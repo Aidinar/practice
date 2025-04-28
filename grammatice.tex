@@ -1,0 +1,21 @@
+document        = preamble content* ;
+preamble        = command* ;
+content         = section | figure | text | bibliography | comment ;
+command         = "\\", command_name, [ arguments ] ;
+command_name    = letter+ | special_char ;
+arguments       = optional_argument | mandatory_argument ;
+optional_argument = "[", text, "]" ;
+mandatory_argument = "{", text, "}" ;
+
+section         = "\section{", text, "}", content* ;
+figure          = "\begin{figure}", content*, "\end{figure}" ;
+bibliography    = "\begin{thebibliography}", bibitem*, "\end{thebibliography}" ;
+bibitem         = "\bibitem{", key, "}", text ;
+
+text            = ( any_char - special_chars ) | escaped_char ;
+escaped_char    = "\", any_char ;
+special_chars   = "\" | "%" | "{" | "}" ;
+comment         = "%", { any_char }, newline ;
+
+key             = letter+ | digit+ ;
+
