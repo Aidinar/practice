@@ -1,0 +1,1066 @@
+
+\def\l{\lambda}
+
+
+\renewcommand{\figurename}{\protect\bf Algorithm}
+\renewcommand{\tablename}{\protect\bf Table}
+
+\def\stat{razumchik}
+
+
+\def\tit{REVISITING JOINT STATIONARY DISTRIBUTION IN~TWO FINITE CAPACITY QUEUES 
+OPERATING IN~PARALLEL}
+
+\def\titkol{Revisiting joint stationary distribution in~two finite capacity queues 
+operating in~parallel}
+
+\def\autkol{L.~Meykhanadzhyan, S.~Matyushenko, D.~Pyatkina,
+and~R.~Razumchik}
+
+\def\aut{L.~Meykhanadzhyan$^1$, S.~Matyushenko$^2$, D.~Pyatkina$^3$,
+and~R.~Razumchik$^4$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+%\footnotetext[1] {The 
+%research of Yuri Kabanov was done under partial financial support   of the grant 
+%of  RSF No.\,14-49-00079.}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{School No.\,281 of Moscow, 
+7~Raduzhnaya Str. Moscow 129344, Russian Federation;
+\mbox{lameykhanadzhyan@gmail.com}}
+\footnotetext[2]{Peoples' Friendship University of Russia (RUDN University),
+6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation;
+\mbox{matyushenko\_si@rudn.university}}
+\footnotetext[3]{Peoples' Friendship University of Russia (RUDN University),
+6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation;
+\mbox{pyatkina\_da@rudn.university}}
+\footnotetext[4]{Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences; 
+44-2~Vavilova Str., Moscow 119333, Russian Federation;
+Peoples' Friendship University of Russia,
+6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation;
+\mbox{rrazumchik@ipiran.ru}}
+
+
+\index{Meykhanadzhyan L.}
+\index{Matyushenko S.}
+\index{Pyatkina D.}
+\index{Razumchik R.}
+\index{Мейханаджян Л.\,А.}
+\index{Матюшенко С.\,И.}
+\index{Пяткина Д.\,А.}
+\index{Разумчик Р.\,В.}
+
+
+\vspace*{-1pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+
+\Abste{The paper revisits the problem of the computation
+of the joint stationary probability distribution~$p_{ij}$
+in a~queueing system consisting of 
+two single-server queues, each of capacity $N\ge 3$, 
+operating in parallel, and a~single Poisson flow. 
+Upon each arrival instant, one customer is put simultaneously into each system. 
+When a~customer sees a~full system, it is lost.
+The service times are exponentially distributed 
+with different parameters.
+Using the approach based on generating functions,
+the authors obtain a~new system of equations of 
+a~smaller size than the size of the original
+system of equilibrium equations ($3N-2$ compared to $(N+1)^2$). 
+Given the solution of the new system, the whole joint stationary 
+distribution can be computed recursively.
+The new system gives some insights into the interdependence 
+of~$p_{ij}$ and~$p_{nm}$. If relations between $p_{i-1,N}$ 
+and $p_{i,N}$ for $i=3,5,7,\ldots$
+are known, then the blocking probability can be computed recursively.
+Using the known results for the asymptotic behavior of~$p_{ij}$ as
+$i,j \rightarrow \infty$, the authors illustrate this idea by 
+a~simple numerical example.}
+
+
+\KWE{two queues; generating function; stationary distribution; paired customers}
+
+\DOI{10.14357/19922264170312} 
+
+
+\vspace*{-4pt}
+
+
+\vskip 12pt plus 9pt minus 6pt
+
+      \thispagestyle{myheadings}
+
+      \begin{multicols}{2}
+
+                  \label{st\stat}
+
+\section{Introduction}
+
+\noindent
+The system with two single-server queues (both limited and unlimited capacity
+cases) operating in parallel has received significant attention in the literature
+due its potential application in real-life scenarios
+(for example, packet switches, packet radio networks, parallel processing systems,
+inventory control of database systems, etc.). Further, it is assumed that the system consists of 
+two queues (say, queue~1 and queue~2) each with a single server
+and there is a single Poisson flow of customers arriving at it. 
+Each customer upon arrival is instantly duplicated: one customer goes 
+to queue~1 and the other goes to queue~2. Both queues are working independently,
+service times follow exponential distribution with different parameters,
+and the service discipline in a queue is either FCFS (first-come-first-served), 
+LCFS (last-come-first-served), or Random. 
+Despite the simplicity of the structure, even under such markovian assumptions, 
+the system turned out to be notoriously hard to analyze.
+
+A~big list of publications on the topic is given in~\cite{intro1},
+where the authors give an overview of functional equations (and solution approaches), 
+which arise in the analysis of such systems with infinite capacity queues. 
+References to the application 
+related papers are also given. Among the pioneer works in the 
+area, papers~\cite{orig1,intro2,orig2-1,orig2-2} are worth noticing.
+
+In this paper, the authors revisit the problem of the computation 
+of the joint stationary distribution in the case, when
+both queues have finite capacity. 
+Under the exponential assumptions (and given additional dedicated Poisson flows
+to each queue), the matrix algorithm
+has been proposed already in~\cite{orig1}. Some further considerations,
+including the study of correlation between the queues' sizes were 
+continued in~\cite{orig2}.
+In general, the cases, when both of queues are on finite capacity 
+or one of the queues is (see, for example,~\cite{NEW1}), have received less attention 
+in the literature. This is presumably due to the fact that in
+those cases in order to obtain the joint stationary distribution, one can
+use widely-adopted general techniques:
+folding algorithm, linear level reduction or 
+block-gaussian elimination algorithms
+(see, for example,~\cite{lat-ram,bocharov}).
+
+Our motivation for revisiting this problem comes
+from the papers~\cite{xx1,xx2,xx3,NEW2,NEW3}, where the generating 
+function technique (which utilizes some properties 
+of special functions (Chebyshev and Gegenbauer
+polynomials)) was applied to the systems with 
+two finite-capacity queues 
+and allowed one to derive 
+new relations for the recursive computation of the 
+joint stationary distribution. 
+
+      
+Having applied the same
+approach for the system considered here, 
+the present authors found that it does not lead to the recursive solution. 
+Yet, it gives an alternative way to compute the joint stationary distribution. 
+Specifically, it requires the solution of the system of linear algebraic equations
+of the size $(3N-2)$, when the size of both queues
+is equal  to $N\ge3$ 
+(the exact solutions for $N=1$ and~2
+are obtained in~\cite{orig2}) and is immediately suitable for exact 
+arithmetics implementation.
+If the whole joint stationary distribution is not
+of importance, this approach gives the straight way to 
+calculate the blocking probability
+and new insights into the dependencies between the
+joint probabilities~$p_{ij}$, which prevent the recursive solution. 
+
+The paper is structured as follows. In section~2,
+the description of the system is given and some known results,
+which are necessary in what follows, are repeated.
+Section~3 contains the main contribution of the paper. Here,
+it is shown how new relations for the joint stationary distribution
+can be obtained (see Eqs.~\eqref{n1}--\eqref{n8}). 
+The insights into the interdependence between the joint 
+stationary probabilities is discussed in section~4.
+Section~5 concludes the paper.
+
+
+\section{System Description}
+
+\noindent
+The system under consideration consists of two single-server
+finite capacity queues (queue~1 and queue~2), operating in parallel
+independently of each other.
+By suffering a~little a lack of generality, let us assume 
+that the capacities of both queues are equal to $N\ge3$.
+There is one incoming Poisson flow of rate~$\lambda$
+arriving at the system. Upon arrival,
+each customer is split into two customers:
+one enters queue~1 and another enters queue~2.
+Service time of customers in queue~$i$ follows
+exponential distribution with rate~$\mu_i$, $i=1,2$.
+Since we are interested here only in the queue size related
+characteristics, we allow the service discipline in queues
+to be either FCFS, or LCFS, or Random.
+We are interested in the case (as in~\cite{orig1}), when 
+a customer always occupies the place in the queue 
+whenever it is not full. This is much different
+from the case, when the customer checks the queues' sizes before 
+splitting and leaves the system if at least one queue is full. 
+
+Denote by~$p_{ij}$ stationary probability of the fact that
+there are~$i$~customers in queue~1 and~$j$ customers in queue~2.
+From~\cite{orig1}, it follows that 
+the double generating function for~$p_{ij}$,
+$$
+P(u,v)
+=
+\sum\limits_{i=0}^N \sum\limits_{j=0}^N  u^i v^j p_{ij}\,,  \enskip 
+0 \le u \le 1\,, \ 0 \le v \le 1\,,
+$$
+has the form:
+\begin{equation}
+\label{eq.5.4}
+B(u,v) P(u,v)= A(u,v)
+ \end{equation}
+
+
+
+\noindent
+where
+$$
+B(u,v)=\lambda u^2 v^2 - u(\lambda v+\mu_1 v+ \mu_2 v-\mu_2)+\mu_1 v\,;
+$$
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+A(u,v)= \mu_1 v \left( u-1 \right)\sum\limits_{j=0}^N v^j p_{0j}\\
+{}+
+\mu_2 u \left(v-1\right) \sum\limits_{i=0}^N  u^i p_{i0}
++ \lambda v^2 u^{N+1}(1-u)  \sum\limits_{j=0}^N  v^j p_{Nj}
+\\
+{}+
+\lambda u^2 v^{N+1}(1-v)\sum\limits_{i=0}^N u^i p_{iN} \\
+{}+
+\lambda u^{N+1}v^{N+1}(1-u)(1-v)p_{NN}\,.
+\end{multline*}
+The quadratic polynomial $B(u,v)$ has two roots:
+\begin{multline*}
+%\label{u12}
+u_{1,2}=u_{1,2}(v)=\left(
+\vphantom{\sqrt{(v(\lambda+\mu_1 + \mu_2)-\mu_2)^2-4 \lambda \mu_1 v^3  }}
+v(\lambda+\mu_1 + \mu_2)- \mu_2 \right.\\
+\left.{}
+\mp \sqrt{(v(\lambda+\mu_1 + \mu_2)-\mu_2)^2-4 \lambda \mu_1 v^3  }\right)\Big / 
+(2\lambda v^2)\,.
+\end{multline*}
+The generating function $P(u,v)$ is the ratio of two polynomial functions.
+For each value of~$v$, probability generating function $P(u,v)$ is 
+a~continuous function of~$u$
+in the interval $[0,1]$.
+Then, since the left part in~\eqref{eq.5.4}
+vanishes at points $(u_1(v),v)$, and~$(u_2(v),v)$,
+then the right part must vanish at these points too.
+In the next section, it will be shown that 
+from this observation, one can obtain the system 
+of linear algebraic equations only for the probabilities 
+$\{p_{0j},p_{jN}, 0 \le j \le N\}$ 
+and $\{p_{j0}, 0 \le j \le N-3 \}$ which 
+can be solved by any standard numerical method. Once these probabilities 
+are known, the computation of the rest joint stationary probabilities~$p_{ij}$ 
+is performed recursively from the system of equilibrium equations.
+{\looseness=1
+
+}
+
+
+\section{New System of~Equations}
+
+\noindent
+Both equations $A(u_1(v),v)=0$ and $A(u_2(v),v)=0$
+share the same unknown quantities.
+If one expresses term with 
+$\sum_{j=0}^N v^j p_{0j}$
+from the first equation and put it in the second equation, after collecting
+common terms, one obtains:
+\begin{multline*}
+\mu_2(v-1)\sum\limits_{i=0}^N 
+\left(\fr{u_2^{i+1}-u_1^{i+1}}{u_2-u_1}-
+u_1u_2 \fr{u_2^{i}-u_1^{i}}{u_2-u_1}\right)
+p_{i0}\\
+{}+
+\lambda v\left(1-u_1-u_2+u_1u_2\right)
+\fr{u_2^{N+1}-u_1^{N+1}}{u_2-u_1}\!\sum\limits_{j=0}^N\!\! v^{j+1} p_{Nj}\\
+{}+
+\lambda v^{N+1}(1-v)\sum\limits_{i=0}^N 
+\left ( 
+\fr{u_2^{i+2}-u_1^{i+2}}{u_2-u_1}\right.\\
+\left.{}-
+ u_1u_2\fr{u_2^{i+1}-u_1^{i+1}}{u_2-u_1}
+\right)p_{iN}
+\end{multline*}
+
+\noindent
+\begin{multline}
+{}+
+\lambda v^{N+1}
+{(1-u_1-u_2+u_1u_2)}(1-v)\\
+{}\times{}
+\fr{u_2^{N+1}-u_1^{N+1}}{u_2-u_1}p_{NN}=0\,.
+\label{eq-new-1}
+\end{multline}
+
+\noindent
+Instead of cancelling $\sum_{j=0}^N v^j p_{0j}$, let us express 
+the term with $p_{NN}$ from the {$A(u_1(v),v)=0$}
+and put it into ${A(u_2(v),v)=0}$. By doing so, one gets another relation:
+\begin{multline}
+v\mu_1(1-u_1-u_2+u_1u_2)
+\fr{{u_2}^{N+1}-{u_1}^{N+1}}{u_2-u_1} \sum\limits_{j=0}^N v^j p_{0j}
+\\
++{}
+\mu_2(v-1)\sum\limits_{i=0}^N (u_1u_2)^{i+1}
+\left (
+\fr{{u_2}^{N-i+1}-u_1^{N-i+1}}{u_2-u_1}\right.\\
+\left.{}-\fr{{u_2}^{N-i}-u_1^{N-i}}{u_2-u_1}
+\right) p_{i0} 
+\\
+{}+
+\lambda v^{N+1}(1-v)\sum\limits_{i=0}^N (u_1u_2)^{i+2}
+\left (
+\fr{u_2^{N-i}-{u_1}^{N-i}}{ u_2-u_1}
+\right.\\
+\left.{}-\fr{u_2^{N-i-1}-{u_1}^{N-i-1}}{u_2-u_1}
+\right ) p_{iN}
+=0\,.
+\label{eq-new-2}
+\end{multline}
+It is straightforward to see that the roots
+$u_{1,2}$ admit the following representation:
+\begin{equation*}
+\label{eq524}
+u_{1}=
+\fr{\sqrt{\mu_1}{\lambda v}}
+a(x)\,;\enskip
+u_{2}=
+\fr{\sqrt{\mu_1}{\lambda v}}
+b(x)
+\end{equation*}
+where
+\begin{gather*}
+x = \fr{v(\lambda+\mu_1 + \mu_2)-\mu_2}{v\sqrt{\mu_1\lambda v}}\,;
+\\
+a(x)= \fr{ x - \sqrt{x^2 -4}
+}{2}\,; \enskip
+b(x)= \fr{ x + \sqrt{x^2 -4} }{2}\,.
+\end{gather*}
+It can be shown that $|x|>2$ for all $v \in (0,1]$.
+It is well-known that the fraction
+$(b(x)^m -a(x)^m) /( b(x)-a(x))$ is in fact a polynomial in~$v$ for $m\ge 1$.
+Thus, $(u_2^m - u_1^m) / (u_2-u_1)$ is a polynomial in~$v$ as well.
+After some tedious algebra (derivation is analogous to the one in~\cite{xx3}), 
+let us find that for $m\ge1$, the following
+representation holds:
+\begin{equation}
+\hspace*{-0.3mm}\fr{u_2(v)^m - u_1(v)^m }{u_2(v)-u_1(v)}
+=
+\left (\!
+\sqrt{\fr{\mu_1}{\lambda}}\right)^{\!m-1}\!\!
+\sum\limits_{n=\left\lfloor{m}/{2}\right\rfloor}^{2(m-1)}\hspace*{-2mm}
+v^{-n}a_{m,n}\!
+\label{eq_tran}
+\end{equation}
+where 
+\begin{multline*}
+a_{m,n}=\sum\limits_{j=\max\left\{0,\left\lceil n-(m-1)\right\rceil\right\}}
+^{\lfloor(2n-(m-1))/3\rfloor}
+d_{m,2n-(m-1)-2j,j}\,,\\ \fr{m-1}{2}\leq n\leq 2(m-1)\,;
+\end{multline*}
+
+%\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+d_{i,m,k}\\
+{}=C_{i-m-1}^{m+1} (0)\binom{m}{k}\!
+\left (
+\fr{\lambda +\mu_1 + \mu_2}{\sqrt{\lambda\mu_1}}
+\right )^{m-k}\!\!\!
+\left(-\fr{\mu_2 }{\sqrt{\lambda\mu_1}}\right)^{\!k}\!\!\!.\hspace*{-2.316pt}
+\end{multline*}
+Here, $\binom{m}{k}$ is the binomial coefficient
+and $C^m_n(0)$ denotes the value of 
+Gegenbauer polynomial~$C^m_n(x)$ at point $x=0$ 
+(see, for example,~\cite[p.\,175]{erdelyi}).
+Since each fraction $(u_2^m - u_1^m) / (u_2-u_1)$
+is a polynomial in~$v$ with real coefficients
+(defined by~\eqref{eq_tran})
+and $u_1u_2={\mu_1}/{\l v}$,  
+$u_1+u_2=((\l+\mu_1+\mu_2)v-\mu_2)/(\l v^2)$,
+both expressions on the left in~\eqref{eq-new-1} and~\eqref{eq-new-2} 
+are polynomials in~$v$ as well
+with real coefficients depending on~$\lambda$, $\mu_1$, $\mu_2$
+and certain~$p_{ij}$. Due to the lack of space we omit  
+detailed derivations and just state the final result.
+From the fact that both polynomials~\eqref{eq-new-1} and~\eqref{eq-new-2} 
+are equal to zero for $v \in (0,1]$, it follows 
+that their coefficients are equal to zero.
+This leads to two systems of linear algebraic equations (one from~\eqref{eq-new-1}
+and the other from~\eqref{eq-new-2}) for the stationary
+probabilities on the boundaries ($p_{0j}$, $p_{i0}$, $p_{iN}$,
+and $p_{Nj}$). Careful inspection shows that from these two systems,
+one can draw one single system of equations of size $3N\hm-4$ for the probabilities 
+$\{p_{0j},p_{jN},\ 0 \le j \le N\}$ and $\{p_{j0}, 0 \le j \le N-3 \}$,
+which can be solved numerically. 
+Specifically, for odd $N\ge3$,
+the new system of equations has the form:
+\begin{multline}
+\label{n1}
+\sum\limits_{j=0}^N p_{0j} a_{N+1,j+(N-1)/2} 
+\\
+{}+
+\sum_{j=0}^{(N-1)/2-1}
+p_{jN} \lambda r^{j+2} b_{N-j,N+(N-1)/2-j}
+\\
+{}- p_{00} \mu_2 r b_{N+1,(N-1)/2}=0\,;
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\label{n2}
+\sum\limits_{j=i}^N
+p_{0j} a_{N+1,j+(N-1)/2-i} 
+\\
+{}+
+\sum\limits_{j=0}^{(N-1)/2+(i-1)}
+p_{jN} \lambda r^{j+2} b_{N-j,N+(N-1)/2-j-i}=0\,,\\ 
+i=\overline{1,\fr{N-1}{2}}\,;
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\label{n3}
+\sum\limits_{j=(N+1)/2}^N
+p_{0j} a_{N+1,j-1} +
+\sum\limits_{i=0}^{N-1} p_{iN} \lambda r^{i+2} b_{N-i,N-i-1}\\
+{}+
+p_{NN}\lambda r^{N+1}b_{1,0}=0\,;
+\end{multline}
+
+\begin{figure*}
+\Caption{Recursive computation of $p_{ij}$}
+
+\
+
+\hrule
+
+\
+
+\noindent
+For $0 \le i \le N-2$, $p_{i,N-1} \leftarrow 
+p_{i+1,N}\left(1+\rho_1^{-1}+\rho_2^{-1}\right)-p_{iN}-
+\rho_1^{-1} p_{i+2,N}$
+
+\noindent 
+For $1 \le j \le N-2$, $p_{1,j} \leftarrow 
+p_{0,j}\left( \rho_1+{\mu_2/\mu_1}\right)-p_{0,j+1}{\mu_2/\mu_1}$
+
+\noindent 
+For $2 \le i \le N-1$
+   
+   \hspace*{3mm}For $1 \le j \le N-1$
+
+\hspace*{4mm}$p_{i,j} \leftarrow p_{i-1,j}\left(\rho_1+1+{\mu_2/\mu_1}\right)-\rho_1 p_{i-2,j-1}-p_{i-1,j+1}{\mu_2/\mu_1}$
+
+\noindent 
+$p_{N-2,0} \leftarrow p_{N-3,0}\left( \rho_1 +1\right)-p_{N-3,1}{\mu_2/\mu_1}$
+
+\noindent
+For $1 \le j \le N-1$,
+$p_{N,j} \leftarrow p_{N-1,j}\left( \rho_1 +1+{\mu_2/\mu_1}\right)- \rho_1 p_{N-2,j-1}-p_{N-1,j+1}{\mu_2/\mu_1}$
+
+\noindent For $N-1 \le i \le N$, $p_{i,0} \leftarrow p_{i-1,0}\left( \rho_1 +1\right)-p_{i-1,1}{\mu_2/\mu_1}$
+
+\vspace*{3pt}
+
+\hrule
+\end{figure*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\label{n4}
+\sum\limits_{j=N-i}^N
+p_{0j} a_{N+1,j+i-(N+1)/2}  \\
+{}+ \sum\limits_{j=0}^{2i+1}
+p_{jN}  r^{j+2} b_{N-j,(N-1)/2+i-j}=0\,,\\
+ i=\overline{1,\fr{N-3}{2}}\,;
+\end{multline}
+\begin{equation}
+\label{n5}
+\sum\limits_{j=0}^{2i+1}p_{jN}  r^{j} d_{j+1,i}=0\,,\enskip 
+i=\overline{0,\fr{N-3}{2}}\,;
+\end{equation}
+\begin{equation}
+\label{n6}
+\sum\limits_{j=1}^{N} p_{jN} \lambda r^{j-1} d_{j+1,(N-1)/2}=0\,;
+\end{equation}
+
+\vspace*{-14pt}
+
+\noindent
+\begin{multline}
+\label{n7}
+\sum\limits_{j=0}^N p_{0j} a_{N+1,j+N-2-i} \\[-1pt]
+{}+ \sum\limits_{j=0}^i p_{jN} \lambda r^{j+2} b_{n-j,2N-2-i-j} 
+\\{}-
+\sum\limits_{j=0}^{N-3-2i} p_{j0} \mu_2 r^{j+1} b_{N+1-i,N-2-i-j}=0\,,\\
+i=\overline{0,\fr{N-5}{2}}\,;
+\end{multline}
+
+\vspace*{-14pt}
+
+\noindent
+\begin{multline}
+\label{n8}
+\sum\limits_{j=0}^i p_{0j} a_{N+1,j+2N-i} 
+- \sum\limits_{j=0}^i p_{j0} \mu_2 r^{j+1} b_{N+1-j,2N-i-j}\\
+{}=0\,,\enskip
+ i=\overline{1,N-3}\,,
+\end{multline}
+where the following notations are used:
+\begin{align*}
+r&= \sqrt{\fr{\mu_1}{\lambda}}\,; \\
+a_{ij}&=\mu_2\left(\sqrt{\fr{\mu_1}{\lambda}}\right)^2 C_{i,j} (0) -\mu_1C_{i,j+1}(0)\,;
+\\
+b_{ij}&=\sqrt{\fr{\mu_1}{\lambda}}\, C_{i,j}(0)-C_{i-1,j}(0)\,;\\
+d_{ij}&=\sqrt{\fr{\mu_1}{\lambda}}\, C_{i,j}(0)-C_{i+1,j+1}(0)\,.
+\end{align*}
+System \eqref{n1}--\eqref{n8} consists of $3N-4$
+equations in $3N-2$ unknowns. Two additional equations
+follow from the fact that each queue, when considered 
+independently, operates as the standard $M/M/1/N$ queue
+and, thus, 
+$$
+\sum\limits_{j=0}^N p_{0j} =\fr{1-\rho_1}{1- \rho_1^{N+1}}\,;
+\enskip
+p_{\cdot,N}=\sum\limits_{i=0}^N
+p_{iN}=\rho_2^N \fr{1-\rho_2}{1- \rho_2^{N+1}}.
+$$ 
+Here and henceforth, $\rho_i=\lambda/\mu_i$, $i=1,2$.
+Once the system~\eqref{n1}--\eqref{n8},
+supplemented with these two equations, is solved,
+all other probabilities~$p_{ij}$ can be found recursively 
+(see Algorithm~1).
+
+
+
+
+The relations in Algorithm~1 follow from the system 
+of equilibrium equations for~$p_{ij}$ (see, for example,~\cite[p.~435]{orig1}). 
+Algorithm~1 is not well suited 
+for the computation of the 
+whole joint stationary distribution~$p_{ij}$
+because the accuracy of the results heavily depends
+on the values of initial parameters and sometimes may be low.
+
+
+\section{Relating {{$p_{i-1,N}$}} and~{{$p_{i,N}$}}}
+
+\noindent
+System~\eqref{n1}--\eqref{n8}
+gives some insights into the interdependence of~$p_{ij}$ and~$p_{nm}$.
+Specifically, Eqs.~\eqref{n5} and~\eqref{n6}
+show that it is enough to know the relations between~$p_{2,N}$ 
+and~$p_{3,N}$, $p_{4,N}$ 
+and~$p_{5,N}$, $p_{6,N}$ and~$p_{7,N}$, etc.\ to compute the value of~$p_{NN}$.
+Indeed, let $p_{i,N}= p_{i-1,N} \alpha_i$. From~\eqref{n5} and~\eqref{n6},
+for $y_{jN}=p_{jN}/p_{0N}$, one has:
+\begin{equation}
+\label{app1}
+y_{1N} =
+-\fr{d_{1,0} }{r d_{2,0}}\,;
+\end{equation}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\label{app2}
+y_{2i,N} =-\fr{ \sum\nolimits_{j=0}^{2i-1}
+y_{jN} r^{j} d_{j+1,i}}{r^{2i} d_{2i+1,i}+\alpha_{2i+1} r^{2i+1} d_{2i+2,i}}\,, \\
+ i=\overline{1,\fr{N-3}{2}}\,;
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\label{app3}
+y_{N-1,N} \\
+{}= -\fr{ \sum\nolimits_{j=1}^{N-2}
+y_{jN} r^{j-1} d_{j+1,(N-1)/2}}
+{r^{N-2} d_{N,(N-1)/2}+\alpha_{N} r^{N-1} d_{N+1,(N-1)/2}}\,.
+\end{multline}
+From this system and the normalization condition 
+$p_{\cdot,N} = \rho_2^N (1-\rho_2)/ (1- \rho_2^{N+1})$,
+one finds $p_{0N}\linebreak =p_{\cdot,N}/\sum_{i=0}^N y_{iN}$ and
+$p_{NN}=p_{0N} y_{N,N}$.
+We are unaware of any general rule for choosing~$\alpha_i$.
+Yet, some heuristics can be suggested. 
+Without any loss of generality, further on, we
+consider $\lambda=1$.
+From the results in~\cite{orig2-1}, it
+follows that if $\mu_2>\mu_1>1$,
+then for large~$N$, one has:
+\begin{equation*}
+%\label{p25p35}
+p_{iN}\approx
+p_{i-1,N} \left ( \fr{\Phi(x_{i+1}) - \Phi(x_{i})}
+{\Phi(x_{i}) - \Phi(x_{i-1})}
+\right )
+\end{equation*}
+where
+\begin{gather*}
+x_i = \fr{1}{\sqrt{N}}
+\left (i - \fr{\mu_2-\mu_1}{\mu_2-1} N \right )\,;
+\\
+\Phi(x)=\fr{1}{\sqrt{2 \pi}\, \sigma}
+\int\limits_{-\infty}^x e^{-{t^2}/({2 \sigma^2})}\,dt\,;
+\\
+\sigma^2= 
+\fr{\mu_1^2 \mu_2 + \mu_1 \mu_2^2 + \mu_1 + \mu_1^2 + \mu_2 + \mu_2^2 - 
+6 \mu_1 \mu_2 }{(\mu_2-1)^3}\,.
+\end{gather*}
+Thus, the (approximate) value of~$p_{NN}$ can be found from~\eqref{app1}--\eqref{app3}
+with 
+$$
+\alpha_i=\fr{\Phi(x_{i+1}) - \Phi(x_{i})}{\Phi(x_{i}) - \Phi(x_{i-1})}\,.
+$$
+It is worth noticing that the value $p_{\cdot,N}(1-\Phi(x_{N}))$
+gives another approximation for~$p_{NN}$ if $\mu_2>\mu_1>1$ and
+can be quite accurate. We can try one's luck and
+use the same value of~$\alpha_i$ in the overloaded case as well 
+(i.\,e., when the load of at least one queue is~1)
+with two minor modifications. Firstly, substitute~$-\sigma^2$ instead 
+of~$\sigma^2$ and, secondly, put $\alpha_i \equiv 1$ whenever 
+$-\sigma^2<0$ or $\Phi(x_{i}) \approx \Phi(x_{i-1})$.   
+With these agreements, by using $p_{i,N}= p_{i-1,N} \alpha_i$
+in~\eqref{app1}--\eqref{app3}, the value of~$p_{NN}$ can be approximated with
+$2 p_{0N} y_{N,N}$. The data in the table give the idea of the quality 
+of the approximation
+for the case $N=35$, $\lambda=1$, and $\mu_1=0.01$ ($\rho_1=100$). 
+
+\vspace*{6pt}
+
+%\begin{table*}
+{\small
+\begin{center}
+
+%\label{tab1}
+\begin{tabular}{lcc}
+\multicolumn{3}{p{65mm}}{Exact values of $p_{NN}$ (solution of~\eqref{n1}--\eqref{n8})
+and approximate values of~$p_{NN}$ (solution of~\eqref{app1}--\eqref{app3}). 
+The case of $N=35$,
+$\lambda=1$, and $\mu_1=0.01$}\\
+\multicolumn{3}{c}{\ }\\[-6pt]
+\hline 
+\multicolumn{1}{c}{\raisebox{-6pt}[0pt][0pt]{$\mu_2$}} & \multicolumn{2}{c}{$p_{NN}$}\\
+\cline{2-3}
+& Exact value  & Approximate value\\  
+\hline 
+&&\\[-9pt]
+$2.5$ & $1.1310\cdot 10^{-15}$ & $1.1334\cdot 10^{-15}$  \\ 
+%\hline 
+$2$ & $3.6258\cdot 10^{-12}$ & $3.6380\cdot 10^{-12}$  \\ 
+%\hline 
+$1.25$ & $5.1702\cdot 10^{-5}\hphantom{^1}$ & $5.1934\cdot 10^{-5}\hphantom{^1}$  \\ 
+%\hline 
+$1.1$ & 0.0027 & 0,0027 \\ 
+%\hline 
+$1.01$ & 0.0217 & 0.0218  \\ 
+%\hline 
+$0.9$ & 0.1013 & 0.1016  \\ 
+%\hline 
+$0.8$ & 0.1989 & 0.1972  \\ 
+\hline 
+\end{tabular} 
+\end{center}
+}
+%\end{table*}
+
+
+\section{Concluding Remarks}
+
+\noindent
+In this paper, it  has been shown that the joint stationary probability distribution
+can be computed using the system of equations
+of the smaller size (than the original one).
+The idea follows from the fact that in the finite-capacity
+case, both roots in the denominator of the generating function 
+are the roots of its numerator (on the contrast to the infinite-capacity case).
+The drawbacks of the utilized method can be seen when computing 
+the whole joint distribution~$p_{ij}$. Here, the widely-adopted
+Gaussian elimination and matrix-analytic methods are preferable.
+Yet, when only the blocking probability is of interest,
+the utilized method leads to the new computational procedure and
+some insights into the interdependencies between~$p_{ij}$ and~$p_{nm}$. 
+Unlike in some other system with two queues of 
+finite-capacity, here the values of~$p_{ij}$ do not allow 
+recursive computation, which is, as clearly seen, due simultaneously happening arrivals.
+Still the utilized method allows further investigations into
+the new procedures for the approximate computation of~$p_{ij}$ as suggested 
+in~\cite{NEW2}.
+
+\Ack  
+\noindent
+This work was supported in part by the
+Russian Foundation for Basic Research (grants 15-07-03007 and 15-07-03406).
+
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+
+\vspace*{-6pt}
+
+%\vspace*{-6pt}
+
+{\small\frenchspacing
+{\baselineskip=10.65pt
+\begin{thebibliography}{99}
+\bibitem{intro1} 
+\Aue{El-hady, E., J.~Brzdek, and H.~Nassar.} 2017. 
+On the structure and solutions of functional 
+equations arising from queueing models. \textit{Aequationes Math.} 
+91(3):~445--477.
+
+\bibitem{intro2}
+\Aue{Kingman, J.\,F.\,C.} 1961. 
+Two similar queues in parallel. \textit{Ann. Math. Stat.} 32(4):1314--1323.
+
+\bibitem{orig1} %3
+\Aue{Hunter, J.\,J.} 1969. Two queues in parallel. \textit{J.~Roy. 
+Stat. Soc. B} 31(3):432--445. 
+%The Journal of the Royal Statistical Society, Series B
+
+
+\bibitem{orig2-2} %4
+\Aue{Flatto, L., and S.~Hahn.} 1984. Two parallel queues created by 
+arrivals with two demands~I. \textit{SIAM J.~Appl. Math.} 44(5):1041--1053.
+
+
+\bibitem{orig2-1} %5
+\Aue{Flatto, L.} 1985. 
+Two parallel queues created by arrivals with two demands~II. 
+\textit{SIAM J.~Appl. Math.} 45(5):861--878.
+
+\bibitem{NEW1} %6
+\Aue{Rao, B.\,M., and M.\,J.\,M.~Posner}. 
+1985. Algorithmic and approzimation analyses of the split and match queue.
+\textit{Commun. Stat. Stochastic Models} 1(3):433--456.
+
+\bibitem{lat-ram} %7
+\Aue{Latouche, G., and V.~Ramaswami.} 1999. 
+\textit{Introduction to matrix analytic methods in stochastic modeling}. 
+Philadelphia, PA: SIAM. 334~p.
+
+\bibitem{bocharov} %8
+\Aue{Bocharov, P.\,P., C.~D'Apice, A.\,V.~Pechinkin, and S.~Salerno}. 2004.
+\textit{Queueing theory}. Utrecht: VSP Publishing. 450~p.
+
+\bibitem{xx2} %9
+\Aue{Bavinck, H., G.~Hooghiemstra, and E.~De~Waard.} 1993. 
+An application of Gegenbauer polynomials in queueing theory. 
+\textit{J.~Comput. Appl. Math.} 49:1--10.
+
+
+\bibitem{xx1} %10
+\Aue{Avrachenkov, K.\,E., N.\,O.~Vilchevsky, and G.\,L.~Shevlyakov}. 
+2003. Priority queueing with finite buffer size and randomized push-out mechanism. 
+\textit{ACM  Conference (International) on Measurement and Modeling of Computer
+Systems Proceedings}. New York, NY: ACM. 31(1):324--335.
+
+
+
+\bibitem{xx3} %11
+\Aue{Razumchik, R.\,V.} 2014. 
+Analysis of finite capacity queue with negative customers and bunker for ousted 
+customers using Chebyshev and Gegenbauer polynomials. 
+\textit{Asia Pac. J.~Oper. Res.} 31(4).
+%1450029 (21 pages)
+
+\bibitem{NEW3} %12
+\Aue{Zaryadov, I.\,S., L.\,A.~Meykhanadzhyan, T.\,A.~Milovanova, and R.\,V.~Razumchik}. 2015. 
+Metod nakhozhdeniya statsionarnogo raspredeleniya ocheredi v~dvukhkanal'noy sisteme 
+s~uporyadochennym vkhodom konechnoy emkosti [On the method of 
+calculating the stationary distribution in the finite two-channel system with 
+ordered input].
+\textit{Sistemy i~Sredstva Informatiki~--- 
+Systems and Means of Informatics} 25(3):44--59.
+
+\bibitem{NEW2} %13
+\Aue{Razumchik, R.\,V.} 2015. Algebraic method 
+for approximating joint stationary distribution in finite capacity queue 
+with negative customers and two queues. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 9(4):68--77.
+
+\bibitem{orig2} %14
+\Aue{Hunter, J.\,J.} 1971. 
+Further studies on two queues in parallel. 
+\textit{Aust. NZ J.~Stat.} 13(2):83--93.
+
+
+\bibitem{erdelyi} %15
+\Aue{Erdelyi, A., and H.~Bateman.} 1985. 
+\textit{Higher transcendental functions.} 
+Robert E.\ Krieger Publishing Co.  Vol.~II. 414~p.
+
+\end{thebibliography} } }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received July 15, 2017}}
+
+
+
+\vspace*{-24pt}
+
+\Contr
+
+\vspace*{-2pt}
+
+\noindent
+\textbf{Meykhanadzhyan Lusine A.} (b.\ 1990)~---
+Candidate of Science (PhD) in physics and mathematics,
+ extended education teaching assistant, School No.\,281 of Moscow, 
+7~Raduzhnaya Str., Moscow 129344, Russian Federation; 
+\mbox{lameykhanadzhyan@gmail.com}
+
+\vspace*{2pt}
+
+
+\noindent
+\textbf{Matyushenko Sergey I.} (b.\ 1963)~--- 
+Candidate of Science (PhD) in physics and 
+mathematics, associate professor, Peoples' Friendship University of Russia 
+(RUDN University), 6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation; 
+\mbox{matyushenko\_si@rudn.university}
+
+\vspace*{2pt}
+
+
+\noindent
+\textbf{Pyatkina Daria A.} (b.\ 1968)~--- 
+Candidate of Science (PhD) in physics and mathematics, 
+associate professor, Peoples' Friendship University of Russia (RUDN University), 
+6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation; 
+\mbox{pyatkina\_da@rudn.university}
+
+\vspace*{2pt}
+
+
+\noindent
+\textbf{Razumchik Rostislav V.} (b.\ 1984)~--- Candidate of Science (PhD) in physics 
+and mathematics, leading scientist, Institute of Informatics Problems, 
+Federal Research Center ``Computer Science and Control'' of the Russian 
+Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+associate professor, Peoples' Friendship University of Russia (RUDN University), 
+6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation; 
+\mbox{rrazumchik@ipiran.ru}  %; \mbox{razumchik\_rv@rudn.university} 
+
+\vspace*{6pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\newpage
+
+\vspace*{-2pt}
+
+%\vspace*{8pt}
+
+\def\tit{СОВМЕСТНОЕ СТАЦИОНАРНОЕ РАСПРЕДЕЛЕНИЕ ЧИСЛА ЗАЯВОК В~СИСТЕМЕ С~ДВУМЯ 
+ОЧЕРЕДЯМИ КОНЕЧНОЙ ЕМКОСТИ И~ОБЩИМ ВХОДЯЩИМ ПОТОКОМ$^*$}
+
+
+
+
+\def\titkol{Совместное стационарное распределение числа заявок в системе с двумя 
+очередями конечной емкости} % и общим входящим потоком}
+
+\def\aut{Л.\,А. Мейханаджян$^{1}$,
+С.\,И.~Матюшенко$^2$,
+Д.\,А.~Пяткина$^2$, Р.\,В.~Разумчик$^{2,3}$}
+
+\def\autkol{Л.\,А. Мейханаджян, С.\,И.~Матюшенко,
+Д.\,А.~Пяткина, Р.\,В.~Разумчик}
+
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\footnotetext[1]{Работа частично поддержана грантами РФФИ
+№\,15-07-03007 и~№\,15-07-03406.}}
+
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-12pt}
+
+\noindent
+$^1$Школа №~281 города Москвы
+
+\noindent
+$^2$Российский университет дружбы народов
+
+
+\noindent
+$^3$Институт проблем информатики Федерального исследовательского центра 
+<<Информатика и управление>>\linebreak
+$\hphantom{^1}$Российской академии наук
+
+\vspace*{6pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 11\ \ \ выпуск\ 3\ \ \ 2017}
+}%
+ \def\rightfootline{\small{ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 11\ \ \ выпуск\ 3\ \ \ 2017
+\hfill \textbf{\thepage}}}
+
+
+\Abst{Рассматривается система массового обслуживания с~входящим пуассоновским 
+потоком и~двумя приборами, являющаяся одним из простых вариантов fork-систем. 
+Перед каждым прибором имеется накопитель конечной емкости. При поступлении 
+в~систему новой заявки создается ее копия и~далее в~каждую 
+из очередей поступает по одной заявке. Если в~момент поступления заявки накопитель 
+оказывается полностью заполненным, заявка теряется и~в~систему не возвращается. 
+Времена обслуживания заявок на приборах имеют экспоненциальное распределение 
+с~различными параметрами. Хорошо известно, что подобные системы 
+с~трудом поддаются аналитическому анализу. В~работе предлагается метод 
+нахождения вероятности блокировки, а~также совместного стационарного 
+распределения числа заявок в~накопителях, основанный на методе производящих функций 
+и~использующий  некоторые результаты теории специальных функций.}
+
+\KW{система массового обслуживания; fork-система; две очереди; конечная емкость; стационарное распределение}
+
+\DOI{10.14357/19922264170312} 
+
+
+%\vspace*{6pt}
+
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily Литература}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\begin{thebibliography}{99}
+
+\bibitem{intro1-1}
+\Au{El-hady E., Brzdek~J., Nassar~H.}
+On the structure and solutions of functional equations arising from queueing models~// 
+{Aequationes Math.}, 2017. Vol.~91. No.\,3. P.~445--477.
+
+\bibitem{intro2-1}
+\Au{Kingman J.\,F.\,C.} Two similar queues in parallel~// {Ann. Math. Stat.}, 1961. 
+Vol.~32. No.\,4. P.~1314--1323.
+
+
+\bibitem{orig1-1} %3
+\Au{Hunter J.\,J.} Two queues in parallel~// J.~Roy. Stat. Soc.~B, 1969. 
+Vol.~31. P.~432--445. %(1969).
+
+
+\bibitem{orig2-2-1} %4
+\Au{Flatto L., Hahn~S.} Two parallel queues created by arrivals with two demands~I~// 
+{SIAM J.~Appl. Math.}, 1984. Vol.~44. No.\,5. P.~1041--1053.
+
+
+\bibitem{orig2-1-2} %5
+\Au{Flatto L.} Two parallel queues created by arrivals with two demands~II~// 
+{SIAM J.~Appl. Math.}, 1985. Vol.~45. No.\,5. P.~861--878.
+
+\bibitem{NEW1-1} %6
+\Au{Rao B.\,M., Posner~M.\,J.\,M.} Algorithmic 
+and approzimation analyses of the split and match queue~// 
+{Commun. Stat. Stochastic Models}, 1985. Vol.~1. No.\,3. P.~433--\linebreak 456.
+
+\bibitem{lat-ram-1} %7
+\Au{Latouche G., Ramaswami~V.} 
+{Introduction to matrix analytic methods in stochastic modeling}.~---  
+Philadelphia, PA, USA: SIAM, 1999. 334~p.
+
+
+\bibitem{bocharov-1} %8
+\Au{Bocharov P.\,P., D'Apice C., Pechinkin A.\,V., Salerno S.} 
+{Queueing theory}.~--- Utrecht: VSP Publishing, 2004.\linebreak 450~p.
+
+\bibitem{xx2-1} %9
+\Au{Bavinck H., Hooghiemstra~G., De~Waard~E.} An application of Gegenbauer 
+polynomials in queueing theory~// {J.~Comput. Appl. Math.}, 1993. Vol.~49. P.~1--10.
+
+\bibitem{xx1-1} %10
+\Au{Avrachenkov K.\,E., Vilchevsky~N.\,O., Shevlyakov~G.\,L.} 
+Priority queueing with finite buffer size and randomized push-out mechanism~// 
+{ACM  Conference (International) on Measurement and Modeling of Сomputer 
+Systems Proceedings}.~--- New York, NY, USA: ACM, 
+2003. Vol.~31. No.\,1. P.~324--335.
+
+
+
+\bibitem{xx3-1} %11
+\Au{Razumchik R.\,V.} Analysis of finite capacity queue with negative customers 
+and bunker for ousted customers using Chebyshev and Gegenbauer polynomials~// 
+{Asia Pac. J.~Oper. Res.}, 2014. Vol.~31. No.\,4. Id.~1450029.
+%1450029 (21 pages)
+
+\bibitem{NEW3-1} %12
+\Au{Зарядов И.\,С., Мейханаджян~Л.\,А., Милованова~Т.\,А., Разумчик~Р.\,В.} 
+Метод нахождения стационарного распределения очереди в~двухканальной системе 
+с~упорядоченным входом конечной емкости~// 
+Системы и~средства информатики, 2015. Т.~25. Вып.~3. С.~44--59.
+
+\bibitem{NEW2-1} %13
+\Au{Razumchik R.\,V.} Algebraic method for approximating joint stationary 
+distribution in finite capacity queue with negative customers and two queues~//
+Информатика и~её применения, 2015.  Т.~9. Вып.~4. C.~68--77.
+
+\bibitem{orig2-1-1} %14
+\Au{Hunter J.\,J.}
+Further studies on two queues in parallel~// 
+{Aust. NZ J.~Stat.}, 1971. Vol.~13. No.\,2. P.~83--93.
+
+
+\bibitem{erdelyi-1} %15
+\Au{Erdelyi A., Bateman~H.} {Higher transcendental functions.} 
+Robert E.~Krieger Publishing Co., 1985.  Vol.~II. 414~p.
+
+
+
+
+\end{thebibliography}
+} }
+
+\end{multicols}
+
+ \label{end\stat}
+
+ \vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в редакцию  15.07.2017}}
+
+
+%\renewcommand{\bibname}{\protect\rm Литература}
+\renewcommand{\figurename}{\protect\bf Рис.}
+\renewcommand{\tablename}{\protect\bf Таблица}

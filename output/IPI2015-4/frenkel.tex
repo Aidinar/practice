@@ -1,0 +1,863 @@
+
+\renewcommand{\figurename}{\protect\bf Figure}
+\renewcommand{\tablename}{\protect\bf Table}
+
+\def\stat{frenkel}
+
+
+\def\tit{PERFORMANCE IMPROVEMENT OF LEMPEL--ZIV--WELCH COMPRESSION ALGORITHM}
+
+\def\titkol{Performance improvement of Lempel--Ziv--Welch compression algorithm}
+
+\def\autkol{S.~Frenkel, M.~Kopeetsky, R.~Molotkovski, and~P.~Borovsky}
+
+\def\aut{S.~Frenkel$^{1,2}$, M.~Kopeetsky$^3$, R.~Molotkovski$^3$, and~P.~Borovsky$^3$}
+
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+%\footnotetext[1] {The first author has partially been supported by the Russian Foundation 
+%for Basic Research under grant 15-07-05316. The second author has 
+%partially been supported by the internal research program of the Shamoon College 
+%of Engineering.}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences,
+44-2 Vavilov Str., Moscow 119333, Russian Federation}
+\footnotetext[2]{Moscow State University of Information
+Technologies, Radioengineering, and Electronics, 
+78~Vernadskogo Ave., Moscow 119454, Russian Federation}
+\footnotetext[3]{Department of Software Engineering, Shamoon College of Engineering, Basel/Bialik Sts,
+Beer-Sheva, Israel}
+
+\vspace*{-9pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2015\ \ \ volume~9\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2015\ \ \ volume~9\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{-4pt}
+
+
+\Abste{The paper proposes two novel schemes which improve the dictionary-based 
+Lempel--Ziv--Welch ({LZW}) compression algorithm. The first scheme proposes 
+an improvement over the {LZW} algorithm by applying an exponential decay 
+({ED}) technique as a~tool to manage and remove infrequently used entries 
+in the {LZW} dictionary. The presented results demonstrate that {ED} 
+may be an efficient tool to manage and refresh the {LZW} dictionary. 
+The achieved compression ratio (CR) is higher than in the traditional methods like 
+Dictionary Reset 
+({DR}) and Least Recently Used (LRU). 
+ %
+Another approach uses  the Distance from Last Use ({DLU}) method. 
+The {DLU} can be compressed by Huffman coding based on the frequencies 
+of the phrases. The compression scheme, called  {HCD} (Huffman Coding of 
+Distance), was tested on different real-life data types such as text, programming code, 
+audio, video and image files, characterized by different Shannon entropy.
+The experimental results demonstrate that the {ED} and {HCD} 
+scheme may provide higher CR, compared with the {LZW} 
+algorithm.} 
+
+\KWE{({LZW}) Dictionary Compression; dynamic dictionary; 
+dictionary reset {DR}; least recently used {LRU}; 
+exponential decay {ED}}
+
+\DOI{10.14357/19922264150408} 
+
+\vspace*{-6pt}
+
+
+\vskip 12pt plus 9pt minus 6pt
+
+      \thispagestyle{myheadings}
+
+      \begin{multicols}{2}
+
+                  \label{st\stat}
+
+
+
+\section{Introduction}
+%\label{s:Intro}
+
+\noindent
+Data compression based on dynamic dictionary is a~commonly used form of lossless 
+data compression algorithms. A~dictionary that starts from a~predetermined state, 
+nevertheless its values can be changed during the encoding or decoding process, 
+is used. One of the most well known dynamic dictionary based compression algorithms 
+is the LZW algorithm which was proposed by Abraham Lempel, 
+Jacob Ziv, and Terry Welch as a~modification of the ZL77 algorithm~[1--3]. 
+The {LZW} algorithm is a~general purpose algorithm in the sense that it can work with 
+almost any type of data. The dictionary that is used in {LZW} stores sets of 
+codes and strings of characters. At the initial state, only one length strings are 
+stored (usually, ASCII characters) in the dictionary; however, during the encoding 
+process, strings that have not been encountered previously are added to the dictionary. 
+Compression is achieved by replacing strings with codewords (indexes) that are 
+associated with them. Similarly, decompression is achieved by replacing sets of 
+codewords (indexes) with the associated strings. 
+
+One of the main factors that should 
+be taken into account in the {LZW} compression is the amount of bits that 
+should be allocated to each codeword, namely, codeword length, which determines 
+the amount of unique codewords that can be stored in the dictionary at any given time. 
+The drawback of large dictionaries is that the larger the dictionary is, the more 
+space each codeword will require that can effect negatively the achievable 
+CR. To avoid this problem, there are several solutions that are 
+designed to manage the dictionary after it becomes full. 
+This paper proposes some improvements  over {LZW} algorithm by employing  
+new methods of  {LZW} dictionary management, namely, 
+{ED} as a~tool to manage and remove infrequently used entries in the 
+{LZW} dictionary, and  by using of knowledge about the distance  between 
+two sequential phrases, DLU.
+Distance from last use is compressed by Huffman coding based on the frequencies of the 
+ codewords. 
+ 
+ 
+\noindent
+\textbf{Paper organization.} The paper is organized as follows: Section~2 
+introduces several implementations of {LZW},  which are designed to manage 
+dictionary size. The {ED} scheme, its time performance, and optimization
+are discussed in section~2.
+Improvement of LZW Performance by using of the DLU 
+is presented in section~3.
+Conclusions of section~4 complete the paper.
+
+\vspace*{-9pt}
+
+ 
+\section{Lempel--Ziv--Welch Algorithm and Dynamic Dictionaries}
+%\label{s:LZW}
+
+\noindent
+The {LZW} algorithm is a~lossless data compression algorithm that is designed 
+to compress any kind of data. Some of its main uses are in image compression 
+like {GIF} (graphics interchange format) and {TIFF} (tagged image file format). 
+The {LZW} algorithm is one of the compression 
+algorithms that take advantage of a~dynamic dictionary during the encoding and 
+decoding processes. A~dictionary is a~table where each its entry holds pairs of indexes 
+and strings. At the initial state, a~dictionary will contain only one length strings;
+however, during encoding and decoding processes, new sets of strings and indexes 
+are  added dynamically.
+Compression is achieved by replacing sets of strings with their corresponding indexes. 
+Similarly, during decompression, in order to recover the original file, the indexes are 
+replaced with their corresponding strings. A~resulting CR is a~main 
+factor that determines the compression quality and it is defined as 
+$\mathrm{CR}= L_0 /L_{\mathrm{LZW}}$ where $L_0$ and $L_{\mathrm{LZW}}$ 
+are the lengths of the original and 
+compressed file, respectively.
+
+%\smallskip
+
+\textbf{Limiting the size of the dictionary.}
+The key factors that affect the achievable CR are the dictionary's 
+size and managing the dictionary after it becomes full. 
+For a~dictionary that can store $n$ unique indexes, each index is of 
+length $\log_2 n$ bits. Therefore, the larger 
+dictionary is, the more space each index will require, which, in turn, can result in 
+a~low CR. This means that for achieving a~more efficient compression,
+the dictionary's size should be limited. 
+One of the most used methods in handling a~full dictionary is known as 
+{DR}~\cite{W84}. Every time the dictionary becomes full, it is restored 
+to its initial state in which it stores only one length strings. The main disadvantage 
+of the {DR} method is that all of the dictionary's entries are treated equally, 
+regardless of whether they are repeated frequently or not. Generally, the
+methods that can 
+remove infrequently used entries while keeping the frequent ones, usually achieve 
+higher CR. Some of the existing frequency based update methods are 
+LRU and Least Frequently Used ({LFU})~\cite{DT90}.
+         
+This paper introduces and analyzes a~new {ED} method for removing infrequently 
+used entries which makes use of exponential decay as a~tool to sort the
+entries dynamically.
+Note that the exponentially decaying probabilities for Huffmann coding were used 
+in~\cite{T08} for input rather than for a~dictionary content.
+
+
+
+
+\subsection{Exponential decay and other methods for~managing dictionary size}
+%\label{s:ED}
+
+\noindent 
+\textbf{Dictionary reset.}
+This method employs the removal of all data from dictionary except one 
+length strings which together determine the initial state when the dictionary becomes 
+full.
+
+\noindent 
+\textbf{Least recently used.}
+In the {LRU} method, each dictionary entry holds a~value that indicates the last 
+time it was used ({LTU}). In order to free space in a~full dictionary, the entry which 
+was LRU is removed (it is an entry with the lowest {LTU} value).
+
+\noindent
+\textbf{Exponential decay.}
+This method works similarly to the {LRU} method in the sense that when 
+the dictionary becomes full, a~single entry is removed in order to free space. 
+However, unlike the {LRU} implementation, each dictionary entry holds two values 
+in addition to the entry's code and string: entry creation time ({ECT}) 
+and number of times used 
+({NTU}). When choosing which entry should be removed from the dictionary, 
+a~decay value $N(t)$ is calculated for each entry as
+$N(t)=N(0) e^{-\lambda t}+\mathrm{NTU}$ where
+$N(0)$ is the initial value; $\lambda$ is the decay rate;
+$t$ is the current time minus ECT; and 
+NTU is equal to the number of times a~string was used.
+The entry with the lowest $N(t)$ value is removed from the dictionary.
+
+\noindent
+ \textbf{Encoding and decoding runtime.}
+In the complexity analysis of all of the mentioned {LZW}-based algorithms, 
+string lookup implementation was used by means of a~binary search tree. Therefore, 
+lookup, insertion, and deletion operations are implemented in the cost of $O(\log_2 n)$. 
+{Dictionary reset} is the fastest method since entry removal is done only every $n$ steps 
+where~$n$ is the maximum number of entries in the dictionary. 
+In the present {LRU} implementation, minimal {NTU} value lookup was done 
+using binary search tree. Although being slightly more costly than the basic 
+default {LZW} implementation, overall time complexity for each operation 
+remained the same $O(\log_2 n)$.
+Unlike {DR} and {LRU}, {ED} method is more costly since minimal $N(t)$ 
+value lookup requires iteration over every entry in the dictionary with iteration cost of 
+$O(n)$.
+
+\noindent
+\textbf{Testing and simulation.} 
+In order to investigate performance of {LZW} based on {DR}, 
+{LRU}, and {ED} methods, the files of different formats have been tested. 
+The results are presented in Fig.~1.
+
+
+Evaluation of CR for DR, LRU and ED is performed for 
+$N(0)=1$ and $\lambda=0.001$.
+Since dictionary size significantly influences the CR, the 
+following results demonstrate~CR as a~function of the dictionary size for the 
+range of codewords lengths from~9 to~19~bit (for each method).
+
+
+
+
+
+Figure~1 demonstrates that ED provides higher 
+CR compared with DR and LRU methods.
+Note that LZW with ED can provide higher CR compared 
+with basic LZW algorithm for rather short
+files (see Fig.~1\textit{c}) since the asymptotic properties of Lempel--Ziv 
+algorithms~\cite{ZL77, Z09} are still not satisfied. 
+
+
+\noindent
+\textbf{Optimization of the ED method.} 
+Unlike DR and LRU, ED method is characterized by two additional parameters $N(0)$ 
+and~$\lambda$ that may affect the achieved CR. It should be reminded 
+that $N(0)$ determines the initial value when the entry is created and~$\lambda$ 
+ determines how fast an entry's value will decay as it ages.
+
+\noindent
+\textbf{Optimization of {\boldmath{$N(0)$}}.}
+The provided tests demonstrate that $N(0)$ has an impact on CR
+only in the small dictionaries with codewords at most~13~bit 
+length (Table~1). The shorter codeword is, the more significant impact of $N(0)$ 
+ on the CR is. For the codewords longer than~13~bit,\linebreak\vspace*{-12pt}
+ 
+ \pagebreak
+ 
+ \noindent
+ \begin{center}  %fig1
+\vspace*{-8pt}
+\mbox{%
+ \epsfxsize=74.365mm
+ \epsfbox{fre-1.eps}
+ }
+
+\end{center}
+
+%\vspace*{9pt}
+
+\noindent
+{{\figurename~1}\ \ \small{Compression ratios: (\textit{a})~BW\_Photo.bmp (233~KB);
+(\textit{b})~combo002.css (136~KB);
+and (\textit{c})~aooles.txt (8.75~KB)}}
+ 
+ \vspace*{19pt}
+ 
+ \addtocounter{figure}{1}
+
+\noindent
+ the impact 
+ of $N(0)$ on CR is negligible. In fact, the value of $N(0)$ 
+ is not relevant for the files with the large dictionary size (while codeword length 
+ is larger than~13~bit in the present tests).
+
+ \noindent
+ \textbf{Optimization of {\boldmath{$\lambda$}}.}
+Parameter~$\lambda$ can affect the CR significantly since a~different 
+decay ratio can cause a~different order of entry removal during encoding and decoding 
+process. 
+In the tests for the optimal value of~$\lambda$, the optimal dictionary 
+size (codeword length) was used for each file (Table~2). 
+
+\noindent
+{{\normalsize{\tablename~1}}\ \ \small{Compression ratio for files BW\_Photo.bmp, apples.txt, and 
+earth.avi with $N(0)$ values for codeword length ranging between~1 and~10~bit}}
+ 
+ \begin{center}  %tabl1
+ 
+ \vspace*{3pt}
+ 
+ {\small
+  \tabcolsep=10.3pt
+  \begin{tabular}{cccc}
+  \hline
+  $N(0)$ &\tabcolsep=0pt\begin{tabular}{c} BW\_Photo.bmp\\ at 10~bit\end{tabular} & 
+  \tabcolsep=0pt\begin{tabular}{c}apples.txt\\ at 11~bit\end{tabular} &
+  \tabcolsep=0pt\begin{tabular}{c} earth.avi\\ at 13~bit\end{tabular}\\
+  \hline
+  1& 2.2746& 1.9227& 2.1574\\
+  2& 2.2998& 1.9227& 2.1572\\
+  3& 2.2070& 1.9227& 2.1554\\
+  4& 2.1249& 1.9227& 2.1528\\
+  5& 2.0943& 1.9215& 2.1492\\
+  6& 2.0301& 1.9162& 2.1458\\
+  7& 1.9798& 1.9080& 2.1410\\
+  8& 1.9510& 1.8975& 2.1373\\
+  9& 1.9156& 1.8939& 2.1337\\
+  10\hphantom{9} & 1.8941& 1.8859& 2.1327\\
+  \hline
+    \end{tabular}}
+  \end{center}
+%\end{table*}
+
+\vspace*{12pt}
+
+\noindent  %tabl1
+{{\normalsize{\tablename~2}}\ \ \small{Compression ratios for Yahoo UK.htm  with dictionary size at 15~bits,
+combo002.css with dictionary size at 14~bits, and
+ earth.avi file with codeword length 13~bits}}
+{\small
+\begin{center} 
+
+ \vspace*{3pt}
+
+\tabcolsep=8.2pt
+\begin{tabular}{cccc}
+\hline
+$\lambda$ & Yahoo UK.htm & combo002.css & earth.avi\\
+\hline
+&&&\\[-9pt]
+10$^{-5}$ & 2.0022& 2.9414& 2.1574\\
+10$^{-3}$ & 2.0022& 2.9414& 2.1574\\
+10$^{-1}$ & 2.0010& 2.9401& 2.1602\\
+10$^1$\hphantom{$^-$} & 1.9681& 2.9048& 2.1534\\
+\hline
+\end{tabular}
+ 
+  \end{center}}
+%\end{table*}
+
+    \vspace*{12pt}
+
+The presented results demonstrate that~$\lambda$ has small or negligible 
+influence on the CR. Generally, smaller~$\lambda$~values tend to 
+produce slightly better compression.  Additionally, during testing, it was noticed 
+that using large~$\lambda$~values can be problematic since they can cause too 
+small $N(t)$ values for any floating point variables to handle. Hence, 
+unpredictable behavior and even failure to reconstruct the original file correctly 
+can occur. 
+
+
+\begin{figure*} %fig2
+ \vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=140.12mm
+ \epsfbox{fre-9.eps}
+ }
+ \end{center}
+ \vspace*{-11pt}
+\Caption{Comparison of CR of original implementation of {LZW} 
+vs.\ {LZW} with HDC}
+\label{f:F6}
+%\vspace*{-6pt}
+\end{figure*}
+
+\vspace*{-3pt}
+
+\section{Improvement of~Lempel--Ziv--Welch 
+Performance by~Using of~the~Distance from Last Use}
+%\label{s:DLU}
+
+
+\noindent
+A Huffmann Coding of Distance scheme that combines 
+a~dictionary-based LZW algorithm~\cite{W84} and well-known sliding 
+window~{LZ77} algorithm~\cite{ZL77} has been proposed.  
+For each phrase to be encoded, the distance between the current position and the previous one (namely, the 
+DLU) is calculated and  encoded by the Huffman algorithm. As a~result,
+the generated codewords are shorter and the CR is higher. The experimental 
+results presented in Fig.~\ref{f:F6} demonstrate that as short the mean distance between phrase occurrences is, the improvement of 
+compression  ratio is more significant.
+
+A new phrase is inserted  each time  to the dictionary in position~``0'' and all 
+the other phrases are moved to the right, and the last phrase is removed in the HCD 
+scheme.
+% (Figure \ref{fig:F4}). 
+In order to encode a~phrase that is already in the dictionary, 
+its position was simply encoded. So, if the dictionary is maintained in this manner, the position of 
+the phrase is the distance from the last occurrence of this phrase.
+
+The HCD scheme is based on the Kac's lemma~\cite{K47} that states that 
+the average distance between occurrences of a~pattern is equal to the inverse 
+of the probability of the pattern. Hence, it is reasonable to assume that if 
+a~phrase has been recently used, there is a~higher probability that it will 
+appear again. Based on the Kac's lemma,  the {HCD} scheme permanently 
+computes the frequencies of different phrases and generates the Huffman codes 
+by representing the more frequent phrases by a~smaller codeword.
+As a~result, if most of the phrases appear close to each other in a~particular 
+file, then this file will be efficiently compressed, providing high CR. 
+As a~matter of fact, the similar approach has achieved great success in the 
+window-based LZ77 compression algorithm~\cite{ZL77}. The experimental results  
+presented 
+in section~4 demonstrate that this approach is effective in the dictionary-based 
+LZW~\cite{W84} compression algorithm.
+
+\noindent
+\textbf{Related work in combination of LZ, and Huffmann coding.}
+ There are several papers that use the similar approach to improve LZ77 
+ compression algorithm. The Huffman encoding is used for a~range that will 
+ group several DLUs together.
+% and index of $DLU$ in the particular range.
+ Only the range is compressed by the Huffman code and the index is encoded as is. 
+The idea of the {HCD} scheme is basically the same; nevertheless, 
+{HCD} is designed for the  sliding window {LZ77}-like scheme.
+  A~similar approach was used in Deflate~\cite{DEFLATE}, a~data compression 
+  algorithm that uses a~combination of the {LZ77} algorithm and the 
+  Huffman coding. It was originally defined by Phil Katz for version~2 of his 
+  PKZIP archiving tool and was later specified in RFC~1951. This scheme is also 
+  based on the sliding window {LZ77} algorithm~\cite{ZL77}, while the 
+{HCD} scheme is focused on the modification of the dictionary-based 
+{LZW} algorithm~\cite{ZL77}.
+
+There are several research papers that propose a~combination of the 
+{LZW} algorithm and Huffman coding~\cite{LZWH1991, LZWH2010}. Nevertheless, 
+unlike HCD scheme,  none of them mention the method for dictionary maintenance 
+(such as LRU/First In First Out ({FIFO}) 
+approach) that is the basic idea in~HCD.
+
+Paper~\cite{LZWH2011} proposes the similar solution with one difference that 
+ the generation of the Huffman codes is based on the frequency of specific entries 
+ in the dictionary and not on the distance from last use divided into ranges.
+
+
+
+In order to maintain the dictionary generated by the {LZW} 
+algorithm, the FIFO method was used, which is quite 
+similar approach to {LRU}. The reason is that {FIFO} 
+allows one to calculate the distance between elements immediately instead of 
+looping on the linked {LRU} list each time (in order to calculate a~distance). 
+The same issue was described in the USA patent~\cite{LZWH}. The proposed solution is 
+applying a~Move Ahead Technique: every time if a~phrase occurs in the dictionary, it 
+is moved ahead. On the one hand, the proposed method could possibly decrease the 
+performance in terms of the compression speed which is very important for the 
+compression algorithm. On the other hand, \mbox{FIFO} approach used in the described
+scheme, 
+does not cause decrease of the compression speed.
+
+
+
+
+\noindent
+\textbf{Architecture of the Huffman coding of distance scheme.}
+The presented scheme is designed from the layer added on top of the {LZW} 
+scheme. This approach allows one to modify and improve each layer independently 
+on  other layers:
+\begin{enumerate}[(1)]
+\item    input--output stream is responsible to communicate with the file system, 
+read the input to be processed, and write the generated output;
+\item    {LZW} layer is the original implementation of the {LZW} 
+algorithm and it does not differ from the original {LZW} code; 
+\item the distance of the phrase generated by the {LZW} from its last use 
+is computed in the HCD component and the records of phrases use are maintained; and
+\item  the Huffman coding layer is the part where the HCD improvement is introduced 
+and the code
+ generated by the {LZW} scheme is compressed by utilizing 
+the frequency of the different distance ranges.
+Figure~3 describes the pseudocode of the HCD scheme for the case when 
+the codeword length is~10~bit.
+\end{enumerate}
+
+{%\begin{figure*} %fig3
+%[ht]
+\small
+%\begin{wrapfigure}{r}{2.5in}
+\vspace{1mm}
+\begin{footnotesize}
+\begin{center}
+\fbox{
+\begin{minipage}{2.8in} %3.2
+\begin{algorithmic}[1]
+
+\STATE {\textbf{HCD scheme: Encoder}}
+\\
+\STATE {Calculate the distance of the code from the FIFO head}
+\STATE { Push the code into a~FIFO }
+\STATE { Divide the distance into two parts:}
+ \STATE {length $5$ is a~half):}
+\STATE {~~$5$ least significant bits}
+\STATE {Encode the most significant bits with Huffman code}
+
+ and write it to the output 
+\STATE {Write the least significant bits to the output }
+\STATE {\textbf{HCD scheme: Decoder}}
+\\
+\STATE {Decode $5$ most significant bits by Huffman code}
+\STATE {Read $5$ least significant bits from input}
+\STATE {Return the resulted code to the {LZW} part}
+\end{algorithmic}
+\end{minipage}
+}
+
+\vspace*{6pt}
+
+{{\normalsize{\figurename~3}}\ \ {\small{The HCD scheme}}}
+%\Caption{The HCD scheme} \label{f:F4}
+\end{center}
+\end{footnotesize}
+%\vspace*{-0.7in}
+%\end{wrapfigure}
+%\vspace*{-3pt}
+%\end{figure*}
+}
+
+%\vspace*{-12pt}
+
+
+
+
+The HCD scheme provides higher CR for the majority 
+of the tested files. Specifically, the experimental results of Fig.~2
+demonstrate that the HCD scheme can significantly improve the compression 
+quality for most file types. According to present experiments, three factors  were identified
+that are crucial to the CR of the {LZW} algorithm with the HCD 
+scheme. These factors are the size of the {LZW} dictionary, the division of 
+the distance to ranges, and the period of recalculating the Huffman code. 
+
+
+ \section{Discussion of~Experimental Results and~Concluding Remarks}
+%\label{s:Con}
+
+\noindent
+The presented results demonstrate that there are various ways for improvement of 
+{LZW} algorithm by the additional techniques for  maintenance of a~dictionary.
+ In particular, ED may be an efficient tool to manage and refresh the {LZW} 
+ dictionary. The achieved CR is higher than in the traditional methods 
+ like {DR} and {LRU}. However, the encoding and decoding time is larger. 
+It was demonstrated that the codeword length (dictionary size) has a~significant 
+impact on the achieved CR. Moreover, different files may require 
+different codeword lengths in order to achieve an optimal CR. 
+As for addition of the {LZW} with {HCD}, there is usually increase of 
+the CR. Nevertheless, usually, {ED} technique is slightly better. 
+Hence, there is a~need for analytical and experimental research of the {ED}
+ method in order to determine better relationship between file structure and 
+ values of parameters $N(0)$ and~$\lambda$.
+Taking into account that both considered techniques differently affect the {LZW} mechanisms, it would be interesting to consider their joint implementation. 
+
+\vspace*{-6pt}
+
+\Ack
+\noindent
+The first author has partially been supported by the Russian Foundation 
+for Basic Research under grant 15-07-05316. The second author has 
+partially been supported by the internal research program of the Shamoon College 
+of Engineering.
+The authors thank Shlomi Dolev for the idea to apply the exponential decay method 
+in the {LZW} algorithm. 
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+
+%\vspace*{-6pt}
+
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\begin{thebibliography}{99}
+
+\bibitem{ZL78}  %1
+\Aue{Ziv, J., and A.~Lempel}. 1978. 
+Compression of individual sequences via
+variable-rate coding. \textit{IEEE Trans. Inform. Theory} 5(24):530--536.
+
+\bibitem{W84}  %2
+\Aue{Welch, T.} 1984. A~technique for high-performance data compression. 
+\textit{Computer~J.} 17(6):8--19.
+
+
+\bibitem{MW} %3
+\Aue{Solomon, D}. 2004. 
+\textit{Data compression: The
+complete reference}. 3rd ed. Springer. P.~206--208.
+\bibitem{DT90} %4
+\Aue{Asit, D., and T.~Don}. 1990. 
+An approximate analysis of the LRU and FIFO buffer replacement schemes. 
+\textit{ACM SIGMETRICS Conference on Measurement and Modeling of Computer
+ Systems SIGMETRICS Proceedings}. 143--152.
+
+\bibitem {T08}  %5
+\Au{Tcheslavski, G.\,V.} 2008. Basic Image compression methods. 
+Available at {\sf http://ee.lamar.edu/gleb/dip/ index.htm}
+(accessed December~7, 2015).
+
+
+\bibitem{ZL77}  %6
+\Aue{Ziv, J., and A.~Lempel}. 1977. 
+A~universal algorithm for sequential data compression. 
+\textit{IEEE Trans. Inform. Theory} 3(23):337--343.
+
+
+
+
+
+\bibitem{Z09}  %7
+\Au{Ziv, J.} 2009. The universal LZ77 compression algorithm is essentially optimal 
+for individual finite-length-blocks. \textit{IEEE Trans. Inform. Theory} 
+5(55):1941--1944.
+
+\bibitem{K47} %8
+\Au{Kac, M.} 1947. 
+On the notion of recurrence in discrete stochastic processes. 
+\textit{Bull. Am. Math. Soc. 53.10}. 1002--1010.
+
+\bibitem{DEFLATE} 
+\Au{Katz, P.\,W.} 1991. String searcher, and compressor using same. 
+{U.S. Patent No.\,551745}.
+
+\bibitem{LZWH1991} 
+\Au{Perl, Y., and A.~Mehta}. 1991. Cascading LZW 
+algorithm with Huffman coding: A~variable to variable length compression algorithm. 
+\textit{Computing in the 90's.} Eds.  N.\,A.~Sherwani, E.~de~Doncker, and J.\,A.~Kapenga.
+{Lecture notes in computer science ser.} Springer. 507:170--178.
+
+%\pagebreak
+
+\bibitem{LZWH2010} 
+\Au{Yikun, Z.}  2010. 
+An lidar data compression method based on improved LZW and Huffman algorithm.
+\textit{IEEE  Conference (International) on Electronics and Information Engineering
+ (ICEIE)}.  2:250--254. 
+
+\bibitem{LZWH2011} 
+\Au{Raja, P., and D.~Saraswathi}. 2011. 
+An effective two stage text compression. \textit{Int. J.~Electron. 
+Commun. Eng.} 4(2):233--241.
+
+\bibitem{LZWH} 
+\Au{Jaquette, G.\,A.} 1995. 
+Literal handling in LZ compression employing MRU/LRU encoding. 
+{U.S. Patent No.\,6218970}.
+\end{thebibliography} } }
+
+\end{multicols}
+
+\vspace*{-7pt}
+
+\hfill{\small\textit{Received October 5, 2015}}
+
+\vspace*{-20pt}
+
+\Contr
+
+\noindent
+\textbf{Frenkel Sergey L.} (b.\ 1951)~---
+Candidate of Science (PhD) in technology, senior scientist, Institute of 
+Informatics Problems, Federal Research Center ``Computer Sciences and Control'' 
+of the Russian Academy of Sciences, 44-2 Vavilov Str., Moscow 119333, Russian Federation; 
+associate professor, Moscow State University of Information
+Technologies, Radioengineering, and Electronics,
+78~Vernadskogo Ave., Moscow 119454, Russian Federation;
+fsergei51@gmail.com
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Kopeetsky Marina} (b.\ 1966)~--- PhD in Computer Sciences, senior lectures, 
+Department of Software Engineering, Shamoon College of Engineering, 
+ Basel/Bialik Sts, Beer-Sheva 84100, Israel;  marinako@sce.ac.il 
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Molotkovsky Roman} (b.\ 1989)~---  Bachelor of  Sciences in Computer Sciences, 
+Department of Software Engineering, Shamoon College of Engineering, 
+Basel/Bialik Sts, Beer-Sheva 84100, Israel;
+megaclaff@gmail.com
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Borovsky Pavel} (b.\ 1986)~--- 
+Master of Science in Computer Science,  Department of Software Engineering, 
+Shamoon College of Engineering, Basel/Bialik Sts, Beer-Sheva 84100, Israel;
+pavelbsky@gmail.com
+
+\vspace*{12pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+\vspace*{2pt}
+
+%\vspace*{-24pt}
+
+
+
+\def\tit{УЛУЧШЕНИЕ ПРОИЗВОДИТЕЛЬНОСТИ АЛГОРИТМА СЖАТИЯ ДАННЫХ ЛЕМПЕЛЯ--ЗИВА--УЭЛЧА}
+
+\def\aut{С.~Френкель$^{1}$, М.~Копицкая$^2$, Р.~Молотковский$^3$, П.~Боровский$^4$}
+
+
+\def\titkol{Улучшение производительности алгоритма сжатия данных 
+Лемпеля--Зива--Уэлча}
+
+\def\autkol{С.~Френкель, М.~Копицкая, Р.~Молотковский, П.~Боровский}
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+%\footnotetext[1]{Работа проводится при финансовой поддержке Программы
+%стратегического развития Петрозаводского государственного университета в рамках
+%на\-уч\-но-ис\-сле\-до\-ва\-тель\-ской деятельности.}}
+
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-12pt}
+
+\noindent
+$^1$Институт проблем информатики Федерального исследовательского
+центра <<Информатика и~управление>>\linebreak
+$\hphantom{^1}$Российской академии наук;
+Московский государственный университет информационных технологий,\linebreak
+$\hphantom{^1}$радиотехники и~электроники;  fsergei51@gmail.com
+
+
+
+\noindent
+$^2$Академический инженерный колледж Шамуна, Беер-Шева, Израиль; marinako@sce.ac.il 
+
+\noindent
+$^3$Академический инженерный колледж Шамуна, Беер-Шева, Израиль; megaclaff@gmail.com
+
+\noindent
+$^4$Академический инженерный колледж Шамуна, Беер-Шева, Израиль; pavelbsky@gmail.com 
+
+%\vspace*{-3pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 9\ \ \ выпуск\ 4\ \ \ 2015}
+}%
+ \def\rightfootline{\small{ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 9\ \ \ выпуск\ 4\ \ \ 2015
+\hfill \textbf{\thepage}}}
+
+
+\Abst{Предлагаются две новые схемы, улучшающие сжатие данных при 
+использовании алгоритма Лемпеля--Зива--Уэлча (LZW). Первая схема основана на управлении 
+размером словаря  методом ``exponential decay'' (ED) путем удаления редко встречающихся 
+записей  словарной таблицы. Пред\-став\-лен\-ные результаты показывают, что ED 
+является эффективным инструментом управления и~обновления словаря. Достигнутый 
+коэффициент сжатия выше, чем при использовании  традиционных методов повышения
+эффективности LZW,  например, таких как Dictionary Reset (DR) и~Least Recently
+Used (LRU).
+Вторая схема, названная Huffman Coding of Distance (HCD), основана на учете расстояния 
+в~словаре до слова, использованного при прошлом обращении, называемого   
+Distance from Last Use (DLU). Величина DLU может быть сжата кодом Хаффмана. 
+Эта схема тестировалась на различных типах данных, таких как текстовые, коды программ, 
+графические, аудио- и~видеоформаты.
+Экспериментальные результаты показывают, что как ED, так и~HCD обеспечивают более 
+существенное сжатие, чем обычный LZW.}  
+
+\KW{сжатие данных; алгоритмы Лемпеля--Зива; динамический словарь; LRU;  
+экспоненциальное затухание} 
+
+\DOI{10.14357/19922264150408}
+
+\pagebreak
+
+%\vspace*{-6pt}
+
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily Литература}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\begin{thebibliography}{99} 
+\bibitem{4-f} %1
+\Au{Ziv J., Lempel A.} Compression of individual sequences via variable-rate
+coding~// IEEE Trans. Inform. Theory, 1978. Vol.~5. No.\,24. P.~530--536.
+
+\bibitem{2-f} %2
+\Au{Welch T.} A~technique for high-performance data compression~// Computer~J., 1984.
+Vol.~17. No.\,6. P.~8--19.
+
+\bibitem{1-f} %3
+\Au{Solomon D.} Data compression:
+The  complete reference.~--- 3rd ed.~--- Springer, 2004. P.~206--208.
+
+\bibitem{5-f} %4
+\Au{Asit D., Don T.} An approximate analysis of the LRU and FIFO buffer
+replacement schemes~// ACM \mbox{SIGMETRICS} Conference
+on Measurement and Modeling of Computer Systems SIGMETRICS Proceedings, 1990. P.~143--152.
+\bibitem{6-f} %5
+\Au{Tcheslavski G.\,V.}   Basic Image compression methods.  2008.
+{\sf http://ee.lamar.edu/gleb/dip/index.htm}.
+\bibitem{3-f} %6
+\Au{Ziv, J., Lempel A.} A~universal algorithm for sequential data compression~// 
+IEEE Trans. Inform. Theory, 1977. Vol.~3. No.\,23. P.~337--343.
+
+
+\bibitem{7-f}
+\Au{Ziv J.} The universal LZ77 compression algorithm is essentially optimal
+for individual finite-length-blocks~// IEEE Trans. Inform. Theory,
+1977. Vol.~5. No.\,55. P.~1941--1944.
+\bibitem{8-f}
+\Au{Kac M.} On the notion of recurrence in discrete stochastic processes~// 
+Bull. Amer. Math. Soc. 53.10, 1947. P.~1002--1010.
+\bibitem{9-f}
+\Au{Katz P.\,W.} String searcher, and compressor using same. U.S. Patent No.\,551745,
+1991.
+\bibitem{10-f}
+\Au{Perl Y., Mehta A.} Cascading LZW algorithm with human coding: 
+A~variable to variable length compression algorithm~// Computing in the 90's~/
+ Eds.\  N.\,A.~Sherwani, E.~de~Doncker,  J.\,A.~Kapenga.~---
+ Lecture notes in computer science ser.~--- Springer, 1991.  Vol.~507. P.~170--178.
+%Performance Improvement of LZW Compression Algorithm 9
+\bibitem{11-f}
+\Au{Yikun Z.} An lidar data compression method based on improved LZW and
+Huffman algorithm~// IEEE  Conference (International) on Electronics and 
+Information Engineering (ICEIE), 2010. Vol.~2. P.~250--254.
+\bibitem{12-f}
+\Au{Raja P., Saraswathi D.} An effective two stage text compression~// 
+Int. J.~Electron. Commun. Eng., 2011. Vol.~4. No.\,2.
+P.~233--241.
+
+\bibitem{13-f}
+\Au{Jaquette G.\,A.} Literal handling in LZ compression employing MRU/LRU
+encoding.  U.S. Patent No.\,6218970, 1995. 
+\end{thebibliography}
+}}
+\end{multicols}
+
+ \label{end\stat}
+
+ \vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в редакцию  05.10.2015}}
+%\renewcommand{\bibname}{\protect\rm Литература}
+\renewcommand{\figurename}{\protect\bf Рис.}
+\renewcommand{\tablename}{\protect\bf Таблица}

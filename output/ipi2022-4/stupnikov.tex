@@ -1,0 +1,610 @@
+\def\stat{stupnikov}
+
+\def\tit{ЛОГИЧЕСКАЯ РЕЛЯЦИОННАЯ МОДЕЛЬ СТРУКТУР ДАННЫХ ДЛЯ~РЕШЕНИЯ 
+ЗАДАЧ В~ПРЕДМЕТНОЙ ОБЛАСТИ УПРАВЛЕНИЯ~ЗЕМЛЕПОЛЬЗОВАНИЕМ$^*$}
+
+\def\titkol{Логическая реляционная модель структур данных для~решения 
+задач в %~предметной 
+области управления землепользованием}
+
+\def\aut{Д.\,О.~Брюхов$^1$, С.\,А.~Ступников$^2$}
+
+\def\autkol{Д.\,О.~Брюхов, С.\,А.~Ступников}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Брюхов Д.\,О.}
+\index{Ступников С.\,А.}
+\index{Briukhov D.\,O.}
+\index{Stupnikov S.\,A.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Исследование выполнено при финансовой поддержке Российской Федерации (соглашение с~Минобрнауки 
+России №\,075-15-2020-805 от 02~октября 2020~г.).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{dbriukhov@ipiran.ru}}
+\footnotetext[2]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{sstupnikov@ipiran.ru}}
+
+
+\vspace*{-12pt}
+
+
+
+
+\Abst{Статья относится к~теоретическим основам агроинформатики, а~более конкретно~--- 
+к~об\-ласти разработки методов и~средств автоматизации управления землепользованием. 
+Предлагается логическая модель структур данных для решения задач в~упомянутой 
+предметной области. В~виде набора отношений реляционной модели данных и~связей 
+между ними формализованы: реестр агроэкологических групп и~видов земель, 
+упорядочивающий разнообразие их геоморфологических, почвенных и~агрохимических 
+условий; реестр сортов сельскохозяйственных культур и~регистр агротехнологий как 
+комплексов технологических операций по управ\-ле\-нию продукционными процессами 
+сельскохозяйственных культур. Применение логической модели демонстрируется на 
+примерах нескольких обобщенных задач управления землепользованием. Решение каждой 
+из задач реализовано в~виде декларативного выражения (запроса) над логической 
+моделью. Модель реализована в~реляционной сис\-те\-ме управ\-ле\-ния базами данных (СУБД).}
+
+\KW{реляционная логическая модель; управление землепользованием; решение задач}
+
+ \DOI{10.14357/19922264220414} 
+  
+%\vspace*{-3pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+    Разработка методов и~средств автоматизации управления 
+землепользованием~--- это важное направление современной 
+агроинформатики. В~частности, одной из насущных оптимизационных задач 
+стала задача планирования севооборота (на каких участках поля и~в~какой 
+последовательности следует выращивать сельскохозяйственные культуры). 
+Для автоматизации решения этой задачи в~мире активно разрабатываются 
+информационные методы и~системы поддержки умного 
+землепользования~[1]. 
+
+В~качестве входных данных для проектирования 
+севооборотов используются характеристики сортов культур, климатические 
+данные, данные о~доступной технике, данные о~полях (включая размеры, 
+форму, характеристики почвы)~[2, 3]. В~част\-ности, подход, 
+разрабатываемый в~Почвенном институте им.\ В.\,В.~Докучаева, опирается на 
+методологию комплексной оценки сельскохозяйственных земель~[4, 5] 
+и~предполагает использование данных, накопленных в~реестре 
+агроэкологических групп и~видов земель (упорядочивающем разнообразие их 
+геоморфологических, почвенных и~агрохимических условий), реестре сортов 
+сельскохозяйственных культур (содержащем характеристики урожайности, 
+качества и~устойчивости сортов к~различным факторам) и~регистре базовых 
+агротехнологий (как комплексов технологических операций по управлению 
+продукционными процессами сельскохозяйственных культур). 
+    
+    Данная статья посвящена теоретическому обосно\-ва\-нию подхода с~точки 
+зрения структур данных. 
+
+Предлагается логическая реляционная модель для 
+решения задач в~об\-ласти управ\-ле\-ния землепользованием, 
+формализующая упомянутые выше реестры в~виде набора отношений 
+реляционной модели данных и~связей между ними. Применение логической 
+модели демонстрируется на примерах нескольких обобщенных задач 
+управления землепользованием. Решение каждой из задач реализовано в~виде 
+декларативного выражения (запроса) над логической моделью (в~текс\-те 
+статьи приведен один запрос).
+
+\begin{figure*}[b] %fig1
+\vspace*{1pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=160mm
+\epsfbox{stu-1.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Фрагмент модели реестра агроэкологических групп и~видов земель}
+%\end{figure*}
+%\begin{figure*} %fig2
+\vspace*{12pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=123mm
+\epsfbox{stu-2.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Фрагмент модели реестра сортов культур}
+\end{figure*}
+
+    
+    Модель реализована в~СУБД PostgreSQL, а соответствующая база 
+данных рассматривается как составная часть системы <<Умное 
+землепользование>>, реализуемой в~рамках проекта <<Актуальные научные 
+задачи стратегии адаптации потенциала землепользования России в~условиях 
+беспрецедентных вызовов (экономический кризис, изменения климата, 
+кризис глобальных тенденций природопользования)>> (далее~--- 
+Проект). 
+    
+\section{Логическая реляционная модель для~реестров 
+агроэкологических групп земель, сортов, агротехнологий}
+
+\subsection{Логическая модель реестра агроэкологических групп и~видов~земель}
+
+    Реестр агроэкологических групп и~видов земель упорядочивает 
+разнообразие их геолого-геоморфологических, гидрогеоморфологических, 
+почвенных и~агрохимических условий. 
+    
+    На рис.~1 представлен фрагмент логической модели реестра 
+агроэкологических групп и~видов земель, содержащий структуры данных 
+о~группах земель (отношение AE\_GROUP) и~видах земель (\mbox{отношение} 
+AE\_TYPE), представленных в~конкретных провинциях (отношение 
+PROVINCE) природных зон (отношение ZONE). Модель также содержит 
+связи провинций с~конкретными административными областями и~районами 
+и~структуру характеристик почв каждого вида земель (отношение 
+AE\_TYPE\_PROPERTY). 
+
+\begin{figure*}[b] %fig3
+\vspace*{1pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=160mm
+\epsfbox{stu-3.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Фрагмент модели регистра базовых агротехнологий}
+%\end{figure*}
+%\begin{figure*} %fig4
+\vspace*{18pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=160mm
+\epsfbox{stu-4.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Фрагмент модели хо\-зяй\-ст\-вен\-но-эко\-но\-ми\-че\-ских па\-ра\-метров}
+\end{figure*}
+
+
+
+\subsection{Логическая модель реестра сортов культур}
+
+    На рис.~2 представлен фрагмент логической модели реестра сортов, 
+содержащий структуру основных данных о~сортах культур (отношение\linebreak 
+CROP\_CULTIVAR), включающую название культуры (crop\_name) и~сорта 
+(crop\_cultvar), год районирования (zoning\_year), разновидность (variety) 
+и~назначение использования сорта (usage). \mbox{Отношение} 
+CROP\_CULTIVAR\_PROPERTY позволяет связывать с~сортом различные 
+дополнительные свойства (indicator), такие как длительность периода 
+вегетации, морозоустойчивость и~зимостойкость, засухоустойчивость, 
+требования к~условиям возделывания и~др., и~указывать их значения 
+(value). 
+    
+
+
+\subsection{Логическая модель регистра базовых агротехнологий}
+
+    Современные агротехнологии представляют собой комплексы 
+технологических операций по управ\-ле\-нию продукционными процессами 
+сельскохозяйственных культур в~агроценозах с~целью достижения 
+планируемой урожайности и~качества продукции при обеспечении 
+экологической безопасности и~экономической эффективности~[6].
+    
+
+    На рис.~3 представлен фрагмент логической модели регистра 
+агоротехнологий, содержащий структуру общих данных об агротехнологии 
+(отношение AGROTECHNOLOGY), применяемые ресурсы интенсификации 
+производства~--- удобрения и~химические средства защиты растений 
+(отношение TECHNOLOGY\_INTENSIFICATION\_\linebreak RESOURCES), список 
+процессов и~операций агротехнологии (отношение 
+TECHNOLOGY\_\linebreak OPERATIONS). Структура общих данных включает название 
+выращиваемой культуры (crop\_name) в~провинции (province\_name) зоны 
+(zone\_name), применяемый уровень технологии (technology\_\linebreak level), список 
+подходящих агроэкологических видов земель, список рекомендуемых сортов, 
+показатели качества, гарантированную урожайность и~др. Структура 
+данных об операциях включает технологические параметры 
+(technology\_parameters), сроки (time), используемую технику (equipment).
+
+\subsection{Логическая модель структуры хозяйственно-экономических 
+параметров}
+
+    В отдельную схему модели выделены структуры  
+хо\-зяй\-ст\-вен\-но-эко\-но\-ми\-че\-ских параметров использования 
+агроэкологических видов земель.
+    
+
+
+    На рис.~4 представлен фрагмент модели  
+хо\-зяй\-ст\-вен\-но-эко\-но\-ми\-че\-ских параметров. Отношение 
+SOIL\_TYPE\_TECHNOLOGY содержит данные об урожайности (harvest) 
+и~себестоимости за тонну (cost) выращивания культур в~за\-ви\-си\-мости от 
+провинции, агроэкологического вида земли, уровня ин\-тен\-сив\-ности 
+технологий. Отношение PROVINCE\_TECHNOLOGY\_CROP содержит 
+данные о~подходящих сортах (crop\_cultvars) для выращивания на землях 
+конкретных агроэкологических видов и~в~за\-ви\-си\-мости от уровня технологий. 
+Отношение TECHNOLOGY\_LEVEL представляет собой словарь 
+су\-щест\-ву\-ющих уровней ин\-тен\-сив\-ности технологий (экстенсивный, 
+нормальный, интенсивный, точный)~[6]. 
+    
+\subsection{Логическая модель данных о~конкретных участках}
+
+    При планировании землепользования в~конкретном хозяйстве одним из 
+этапов является разделение территории на участки с~выделением их 
+агроэкологических групп и~видов земель. Эти данные выделяются 
+в~отдельное отношение FIELD\_AE\_ TYPE (рис.~5), содержащее название 
+конкретного хозяйства (agrostation\_name), список его по\-лей/участ\-ков 
+(field\_name), агроэкологический вид земель каждого участка (ae\_type) 
+и~площадь каждого участка (area). 
+
+
+    
+
+    Рассмотренная логическая модель базы данных реестров была 
+реализована в~СУБД PostgreSQL. В~рамках Проекта были собраны 
+и~загружены в~базу данные о~группах и~видах земель для Среднерусской 
+провинции юж\-но-та\-еж\-но-лес\-ной зоны, данные о~сор\-тах зерновых 
+и~зернобобовых культур и~данные о~базовых агротехнологиях возделывания 
+этих культур для Центрального региона Нечерноземной зоны.
+
+{ \begin{center}  %fig5
+ \vspace*{7pt}
+    \mbox{%
+\epsfxsize=48mm
+\epsfbox{stu-5.eps}
+}
+
+\vspace*{3pt}
+
+\noindent
+{{\figurename~5}\ \ \small{
+Фрагмент модели данных о конкретных участках
+}}
+\end{center}
+}
+
+%\vspace*{6pt} 
+
+
+Полная 
+реализация модели в~SQL (structured query language), данные, использовавшиеся для экспериментов, 
+и~скрипты их загрузки в~базу данных выложены в~репозитории 
+github\footnote{{\sf  https://github.com/sstupnikov/Smart-Landuse}.}.
+
+
+
+
+
+\section{Применение логической модели на~примерах обобщенных 
+задач управления землепользованием}
+
+    Ниже приведены некоторые варианты задач, возникающих при 
+планировании землепользования и~решаемых с~использованием данных из 
+реестров.
+    \begin{enumerate}[1.]
+\item Для поля, состоящего из $n$ участков с~видами земель $\mathrm{aet}_1, \ldots , 
+\mathrm{aet}_n$,  определить минимальный уровень интенсивности технологий, 
+при котором культура crop даст среднюю уро\-жай\-ность по полю не менее 
+yield.
+\item Для участка площадью~$S$ с~видом земли $\mathrm{aet}$ определить 
+максимальную по ин\-тен\-сив\-ности технологию для культуры~crop, при 
+которой се\-бе\-сто\-и\-мость производства не превышает cost.
+\item Для участка с~видом земли $\mathrm{aet}$ определить технологию, 
+обеспечивающую максимальную рен\-та\-бель\-ность выращивания культуры 
+crop.
+\item Для участка с~видом земли $\mathrm{aet}$ определить технологию, 
+обес\-пе\-чи\-ва\-ющую максимальный по объему урожай культуры crop.
+\end{enumerate}
+    
+    Реализация решения подобных задач осуществляется с~по\-мощью 
+декларативных реляционных запросов над базой данных реестров, 
+ре\-а\-ли\-зу\-ющей логическую модель из разд.~3. Ввиду ограниченного объема 
+статьи рас\-смот\-рим только запрос, ре\-а\-ли\-зу\-ющий пример 
+задачи~2\footnote{Запросы, реализующие примеры для всех четырех задач, 
+выложены в~файле {\sf https://github.com/sstupnikov/Smart-Landuse/blob/main/db\_queries\_ed.txt.}}.
+
+
+    
+ Для примера задачи~2 был выбран учас\-ток~1 пло\-щадью 0,792~га 
+в~хозяйстве Козлово, находящемся в~среднерусской провинции  
+юж\-но-та\-еж\-но-\linebreak лес\-ной зоны (табл.~1). В~качестве культуры вы\-бра\-на
+%\noindent
+озимая рожь, при этом ограничение на се\-бе\-сто\-и\-мость выращивания 
+со\-став\-ля\-ет~20\,000~руб. %\linebreak\vspace*{-6pt}
+
+
+    
+
+\end{multicols}
+
+\setcounter{table}{0}
+\begin{table*}[h]\small %tabl1
+\vspace*{-12pt}
+    \begin{center}
+    \Caption{Данные об участке}
+     \vspace*{2ex}
+     
+     \begin{tabular}{|c|c|c|c|}
+     \hline
+\textbf{Хозяйство}&\textbf{Участок}&\textbf{Вид земель}&\textbf{Площадь, га}\\
+\hline
+Козлово&1&1.1. Дерново-подзолистые средне- и~легкосуглинистые культурные&0,792\\
+\hline
+\end{tabular}
+\end{center}
+\end{table*}
+
+\pagebreak
+
+
+
+    \setcounter{table}{1}
+\begin{table*}[h]\small %tabl2
+    \begin{center}
+    \Caption{Результат запроса}
+     \vspace*{2ex}
+     
+     \begin{tabular}{|c|c|c|c|c|c|c|}
+     \hline
+\textbf{Хозяйство}&\textbf{Участок}&\textbf{Культура}&\tabcolsep=0pt\begin{tabular}{c}\textbf{Уровень}\\ \textbf{технологий}\end{tabular}&
+\tabcolsep=0pt\begin{tabular}{c}\textbf{Себестоимость}\\ \textbf{за  гектар, руб.}\end{tabular}&\textbf{Площадь, га}&\tabcolsep=0pt\begin{tabular}{c}\textbf{Общая}\\ 
+\textbf{себестоимость, руб.}\end{tabular}\\
+\hline
+Козлово&1&Озимая рожь&Нормальный&24\,990&0,792&19\,792,08\\
+\hline
+\end{tabular}
+\end{center}
+\end{table*}
+
+ \begin{multicols}{2}  
+
+
+    
+Реляционный запрос на языке SQL, ре\-а\-ли\-зу\-ющий задачу, основан на 
+соединении  трех отношений: FIELD\_AE\_TYPE,
+SOIL\_TYPE\_\linebreak TECHNOLOGY и~TECHNOLOGY\_LEVEL (см.\ разд.~3). Запрос 
+выглядит сле\-ду\-ющим образом:
+
+\vspace*{-6pt}
+
+\noindent
+   {\small \begin{verbatim}
+select
+  d.agrostation_name
+  , d.field_name
+  , st.crop_name
+  , st.technology_level
+  , st.harvest*st.cost cost_per_ha
+  , d.area
+  , st.harvest*st.cost*d.area cost_for_field
+from
+  economic_parameters."SOIL_TYPE_TECHNOLOGY" st
+  , data."FIELD_AE_TYPE" d
+  , economic_parameters."TECHNOLOGY_LEVEL" tl
+where
+  st.zone_name = d.zone_name 
+          and st.province_name = d.province_name
+  and st.ae_type = d.ae_type
+  and st.technology_level = tl .technology_level
+  and d.agrostation_name = 'Козлово'
+  and d.field_name = '1'
+  and st.crop_name = 'Озимая рожь'
+  and st.harvest*st.cost*d.area < 20000
+order by
+  tl.index desc
+limit 1
+    \end{verbatim}
+    }
+    
+    \vspace*{-6pt}
+    
+    Себестоимость вычисляется как произведение урожайности (harvest), 
+се\-бе\-сто\-и\-мости за тонну (cost) и~площади (area). Максимальный уровень 
+ин\-тен\-сив\-ности выбирается при помощи упорядочения (order by) индекса 
+уровня технологии (index) по убыванию (desc) и~выбора первого результата 
+(limit~1).
+
+
+    
+    
+    В табл.~2 представлен результат этого запроса, содержащий данные об 
+удовле\-тво\-ря\-ющей заданному бюджету се\-бе\-сто\-и\-мости выращивания на 
+участ\-ке озимой ржи для максимального уров\-ня технологии.
+    
+    
+
+\section{Заключение}
+
+    Направление разработки методов и~средств автоматизации управ\-ле\-ния 
+землепользованием~--- одно из важ\-ней\-ших в~современной агроинформатике. 
+В~работе рас\-смот\-ре\-на логическая модель структур данных, 
+фор\-ма\-ли\-зу\-ющая данные об агроэкологических группах земель, сортах 
+и~агротехнологиях. Показано, что эта модель может служить основой для 
+решения задач планирования землепользования.
+    
+    Направление дальнейшей работы~--- встраивание реализованной базы 
+данных в~сис\-те\-му <<Умное землепользование>> и~реализация пол\-но\-го 
+набора задач планирования землепользования в~виде реляционных запросов.
+    
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{1-st}
+\Au{Sch$\ddot{\mbox{o}}$ning~J., Wachter~P., Trautz~D.} Crop rotation and management tools 
+for every farmer? The current status on crop rotation and management tools for enabling 
+sustainable agriculture worldwide~// Smart Agricultural Technology, 2023. Vol.~3. 
+Art.\ 100086. 15~p. doi: 10.1016/j. atech.2022.100086.
+\bibitem{2-st}
+\Au{Pahmeyer~C., Kuhn~T., Britz~W.} ``FruchtFolge'': A~crop rotation decision support system for 
+optimizing cropping choices with big data and spatially explicit modeling~// Comput. 
+Electron. Agr., 2021. Vol.~181. Art.\ 105948. 11~p.
+\bibitem{3-st}
+\Au{Kim J.\,S., Kisekka~I.} FARMs: A~geospatial crop modeling and agricultural water 
+management system~// ISPRS Int. J.~Geo-Inf., 2021. Vol.~10. No.\,8. 
+Art.\ 553. 17~p. doi: 10.3390/ijgi10080553.
+\bibitem{4-st}
+\Au{Кирюшин В.\,И.} Методология комплексной оцен\-ки сельскохозяйственных земель~// 
+Почвоведение, 2020. №\,7. С.~871--879.
+\bibitem{5-st}
+\Au{Кирюшин В.\,И., Дубачинская~Н.\,Н., Юрова~А.\,Ю.} Комплексная оцен\-ка 
+сельскохозяйственных земель на примере Южного Урала~// Почвоведение, 2021. №\,11. 
+С.~1363--1375.
+\bibitem{6-st}
+\Au{Кирюшин В.\,И., Кирюшин~С.\,В.} Агротехнологии.~--- СПб.: Лань, 2022. 464~с. 
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 29.08.22}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{LOGICAL  RELATIONAL MODEL OF~DATA STRUCTURES FOR~PROBLEM  SOLVING IN~LAND USE MANAGEMENT}
+
+
+\def\titkol{Logical  relational model of~data structures for~problem  solving in~land use management}
+
+
+\def\aut{D.\,O.~Briukhov and~S.\,A.~Stupnikov}
+
+\def\autkol{D.\,O.~Briukhov and~S.\,A.~Stupnikov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-8pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+
+
+ \Abste{The paper belongs to theoretical foundations of agroinformatics. To be more precise, it concerns development of 
+ methods and tools for automatization of land use management. A~logical model for data structures intended for problem solving in the subject area is proposed. 
+ Registry for agroecological groups and types of lands organizing diversity of their geomorphological, soil, and agrochemical conditions, registry for crops 
+ and cultivars, and registry for agrotechnologies as complexes of technological operations for management of crop production processes are formalized as sets 
+ of relations of the relational data model and relationships between them. Application of the logical model is demonstrated via several generic 
+ problems of land use management. Each problem is implemented as 
+ a~declarative query expression over the logical model. The model is implemented in a~relational database management system.}
+
+\KWE{logical relational model; land use management; problem solving}
+
+
+ \DOI{10.14357/19922264220414} 
+
+\vspace*{-12pt}
+
+ \Ack
+\noindent
+The study was financially supported by the Ministry of Education and Science of 
+the Russian Federation (agreement No.\,075-15-2020-805 dated October 2, 2020). 
+
+
+\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{1-st-1}
+\Aue{Sch$\ddot{\mbox{o}}$ning, J., P.~Wachter, and D.~Trautz.} 2023. Crop 
+rotation and management tools for every farmer? The current status on crop 
+rotation and management tools for enabling sustainable agriculture worldwide. 
+\textit{Smart Agricultural Technology} 3:100086. 15~p.  doi: 10.1016/j.atech. 2022.100086.
+{\looseness=1
+
+}
+\bibitem{2-st-1}
+\Aue{Pahmeyer, C., T.~Kuhn, and W.~Britz.} 2021. ``FruchtFolge'': A crop rotation 
+decision support system for optimizing cropping choices with big data and 
+spatially explicit modeling. \textit{Comput. Electron. Agr.} 181:105948.  11~p.
+\bibitem{3-st-1}
+\Aue{Kim, J.\,S., and I.~Kisekka.} 2021. FARMs: A~geospatial crop modeling and 
+agricultural water management system. \textit{\mbox{ISPRS} Int. J. Geo-Inf.} 10(8):553. 17~p.
+doi: 10.3390/\linebreak ijgi10080553.
+\bibitem{4-st-1}
+\Aue{Kiryushin, V.\,I.} 2020. Methodology for integrated assessment of agricultural 
+land. \textit{Eurasian Soil Sci.} 53(7):960--967.
+\bibitem{5-st-1}
+\Aue{Kiryushin, V.\,I., N.\,N.~Dubachiskaya, and A.\,Yu.~Yurova}. 2021. 
+Comprehensive assessment of agricultural land by the exemple of the Southern Urals. \textit{Eurasian Soil Sci.} 54(11):1721--1731.
+\bibitem{6-st-1}
+\Aue{Kiryushin, V.\,I., and S.\,V.~Kiryushin.} 2022. \textit{Agrotekhnologii} [Agrotechnologies]. 
+St.\ Petersburg: Lan'. 464~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received August 29, 2022}}
+
+\vspace*{-16pt}
+    
+    \Contr
+    \noindent
+    \textbf{Briukhov Dmitry O.} (b.\ 1971)~--- Candidate of Science (PhD) in 
+technology, senior scientist, Institute of Informatics Problems, Federal Research 
+Center ``Computer Science and Control'' of the Russian Academy of Sciences, \mbox{44-2}~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{dbriukhov@ipiran.ru}
+    
+    \vspace*{3pt}
+    
+    \noindent
+    \textbf{Stupnikov Sergey A.} (b.\ 1978)~--- Candidate of Science (PhD) in 
+technology, leading scientist, Institute of Informatics Problems, Federal Research 
+Center ``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{sstupnikov@ipiran.ru}
+  
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}    
+   

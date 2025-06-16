@@ -1,0 +1,1097 @@
+\renewcommand{\figurename}{\protect\bf Figure}
+\renewcommand{\tablename}{\protect\bf Table}
+
+\def\stat{kovalev}
+
+
+\def\tit{VIRTUAL EXPERIMENTS IN~DATA INTENSIVE RESEARCH}
+
+\def\titkol{Virtual experiments in~data intensive research}
+
+\def\autkol{D.\,Y.~Kovalev and E.\,A.~Tarasov}
+
+\def\aut{D.\,Y.~Kovalev$^1$ and E.\,A.~Tarasov$^2$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+%\footnotetext[1] {The study was carried out under state order to the Karelian Research 
+%Centre of the Russian Academy of Sciences (Institute of Applied Mathematical 
+%Research KarRC RAS) and supported by the Russian Foundation for Basic Research, 
+%projects 18-07-00187, 18-07-00147, 18-07-00156, 19-07-00303.}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Institute of 
+Informatics Problems, Federal Research Center ``Computer Science and Control'' of 
+the Russian Academy of Sciences, 44-2~Vavilov Str., 119333 Moscow, Russian 
+Federation, \mbox{dkovalev@ipiran.ru}}
+\footnotetext[2]{Institute of 
+Informatics Problems, Federal Research Center ``Computer Science and Control'' of 
+the Russian Academy of Sciences, 44-2~Vavilov Str., 119333 Moscow, Russian 
+Federation,  \mbox{e.tarasov@outlook.com}}
+
+
+\index{Kovalev D.\,Y.}
+\index{Tarasov E.\,A.}
+\index{Ковалёв Д.\,Ю.}
+\index{Тарасов Е.\,А.}
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{-4pt}
+
+           
+
+\Abste{Organization and management of virtual experiments (VE) in data intensive 
+research  (DIR)
+has been widely studied in the several past years. The authors survey existing 
+approaches to deal with VEs and hypotheses and analyze 
+VE management in a real use-case from the astronomy domain. A~review of 
+existing systems that can act as platforms for conducting a~VE has been 
+carried out. Requirements for a~system to organize VEs in data intensive 
+domains have been gathered and overall structure and functionality for system running 
+VEs are presented. The relationships between hypotheses and models in 
+VE are discussed. The authors also illustrate how to model conceptually 
+VEs, respective hypotheses, and models. Potential benefits and 
+drawbacks of such approach are discussed, including maintenance of experiment 
+consistency and reduction of potential number of experiments.}
+
+\KWE{virtual experiment; hypothesis; conceptual modeling; data intensive research}
+
+ \DOI{10.14357/19922264190216}
+
+
+%\vspace*{8pt}
+
+
+\vskip 12pt plus 9pt minus 6pt
+
+ \thispagestyle{myheadings}
+
+ \begin{multicols}{2}
+
+ \label{st\stat}
+
+\section{Introduction}
+
+\vspace*{-2pt}
+
+      \noindent
+      Data intensive research is evolving according to the 4th paradigm of 
+scientific development and reflects the fact that modern science is highly dependent 
+on knowledge extraction from massive datasets~[1]. Data intensive research is 
+multidisciplinary in its nature, bringing in many separate principles and techniques to 
+handle complex data analysis and management. Researcher's time is split between 
+management of raw and analytical data, including data collection, curation and 
+integration, and scientific work itself, which the article focuses on. It requires 
+knowledge inference from collected data in order to test proposed hypotheses, gather 
+novel information, and correctly integrate it. 
+      
+      Large-scale scientific experiments besides data processing issues are highly 
+sophisticated~--- they include workflows, models, and analytical methods. Together, 
+they compose a~VE. In~[2], a~survey is presented discussing 
+different approaches to experiment modeling and how its core artifacts~--- 
+hypotheses~--- can be specified. The use of conceptual representation of hypotheses and 
+their corresponding implementation is emphasized, thus leading to the need of proper 
+tools.
+      
+      This particular paper is aimed at developing methods and tools to support the 
+execution and conceptual modeling of VEs and discusses several 
+approaches to manage~it. 
+      
+      The paper is structured as follows. Section~2 provides an analysis of existing 
+systems and the system requirements for managing VE. In Section~3, main core 
+elements of VE are defined. In Sections~4 and~5, the two modes of execution of VE 
+based on two DIR use-cases are discussed. Section~6 concludes the paper.
+      
+      This work is a continuation of~[3, 4]. Comparing it with the previous work, 
+this paper presents unified methodology to work with VE. The emphasis is made on 
+working with two components: research lattices and real-time model/hypothesis 
+testing. Research is carried out in the frame of Research Data 
+Alliance\footnote[3]{``The Research Data Alliance (RDA) was launched as 
+a~community-driven organization in 2013 by the European Commission, the United 
+States National Science Foundation and National Institute of Standards and 
+Technology, and the Australian Government's Department of Innovation with the 
+goal of building the social and technical infrastructure\ $\ldots$\ that promotes 
+data-sharing and data-driven research$\ldots$'' ({\sf  
+https://www.rd-alliance.org/about-rda)}.} activity.
+      
+      
+      \vspace*{-4pt}
+      
+\section{Analysis of~Existing Systems}
+
+\vspace*{-2pt}
+
+      \noindent
+      Systems with explicit representation of hypotheses are being rapidly 
+developed during last several years~[5--10]. Authors analyzed~4~different systems 
+for managing VE and hypotheses: Hephaestus, Upsilon-DB, SDI
+(Scientific Data Infrastructure), and FCCE (Features Collection and
+Correlation Engine). Some 
+requirements for organizing and managing VEs were retrieved during 
+the analysis.
+
+\vspace*{-9pt}
+
+\subsection{Hephaestus}
+
+\vspace*{-2pt}
+
+      \noindent
+      Hephaestus is a system for running VEs over existing 
+collections of data. It provides independence from resources and the system rewrites 
+its queries into data source queries. The system hides underlying implementation 
+details from user, letting him/her to work only with the Hephaestus language. This language 
+itself is a~declarative language and is used to specify VEs and 
+underlying hypotheses.
+      
+      Hephaestus separates two different classes of hypotheses: top-down and 
+bottom-up. Top-down hypotheses are the one introduced by the researcher, while 
+bottom-up hypotheses are derived from data. The system supports the discovery of 
+bottom-up hypotheses by looking for the correlation in data. These hypotheses are 
+then ranked by some score (e.\,g., $p$-value of some statistical test) and the one with 
+the highest are passed to the researcher. Yet, the system does not support 
+automatically finding of causality. Hephaestus emphasizes the role of an expert in 
+understanding which relationships should be further studied and which should not be 
+chased. Hephaestus also computes metrics about experiments to estimate significance 
+adequate to abandon further computation. The system is used in testing clinical trials. 
+The system does not catch the evolution of hypotheses or experiments yet.
+
+\vspace*{-9pt}
+
+\subsection{Upsilon-DB}
+
+\vspace*{-2pt}
+
+      \noindent
+      The system enables researcher to code and manage deterministic scientific 
+hypotheses as uncertain data. It uses internal database to form hypotheses as relations 
+and adds uncertainty parameter. Later, this uncertainty parameter is used to rank 
+hypotheses using Bayes rule. The provided approach can be treated as 
+complementary to classical statistical approach. The system allows to work with two 
+types of uncertainty~--- theoretical, which is brought by competing hypotheses, and 
+empirical, which appears because of alternative datasets used. The system 
+introduces algorithm to rank hypotheses using observed data. This is done because 
+several competing hypotheses can explain the same observation well and some score 
+to distinguish them is needed. When new data become available, this score can be 
+adjusted accordingly.
+      
+      Hypotheses have mathematical representation and authors provide method to 
+translate its mathematical representation into relations in database. The simulations 
+are also treated as data and respective relations are put inside the same database as 
+hypotheses. Authors emphasize the need to support and develop the extraction of 
+hypotheses from data and methods to sample both hypotheses and data. They 
+illustrate that systems such as Eureqa~[11] can be used to learn formula 
+representation from data.
+      
+      An example presented in the paper is based on three different laws describing 
+free fall and some simulated data. They rank hypotheses accordingly.
+
+\vspace*{-9pt}
+
+\subsection{Other}
+
+\vspace*{-2pt}
+
+      \noindent
+      Several other platforms are analyzed. We describe them separately since they 
+are not explicitly designed with hypotheses or VEs as their core 
+element. However, some of the ideas that they implement are worth mentioning.
+      
+      The SDI platform~\cite{5-tar} is used to support scientific experiments. The 
+system can integrate open data and reuse observed and simulation data in the further 
+development of experiments. The system enables multiple groups of researchers to 
+access data and experiments simultaneously. Components of the framework are 
+developed in such a~way that they could be deployed, adapted, and accessed in 
+individual research projects fast. The SDI platform requires the support of lineage, provenance, 
+classification, and indexing of experiments and data, the whole cycle of obtaining data, 
+curating and cleaning it, building experiments to test hypotheses over massive data, 
+and aggregating results is supported over prolonged periods of time. The use of semantics 
+is required by the system.
+      
+      The FCCE platform~\cite{10-tar} is designed to search for correlations in 
+heterogeneous data sets spanning long time ranges. It is oriented to work with 
+minimal delays and access to unprocessed source data. The key component of the 
+data model is the concept of features. The features define the relationship between the 
+key and some value, each element of which can contain several features. The FCCE platform
+presents a simplified relational data model for the user, where each table stores one 
+type of characteristic. Each line is identifiable by a key and can contain several 
+features. The platform provides an application program interface
+ for storing, obtaining, and calculating 
+correlation over features. The developers offer the original approach of integrating 
+the correlation criterion evaluation module into the query execution engine over the 
+repository, which allows to speed up the response time to the query and to reduce the 
+overhead of computation and input/output operations. The FCCE platform
+uses two distinctive mechanisms 
+to support the effectiveness of correlations between the characteristics: the query pipe 
+and the query modifier.
+
+\vspace*{-9pt}
+      
+\subsection{Requirements for a~virtual experiment management system}
+
+\vspace*{-2pt}
+
+      \noindent
+      Although platforms mentioned above provide important insights into defining 
+and handling hypotheses, they miss some notable features. In this subsection, missing 
+features are overviewed and general requirements for a~VE
+Management System (VEMS) are defined.
+      
+      First, existing platforms do not describe the perception of automatically 
+derived hypotheses by domain experts, do not track their evolution, and do not 
+discuss experiment design principles. In a series of experiment run, it is important to 
+keep track on evolution of models, hypotheses, and experiments, as well as 
+identifying new data sources. Operations to manipulate VEs and their 
+components need to be defined. Next, a VEMS needs to capture dependencies (like 
+\textit{competes, derived by}) between hypotheses, invariants in single hypothesis. 
+Correlations between parameters of several hypotheses should also be considered.
+      
+      Second, a VEMS should contain components responsible for automatic 
+extraction of dependencies between hypotheses, parameters in single and multiple 
+hypotheses. Obtained data are used in deciding which experiments should be 
+abandoned and used in keeping hypotheses consistent in a single experiment.
+      
+      Third, one needs components for maintaining experiment consistency and 
+constraining the number of possible experiments as well as defining the metric, which 
+is used to define if experiment poorly explains phenomena and abandon further 
+computations. Methods for removing poor experiments based on previous 
+experiments runs are also required. Experiments and hypotheses should stay 
+consistent when parameters of hypotheses are changed.
+      
+      As soon as several hypotheses in some experiments could explain some 
+phenomena well and due to errors in data, researcher needs to deal with uncertainty 
+and needs methods to rank experiments and competing hypotheses on massive 
+datasets.
+      
+      While experiment could change slightly from a previous experiment run 
+(e.\,g., one hypothesis parameter changes), system should store some data about 
+previous executions. Methods for understanding, which parts of experiments should 
+be recomputed and which are not, should be developed as well. Defining structures to 
+store results of previous experiments and to query these results is important. Since there 
+could be thousands of possible experiments, the system should use a~method to form 
+a~plan to execute experiments in such a~way that stored results are reused and no 
+additional computations are made. 
+      
+      During the execution of the VE, the researcher manipulates by 
+the parameters of hypotheses, i.\,e., a set of variables that in some cases can be 
+correlated with each other as well as with the parameters of the other 
+hypotheses~\cite{2-tar, 12-tar}. Since the number of potential hypotheses in a~VE 
+can be enormous and their interaction is nontrivial, a~space with many 
+VEs is formed, some of which poorly describe observations and need 
+to be omitted before the experiment is performed. Consequently, a~researcher needs 
+a~tool that allows to preidentify and filter out VEs with a predictably 
+bad result. At the same time, the presence of complex dependencies in the data makes 
+their understanding difficult for the researcher and does not allow doing this 
+manually~\cite{6-tar}. Correlation estimation tools allow to automatically divide 
+VEs into groups with a predictably good and poor experimental 
+result~\cite{13-tar}.
+      
+      Thus, reducing the number of experiments is achieved by:
+      \begin{itemize}
+\item \textit{correlations search}~--- this allows to combine the features of the 
+phenomenon under investigation into certain groups that affect it in some 
+aggregate;
+\item \textit{analysis of features}~--- it is necessary to select a set of parameter 
+values within a selected group that, with certain accuracy indicators, would 
+describe the actual observational data; and
+\item \textit{ranking} of hypotheses according to the degree of accuracy of the 
+VE. This will help the researcher to pay attention to the most 
+probable hypotheses without the need for a complete search through all 
+parameters combinations.
+\end{itemize}
+
+      To reduce the space of hypotheses parameters and VEs, 
+methods for featuring selection are widely used~\cite{14-tar}. They allow to increase 
+the speed of data processing and to obtain the result without reducing the 
+accuracy~\cite{15-tar}, by isolating only those informative features that are required 
+for performing a~VE. The selection of a~set of characteristics makes it 
+possible to simplify the understanding of the model by the researcher and, 
+consequently, to use them as input data for the widely known algorithms of machine 
+learning~\cite{16-tar}. In addition, these methods allow to reduce noise in the data 
+and to reveal the interaction between the parameters.
+
+
+
+\section{Hypotheses and~Models in~Virtual~Experiment}
+
+      \noindent
+Extracted information needs to be formally specified. For that, authors define 
+additional artifact~--- VE. It is a~tuple $\langle O, H, M, R, W, 
+C\rangle$, where:
+      \begin{itemize}
+\item $O$ is the domain ontology that is a set of concepts and relationships in 
+applied domain formally specified with some language;
+\item $H$ is the set of hypotheses specifications and relationships between them. 
+$H$ is a~part of ontology and uses concepts from it. Together they form the 
+ontology of VE. Hypothesis is a proposed explanation of 
+a~phenomenon that still has to be rigorously tested; 
+\item $M$ is the set of models. Each model is a~set of functions. Every model 
+implements a hypothesis specification. If model generates expected behavior of 
+some phenomenon, it is said that model and respective hypothesis are supported 
+by observations;
+\item $R: H\to M$ is the mapping from the set of hypotheses and into the models;
+\item $W$ is the workflow, the set of tasks, orchestrated by specific constructs 
+(workflow patterns~--- split, join, etc.). Each task represents a~function with 
+predefined signature, which invokes models from~$M$. Workflow implements 
+experiment specifying when each model that conforms to related hypotheses 
+should be invoked; and 
+\item $C$  is the configuration for each experiment run. It consists of a total 
+mapping from workflow tasks into sets of function parameter values.
+\end{itemize}
+      
+      There exist many possible hypotheses representations~--- mathematical models, 
+Boolean networks, ontologies, predicates in first-order logic, etc. Authors use 
+ontologies to specify hypotheses.
+      
+      Possible relationships between hypotheses are \textit{competes\_with}, which 
+is used to relate competing hypotheses and \textit{derived\_by} to relate two 
+hypotheses, one of which was used to derive another. \textit{Derived\_by} can be 
+used to form hypotheses lattice~\cite{17-tar}~--- algebraic structure with partial 
+order relation. Hypotheses derived from a single hypothesis are atomic, otherwise~--- 
+complex (see Fig.~2 below).
+      
+      Model, which implements hypothesis, should conform to the hypothesis 
+specification. If model generates expected behavior of some phenomenon, it is said 
+that model and respective hypothesis are supported by observations.
+      
+      Since hypotheses become the core artifact of VE, there is 
+a~shift in treating data to manage it successfully. Figure~1 depicts the process of 
+specifying~VE.
+
+First, hypotheses are extracted from scientific articles. Usually, they are 
+represented by text or formulas. Sometimes, there is a~need to provide external 
+hypotheses and to substitute the existing ones. Next step is to define mapping between 
+hypotheses and models, which implement these hypotheses, and build some 
+workflow\linebreak\vspace*{-12pt}
+
+{ \begin{center}  %fig1
+ \vspace*{9pt}
+  \mbox{%
+ \epsfxsize=78.4mm 
+ \epsfbox{kov-1.eps}
+ }
+
+
+\vspace*{6pt}
+
+
+\noindent
+{{\figurename~1}\ \ \small{Methodology to form VE}}
+\end{center}
+}
+
+%\vspace*{9pt}
+
+\addtocounter{figure}{1}
+
+
+
+      
+      
+      \noindent
+       specifying the sequence of tasks. Forming a~research lattice is the next step. 
+Virtual experiment needs configuration and execution plan. After that, one can
+ launch~VE.
+      
+      Statistical testing is the process of deciding whether hypothesis contradicts 
+observations. There exist two main approaches for statistical testing: 
+\textit{frequentist} and \textit{Bayesian approach} discussed in the next section. 
+      
+      Formal specifications of VE, hypotheses, their relationship,  and further 
+clarification can be found in~\cite{3-tar}.
+
+\section{Hypotheses Quality Estimation}
+
+      \noindent
+      Important part of the methodology to form VEs is the 
+configuration of statistical tests and hypotheses ranking. These tasks are 
+interconnected, e.\,g., $p$-value from statistical test or Bayesian probability can be 
+used as a metric to rank and range hypotheses.
+      
+      The method for estimating the quality of a~VE is based on the 
+classical theory of signal processing~\cite{18-tar}. This theory serves as a mean of 
+quantifying the possibility of distinguishing the information component of a signal 
+from noise~\cite{19-tar}.
+      
+      The quality assessment tells when to rebuild a model and is represented with a 
+statistical hypothesis:
+      \begin{description}
+      \item    $H_0$:   Model is correct.
+      \item    $H_1$:  There is a malfunction in the model.
+      \end{description}
+      
+To make an assumption about the quality of the model, it is necessary 
+to perform statistical test with incoming observations. One of the parameters 
+transmitted to the input of our system once every time period is the measured 
+value~$Y$. During execution of the VE, the model provides the 
+calculated value of the~$\hat{Y}$. Estimating their difference $\hat{Y}- Y$  
+for~$n$~periods, we evaluate the quality of the model under the given experimental 
+conditions.
+      
+      As an example, often the difference $\hat{Y}- Y$ obeys the normal 
+distribution law~\cite{20-tar}. Both classical and frequency-based and the Bayesian 
+approaches are used.
+      
+      \textit{Frequentist Approach.} In the framework of the classical approach, the 
+probability is the relative frequency of occurrence of specific events. All events are 
+independent. The general methodology for carrying out statistical testing is widely 
+discussed in the literature.
+      
+      The residuals obey the normal distribution law and the signal variance is 
+unknown. Thus, within the framework of the frequency approach, a one-sample  
+$T$-test with a two-way alternative is used.
+      
+      As the random variable studied, $X_n=\hat{Y}-Y$ is the difference between 
+the reference value of the flow rate coming from the sensors with the value of the 
+flow velocity obtained as a result of the operation of the model:
+      $$
+      X=\left( x_1,\ldots , x_n\right) \in R\,,\enskip X_n\sim N\left( \mu, 
+\sigma^2\right)\,.
+      $$
+      
+      The hypothesis that the sample mean is equal to a~given number against the 
+alternative hypothesis that it is not equal:
+      \begin{align*}
+      H_0: &\ \ \overline{X}=\mu\,;\\
+      H_1: &\ \ \overline{X}\not= \mu\,.
+      \end{align*}
+      
+      In our case, $\mu=0$  is assumed. Student's test is used. The statistics of the 
+criterion has a Student's distribution with $n-1$ degrees of freedom and a given level 
+of significance $\alpha=0.05$.
+      
+      \textit{Bayesian Approach.} The Bayesian approach differs from the classical 
+one in treating the probability. In general, the probability is seen as the degree of 
+confidence. Some \textit{a~priori} knowledge about the observation is refined during 
+the experiment. A more detailed description of the application of the Bayesian 
+approach in the theory of signal processing can be found in a survey~\cite{18-tar}.
+      
+      Thus, the Bayesian approach verifies the likelihood coefficient. The empirical 
+scale~\cite{2-tar} of the evidential strength of the Bayesian criterion is provided 
+in~\cite{4-tar}.
+      
+      Evidence strength tells whether hypothesis $H_0$ can be rejected or not. 
+Since hypothesis~$H_0$ assumes that the model is seen as correct, its rejection 
+serves as a quality assessment and indicates that the model begins to poorly describe 
+observations.
+      
+      As the random variable studied in the same way as in the frequency 
+approach, $X_n=\hat{Y}-Y$ is the difference in the reference value of the flow rate 
+coming from the sensors with the value of the flow velocity obtained as a~result of the 
+operation of the model. Thus, a sample is specified:
+      $$
+      X=\left( x_1,\ldots , x_n\right) \in R\,,\enskip X_n\sim N \!\left(\mu, 
+\sigma^2\right)\,.
+      $$
+      
+      The hypothesis is checked that the difference between the average observed 
+and simulated signal is zero plus there is an additional component of some noise 
+against the alternative hypothesis that in addition to noise, there is a nonzero 
+component that informs that the signal has left the baseline:
+      \begin{align*}
+      H_0: &\ \ r_i=0+n_i=n_i\,,\enskip i=1,2,\ldots , N\,;\\
+      H_1: &\ \ r_i=\mu+n_i\,,\enskip i=1,2,\ldots, N\,.
+      \end{align*}
+      
+      The noise component obeys the normal distribution law. The final formula for 
+calculating the likelihood ratio is given below. A~more detailed derivation of the 
+formula can be found in~\cite{4-tar, 18-tar}.
+      
+
+\section{Besancon Galaxy Model Use-Case}
+
+\subsection{Main components}
+
+      \noindent
+      Authors' further experience on how to deal with batch execution of 
+VEs and hypotheses is based on Besancon Galaxy Model (BGM). Besancon Galaxy
+Model is 
+based on ``the population synthesis approach\ $\ldots$\ aims at assembling current 
+scenarios of galaxy formation and evolution, theories of stellar formation and 
+evolution, models of stellar atmospheres and dynamical constraints, in order to make 
+a~consistent picture explaining currently available observations of different types 
+(photometry, astrometry, spectroscopy) at different wavelengths''~\cite{21-tar}.
+      
+     Besancon Galaxy
+Model which is being developed for more than~35~years represents a complex 
+computational artifact, described in a series of~\cite{21-tar, 22-tar, 23-tar} and 
+presented in several major releases. Such a development represents a unique 
+experience for catching the evolution scenarios for the model, changes to the model 
+introduced both by using new observations (e.\,g., Hypparcos and Tycho-2 surveys) 
+and by the theoretical progress in the field. Both minor changes to parameters of the 
+model and huge improvements of the entire process were also made during the 
+lifetime of the model. Also, the BGM authors enabled the community to change some 
+parts of the model.
+      
+      Due to the broad experience collected by the BGM authors in the respective 
+articles and associated code, now there is a possibility to collect the requirements for 
+the system to supports experiments and provide rationale to choosing the appropriate 
+methods and adequate techniques for the infrastructure.
+      
+     Besancon Galaxy
+Model takes as input hypotheses and their parameters. The examples of such 
+hypotheses are star formation rate (SFR), initial mass function (IMF), density laws, 
+evolutionary tracks, and so on~\cite{21-tar}. As the model is evolving, new values for 
+hypotheses parameters, even new parameters have been introduced into the BGM, 
+e.\,g., for the IMF hypothesis in the last realization, there has not only been tests of 
+several new values of the hypothesis but also separation of 2- and 3-slope 
+instances of IMF has been done.
+      
+      It is very important to explicitly catch the relationship between several 
+hypotheses in VE. Hypotheses and their parameters can be interrelated. For example, 
+stellar birthrate function is derived from both IMF and SFR functions and local 
+volume density function is based on the provided density law. The relationships between 
+hypotheses put constraints on the tuning of their parameters. 
+Besancon Galaxy
+Model hypothesis lattice  is depicted in Fig.~2.
+      
+      The parameters of a~single hypothesis can be linked to each other directly through 
+equations. There are also indirect connections of parameters of several hypotheses, 
+e.\,g., SFR parameter correlates with the slopes of IMF. This implies that one could 
+not give the best solution for a~particular variable without correlating it with others. 
+So, there is a~need to support for a~correlation search\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+{ \begin{center}  %fig2
+ \vspace*{-6pt}
+ \mbox{%
+ \epsfxsize=60.589mm 
+ \epsfbox{kov-2.eps}
+ }
+
+
+\end{center}
+
+
+\noindent
+{{\figurename~2}\ \ \small{The BGM hypotheses lattice with derived by relationship}}
+}
+
+\vspace*{12pt}
+
+\addtocounter{figure}{1}
+
+\noindent
+ between hypotheses parameters 
+and to store relationships between parameters of a~single hypothesis.
+      
+      
+      
+      Not all model ingredients are allowed to be changed by the user. This is done 
+because if some hypothesis is changed in the model and no further adjustments for 
+the dependent hypotheses are made, a~model consistency is broken. Furthermore, the 
+model has a property of being self-consistent meaning that when input values change, 
+if it is possible, hypotheses derived by the one changed are properly adjusted in order 
+not to break fundamental equations of astronomy. Therefore, derived by relationship 
+needs to be modeled. Also, system component should enable the adjustment and 
+calibration of any hypothesis available in the model.
+
+
+      
+      Apart from explicit hypotheses, there are also implicit hypotheses in the 
+model. They are not described in the articles and are tacit. The example of such 
+hypothesis is that no stars come from outside of the Galaxy. It is important to 
+explicitly store such hypotheses and understand how to extract such hypotheses from 
+publications and data sources.
+      
+      Workflow is used to implement BGM experiment specifying when each 
+model which conforms to related hypotheses should be invoked. The workflow has 
+also evolved since the first version, e.\,g., for thin disk treatment, new activities 
+dependent on IMF and SFR hypotheses are introduced. This development can only be 
+tracked using publications. Some activities in the model structure require the usage of 
+statistical methods, tests, and tools which are used on both local hypotheses and on 
+the general simulations from the whole experiment.
+      
+      As the number of experiments is huge due to the increasing size of competing 
+hypotheses family, now not all the possible are run against the whole sky. Studying 
+the ways to reduce the number of experiments which give the best fit and to choose 
+when and if to abandon further computations of experiment is a major part of 
+requirements to the new system. Using the information from experiment run done 
+both locally and by other research groups can be helpful in achieving that goal.
+      
+      Some research of data-intensive analysis emphasize the role of error bars. As 
+the data in astronomy are provided usually with errors, the BGM uses special methods 
+to work with such type of uncertainty. A component supporting statistical tools, 
+which works with error bars, is a~major requirement for the infrastructure.
+
+\vspace*{-12pt}
+
+\subsection{Hypotheses specification}
+
+\vspace*{-4pt}
+
+      \noindent
+      Examples of hypotheses and their relationships come from BGM. For the 
+sake of clarity, not all hypotheses in BGM are specified. Every BGM hypothesis is 
+treated as subclass of Hypothesis class. Example instances from each subclass are 
+provided in~\cite{3-tar}.
+      
+      Initial mass function is the mass distribution of a~given population of stars 
+and is represented by standard power law. Due to construction of the hypothesis in 
+the BGM, IMF has a~mathematical representation as a~piecewise function with~2 
+or~3~pieces (slopes) where it is defined for mass regions. As there are just~2~possible 
+sizes of the piecewise function, we put this into two disjoint subclasses. There are 
+restrictions on available mass to Sol mass ratio. For IMF, there are~10~different 
+versions of a~hypothesis, 4~of them are 2-slope functions and~6 of them are 3-slope 
+function. All of hypotheses are competing. 
+      
+      Star formation rate, $\Psi(t)$, represents the total mass of stars born per unit 
+time per unit mass of Galaxy. Star formation rate has subclasses for representing 
+constant $\Psi(t)=C$ and exponential function $\Psi(t)=\exp \{ -\gamma t\}$ where 
+$\gamma$ is the parameter. Several competing hypotheses are specified as there are 
+two possible values for~$\gamma$ (0.12 and 0.25) and one constant value. They can be 
+stated as instances of respective classes. 
+      
+     Besancon Galaxy
+Model apart from the model ingredients has also implicit hypotheses which are 
+not marked as ingredients. For example, ($i$)~thin disk is divided into~7~age bins; and
+($ii$)~no stellar population comes from the outside of the galaxy. 
+
+For the first example, 
+we can specify additional class \textit{AgeBins} that has exactly~7~age bins. 
+      
+      It is more difficult to deal with the second one. As a possible solution, 
+additional hypothesis could later be specified.
+      
+      Hypotheses lattice is modeled with \textit{derivedByobject} property. Some 
+classes can be specified using \textit{EquivalentClasses} construction. Hypotheses 
+lattice for BGM is created manually but later, it should be constructed automatically 
+by system for executing experiments. Part of hypotheses lattice for BGM is shown 
+in Fig.~2. 
+      
+      For IMF class, there are relations between slopes, \textit{outputMass}, and 
+\textit{availableMass}. Based on \textit{availableMass} parameter alpha is chosen 
+and then \textit{outputMass} is computed. If \textit{availableMass} is inside the 
+respective interval, alpha is taken and \textit{outputMass} is computed. Next,  
+postcondition for \textit{ExponentSFR} is written. It says that born stars should have 
+mass respective to the exponential equation. Other pre- and postconditions are 
+specified in the same manner. 
+      
+      Since some hypotheses can take quite a few values, the number of possible 
+models can reach thousands. This poses a question about the order of model 
+execution and how to make these executions effective (and not to recompute previous 
+unchanged results). For that, we use special structures to cache and store results. The 
+system can put model execution in some order and use the results of previous 
+executions. This could drastically increase the speed of model computation, 
+especially on big amount of data. To implement this, we use the properties of hypotheses 
+lattices.
+      
+      The researcher can run several experiments finding the probability of each, 
+which can be later queried by other researchers. For example, query described 
+in~\cite{3-tar} takes two experiments, which have underlying models best explaining 
+observed data, and fixed values for hypothesis SFR and workflow specified by 
+uniform resource identifier. 
+Since there could be thousands of possible experiments, there is a need to order them 
+by their probability. As in~\cite{6-tar}, we do not want the researched to bury in 
+thousands of possible models and just take several the best ones.
+
+\vspace*{-9pt}
+      
+      \section{Concluding Remarks}
+      
+      \vspace*{-2pt}
+
+\noindent
+The article is aimed at development of a new approach for managing VE and its core 
+components such as hypotheses, research lattices, ontologies, and workflows in 
+a~single manner. Analysis of existing systems, which explicitly state to manage VE 
+or hypotheses, was carried out to extract and understand requirements for such 
+systems.
+      
+      Not all of these requirements come from the survey of existing systems but 
+appear from studying astronomy use-case which add several important requirements 
+for catching model evolution and real-time processing.
+      
+      Future work is be concentrated on developing metasystem for handling 
+hypotheses, models, and other metadata in~VE.
+      
+\vspace*{-9pt}
+
+\Ack
+
+\vspace*{-2pt}
+
+\noindent
+This research was partially supported by the Russian Foundation for Basic 
+Research (project 18-07-01434~А).
+
+
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+
+%\vspace*{-6pt}
+
+%\vspace*{-6pt}
+
+{\small\frenchspacing
+{ %\baselineskip=10.35pt
+\begin{thebibliography}{99}
+
+\vspace*{-6pt}
+
+\bibitem{1-tar}
+\Aue{Hey, T., S.~Tansley, and K.~Tolle.} 2009. \textit{The fourth paradigm: 
+Data-intensive  scientific discovery}. Redmond, WA: Microsoft Research. 284~p.
+\bibitem{2-tar}
+\Aue{Kalinichenko, L., D.~Kovalev, D.~Kovaleva, and O.~Malkov.} 2015. Methods and tools for 
+hypothesis-driven research support: A~survey. \textit{Informatika i ee~Primeneniya~--- Inform. 
+Appl.}  9(1):28--54.
+
+\bibitem{4-tar} %3
+\Aue{Tarasov, E., and D.~Kovalev.} 2017. Otsenka kachestva nauchnykh gipotez v~virtual'nykh 
+eksperimentakh v~oblastyakh s~intensivnym ispol'zovaniem dannykh [Estimation of scientific 
+hypotheses quality in virtual experiments in data intensive domains]. \textit{CEUR Workshop 
+Proceedings: 19th Conference (International) on Data Analytics and 
+Management in Data Intensive Domains Selected Papers}. 2022:272--278.
+\bibitem{3-tar} %4
+\Aue{Kovalev, D., L.~Kalinichenko, and S.~Stupnikov.}
+2017. Organization of virtual experiments in data-intensive domains: Hypotheses and workflow 
+specification. \textit{CEUR Workshop Proceedings:  19th Conference 
+(International) on Data Analytics and Management in Data Intensive Domains
+Selected Papers}. 2022:293--300.
+
+\bibitem{5-tar} %5
+\Aue{Demchenko, Y., P.~Grosso, C.~Laat, and P.~Membrey.} 2013. Addressing big data issues in 
+scientific data infrastructure. \textit{Conference (International) on Collaboration Technologies 
+and Systems}. San Diego, CA: IEEE. 48--55.
+
+\bibitem{9-tar} %6
+  \Aue{Porto, F., and B.~Schulze.} 2013. Data management for eScience in Brazil. 
+\textit{Concurr. Comp. Pract.~E.} 25(16):2307--2309.
+
+
+
+\bibitem{7-tar} %7
+  \Aue{Gonсalves, B., F.~Silva, and F.~Porto.} 2014. Upsilon-DB: A~system for data-driven 
+hypothesis management and analytics. arXiv:1411.7419~[cs.DB]. 6~p.
+\bibitem{8-tar} %8
+  \Aue{Kalinichenko, L., S.~Stupnikov, A.~Vovchenko, and D.~Kovalev.} 2014. Rule-based 
+multi-dialect infrastructure for conceptual problem solving over heterogeneous distributed 
+information resources. \textit{New trends in 
+databases and information systems}.
+Eds. B.~Catania, T.~Cerquitelli, S.~Chiusano, \textit{et al.}
+ Advances in intelligent systems and computing ser.  Springer. 241:61--68.
+
+\bibitem{6-tar} %9
+\Aue{Duggan, J., and M.~Brodie.} 2015. Hephaestus: Data reuse for accelerating scientific 
+discovery. \textit{7th Biennial Conference on Innovative Data Systems Research}. 
+Asilomar, CA.  Paper~29. 12~p.
+Available at: {\sf
+http://users.eecs. northwestern.edu/$\sim$jennie/pubs/hephaestus\_full.pdf}
+(accessed June~11, 2019).
+
+\bibitem{10-tar}
+\Aue{Schales, D., X. Hu, J.~Jang, %R.~Sailer, M.~Stoecklin, 
+\textit{et al.}} 2015. FCCE: Highly 
+scalable distributed feature collection and correlation engine for low latency big data analytics. 
+\textit{31st  Conference (International) on Data Engineering}. 
+Seoul, South Korea: IEEE. 
+1316--1327.
+\bibitem{11-tar}
+\Aue{Ly, D., and H.~Lipson.} 2012. Learning symbolic representations of hybrid dynamical 
+systems. \textit{J.~Mach. Learn. Res.} 13:3585--3618.
+\bibitem{12-tar}
+\Aue{Tarasov, Е.} 2016. Sokrashchenie chisla virtual'nykh eks\-pe\-ri\-men\-tov s~pomoshch'u otsenki 
+korrelyatsii pa\-ra\-met\-rov\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+ vzaimodeystvuyushchikh gipotez [Reducing the number of virtual 
+experiments by estimating the correlation parameters of interacting hypotheses]. \textit{CEUR 
+Workshop Proceedings:  18th  Conference (International) on Data Analytics 
+and Management in Data Intensive Domains Selected Papers}. 1752:272--278.
+\bibitem{13-tar}
+\Aue{Goncalves, B., and F.~Porto.} 2015. Managing scientific hypotheses as data with support for 
+predictive analytics. \textit{Comput. Sci. Eng.} 17(5):35--43.
+\bibitem{14-tar}
+  \Aue{Molina, L., L.~Belanche, and A.~Nebot.} 2002. Feature selection algorithms: A~survey 
+and experimental evaluation. \textit{Conference (International) on Data Mining 
+Proceedings}.  IEEE. 306--313.
+\bibitem{15-tar}
+\Aue{Williams, N., S.~Zander, and G.~Armitage.} 2006. A~preliminary performance comparison 
+of five machine learning algorithms for practical IP traffic flow classification. \textit{ACM 
+SIGCOMM Comp. Com.} 36(5):5--16.
+\bibitem{16-tar}
+\Aue{Hall, M.} 1999. Correlation-based feature selection for machine learning. 
+Hamilton, New 
+Zealand: Waikato University, Department of Computer Science. PhD Thesis.
+\bibitem{17-tar}
+\Aue{Porto, F., A.~Moura, B.~Goncalves, R.~Costa, and S.~Spaccapietra.} 2012. A~scientific 
+hypothesis conceptual model. \textit{Advances in conceptual modeling}.
+Eds. S.~Castano, P.~Vassiliadis, L.\,V.\,S.~Lakshmanan, and M.-L.~Lee.
+ Lecture notes in computer science ser. Springer. 7518:101--110.
+\bibitem{18-tar}
+\Aue{Trees, H.} 2013. \textit{Detection, estimation, and modulation theory. Part~I: Detection, 
+estimation, and linear modulation theory}. 2nd ed. Hoboken, NJ: John Wiley \& Sons. 1176~p.
+\bibitem{19-tar}
+  \Aue{Rysak, A., G.~Litak, and R.~Mosdorf.} 2016. Analysis of non-stationary signals by 
+recurrence dissimilarity. \textit{Recurrence plots and their quantifications: Expanding horizons}. 
+Eds. C.\,L.~Webber, Jr., C.~Ioana, and N.~Marwan.
+Springer proceedings in physics ser. Springer. 180:65--90.
+  \bibitem{20-tar}
+  \Aue{Brennen, C.} 2005. \textit{Fundamentals of multiphase flow}. New York, NY: Cambridge 
+University Press. 410~p.
+\bibitem{21-tar}
+\Aue{Czekaj, M., A.~Robin, F.~Figueras, X.~Luri, and M.~Haywood.} 2014: The Besancon 
+Galaxy Model renewed. Constraints on the local star formation history from Tycho data. 
+\textit{Astron. Astrophys.} 564:A102. 20~p.
+\bibitem{22-tar}
+\Aue{Robin, A., and M.~Creze.} 1986. Stellar populations in the Milky Way~---
+a~synthetic model. 
+\textit{Astron. Astrophys.} 157(1):71--90.
+\bibitem{23-tar}
+\Aue{Robin, A., C.~Reyle, S.~Derriere, and S.~Picaud.} 2003. A~synthetic view on structure and 
+evolution of the Milky Way. \textit{Astron. Astrophys.} 409(2):523--540.     
+
+\end{thebibliography} } }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received November 13, 2018}}
+
+\vspace*{-28pt}
+
+
+
+
+\Contr
+
+\vspace*{-2pt}
+
+\noindent
+\textbf{Kovalev Dmitry Y.} (b.\ 1988)~--- junior scientist, Institute of 
+Informatics Problems, Federal Research Center ``Computer Science and 
+Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., 119333 Moscow, 
+Russian Federation; \mbox{dkovalev@ipiran.ru}
+      
+      \vspace*{2pt}
+      
+      \noindent
+      \textbf{Tarasov Evgeny A.} (b.\ 1987)~--- programmer, Institute of 
+Informatics Problems, Federal Research Center ``Computer Science and Control'' of 
+the Russian Academy of Sciences, 44-2~Vavilov Str., 119333 Moscow, Russian 
+Federation; \mbox{e.tarasov@outlook.com}
+ 
+
+
+\vspace*{6pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+\vspace*{-8pt}
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\def\tit{ВИРТУАЛЬНЫЕ ЭКСПЕРИМЕНТЫ В~ИССЛЕДОВАНИЯХ С~ИНТЕНСИВНЫМ 
+ИСПОЛЬЗОВАНИЕМ ДАННЫХ$^*$\\[-7pt]}
+
+\def\titkol{Виртуальные эксперименты в~исследованиях с~интенсивным 
+использованием данных}
+
+\def\aut{Д.\,Ю.~Ковалёв, Е.\,А.~Тарасов\\[-7pt]}
+
+\def\autkol{Д.\,Ю.~Ковалёв, Е.\,А.~Тарасов}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Исследование выполнено при частичной финансовой поддержке
+РФФИ (проект 18-07-01434~А).}}
+
+
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-22pt}
+
+\noindent
+Институт проблем информатики Федерального исследовательского центра 
+<<Информатика и~управление>> Российской академии наук
+
+
+\vspace*{-1pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 13\ \ \ выпуск\ 2\ \ \ 2019}
+}%
+ \def\rightfootline{\small{ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 13\ \ \ выпуск\ 2\ \ \ 2019
+\hfill \textbf{\thepage}}}
+
+\vspace*{1pt}
+
+%\vspace*{-3pt}
+
+\Abst{Организация и управление виртуальными экспериментами в~исследованиях 
+с~интенсивным использованием данных широко изучались в~последние годы. Авторы 
+рассматривают существующие подходы к~работе с~виртуальными экспериментами 
+и~гипотезами и~анализируют управление виртуальными экспериментами на примере 
+из области астрономии. Проведен обзор существующих систем, которые могут 
+выступать в~качестве платформ для проведения виртуального эксперимента. Были 
+представлены требования к~системе для организации виртуальных экспериментов 
+в~областях с~интенсивным использованием данных, а~также представлена общая 
+структура и~функциональность для систем, выполняющих виртуальные эксперименты. 
+Обсуждаются взаимосвязи между гипотезами и~моделями в~виртуальном 
+эксперименте. Также авторы иллюстрируют, как концептуально моделировать 
+виртуальные эксперименты, соответствующие гипотезы и~модели. Обсуждаются 
+потенциальные преимущества и~недостатки предлагаемого подхода, включая 
+поддержание согласованности эксперимента и уменьшение потенциального числа 
+экспериментов.}
+
+\KW{виртуальный эксперимент; гипотезы; концептуальное моделирование; 
+исследования с~интенсивным использованием данных}
+
+ \DOI{10.14357/19922264190216}
+
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily Литература}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+{\baselineskip=10.5pt
+\begin{thebibliography}{99}
+%\vspace*{-3pt}
+
+  \bibitem{1-tar-1}
+  \Au{Hey~T., Tansley~S., Tolle~K.} The fourth paradigm: Data-intensive scientific  
+discovery.~--- Redmond, WA, USA: Microsoft Research, 2009. 284~p.
+  \bibitem{2-tar-1}
+  \Au{Kalinichenko L., Kovalev~D., Kovaleva~D., Malkov~O.} Methods and tools for
+   hypothesis-driven research support: A~survey~// Информатика и~ее применения, 2015. Т.~9. Вып.~1. 
+С.~28--54.
+
+\bibitem{4-tar-1}
+  \Au{Тарасов~Е., Ковалёв~Д.} Оценка качества научных гипотез в виртуальных 
+экспериментах в областях с интенсивным использованием данных~// CEUR Workshop 
+Proceedings:  19th Conference (International) on Data 
+Analytics and Management in Data Intensive Domains
+Selected Papers, 2017. Vol.~2022. P.~272--278.
+
+  \bibitem{3-tar-1}
+  \Au{Kovalev D., Kalinichenko~L., Stupnikov~S.} Organization of virtual experiments in  
+data-intensive domains: Hypotheses and workflow specification~//
+ CEUR Workshop Proceedings: 19th Conference (International)  on Data Analytics and 
+Management in Data Intensive Domains Selected Papers, 2017.  Vol.~2022. P.~293--300.
+  
+  \bibitem{5-tar-1}
+  \Au{Demchenko Y., Grosso~P., Laat~C., Membrey~P.} Addressing big data issues in scientific 
+data infrastructure~// Conference (International) on Collaboration Technologies and Systems.~---
+San Diego, CA, USA: IEEE, 2013. P.~48--55.
+
+\bibitem{9-tar-1} %6
+  \Au{Porto F., Schulze B.} Data management for eScience in Brazil~// Concurr.  
+Comp. Pract.~E., 2013. Vol.~25. Iss.~16. P.~2307--2309.
+
+
+
+  \bibitem{7-tar-1}
+  \Au{Gonсalves B., Silva~F., Porto~F.} Upsilon-DB: A~system for data-driven hypothesis 
+management and analytics~// arXiv:1411.7419 [cs.DB], 2014. 6~p.
+  \bibitem{8-tar-1}
+  \Au{Kalinichenko L., Stupnikov~S., Vovchenko~A., Kovalev~D.} Rule-based multi-dialect 
+infrastructure for conceptual problem solving over heterogeneous distributed information 
+resources~//  New trends in 
+databases and information systems~/
+Eds. B.~Catania, T.~Cerquitelli, S.~Chiusano, \textit{et al.}~---
+Advances in intelligent systems and computing ser.~---
+Springer, 2014. Vol.~241.  P.~61--68.
+
+\bibitem{6-tar-1} %9
+  \Au{Duggan J., Brodie~M.} Hephaestus: Data reuse for accelerating scientific discovery~// 7th 
+Biennial Conference on Innovative Data Systems Research.~--- Asilomar, CA, USA,
+2015.  Paper~29. 12~p.
+{\sf
+http://users.eecs. northwestern.edu/$\sim$jennie/pubs/hephaestus\_full.pdf}.
+  
+  \bibitem{10-tar-1}
+  \Au{Schales D., Hu X., Jang~J., 
+  %Sailer~R., Stoecklin~M., 
+  \textit{et al.}} FCCE: Highly scalable 
+distributed feature collection and correlation engine for low latency big data analytics~// 31st  
+Conference (International) on Data Engineering.~---
+Seoul, South Korea: IEEE, 2015. P.~1316--1327.
+  \bibitem{11-tar-1}
+  \Au{Ly D., Lipson~H.} Learning symbolic representations of hybrid dynamical systems~// 
+J.~Mach. Learn. Res., 2012. Vol.~13. P.~3585--3618.
+  \bibitem{12-tar-1}
+  \Au{Тарасов~Е.} Сокращение числа виртуальных экспериментов с помощью оценки 
+корреляции параметров взаимодействующих гипотез~// CEUR Workshop Proceedings: 
+18th  Conference (International) on Data Analytics and 
+Management in Data Intensive Domains Selected Papers, 2016. Vol.~1752. P.~272--278.
+  \bibitem{13-tar-1}
+  \Au{Goncalves B., Porto~F.} Managing scientific hypotheses as data with support for predictive 
+analytics~// Comput. Sci. Eng., 2015. Vol.~17. Iss.~5. P.~35--43.
+  \bibitem{14-tar-1}
+  \Au{Molina L., Belanche~L., Nebot~A.} Feature selection algorithms: 
+  A~survey and experimental 
+evaluation~// Conference (International)  on Data Mining Proceedings.~--- IEEE, 2002. 
+P.~306--313.
+  \bibitem{15-tar-1}
+  \Au{Williams N., Zander~S., Armitage~G.} A~preliminary performance comparison of five 
+machine learning algorithms for practical IP traffic flow classification~// ACM SIGCOMM 
+Comp. Com., 2006. Vol.~36. Iss.~5. P.~5--16.
+  \bibitem{16-tar-1}
+  \Au{Hall M.} Correlation-based feature selection for machine learning.~--- Hamilton, New 
+Zealand: Waikato University, Department of Computer Science, 1999. PhD Thesis.
+  \bibitem{17-tar-1}
+  \Au{Porto F., Moura~A., Goncalves~B., Costa~R., Spaccapietra~S.} A~scientific hypothesis 
+conceptual model~// Advances in conceptual modeling~/
+Eds. S.~Castano, P.~Vassiliadis, L.\,V.\,S.~Lakshmanan, M.-L.~Lee.~--- Lecture notes in computer 
+science ser.~--- Springer, 2012. Vol.~7518. P.~101--110.
+  \bibitem{18-tar-1}
+  \Au{Trees H.} Detection, estimation, and modulation theory. Part~I: Detection, estimation, and 
+linear modulation theory.~--- 2nd ed.~--- Hoboken, NJ, USA: John Wiley \& Sons, 2013. 1176~p.
+  \bibitem{19-tar-1}
+  \Au{Rysak A., Litak~G., Mosdorf~R.} Analysis of non-stationary signals by recurrence 
+dissimilarity~//  Recurrence plots and their quantifications: Expanding horizons.~--- 
+Eds. C.\,L.~Webber, Jr., C.~Ioana, N.~Marwan.~--- Springer 
+proceedings in physics ser.~--- Springer, 2016. Vol.~180. P.~65--90.
+  \bibitem{20-tar-1}
+  \Au{Brennen C.} Fundamentals of multiphase flow.~--- New York, NY, USA: Cambridge 
+University Press, 2005. 410~p.
+  \bibitem{21-tar-1}
+  \Au{Czekaj M., Robin A., Figuera~ F., Luri~X., Haywood~M.} The Besancon Galaxy model 
+renewed. Constraints on the local star formation history from Tycho data~// Astron.  
+Astrophys., 2014. Vol.~564. Art.\,A102. 20~p.
+  \bibitem{22-tar-1}
+  \Au{Robin A., Creze M.} Stellar populations in the Milky Way~--- a~synthetic model~// 
+Astron. Astrophys., 1986. Vol.~157. No.\,1. P.~71--90.
+  \bibitem{23-tar-1}
+  \Au{Robin A., Reyle C., Derriere~S., Picaud~S.} A~synthetic view on structure and evolution of 
+the Milky Way~// Astron. Astrophys., 2003. Vol.~409. No.\,2. P.~523--540.
+      
+
+\end{thebibliography}
+} }
+
+\end{multicols}
+
+ \label{end\stat}
+
+ \vspace*{-9pt}
+
+\hfill{\small\textit{Поступила в~редакцию 13.11.2018}}
+
+
+%\renewcommand{\bibname}{\protect\rm Литература}
+\renewcommand{\figurename}{\protect\bf Рис.}
+\renewcommand{\tablename}{\protect\bf Таблица}
+      

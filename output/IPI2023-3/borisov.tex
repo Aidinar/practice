@@ -1,0 +1,808 @@
+\newcommand{\me}[2]{\mathsf{E}_{ #1 }\left\{ \mathop{#2} \right\} }
+
+\def\stat{borisov}
+
+\def\tit{РЫНОК С МАРКОВСКОЙ СКАЧКООБРАЗНОЙ ВОЛАТИЛЬНОСТЬЮ II: АЛГОРИТМ ВЫЧИСЛЕНИЯ СПРАВЕДЛИВОЙ ЦЕНЫ ДЕРИВАТИВОВ$^*$}
+
+\def\titkol{Рынок с~марковской скачкообразной волатильностью II: алгоритм вычисления справедливой цены деривативов}
+
+\def\aut{А.\,В.~Борисов$^1$}
+
+\def\autkol{А.\,В.~Борисов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Борисов А.\,В.}
+\index{Borisov A.\,V.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнялась с~использованием инфраструктуры Центра коллективного пользования <<Высокопроизводительные вы\-чис\-ле\-ния и~большие данные>> 
+(ЦКП <<Информатика>>) ФИЦ ИУ РАН (г.~Москва).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук;
+\mbox{aborisov@frccsc.ru}}
+
+\vspace*{-8pt}
+
+
+
+
+\Abst{Вторая часть цикла посвящена численной реализации задачи моделирования справедливой цены производных финансовых инструментов (деривативов) в~модели 
+неполного рынка с~мар\-ков\-ской скач\-ко\-об\-раз\-ной во\-ла\-тиль\-ностью. Концепция рыночной цены рис\-ка, рас\-про\-стра\-нен\-ная 
+в~Runggaldier (2004) на класс рисковых базовых 
+активов, поз\-во\-ли\-ла в~первой части цикла получить сис\-те\-му дифференциальных уравнений в~част\-ных производных, опи\-сы\-ва\-ющих временную эволюцию цены 
+деривативов как функцию текущей цены базового актива и~скрытой во\-ла\-тиль\-ности~--- обобщение классического уравнения Блэ\-ка--Шоул\-за. В~отличие от 
+по\-след\-не\-го, полученная сис\-те\-ма не допускает аналитического решения. Для этого в~работе предложено использовать при\-бли\-жен\-но-ана\-ли\-ти\-че\-ский метод 
+дроб\-ных шагов. Временная шкала разбивается сеткой, и~иско\-мое решение ап\-прок\-си\-ми\-ру\-ет\-ся комбинацией решений классического уравнения 
+теп\-ло\-про\-вод\-ности и~сис\-те\-мы обыкновенных линейных дифференциальных уравнений. Свойства полученных решений уравнений и~смоделированных с~их по\-мощью 
+цен деривативов про\-ил\-люст\-ри\-ро\-ва\-ны комплексом чис\-лен\-ных экспериментов.}
+
+\KW{марковский скачкообразный процесс; оптимальная фильт\-ра\-ция; стохастическая во\-ла\-тиль\-ность; рыночная цена риска; 
+пре\-об\-ла\-да\-ющая мартингальная мера}
+
+ \DOI{10.14357/19922264230303}{DNXJGB}
+  
+\vspace*{-4pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Необходимые сведения и~постановка задачи}
+
+В цикле рассматривается модель неполного финансового рынка со сто\-ха\-сти\-че\-ской во\-ла\-тиль\-ностью, со\-сто\-яще\-го из банковского вкла\-да 
+с~детерминированной став\-кой~$r_t$,  $N$ базовых финансовых инструментов~$S$ и~$M$ производных \mbox{финансовых} инструментов (деривативов)~$F$, 
+опре\-де\-ля\-емых платежным требованием~$H(S)$. Сто\-ха\-сти\-че\-ская во\-ла\-тиль\-ность определяется внеш\-ним скрытым марковским скачкообразным процессом (МСП) 
+
+\noindent
+$$
+Z_t \triangleq \mathrm{col}\,(Z_t^1, \ldots, Z_t^L) \in \{e_1,\ldots, e_L\}
+$$ 
+с~мат\-рич\-но\-знач\-ной функцией
+ ин\-тен\-сив\-ности переходов $\Lambda(\cdot)$ и~начальным распределением $\pi_0^Z$.
+Этот процесс является единственным сильным решением линейной сто\-ха\-сти\-че\-ской дифференциальной сис\-те\-мы (СДС) с~мартингалом $M_t$ в~правой \mbox{части}:
+
+\noindent
+\begin{equation}
+  dZ_t = \Lambda^{\top}(t)Z_t\,dt + dM_t,\enskip t \in (0,T], \enskip Z_0 \sim \pi_0^Z.
+  \label{eq:Z_sys}
+  \end{equation}
+
+Эволюция цен базовых финансовых активов $S_t \hm\triangleq \mathrm{col}\,(S_t^1,\ldots,S_t^N)$  задается единственным силь\-ным
+решением~СДС
+
+\columnbreak
+
+\noindent
+  \begin{multline}
+  dS_t = \mathrm{diag}\, S_t a(t,Z_t)\,dt + \mathrm{diag}\,S_t \sigma(t,Z_t)\,dw_t,\\
+  t \in (0,T], \quad S_0 \sim \pi_0^{S},
+  \label{eq:S_sys_P}
+  \end{multline}
+  где $w_t \triangleq \mathrm{col}\left (w_t^1,\ldots,w_t^K\right)$~--- $K$-мер\-ный стандартный винеровский процесс ($K \hm\geqslant N$), 
+  а~случайные функции мгновенной процентной став\-ки~$a$ и~внут\-рен\-ней во\-ла\-тиль\-ности~$\sigma$ <<модулируются>> МСП~$Z_t$~как
+  
+  \noindent
+  $$
+  a(t,Z_t) = \sum\limits_{\ell=1}^L Z_t^{\ell} a^{\ell}(t); \enskip  \sigma(t,Z_t) = \sum\limits_{\ell=1}^L Z_t^{\ell}  \sigma^{\ell}(t)
+$$
+с известными наборами детерминированных функций $\{a^{\ell}(t)\}_{\ell=\overline{1,L}}$  и~$\{\sigma^{\ell}(t)\}_{\ell=\overline{1,L}}$.
+
+Срок погашения всех деривативов совпадает с~$T$, погашение происходит в~соответствии с~пла\-теж\-ным требованием 
+$$
+H(S_T) \triangleq \mathrm{col}\,(H^1(S_T), \ldots, H^M(S_T)).
+$$
+
+Концепция рыночной цены риска, рас\-про\-стра\-нен\-ная в~[1] на класс рис\-ко\-вых базовых активов, поз\-во\-ли\-ла в~\cite{B_23_1_IA} доказать, что в~условиях 
+без\-ар\-бит\-раж\-ности данного рынка при наличии мартингальной меры спра\-вед\-ли\-вая цена~$F^m$ $m$-го дериватива определяется фор\-мулой:
+
+\pagebreak
+
+\noindent
+\begin{equation}
+F^m = F^m \left(t, S_t, Z_t\right) = \sum\limits_{\ell=1}^L Z_t^{\ell} F^{m\ell} \left(t, S_t\right),
+\label{eq:F_m_expl}
+\end{equation}
+а функции $\{F^{m\ell} (t, s)\}_{\ell = \overline{1,L}}$ являются решением задачи Коши для сле\-ду\-ющей 
+сис\-те\-мы дифференциальных уравнений в~част\-ных про\-из\-вод\-ных:
+\begin{equation}
+\left.
+\begin{array}{l}
+\displaystyle F_t^{m\ell} = rF^{m\ell} - \sum\limits_{j=1}^L \Lambda^{\ell j}F^{mj} - {}\\[6pt]
+\displaystyle {}-\sum\limits_{n=1}^N F_{s^n}^{m\ell}s^n(r-a_n^{\ell} ) - \fr{1}{2} \sum\limits_{i,j=1}^N s^is^j F_{s^i,s^j}^{m\ell}B_{ij}^{\ell},\\[9pt]
+  \hspace*{19mm}\ell=\overline{1,M}, \enskip m=\overline{1,M}, \enskip t \in [0,T];\\[6pt]
+F^{m\ell}(T,s) = H^m(s),
+\label{eq:F_m_eq}
+\end{array}
+\right\}
+\end{equation}
+где 
+$$
+B^{\ell} = \left\|B_{ij}^{\ell}\right\|_{i,j=\overline{1,N}} \hm\triangleq \sigma^{\ell}\left( \sigma^{\ell} \right)^{\top}.$$
+Эти сис\-те\-мы могут трактоваться как некоторые обобщения классического уравнения
+Блэ\-ка--Шоул\-за. При этом цены~$F^m$ допускают сле\-ду\-ющий сто\-ха\-сти\-че\-ский диф\-фе\-рен\-циал:
+  \begin{multline}
+dF^{m} =
+ \sum\limits_{\ell=1}^L Z^{\ell}
+ \Bigg[
+ r F^{m\ell} + \sum\limits_{n=1}^N F_{s^n}^{m\ell} S^n(a_n^{\ell} - r)
+ \Bigg]dt + {}\\
+ {}+  \sum\limits_{\ell=1}^L F^{m\ell}\,dM^{\ell} +
+ \sum\limits_{\ell=1}^L Z^{\ell} \sum\limits_{n=1}^N \sum\limits_{k=1}^K F_{s^n}^{m\ell} S^n \sigma_{nk}^{\ell}\,dw^k, \\
+ m=\overline{1,M}, \enskip
+ {\ell}=\overline{1,L}, \enskip
+ F^{m\ell}= F^{m\ell}(t,S_t).
+\label{eq:F_m_obs}
+\end{multline}
+Задача данной статьи заключается в~разработке алгоритма моделирования цены деривативов. Сто\-ха\-сти\-че\-ский дифференциал~(\ref{eq:F_m_obs}) 
+не подходит для этой цели: он необходим при решении задачи оценивания со\-сто\-яния скрытого МСП по наблюдениям~$S$ и~$F$, 
+что станет предметом исследований по\-сле\-ду\-ющих час\-тей цикла. Генерация траекторий деривативов выполняется только с~по\-мощью~(\ref{eq:F_m_expl}) 
+и~(\ref{eq:F_m_eq}), поэтому решение сис\-те\-мы~(\ref{eq:F_m_eq}) пред\-став\-ля\-ет\-ся актуальной задачей.
+
+\section{Применение алгоритма дробных шагов при~решении обобщения уравнения Блэка--Шоулза}
+
+Вообще говоря, (\ref{eq:F_m_eq}) пред\-став\-ля\-ет собой со\-во\-куп\-ность~$M$ независимых под\-сис\-тем с~$L$~уравнениями в~каж\-дой, 
+причем внут\-ри каждой  под\-сис\-те\-мы уравнения не могут быть разделены. При этом все урав\-не\-ния относятся к~классу урав\-не\-ний теп\-ло\-про\-вод\-ности.
+
+Для упрощения пред\-став\-ле\-ния алгоритма решения~(\ref{eq:F_m_eq}) методом дроб\-ных шагов сделаем сле\-ду\-ющие до\-пу\-щения.
+\begin{enumerate}
+\item
+Матрица интенсивностей переходов~$\Lambda$,
+банковский процент~$r$, мгновенные процентные став\-ки по базовым активам~$a$ и~внут\-рен\-ние волатильности~$\sigma$ не зависят от времени:
+$$
+\Lambda(t) \equiv \Lambda\,;\enskip r_t \equiv r\,;\enskip a^{\ell}(t) \equiv a^{\ell};\enskip \sigma^{\ell}(t) \equiv  \sigma^{\ell}.
+$$
+\item
+Платежные требования~$H^m(s^1,\ldots,s^N)$, со\-от\-вет\-ст\-ву\-ющие отдельным деривативам, определяются одним базовым активом, т.\,е.\
+ для любого $1 \hm\leqslant m \hm \leqslant M$ существует такой номер $1 \hm\leqslant n_m \hm\leqslant N$, что $H^m(s)\hm = H^{m}(s^{n_m})$.
+\end{enumerate}
+Сделанные предположения не слишком обременительны. Во-пер\-вых, постоянство коэффициентов требуется лишь на отрезках дискретизации по времени. 
+Порядок длины этого отрезка для расчетов не превышает~1~ч (т.\,е.~0,001 при нормировании к~году), 
+и~на нем указанные характеристики весьма близ\-ки к~константам. Во-вто\-рых, большинство реальных деривативов, например европейских опционов, 
+строятся на отдельных базовых активах, а~не на их комбинациях.
+
+Рассмотрим один дериватив и~по\-рож\-да\-ющий его базовый актив. 
+Для прос\-то\-ты записи будем опускать за\-ви\-си\-мость от индексов: номера дериватива~$m$ и~базового актива~$n$. Используя обо\-зна\-чения
+\begin{gather*}
+\overline{F} \triangleq \mathrm{col}\left(F^1(t,s), \ldots, F^L(t,s)\right); \\
+\overline{F}(t) \triangleq \mathrm{col}\left (F^1(t,\cdot), \ldots, F^L(t,\cdot)\right); \\
+\overline{H} \triangleq \mathrm{col}\left(H(\cdot), \ldots, H(\cdot)\right);
+\\
+A \triangleq \mathrm{diag}\left (a^1,\ldots, a^L\right), \enskip B \triangleq \mathrm{diag}\left(B^1,\ldots, B^L\right);
+\\
+\overline{F}_t \triangleq \fr{\partial}{\partial t} \overline{F} (t,s); \\
+\mathcal{L}_1\overline{F} \triangleq
+\left[
+r - (rI-A)s\fr{\partial}{\partial s} - \fr{1}{2}\, B s^2\fr{\partial^2}{\partial s^2}
+\right] \overline{F}\,; \\
+ \mathcal{L}_2\overline{F} \triangleq - \Lambda \overline{F},
+\end{gather*}
+однородную задачу Коши~(\ref{eq:F_m_eq}) мож\-но записать в~\mbox{виде}
+\begin{equation*}
+\overline{F}_t = \left( \mathcal{L}_1 + \mathcal{L}_2 \right)\overline{F}, \enskip
+t \in [0,T), \enskip
+\overline{F}(T,s) =\overline{H}(s) ,
+%\label{eq:Cauchy}
+\end{equation*}
+и ее решение будет пред\-ста\-ви\-мо в~\mbox{виде}
+\begin{equation*}
+\overline{F}(t) = \mathfrak{L}(t,T)\overline{H}\,,
+%\label{eq:Cauchy_sol}
+\end{equation*}
+где $\mathfrak{L}(t,T)$~--- линейный оператор перехода на промежутке $[t,T]$, со\-от\-вет\-ст\-ву\-ющий дифференциальному оператору $ \left( \mathcal{L}_1 
+\hm+ \mathcal{L}_2 \right)$. Для данной задачи Коши выполнен прин\-цип Ада\-мара:
+\begin{equation*}
+\overline{F}(t) =  \mathfrak{L}(t,\tau) \overline{F}(\tau) \ \mbox{для любых} \ 0 < t \leqslant \tau \leqslant T\,,
+%\label{eq: Hadamard}
+\end{equation*}
+который можно положить в~основу рекуррентной процедуры вы\-чис\-ле\-ния решения~$\overline{F}$ на временн$\acute{\mbox{о}}$й сетке 
+$\{t_j\}_{i=\overline{1,J}}$: $t_j \hm= j h$, $h = {T}/{J}$:
+\begin{multline}
+\overline{F}(t_{j-1}) =  \mathfrak{L}(t_{j-1},t_j) \overline{F}(t_j), \\[2pt]
+ j=\overline{1,J}\,, \enskip \overline{F}(t_J,s) = \overline{H}(s).
+\label{eq:grid_L}
+\end{multline}
+Поиск оператора~$\mathfrak{L}(t,T)$ пред\-став\-ля\-ет\-ся не\-три\-ви\-аль\-ной задачей, и~исход\-ную задачу Коши мож\-но решать 
+с~по\-мощью различных вариантов метода конечных разностей~\cite{TS_04}. В~данной работе предлагается решать ее методом дроб\-ных шагов~\cite{Ya_67}. 
+Для этого рас\-смот\-рим две вспомогательные од\-но\-род\-ные задачи \mbox{Коши}:
+\begin{alignat}{3}
+\overline{R}_t &= \mathcal{L}_1 \overline{R}, &\quad t &\in [0,T), &\quad
+\overline{R}(T,s) &=\overline{H}_R(s);
+\label{eq:Cauchy_1}
+\\[2pt]
+\overline{Q}_t &=  \mathcal{L}_2 \overline{Q}, &\quad
+t &\in [0,T), &\quad
+\overline{Q}(T,s) &=\overline{H}_Q(s),
+\label{eq:Cauchy_2}
+\end{alignat}
+решения которых так\-же могут быть выражены через со\-от\-вет\-ст\-ву\-ющие операторы перехода~$\mathfrak{L}_1$ и~$\mathfrak{L}_2$ 
+(ниже они также пред\-став\-ле\-ны в~форме принципа Ада\-мара):
+\begin{equation*}
+\overline{R}(t) =  \mathfrak{L}_1(t,\tau) \overline{R}(\tau)\,;\enskip
+\overline{Q}(t) =  \mathfrak{L}_2(t,\tau) \overline{Q}(\tau)
+%\label{eq: Hadamard}
+\end{equation*}
+для любых $0 < t \leqslant \tau \leqslant T$.
+
+Решение~(\ref{eq:grid_L}) $\{\overline{F}(t_j,s)\}_{j=\overline{0,J}}$ предлагается ап\-прок\-си\-ми\-ро\-вать, используя вмес\-то~$\mathfrak{L}$ композицию 
+переходных операторов~$\mathfrak{L}_1$ и~$\mathfrak{L}_2$:
+\begin{multline}
+\widetilde{F}(t_{j-1}) =  \mathfrak{L}_2(t_{j-1},t_j) \mathfrak{L}_1(t_{j-1},t_j)
+\widetilde{F}(t_j), \\[2pt]
+ j=\overline{1,J}, \quad \widetilde{F}(t_J) = \overline{H}\,.
+\label{eq:grid_L_app}
+\end{multline}
+Операторы $\mathfrak{L}_1$ и~$\mathfrak{L}_2$ могут быть легко найдены.
+
+Все уравнения сис\-те\-мы~(\ref{eq:Cauchy_1}) независимы, и~они могут быть преобразованы к~стандартному уравнению теп\-ло\-про\-вод\-ности так же, 
+как это сделано для классического урав\-не\-ния Блэ\-ка--Шоул\-за~\cite{Sh_98}. Рас\-смот\-рим одну из таких задач Коши (индекс~$\ell$ опус\-тим для 
+прос\-то\-ты за\-писи)
+\begin{multline}
+R_t(t,s) = rR(t,s) - (r - a)sR_s(t,s) - \fr{b}{2}\,s^2R_{ss}(t,s), \\[2pt]
+ 0 \leqslant t < T\,,
+\quad R(T,s) = H_R(s),
+\label{eq:Cauchy_3}
+\end{multline}
+и решим ее с~по\-мощью сле\-ду\-ющей по\-сле\-до\-ва\-тель\-ности за\-мен.
+\begin{enumerate}[1.]
+\item
+Искомая функция $R$ заменяется на~$V$:
+$V(t,s) \triangleq$\linebreak $\triangleq e^{r(T-t)} R(t,s)$.
+Задача Коши~(\ref{eq:Cauchy_3}) для новой функции~$V$ при\-ни\-ма\-ет~вид:
+\begin{multline}
+V_t(t,s) =  - (r - a)sV_s(t,s) - \fr{b}{2} \,s^2V_{ss}(t,s), \\[2pt]
+ 0 \leqslant t < T\,,
+\quad V(T,s) = H_R(s).\\[-30pt]
+\label{eq:Cauchy_4}
+\end{multline}
+\end{enumerate}
+
+\columnbreak
+
+\begin{enumerate}[1.]
+\setcounter{enumi}{1}
+\item
+Вводится новая переменная $\tau(t) \hm= T\hm-t$ и~функция $U(\tau(t),s)\hm \triangleq V(t,s)$. Задача Коши~(\ref{eq:Cauchy_4}) для~$U$ при\-ни\-ма\-ет~вид:
+\begin{multline}
+U_{\tau}(\tau,s) =  (r - a)sU_s(\tau,s) + \fr{b}{2}\,s^2U_{ss}(\tau,s), \\
+ 0 < \tau \leqslant T\,,
+\quad U(0,s) = H_R(s).
+\label{eq:Cauchy_5}
+\end{multline}
+\item
+Вводится новая переменная $x(\tau,s) \hm= \ln s\hm + (r-a-({b}/{2}))\tau$ и~функция $G(\tau,x(\tau,s)) \hm\triangleq U(\tau,s)$. 
+Задача Коши~(\ref{eq:Cauchy_5}) для~$G$ при\-ни\-ма\-ет~вид:
+
+\vspace*{-3pt}
+
+\noindent
+\begin{multline}
+G_{\tau}(\tau,x) =  \fr{b}{2}\,x^2G_{xx}(\tau,x), \\
+ 0 < \tau \leqslant T\,,
+\quad G(0,x(0,s)) = H_R(s).
+\label{eq:Cauchy_5-1}
+\end{multline}
+
+\vspace*{-3pt}
+
+\noindent
+Решение~(\ref{eq:Cauchy_5-1}) из\-вестно:
+\begin{equation*}
+G(\tau,x) =  \int\limits_{-\infty}^{\infty} \Phi (\tau, x-y)H_R(y)\, dy\,,
+%\label{eq:Cauchy_5_sol}
+\end{equation*}
+
+\vspace*{-3pt}
+
+\noindent
+где
+$$
+\Phi (u,x) \triangleq \fr{1}{\sqrt{2\pi b u}} \exp \left(- \fr{x^2}{2bu} \right).
+$$
+\end{enumerate}
+
+\vspace*{-3pt}
+
+\noindent
+Производя обратные под\-ста\-нов\-ки, мож\-но получить окончательный покомпонентный вид переходного оператора $\mathfrak{L}_1
+\hm= \mathrm{col}\,(\mathfrak{L}_1^1,\ldots,\mathfrak{L}_1^L)$ на одном временн$\acute{\mbox{о}}$м \mbox{шаге}:
+
+\vspace*{-3pt}
+
+\noindent
+\begin{multline*}
+\mathfrak{L}_1^{\ell}(t_{j-1},t_j) R^{\ell} \triangleq{}\\
+{}\triangleq
+e^{-rh} \int\limits_0^{\infty}
+\fr{\Phi(h, \ln {s}/{y}  +
+(r- a^{\ell} - {B^{\ell}}/{2} )h)}{y}\,R^{\ell}(y)\,dy\,, \\
+ \ell = \overline{1,L}\,.
+%\label{eq:L1_expl}
+\end{multline*}
+
+\vspace*{-3pt}
+
+Система~(\ref{eq:Cauchy_2}) со\-сто\-ит из однородных обыкновенных линейных дифференциальных урав\-не\-ний,
+оператор перехода~$\mathfrak{L}_2$ для нее определен сле\-ду\-ющим об\-ра\-зом:
+\begin{equation*}
+\mathfrak{L}_2(t_{j-1},t_j)Q = e^ {-h \Lambda }Q 
+%\label{eq:L2_expl}
+\end{equation*}
+\mbox{для любых} $0 \leqslant  t  \leqslant \tau  \leqslant T$.
+
+Окончательно рекуррентная процедура~(\ref{eq:grid_L_app}) послойного вы\-чис\-ле\-ния при\-бли\-жен\-но\-го решения~$\overline{F}$ при\-ни\-ма\-ет~вид
+
+\vspace*{-3pt}
+
+\noindent
+\begin{multline}
+\widetilde{F}(t_{j-1},s) =
+e^{-h(rI+\Lambda)} \int\limits_0^{\infty}\Psi(s,y)
+\widetilde{F}(t_j,y)\,dy, \\ 
+j=\overline{1,J}\,, \quad \widetilde{F}(t_J,s) = \overline{H}(s)\,,
+\label{eq:grid_L_app_expl}
+\end{multline}
+
+
+\noindent
+где
+
+\columnbreak
+
+%\vspace*{-6pt}
+
+\noindent
+\begin{multline*}
+\Psi(s,y) \triangleq
+\mathrm{diag} 
+\left(\fr{1}{y\sqrt{2\pi B^1 h}}\times{}\right.\\
+{}\times e^{- ({\left( \ln {s}/{y}  +
+(r- a^1 - {B^1}/{2} )h\right)^2})/({2B^1h})},\ldots \\
+\left.\ldots,
+\fr{1}{y\sqrt{2\pi B^L h}}\, e^{- ({\left( \ln {s}/{y}  +
+(r- a^L - {B^L}/{2} )h\right)^2})/(2B^Lh) }
+\right)\!.\hspace*{-1.81146pt}
+\end{multline*}
+Интеграл (\ref{eq:grid_L_app_expl}) не может быть вы\-чис\-лен аналитически и~заменяется некоторой аппроксимацией.
+В~данном цик\-ле работ используется метод трапеций с~рав\-но\-мер\-ной сеткой с~шагом~$\Delta$. 
+Об\-ласть интегрирования~--- положительная полуось~--- заменяется конечным отрезком $[\underline{s},\overline{s}]$, который выбирается, исходя из условия
+$
+{\sf E}\left\{S_T (1 - \mathbf{I}_{[\underline{s},\overline{s}]}(S_T))\right\} \hm\leqslant \Delta^2$. 
+В~этом случае аппроксимация~$\widetilde{F}$ обеспечивает на каж\-дом шаге точ\-ность вы\-чис\-ле\-ния слоя $O(h^2\hm+ \Delta^2)$~\cite{Ya_67}. 
+Сле\-ду\-ющий раздел содержит результаты чис\-лен\-но\-го эксперимента, ил\-люст\-ри\-ру\-юще\-го качество предложенного алгоритма 
+вы\-чис\-ле\-ния справедливой цены дериватива и~его совместное поведение с~базовым ак\-тивом.
+
+\vspace*{-2pt}
+
+\section{Комплекс численных экспериментов}
+
+\vspace*{-2pt}
+
+
+Первый эксперимент посвящен чис\-лен\-но\-му анализу эволюции  во времени функций~$\{F^{\ell}\}$.
+Па\-ра\-мет\-ры финансовой сис\-те\-мы в~данном примере искусственно выбраны так, 
+чтобы на\-гляд\-но продемонстрировать разницу~$F^{\ell}$ для разных значений~$\ell$.
+
+На отрезке времени $[0,1]$ (1~год, 250~торговых дней по~8~ч каж\-дый) моделируется поведение одного базового актива~(\ref{eq:S_sys_P})
+($N\hm=1$), сто\-ха\-сти\-че\-ская во\-ла\-тиль\-ность которого пред\-став\-ля\-ет собой МСП~(\ref{eq:Z_sys}) 
+с~че\-тырь\-мя воз\-мож\-ны\-ми со\-сто\-яни\-ями ($L \hm= 4$).
+Став\-ка банковского вклада $r \hm= 10\%$ годовых, на рын\-ке присутствует один дериватив ($M$\hm=1)~--- 
+\textit{call}-оп\-ци\-он с~ценой исполнения $K\hm=1$. Для сис\-те\-мы~(\ref{eq:S_sys_P}), (\ref{eq:Z_sys}) 
+были выбраны сле\-ду\-ющие па\-ра\-метры:
+
+\vspace*{-3pt}
+
+\noindent
+\begin{gather*}
+S_0 \equiv 1\,; \ a = (0{,}8; 0{,}6; 0{,}4; 0{,}2); \ \sigma = (0{,}2; 0{,}4; 0{,}6; 0{,}8);
+\\
+\Lambda = \left[
+\begin{array}{cccc}
+-15 & 5 & 5 & 5 \\
+5 & -15 & 5 & 5 \\
+5 & 5 & -15 & 5 \\
+5 & 5 & 5 & -15 \\
+\end{array}
+\right]; \enskip
+\pi_0^Z = \left[
+\begin{array}{c}
+\fr{1}{4}  \\
+\fr{1}{4}  \\
+\fr{1}{4}  \\
+\fr{1}{4}  \\
+\end{array}
+\right].
+\end{gather*}
+
+\vspace*{-3pt}
+
+\noindent
+Интегрирование СДС~(\ref{eq:S_sys_P}) выполнялось методом Эй\-ле\-ра--Ма\-ру\-ямы~\cite{KP_92}, адап\-ти\-ро\-ван\-ным к~скач\-кам~\cite{PB_10}, 
+с~основ\-ным шагом $\tau \hm= 10^{-7}$,
+интегрирование сис\-те\-мы уравнений в~част\-ных производных~(\ref{eq:F_m_eq})\linebreak\vspace*{-12pt}
+
+{ \begin{center}  %fig1
+ \vspace*{-5pt}
+    \mbox{%
+\epsfxsize=79mm 
+\epsfbox{bor-1.eps}
+}
+
+\end{center}
+
+\vspace*{-3pt}
+
+\noindent
+{{\figurename~1}\ \ \small{Зависимость $F^{\ell}(t,s)$ от цены~$s$ для некоторых значений времени~$t$:
+черные кривые~--- $t\hm=0$; серые кривые~--- $t\hm=0{,}5$; \textit{1}~--- $\ell\hm=1$;
+\textit{2}~--- 2; 
+\textit{3}~--- 3; 
+\textit{4}~--- $\ell\hm=4$
+}}}
+
+\vspace*{14pt}
+
+\addtocounter{figure}{1}
+
+\noindent
+ выполнялось c~шагом по времени 
+$h\hm = 0{,}0001$ (шаг соответствует 6~мин торгового времени) и~шагом по координате $\delta \hm= 0{,}002$ (шаг соответствует $0{,}2$~процентным 
+пунк\-там начальной цены базового актива).
+{\looseness=-1
+
+}
+
+
+
+ 
+На рис.~1 пред\-став\-ле\-ны сечения решений $\{F^{\ell}(t,s)\}_{\ell\hm=\overline{1,4}}$ сис\-те\-мы~(\ref{eq:F_m_eq}) 
+при фиксированных\linebreak значениях времени: $t\hm=0$~--- начало года и~$t\hm=0{,}5$~--- 
+полгода до погашения. Для срав\-не\-ния на рисунке пред\-став\-ле\-на и~функция платежного требования~$H(s)$, 
+с~которой совпадают все функции~$F^{\ell}(t,s)$  в~момент погашения $t\hm=1$.
+Действительно, при  разных значениях~$\ell$ и~фиксированных моментах~$t$ графики~$F^{\ell}(\cdot,s)$ значительно отличаются друг от друга. 
+Помимо этого рисунок также демонстрирует изменение функций~$F^{\ell}(t,\cdot)$ с~течением времени.
+
+ \setcounter{figure}{2}
+\begin{figure*}[b] %fig3
+  \vspace*{-6pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=161.344mm 
+\epsfbox{bor-3.eps}
+}
+\end{center}
+\vspace*{-11pt}
+\Caption{Скрытый марковский скачкообразный процесс и~цены базового актива~$S_t$~(\textit{1}) и~\textit{call}-оп\-ци\-о\-нов~$F_t(K)$ 
+в~за\-ви\-си\-мости от раз\-ных цен исполнения~$K$: \textit{2}~--- $K\hm=0{,}9$; \textit{3}~--- 0,95; \textit{4}~--- 1; \textit{5}~--- 1,05;
+\textit{6}~--- 1,1; \textit{7}~--- 1,15; \textit{8}~--- 1,2; \textit{9}~--- 1,4; \textit{10}~--- 1,5; \textit{11}~--- $K\hm= 1{,}6$} 
+\label{pic:pic3}
+\end{figure*}
+
+Второй численный эксперимент призван продемонстрировать сущ\-ность совместной генерации 
+цены базового актива и~его производного финансового инструмента.
+Слу\-чай\-ность цены опциона~$F_t$~--- это результат влияния двух случайных факторов: текущей цены базового актива~$S_t$ 
+и~скрытого со\-сто\-яния рынка~$Z_t$~(\ref{eq:F_m_expl}):
+
+\vspace*{4pt}
+
+\noindent
+$$
+F_t = \overline{F}\left(t, S_t\right)Z_t.
+$$
+
+\vspace*{-3pt}
+
+\noindent
+Графическая иллюстрация этой комбинации пред\-став\-ле\-на на рис.~2. 
+Трехмерная по\-верх\-ность пред\-став\-ля\-ет собой произведение~$\overline{F}(t, s)Z_t$,  
+и~на ней\linebreak траектория базового актива <<вы\-чер\-чи\-ва\-ет>> про\-стран\-ст\-вен\-ную кривую, 
+аппликата которой и~пред\-став\-ля\-ет собой цену дериватива. 
+Следует отметить, что эта по\-верх\-ность не непрерывна: ее разрывы вызваны скачками МСП~$Z_t$. 
+Эти разрывы  также по\-рож\-да\-ют скач\-ки дериватива~$F$.
+
+Третий эксперимент иллюстрирует совместное поведение базового актива и~различных деривативов~--- \textit{call}-оп\-ци\-о\-нов 
+с~раз\-ны\-ми ценами ис\-пол\-не-\linebreak\vspace*{-12pt}
+
+
+
+{ \begin{center}  %fig2
+ \vspace*{-4pt}
+    \mbox{%
+\epsfxsize=78.561mm 
+\epsfbox{bor-2.eps}
+}
+
+\end{center}
+
+
+
+\noindent
+{{\figurename~2}\ \ \small{Зависимость $F^{\ell}(t,s)$ от цены~$s$ для некоторых значений времени~$t$
+}}}
+
+\vspace*{6pt}
+
+%\addtocounter{figure}{1}
+
+ 
+\setcounter{figure}{3}
+ \begin{figure*} %fig4
+  \vspace*{1pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=162.931mm 
+\epsfbox{bor-4.eps}
+}
+\end{center}
+\vspace*{-12pt}
+\Caption{Скрытый марковский скачкообразный процесс и~цены базового актива~$S_t$~(\textit{1}) и~\textit{call}-оп\-ци\-о\-нов~$F_t(K)$ 
+в~за\-ви\-си\-мости от разных значений цены исполнения~$K$: \textit{2}~--- $K\hm=0{,}9$; \textit{3}~--- 0,95; \textit{4}~--- 1; \textit{5}~--- 1,05;
+\textit{6}~--- 1,1; \textit{7}~--- 1,15; \textit{8}~--- 1,2; \textit{9}~--- 1,4; \textit{10}~--- 1,5; \textit{11}~--- $K\hm= 1{,}6$. Увеличенный фрагмент со скач\-ком} 
+\label{pic:pic4}
+\vspace*{-3pt}
+\end{figure*}
+
+
+
+
+
+\noindent
+ния~$K$. Колебания цен деривативов, представлен\-ные на рис.~\ref{pic:pic3}, похожи на 
+колебания котировок базового актива, однако не прямо пропорциональны им. Особенно на\-гляд\-но это вид\-но в~случае с~опционами, 
+цена исполнения которых выше текущей цены базового актива (так на\-зы\-ва\-емые опционы \textit{out of the money}).
+
+Формула~(\ref{eq:F_m_expl}), определяющая цену деривативов, подразумевает также наличие ее скачков, 
+совпадающих по времени со скачками внеш\-не\-го МСП~$Z_t$. 
+На рис.~\ref{pic:pic4} пред\-став\-лен увеличенный фрагмент рис.~\ref{pic:pic3}: на нем на интервале $[0{,}22; 0{,}225]$ виден скачок МСП 
+и~по\-рож\-ден\-ные им скачки цен деривативов. Примечательно, что не для всех цен исполнения скач\-ки имеют явно выраженный характер. 
+Причину этому легко понять, анализируя рис.~1. Дело в~том, что амплитуда скач\-ка зависит от того, насколько отличаются значения 
+функций~$F^{\ell}(\cdot,\cdot)$ для различных~$\ell$. Из рис.~4 можно сделать вывод, что это различие 
+незначительно при достаточно малых значениях аргумента~$s$ 
+и~исче\-за\-юще мало при $s \hm\to +\infty$. Таким образом, различия между~$F^{\ell}(\cdot,\cdot)$, 
+а~значит, и~величины скачков цены дериватива 
+существенны, когда цена базового актива близ\-ка к~цене исполнения (опционы с~такими страйками называются \textit{at the money}).
+
+\vspace*{-6pt}
+
+\section{Промежуточные выводы}
+
+\vspace*{-3pt}
+
+Вторая часть цикла статей пред\-став\-ля\-ет алгоритм вы\-чис\-ле\-ния справедливой цены  производных финансовых инструментов в~моделях рынка с~марковской 
+скачкообразной во\-ла\-тиль\-ностью. Во-пер\-вых, данный алгоритм необходим при решении широкого класса задач анализа цен деривативов в~предложенной 
+модели финансовой сис\-те\-мы. Во-вто\-рых, он становится ключевым при совместном чис\-лен\-ном моделировании эволюции цен базовых финансовых инструментов и~их 
+деривативов. Эта воз\-мож\-ность нуж\-на для проведения сравнительного чис\-лен\-но\-го анализа решения задачи мониторинга рыночной цены рис\-ка как 
+част\-но\-го случая задачи фильт\-ра\-ции МСП по име\-ющим\-ся наблюдениям цен бумаг. 
+В~по\-сле\-ду\-ющих час\-тях цик\-ла будут пред\-став\-ле\-ны алгоритмы решения этой задачи оценивания в~за\-ви\-си\-мости от структуры име\-ющих\-ся наблюдений: 
+до\-ступ\-ны\-ми будут цены инструментов, дискретизованные по времени с~известным детерминированным шагом~\cite{B_20_2_IA, B_20_3_IA},
+ либо вы\-со\-ко\-час\-тот\-ные потоки наблюдений цен в~случайные моменты времени~\cite{B_20_3_ARC}.
+
+\vspace*{-12pt}
+
+
+{\small\frenchspacing
+ {\baselineskip=10.6pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+   
+
+\bibitem{R_04}
+\Au{Runggaldier W.} Estimation via stochastic filtering in financial market models~// Contemp. Math., 2004. Vol.~351.  P.~309--318.
+doi: 10.1090/conm/351/06412.
+
+\bibitem{B_23_1_IA}
+\Au{Борисов~A.} 
+Рынок с~марковской скачкообразной во\-ла\-тиль\-ностью I: мониторинг цены риска как задача оптимальной 
+фильт\-ра\-ции~// Информатика и~её применения, 2023. Т.~17. Вып.~2. 
+С.~27--33. doi:  10.14357/ 19922264230204. EDN: GAXCHQ.
+
+   \bibitem{TS_04}
+\Au{Тихонов А., Самарский~А.} Уравнения математической физики.~--- М.: Наука, 2004. 798~с.
+
+   \bibitem{Ya_67}
+\Au{Яненко Н.} Метод дроб\-ных шагов решения многомерных задач математической физики.~--- Новосибирск: Наука, 1967. 197~с.
+
+\bibitem{Sh_98} %5
+\Au{Shiryayev A.} Essentials of stochastic finance: Facts, models, theory.~--- Hackensack, NJ, USA: World Scientific, 1999. 834~p.
+
+   \bibitem{KP_92}
+\Au{Kloeden P., Platen~E.} Numerical solution of stochastic differential equations.~--- Berlin: Springer, 1992. 636~p.
+
+   \bibitem{PB_10}
+\Au{Platen E., Bruti-Liberati~N.} Numerical solution of stochastic differential equations with jumps in finance.~--- Berlin: Springer, 2010. 884~p.
+
+    \bibitem{B_20_2_IA}
+\Au{Борисов A.} Численные схемы фильт\-ра\-ции марковских скачкообразных процессов по дискретизованным наблюдениям II: случай ад\-ди\-тив\-ных шумов~//
+ Информатика и~её применения, 2020. Т.~14. Вып.~1. С.~17--23. doi: 10.14357/19922264200103.
+
+  \bibitem{B_20_3_IA}
+\Au{Борисов A.} Чис\-лен\-ные схемы фильт\-ра\-ции марковских скачкообразных процессов 
+по дискретизованным наблюдениям III: случай муль\-ти\-пли\-ка\-тив\-ных шумов~//
+ Информатика и~её применения, 2020. Т.~14. Вып.~2. С.~10--18. doi: 10.14357/19922264200202.
+
+\bibitem{B_20_3_ARC}
+\Au{Борисов A.} Алгоритм робастной фильт\-ра\-ции марковских скачкообразных процессов по вы\-со\-ко\-час\-тот\-ным счи\-та\-ющим наблюдениям~// 
+Автоматика и~телемеханика, 2020. Вып.~4. С.~3--20.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-10pt}
+
+\hfill{\small\textit{Поступила в~редакцию 29.12.22}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+
+
+\def\tit{MARKET WITH MARKOV JUMP VOLATILITY II:\\ ALGORITHM OF~DERIVATIVE FAIR PRICE CALCULATION}
+
+
+\def\titkol{Market with Markov jump volatility II: Algorithm of derivative fair price calculation}
+
+
+\def\aut{A.\,V.~Borisov}
+
+\def\autkol{A.\,V.~Borisov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-10pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy 
+of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+\Abste{The second part of the series is devoted to the numerical realization of the fair derivative price in the case 
+of the incomplete financial market
+with a~Markov jump stochastic volatility. The concept of the market price
+of risk applied to this model by Runggaldier (2004) 
+allows derivation of a~system of partial differential equations describing
+the temporal evolution of the derivative price as 
+a~function of the current underlying price and the implied stochastic volatility. This system represents a~generalization of the classic 
+Black--Sholes equation. By contrast with this classic version, the proposed system of equations does not permit an analytical solution. 
+The paper presents an approximate analytical method of the fractional steps. The author equips the temporal axis with a~grid, 
+then the author approximates the required solution as a~combination of the solution to the classical heat equation and the system of 
+the ordinary linear differential equations. The paper contains the results of the numerical experiments illustrating the properties of 
+both the Black--Sholes generalization and the joint evolution of the derivative and corresponding underlying prices.}
+
+\KWE{Markov jump process; optimal filtering; stochastic volatility; market price of risk; prevailing martingale measure}
+
+
+ \DOI{10.14357/19922264230303}{DNXJGB}
+
+\vspace*{-20pt}
+
+\Ack
+
+\vspace*{-3pt}
+
+\noindent
+The research was carried out using the infrastructure of the Shared Research Facilities 
+``High Performance Computing and Big Data'' (CKP ``Informatics'') of FRC CSC RAS (Moscow).
+  
+
+%\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99} 
+
+\bibitem{R_04-1} 
+\Aue{Runggaldier, W.} 2004. Estimation via stochastic filtering in financial market models. \textit{Contemp. Math.} 351:309--318.
+doi: 10.1090/conm/351/06412.
+
+\bibitem{B_23_1_IA-1} 
+\Aue{Borisov, A.} 2023. Ry\-nok s~mar\-kov\-skoy skach\-ko\-ob\-raz\-noy vo\-la\-til'\-nost'yu I: mo\-ni\-to\-ring tse\-ny ris\-ka kak za\-da\-cha 
+op\-ti\-mal'\-noy fil't\-ra\-tsii 
+[Market with Markov jump volatility I: Price of risk monitoring as an optimal filtering problem]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 17(2):~27--33. 
+doi:   10.14357/19922264230204. EDN: GAXCHQ.
+
+
+
+\bibitem{TS_04-1} 
+\Aue{Tikhonov, A., and A.~Samarskiy.} 2004.  \textit{Urav\-ne\-niya ma\-te\-ma\-ti\-che\-skoy fi\-zi\-ki} 
+[Equations of mathematical physics]. Moscow: Nauka. 798~p.
+
+\bibitem{Ya_67-1} 
+\Aue{Yanenko, N.} 1967. \textit{Me\-tod drob\-nykh sha\-gov re\-she\-niya mno\-go\-mer\-nykh za\-dach ma\-te\-ma\-ti\-che\-skoy fi\-zi\-ki}
+ [The fractional steps method for solving multidimensional problems of mathematical physics]. Novosibirsk: Nauka. 197~p.
+
+\bibitem{Sh_98-1}
+\Aue{Shiryayev, A.} 1999. \textit{Essentials of stochastic finance: Facts, models, theory}. Hackensack, NJ: World Scientific. 834~p.
+
+\bibitem{KP_92-1} 
+\Aue{Kloeden, P., and E.~Platen.} 1992. \textit{Numerical solution of stochastic differential equations}. Berlin: Springer. 636~p.
+
+\bibitem{PB_10-1} 
+\Aue{Platen, E., and N.~Bruti-Liberati.} 2010. \textit{Numerical solution of stochastic differential equations with jumps in finance}.
+ Berlin: Springer. 884~p.
+
+\bibitem{B_20_2_IA-1} 
+\Aue{Borisov, A.} 2020. Chis\-len\-nye skhe\-my fil't\-ra\-tsii mar\-kov\-skikh skach\-ko\-ob\-raz\-nykh pro\-tses\-sov po 
+dis\-kre\-ti\-zo\-van\-nym nab\-lyu\-de\-niyam II: slu\-chay ad\-di\-tiv\-nykh shu\-mov
+ [Numerical schemes of Markov jump process filtering given discretized observations II: Additive noises case]. 
+ \textit{Informatika i~ee primeneniya~---  Inform. Appl.} 14(1):~17--23. doi: 10.14357/19922264200103.
+
+
+\bibitem{B_20_3_IA-1} 
+\Aue{Borisov, A.} 2020. Chis\-len\-nye skhe\-my fil't\-ra\-tsii mar\-kov\-skikh skach\-ko\-ob\-raz\-nykh pro\-tses\-sov 
+po dis\-kre\-ti\-zo\-van\-nym nablyu\-de\-ni\-yam III: 
+slu\-chay mul'\-ti\-pli\-ka\-tiv\-nykh shu\-mov [Numerical schemes of Markov jump process filtering given discretized 
+observations III: Multiplicative noises case]. 
+\textit{Informatika i~ee primeneniya~--- Inform. Appl.} 14(2):~10--18. doi: 10.14357/19922264200202.
+
+\bibitem{B_20_3_ARC-1} 
+\Aue{Borisov, A.} 2020. Robust filtering algorithm for Markov jump processes with high-frequency counting observations. \textit{Automat. Rem. Contr.} 81(4):575--588. 
+doi: 10.1134/ S0005117920040013.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received December 29, 2022}} 
+
+\vspace*{-20pt}
+
+\Contrl
+
+\vspace*{-4pt}
+
+\noindent
+\textbf{Borisov Andrey V.} (b.\ 1965)~--- 
+Doctor of Science in physics and mathematics, principal scientist, Federal Research Center ``Computer Science and Control''
+ of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{aborisov@frccsc.ru}
+
+
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

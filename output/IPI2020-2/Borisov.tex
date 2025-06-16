@@ -1,0 +1,1199 @@
+\newcommand{\me}[2]{\mathbf{E}_{ #1 }\left\{ \mathop{#2} \right\} }
+
+
+
+
+%\newcommand {\s}{^{(s)}}
+%\newcommand {\g}{\gamma}
+
+\def\stat{borisov}
+
+\def\tit{ЧИСЛЕННЫЕ СХЕМЫ ФИЛЬТРАЦИИ МАРКОВСКИХ СКАЧКООБРАЗНЫХ ПРОЦЕССОВ 
+ПО~ДИСКРЕТИЗОВАННЫМ НАБЛЮДЕНИЯМ~III:~СЛУЧАЙ МУЛЬТИПЛИКАТИВНЫХ ШУМОВ$^*$}
+
+\def\titkol{Численные схемы фильтрации марковских скачкообразных 
+процессов по %дискретизованным наблюдениям~III:~случай мультипликативных 
+шумов}
+
+\def\aut{А.\,В.~Борисов$^1$}
+
+\def\autkol{А.\,В.~Борисов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Борисов А.\,В.}
+\index{Borisov A.\,V.}
+ 
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при частичной поддержке РФФИ (проект 19-07-00187~А).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального 
+исследовательского центра <<Информатика 
+и~управление>> Российской академии наук, \mbox{aborisov@frccsc.ru}}
+
+\vspace*{-12pt}
+
+\Abst{Статья завершает цикл исследований, начатых в~работах <<Численные 
+схемы фильтрации марковских скачкообразных процессов по дискретизованным 
+наблюдениям~I:~ характеристики точ\-ности>> и~<<Численные схемы фильтрации 
+марковских скачкообразных процессов по дискретизованным 
+наблюдениям~II:~случай аддитивных шумов>>.
+На основании представленных ранее теоретических результатов разработан 
+алгоритм численной реализации задачи фильтрации состояний однородных 
+марковских скачкообразных процессов (МСП) по косвенным непрерывным зашумленным 
+наблюдениям, дискретизованным по времени.
+Класс систем наблюдения ограничен системами с~\textit{мультипликативными} 
+винеровскими шумами: аддитивная полезная составляющая в~наблюдениях 
+отсутствует, а~интенсивность шумов является функцией оцениваемого 
+состояния.
+Для вычисления интегралов, присутствующих в~оценках, использовался 
+составной вариант численной схемы <<средних>> прямоугольников порядка 
+точ\-ности~$3$ для вычисления одномерных интегралов, а~также формула 
+среднего порядка~$4$ для интегрирования по треугольнику. В~итоге были 
+получены численные схемы порядка точности~$1$ и~$2$.}
+
+\KW{марковский скачкообразный процесс; оптимальная фильтрация; 
+мультипликативные шумы в~наблюдениях; стохастическое дифференциальное 
+уравнение; аналитическая и~численная аппроксимация}
+
+\DOI{10.14357/19922264200202} 
+ 
+%\vspace*{9pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+ \section{Введение}
+
+Работа завершает цикл статей~\cite{B_20_1_IA, B_20_2_IA}. Она посвящена 
+созданию и~сравнительному анализу алгоритмов численного решения задач 
+оптимальной фильтрации состояний однородных МСП
+ по дискретизованным косвенным наблюдениям 
+с~мультипликативными винеровскими шумами. Наличие шумов такого рода 
+означает, что их интенсивность является случайной и~зависит от 
+оцениваемого со\-сто\-яния. Тео\-ре\-ти\-че\-ские основы решения такой задачи 
+заложены в~\cite{B_18, B_18_IA}. Так как оценка оптимальной фильтрации 
+имеет почти наверное неотрицательные компоненты и~удовлетворяет условию 
+нормировки, то пред\-став\-лен\-ные в~данном цикле алгоритмы чис\-лен\-но\-го решения 
+задачи фильтрации сохраняют для своих реализаций указанные свойства 
+и~названы за это \textit{устойчивыми}.
+Точность оценок зависит от шага дискретизации наблюдений 
+и~\textit{порядка~$s$ аналитической аппроксимации}~--- числа возможных скачков 
+оцениваемого состояния на интервале дискретизации, учитываемого 
+в~алгоритме.
+
+
+Статья организована следующим образом. 
+%
+Раздел~2 содержит постановку 
+задачи оптимальной фильтрации по дискретизованным наблюдениям, а~также 
+сведения из~\cite{B_20_1_IA, B_20_2_IA}, необходимые для ее чис\-лен\-но\-го 
+решения. 
+
+В~разд.~3 для систем с~мультипликативными шумами разработаны 
+численные схемы фильтрации, соответствующие аналитическим аппроксимациям 
+порядка $s\hm=1$ и~$2$.
+Для численного интегрирования при вычислении аппроксимации порядка 
+$s\hm=1$ выбрана составная схема <<средних>> прямоугольников, а~для 
+$s\hm=2$~--- та же схема прямоугольников для вычисления одномерных 
+интегралов, и~составной вариант метода средних~--- для вычисления 
+двумерных интегралов по треугольникам. 
+Полученные в~результате чис\-лен\-ные 
+аппроксимации имеют порядки~$1$ и~$2$. 
+
+Заключительные замечания 
+представлены в~разд.~4.
+
+%\vspace*{-16pt}
+ 
+\section{Оценка фильтрации и~ее~аппроксимации}
+
+%\vspace*{-6pt}
+
+ На триплете с~фильтрацией $(\Omega^X \times \Omega^W,\mathcal{F}^X 
+\hm\times \mathcal{F}^W,
+ \mathcal{P}^X \hm\times \mathcal{P}^W, \{\mathcal{F}^X_t \times 
+\mathcal{F}^W_t\}_{t \geqslant 0})$ рассматривается система наблюдения
+
+%\pagebreak
+
+\noindent
+\begin{equation}
+ \left.
+ \begin{array}{ll}
+\displaystyle
+X_t =X_0 + \int\limits_0^t \Lambda^{\top}X_{s}ds + \mu_t\,; & \\[6pt]
+ \displaystyle Y_r = \int\limits_{(r-1)h}^{rh}\!\! fX_sds+ 
+\int\limits_{(r-1)h}^{rh} \sum\limits_{n=1}^NX_s^ng_n^{1/2} dW_s, &\\[6pt]
+ &\hspace*{-10mm}r \in \mathbb{N},
+ \end{array}
+ \right\}
+ \label{eq:obsys_1}
+ \end{equation}
+ где
+ % \item[]
+ $X_t \triangleq \mathrm{col}\left(X_t^1,\ldots,X_t^N\right) \in 
+\mathbb{S}^N$~--- не\-на\-блю\-да\-емое состояние системы~--- однородный МСП 
+с~конечным множеством состояний $ \mathbb{S}^N \triangleq 
+\{e_1,\ldots,e_N\}$ ($\mathbb{S}^N$~--- множество единичных векторов 
+евклидова пространства $\mathbb{R}^N$), матрицей интенсивностей\linebreak переходов 
+$\Lambda$ и~начальным распределением $\pi$;
+ %\item[]
+ $\mu_t \hm\triangleq \mathrm{col}\left(
+ \mu_t^1,\ldots,\mu_t^N\right)\hm\in \mathbb{R}^N$~--- 
+$\mathcal{F}_t^X$-со\-гла\-со\-ван\-ный мартингал;
+% \item[]
+ $\{Y_r\}_{r \in \mathbb{N}}:\; Y_r \hm\triangleq 
+\mathrm{col}\left(Y_r^1,\ldots,Y_r^M\right) \hm\in \mathbb{R}^M$~--- 
+последовательность дискретизованных наблюдений, доступных в~известные 
+равноотстоящие\linebreak моменты времени $\{rh\}_{r \in \mathbb{N}}$;
+$W_t \triangleq \mathrm{col}(W_t^1,\ldots\linebreak \ldots ,W_t^M) \hm\in \mathbb{R}^M$ 
+является
+$\mathcal{F}_t^W$-со\-гла\-со\-ван\-ным стандартным винеровским процессом;
+ $f$~--- $(M \times N)$-мер\-ная мат\-ри\-ца;
+ $\{g_n\}_{n=\overline{1,N}}$~--- симметричные положительно определенные 
+матрицы; процессы~$X$ и~$W$ независимы.
+ %\end{itemize}
+
+ \textit{Задача оптимальной фильтрации состояния $X$ по дискретизованным 
+наблюдениям~$Y$} заключается в~нахождении условного математического 
+ожидания
+ \begin{equation*}
+ \widehat{X}_r \triangleq \me{}{X_{t_r}|\mathcal{O}_{r} },
+ %\label{eq:fest_1}
+ \end{equation*}
+ где $\mathcal{O}_r \triangleq \sigma\{ Y_{\ell}: \; 1 \leqslant \ell 
+\leqslant r\}$~--- $\sigma$-ал\-геб\-ра, по\-рож\-ден\-ная наблюдениями, 
+полученными до момента времени $rh$ включительно; $\mathcal{O}_0 
+\triangleq \{\varnothing,\; \Omega\}$.
+
+ Пусть $N_r^X(\omega)$~--- число скачков процесса~$X$,\linebreak произошедших на 
+отрезке $[(r-1)h,rh]$, $\tau_r\hm \triangleq \int\nolimits_0^t X_s\,ds$~--- 
+случайный вектор времени пребывания~$X$ в~различных состояниях на  
+$[(r-1)h,rh]$, а
+ $\rho^{n,j,m}(\cdot)$~--- распределение вектора
+ $\tau_{r}X_{t_{r}}^{j}\mathbf{I}_{\{m\}}(N_{r}^X)$ при условии $X_{t_{r-
+1}}\hm=e_k$. Это означает, что
+ для любого $\mathcal{G} \hm\in \mathcal{B}(\mathbb{R}^M)$ верно 
+равенство
+ $$
+\me{}{\mathbf{I}_{\mathcal{G}}\left(\tau_r\right)X_{t_r}^j
+\mathbf{I}_{\{m\}}(N_r^X)|X_{t_{r-1}}=e_n}
+=
+ \hspace*{-3pt}\int\limits_{\mathcal{G}}\hspace*{-3pt} \rho^{n,j,m}(du).
+ $$
+
+\textit{Аналитическая аппроксимация $\overline{X}_r$ порядка~$s$} 
+опре\-де\-ля\-ет\-ся рекурсивной схемой
+ \begin{equation}
+\overline{X}_r = (\mathbf{1}\xi_{r}^{\top}\overline{X}_{r-1})^{-1} 
+\xi_{r}^{\top}\overline{X}_{r-1}, \enskip r \geqslant 1, \enskip 
+\overline{X}_0=\pi,\!\!
+ \label{eq:filt_3}
+ \end{equation}
+ где $\mathbf{1} = \mathrm{row}\, (1,\ldots,1)$~--- вектор-строка 
+подходящей размерности;
+$\xi_q \triangleq \|\xi^{ij}(Y_q)\|_{i,j=\overline{1,N}},\; q \hm\in 
+\mathbb{N}$~--- $(N \times N)$-мер\-ные случайные матрицы~--- функции 
+наблюдений~$Y_q$:
+ \begin{equation} %\textstyle
+ \xi^{ij}(y)\triangleq
+\sum\limits_{m=0}^s \int\limits_{\mathcal{D}}
+ \mathcal{N}\left(y,f u,\sum_{p=1}^N u^p g_p\right)
+ \rho^{i,j,m}(du).
+ \label{eq:xi_def}
+ \end{equation}
+ В~(4) 
+ $\mathcal{N}(y,m,K) \triangleq (2\pi)^{-M/2} \mathrm{det}^{-1/2} K \times\linebreak
+ \times
+\exp\left\{ -({1}/{2})\|y-m)\|^2_{K^{-1}}\right\}
+ $~--- это $M$-мер\-ная\linebreak плот\-ность гауссовского распределения с~математическим 
+ожиданием~$m$ и~невырожденной ковариационной матрицей $K$; $\mathcal{D} 
+\triangleq \{u \hm\in \mathbb{R}^M_+:\; \mathbf{1}u=h\}$.
+
+ Из построения оценки $\overline{X}_r$~(\ref{eq:filt_3}) следует, что она 
+обладает свойством устойчивости.
+
+ Интегралы $\xi^{ij}(y)$ приближенно вычисляются в~виде сумм:
+ \begin{align*}
+%\left.
+% \begin{array}{rl}
+ \!\!\xi^{ij}(y) &\displaystyle
+\approx \psi^{ij}(y) \triangleq
+ \sum\limits_{\ell=1}^{L} \mathcal{N}\!\left( \! y,f 
+w_{\ell},\sum\limits_{p=1}^N w^p_{\ell} g_p \!\right)\varrho_{\ell}^{ij}; \\
+\! \!\psi(y) &\triangleq \|\psi^{ij}(y)\|_{i,j=\overline{1,N}}, 
+% \quad \psi_q % 
+%\triangleq \psi(Y_q),%\\
+ %\Psi_{q,p}(Y_q,\ldots,Y_p) \triangleq % 
+%\psi_q(Y_q)\psi_{q+1}(Y_{q+1})\ldots\psi_p(Y_p),
+% \end{array}\!\!
+%\right\}\!
+% \label{eq:int_sum}
+ \end{align*}
+ определяемых набором пар 
+$\{(w_{\ell},\varrho_{\ell}^{ij})\}_{\ell=\overline{1,L}}$. Здесь 
+$\varrho_{\ell}^{ij} \hm\geqslant 0$, $\ell\hm=\overline{1,L},$~--- веса; 
+$\sum\nolimits_{\ell=1}^L\varrho_{\ell}^{ij} \hm\leqslant 1$; 
+$w_{\ell}\hm\triangleq 
+\mathrm{col}\left(w^1_{\ell},\ldots,w^N_{\ell}\right) \hm\in 
+\mathcal{D}$~--- точки; $\psi_q \hm\triangleq \|\psi^{ij}(Y_q)\|_{ij=\overline{1,N}}$.
+
+ По построению $\psi^{ij}_q$ являются положительными случайными 
+величинами, поэтому \textit{численная аппроксимация} $\widetilde{X}_r$ 
+оценки~$\overline{X}_r$
+ \begin{equation*}
+ \widetilde{X}_r \triangleq (\mathbf{1}\psi_r^{\top}  
+\widetilde{X}_{r-1})^{-1}\psi_r^{\top} \widetilde{X}_{r-1}, \enskip 
+r\geqslant 1, \enskip \widetilde{X}_{0} = \pi,
+% \label{eq:pp_est}
+ \end{equation*}
+ также обладает свойством устойчивости.
+
+Если для схемы численного интегрирования выполнено условие
+$$ %\textstyle
+\max\limits_{k=\overline{1,N}} \sum\limits_{j=1}^N
+\int\limits_{\mathbb{R}^M}|\psi^{kj}(y) - \xi^{kj}(y)|dy < \delta\,,
+$$
+то глобальный показатель точности приближения оптимальной оценки
+$\widehat{X}_r$ ее численной аппроксимацией $\widetilde{X}_r$
+ограничен сверху
+ \begin{multline} %\textstyle
+\sup\limits_{\pi \in \Pi}\me{}{\|\widehat{X}_r - \widetilde{X}_r\|_1} 
+\leqslant{}\\
+{}\leqslant  4
+\left[ 1-\left(1-\fr{(\overline{\lambda}h)^{s+1}}{(s+1)!}\right)^r
+\right] + 2r\delta,
+ \label{eq:tot_glob}
+ \end{multline}
+ где $\Pi \triangleq \{\pi \in \mathbb{R}^N_+:\; \mathbf{1}\pi=1\}$~--- 
+вероятностный симплекс; $\overline{\lambda} \triangleq 
+\max_k|\lambda_{kk}|$.
+
+ Для фиксированного момента времени $T$ с~уменьшением шага дискретизации 
+$h \hm\to 0$ неравенство~(\ref{eq:tot_glob}) принимает асимптотический 
+вид:
+ \begin{multline}
+\sup\limits_{\pi \in \Pi}\me{}{\|\widetilde{X}_{T/h} - 
+\widehat{X}_{T/h}\|_1}
+\leqslant{}\\
+{}\leqslant
+2T\left(2\overline{\lambda} \fr{(\overline{\lambda}h)^s}{(s+1)!}+
+ \fr{\delta}{h}\right).
+ \label{eq:asympt_glob}
+\end{multline}
+Поэтому для эффективного выбора схемы численного интегрирования,
+чтобы не понизить порядок точности, обеспечиваемый аналитической 
+аппроксимацией $s$-го порядка,
+необходимо подбирать~$\delta$ так, чтобы 
+${\overline{\lambda}\delta}/{(\overline{\lambda}h)^{s+1}}\hm \to C 
+\hm\geqslant 0$ при $h \hm\to 0$.
+
+ \section{Приближенное решение задачи фильтрации по~наблюдениям 
+с~мультипликативными шумами}
+
+\vspace*{-2pt}
+
+ Для построения численных схем фильтрации состояний однородных МСП по 
+наблюдениям с~мультипликативными шумами и~исследования их точности без 
+ограничения общности рассмотрим\linebreak случай <<чисто мультипликативных шумов>>. 
+Это означает, что в~(\ref{eq:obsys_1}) $f\hm=0$, т.\,е.\ аддитивный 
+полезный сигнал полностью отсутствует, а~информация об оцениваемом 
+состоянии скрыта в~интенсивности шумов в~наблюдениях. Будем также 
+считать, что все условные интенсивности шумов мультипликативных 
+наблюдений $\{g_n\}_{n=\overline{1,N}}$ различны.
+
+ Ниже исследуются аппроксимации порядка $s\hm=1$ и~$2$. Для них 
+с~помощью обобщенной формулы полной вероятности легко получить вид 
+интегралов~(\ref{eq:xi_def}), используемых в~дальнейшем изложении:
+
+\noindent
+ \begin{multline} %\textstyle
+ \int\limits_{\mathcal{D}} \mathcal{N}\left(y,f u,\sum\limits_{p=1}^N u^p 
+g_p\right) \rho^{k,j,0}(du) ={}\\
+{}=
+ \delta_{kj}e^{\lambda_{kk}h} \mathcal{N}\left(y,0 ,h g_k\right);
+ \label{eq:h0}
+ \end{multline}
+ 
+ \vspace*{-12pt}
+ 
+ \noindent
+ \begin{multline*}
+ \displaystyle \int\limits_{\mathcal{D}} \mathcal{N}\left(y,f 
+u,\sum_{p=1}^N u^p g_p\right) \rho^{k,j,1}(du) ={}\\
+{}=(1- \delta_{kj})\lambda_{kj}e^{\lambda_{jj}h}
+ \int\limits_0^{h}
+ Q^{kj}(y,u)du\,;
+ \end{multline*}
+ 
+ \vspace*{-12pt}
+ 
+ \noindent
+ \begin{multline*}
+  Q^{kj}(y,u) \triangleq{}\\
+ {}\triangleq e^{(\lambda_{kk}-\lambda_{jj})u}
+ \mathcal{N}\left(y,0, u g_k+(h-u)g_j\right)\,;
+ % \label{eq:h1}
+ \end{multline*}
+ 
+ \noindent
+\begin{equation}
+\left.
+\begin{array}{l}
+\displaystyle
+\int\limits_{\mathcal{D}} \mathcal{N}\left(y,f u,\sum\limits_{p=1}^N u^p 
+g_p\right) \rho^{k,j,2}(du) ={}\\[6pt]
+{}=\displaystyle
+ \sum\limits_{\substack{{i:i \neq k,}\\ {i \neq j}}} \lambda_{k 
+i}\lambda_{i j} e^{\lambda_{jj}h}
+\int\limits_0^{h} \int\limits_0^{h-u} R^{kij}(y,u,v)dvdu,\\[6pt]
+R^{kij}(y,u,v) \triangleq
+e^{(\lambda_{kk}-\lambda_{i i})u+(\lambda_{i i}-\lambda_{jj})v}\times{}\\[6pt]
+\hspace*{5mm}{}\times
+\mathcal{N}\left(y,0,
+ u g_k+v g_{i} + (h - u - v )g_j
+ \right).
+ \end{array}
+\right\}
+ \label{eq:h2}
+ \end{equation}
+ 
+За исключением~(\ref{eq:h0}), остальные интегралы не имеют явного 
+аналитического представления, и~для них будут рассмотрены различные 
+варианты чис\-лен\-ной реализации.
+
+\vspace*{-10pt}
+
+ \subsection{Порядок $s=1$, схема <<средних>> прямоугольников}
+ 
+ \vspace*{-2pt}
+ 
+ Рассмотрим аналитическую аппроксимацию $\overline{X}_r$ порядка 
+$s\hm=1$.
+ В~этом случае
+ 
+ \noindent
+ \begin{multline*} %\textstyle
+ \xi^{kj}(y)=\delta_{kj}e^{\lambda_{jj}h}\mathcal{N}(y,0,hg_j)+{}\\
+ {}+
+ \left(1-\delta_{kj}\right)\lambda_{kj}e^{\lambda_{jj}h}
+ \int\limits_0^h Q^{kj}(y,u)\,du\,,
+% \label{eq:xi_1}
+ \end{multline*}
+ а~для ее приближения попробуем использовать схему <<средних>> 
+прямоугольников без дополнительного дробления отрезка $[0,h]$:
+
+\noindent
+ \begin{multline*} %\textstyle
+ \psi^{kj}(y)=\delta_{kj}e^{\lambda_{jj}h}\mathcal{N}(y,0,hg_j)
++{}\\
+{}+
+ \left(1-\delta_{kj}\right)\lambda_{kj}hQ^{kj}\left(y,\fr{h}{2}\right).
+ %\label{eq:psi_mid_tr}
+ \end{multline*}
+ При этом ошибка численного интегрирования~\cite{IK_94} определяется 
+формулой:
+
+\noindent
+ \begin{multline*} %\textstyle
+ \gamma^{kj}(y)=\left(1-
+\delta_{kj}\right)\fr{\lambda_{kj}h^3e^{\lambda_{jj}h}}{24}\,
+\fr{\partial^2}{\partial u^2}Q^{kj}(y,u)\Bigl|_{u=z} ={}\\
+\hspace*{-2pt}{}=
+ \left(1-\delta_{kj}\right)\fr{\lambda_{kj}h^3e^{\lambda_{jj}h}}{24}
+ \,Q^{kj}(y,z) \left[\zeta_0^2(y,z)-\zeta_1(y,z)\right]\!,\hspace*{-7.95522pt}
+ \end{multline*}
+ где $z = z (y) \in [0,h]$~--- некоторый параметр, зависящий от $y$;
+ 
+\noindent
+ \begin{multline*} %\textstyle
+ \zeta_0 (y,z) \triangleq
+ \lambda_{kk}-\lambda_{jj}-{}\\
+ {}-\fr{d}{dz}\left\vert z g_k+(h-z)g_j\right\vert \Big/
+ \left(2\left\vert z g_k+(h-
+z)g_j \right\vert\right)
+ +{}\\
+{} +\fr{1}{2}\,y^{\top}[z g_k+(h-z)g_j]^{-1}\left( g_k-g_j\right)\times{}\\
+{}\times\left[z 
+g_k+(h-z)g_j\right]^{-1}y\,;
+ %\label{eq:zeta_0_def}
+ \end{multline*}
+
+\vspace{-16pt}
+
+\noindent
+ \begin{multline*} %\textstyle
+ \zeta_1(y,z) \triangleq{}\\
+ {}\triangleq
+ \left( \vphantom{\left(\fr{d}{dz}\left\vert z 
+g_k+(h-z)g_j\right\vert \right)^2}
+ \left\vert z g_k+(h-z)g_j\right\vert  \fr{d^2}{dz^2}
+ \left\vert z g_k
+ +(h-z)g_j\right\vert -{}\right.\\
+\left.{}-\left(\fr{d}{dz}\left\vert z 
+g_k+(h-z)g_j\right\vert \!\right)^{\!2}
+\right)\!\!\Bigg/ \!\!
+\left( \vphantom{(h-z)g_j|^2}
+2|z g_k+{}\right.\\
+\left.{}+(h-z)g_j|^2
+\right)
+ +y^{\top}\left[z g_k+(h-z)g_j\right]^{-1}\times{}\\
+ {}\times \left( g_k-g_j\right)\left[z g_k+(h-z)g_j\right]^{-1}\times{}\\
+ {}\times
+ \left( g_k-g_j\right)\left[z g_k+(h-z)g_j\right]^{-1}y\,.
+% \label{eq:zeta_1_def}
+ \end{multline*}
+ Непосредственно интегрировать абсолютную величину~$\gamma^{kj}$ 
+проблематично, так как
+ $\int\nolimits_{\mathbb{R}^M}|\gamma^{kj}(y)|\,dy\hm= 
+\int\nolimits_{\mathbb{R}^M}|\gamma^{kj}(y, z^{kj}(y))|\,dy$, а~зависимость 
+$z^{kj} (y)$ в~общем случае неизвестна. Поэтому предварительно оценим 
+$|\gamma^{kj}|$ сверху.
+
+ Свойства системы~(\ref{eq:obsys_1}) гарантируют, что существуют такие 
+симметричные матрицы~$g$ и~$G$, что $0\hm < g \hm\leqslant g_n 
+\hm\leqslant G$ для всех $n=\overline{1,N}$. Поэтому выполняется 
+неравенство
+ \begin{equation*}
+ Q^{kj}(y,u) \leqslant K_1 \mathcal{N}(y,0,hg),
+ %\label{eq:Q_ineq}
+ \end{equation*}
+ 
+ %\vspace*{-3pt}
+ 
+ \noindent
+  где
+  
+\vspace*{-3pt}
+
+  \noindent
+ $$
+ K_1 = \exp\left(
+ \max\limits_{\substack{{k,j=\overline{1,N}:k \neq j}\\ {u \in[0,h]}}} 
+(\lambda_{kk}-\lambda_{jj})u
+ \right)\fr{|G|}{|g|}.
+% \frac{|hg|}{\max_{k,j=\overline{1,N}:k \neq j \atop u \in[0,h]}|u % 
+%g_k+(h-u)g_j|}.
+ $$
+ 
+ \noindent
+ Из свойства определителей~\cite{MN_2019} следует, что
+ \begin{multline}
+ |z g_k+(h-z)g_j| =\left\vert z (g_k-g_j)+hg_j\right\vert ={}\\
+ {}=\sum\limits_{n=0}^N z^nh^{N-
+n}G_{kjn},
+ \label{eq:det}
+ \end{multline}
+ где $G_{kjn}$~--- сумма всех определителей матриц, полученных из матрицы 
+$u (g_k-g_j)$ путем замены $n$ столбцов соответствующими столбцами 
+мат\-ри\-цы~$hg_j$. Отсюда следует, что
+ \begin{equation}
+ \fr{d}{dz} |z g_k+(h-z)g_j| = \sum\limits_{n=1}^N nz^{n-1}h^{N-
+n}G_{kjn},
+ \label{eq:det_der}
+ \end{equation}
+ поэтому верно неравенство:
+\begin{multline*}
+\left|
+ \fr{d}{dz}\left\vert z g_k+(h-z)g_j\right\vert \Big/ 
+ \left(2\left\vert z g_k+(h-z)g_j\right\vert \right) \right|
+ ={}\\
+ {}=h^{-1}
+ \left|
+ \fr{\sum\nolimits_{n=1}^N n\left({u}/{h}\right)^{n-
+1}G_{kjn}}{\sum\nolimits_{m=0}^N \left({u}/{h}\right)^mG_{kjm}}
+ \right|
+ \leqslant \fr{K_2}{h},
+ \end{multline*}
+ где 
+$$
+K_2 = \max\limits_{\substack{{k,j=\overline{1,N}:}\\ {k\neq 
+j}}}\fr{\sum\nolimits_{n=1}^N n\left|G_{kjn}\right|}{2\min_{w \in[0,1]} 
+\left| \sum\nolimits_{m=0}^N G_{kjm} w^m\right|}.
+$$
+ Таким образом, для функции $|\zeta_0(y,u)|$ верна следующая оценка 
+сверху:
+$$
+ |\zeta_0(y,u)| \leqslant K_3 + \fr{K_2}{h} + \fr{K_4}{h^2}\|y\|^2_I,
+ $$
+ где $K_3 = \max\nolimits_{\substack{{k,j=\overline{1,N}:}\\ { k \neq 
+j}}}|\lambda_{kk}-\lambda_{jj}|$, $K_4 \hm= \|g^{-1}Gg^{-1}\|^2_2$~--- 
+квадрат спектральной нормы мат\-ри\-цы. Из этого следует оценка сверху для 
+квадрата $\zeta_0(y,u)$:
+ \begin{multline*} %\textstyle
+ \zeta_0^2(y,u)= K_3^2 + \fr{K_2^2}{h^2}+\fr{K_4^2}{h^4}\|y\|^4_I+{}\\
+ {}+
+ 2\fr{K_2K_3}{h}+ 2\fr{K_3K_4}{h^2}\|y\|^2_I + 
+2\fr{K_2K_4}{h^3}\|y\|^2_I.
+ %\label{eq:zeta0_2_upbound}
+ \end{multline*}
+
+ Используя формулы~(\ref{eq:det}) и~(\ref{eq:det_der}), можно получить 
+оценку сверху для абсолютного значения первого слагаемого 
+в~$\zeta_1(y,u)$:
+
+\noindent
+ \begin{multline*}
+ \left\vert 
+ \left(
+ \vphantom{\left(\fr{d}{dz}  \left\vert z g_k+\left(h-z\right)g_j\right\vert \right)^{\!2}}
+\left\vert z g_k+(h-z)g_j\right\vert \fr{d^2}{dz^2}
+ \left\vert z g_k+(h-z)g_j\right\vert -{}\right.\right.\\
+\left. {}-\left(\fr{d}{dz}
+ \left\vert z g_k+\left(h-
+z\right)g_j\right\vert \right)^{\!2}
+\right)\left(
+\vphantom{(h-z)g_j|^2}
+2|z g_k+{}\right.\\
+\left.\left.{}+(h-z)g_j|^2\right)^{-1} 
+\vphantom{\left(\left(\fr{d}{dz}\right)  \left\vert z g_k+\left(h-z\right)g_j\right\vert \right)^{\!2}}
+\right\vert= 
+\left|
+\left(
+\vphantom{\left(\left(\sum\limits_{\ell=1}^N\ell z^{\ell-1}h^{N-
+\ell}G_{kj\ell}\right)^{\!2}\right)^{-1}}
+\sum\limits_{n=0}^Nz^sh^{N-n}G_{kjn}\times{}\right.\right.\\
+{}\times\sum\limits_{m=2}^Nm(m-1)z^{m-2}h^{N-m}G_{kjm} -{}\\
+\left.{}- \left(\sum\limits_{\ell=1}^N\ell z^{\ell-1}h^{N-\ell}
+G_{kj\ell}\right)^{\!2}\right)\times{}\\
+{}\times
+\left.\left(2\left(\sum\limits_{s=0}^Nz^sh^{N-s}G_{kjs}\right)^2\right)^{-1}
+\right| = \fr{1}{h^2}\times{}\\
+{}\times
+\left|
+\left( 
+\vphantom{\left(\left(\sum\limits_{\ell=1}^N\ell z^{\ell-1}h^{N-
+\ell}G_{kj\ell}\right)^{\!2}\right)^{-1}}
+\sum\limits_{n=0}^N\left(\fr{z}{h}\right)^s \hspace*{-1.5pt}G_{kjn}
+\sum\limits_{m=2}^Nm(m-1)\left(\fr{z}{h}\right)^{m-2}\hspace*{-1.5pt}G_{kjm} - {}\right.\right.\\
+\left.{}-\left(\sum\limits_{\ell=1}^N \ell \left(\fr{z}{h}\right)^{\ell-1}\!\!
+G_{kj\ell}\right)^2
+\right)\times{}\\
+{}\times
+\left.\left(2\left(\sum\limits_{s=0}^N\left({z}/{h}\right)^sG_{kjs}\right)^2\right)^{-1}
+ \right| \leqslant \fr{K_5}{h^2},
+ \end{multline*}
+ где
+ \begin{multline*}
+ \hspace*{-7.7pt}K_5 = \hspace*{-13pt}\max\limits_{%\substack
+ {k,j=\overline{1,N}:} %\\ 
+ {k \neq j}}
+\left(
+\vphantom{\left(\sum\limits_{\ell=1}^N\ell |G_{kj\ell}|\right)^2}
+\!\left( 
+\sum\limits_{n=0}^N|G_{kjn}|\sum\limits_{m=2}^Nm(m-1)|G_{kjm}| + {}\right.\right.\vspace*{-3pt}\\
+\left.\left.{}+
+\left(\sum\limits_{\ell=1}^N\ell |G_{kj\ell}|\right)^2
+\right)\!\Bigg/ \!\left(2\min\limits_{w \in [0,1]}
+(\sum\limits_{s=0}^N w^sG_{kjs})^2\right)
+\vphantom{\left(\sum\limits_{\ell=1}^N\ell |G_{kj\ell}|\right)^{\!2}}
+\!\right).\hspace*{-5pt}
+ \end{multline*}
+ Абсолютное значение второго слагаемого в~$\zeta_1(y,u)$ также 
+оценивается сверху:
+ \begin{multline*}
+ y^{\top}\left[z g_k+(h-z)g_j\right]^{-1}\left( g_k-g_j\right)\times{}\\
+ {}\times \left[z g_k+(h-z)g_j\right]^{-1}
+ ( g_k-g_j)\left[z g_k+{}\right.\\
+\left. {}+(h-z)g_j\right]^{-1}y \leqslant
+ \fr{K_6}{h^3}\,\|y\|^2_I\,,
+ \end{multline*}
+ где $K_6 = 4 \|g^{-1}Gg^{-1}Gg^{-1}\|^2_2$.
+
+
+\begin{figure*} %fig1
+\vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=162.006mm 
+ \epsfbox{bor-1.eps}
+ }
+ \end{center}
+   \vspace*{-9pt}
+   \begin{minipage}[t]{80mm}
+   \Caption{Общий вид функции $\mathfrak{Q}(y,u)$ в~случае аддитивных шумов 
+в~наблюдениях
+} 
+\end{minipage}
+\label{pic:pic1}
+%\end{figure*}
+\hfill
+% \begin{figure*} %fig2
+    \vspace*{-9pt}
+       \begin{minipage}[t]{80mm}
+\Caption{Общий вид функции $Q(y,u)$ в~случае мультипликативных шумов в~наблюдениях
+} \label{pic:pic3}
+\end{minipage}
+\vspace*{12pt}
+\end{figure*}
+
+
+ Обозначим 
+ 
+ \noindent
+ $$
+ K_0 \triangleq 
+\max\limits_{\substack{{k,j=\overline{1,N}:}\\ {k \neq 
+j}}}\fr{\lambda_{kj}e^{\lambda_{jj}h}}{24}
+$$ 
+и~оценим сверху
+ $\int_{\mathbb{R}^M}|\gamma^{kj}(y)|\,dy$, используя связь моментов \mbox{2-го} 
+и~4-го порядка гауссовского распределения:
+
+\noindent
+ \begin{multline*} %\textstyle
+ \int\limits_{\mathbb{R}^M}|\gamma^{kj}(y)|dy \leqslant{}\\
+ {}\leqslant h^3 K_0K_1
+ \left[
+ K_3^2 + \fr{2K_2K_3}{h} + \fr{K_2^2+K_5}{h^2}
+ \right] + h^3 K_0K_1\times{}\\
+ {}\times
+ \int\limits_{\mathbb{R}^M}
+ \left[
+ \fr{2K_3K_4}{h^2} + \fr{2K_2K_4+K_6}{h^3}
+ \right]
+ \|y\|^2_I
+ \mathcal{N}(y,0,hG)dy
+ + {}\\ 
+{}+ 
+ h^3 K_0K_1\fr{K_4^2}{h^4}
+ \int\limits_{\mathbb{R}^M}
+ \|y\|^4_I
+ \mathcal{N}(y,0,hG)dy ={}\\
+ {}= K_7h + K_8h^2 +K_9h^3
+ \end{multline*}
+ для некоторых положительных констант $K_7$, $K_8$ и~$K_9$. Это значит, 
+что 
+$$
+\int\limits_{\mathbb{R}^M}|\gamma^{kj}(y)|dy \hm= O(h)
+$$ 
+и~согласно~(\ref{eq:asympt_glob}) 
+$$
+\sup\limits_{\pi \in 
+\Pi}\me{}{\|\widetilde{X}_{T/h} - \widehat{X}_{T/h}\|_1}\hm = O(h^0)
+$$ 
+и~точности \textit{несоставного} метода <<средних>> прямоугольников 
+недостаточно для построения численного алгоритма фильтрации любой 
+степени. Какая-либо замена этой схемы на другую несоставную (например, на 
+схему Симпсона, квадратуры Гаусса и~пр.)\ к~улучшению не приведет. 
+Причиной этому является связь между порядком производной и~степенью~$h$ 
+в~оценке ошибки интеграла по остатку ряда Тейлора.
+ Дело в~том, что функция $Q_{kj}(y,u)$ при малых значениях параметра~$h$ 
+и~некоторых фиксированных значениях~$y$ быстро меняется по аргументу~$u$. 
+Примечательно, что в~случае наблюдений с~аддитивными 
+шумами~\cite{B_20_2_IA} аналогичная функция
+ $$
+\mathfrak{Q}_{kj}(y,u) = e^{(\lambda_{kk}-\lambda_{jj})u}
+ \mathcal{N}\left(y,u f^k+(h-u)f^j, h g\right)
+$$
+ такими отрицательными свойствами не обладает. В последней формуле $f^k$ 
+и~$f^j$ означают $k$-й и~$j$-й столбцы матрицы $f$.
+
+ Для иллюстрации данного факта рассмотрим два примера наблюдений 
+одинакового масштаба:
+ \begin{enumerate}
+ \item
+ \textit{Наблюдения c аддитивными шумами:}
+ \begin{gather*}
+N = 2;\enskip M = 1; \enskip f = [1\;\; 10]; \enskip 
+\lambda_{11}=\lambda_{22}=-1\,. \\ 
+g_1=g_2=1\,.
+\end{gather*}
+ \item
+ \textit{Наблюдения c мультипликативными шумами:}
+ \begin{gather*}
+N = 2;\enskip M = 1; \enskip f = [0\;\; 0 ]; \enskip 
+\lambda_{11}=\lambda_{22}=-1; \\
+ g_1=1;\enskip g_2=100.
+\end{gather*}
+ \end{enumerate}
+ Общие трехмерные графики функций $\mathfrak{Q}(y,u)$ и~$Q(y,u)$ 
+представлены на рис.~1 и~3, а~отдельные их 
+сечения~--- на рис.~3 и~4 соответственно. На 
+рис.~4 видно, что в~окрестности $y=0$ функция $Q(y,u)$ 
+меняется быстро и~любая простая (несоставная) схема не обеспечит 
+необходимой точности интегрирования.
+ 
+
+ \begin{figure*} %fig3
+ \vspace*{1pt}
+ \begin{minipage}[t]{80mm}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=79mm 
+ \epsfbox{bor-3.eps}
+ }
+ \end{center}
+   \vspace*{-9pt}
+\Caption{
+Сечения $\mathfrak{Q}(y,u)$ для некоторых фиксированных~$y$ в~случае 
+аддитивных шумов в~наблюдениях:
+\textit{1}~--- $y\hm=-0{,}083$; \textit{2}~--- $-0{,}0485$;
+\textit{3}~--- $-0{,}014$; \textit{4}~--- $-0{,}0205$; \textit{6}~--- $y\hm=0{,}055$
+} \label{pic:pic2}
+\end{minipage}
+%\end{figure*}
+\hfill
+% \begin{figure*} %fig4
+\vspace*{1pt}
+\begin{minipage}[t]{80mm}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=79mm 
+ \epsfbox{bor-4.eps}
+ }
+ \end{center}
+   \vspace*{-9pt}
+\Caption{
+Сечения $Q(y,u)$ для некоторых фиксированных~$y$ в~случае 
+мультипликативных шумов в~наблюдениях: \textit{1}~--- $y\hm=-0{,}9$; \textit{2}~--- $-0{,}6$;
+\textit{3}~--- $-0{,}3$; \textit{4}~--- $-0{,}15$; \textit{5}~--- $y\hm=0$
+} \label{pic:pic4}
+\end{minipage}
+\end{figure*}
+
+Используем для приближенного вычисления $\xi^{kj}$ составную схему 
+<<средних>> прямоугольников, разбив отрезок интегрирования $[0,h]$ 
+с~шагом $h^2$. В~этом случае
+ \begin{equation*} %\textstyle
+ \gamma^{kj}(y)=(1-\delta_{kj})\fr{\lambda_{kj}h^5e^{\lambda_{jj}h}}{24}
+\,\fr{\partial^2}{\partial u^2}Q_{kj}(y,u)\Bigl|_{u=z}.
+ \end{equation*}
+ Повторяя все выводы этого подраздела для составной схемы <<средних>> 
+прямоугольников, можно проверить, что она обеспечивает порядок 
+точ\-ности~$3$:
+ $$
+ \int\limits_{\mathbb{R}^M}|\gamma^{kj}(y)|\,dy = O(h^3)
+ $$ 
+и~согласно~(\ref{eq:asympt_glob}) глобальный показатель точности имеет 
+порядок~$1$:
+ $$
+\sup\limits_{\pi \in \Pi}\me{}{\|\widetilde{X}_{T/h} - 
+\widehat{X}_{T/h}\|_1} \leqslant CTh.
+$$
+ Окончательно схема вычисления $\psi^{kj}$ при $s=1$ примет вид:
+ \begin{multline*} %\textstyle
+ \psi^{kj}(y)=\delta_{kj}e^{\lambda_{jj}h}\mathcal{N}(y,0,hg_j)
++{}\\
+{}+
+ (1-\delta_{kj})\lambda_{kj}h^2 
+\sum\limits_{i=1}^{\left[{1}/{h}\right]-1} 
+Q^{kj}\left(y,h^2\left(i-\fr{1}{2}\right)\right).
+ %\label{eq:psi_mid_tr_comp}
+ \end{multline*}
+ 
+\subsection{Порядок $s=2$, схема средних}
+
+ В случае $s=2$ элементы $\xi^{jk}$ вычисляются по формуле:
+ \begin{multline} %\textstyle
+ \xi^{kj}(y)= \delta_{kj}e^{\lambda_{jj}h}\mathcal{N}(y,0,hg_j)+{} \\
+{}+ 
+ (1-\delta_{kj})\lambda_{kj}e^{\lambda_{jj}h}
+ \int\limits_0^h Q^{kj}(y,u)\,du +{}\\
+ {}+
+ \sum\limits_{\substack{{i:i \neq k,}\\ {i \neq j}}} \lambda_{k 
+i}\lambda_{i j} e^{\lambda_{jj}h}
+\int\limits_0^{h} \int\limits_0^{h-u}
+R^{kij} (y,u,v)\,dvdu.
+ \label{eq:xi_2}
+ \end{multline}
+Согласно~(\ref{eq:asympt_glob}) для сохранения второго порядка точности 
+аналитической аппроксимацией необходимо, чтобы локальная ошибка 
+численного интегрирования на каждом шаге была не более~$O(h^3)$.\linebreak 
+Составная схема <<средних>> прямоугольников, предложенная в~предыдущем 
+подразделе, обеспечивает эту точность для вычисления одномерного 
+интеграла~--- второго слагаемого в~(\ref{eq:xi_2}).
+
+Выберем подходящую схему вычисления двойных интегралов по треугольнику, 
+входящих в~третье слагаемое~(\ref{eq:xi_2}).
+ Прежде всего, определим величину ошибки приближения интеграла 
+в~(\ref{eq:h2}) простым методом средних:
+ \begin{multline*} %\textstyle
+ \lambda_{k i}\lambda_{i j} e^{\lambda_{jj}h}
+\int\limits_0^{h} \int_0^{h-u} R^{kij}(y,u,v)\,dvdu ={}\\
+{}= \fr{h^2}{2}\,
+\lambda_{k i}\lambda_{i j} e^{\lambda_{jj}h}
+R^{kij}\left(y,\fr{h}{3},\fr{h}{3}\right)+{} \\ %\textstyle
+{}+\lambda_{k i}\lambda_{i j} e^{\lambda_{jj}h} \int\limits_0^{h} 
+\int\limits_0^{h-u}\chi_2^{kij}(y,u,v)\,dvdu,
+ \end{multline*}
+где функция $\chi_2^{kij}(y,u,v)$ имеет вид:
+\begin{multline*} %\textstyle
+\chi_2^{kij}(y,u,v)\triangleq
+\fr{1}{2}
+\left(\left(z-\fr{h}{3}\right)\fr{\partial}{\partial z}+{}\right.\\
+\left.{}+\left(w-
+\fr{h}{3}\right)\fr{\partial}{\partial w}
+\right)^2R^{kij}(y,z,w)\Bigl|_{(z(y,u),w(y,v))}.
+\end{multline*}
+Согласно~\cite{IK_94}, для некоторой положительной константы~$C_1$ верно 
+неравенство:
+ \begin{multline*} %\textstyle
+\lambda_{k i}\lambda_{i j} e^{\lambda_{jj}h} \int\limits_0^{h} 
+\int\limits_0^{h-u}\chi_2^{kij}(y,u,v)\,dvdu \leqslant{}\\
+{}\leqslant h^4C_1
+\max\limits_{\substack{{\ell=0,1,2;}\\ { (z,w) \in \mathcal{D}}}}
+\left|\fr{\partial^2}{\partial z^{\ell}\partial w^{2-
+\ell}}\,\chi_2^{kij}(y,z,w)\right|.
+ \end{multline*}
+ В предыдущем разделе также оценивалась вторая производная, однако от 
+другой функции~--- $Q^{kj}$. Она содержала $h^2$ в~знаменателе. Сравнивая 
+$Q^{kj}$ и~$R^{kij}$, можно заключить, что вторая производная от 
+$R^{kij}$ также будет содержать $h^2$ в~знаменателе, т.\,е.
+ $$
+ \lambda_{k i}\lambda_{i j} e^{\lambda_{jj}h} \int\limits_0^{h} 
+ \int\limits_0^{h-u}\chi_2^{kij}(y,u,v)\,dvdu \leqslant h^2C_2
+ $$
+ для некоторой положительной константы $C_2$. Так как требуемый порядок 
+точности~--- третий, последнее равенство позволяет сделать вывод о~том, 
+что простой метод средних в~данном случае нужной точности не 
+обеспечивает.
+
+ Используем для вычисления двойного интег\-рала составной метод средних, 
+разбив область\linebreak интегрирования, прямоугольный треугольник с~катетами длины 
+$h$, на подобные треугольники с~катетами~$h^2$. В этом случае
+ $$
+\lambda_{k i}\lambda_{i j} e^{\lambda_{jj}h} \int\limits_0^{h} 
+\int\limits_0^{h-u}\chi_2^{kij}(y,u,v)\,dvdu \leqslant h^4 C_3
+ $$
+ для некоторой положительной константы $C_3$. Тогда 
+согласно~(\ref{eq:asympt_glob})
+ $$
+\sup\limits_{\pi \in \Pi}\me{}{\|\widetilde{X}_{T/h} - 
+\widehat{X}_{T/h}\|_1} \leqslant CTh^2,
+$$
+ т.\,е.\ для реализации аналитической аппроксимации порядка $s\hm=2$ 
+правомерно использование составных схем средних при вычислении одномерных 
+и~двойных интегралов.
+
+ Окончательно схема вычисления $\psi^{kj}$ при $s\hm=2$ примет вид:
+ \begin{multline*} %\textstyle
+ \psi^{kj}(y)=\delta_{kj}e^{\lambda_{jj}h}\mathcal{N}(y,0,hg_j)
++{}\\
+{}+
+ (1-\delta_{kj})\lambda_{kj}h^2\sum_{i=1}^{\left[{1}/{h}\right]-1}
+Q^{kj}\left(y,h^2\left(i-\fr{1}{2}\right)\right)+ {}\\
+{} +
+ \fr{h^4}{2}\sum\limits_{\substack{{i:i \neq k,}\\ {i \neq j}}} 
+\lambda_{k i}\lambda_{i j} e^{\lambda_{jj}h}\times{}\\
+{}\times
+\sum\limits_{n=1}^{\left[{1}/{h}\right]-1}
+\sum\limits_{m=1}^{\left[{1}/{h}\right]-1-n} \hspace*{-10pt}R^{kij}\!\left(y,h^2
+\left(n-\fr{2}{3}\right),h^2\left(m-\fr{2}{3}\right)\!\right).\hspace*{-5.93419pt}
+ %\label{eq:psi_mid_tr_comp-t}
+ \end{multline*}
+
+ \section{Заключение}
+
+ Данный цикл работ посвящен разработке алгоритмов численного решения 
+задач фильтрации МСП по косвенным наблюдениям в~присутствии винеровских 
+шумов. Перед обработкой непрерывные наблюдения дискретизуются по времени. 
+Таким образом, полученные результаты могут применяться для практических 
+задач оценивания как по исходным непрерывным наблюдениям, так и~по 
+заранее дискретизованным данным. Формула~(\ref{eq:asympt_glob}) при этом 
+представляется ключевой. Она описывает влияние <<входных>> характеристик 
+на итоговую точность численного алгоритма фильтрации. К~<<входным>> 
+относятся: характеристика темпа изменения состояний МСП (величина 
+$\overline{\lambda}$), шаг дискретизации по времени $h$, порядок 
+реализуемой аналитической аппроксимации $s$ и~точность используемых схем 
+численного интегрирования $\delta$. Основываясь на этих данных, 
+(\ref{eq:asympt_glob}) позволяет оценить величину $\sup\nolimits_{\pi \in 
+\Pi}\me{}{\|\widetilde{X}_{T/h} \hm- \widehat{X}_{T/h}\|_1}$~--- потерю 
+точности при переходе от оптимальной оценки к~некоторой ее численной 
+аппроксимации. Данная формула позволяет решать ряд практических задач 
+системного анализа. Во-пер\-вых, по фиксированным $\overline{\lambda}$ 
+и~$h$ можно выбирать схему численной реализации оценки с~учетом требуемой 
+точности и~ресурсоемкости различных методов численного интегрирования. 
+Во-вторых, при проектировании реальных сис\-тем наблюдения можно подбирать 
+максимальный шаг дискретизации $h$, обеспечивающий для выбранной схемы 
+численной реализации тре\-бу\-емую точность.
+
+ Важно отметить еще одну особенность полученных результатов. В~отличие от 
+классической\linebreak $\mathcal{L}_2$-мет\-ри\-ки, используемой для характеризации 
+ошибок численного решения стохастических дифференциальных 
+уравненией~\cite{KP_92}, в~предложенном цик\-ле для этого используется 
+$\mathcal{L}_1$-метрика. Дело в~том, что решением задачи оптимальной 
+фильт\-ра\-ции является условное распределение со\-сто\-яния МСП по имеющимся 
+наблюдениям. Приближенные решения, предлагаемые в~данной работе, обладают 
+свойством устойчивости, т.\,е.\ также могут рас\-смат\-ри\-вать\-ся как некоторые 
+распределения. Очевидно, что $\mathcal{L}_1$-метрика оказывается более 
+естественной характеристикой, описывающей расстояние между 
+распределениями.
+
+В данных статьях оценено расстояние между оптимальной оценкой фильтрации 
+по дискретизованным наблюдениям и~ее численной аппроксимацией, выбранной 
+из предложенного класса. Однако итоговая точность предложенных численных 
+аппроксимаций, т.\,е.\ расстояние между ними и~истинным текущим 
+состоянием оцениваемого МСП, пока не охарактеризовано. Решение данной 
+задачи представляется одним из направлений дальнейших исследований.
+
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+ \bibitem{B_20_1_IA}
+ \Au{Борисов А.} Численные схемы фильтрации марковских скачкообразных 
+процессов по дискретизованным наблюдениям~I:~характеристики точности~// 
+Информатика и~её применения,~2019. Т.~13. Вып.~4. C.~68--75. doi: 
+10.14357/19922264190411.
+
+\bibitem{B_20_2_IA}
+ \Au{Борисов А.} Численные схемы фильтрации марковских скачкообразных 
+процессов по дискретизованным наблюдениям II: случай аддитивных шумов~// 
+Информатика и~её применения,~2020. Т.~14. Вып.~1. C.~17--23. 
+doi:  10.14357/19922264200103.
+
+\bibitem{B_18}
+\Au{Борисов А.} Фильтрация Вонэма по наблюдениям с~мультипликативными 
+шумами~// Автоматика и~телемеханика, 2018.
+№\,1. C.~52--65. % doi: 10.1134/S0005117918010046.
+
+ \bibitem{B_18_IA}
+ \Au{Борисов А.} Фильтрация состояний марковских скачкообразных процессов 
+по дискретизованным наблюдениям~// Информатика и~её применения,~2018. 
+Т.~12. Вып.~3. C.~115--121. doi: 10.14357/19922264180316.
+
+%\bibitem{KP_92}
+%{\it Kloeden P., Platen E.} Numerical solution of stochastic 
+%differential equations.~--- % 
+%Berlin: Springer, 1992. 636 p. %doi: 10.1007/978-3-662-12616-5.
+
+%\bibitem{YZL_04}
+%{\it Yin G., Zhang Q., Liu Y.}
+%Discrete-time approximation of Wonham filters~//
+%Journal of Control Theory and Applications. 2004. №.\,2. P.~1--10.
+
+%\bibitem{PR_10}
+%{\it Platen E., Rendek R.}
+%Quasi-Exact Approximation of Hidden Markov Chain Filters~// 
+%Communicat.~Stoch.~Analys. 2010.  
+%Vol.~4. №.~1. P.~129--142.
+
+%\bibitem{BGH_16}
+%{\it B\"auerle, N., Gilitschenski I., Hanebeck U.} Exact and approximate 
+%hidden Markov chain filters based on discrete observations // Statistics 
+%\& Risk Modeling. 2016. V.~32.~ №.3-4.~
+%P.~159--176.
+
+\bibitem{IK_94}
+\Au{Isaacson E., Keller H.} Analysis of numerical methods.~--- New York, 
+NY, USA: Dover Publications, 1994. 541~p.
+
+\bibitem{MN_2019}
+ \Au{Magnus J., Neudecker H.}
+ Matrix differential calculus with applications in statistics and 
+econometrics.~---
+ New York, NY, USA: Wiley, 2019. 504~p.
+
+ \bibitem{KP_92}
+\Au{Kloeden P., Platen E.} Numerical solution of stochastic differential 
+equations.~--- Berlin: Springer, 1992. 636~p. %doi: 10.1007/978-3-662-12616-5.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 11.10.19}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{NUMERICAL SCHEMES OF MARKOV JUMP PROCESS FILTERING GIVEN 
+DISCRETIZED OBSERVATIONS III: MULTIPLICATIVE NOISES CASE}
+
+
+\def\titkol{Numerical schemes of Markov jump process filtering given 
+discretized observations III: Multiplicative noises case}
+
+\def\aut{A.\,V.~Borisov}
+
+\def\autkol{A.\,V.~Borisov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+Institute of Informatics Problems, Federal Research Center ``Computer 
+Science 
+and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., 
+Moscow 
+119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+
+
+\Abste{The paper presents the final part of investigations initialized in 
+the papers
+\Aue{Borisov,~A.} 2019. Numerical schemes of Markov jump process 
+filtering given discretized observations I: Accuracy characteristics. 
+\textit{Inform.~Appl.} 13(4):68--75
+and 
+\Aue{Borisov,~A.} 2020. Numerical schemes of Markov jump process 
+filtering given discretized observations II: Multiplicative noises case. 
+\textit{Inform.~Appl.} 14(1):17--23. 
+Relying on the theoretical results, this paper presents a~numerical 
+algorithm of the state filtering of homogeneous Markov jump processes 
+(MJP) given indirect noisy continuous time observations discretized by 
+time. The class of observation systems under consideration is restricted 
+by ones with multiplicative noises: any additive payload component is 
+absent in the observable signal, but the observation noise intensity is 
+a~function of the MJP state under estimation. To calculate the integrals 
+in the estimate, the author uses the composite midpoint rule of the 
+precision order $3$, along with the composite midpoint rule for triangles 
+of the precision order~$4$. The constructed numerical algorithms of 
+filtering have the final precision of the orders~$1$ and~$2$.}
+
+\KWE{Markov jump process; optimal filtering; additive and multiplicative 
+observation noises; stochastic differential equation; analytical and 
+numerical approximation}
+
+
+
+\DOI{10.14357/19922264200202}
+
+\vspace*{-6pt}
+
+\Ack
+\noindent
+The work was supported in part by the Russian Foundation
+for Basic Research (project No.\,19-07-00187~A).
+
+
+\vspace*{6pt}
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+
+ 
+
+ \bibitem{B_20_1_IA-1}
+\Aue{Borisov, A.} 2019. Chislennye skhemy fil'tratsii markovskikh 
+skachkoobraznykh protsessov po diskretizovannym nablyudeniyam I: 
+kharakteristiki tochnosti [Numerical schemes of Markov jump process 
+filtering given discretized observations I: Accuracy characteristics]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 13(4):68--75. 
+doi: 10.14357/19922264190411.
+
+ \bibitem{B_20_2_IA-1}
+\Aue{Borisov, A.} 2020. Chislennye skhemy fil'tratsii markovskikh 
+skachkoobraznykh protsessov po diskretizovannym nablyudeniyam II: sluchay 
+additivnykh shuchmov [Numerical schemes of Markov jump process filtering 
+given discretized observations II: Additive noises case]. 
+\textit{Informatika i~ee primeneniya~--- Inform. Appl.} 14(1):17--23. 
+doi: 10.14357/19922264200103.
+
+\bibitem{B_18-1}
+\Aue{Borisov, A.} 2018. 
+Wonham filtering by observations with multiplicative noises. 
+\textit{Automat. Rem. Contr.} 79(1):39--50. 
+doi: 10.1134/S0005117918010046.
+
+ \bibitem{B_18_IA-1}
+\Aue{Borisov, A.} 2018. Fil'tratsiya sostoyaniy markovskikh 
+skachkoobraznykh protsessov po diskretizovannym nablyu-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+deniyam [Filtering 
+of Markov jump processes by discretized observations]. 
+\textit{Informatika i~ee Primeneniya~--- Inform.~Appl.} 12(3):115--121. 
+doi: 10.14357/19922264180316.
+
+\bibitem{IK_94-1}
+\Aue{Isaacson, E., and H. Keller.} 1994.
+\textit{Analysis of numerical methods.} New York, NY: Dover Publications. 
+541~p.
+
+
+
+\bibitem{MN_2019-1}
+\Aue{Magnus, J., and H.~Neudecker}. 2019.
+\textit{Matrix differential calculus with applications in statistics and 
+econometrics.} 
+New York, NY: Wiley. 504~p.
+
+\bibitem{KP_92-1}
+\Aue{Kloeden,~P., and E.~Platen.} 1992. \textit{Numerical solution of 
+stochastic
+differential equations.} Berlin: Springer. 636~p.
+
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Received October 11, 2019}}
+
+%\pagebreak
+
+%\vspace*{-24pt}
+
+
+\Contrl
+
+\noindent
+\textbf{Borisov Andrey V.} (b.\ 1965)~--- Doctor of Science in physics and 
+mathematics, principal scientist, Institute of Informatics Problems, 
+Federal Research Center ``Computer Science and Control'' of the Russian 
+Academy of Sciences, 44-2 Vavilov Str., Moscow 119333, Russian 
+Federation; \mbox{aborisov@frccsc.ru}
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

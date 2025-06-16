@@ -1,0 +1,1103 @@
+\newcommand{\Variance}{\sf D}
+\newcommand{\Prob}{\sf P}
+
+\def\stat{shestakov}
+
+\def\tit{АСИМПТОТИЧЕСКИЕ СВОЙСТВА ОЦЕНКИ РИСКА ПРИ~ПОРОГОВОЙ ОБРАБОТКЕ 
+ВЕЙВЛЕТ-КОЭФФИЦИЕНТОВ
+В~МОДЕЛИ С КОРРЕЛИРОВАННЫМ ШУМОМ$^*$}
+
+\def\titkol{Асимптотические свойства оценки риска при~пороговой обработке 
+вейвлет-коэффициентов}
+%в~модели с коррелированным шумом}
+
+\def\autkol{А.\,А.~Ерошенко, О.\,В.~Шестаков}
+
+\def\aut{А.\,А.~Ерошенко$^1$, О.\,В.~Шестаков$^2$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\footnotetext[1]{Работа выполнена при финансовой поддержке РФФИ (проект 11-01-00515а).}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет им.\ М.\,В.~Ломоносова, 
+кафедра математической статистики факультета вычислительной математики и кибернетики, 
+aeroshik@gmail.com} 
+\footnotetext[2]{Московский государственный университет им.\ М.\,В.~Ломоносова, 
+кафедра математической статистики факультета вычислительной математики и кибернетики; 
+Институт проблем информатики Российской академии наук, oshestakov@cs.msu.su}
+
+
+\Abst{Вейвлет-методы подавления шума, основанные на процедуре пороговой обработки, 
+широко используются при анализе сигналов и изображений. Их привлекательность заключается, 
+во-пер\-вых, в быстроте алгоритмов построения оценок, а во-вто\-рых, 
+в возможности лучшей, чем линейные методы, адаптации к функциям, имеющим 
+на разных участках различную степень регулярности. Анализ погрешностей 
+этих методов представляет собой важную практическую задачу, поскольку он 
+позволяет оценить качество как самих методов, так и используемого оборудования. 
+В~работе исследуются асимптотические свойства оценки среднеквадратичного риска 
+при пороговой обработке коэффициентов разложения функции сигнала по вейв\-лет-ба\-зи\-су 
+в модели с коррелированным шумом. Приводятся условия, при которых имеют место состоятельность 
+и асимптотическая нормальность несмещенной оценки риска. Полученные результаты дают 
+возможность строить асимптотические доверительные интервалы для погрешности пороговой 
+обработки, используя только наблюдаемые данные.}
+
+\KW{вейвлеты; пороговая обработка; несмещенная оценка риска; коррелированный шум; асимптотическая нормальность}
+
+\DOI{10.14357/19922264140105}
+
+\vskip 20pt plus 9pt minus 6pt
+
+      \thispagestyle{headings}
+
+      \begin{multicols}{2}
+
+            \label{st\stat}
+
+\section{Введение}
+
+Статистические методы вейв\-лет-ана\-ли\-за широко применяются при анализе и обработке 
+зашумленных сигналов и изображений. \mbox{Построение} вейвлет-оце\-нок 
+для данных с коррелированным шумом обычно осуществляется с помощью 
+применения мягкой пороговой обработки к эмпирическим вейв\-лет-ко\-эф\-фи\-ци\-ен\-там. 
+Порог обычно зависит от уровня разложения, и его можно выбирать различными способами, 
+исходя из постановки задачи и целей обработки (см., например,~[1--4]). Наличие шума 
+неизбежно приводит к погрешностям в оцениваемом сиг\-на\-ле/изоб\-ра\-же\-нии. 
+Свойства оценки таких погрешностей (риска) в модели с независимым шумом исследовались в 
+работах~[1--12]. Показано, что при определенных условиях оценка риска является состоятельной 
+и асимптотически нормальной. В данной работе исследуется асимптотическое поведение оценки 
+риска в модели со стационарным коррелированным шумом. Для простоты изложения рассматриваются 
+одномерные сигналы.
+
+\section{Модель данных и~коэффициенты вейвлет-разложения}
+
+Вейвлет-разложение функции $f\hm\in L^2(\mathbb{R})$, описывающей сигнал, представляет 
+собой ряд
+\begin{equation}
+f=\sum\limits_{j,k\in Z}\langle f,\psi_{jk}\rangle\psi_{jk}\,,
+\label{Wavelet_Decomp}
+\end{equation}
+где $\psi_{jk}(t)\hm=2^{j/2}\psi(2^jt-k)$, а $\psi(t)$~--- 
+некоторая материнская вейв\-лет-функ\-ция (семейство $\{\psi_{jk}\}_{jk\in Z}$ 
+образует ортонормированный базис в~$L^2(\mathbb{R})$). Индекс~$j$ 
+в~\eqref{Wavelet_Decomp} называется масштабом, а индекс~$k$~--- сдвигом. 
+Функция~$\psi$ должна удовлетворять определенным требованиям, однако ее 
+можно выбрать таким образом, чтобы она обладала некоторыми полезными свойствами, 
+например была дифференцируемой нужное число раз и имела заданное число~$M$ нулевых 
+моментов~\cite{13-she}, т.\,е.
+$$\int\limits_{-\infty}^{\infty}t^k\psi(t)\,dt=0\,,\enskip k=0,\ldots,M-1\,.
+$$
+
+В дальнейшем будут рассматриваться функции сигнала $f\hm\in L^2(\mathbb{R})$ 
+на конечном отрезке $[a,b]$, равномерно регулярные по Липшицу с некоторым 
+параметром $\gamma\hm>0$. Для таких функций известно~\cite{14-she}, 
+что если вейв\-лет-функ\-ция~$M$~раз непрерывно дифференцируема 
+($M\hm\geqslant\gamma$), имеет $M$ нулевых моментов и достаточно 
+быстро убывает на бесконечности, т.\,е.\ существует такая константа $C_A\hm>0$, что
+$$
+\int\limits_{-\infty}^{\infty}\left(1+\abs{t}^{\gamma}\right)\abs{\psi(t)}\,dt\leqslant C_A\,,
+$$
+то найдется такая константа $A\hm>0$, что
+\begin{equation}
+\langle f,\psi_{jk}\rangle\leqslant\fr{A}{2^{j\left(\gamma+1/2\right)}}\,.
+\label{Coeff_Decay}
+\end{equation}
+
+На практике функции сигнала всегда заданы в дискретных отсчетах на конечном отрезке. 
+Не ограничивая общности, будем считать, что это отрезок $[0,1]$ и функция~$f$ задана в 
+точках $i/2^J$ ($i\hm=1,\ldots, 2^J$): $f_i\hm=f\left(i/2^J\right)$.
+Дискретное вейв\-лет-пре\-обра\-зо\-ва\-ние представляет собой умножение 
+вектора значений функции~$f$ (обозначим его через~$\overline{f}$) на ортогональную матрицу~$W$, 
+определяемую вейв\-лет-функ\-ци\-ей~$\psi$: $\overline{f}^{W}\hm=W\overline{f}$~\cite{14-she}. 
+При этом дискретные вейв\-лет-ко\-эф\-фи\-ци\-ен\-ты связаны с непрерывными следующим образом: 
+$f^{W}_{jk}\hm\approx 2^{J/2}\langle f,\psi_{jk}\rangle$ (см., например,~\cite{2-she} 
+или~\cite{14-she}). Это приближение тем точнее, чем больше~$J$. 
+Здесь не будут обсуждаться методы борьбы с краевыми эффектами, 
+связанными с использованием вейв\-лет-раз\-ло\-же\-ния на конечном отрезке. 
+Познакомиться с этими методами можно, например, в~\cite{15-she}.
+
+В реальных наблюдениях всегда присутствует шум. Пусть $\{e_i, i \hm\in \mathbb{Z}\}$~--- 
+стационарный гауссовский процесс с ковариационной по\-сле\-до\-ва\-тель\-ностью 
+$r_k \hm= \cov (e_i,e_{i+k})$. Будем полагать, что $e_i$ имеют нулевое среднее и 
+единичную дисперсию. Рас\-смот\-рим следующую модель данных:
+\begin{equation*}
+Y_j = f_j + e_j \qquad j = 1, \dots, 2^J\,.
+%\label{Data_Model}
+\end{equation*}
+
+Для $t\in [0,1]$ определим наблюдаемый процесс
+\begin{equation*}
+Y_J(t) = \fr{1}{2^J} \sum\limits_{i=1}^{[2^Jt]} Y_i = 
+F_J(t)+ \fr{1}{2^J} \sum\limits_{i=1}^{[2^Jt]} e_i\,,
+\end{equation*}
+где $F_J(t)=1/2^J \sum\limits_{i=1}^{[2^Jt]} f(i/2^J)$~--- 
+<<суммарный сигнал>>. Как и в работах~\cite{16-she, 17-she}, рассмотрим два от\-дель\-ных случая.
+
+\subsection{Модель краткосрочной зависимости}
+
+Пусть $\sum\limits_{-\infty}^{+\infty} |r_k| < \infty$.
+Положим $\tau^2 \hm= \sum\limits_{-\infty}^{+\infty} r_k$.
+В~этом случае
+\begin{equation}
+2^{J/2}(Y_J(t)-F_J(t)) \Rightarrow \tau \mathbf{B}(t))\,, \enskip t \in [0,1]\,,
+\label{SRD_limit}
+\end{equation}
+где $\mathbf{B}(t)$~--- процесс стандартного броуновского движения. Это следует, 
+например, из~\cite{18-she} (лемма~5.1).
+Проведем масштабирование $\epsilon\hm = \tau \cdot 2^{-J/2}$. Без ограничения общности 
+далее будем полагать, что $\tau\hm=1$. Из~(\ref{SRD_limit}) следует, 
+что можно аппроксимировать наблюдаемый процесс $Y_J(t)$ с помощью $Y(t)$ 
+для $t \hm\in [0,1]$, где
+\begin{equation}
+Y(t) = F(t) + \epsilon \mathbf{B}(t)
+\label{Scale_proc}
+\end{equation}
+и $F(t)= \int\limits_0^t f(s)\,d s$. Применяя к~(\ref{Scale_proc}) вейв\-лет-раз\-ло\-же\-ние 
+и аппроксимируя его дискретным вейв\-лет-пре\-обра\-зо\-ва\-ни\-ем, приходим к следующей модели 
+дискретных вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов~\cite{16-she}:
+\begin{equation}
+X_{jk} = \mu_{jk} +  z_{jk}\,,
+\label{Wav_SRD_model}
+\end{equation}
+где $\mu_{jk}=f^{W}_{jk}$, а  $z_{jk}$ независимы и имеют стандартное 
+нормальное распределение.
+
+\smallskip
+
+\noindent
+\textbf{Замечание 1.} В силу краевых эффектов нормальные случайные величины~$z_{jk}$ 
+c нулевым средним, относящиеся к фиксированному уровню~$j$, на самом деле имеют 
+ковариационную матрицу, удовлетворяющую условию
+\begin{equation}
+\sigma_a^2 I \leqslant \Gamma_j \leqslant \sigma_b^2 I,
+\label{Wav_SRD_Cov}
+\end{equation}
+где неравенства рассматриваются в смысле неотрицательно определенных матриц и 
+константы $\sigma_a$, $\sigma_b$ не зависят от~$j$, а только от выбранного вейв\-лет-ба\-зи\-са. 
+Таким образом, модель~(\ref{Wav_SRD_model}) справедлива с точностью до 
+ограничений~(\ref{Wav_SRD_Cov})~\cite{16-she}.
+
+\subsection{Модель долгосрочной зависимости}
+
+Теперь предположим, что автоковариационная функция шума убывает медленно согласно 
+модели $r_k \hm\sim Ak^{-\alpha}$, где $0 \hm< \alpha \hm<1$.
+
+Положим $\tau^2 \hm= 2A/((1\hm-\alpha)(2\hm-\alpha))$ (без ограничения общности 
+далее будем полагать, что $\tau\hm=1$) и $H \hm= 1- \alpha/2 \hm\in (1/2,1)$.
+
+Определим дробное броуновское движение $\mathbf{B}_H(t)$ как
+гауссовский процесс на~$\mathbb{R}$ с нулевым средним  и
+ковариационной функцией
+\begin{equation*}
+r(s,t) = \fr{V_H}{2}\left(|s|^{2H} + |t|^{2H} - |t-s|^{2H}\right)\,, \enskip s,t \in \mathbb{R}\,,
+\end{equation*}
+где
+\begin{equation*}
+V_H = \Variance (\mathbf{B}_H(1)) = \fr{-\Gamma(2-2H)\cos(\pi H)}{\pi H(2H-1)}\,.
+\end{equation*}
+Теперь лемма~5.1 из~\cite{18-she} показывает, что
+\begin{equation*}
+2^{\alpha J/2}(Y_J - F_J) \Rightarrow \tau\mathbf{B}_H(t)\,, \enskip t\in[0,1]\,.
+\end{equation*}
+Таким образом, полагая $\epsilon \hm= \tau^{1/\alpha}\cdot 2^{-J/2}$, 
+можно аппроксимировать наблюдаемый процесс $Y_J(t)$ с помощью $Y(t)$ для $t\hm \in [0,1]$:
+\begin{equation*}
+Y(t) = F(t) + \epsilon^{\alpha} \textbf{B}_H(t)\,.
+\end{equation*}
+
+Так же как и в случае краткосрочной за\-ви\-си\-мости, можно перейти к следующей модели 
+дискретных вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов~\cite{16-she}:
+\begin{equation}
+X_{jk} = \mu_{jk} +  2^{(J-j)(1-\alpha)/2} z_{jk}\,,
+\label{Wav_LRD_model}
+\end{equation}
+где $z_{jk}=2^{j(1-\alpha)/2} \int \psi_{jk}\, d\mathbf{B}_H$. 
+Шумовые переменные $z_{jk}$ имеют стандартное нормальное распределение, 
+но не являются независимыми. Однако можно показать, что они обладают 
+ограниченной зависимостью, т.\,е.\ для всех~$j$ и~$k$
+\begin{equation*}
+0<c_0\leqslant \Variance(z_{jk}| z_{il}, i \neq j, k \neq l) \leqslant 1\,.
+\end{equation*}
+
+\section{Пороговая обработка и~оценка риска}
+
+Смысл пороговой обработки вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов заключается в 
+удалении достаточно маленьких коэффициентов, которые считаются шумом. 
+Будем использовать так называемую мягкую пороговую обработку с порогом~$T_j$, 
+зависящим от уровня~$j$. К~каждому вейв\-лет-ко\-эф\-фи\-ци\-ен\-ту применяется 
+функция $\rho_{T_j}(x)\hm=\textbf{sgn}(x)\left(\abs{x}-T_j\right)_{+}$, т.\,е.\ 
+при такой пороговой обработке коэффициенты, которые по модулю меньше порога~$T_j$, 
+обнуляются, а абсолютные величины остальных коэффициентов уменьшаются на величину 
+порога. Погрешность (или риск) мягкой пороговой обработки определяется следующим образом:
+\begin{equation}
+R_J(f)=\sum\limits_{j=0}^{J-1}\sum\limits_{k=0}^{2^j-1}
+\Expect\left(\mu_{jk}-\rho_{T_j}(X_{jk})\right)^2.
+\label{Risk_def}
+\end{equation}
+
+В работах~\cite{2-she} и~\cite{3-she} было предложено использовать порог 
+$T_j\hm=\sigma_j\sqrt{2\ln 2^J}$. Было показано, что при таком пороге риск 
+близок к минимальному~\cite{2-she}. Этот порог получил название <<универсальный>>. 
+В~дальнейшем будет использоваться именно такой вид порога. 
+В~выражении~(\ref{Risk_def}) присутствуют неизвестные величины~$\mu_{jk}$, 
+поэтому вычислить значение $R_J(f)$ нельзя. Однако его можно оценить. 
+В~качестве оценки риска используется следующая величина~\cite{1-she}:
+\begin{equation}
+\widehat{R}_J(f)=\sum\limits_{j=0}^{J-1}\sum\limits_{k=0}^{2^j-1}F\left[X_{jk}^2,T_j,\sigma_j\right]\,,
+\label{Risk_Est}
+\end{equation}
+где 
+\begin{multline*}
+F[x,T,\sigma]=\left(x-\sigma^2\right)\Ik(|x|\leqslant T^2)+{}\\
+{}+
+(\sigma^2+T^2)\Ik (|x|\hm>T^2)\,.
+\end{multline*}
+
+Величина $\widehat{R}_J(f)$ является несмещенной оценкой для $R_N(f)$~\cite{14-she}. 
+В~работах~[6--12] исследовались асимптотические свойства оценки~(\ref{Risk_Est}) 
+в модели с независимым шумом. Было показано, что при определенных условиях гладкости 
+эта оценка является\linebreak состоятельной и асимптотически нормальной.\linebreak Поскольку для модели 
+данных с краткосрочной зависимостью принимается модель эмпирических 
+вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов~(\ref{Wav_SRD_model}), с точностью до ограничений~(\ref{Wav_SRD_Cov}) 
+все результаты указанных работ переносятся на этот случай. Далее будет исследовано асимптотическое 
+поведение оценки~(\ref{Risk_Est}) в модели данных с долгосрочной зависимостью.
+
+\section{Вспомогательные результаты}
+
+В этом разделе будут получены некоторые результаты, касающиеся характера 
+зависимости эмпирических вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов. Всюду далее предполагается, 
+что используются вейвлеты \mbox{Мейера}~\cite{14-she}, обладающие нужным количеством нулевых 
+моментов и непрерывных производных. Рассмотрим ковариацию случайных величин в 
+модели~(\ref{Wav_LRD_model})~\cite{16-she}:
+\begin{multline*}
+\cov(X_{jk},X_{il})= 2^{J(1-\alpha)} \Expect \int \psi_{jk} \,
+d\mathbf{B}_H \overline{\int \psi_{il}\, d\mathbf{B}_H}={}\\
+{}=
+2^{J(1-\alpha)}\fr{1}{2\pi} \int \hat{\psi_{jk}}(\xi)
+\overline{\hat{\psi_{il}}(\xi)}|\xi|^{-(1-\alpha)}\, d\xi\,.
+\end{multline*}
+Для преобразования Фурье вейв\-лет-функ\-ции справедливо
+$$\hat{\psi}_{jk}(\xi) = 2^{-j/2} e^{ik\cdot 2^{-j}}\hat{\psi}(2^{-j}\xi)\,.
+$$
+Рассмотрим ковариацию в пределах одного уровня~$j$:
+\begin{multline*}
+\cov(X_{j0},X_{jk}) ={}\\
+{}=
+2^{(J-j)(1-\alpha)} \fr{1}{2\pi}\int e^{ik\xi}|\hat{\psi}(\xi)|^2 |\xi|^{-(1-\alpha)}\,d\xi\,.
+\end{multline*}
+Поскольку вейв\-лет-функ\-ция~$\psi$ имеет $M$ нулевых моментов и $M$ непрерывных 
+производных, найдется такая константа $C_M\hm>0$, что
+\begin{equation}
+|\cov(X_{j0},X_{jk})| \leqslant  \fr{C_M 2^{(J-j)(1-\alpha)}}{k^M}\,.
+\label{Cov_Single_Decay}
+\end{equation}
+
+
+\smallskip
+
+\noindent
+\textbf{Замечание~2.}
+Для вейв\-лет-функ\-ции Мейера $\psi(x)$ при любом натуральном~$M_0$ существует 
+константа $C_{M_0}\hm>0$ такая, что $|\hat{\psi}(\xi)|\hm\leqslant C_{M_0} |\xi|^{M_0} 
+\mathbf{1}_{\xi \in \mathrm{supp}\left(\hat{\psi}\right)}$.
+
+\smallskip
+
+Теперь оценим ковариацию на разных уровнях $\cov(X_{jk},X_{il})$, предполагая, что $j\hm>i$:
+\begin{multline*}
+\cov(X_{jk},X_{il}) = 2^{J(1-\alpha)} \fr{1}{2\pi} \int 
+2^{-{j}/{2}}e^{ik\xi\cdot 2^{-j}}\times{}\\
+{}\times \hat{\psi}(2^{-j}\xi) 
+2^{-{i}/{2}} \overline{e^{il\xi\cdot 2^{-i}}\hat{\psi}(2^{-i}\xi)} 
+|\xi|^{-(1-\alpha)} d \xi = {}\\
+{}=2^{J(1-\alpha)}\fr{1}{2\pi}2^{-(\Delta/2)-i(1-\alpha)} \times{}\\
+{}\times
+\int e^{i\xi(k\cdot 2^{-\Delta}-l)}\hat{\psi}(2^{-\Delta}\xi) 
+\overline{\hat{\psi}(\xi)} |\xi|^{-(1-\alpha)} \,d \xi\,,
+\end{multline*}
+где $\Delta\hm=j-i$. Далее, в силу замечания~2
+\begin{multline*}
+|\cov(X_{jk},X_{il})|\leqslant{}\\
+{}\leqslant
+2^{J(1-\alpha)}\fr{C_{M_0}}{2\pi}2^{-({\Delta}/{2})-i(1-\alpha)}\cdot
+2^{-\Delta M_0} \times{}\\
+{}\times
+\left\vert
+\int e^{i\xi(k\cdot2^{-\Delta}-l)} \overline{\hat{\psi}(\xi)} |\xi|^{M_0-(1-\alpha)}\,
+d \xi \right\vert\,.
+\end{multline*}
+Рассмотрим два случая:
+\begin{enumerate}[(1)]
+\item $|k\cdot2^{-\Delta}-l| > 1$:
+тогда в силу свойств преобразования Фурье и гладкости выбранной 
+вейв\-лет-функ\-ции найдется такая константа $C_1\hm>0$, что
+\begin{multline*}
+|\cov(X_{jk},X_{il})|
+\leqslant {}\\
+\hspace*{-19pt}{}\leqslant 2^{J(1-\alpha)} \fr{1}{2\pi}\,2^{-({\Delta}/{2})-i(1-\alpha)}\cdot
+2^{-\Delta M_0} \fr{C_1}{(k\cdot2^{-\Delta}-l)^M}\,;\hspace*{-8.9667pt} %\notag
+\end{multline*}
+
+\item $|k\cdot2^{-\Delta}-l| \leqslant 1$: тогда найдется такая константа $C_2\hm>0$, что
+\begin{equation*}
+\left\vert \int e^{i\xi(k\cdot2^{-\Delta}-l)} \overline{\hat{\psi}(\xi)} 
+|\xi|^{M_0-(1-\alpha)} \,d \xi \right\vert \leqslant C_2
+\end{equation*}
+и
+\begin{multline*}
+|\cov(X_{jk},X_{il})|
+\leqslant {}\\
+{}\leqslant C_2 \cdot 2^{J(1-\alpha)}\fr{C_{M_0}}{2\pi}\,
+2^{-({\Delta}/{2})-i(1-\alpha)}\cdot 2^{-\Delta M_0}. %\notag
+\end{multline*}
+\end{enumerate}
+Следовательно, найдется такая константа $C_{Me}\hm>0$, что
+
+%\pagebreak
+
+\noindent
+\begin{multline}
+|\cov(X_{jk},X_{il})| \leqslant{}\\
+\!\!{}\leqslant
+    \begin{cases}
+        C_{Me}\cdot2^{J(1-\alpha)-({\Delta}/{2})-i(1-\alpha)}\cdot2^{-\Delta M_0} \times{}\\
+         \hspace*{5mm}\times \fr{1}{(k\cdot2^{-\Delta}-l)^M}\,, &  \hspace*{-30mm}
+         \left\vert k\cdot2^{-\Delta}-l\right\vert > 1; \\
+        C_{Me}\cdot2^{J(1-\alpha)-({\Delta}/{2})-i(1-\alpha)}\cdot2^{-\Delta M_0}\,, & \\
+        \hspace*{34mm}\left\vert k\cdot2^{-\Delta}-l\right\vert \leqslant 1\,. &
+    \end{cases}\!\!
+    \label{Cov_Multi_Decay}
+\end{multline}
+Рассмотрим теперь структуру дисперсии оценки риска.
+Введем обозначение для последовательностей
+$a_J\simeq b_j$, если $\lim ({a_J}/{b_J}) \hm= 1$ при $J\hm\rightarrow \infty$.
+
+\bigskip
+
+\noindent
+\textbf{Лемма 1.}
+\textit{Пусть $\alpha\hm>1/2$ и $\gamma\hm>(4\alpha\hm-2)^{-1}$, тогда 
+$D_J^2 \hm=\Variance \widehat{R}_J(f) \simeq  C_{\alpha}\cdot2^J,$ 
+где константа $C_{\alpha}$ зависит от~$\alpha$, но не зависит от функции сигнала~$f$.}
+
+\medskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ 
+При выполнении условий леммы $(2\gamma +1)^{-1}\hm<1\hm-(2\alpha)^{-1}$.
+Выберем $p''$ такое, что $(2\gamma \hm+1)^{-1}\hm<p''\hm<1\hm-(2\alpha)^{-1}$ и 
+$p''J$~--- целое число. Тогда в силу~(\ref{Coeff_Decay}) $\mu_{jk}\hm\rightarrow 0$ 
+для всех $j \colon p''J\leqslant j \hm<J$ при $J\hm\rightarrow \infty$. 
+Разобьем выражение~(\ref{Risk_Est}) на две суммы:
+\begin{multline*}
+\widehat{R}_J(f)=\sum\limits_{j=0}^{p''J}
+\sum\limits_{k=0}^{2^j-1}F\left[X_{jk}^2,T_j,\sigma_j\right]+{}\\
+{}+
+\sum\limits_{j=p''J+1}^{J-1}\sum\limits_{k=0}^{2^j-1}F\left[X_{jk}^2,T_j,\sigma_j\right]\,.
+\end{multline*}
+Так как существует такая константа $C_F\hm>0$, что $F[X_{jk}^2,T_j,\sigma_j] \hm\leqslant 
+C_F T^2_j\hm=C_F J\cdot2^{(J-j)(1-\alpha)}$, для первой суммы имеем
+\begin{multline}
+\hspace*{-9pt}\sum_{i=0}^{p''J}\sum\limits_{l=0}^{2^i-1} F[X_{jk}^2,T_j,\sigma_j]
+\leqslant C_F\sum\limits_{i=0}^{p''J}\sum\limits_{l=0}^{2^i-1} С 
+J\cdot2^{(J-i)(1-\alpha)} \leqslant {}\\
+{}\leqslant C'_F  J \cdot2^{J(1-\alpha+\alpha p'')}
+\label{Large_Coeff_Order}
+\end{multline}
+с некоторой константой $C'_F\hm>0$. Далее
+\begin{multline}
+\Variance \widehat{R}_J(f)
+= \sum\limits_{j=0}^{J-1}\sum\limits_{k=0}^{2^j-1} \Variance F[X_{jk}^2,T_j,\sigma_j]
++ \sum\limits_{i=0}^{J-1} \sum\limits_{l=0}^{2^i-1}\times{}\\
+\hspace*{-5mm}{}\times \sum\limits_{j=0}^{J-1}
+\sum\limits_{k=0}^{2^j-1} \cov\left(F[X_{il}^2,T_i,\sigma_i]^2,F[X_{jk}^2,T_j,\sigma_j]^2\right).
+\label{Var_Struct}
+\end{multline}
+Рассмотрим сумму дисперсий:
+\begin{multline*}
+\sum\limits_{j=0}^{J-1}\sum\limits_{k=0}^{2^j-1} \Variance 
+F\left[X_{jk}^2,T_j,\sigma_j\right]=
+\sum\limits_{j=0}^{p''J}\sum\limits_{k=0}^{2^j-1} \Variance 
+F\left[X_{jk}^2,T_j,\sigma_j\right]+{}\\
+{}+\sum\limits_{j=p''J+1}^{J-1}\sum\limits_{k=0}^{2^j-1} 
+\Variance F\left[X_{jk}^2,T_j,\sigma_j\right].
+\end{multline*}
+В силу~(\ref{Large_Coeff_Order}) первая сумма не превосходит 
+$C''_F  J^2\times$\linebreak $\times\; 2^{2J(1-\alpha+\alpha p'')}$, где $C''_F$~--- 
+некоторая положительная константа, и, так как $p''\hm<1\hm-(2\alpha)^{-1}$, 
+имеем $2(1\hm-\alpha\hm+\alpha p'')\hm<1$. Учитывая вид порога~$T_j$ 
+и принимая во внимание, что $\alpha\hm>1/2$, для второй суммы имеем:
+\begin{multline*}
+\sum\limits_{j=p''J+1}^{J-1}\sum\limits_{k=0}^{2^j-1} \Variance 
+F\left[X_{jk}^2,T_j,\sigma_j\right]\simeq
+\sum\limits_{j=p''J+1}^{J-1}\sum\limits_{k=0}^{2^j-1}\Variance X_{jk}^2={} \\
+{}=\sum\limits_{j=p''J+1}^{J-1}\sum\limits_{k=0}^{2^j-1} 
+2\sigma_j^2(\sigma_j^2 +\mu_{jk}^2)\simeq \sum\limits_{j=p''J+1}^{J-1}
+\sum\limits_{k=0}^{2^j-1} 2\sigma_j^4
+= {}\\
+{}= \sum\limits_{j=p''J+1}^{J-1}\sum\limits_{k=0}^{2^j-1} 
+2\fr{2^{2J(1-\alpha)}}{2^{2j(1-\alpha)}} = {}\\
+{}= 2^{2J(1-\alpha)+1}\!\!\! \sum\limits_{j=p''J+1}^{J-1}\!\!\! 2^{-j+2\alpha j} 
+\simeq 2^{J}\fr{2}{2^{2\alpha-1}(2^{2\alpha-1}-1)}.\hspace*{-4.40202pt}
+\end{multline*}
+Таким образом,
+\begin{multline}
+\sum\limits_{j=0}^{J-1}\sum\limits_{k=0}^{2^j-1} 
+\Variance F\left[X_{jk}^2,T_j,\sigma_j\right]\simeq{}\\
+{}\simeq
+\sum\limits_{j=p''J+1}^{J}\sum\limits_{k=0}^{2^j-1}\Variance X_{jk}^2\simeq C'_\alpha2^{J}\,,
+\label{Var_Order}
+\end{multline}
+где $C'_\alpha$~--- положительная константа.
+Рассмотрим теперь сумму ковариаций в~(\ref{Var_Struct}). Аналогично сумме дисперсий имеем:
+\begin{multline*}
+\sum\limits_{i=0}^{J-1} \sum\limits_{l=0}^{2^i-1}\sum\limits_{j=0}^{J-1}\times{}\\
+{}\times
+\sum\limits_{k=0}^{2^j-1} \!\!\cov\left(F[X_{jk}^2,T_j,\sigma_j],
+F\left[X_{jk}^2,T_j,\sigma_j\right]\right)\simeq{}\\
+{}\simeq
+\sum\limits_{i=p''J+1}^{J-1} \sum\limits_{l=0}^{2^i-1}\sum\limits_{j=p''J+1}^{J-1}
+\sum\limits_{k=0}^{2^j-1} \cov(X_{il}^2,X_{jk}^2)\,.
+\end{multline*}
+Известно, что если вектор $(X,Y)$ имеет двумерное нормальное распределение, то
+\begin{equation}
+\hspace*{-2mm}\cov(X^2,Y^2) = 4\Expect X \Expect Y\cov(X,Y) + 2\cov^2(X,Y).\!\!
+\label{covrazl}
+\end{equation}
+Используя~(\ref{Cov_Single_Decay}), (\ref{Cov_Multi_Decay}) и~(\ref{covrazl}), получаем
+\begin{multline*}
+\fr{1}{2}\sum\limits_{i=p''J+1}^{J-1} \sum\limits_{l=0}^{2^i-1}
+\sum\limits_{j=p''J+1}^{J-1}\sum\limits_{k=0}^{2^j-1} \cov^2(X_{il},X_{jk})={}\\
+{}=\!\!\!\!
+\sum\limits_{i=p''J+1}^{J-1} \sum\limits_{l=0}^{2^i-1}
+\sum\limits_{\Delta=0}^{J-i-1} \sum_{k={\protect\scriptstyle\begin{cases}{\scriptstyle l+1,} 
+&{\scriptstyle \Delta=0;} \\[-6pt]{\scriptstyle 0,} & 
+{\scriptstyle \Delta>0.} \end{cases}}}^{2^{i+\Delta}-1}\!\!\!\!\!\! \!\!\!\!\!\!\cov^2(X_{il},X_{i+\Delta,k}) 
+\leqslant{}\hspace*{-5.1336pt}
+\end{multline*}
+
+\noindent
+\begin{multline}
+{}
+\leqslant \sum\limits_{i=p''J+1}^{J-1} \sum\limits_{l=0}^{2^i-1} \Bigl( 
+\sum\limits_{\delta=1}^{2^i-l} C_M^2\delta^{-2M_0}\cdot2^{2(J-i)(1-\alpha)}+{}
+\\[3pt]
+{}+\sum\limits_{\Delta=1}^{J-i-1}\sum\limits_{k=0}^{2^{i+\Delta}-1} 
+2^{2(J-i)(1-\alpha)}\cdot 2^{-\Delta(1+2M_0)}\times{}\\[3pt]
+{}\times \fr{\mathbf{1}_{\{|k\cdot2^{-\Delta}-l|>1\}}}
+{|k\cdot2^{-\Delta}-l|^{2M}}\,C^2_{Me} +
++\sum\limits_{\Delta=1}^{J-i-1}\sum\limits_{k=0}^{2^{i+\Delta}-1} 
+2^{2(J-i)(1-\alpha)}\times{}\\[3pt]
+{}\times 2^{-\Delta(1+2M_0)}\cdot \mathbf{1}_{\{|k\cdot2^{-\Delta}-l|\leqslant 1\}} 
+C^2_{Me}\Bigr) \leqslant{}\\[3pt]
+{}\leqslant \sum\limits_{i=p''J+1}^{J-1} \left( \sum\limits_{l=0}^{2^i-1}
+\sum\limits_{\delta=1}^{2^i-l-1} C_M^2\delta^{-2M_0}2^{2(J-i)(1-\alpha)} +{}\right.
+\\[3pt]
+{}+\sum\limits_{\Delta=1}^{J-i-1}2^{2(J-i)(1-\alpha)}\cdot 2^{-\Delta(1+2M_0)} \times{}\\[3pt]
+\left.{}\times
+\sum\limits_{l=0}^{2^i-1}C^2_{Me}
+\left( \sum\limits_{k=0}^{2^{i+\Delta}-1} 
+\fr{\mathbf{1}_{\{|k\cdot2^{-\Delta}-l|>1\}}}{|k\cdot2^{-\Delta}-l|^{2M}} 
++ 2^{\Delta+1}\right)\right) \leqslant{}\\[3pt]
+{}\leqslant \sum\limits_{i=p''J+1}^{J-1} 2^{2(J-i)(1-\alpha)}
+ \left(\vphantom{\sum\limits_{\Delta=1}^{J-1}}
+C_M^2 \cdot2^i H_0 +{}\right.\\[3pt]
+\left.{}+\sum\limits_{\Delta=1}^{J-i-1} \left( 2^{i-2M_0\Delta} H_{1}
++ 2^{i-2M_0\Delta+1} H_{2}\right) 
+\vphantom{\sum\limits_{\Delta=1}^{J-1}}
+\right)\leqslant{}
+\\[3pt]
+{}\leqslant \sum\limits_{i=p''J+1}^{J-1} 2^{2(J-i)(1-\alpha)}\cdot 2^iH_3\leqslant C''_\alpha
+\cdot 2^{J}\,,
+\label{Cov2_Estimate}
+\end{multline}
+где $H_0$, $H_1$, $H_2$, $H_3$ и $C''_\alpha$~--- константы, зависящие от~$\alpha$.
+Аналогично с учетом~(\ref{Coeff_Decay})
+\begin{multline}
+\sum\limits_{i=p''J+1}^{J-1} \sum\limits_{l=0}^{2^i-1}\sum\limits_{j=p''J+1}^{J-1}
+\sum\limits_{k=0}^{2^j-1} \mu_{il}\mu_{jk}\cov(X_{il},X_{jk})\leqslant {}\\[3pt]
+{}\leqslant
+H_\alpha\cdot 2^{J(1-\alpha(1-p''))}\,,
+\label{Cov1_Estimate}
+\end{multline}
+где $H_\alpha$~--- константа, зависящая от~$\alpha$.
+
+Объединяя (\ref{Var_Order}), (\ref{Cov2_Estimate}) и~(\ref{Cov1_Estimate}), получаем, что 
+$\Variance \widehat{R}_J(f) \simeq  C_{\alpha}\cdot 2^J$. Лемма доказана.
+
+\smallskip
+
+Докажем еще одно свойство эмпирических вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов. 
+Говорят, что последовательность случайных величин $\{Y_i\}_{i=1}^\infty$ 
+обладает свойством $\rho$-пе\-ре\-ме\-ши\-ва\-ния, если для функции
+\begin{equation*}
+\rho(m) = \sup\limits_{i,j:|i-j|>m} \corr(Y_i,Y_j)
+\end{equation*}
+справедливо $\rho(m)\hm\rightarrow0$ при $m\hm\rightarrow\infty$.
+
+\pagebreak
+
+%\medskip
+
+\noindent
+\textbf{Лемма 2.}
+Последовательность $\left\{F[X_{jk}^2,T_j,\sigma_j]\right\}$, $j \hm=0, \dots, J-1, k=1,
+\dots,2^j,$ обладает свойством $\rho$-пе\-ре\-ме\-ши\-ва\-ния. 
+Причем для некоторой положительной константы~$C_\rho$
+$$
+\rho(m) \leqslant \begin{cases}
+       \fr{C_\rho}{(m+1)^{2M_0}}  &\ \mbox{для элементов}\\[-9pt]
+       &\ \mbox{на одном уровне } (i=j); \\
+       \fr{C_\rho}{2^{(m+1)\alpha}}  &\ \mbox{для элементов}\\[-9pt]
+       &\ \mbox{на разных уровнях}. 
+\end{cases}
+$$
+
+\medskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ 
+Рассмотрим функцию перемешивания между элементами с номерами~$l$ и~$k$ на одном уровне~$i$, 
+$i \hm=0, \dots, J-1$. Для некоторой константы $C_\rho\hm>0$ имеем:
+\begin{multline}
+\rho(m)={}\\
+{}=
+\sup\limits_{{\begin{smallmatrix}0\leqslant i\leqslant J-1,\\k,l:|k-l|>m\end{smallmatrix}}} 
+\fr{\cov(F[X_{il}^2,T_i,\sigma_i],F[X_{ik}^2,T_i,\sigma_i])}
+{\sqrt{\Variance F[X_{il}^2,T_i,\sigma_i] \Variance F[X_{ik}^2,T_i,\sigma_i]}}
+\leqslant{}\\
+{}\leqslant \sup\limits_{{\begin{smallmatrix}0\leqslant i\leqslant J-1,\\k,l:|k-l|>m\end{smallmatrix}}} 
+C_\rho\fr{2^{2(J-i)(1-\alpha)} |k-l|^{-2M_0}}{\sqrt{\sigma^8_i}}\leqslant{}\\
+{} \leqslant 
+\sup_{{\begin{smallmatrix}0\leqslant i\leqslant J-1,\\k,l:|k-l|>m\end{smallmatrix}}}  
+C_\rho\fr{2^{2(J-i)(1-\alpha)} |k-l|^{-2M_0}}{2^{2(J-i)(1-\alpha)} }
+\leqslant{}\\
+{}\leqslant \sup\limits_{{\begin{smallmatrix}0\leqslant 
+i\leqslant J-1,\\k,l:|k-l|>m\end{smallmatrix}}}  C_\rho\fr{1}{|k-l|^{2M_0}} = 
+\fr{C_\rho}{(m+1)^{2M_0}}\,.\notag
+\end{multline}
+
+Далее обратимся к функции перемешивания для элементов 
+$F\left[X_{il}^2,T_i,\sigma_i\right]$ и 
+$F\left[X_{jk}^2,T_j,\sigma_j\right]$ на разных уровнях $i,j: j\hm>i, j\hm-i\hm=\Delta\hm>0$.
+Рассмотрим случай $|k\cdot 2^{-\Delta}-l|>1$. Имеем:
+\begin{multline*}
+\rho(m)
+={}\\
+{}=\sup\limits_{{\begin{smallmatrix}j-i=\Delta>m,\\ 
+0\leqslant l\leqslant2^i-1,\\
+0\leqslant k\leqslant2^j-1,\\|k\cdot2^{-\Delta}-l|>1.\end{smallmatrix}}}
+\!\!\!\!\!\!\!\fr{\cov(F[X_{il}^2,T_i,\sigma_i],F[X_{jk}^2,T_j,\sigma_j])}
+{\sqrt{\Variance F[X_{il}^2,T_i,\sigma_i] \Variance F[X_{jk}^2,T_j,\sigma_j]}}\leqslant{}\\
+{}\leqslant \sup\limits_{{\begin{smallmatrix}j-i=\Delta>m,\\ 0\leqslant
+ l\leqslant2^i-1,\\ 0\leqslant k\leqslant2^j-1,\\|k\cdot2^{-\Delta}-l|>1.\end{smallmatrix}}} 
+ \!\!\!\!\!\!\!\!\!\!\!C_\rho\fr{2^{2(J-i)(1-\alpha) -\Delta} |k\cdot2^{-\Delta}-l|^{-2M_0}}
+ {\sqrt{\sigma^4_j\sigma^4_i}}\leqslant{}\\
+  {}\leqslant\sup\limits_{{\begin{smallmatrix}j-i=\Delta>m,\\ 0\leqslant l\leqslant2^i-1,\\ 0\leqslant k\leqslant2^j-1,\\|k\cdot2^{-\Delta}-l|>1.\end{smallmatrix}}} 
+\!\!\!\!\!\!\!\!\!\!\!C_\rho\fr{2^{2(J-i)(1-\alpha) -\Delta} |k\cdot2^{-\Delta}-l|^{-2M_0}}{2^{2(J-i)(1-\alpha) -\Delta(1-\alpha)}}
+\leqslant{}  %\notag
+\end{multline*}
+
+\noindent
+\begin{multline*} 
+{}\leqslant \sup\limits_{{\begin{smallmatrix}\Delta>m,\\ 0\leqslant l\leqslant2^i-1,\\ 0\leqslant k\leqslant2^j-1,\\|k\cdot2^{-\Delta}-l|>1.\end{smallmatrix}}} 
+\!\!\!\!\!\!\!\!\!\!\!C_\rho\fr{1}{2^{\Delta\alpha}}\,\fr{1}{|k\cdot2^{-\Delta}-l|^{2M_0}}\leqslant{}\\
+{}\leqslant \sup_{\Delta>m}  C_\rho\fr{1}{2^{\Delta\alpha}}
+=\fr{C_\rho}{2^{(m+1)\alpha}}. %\notag
+\end{multline*}
+
+Теперь рассмотрим случай $|k\cdot2^{-\Delta}\hm-l|\hm\leqslant1$. Имеем для некоторой константы 
+$C'_\rho\hm>0$:
+\begin{multline*}
+\rho(m)
+={}\\
+{}=\!\!\!\!\!\sup\limits_{{\begin{smallmatrix}j-i=\Delta>m,\\ 0\leqslant l\leqslant2^i-1,\\
+ 0\leqslant k\leqslant2^j-1,\\|k\cdot2^{-\Delta}-l|\leqslant1.\end{smallmatrix}}}
+\!\!\!\fr{\cov(F[X_{il}^2,T_i,\sigma_i],F[X_{jk}^2,T_j,\sigma_j])}
+{\sqrt{\Variance F[X_{il}^2,T_i,\sigma_i] \Variance F[X_{jk}^2,T_j,\sigma_j]}}
+\leqslant{}\\
+{}\leqslant\sup\limits_{j-i=\Delta>m} C'_\rho\fr{2^{2(J-i)(1-\alpha) -\Delta} C_{Me}}
+{\sqrt{\sigma^4_j\sigma^4_i}}\leqslant{}\\
+{}\leqslant \sup\limits_{j-i=\Delta>m} C'_\rho\fr{2^{2(J-i)(1-\alpha) -\Delta} C_{Me}}{2^{2(J-i)(1-\alpha) -\Delta(1-\alpha)}}
+\leqslant{}\\
+{}\leqslant \sup\limits_{\Delta,k,l:\Delta>m} C_{\rho}\fr{1}{2^{\Delta\alpha}}=\frac{C_{\rho}}{2^{(m+1)\alpha}}\,.
+\end{multline*}
+
+Следовательно, получаем
+$$
+\rho(m) \leqslant
+\begin{cases}
+       \fr{C_{\rho}}{(m+1)^{2M_0}}  &\ \mbox{на одном уровне;} \\
+       \fr{C_{\rho}}{2^{(m+1)\alpha}}  &\ \mbox{на разных уровнях.} \\
+\end{cases}
+$$
+При $m \hm\rightarrow \infty$ $\rho(m) \rightarrow 0$  что и доказывает утверждение леммы.
+
+
+\section{Основные теоремы}
+
+Докажем асимптотическую нормальность оценки риска.
+
+\medskip
+
+\noindent
+\textbf{Теорема 1.} \textit{Пусть $\alpha>1/2$ и функция~$f$ 
+регулярна с параметром $\gamma \hm> (4\alpha-2)^{-1}$. Тогда при 
+пороговой обработке с <<универсальным>> порогом $T_j$ имеет место 
+сходимость по распределению}:
+\begin{align}
+\fr{\widehat{R}_J(f) - R_J(f)}{ D_J } \Rightarrow \textbf{N}(0,1)\,, \enskip
+J \rightarrow \infty\,,
+\label{asnorm}
+\end{align}
+\textit{где $D_J^2\hm=C_\alpha 2^J$, а константа~$C_\alpha$ зависит только 
+от~$\alpha$ и выбранного вейв\-лет-ба\-зиса}.
+
+\medskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ Из леммы~1 следует, что 
+$\Variance \widehat{R}_J(f)\simeq D_J^2\hm=C_\alpha 2^J$. 
+Разобьем выражение в~(\ref{asnorm}) на две суммы, как это было сделано в лемме~1:
+
+\noindent
+\begin{multline*}
+\fr{\widehat{R}_J(f) - R_J(f)}{ D_J }={}\\[3pt]
+{}=
+\fr{\sum\limits_{j=0}^{p''J}\sum\limits_{k=0}^{2^j-1}
+\left(F[X_{jk}^2,T_j,\sigma_j]-\Expect F[X_{jk}^2,T_j,\sigma_j]\right)}{ D_J }+{}\\[3pt]
+{}+\fr{\sum\limits_{j=p''J+1}^{J-1}\sum\limits_{k=0}^{2^j-1}
+\left(F[X_{jk}^2,T_j,\sigma_j]-\Expect F[X_{jk}^2,T_j,\sigma_j]\right)}{ D_J }\,,
+\end{multline*}
+где $p''>(2\gamma+1)^{-1}$. Поскольку $\gamma\hm > (4\alpha-2)^{-1}$, 
+имеем $(2\gamma+1)^{-1}\hm<1\hm-(2\alpha)^{-1}$. Следовательно, можно выбрать такое~$p''$, 
+что $(2\gamma\hm+1)^{-1}\hm<p''\hm<1\hm-(2\alpha)^{-1}$. Отсюда 
+$1\hm-\alpha\hm+\alpha p''\hm<1/2$, и из~(\ref{Large_Coeff_Order}) 
+следует, что первая сумма стремится к нулю почти всюду (п.в.).
+
+Далее, действуя как в лемме~1, нетрудно показать, что
+\begin{multline*}
+\sup_J \fr{1}{D^2_J}\sum\limits_{j=p''J+1}^{J-1}\sum\limits_{k=0}^{2^j-1} 
+\Expect  \bigl( F\left[X_{jk}^2,T_j,\sigma_j\right] -{}\\[3pt]
+ {}-
+\Expect  F\left[X_{jk}^2,T_j,\sigma_j\right]\bigr)^2 ={}\\[3pt]
+=\sup_J \fr{1}{D^2_J}\sum\limits_{j=p''J+1}^{J-1}\sum\limits_{k=0}^{2^j-1} \Variance  
+F\left[X_{jk}^2,T_j,\sigma_j\right] < \infty\,.
+%\label{Norm_Cond1}
+\end{multline*}
+
+Из леммы~2 следует, что последовательность $\bigl\{F[X_{jk}^2,T_j,\sigma_j]\bigr\}$, 
+$j \hm=0, \dots, J-1, k=1,\dots,2^j,$ обладает свойством $\rho$-пе\-ре\-ме\-ши\-ва\-ния 
+и, следовательно, обладает свойством $\alpha$-пе\-ре\-ме\-ши\-ва\-ния~\cite{19-she}.
+\par Наконец, выполнено условие Линдеберга: для любого $\epsilon\hm>0$
+\begin{multline}
+\fr{1}{D^2_J}\sum\limits_{j=p''J+1}^{J-1}\sum\limits_{k=0}^{2^j-1} \Expect  
+\left( F\left[X_{jk}^2,T_j,\sigma_j\right] - {}\right.\\[3pt]
+\left.{}-
+\Expect F\left[X_{jk}^2,T_j,\sigma_j\right]\right)^2\times{}\\[3pt] 
+{}\times\mathbf{1}\bigl( \left\vert F\left[X_{jk}^2,T_j,\sigma_j\right] - \Expect  
+F\left[X_{jk}^2,T_j,\sigma_j\right]\right\vert >\epsilon D_J\bigr)\rightarrow {}\\[3pt]
+{}\rightarrow
+0\,,\ J\rightarrow\infty\,.
+\label{Norm_Cond2}
+\end{multline}
+Действительно, так как $F[X_{jk}^2,T_j,\sigma_j]\hm \leqslant C_F
+J\times$\linebreak $\times\;2^{(J-j)(1-\alpha)}$ (см.\ лемму~1), а $D_J^2\hm=C_\alpha \cdot2^J$, то при
+$\alpha\hm>1/2$, начиная с некоторого~$J$, все индикаторы в~(\ref{Norm_Cond2}) обращаются в ноль.
+
+Таким образом, выполнены все условия теоремы~2.1 из работы~\cite{20-she} 
+и справедлива сходимость по распределению~(\ref{asnorm}). Теорема доказана.
+
+\medskip
+
+Докажем теперь теорему о состоятельности оценки риска, справедливую 
+при более слабых ограничениях на~$\alpha$ и~$\gamma$.
+
+\medskip
+
+\noindent
+\textbf{Теорема 2.}
+\textit{Пусть $0<\alpha<1$, функция~$f$ регулярна с параметром $\gamma\hm>0$ и 
+$b\hm>1\hm-\alpha\hm+\alpha(2\gamma\hm+1)^{-1}$.
+Тогда при пороговой обработке с <<универсальным>> порогом~$T_j$ выполняется}
+\begin{equation}
+\fr{\widehat{R}_J(f) - R_J(f)}{2^{bJ}}\xrightarrow{\Prob} 0\,,\enskip J\rightarrow \infty\,.
+\label{utv2l}
+\end{equation}
+
+\medskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \  
+Условия теоремы позволяют выбрать~$p''$ таким, что 
+$(2\gamma \hm+1)^{-1}\hm<p''\hm<(b\hm+\alpha\hm-1)/\alpha$. Разобьем выражение 
+в~(\ref{utv2l}) на две суммы:
+\begin{multline*}
+\widehat{R}_J(f) - R_J(f)={}\\
+{}=\sum\limits_{j=0}^{p''J}
+\sum\limits_{k=0}^{2^j-1}\left(F[X_{jk}^2,T_j,\sigma_j]-
+\Expect F[X_{jk}^2,T_j,\sigma_j]\right)+{}\\
+{}+\sum\limits_{j=p''J+1}^{J-1}\sum\limits_{k=0}^{2^j-1}\left(F[X_{jk}^2,T_j,\sigma_j]-
+\Expect F[X_{jk}^2,T_j,\sigma_j]\right)\equiv{}\\
+{}\equiv R_1+R_2\,.
+\end{multline*}
+Повторяя рассуждения леммы~1, получаем, что $|R_1|\hm\leqslant C_1  J\cdot 
+2^{J(1-\alpha+\alpha p'')}$ 
+с некоторой константой $C_1\hm>0$. При этом $1\hm-\alpha\hm+\alpha p''\hm<b$ в 
+силу выбора~$p''$. Следовательно, $R_1\cdot 2^{-bJ}\xrightarrow{\Prob} 0$.
+Далее, так же как в лемме~1, можно показать, что для некоторой константы~$C_\alpha$
+$$
+\Variance R_2\simeq\begin{cases}
+       C_\alpha \cdot 2^{J}, & \mbox{если}\  \alpha>\fr{1}{2}\,; \\
+       C_\alpha J\cdot 2^{J}, & \mbox{если}\  \alpha=\fr{1}{2}\,; \\
+       C_\alpha \cdot 2^{2J(1-\alpha)}, & \mbox{если}\  \alpha<\fr{1}{2}\,.
+\end{cases}
+$$
+Вследствие неравенства Чебышёва имеем при любом $\delta\hm>0$
+\begin{equation}
+\Prob \left(\fr{|R_2|}{2^{bJ} } \geqslant \delta \right)
+\leqslant\fr{\Variance\widehat{R}_J(f)}{2^{2bJ}\delta^2}\,.
+\label{Tchebyshev}
+\end{equation}
+Для $1>\alpha\geqslant1/2$ правая часть~(\ref{Tchebyshev}) стремится к нулю при 
+$b\hm>1/2$. Для $1/2\hm>\alpha\hm>0$ правая часть~(\ref{Tchebyshev}) стремится к нулю 
+при $b\hm>1-\alpha$.
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\addcontentsline{toc}{section}{References}
+\begin{thebibliography}{99}
+
+
+\bibitem{2-she}
+\Au{Donoho D., Johnstone I.\,M.} Ideal spatial adaptation via
+wavelet shrinkage~// Biometrika, 1994. Vol.~81. No.\,3.
+P.~425--455.
+
+\bibitem{1-she}
+\Au{Donoho~D., Johnstone I.\,M.} Adapting to unknown
+smoothness via wavelet shrinkage~// J.~Amer. Stat. Assoc., 1995.
+Vol.~90. P.~1200--1224.
+
+\bibitem{3-she}
+\Au{Donoho D.\,L., Johnstone I.\,M., Kerkyacharian~G., Picard~D.} 
+Wavelet shrinkage: Asymp\-to\-pia?~// J.~R. Statist. Soc. Ser.
+B., 1995. Vol.~57. No.\,2. P.~301--369.
+
+\bibitem{4-she}
+\Au{Marron J.\,S., Adak~S., Johnstone~I.\,M., Neumann~M.\,H.,
+Patil~P.} Exact risk analysis of wavelet regression~// J.~Comput.
+Graph. Stat., 1998. Vol.~7. P.~278--309.
+
+\bibitem{5-she}
+\Au{Antoniadis A., Fan J.} Regularization of wavelet
+approximations~// J.~Amer. Statist. Assoc., 2001. Vol.~96. No.\,455. P.~939--967.
+
+\bibitem{6-she}
+\Au{Маркин А.\,В.} Предельное распределение оценки риска при
+пороговой обработке вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов~// Информатика и её
+применения, 2009. Т.~3. Вып.~4. С.~57--63.
+
+\bibitem{7-she}
+\Au{Маркин А.\,В., Шестаков О.\,В.} О~состоятельности оценки
+риска при пороговой обработке вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов~// Вестн. Моск.
+ун-та. Сер.~15. Вычисл. матем. и киберн., 2010. №\,1. C.~26--34.
+
+\bibitem{8-she}
+\Au{Шестаков О.\,В.} Аппроксимация распределения оценки риска
+пороговой обработки вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов нормальным распределением
+при использовании выборочной дисперсии // Информатика и её
+применения, 2010. Т.~4. Вып.~4. С.~73--81.
+
+\bibitem{9-she}
+\Au{Шестаков О.\,В.} О~точности приближения распределения оценки риска пороговой обработки 
+вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов
+сигнала нормальным законом при неизвестном уровне шума~// 
+Системы и средства информатики, 2012. Т.~22. №\,1. С.~142--152.
+
+\bibitem{10-she}
+\Au{Шестаков О.\,В.}  Асимптотическая нормальность оценки риска пороговой обработки 
+вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов при выборе
+адаптивного порога~// Доклады РАН, 2012. Т.~445. №\,5. С.~513--515.
+
+\bibitem{11-she}
+\Au{Шестаков О.\,В.} Зависимость предельного распределения
+оценки риска пороговой обработки вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов сигнала от
+вида оценки дисперсии шума при выборе адаптивного порога~// T-Comm~--- 
+Телекоммуникации и транспорт, 2012. №\,1. С.~46--51.
+
+\bibitem{12-she}
+\Au{Шестаков О.\,В.} Центральная предельная теорема для
+функции обобщенной кросс-ва\-ли\-да\-ции при пороговой обработке
+вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов~// Информатика и её применения, 2013. Т.~7.
+Вып.~2. С.~40--49.
+
+\bibitem{13-she}
+\Au{Добеши И.} Десять лекций по вейвлетам.~--- 
+Ижевск: НИЦ Регулярная и хаотическая динамика, 2001. 357~с.
+
+\bibitem{14-she}
+\Au{Mallat S.} A~wavelet tour of signal processing.~--- Academic Press, 1999.
+851~с.
+
+\bibitem{15-she}
+\Au{Boggess A., Narkowich~F.} A~first course in wavelets with Fourier analysis.~--- 
+Prentice Hall, 2001. 283~с.
+
+\bibitem{16-she}
+\Au{Johnstone I.\,M., Silverman B.\,W.} Wavelet threshold
+estimates for data with correlated noise~// J.~Roy. Statist. Soc.
+Ser.~B, 1997. Vol.~59. P.~319--351.
+
+\bibitem{17-she}
+\Au{Johnstone I.\,M.} Wavelet shrinkage for correlated data and inverse problems: Adaptivity
+results~// Statistica Sinica, 1999. Vol.~9. No.\,1. P.~51--83.
+
+\bibitem{18-she}
+\Au{Taqqu M.\,S.} Weak convergence to fractional Brownian motion and to the 
+Rosenblatt process~// Z. Wahrscheinlichkeitsth. verw. Geb., 1975. Vol.~31. P.~287--302.
+
+\bibitem{19-she}
+\Au{Bradley R.\,C.} Basic properties of strong mixing conditions. A~survey 
+and some open questions~// Probab. Surveys, 2005. Vol.~2. P.~107--144.
+
+\bibitem{20-she}
+\Au{Peligrad M.} On the asymptotic normality of sequences of weak dependent random variables~// 
+J.~Theoret. Prob., 1996. Vol.~9. No.\,3. P.~703--715.
+\end{thebibliography}
+} }
+
+\end{multicols}
+
+\hfill{\small\textit{Поступила в редакцию 14.08.13}}
+
+
+\vspace*{12pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\newpage
+
+%\vspace*{-24pt}
+
+\def\tit{ASYMPTOTIC PROPERTIES OF WAVELET THRESHOLDING RISK ESTIMATE IN~THE~MODEL 
+OF~DATA WITH~CORRELATED NOISE}
+
+\def\titkol{Asymptotic properties of wavelet thresholding risk estimate in~the~model 
+of~data with~correlated noise}
+
+\def\aut{A.\,A.~Eroshenko$^1$ and O.\,V.~Shestakov$^{1,2}$}
+\def\autkol{A.\,A.~Eroshenko and O.\,V.~Shestakov}
+
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+\noindent
+$^1$M.\,V.~Lomonosov Moscow State University, Faculty of Computational Mathematics 
+and Cibernetics,\\
+$\hphantom{^1}$1-52 Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation\\
+\noindent
+$^2$Institute of Informatics 
+Problems, Russian Academy of Sciences, 44-2 Vavilov Str., Moscow 119333, Russian\\
+$\hphantom{^1}$Federation
+ 
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2014\ \ \ volume~8\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2014\ \ \ volume~8\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}   
+
+\vspace*{6pt}
+  
+\Abste{Wavelet thresholding techniques of denoising are widely used in signal and 
+image processing. These methods are easily implemented through fast algorithms; so, 
+they are very appealing in practical situations. Besides, they adapt to function 
+classes with different amounts of smoothness in different locations more effectively 
+than the usual linear methods. Wavelet thresholding risk analysis is an important 
+practical task because it allows determining the quality of techniques themselves 
+and equipment which is being used. In the present paper, asymptotical 
+properties of mean-square risk estimate of wavelet thresholding techniques have been studied
+in the 
+model of data with correlated noise. The conditions under which the unbiased 
+risk estimate is consistent and asymptotically normal are given. These results allow constructing 
+asymptotical confidence intervals for wavelet thresholding risk, using only the observed data.}
+
+
+\KWE{wavelets; unbiased risk estimate; correlated noise; asymptotic normality} 
+
+\DOI{10.14357/19922264140105}
+
+\Ack
+\noindent
+The financial support of the Russian Foundation for Basic Research is acknowledged
+(project 11-01-00515а).
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\addcontentsline{toc}{section}{References}
+\begin{thebibliography}{99}
+
+
+\bibitem{2-she-1}
+\Aue{Donoho, D., and I.\,M. Johnstone.} 
+1994. Ideal spatial adaptation via wavelet shrinkage.
+\textit{Biometrika}  81(3):425--455.
+
+\bibitem{1-she-1}
+\Aue{Donoho, D., and I.\,M. Johnstone.} 
+1995. Adapting to unknown smoothness via wavelet shrinkage.
+\textit{J.~Amer. Stat. Assoc.} 90:1200--1224.
+
+\bibitem{3-she-1}
+\Aue{Donoho, D.\,L., I.\,M.~Johnstone, G.~Kerkyacharian, and D.~Picard.} 
+1995. Wavelet shrinkage: Asymp\-to\-pia? \textit{J.~R. Statist. Soc. Ser. B.} 57(2):301--369.
+
+\bibitem{4-she-1}
+\Aue{Marron, J.\,S., S.~Adak, I.\,M.~Johnstone, M.\,H.~Neumann, and P.~Patil.} 
+1998. Exact risk analysis of wavelet regression. \textit{J.~Comput. Graph. Stat.} 7:278--309.
+
+\bibitem{5-she-1}
+\Aue{Antoniadis, A., and J.~Fan.} 
+2001. Regularization of wavelet approximations. \textit{J.~Amer. Statist. Assoc.}
+96(455):939--967.
+
+\bibitem{6-she-1}
+\Aue{Markin, A.\,V.} 
+2009. Predel'noe raspredelenie otsenki riska pri porogovoy obrabotke veyvlet-koeffitsientov 
+[Limit distribution of risk estimate of wavelet coefficient thresholding].
+\textit{Informatika i ee Primeneniya}~---
+\textit{Inform. Appl.} 3(4):57--63.
+
+\bibitem{7-she-1}
+\Aue{Markin, A.\,V., and O.\,V.~Shestakov} 
+2010. O~sostoyatel'nosti otsenki riska pri porogovoy obrabotke veyvlet-koeffitsientov 
+[Consistency of risk estimation
+with thresholding of wavelet coefficients]. \textit{Vestn. Mosk. Un-ta. Ser.~15. 
+Vychisl. Matem. i Kibern.} [\textit{Herald of Moscow University, Computational Mathematics and 
+Cybernetics}] 1:26--34.
+
+\bibitem{8-she-1}
+\Aue{Shestakov, O.\,V.} 
+2010. Approksimatsiya raspredeleniya otsenki riska porogovoy obrabotki 
+veyvlet-koeffitsientov normal'nym raspredeleniem pri ispol'zovanii vyborochnoy dispersii 
+[Normal approximation for distribution of risk estimate for wavelet coefficients thresholding 
+when using sample variance]. \textit{Informatika i ee Primeneniya}~--- 
+\textit{Inform. Appl.} 4(4):73--81.
+
+\bibitem{9-she-1}
+\Aue{Shestakov,~O.\,V.} 
+2012. O~tochnosti priblizheniya\linebreak raspredeleniya otsenki riska porogovoy 
+obrabotki veyvlet-koeffitsientov
+signala normal'nym zakonom pri neizvestnom urovne shuma 
+[On the accuracy of normal approximation for risk estimate distribution when 
+thresholding signal wavelet coefficients in case of unknown noise level]. 
+\textit{Sistemy i Sredstva Informatiki}~--- \textit{Systems and Means of Informatics}
+22(1):142--152.
+
+\bibitem{10-she-1}
+\Aue{Shestakov, O.\,V.}  
+2012. Asimptoticheskaya normal'nost' otsenki riska porogovoy obrabotki veyvlet-koeffitsientov pri vybore
+adaptivnogo poroga [Asymptotic normality of adaptive wavelet thresholding risk estimation].
+\textit{Doklady RAN} [\textit{Doklady Mathematics}] 445(5):513--515.
+
+\bibitem{11-she-1}
+\Aue{Shestakov, O.\,V.} 
+2012. Zavisimost' predel'nogo ras\-pre\-de\-leniya otsenki riska porogovoy obrabotki 
+veyvlet-koef\-fit\-si\-entov signala
+ot vida otsenki dispersii shuma pri vybore adaptivnogo poroga 
+[The dependence of the limiting distribution of the risk assessment thresholding 
+wavelet coefficients of the signal on the type of noise variance estimation 
+when selecting an adaptive threshold]. \textit{T-Comm~--- Telekommunikacii i Transport} 
+[\textit{T-Comm~--- Telecommunications and Transport}] 1:46--51.
+
+\bibitem{12-she-1}
+\Aue{Shestakov, O.\,V.} 
+2013. Tsentral'naya predel'naya teorema dlya funktsii obobshchennoy 
+kross-validatsii pri po\-ro\-go\-voy obrabotke veyvlet-koeffitsientov 
+[Central limit theorem for generalized cross-validation function in wavelet 
+thresholding method]. \textit{Informatika i ee Primeneniya}~--- 
+\textit{Inform. Appl.} 7(2):40--49.
+
+\bibitem{13-she-1}
+\Aue{Daubechies, I.} 1992. \textit{Ten lectures on wavelets}. SIAM. 357~p.
+
+\bibitem{14-she-1}
+\Aue{Mallat, S.} 1999. \textit{A~wavelet tour of signal processing}. Academic Press.
+851~p.
+
+\bibitem{15-she-1}
+\Aue{Boggess, A., and F.~Narkowich.} 
+2001. A~first course in wavelets with Fourier analysis. Prentice Hall. 283~p.
+
+\bibitem{16-she-1}
+\Aue{Johnstone, I.\,M., and B.\,W.~Silverman.} 
+1997. Wavelet threshold estimates for data with correlated noise.
+\textit{J.~Roy. Statist. Soc. Ser. B.} 59:319--351.
+
+\bibitem{17-she-1}
+\Aue{Johnstone, I.\,M.} 
+1999. Wavelet shrinkage for correlated data and inverse problems: Adaptivity
+results. \textit{Statistica Sinica} 9(1):51--83.
+
+\bibitem{18-she-1}
+\Aue{Taqqu, M.\,S.} 
+1975. Weak convergence to fractional Brownian motion and to the Rosenblatt process.
+\textit{Z.~Wahrscheinlichkeitsth. verw. Geb.} 31:287--302.
+
+\bibitem{19-she-1}
+\Aue{Bradley, R.\,C.} 
+2005. Basic properties of strong mixing conditions. A~survey and some open questions.
+\textit{Probab. Surveys} 2:107--144.
+
+\bibitem{20-she-1}
+\Aue{Peligrad, M.} 
+1996. On the asymptotic normality of sequences of weak dependent random variables.
+\textit{J.~Theoret. Prob.} 9(3):703--715.
+\end{thebibliography}
+} }
+
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received August 14, 2013}}
+
+\vspace*{-18pt}
+
+\Contr
+
+\noindent
+\textbf{Eroshenko Alexander A.} (b.\ 1989)~--- PhD student, Department of Mathematical Statistics, Faculty of Computational
+Mathematics and Cybernetics, M.\,V.~Lomonosov
+Moscow State University, 1-52 Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation; 
+aeroshik@gmail.com 
+
+\vspace*{2pt}
+
+\noindent
+\textbf{Shestakov Oleg V.} (b.\ 1976)~--- Doctor of Science in physics and 
+mathematics, assistant professor, Department of Mathematical Statistics, Faculty of Computational
+Mathematics and Cybernetics, M.\,V.~Lomonosov
+Moscow State University, 
+1-52 Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation; senior scientist, Institute of Informatics Problems, Russian Academy of
+Sciences, 44-2 Vavilov Str., Moscow 119333, Russian Federation; oshestakov@cs.msu.su
+
+
+
+ \label{end\stat}
+ 
+\renewcommand{\bibname}{\protect\rm Литература}  
+  

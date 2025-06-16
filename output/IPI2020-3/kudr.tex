@@ -1,0 +1,696 @@
+\newcommand{\G}{{\sf Ge}}
+\renewcommand{\Re}{{\sf Re} }
+
+\def\stat{kudr}
+
+\def\tit{МЕТОД ЛОГАРИФМИЧЕСКИХ МОМЕНТОВ ДЛЯ ОЦЕНИВАНИЯ ПАРАМЕТРОВ 
+ГАММА-ЭКСПОНЕНЦИАЛЬНОГО РАСПРЕДЕЛЕНИЯ$^*$}
+
+\def\titkol{Метод логарифмических моментов для оценивания параметров 
+гамма-экспоненциального распределения}
+
+\def\aut{А.\,А.~Кудрявцев$^1$, О.\,В.~Шестаков$^2$}
+
+\def\autkol{А.\,А.~Кудрявцев, О.\,В.~Шестаков}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Кудрявцев А.\,А.}
+\index{Шестаков О.\,В.}
+\index{Kudryavtsev A.\,A.}
+\index{Shestakov O.\,V.}
+ 
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при частичной 
+финансовой поддержке РФФИ (проект 20-07-00655) и в соответствии с программой Московского центра
+ фундаментальной и~прикладной математики.}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет 
+им.~М.\,В.~Ломоносова, факультет вычислительной математики и~кибернетики, 
+\mbox{nubigena@mail.ru}}
+\footnotetext[2]{Московский государственный университет 
+им.~М.\,В.~Ломоносова, факультет вычислительной математики и~кибернетики; 
+Институт проблем информатики Федерального исследовательского центра 
+<<Информатика и~управление>> Российской академии наук, \mbox{oshestakov@cs.msu.su}}
+
+\vspace*{-8pt}
+
+
+
+
+\Abst{Рассматривается модифицированный метод моментов для оценивания 
+параметров гам\-ма-экс\-по\-нен\-ци\-аль\-но\-го распределения. Обосновывается сильная 
+состоятельность полученных оценок. Гам\-ма-экс\-по\-нен\-ци\-аль\-ное распределение 
+представляет собой удобный механизм при моделировании процессов и~явлений 
+с~по\-мощью мас\-штаб\-ных смесей обобщенных гам\-ма-рас\-пре\-де\-ле\-ний. Подобные задачи 
+возникают во многих естественно-научных областях в~предположении 
+о~рандомизированности рас\-смат\-ри\-ва\-емых па\-ра\-мет\-ров и~могут быть единообразно описаны 
+в~терминах байесовских моделей баланса. Полученные результаты могут применяться 
+в~широком классе задач, использующих для моделирования распределения 
+с~положительным неограниченным носителем, без дополнительных предположений 
+о~представлении исследуемого объекта в~терминах масштабной смеси, ввиду большого 
+разнообразия видов плотности пятипараметрического гам\-ма-экс\-по\-нен\-ци\-аль\-но\-го 
+распределения.}
+
+\KW{оценивание параметров; гамма-экс\-по\-нен\-ци\-аль\-ное 
+распределение; смешанные распределения;  обобщенное гам\-ма-рас\-пре\-де\-ле\-ние; 
+метод  моментов; состоятельная оценка}
+
+\DOI{10.14357/19922264200307} 
+ 
+\vspace*{-6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+В~различных областях жизнедеятельности присутствуют характеристики систем, 
+выражаемые при помощи отношения двух  величин. 
+
+Так, в~демографии уровень 
+младенческой смертности определяется как отношение чис\-ла умерших в~возрасте до 
+года к~числу родившихся за некоторый период времени~\cite{Borisov2001}, а~индекс 
+раз\-во\-ди\-мости~--- как отношение коэффициента суммарной разводимости к~коэффициенту 
+суммарной брач\-ности~\cite{Rybako2005}; в~физике коэффициент трансформации~--- 
+это  отношение выходного напряжения к~входному, 
+а~универсальная функция Кирхгофа~--- 
+отношение излучательной способности тела к~поглощательной~\cite{KuzRog2012}; 
+в~тео\-рии массового обслуживания отношение интенсивности входящего потока 
+к~ин\-тен\-сив\-ности обслуживания определяет коэффициент загрузки 
+сис\-те\-мы~\cite{BoPe1995}; при моделировании чрезвычайных ситуаций пожароопасность объекта 
+определяется отношением угрозы возникновения пожара к~фактору пожарозащиты~\cite{ShaRaSha2010}; 
+в~тео\-рии на\-деж\-ности ожи\-да\-емое время безотказной работы 
+представимо в~виде отношения среднего времени безотказной работы к~среднему 
+времени восстановления~\cite{ZdRo2004}. 
+
+Ряд примеров можно продолжить. Каждую из 
+таких характеристик можно рассматривать как индекс баланса системы~\cite{Ku2018}.
+Применение рандомизационного байесовского подхода к~описанным моделям дает 
+возможность изучать характеристики\linebreak индекса баланса как масштабной смеси 
+вероятностных законов. 
+
+В~случае когда для описания процессов и~явлений 
+используются распределения с~неограниченным неотрицательным носителем, широкую 
+популярность приобрел гам\-ма-класс распределений. В~работе~\cite{Ku2019_2} было 
+описано так называемое гам\-ма-экс\-по\-нен\-ци\-аль\-ное распределение, в~терминах 
+которого, в~част\-ности, выражаются характеристики масштабных смесей обобщенных 
+гамма-рас\-пре\-де\-ле\-ний, применяемых в~байесовских моделях баланса~\cite{Ku2018}.
+
+На практике исследователь имеет дело с~наблюдаемыми величинами, отражающими 
+про\-яв\-ление анализируемого реального процесса, в~отношении которых делаются 
+некоторые модельные предположения о~виде их распределения. При этом 
+пред\-полагается, что истинное значение параметров\linebreak распределения неизвестно 
+и~требует оценки.
+Заметим, что нередко при моделировании используются частные случаи обобщенного 
+гам\-ма-рас\-пре\-де\-ле\-ния, такие как
+экспоненциальное распределение;
+$\chi^2$-рас\-пре\-де\-ле\-ние;
+распределение Эрланга;
+гам\-ма-рас\-пре\-де\-ле\-ние;
+полунормальное распределение,\linebreak или
+распределение максимума процесса броуновского движения;
+распределение Рэлея;
+распределение Макс\-вел\-ла--Больц\-ма\-на;
+$\chi$-распределение;\linebreak
+m-распределение Накагами;
+распределение Виль\-со\-на--Хиль\-фер\-ти;
+распределение Вей\-бул\-ла--Гне\-ден\-ко
+и многие другие, включая масштабированные и~обратные аналоги перечисленных.
+
+Дадим необходимые определения.
+Обозначим обобщенное гам\-ма-рас\-пре\-де\-ле\-ние, или распределение 
+Криц\-ко\-го--Мен\-ке\-ля~\cite{KrMe1946,KrMe1948}, с~плот\-ностью
+$$
+f(x)=\fr{|v| x^{vq -1}e^{-(x/\theta)^v}}{\theta^{vq}\Gamma(q)},\ \ v\neq0,\ 
+\ q>0,\ \ \theta>0,\ \ x>0,
+$$
+через $\mathrm{GG}\,(v,q,\theta)$.
+
+\smallskip
+
+\noindent
+\textbf{Определение~1.}
+Назовем функцию вида
+\begin{multline}
+\label{GEF}
+\G_{\alpha,\, \beta} (x) = \sum\limits_{k=0}^{\infty}\fr{x^k}{k!}\,
+ \Gamma(\alpha k + 
+\beta), \\
+ x\in\mathbb{R}, \enskip 0\le\alpha<1, \enskip \beta> 0,
+\end{multline}
+гамма-экс\-по\-нен\-ци\-аль\-ной функцией~\cite{KuTi2017}.
+
+
+Функция~(\ref{GEF}) обобщает на случай $\beta\hm\neq1$ преобразование, введенное 
+Леруа~\cite{LeRoy1900_1} для исследования производящих функций специального 
+вида. Кроме того, функцию~(\ref{GEF}) можно рас\-смат\-ри\-вать (при некоторых 
+допущениях) как частный случай функции Сри\-ва\-ста\-ва--То\-мов\-ски~\cite{SrTo2009}, 
+обобщающей функ\-цию Мит\-таг-Леф\-фле\-ра~\cite{GoKiMaRo2014}.
+
+\smallskip
+
+\noindent
+\textbf{Определение~2.}
+Будем говорить, что случайная величина~$\zeta$ имеет гам\-ма-экс\-по\-нен\-ци\-аль\-ное 
+распределение $\mathrm{GE}\,(r,\nu,s,t,\delta)$ с~па\-ра\-мет\-ра\-ми изгиба $0\hm\le r\hm<1$, формы 
+$\nu\hm\neq0$, концентрации $s,t\hm>0$ и~масштаба $\delta\hm>0$, если ее плотность при 
+$x\hm>0$ задается соотношением:
+$$
+g_E(x) =
+\fr{|\nu|x^{t\nu-1}}{\delta^{t\nu}\Gamma(s)\Gamma(t)}
+   \G_{r,\, tr+s}\left(-\left(\fr{x}{\delta}\right)^{\nu}\right),
+$$
+где $E=(r,\nu,s,t,\delta)$~\cite{Ku2019_2}.
+
+\smallskip
+
+В работе~\cite{Ku2019_2} было показано, что гам\-ма-экс\-по\-нен\-ци\-аль\-ное распределение 
+обладает следующими свойствами.
+
+\smallskip
+
+\noindent
+\textbf{Лемма~1.}
+%\label{GG_to_GE}
+\begin{enumerate}[1.]
+\item \textit{Пусть независимые случайные величины~$\lambda$ и~$\mu$ имеют соответственно 
+распределения $\mathrm{GG}\,(v,q,\theta)$ и~$\mathrm{GG}\,(u,p,\alpha)$, $uv\hm>0$. Тогда
+распределение~$\lambda$ совпадает с~$\mathrm{GE}\,(0,v,\cdot,q,\theta)$;
+распределение~$\lambda/\mu$ при $|u|\hm>|v|$ совпадает с}
+$\mathrm{GE}\,(v/u,v,p,q,\theta/\alpha)$;
+\textit{распределение~$\lambda/\mu$ при $|v|\hm>|u|$ совпадает с~$\mathrm{GE}\,(u/v,-
+u,q,p,\theta/\alpha)$}.
+\item
+ \textit{При $0<r<1$ плотность $g_E(x)$, $E\hm=(r,\nu,s,t,\delta)$, совпадает 
+с~плот\-ностью отношения независимых случайных величин, имеющих обобщенные 
+гам\-ма-рас\-пре\-де\-ле\-ния}
+$\mathrm{GG}\,(\nu,t,\delta)$ и~$\mathrm{GG}\,(\nu/r,s,1)$.
+\end{enumerate}
+
+
+В случае моделирования реального процесса при помощи гам\-ма-экс\-по\-нен\-ци\-аль\-но\-го 
+распределения неизбежно возникает вопрос оценивания неизвестных параметров по 
+реальным данным. Ввиду представления плот\-ности~$g_E(x)$ в~терминах специальной 
+гам\-ма-экс\-по\-нен\-ци\-аль\-ной функции~(\ref{GEF}) метод максимального правдоподобия 
+представляется затруднительным. То же можно сказать и~о~прямом методе моментов. 
+По этой причине предлагается оценивать параметры гам\-ма-экс\-по\-нен\-ци\-аль\-но\-го 
+распределения при помощи модифицированного метода, основанного на 
+логарифмических моментах.
+
+\section{Логарифмические моменты гамма-экспоненциального распределения}
+
+Введем обозначение для ди\-гам\-ма-функ\-ции: $ \psi(z)\hm={\Gamma'(z)}/{\Gamma(z)}$.
+
+Найдем первые два логарифмических момента случайной величины $\zeta\hm\sim 
+\mathrm{GE}\,(r,\nu,s,t,\delta)$. Рас\-смот\-рим преобразование Меллина
+$$
+\mathcal{M}_\zeta(z) = \int\limits_{0}^{\infty}x^z \, dF_\zeta(x)\,,\enskip 
+z\in\mathbb{C}\,,
+$$
+распределения~$\zeta$. Воспользуемся леммой~1 и~представлением 
+$\zeta\stackrel{d}{=}\lambda/\mu$, где независимые случайные величины~$\lambda$ 
+и~$\mu$ имеют соответственно распределения $\mathrm{GG}\,(\nu,t,\delta)$ и~$\mathrm{GG}\,(\nu/r,s,1)$.
+Поскольку для $\lambda\hm\sim \mathrm{GG}\,(\nu,t,\delta)$ преобразование Меллина имеет вид:
+$$
+\mathcal{M}_\lambda(z) = 
+\fr{\delta^z}{\Gamma(t)}\,\Gamma\left(t+\fr{z}{\nu}\right), \enskip
+ t+\fr{\Re  (z)}{\nu}>0\,,
+ $$
+для отношения $\lambda\sim \mathrm{GG}\,(\nu,t,\delta)$ к~$\mu\sim 
+\mathrm{GG}\,(\nu/r,s,1)$ 
+выполнено
+\begin{multline*}
+\mathcal{M}_{\lambda/\mu}(z) = 
+\fr{\delta^z}{\Gamma(t)\Gamma(s)}\,\Gamma\left(t+\fr{z}{\nu}\right)\Gamma\left
+(s-\fr{rz}{\nu}\right), \\
+ t+\fr{\Re (z)}{\nu}>0, \enskip
+ s-\fr{r\Re  (z)}{\nu}>0\,,
+\end{multline*}
+откуда получаем вид моментов $\zeta\stackrel{d}{=}\lambda/\mu$:
+\begin{multline}
+\label{moments_zeta}
+\e \zeta^k = 
+\fr{\delta^{k}}{\Gamma(t)\Gamma(s)}\,\Gamma\left(t+\fr{k}{\nu}\right)\Gamma
+\left(s-\fr{rk}{\nu}\right), \\
+ \ t+\fr{k}{\nu}>0\,, \ \ s-\fr{rk}{\nu}>0\,,
+\end{multline}
+и характеристической функции логарифма~$\zeta$:
+\begin{multline}
+\label{ChF_zeta}
+\e e^{iy\ln\zeta}= 
+\fr{\delta^{iy}}{\Gamma(t)\Gamma(s)}\,\Gamma\left(t+\fr{iy}{\nu}\right)\Gamma
+\left( s-\fr{iry}{\nu}\right), \\
+ y\in\mathbb{R}\,.
+\end{multline}
+Дважды продифференцировав соотношение~(\ref{ChF_zeta}), получаем:
+\begin{align*}
+\e\ln\zeta&=\fr{\nu\ln\delta+\psi(t)-r\psi(s)}{\nu}\,;
+\\
+\e\ln^2\zeta&=
+\frac{\left[\nu\ln\delta+\psi(t)-
+r\psi(s)\right]^2}{\nu^2}+\fr{\psi'(t)}{\nu^2}+\fr{r^2\psi'(s)}{\nu^2}.
+\end{align*}
+
+\section{Оценивание параметров изгиба и~масштаба}
+
+Зафиксируем параметры формы~$\nu$ и~концентрации~$t$ и~$s$. Заметим, что, 
+поскольку функция, стоящая в~правой части~(\ref{moments_zeta}), определена не 
+для всех значений параметров и~необратима, использовать классический метод 
+моментов напрямую не представляется возможным. Оценим при помощи 
+модифицированного метода моментов параметры изгиба~$r$ и~масштаба~$\delta$ 
+распределения $\mathrm{GE}\,(r,\nu,s,t,\delta)$ с~учетом соотношения 
+$\zeta\stackrel{d}{=}\lambda/\mu$, где независимые случайные величины~$\lambda$ 
+и~$\mu$ имеют соответственно распределения~$\mathrm{GG}\,(\nu,t,\delta)$ 
+и~$\mathrm{GG}\,(\nu/r,s,1)$.
+
+Введем обозначение для выборочных логарифмических моментов~$\zeta$:
+$$
+L_k(X)=\fr{1}{n}\sum\limits_{i=1}^n\ln^k X_i,
+$$
+где $X=(X_1,\ldots,X_n)$~--- выборка из распределения~$\zeta$.
+
+Составим систему из двух уравнений с~двумя неизвестными~$r$ и~$\delta$:
+$$
+\e\ln\zeta=L_1(X);\enskip \e\ln^2\zeta=L_2(X)\,.
+$$
+Очевидно, что исходная система уравнений эквивалентна следующей:
+\begin{align}
+\label{first_eq}
+\fr{\nu\ln\delta+\psi(t)-r\psi(s)}{\nu}&=L_1(X)\,;
+\\
+\label{second_eq}
+\fr{\psi'(t)+r^2\psi'(s)}{\nu^2}&=L_2(X)-L_1^2(X)\,.
+\end{align}
+Из последнего уравнения с~учетом $0\hm\le r\hm<1$ получаем, что оценка параметра 
+изгиба имеет вид:
+\begin{equation}
+\label{r_est}
+{\hat r}(X)=
+\sqrt{\fr{\nu^2(L_2(X)-L_1^2(X))-{\psi'(t)}}{\psi'(s)}}\,,
+\end{equation}
+откуда следует вид оценки параметра масштаба:
+\begin{multline}
+\label{delta_r_est}
+{\hat \delta}_r(X)=\exp\Bigg\{
+L_1(X)-\fr{\psi(t)}{\nu}+{}\\
+{}+\psi(s)\sqrt{\fr{\nu^2(L_2(X)-L_1^2(X))-
+{\psi'(t)}}{\nu^2\psi'(s)}}\Bigg\}\,.
+\end{multline}
+
+Из усиленного закона больших чисел и~непрерывности функций, стоящих в~правых 
+частях~(\ref{r_est}) и~(\ref{delta_r_est}), следует свойство полученных оценок.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~1.}
+\textit{При фиксированных параметрах~$\nu$, $t$ и~$s$ распределения 
+$\mathrm{GE}\,(r,\nu,s,t,\delta)$ оценки~${\hat r}(X)$ и~${\hat \delta}_r(X)$ параметров~$r$ 
+и~$\delta$ обладают свойством сильной состоятельности}.
+
+
+\section{Оценивание параметров формы и~масштаба}
+
+Зафиксируем параметры изгиба~$r$ и~концентрации~$t$ и~$s$. Оценим при помощи 
+модифицированного метода моментов параметры формы~$\nu$ и~масштаба~$\delta$ 
+распределения $\mathrm{GE}\,(r,\nu,s,t,\delta)$.
+
+Проводя рассуждения, аналогичные приведенным в~предыдущем разделе, можно 
+заметить, что двух уравнений~(\ref{first_eq}) и~(\ref{second_eq}) недостаточно 
+для решения поставленной задачи ввиду невозможности определения
+ знака параметра~$\nu$ исходя из равенства
+$$
+\nu^2=\fr{\psi'(t)+r^2\psi'(s)}{L_2(X)-L_1^2(X)}\,.
+$$
+
+Рассмотрим дополнительное уравнение:
+$$
+\e\ln^3\zeta=L_3(X)\,.
+$$
+Поскольку выполнено~(\ref{ChF_zeta}), имеем:
+\begin{multline*}
+\e\ln^3\zeta=
+\fr{\left[\nu\ln\delta+\psi(t)-
+r\psi(s)\right]^3}{\nu^3}+{}\\
+{}+\fr{3\left[\nu\ln\delta+\psi(t)
+-r\psi(s)\right]\psi'(t)}{\nu^3}+{}
+\\
+{}+\fr{3r^2\left[\nu\ln\delta+\psi(t)
+-r\psi(s)\right]\psi'(s)}{\nu^3}+{}\\
+{}+\fr{\psi''(t)}{\nu^3}-
+\fr{r^3\psi''(s)}{\nu^3},
+\end{multline*}
+откуда с~учетом~(\ref{first_eq}) и~(\ref{second_eq}) получаем
+$$
+\fr{\psi''(t)}{\nu^3}-\fr{r^3\psi''(s)}{\nu^3}=L_3(X)-
+3L_1(X)L_2(X)+2L_1^3(X)\,.
+$$
+
+Таким образом, оценка параметра формы~$\nu$ имеет вид:
+\begin{equation*}
+%\label{nu_est}
+{\hat \nu}(X)=\sqrt[3]{\fr{\psi''(t)-r^3\psi''(s)}{L_3(X)-
+3L_1(X)L_2(X)+2L_1^3(X)}}\,.
+\end{equation*}
+Из~(\ref{first_eq}) следует вид оценки параметра масштаба $\delta$:
+\begin{multline*}
+%\label{delta_nu_est}
+{\hat \delta}_\nu(X)=\exp\left\{
+\vphantom{\sqrt[3]{\fr{L_3(X)-3L_1(X)L_2(X)+2L_1^3(X)}{\psi''(t)-r^3\psi''(s)}}}
+L_1(X)-(\psi(t)-r\psi(s))\times{}\right.\\
+\left.{}\times
+\sqrt[3]{\fr{L_3(X)-3L_1(X)L_2(X)+2L_1^3(X)}{\psi''(t)-r^3\psi''(s)}}\right\}.
+\end{multline*}
+
+Аналогично заключению разд.~3 справедливо следующее утверждение.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~2.} \textit{При фиксированных параметрах $r$, $t$ и~$s$ 
+распределения 
+$\mathrm{GE}\,(r,\nu,s,t,\delta)$ оценки ${\hat \nu}(X)$ 
+и~${\hat \delta}_\nu(X)$ 
+параметров $\nu$ и~$\delta$ обладают свойством сильной состоятельности}.
+
+
+\section{Заключение}
+
+При получении сильно состоятельных оценок\linebreak двух пар параметров
+ гам\-ма-экс\-по\-нен\-ци\-аль\-но\-го распределения, описанных в~статье, активно использовалось 
+представление гам\-ма-экс\-по\-нен\-ци\-аль\-но\-го распределения 
+как масштабной смеси 
+обобщенных гам\-ма-рас\-пре\-де\-ле\-ний. При этом изначально предполагалось, что 
+исследуемое рас\-пределение пред\-став\-ля\-ет собой удобный механизм анализа 
+байесовских моделей баланса, в~основе которых лежит представление целевого 
+объекта как частного двух независимых случайных величин. Однако 
+пятипараметрическое гам\-ма-экс\-по\-нен\-ци\-аль\-ное распределение обладает широким 
+набором возможных видов плот\-ности и~может оказаться\linebreak полезным при изучении 
+и~других моделей, ис\-поль\-зу\-ющих для описания процессов и~явлений распределения 
+с~неограниченным положительным носителем.
+
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{Borisov2001}
+\Au{Борисов~В.\,А.\/}
+Демография.~--- М.: NOTABENE, 2001. 272~с.
+
+\bibitem{Rybako2005}
+\Au{Волгин~Н.\,А., Рыбаковский~Л.\,Л., Калмыкова~Н.\,М. и~др.} 
+%Архангельский~В.\,Н., Иванова~Е.\,И., Захарова~О.\,Д., Иванова~А.\,Е., 
+%Денисенко~М.\,Б., Тихомиров~Н.\,П., Тихомирова~Т.\,М.}
+Демография.~--- М.: Логос, 2005. 280~с.
+
+%/ Под ред. Н.\,А.~Волгина, Л.\,Л.~Рыбаковского.
+
+
+\bibitem{KuzRog2012}
+\Au{Кузнецов~С.\,И., Рогозин~К.\,И.}
+Справочник по физике.~--- Томск: ТПУ, 2012. 224~с.
+
+\bibitem{BoPe1995}
+\Au{Бочаров~П.\,П., Печинкин~А.\,В.}
+Теория массового обслуживания.~--- М.: РУДН, 1995. 529~с.
+
+\bibitem{ShaRaSha2010}
+\Au{Шаптала~В.\,Г., Радоуцкий~В.\,Ю., Шаптала~В.\,В.}
+Основы моделирования чрезвычайных ситуаций.~--- 
+Белгород: БГТУ, 2010. 166~с.
+%/ Под общ. ред. В.\,Г.~Шапталы.
+
+
+\bibitem{ZdRo2004}
+\Au{Здоровцов~И.\,А., Королев~В.\,Ю.}
+Основы теории надежности волоконно-оптических линий передачи железнодорожного 
+транспорта.~--- М.: МАКС Пресс, 2004. 308~с.
+
+\bibitem{Ku2018}
+\Au{Кудрявцев~А.\,А.}
+Байесовские модели баланса~// Информатика и~её применения, 2018. 
+Т.~12. Вып.~3. С.~18--27.
+
+\bibitem{Ku2019_2}
+\Au{Кудрявцев~А.\,А.}
+О~пред\-став\-ле\-нии гам\-ма-экс\-по\-нен\-ци\-аль\-но\-го 
+и~обобщенного отрицательного биномиального распределений~// Информатика 
+и~её применения, 2019. Т.~13. Вып.~4. С.~78--82.
+
+\bibitem{KrMe1946}
+\Au{Крицкий~С.\,Н., Менкель~М.\,Ф.}
+О приемах исследования случайных колебаний речного стока~// 
+Труды НИУ ГУГМС. Сер.~IV, 1946. Вып.~29. С.~3--32.
+%. Труды Гос. гидрологического ин-та, вып. 29, 1946.
+
+\bibitem{KrMe1948}
+\Au{Крицкий~С.\,Н., Менкель~М.\,Ф.}
+Выбор кривых распределения вероятностей для расчетов речного стока~// 
+Известия АН СССР. Отд. техн. наук, 1948. №\,6. С.~15--21.
+
+\bibitem{KuTi2017}
+\Au{Кудрявцев~А.\,А., Титова~А.\,И.}
+Гам\-ма-экс\-по\-нен\-ци\-аль\-ная функция в~байесовских моделях массового обслуживания~// 
+Информатика и~её применения, 2017. Т.~11. Вып.~4. С.~104--108.
+
+\bibitem{LeRoy1900_1}
+\Au{Le~Roy\ \,\,$\acute{\mbox{\!\!E}}$.}
+Sur les s$\acute{\mbox{e}}$ries divergentes et les fonctions 
+d$\acute{\mbox{e}}$finies par un d$\acute{\mbox{e}}$veloppement de Taylor~// 
+Ann. Facult$\acute{\mbox{e}}$ Sci.
+Toulouse 2 Ser., 1900. 
+Vol.~2. No.\,3. P.~317--384.
+
+\bibitem{SrTo2009}
+\Au{Srivastava~H.\,M., Tomovski~{\ptb{\v{Z}}}.}
+Fractional calculus with an integral operator containing a generalized 
+Mittag-Leffler function in the kernel~// 
+Appl. Math. Comput., 2009. Vol.~211. P.~198--210.
+
+\bibitem{GoKiMaRo2014}
+\Au{Gorenlo~R., Kilbas~A.\,A., Mainardi~F., Rogosin~S.\,V.}
+Mittag-Leffler functions, related topics and applications.~--- 
+Berlin--Heidelberg: Springer-Verlag, 2014. 443~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 04.07.20}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{METHOD OF LOGARITHMIC MOMENTS FOR~ESTIMATING 
+THE~GAMMA-EXPONENTIAL DISTRIBUTION PARAMETERS}
+
+\def\titkol{Method of logarithmic moments for~estimating 
+the~gamma-exponential distribution parameters}
+
+\def\aut{A.\,A.~Kudryavtsev$^1$ and~O.\,V.~Shestakov$^{1,2}$}
+
+\def\autkol{A.\,A.~Kudryavtsev and~O.\,V.~Shestakov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-15pt}
+
+
+\noindent
+$^1$Department of Mathematical Statistics, Faculty of Computational 
+Mathematics and Cybernetics, M.\,V.~Lomo-\linebreak 
+$\hphantom{^1}$nosov Moscow State University, 
+1-52~Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation
+
+\noindent
+$^2$Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+\Abste{The article discusses a~modified method of moments for 
+estimating the parameters of gamma-exponential distribution. 
+The strong consistency of the estimates obtained is proved. 
+Gamma-exponential distribution is a~convenient mechanism for 
+modeling the processes and phenomena using scale mixtures of generalized 
+gamma distributions. Such problems arise in many fields of science 
+under the assumption that the considered parameters are randomized 
+and can be described in terms of Bayesian balance models. 
+The obtained results can be applied in a~wide class of problems that 
+use for modeling the distribution with  positive unlimited support, 
+without additional assumptions about the representation of the 
+studied object in terms of a~scale mixture, due to the wide variety 
+of density types of the five-parameter gamma-exponential distribution.}
+
+\KWE{parameter estimation; gamma-exponential distribution; 
+mixed distributions; generalized gamma distribution; method of moments; 
+consistent estimate}
+
+\DOI{10.14357/19922264200307} 
+
+\vspace*{-20pt}
+
+\Ack
+
+\vspace*{-6pt}
+
+\noindent
+The work was partly supported by the Russian Foundation for Basic Research 
+(project 20-07-00655). The research was conducted in accordance with the 
+Program of the Moscow Center for Fundamental and Applied Mathematics.
+
+%\vspace*{6pt}
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-kudr}
+\Aue{Borisov, V.\,A.}
+ 2001. \textit{Demografiya} [Demography]. Moscow: NOTABENE. 272~p.
+\bibitem{2-kudr}
+\Aue{Volgin, N.\,A., L.\,L.~Rybakovskiy, N.\,M.~Kalmykova, 
+\textit{et al.}} 2005. \textit{Demografiya} [Demography]. Moscow: Logos. 280~p.
+\bibitem{3-kudr}
+\Aue{Kuznetsov, S.\,I., and K.\,I.~Rogozin.} 2012. 
+\textit{Spravochnik po fizike} [Handbook of physics]. Tomsk: TPU. 224~p.
+\bibitem{4-kudr}
+\Aue{Bocharov, P.\,P., and A.\,V.~Pechinkin.} 1995. 
+\textit{Teoriya massovogo obsluzhivaniya} [Queueing theory]. Moscow: RUDN. 529~p.
+\bibitem{5-kudr}
+\Aue{Shaptala, V.\,G., V.\,Yu.~Radoutskiy, and V.\,V.~Shaptala.}
+2010. \textit{Osnovy modelirovaniya chrezvychaynykh situatsiy} 
+[Basics of modeling of emergency situations]. Belgorod: BGTU. 166~p.
+\bibitem{6-kudr}
+\Aue{Zdorovtsov, I.\,A., and V.\,Yu.~Korolev.}
+2004. \textit{Osnovy teorii nadezhnosti volokonno-opticheskikh liniy peredachi 
+zheleznodorozhnogo transporta} [Fundamentals of reliability theory of fiber 
+optic transmission lines for railway transport]. Moscow: MAKS Press. 308~p.
+\bibitem{7-kudr}
+\Aue{Kudryavtsev, A.\,A.}
+ 2018. Bayesovskie modeli balansa [Bayesian balance models]. 
+ \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 12(3):18--27.
+\bibitem{8-kudr}
+\Aue{Kudryavtsev, A.\,A.} 2019. O~predstavlenii gamma-eksponentsial'nogo 
+i~obobshchennogo otritsatel'nogo binomial'nogo raspredeleniy 
+[On the representation of gamma-exponential and generalized negative 
+binomial distributions]. \textit{Informatika i~ee Primeneniya~--- 
+Inform. Appl.} 13(4):78--82.
+\bibitem{9-kudr}
+\Aue{Kritsky, S.\,N., and M.\,F.~Menkel.} 1946. 
+O~priemakh issledovaniya sluchaynykh kolebaniy rechnogo stoka 
+[Methods of investigation of random fluctuations of river flow]. 
+\textit{Trudy NIU GUGMS Ser.~IV} 
+[Proceedings of GUGMS research institutions. Ser. IV] 29:3--32.
+\bibitem{10-kudr}
+\Aue{Kritsky, S.\,N., and M.\,F.~Menkel.}
+ 1948. Vybor krivykh raspredeleniya veroyatnostey dlya raschetov rechnogo 
+ stoka [Selection of probability distribution curves for river flow calculations].
+ \textit{Izvestiya AN SSSR. Otd. tekhn. nauk}
+  [Herald of the USSR Academy of Sciences. Technical Sciences] 6:15--21.
+\bibitem{11-kudr}
+\Aue{Kudryavtsev, A.\,A., and A.\,I.~Titova.}
+2017. Gamma-eksponentsial'naya funktsiya v~bayesovskikh modelyakh massovogo 
+obsluzhivaniya [Gamma-exponential function in Bayesian queuing models]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 11(4):104--108.
+\bibitem{12-kudr}
+\Aue{Le Roy,~$\acute{\mbox{E}}$.} 1900. Sur les series divergentes 
+et les fonctions definiesparun developpement de Taylor. 
+\textit{Ann. Facult$\acute{\mbox{e}}$ Sci. 
+Toulouse 2~Ser.} 2(3):317--384.
+\bibitem{13-kudr}
+\Aue{Srivastava, H.\,M., and Z.~Tomovski.}
+ 2009. Fractional calculus with an integral operator containing 
+ a~generalized Mittag-Leffler function in the kernel. 
+ \textit{Appl. Math. Comput.} 211:198--210.
+\bibitem{14-kudr}
+\Aue{Gorenlo, R., A.\,A.~Kilbas, F.~Mainardi, and S.\,V.~Rogosin.}
+ 2014. \textit{Mittag-Leffler functions, related topics and applications.}
+  Berlin--Heidelberg: Springer-Verlag. 443~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-12pt}
+
+\hfill{\small\textit{Received July 4, 2020}}
+
+\pagebreak
+
+%\vspace*{-24pt}
+
+ 
+
+\Contr
+
+
+\noindent
+\textbf{Kudryavtsev Alexey A.} (b.\ 1978)~--- 
+Candidate of Science (PhD) in physics and mathematics, associate professor, 
+Department of Mathematical Statistics, Faculty of Computational Mathematics 
+and Cybernetics, M.\,V.~Lomonosov Moscow State University, 
+1-52~Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation; 
+\mbox{nubigena@mail.ru}
+
+\vspace*{6pt}
+
+\noindent
+\textbf{Shestakov Oleg V.} (b.\ 1976)~--- 
+Doctor of Science in physics and mathematics, professor, 
+Department of Mathematical Statistics, Faculty of Computational Mathematics 
+and Cybernetics, M.\,V.~Lomonosov Moscow State University, 1-52~Leninskiye 
+Gory, GSP-1, Moscow 119991, Russian Federation; senior scientist, 
+Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{oshestakov@cs.msu.su}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 
+
+\renewcommand{\figurename}{\protect\bf Рис.}

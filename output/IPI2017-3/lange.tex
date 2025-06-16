@@ -1,0 +1,971 @@
+\def\stat{lange}
+
+\def\tit{ОБ ЭФФЕКТИВНОСТИ ИЕРАРХИЧЕСКОГО АЛГОРИТМА ПОИСКА ПРИБЛИЖЕННОГО 
+БЛИЖАЙШЕГО СОСЕДА В~ЗАДАННОМ НАБОРЕ ИЗОБРАЖЕНИЙ$^*$}
+
+\def\titkol{Об эффективности иерархического алгоритма поиска приближенного 
+ближайшего соседа в~заданном наборе} % изображений}
+
+\def\aut{М.\,М.~Ланге$^1$, С.\,Н.~Ганебных$^2$, А.\,М.~Ланге$^3$}
+
+\def\autkol{М.\,М.~Ланге, С.\,Н.~Ганебных, А.\,М.~Ланге}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Ланге М.\,М.}
+\index{Ганебных С.\,Н.}
+\index{Ланге А.\,М.}
+\index{Lange M.\,M.}
+\index{Ganebnykh S.\,N.}
+\index{Lange A.\,M.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при поддержке РФФИ (проекты 15-07-07516 и~15-07-09324).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управ\-ле\-ние>> 
+Российской академии наук, 
+\mbox{lange\_mm@ccas.ru}}
+\footnotetext[2]{Федеральный исследовательский центр <<Информатика и~управ\-ле\-ние>> 
+Российской академии наук, 
+\mbox{sng@ccas.ru}}
+\footnotetext[3]{Федеральный исследовательский центр <<Информатика и~управ\-ле\-ние>> Российской 
+академии наук, \mbox{lange\_am@mail.ru}}
+
+%\vspace*{-18pt}
+
+   
+
+\Abst{Исследуется эффективность иерархического алгоритма поиска в~заданном наборе 
+изображений близкого представителя к~предъявляемому изображению с~негарантированной 
+погрешностью относительно ближайшего соседа. Алгоритм использует пространство 
+квадропирамидальных пред\-став\-ле\-ний изображений и~стратегию направленного поиска на 
+последовательных уровнях представления с~нарастающим разрешением. Эффективность 
+алгоритма исследуется в~терминах эмпирического распределения погрешностей поиска 
+и~вычислительной сложности относительно сложности полного перебора. Приводятся 
+эмпирические распределения погрешностей и~оценки вычислительной сложности алгоритма 
+для двух приложений: поиска в~наборе изображений рукописных цифр из базы данных 
+MNIST и~координатной привязки зашумленных изображений к~аэрокосмической карте 
+местности из сетевого сервиса Google Maps.} 
+
+\KW{изображение; квадропирамидальное представление; цифровая карта; ближайший сосед; 
+приближенный ближайший сосед; погрешность поиска; эмпирическое 
+распределение; вычислительная сложность}
+
+\DOI{10.14357/19922264170306} 
+
+\vspace*{4pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+\vspace*{-4pt}
+
+  Существует широкий класс прикладных задач, связанных с~поиском 
+в~большом наборе данных объекта, близкого по заданной мере 
+к~предъявляемому объекту. К~таким задачам относится поиск в~наборах 
+изображений образцов, сходных с~предъявляемыми изображениями, 
+координатная привязка наблюдаемого изображения к~цифровой карте 
+местности и~др. Перечисленные примеры относятся к~проблеме извлечения 
+изображений (Image Retrieval)~[1]. При больших объемах данных решающий 
+алгоритм должен удовлетворять заданным требованиям к~допустимой 
+по\-греш\-ности (точ\-ности) поиска и~вычислительной слож\-ности 
+(быст\-ро\-дей\-ст\-вию). Как правило, эти характеристики находятся в~обратной 
+зависимости: с~увеличением быст\-ро\-дей\-ст\-вия уменьшается точ\-ность (растет 
+по\-греш\-ность) и~наоборот. Поэтому необходимо обеспечить баланс этих 
+требований путем варьирования па\-ра\-мет\-ра\-ми решающего алгоритма.
+  
+  В качестве решающих алгоритмов могут быть использованы алгоритмы 
+поиска приближенного ближайшего соседа~[2--6] или их модификации. При 
+фиксированной размерности $d\hm\geq 1$ векторного пространства известные 
+алгоритмы с~гарантированной точностью, задаваемой допустимой 
+погрешностью $\varepsilon\hm>0$, реализуют поиск в~наборе из   векторов 
+представителя на расстоянии $D\hm\leq (1\hm+\varepsilon)D_{\min}$ от 
+предъявляемого вектора, где $D_{\min}\hm>0$~--- расстояние до ближайшего 
+соседа. Такие алгоритмы используют древовидные структуры данных, которые 
+при фиксированных~$d$ и~$\varepsilon$ позволяют уменьшить порядок роста 
+вычислительной сложности по~$n$ по сравнению со сложностью переборного 
+алгоритма. В~частности, BBD-ал\-го\-ритм, использующий решающее Balance 
+Box Decision дерево~\cite{5-lan}, имеет сложность $O(d\lceil 
+1\hm+6d/\varepsilon\rceil^d\log n)$, а сложность LSH-ал\-го\-рит\-ма на основе 
+локального хеширования Locality Sensitive Hashing~\cite{6-lan} составляет 
+$O(dn^{1/(1+\varepsilon)})$. Для сравнения переборный алгоритм поиска 
+ближайшего соседа ($\varepsilon\hm=0$) имеет сложность~$\Theta(dn)$. 
+Характер зависимости вычислительной сложности указанных алгоритмов от 
+размерности~$d$ и~допустимой погрешности   ограничивает их применение 
+для поиска изображений размера $N\times N$ из-за чрезмерно высокой 
+размерности $d\hm=N^2$ при $N\hm\geq 100$. 
+  
+  В настоящей работе рассматривается альтернативный алгоритм для быстрого 
+поиска в~заданном наборе изображений мощ\-ности~$n$ приближенного 
+ближайшего соседа к~предъявляемому изображению. Предлагаемый алгоритм 
+является модификацией алгоритма, рассмотренного в~\cite{7-lan}, которая 
+использует квадропирамидальное представление\linebreak изобра\-жений 
+с~многоуровневым разрешением~[8--10]. Алгоритм базируется на 
+параметрической стратегии экспоненциального сужения зоны поиска, 
+аналогичной использованной в~работе~\cite{11-lan}. Такая стратегия поиска 
+обеспечивает вычислительную сложность $O(n\log N)$, но не гарантирует 
+точности приближенного решения.
+  
+  Эффективность предложенного алгоритма исследована в~терминах 
+эмпирического распределения погрешностей поиска и~вычислительного 
+выигры\-ша относительно алгоритма полного перебора. При различных 
+значениях параметра алгоритма указанные характеристики получены для 
+поиска изображений рукописных цифр из базы данных MNIST~\cite{12-lan} 
+и~для координатной привязки зашумленных изображений к~цифровой карте 
+участка земной поверхности, взятой на ин\-тер\-нет-сер\-ви\-се Google 
+Maps~\cite{13-lan}. 
+  
+  \section{Формальная постановка задачи}
+  
+  Рассматривается множество изображений $\mathbf{X}$ размера $N\times N$, 
+элементы которых принадлежат алфавиту $A\hm=\{0,1,\ldots ,q-1\}$ ($q\hm\geq 
+2$). Предполагается, что каждое изображение $\mathbf{x}\hm\in\mathbf{X}$ 
+имеет по крайней мере один ненулевой элемент, а размер изображения является 
+целочисленной степенью числа~2, так что $N\hm=2^L$, где $L\hm\gg1$. 
+В~общем случае мно\-же\-ст\-во~$\mathbf{X}$ содержит набор 
+изображений~$\hat{\mathbf{X}}$, в~котором необходимо найти изображение 
+$\hat{\mathbf{x}}\hm\in\hat{\mathbf{X}}$, ближайшее или достаточно близкое по 
+заданной мере к~заданному изображению $\mathbf{x}\hm\in\mathbf{X}$.
+  
+  Любое изображение $\mathbf{x}\hm\in\mathbf{X}$ с~указанными размерами 
+допускает квадропирамидальное пред\-став\-ление 
+  \begin{equation}
+  \mathbf{x}_L=\left( x_0, \ldots , x_l, \ldots , x_L\right)
+  \label{e1-lan}
+  \end{equation}
+порядка~$L$, которое содержит последовательность описаний 
+изображения~$\mathbf{x}$ с~уровнями разрешения $l\hm=0,\ldots , 
+L$~\cite{8-lan}. Пример квадропирамиды порядка $L\hm=2$ дан на рис.~1.
+
+
+
+  Описание $l$-го уровня~$x_l$ в~(1) является изоб\-ра\-же\-ни\-ем размера 
+$2^l\cdot 2^l$, получаемым из описания~$x_{l+1}$~ путем усреднений по 
+непересекающимся группам из четырех смежных элементов. Ненулевое 
+значение элемента в~вершине пирамиды~$x_0$ позволяет сформировать 
+нормализованное квадропредставление
+  \begin{equation}
+  \mathbf{y}_L=\left( y_1, \ldots , y_l,\ldots ,y_L\right)
+  \label{e2-lan}
+  \end{equation}
+путем деления всех элементов пирамиды~(1) на значение элемента 
+вершины~$x_0$. Нормализация элементов уменьшает зависимость 
+представления~(2) от средней яркости изображения по сравнению 
+с~представлением~(1). 
+  
+  Пусть $z(k_{l1}, k_{l2})>0$~--- значение элемента с~индексами $(k_{l1}, 
+k_{l2})\hm=1,\ldots , 2^l$ в~нормализованном описании $y_l\hm\in 
+\mathbf{y}_L$. Для любой пары изображений $\mathbf{x}\hm\in\mathbf{X}$, 
+$\hat{\mathbf{x}}\hm\in\mathbf{X}$, имеющих нормализованные описания 
+$\mathbf{y}_L, \hat{\mathbf{y}}_L$, вводится мера их различия $l$-го порядка:
+  \begin{multline}
+  D_l\left(\mathbf{x}, \hat{\mathbf{x}}\right) = \fr{1}{(2^l\cdot 2^l)} 
+\sum\limits_{k_{l1}=1}^{2^l} \sum\limits^{2^l}_{k_{l2}=1} \left\vert z\left( 
+k_{l1}, k_{l2}\right) -{}\right.\\
+\left.{}-\hat{z}\left(k_{l1}, k_{l2}\right) %-\hat{z}\left( k_{l1}, k_{l2}\right)
+\right\vert\,,\enskip l=1,\ldots ,L\,,
+  \label{e3-lan}
+  \end{multline}
+где $ z\left( k_{l1}, k_{l2}\right)$ и~$ \hat{z}\left( k_{l1}, k_{l2}\right)$~--- 
+элементы описаний $y_l\hm\in\mathbf{y}_L$ и~$\hat{y}_l\hm\in 
+\hat{\mathbf{y}}_L$ соответственно для изображений~$\mathbf{x}$ 
+и~$\hat{\mathbf{x}}$. Суммирование мер~$D_t(\mathbf{x}, \hat{\mathbf{x}})$ 
+вида~(3) порядка $t\hm=1,\ldots , l$ ($l\hm\leq L$) с~весами 
+$w_t=(1/2)\log_2(2^t\cdot 2^t)\hm=t$ порождает взвешенную меру различия 
+порядка~$l$:
+\begin{equation}
+\tilde{D}_l\left( \mathbf{x},\hat{\mathbf{x}}\right)=\sum\limits^l_{t=1} w_t 
+D_t\left(\mathbf{x}, \hat{\mathbf{x}}\right)\,,\enskip 1\leq l\leq L\,.
+\label{e4-lan}
+\end{equation}
+  
+  Точный или приближенный поиск ближайшего соседа для предъявляемого 
+изображения $\mathbf{x}\hm\in\mathbf{X}$ выполняется на подмножестве 
+$\hat{\mathbf{X}}\subset \mathbf{X}$, содержащем~$n$~изображений. Алгоритм 
+поиска принимает решение $\hat{\mathbf{x}}^*\hm\in \hat{\mathbf{X}}$ по 
+мере~(4) наибольшего порядка~$L$ на наборе изображений 
+$\hat{\mathbf{X}}^*\hm\subseteq \hat{\mathbf{X}}$ мощности $n^*\hm\leq n$ 
+в~соответствии с~решающим правилом
+  \begin{equation}
+  \hat{\mathbf{x}}^*=\mathrm{arg}\,\min\limits_{\hat{\mathbf{x}}\in \hat{\mathbf{X}}^*} 
+\tilde{D}_L\left(\mathbf{x},\hat{\mathbf{x}}\right)\,.
+  \label{e5-lan}
+  \end{equation}
+  
+  Набор $\hat{\mathbf{X}}^*$ в~(5) определяется используемой стратегией 
+направленного (иерархического) поиска, которая в~случае 
+$\hat{\mathbf{X}}^*\hm=\hat{\mathbf{X}}$ обеспечивает точное 
+решение~$\hat{\mathbf{x}}^*_{\mathrm{NN}}$ (Nearest Neighbor), 
+совпадающее\linebreak\vspace*{-12pt}
+
+ { \begin{center}  %fig1
+ \vspace*{1pt}
+ \mbox{%
+\epsfxsize=70.052mm
+\epsfbox{lan-1.eps}
+}
+
+
+\vspace*{9pt}
+
+
+\noindent
+{{\figurename~1}\ \ \small{Квадропирамида $\mathbf{x}_2\hm=\left( x_0, x_1, x_2\right)$ порядка $L\hm=2$}}
+\end{center}
+}
+
+%\vspace*{6pt}
+
+\addtocounter{figure}{1}
+
+
+
+\noindent
+ с~ближайшим соседом, а~в~случае $\hat{\mathbf{X}}^*\hm\subset 
+\hat{\mathbf{X}}$~--- приближенное 
+решение~$\hat{\mathbf{x}}^*_{\mathrm{AN}}$ (Approximate Nearest), которое 
+может отличаться от ближайшего соседа или совпадать с~ним. 
+
+Погрешность поиска по правилу~(5) приближенного ближайшего изображения 
+в~заданном наборе определяется различием значений $\tilde{D}_L(\mathbf{x}, 
+\hat{\mathbf{x}}^*_{\mathrm{AN}})$ и~$\tilde{D}_L(\mathbf{x}, 
+\hat{\mathbf{x}}^*_{\mathrm{NN}})$ и~в~случае $\tilde{D}_L(\mathbf{x}, 
+\hat{\mathbf{x}}^*_{\mathrm{NN}})\hm >0$ равна:
+\begin{equation}
+\varepsilon^s_{n^*} \left( \hat{\mathbf{x}}^*_{\mathrm{AN}}, 
+\hat{\mathbf{x}}^*_{\mathrm{NN}}\right) = 
+\fr{\tilde{D}_L(\mathbf{x},\hat{\mathbf{x}}^*_{\mathrm{AN}})- 
+\tilde{D}_L(\mathbf{x},\hat{\mathbf{x}}^*_{\mathrm{NN}})} 
+{\tilde{D}_L(\mathbf{x},\hat{\mathbf{x}}^*_{\mathrm{NN}})}\,.
+\label{e6-lan}
+\end{equation}
+  
+  В задаче координатной привязки погрешность определяется отклонением 
+координат $(a^*, b^*)$ найден\-но\-го по правилу~(5) 
+изображения~$\hat{\mathbf{x}}^*_{\mathrm{AN}}$ от координат~$(a,b)$ 
+предъявляемого изображения~$\mathbf{x}$ и~в~случае изображений размера 
+$N\times N$ равна: 
+  \begin{equation}
+  \varepsilon^g_{n^*}\left( \hat{\mathbf{x}}^*_{\mathrm{AN}}, \mathbf{x}\right) 
+=\fr{1}{2}\left( \fr{|a-a^*|}{N}+\fr{|b-b^*|}{N}\right)\,.
+  \label{e7-lan}
+  \end{equation}
+  
+  Качество рассматриваемого алгоритма исследуется в~терминах 
+распределений 
+  \begin{align}
+  &\mathrm{Pr} \left\{ \varepsilon^s_{n^*}\left( 
+\hat{\mathbf{x}}^*_{\mathrm{AN}}, \hat{\mathbf{x}}^*_{\mathrm{NN}}\right) \leq 
+\varepsilon\right\}\,;\label{e8-lan}\\
+  &\mathrm{Pr} \left\{ \varepsilon^g_{n^*}\left( 
+\hat{\mathbf{x}}^*_{\mathrm{AN}}, \hat{\mathbf{x}}\right) \leq 
+\varepsilon\right\}\label{e9-lan}
+  \end{align}
+погрешностей~(6) и~(7) с~параметром~$n^*$: $1\hm\leq n^*\hm\leq n$, где 
+$\varepsilon\hm\geq 0$~--- допустимая погрешность, при\-ни\-ма\-ющая значения 
+с~некоторым шагом. При фиксированном значении~$\varepsilon$ вероятности~(8) 
+и~(9) соответствуют надежности выполнения точности поиска и~привязки. 
+  
+  В разд.~3 дается описание алгоритма поиска и~приводятся оценки его 
+вычислительной сложности при больших значениях~$n$ и~$N$, связанных 
+соотношением $N^2\hm\geq \log_q n$. В~разд.~4 приводятся параметрическое 
+семейство эмпирических распределений~(8) с~параметром~$n^*$ 
+и~численные оценки сложности алгоритма, 
+полученные на множестве изображений рукописных цифр. Аналогичные 
+параметрические семейства эмпирических распределений~(9) и~оценки 
+вычислительной сложности, полученные для координатной привязки 
+зашумленных изображений к~карте участка земной поверхности, приводятся 
+в~разд.~5. 
+  
+  \section{Алгоритм поиска}
+  
+  Предполагается, что изображения из набора~$\hat{\mathbf{X}}$, на котором 
+производится поиск, заданы нормализованными пирамидальными 
+представлениями вида~(2) и~образуют многоуровневую сеть
+  \begin{equation}
+  \hat{\mathbf{Y}}_1,\ldots , \hat{\mathbf{Y}}_l,\ldots , \hat{\mathbf{Y}}_L\,,
+  \label{e10-lan}
+  \end{equation}
+в которой $\hat{\mathbf{Y}}_l$~--- подмножество представлений всех 
+изображений из~$\hat{\mathbf{X}}$, заданных~$l$~уровнями нормализованных 
+пирамид. Алгоритм поиска решения~(5) использует стратегию 
+последовательного сужения зоны поиска на уровнях $l\hm=1,\ldots , L$ 
+сети~(\ref{e10-lan}). Согласно этой стратегии число анализируемых 
+изоб\-ра\-же\-ний на $l$-м уровне определяется экспоненциальной функцией 
+\begin{equation}
+n_l=\left\lfloor n\cdot 4^{-\alpha(l-1)}\right\rfloor\,,\enskip l=1,\ldots , L\,,
+\label{e11-lan}
+\end{equation}
+с~коэффициентом $\alpha\hm= (L\hm-1)^{-1}\log_4(n/n^*)$, где 
+$n^*\hm=1,2,\ldots , n$~--- мощность набора $\hat{\mathbf{X}}^*\hm\subseteq 
+\hat{\mathbf{X}}$, на котором принимается решение~(5) по 
+представлениям~$\hat{\mathbf{Y}}_L$ последнего уровня сети~(\ref{e10-lan}).
+
+  \paragraph*{Алгоритм поиска.} Для предъявляемого изображения 
+$\mathbf{x}\hm\in\mathbf{X}$ на последовательных уровнях $l\hm=1,\ldots , 
+L\hm-1$ сети~(\ref{e10-lan}) вычисляются значения меры 
+различия~$\tilde{D}_l(\mathbf{x}, \hat{\mathbf{x}})$ вида~(4) 
+для~$n_l$~изображений из набора~$\hat{\mathbf{X}}$ и~среди них 
+отбираются~$n_{l+1}$~изображений с~наименьшими 
+значениями~$\tilde{D}_l(\mathbf{x}, \hat{\mathbf{x}})$; на уровне $l\hm=L$ 
+среди $n_L\hm=n^*$ изображений отбирается ближайшее с~наименьшим 
+значением~$\tilde{D}_L(\mathbf{x}, \hat{\mathbf{x}})$, которое дает 
+решение~(5). 
+  
+  В случае $1\leq n^*<n$ параметр $\alpha\hm>0$ в~(\ref{e11-lan}) 
+обеспечивает экспоненциальное сужение зоны иерархического поиска, которое 
+приводит к~нахождению приближенного ближайшего соседа на наборе 
+изоб\-ра\-же\-ний $\hat{\mathbf{X}}^*\hm\subset \hat{\mathbf{X}}$ мощ\-ности~$n^*$; 
+в~случае $n^*\hm=n$ параметр $\alpha\hm=0$ приводит к~переборному поиску 
+ближайшего соседа на наборе $\hat{\mathbf{X}}^*\hm\equiv \hat{\mathbf{X}}$ 
+мощности~$n$. В~обоих случаях вычисление меры различия изображений 
+производится с~использованием рекурсии 
+  \begin{multline}
+  \tilde{D}_l\left(\mathbf{x},\hat{\mathbf{x}}\right)=\tilde{D}_{l-1} 
+\left(\mathbf{x},\hat{\mathbf{x}}\right) +w_l D_l 
+\left(\mathbf{x},\hat{\mathbf{x}}\right)\,,\\ l=1,\ldots , L\,,
+  \label{e12-lan}
+  \end{multline}
+при начальном условии $\tilde{D}_0 (\mathbf{x},\hat{\mathbf{x}})\hm=0$.
+
+  Вычислительная сложность алгоритма опре\-де\-ляется числом элементарных 
+операций, затрачиваемых на вычисление меры на всех уровнях\linebreak  
+сети~(\ref{e10-lan}), и~на сортировку значений меры на последовательных 
+уровнях для отбора ближайших изоб\-ра\-же\-ний согласно~(\ref{e11-lan}), включая 
+отбор решения на последнем уровне. В~работе~\cite{7-lan} дана 
+асимптотическая оценка вычислительной сложности сформулированного 
+иерархического алгоритма поиска при больших значениях мощности~$n$ 
+набора изображений~$\hat{\mathbf{X}}$, размере изображения~$N$, 
+удовлетворяющем условию $N^2\hm\geq \log_q n$ ($q$~--- размер алфавита), 
+и~соотношении $n/n^*\hm\geq N^2/4$, обеспечивающем коэффициент сужения 
+зоны поиска $\alpha\hm\geq 1$. Асимптотика сложности иерархического 
+алгоритма с~указанными параметрами имеет вид $C_{n^*\leq 4n/N^2}\hm= 
+O(n\log N)$, вычислительная сложность переборного алгоритма~--- 
+$C_{n^*=n}\hm= \Omega(nN^2)$. Из приведенных оценок следует, что доля 
+сложности иерархического поиска приближенного решения относительно 
+сложности переборного поиска ближайшего соседа убывает с~увеличением 
+размера изображения как $O(N^{-2}\log N)$. 
+  
+  Численные оценки сложности алгоритма получены для суммарного 
+количества элементарных операций, затрачиваемых на вычисление меры 
+и~сортировку вставками значений меры со сложностью~$m\log_2 m$ на наборе 
+из~$m$~элементов~\cite{14-lan}. Поэтому при фиксированных~$n$ 
+и~$N\hm=2^L$ вычислительная сложность алгоритма равна 
+  \begin{equation}
+  C_{n^*}= C_{n^*}^{\mathrm{msr}}+C_{n^*}^{\mathrm{srt}}\,,
+  \label{e13-lan}
+  \end{equation}
+где 
+\begin{equation}
+C_{n^*}^{\mathrm{msr}} =\sum\limits_{l=1}^L n_l\cdot 4^l \leq n
+\sum\limits^L_{l=1} 4^l \left( 
+\fr{n}{n^*}\right)^{-(l-1)/(L-1)}\,;\label{e14-lan}
+\end{equation}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+C_n^{\mathrm{srt}} =(n-1)\left[ n^*=n\right] +{}\\
+{}+\left( 
+\vphantom{\sum\limits_{l=1}^{L-1}}
+\left(
+n^*-1\right) +
+\sum\limits_{l=1}^{L-1} n_l\log_2n_l\right)\left[ n^*<n\right]\leq{}\\
+{}\leq (n-1) \left[ n^*=n\right] +n\log_2 n\left( 
+\sum\limits_{l=1}^{L-1}\!\left(\fr{n}{n^*}\!\right)^{-(l-1)/(L-1)}\!\! - {}\right.\\
+\left.{}-
+\sum\limits_{l=1}^{L-1} \fr{l-1}{L-1}\left( \fr{n}{n^*}\right)^{-(l-1)/(L-1)}\right)
+\left[ n^*<n\right]+{}\\
+{}+\left(n^*-1\right) \left(
+\vphantom{\sum\limits_{l=1}^{L-1}}
+ a+{}\right.\\
+\hspace*{-3mm}\left.{}+n\log_2 e\sum\limits_{l=1}^{L-1}\! \fr{l-1}{L-1}\! \left( 
+\fr{n}{n^*}\!\right)^{-(l-1)/(L-1)}\right) \left[ n^*<n\right]\!\!\!
+\label{e15-lan}
+\end{multline}
+соответственно затраты на вычисление меры и~на сортировку; $[f]$~--- 
+индикатор~$f$. В~случае $n^*\hm=n$ формулы~(\ref{e13-lan})--(\ref{e15-lan}) 
+дают оценки вычислительной сложности переборного поиска точного решения, 
+а~в~случае $n^*<n$~--- оценки сложности иерархического поиска 
+приближенного решения. 
+
+  Формулы~(\ref{e12-lan})--(\ref{e14-lan}) использованы для получения 
+численных оценок относительной сложности $C_{n^*\leq n}/C_{n^*=n}$ при 
+значениях $\lfloor n^*\hm= n/2^k \rceil$, $k\hm=0,1,\ldots$,  и~параметрах~$n$ 
+и~$N\hm=2^L$, с~которыми проведены эксперименты по поиску рукописных 
+цифр (см.\ разд.~4) и~по координатной привязке изоб\-ра\-же\-ний к~карте местности 
+(см.\ разд.~5). Величина, обратная относительной сложности, соответствует 
+вычислительному выигрышу иерархического алгоритма по сравнению 
+с~алгоритмом перебора.
+  
+  \section{Оценки качества и~сложности поиска рукописных цифр}
+  
+  Экспериментальные характеристики качества алгоритма поиска получены на 
+наборе полутоновых изображений рукописных цифр из базы данных 
+MNIST~\cite{12-lan}. Вычислительный эксперимент выполнен с~по\-мощью 
+кода, написанного на языке MATLAB~\cite{15-lan} . Примеры изображений 
+рукописных цифр даны на рис.~2. 
+
+{ \begin{center}  %fig2
+ \vspace*{-3pt}
+ \mbox{%
+\epsfxsize=75mm
+\epsfbox{lan-2.eps}
+}
+
+
+\end{center}
+
+\vspace*{-6pt}
+
+
+\noindent
+{{\figurename~2}\ \ \small{Примеры рукописных цифр из базы данных MNIST}}
+
+}
+
+\vspace*{9pt}
+
+\addtocounter{figure}{1}
+
+  \begin{table*}\small
+  \begin{center}
+  \parbox{260pt}{\Caption{Оценки относительной сложности иерархического алгоритма поиска 
+изображений рукописных цифр ($N \hm= 32$, $q \hm= 256$, $n \hm= 60\,000$)}
+
+}
+
+  \vspace*{2ex}
+  
+\tabcolsep=9pt
+  \begin{tabular}{|c|c|c|c|}
+  \hline
+  &&&\\[-9pt]
+$k$& $C^{\mathrm{msr}}_{n^*\leq  n}/C_{n^*=n}$ &
+$C^{\mathrm{srt}}_{n^*\leq n}/C_{n^*=n}$ & $C_{n^*\leq  n}/C_{n^*=n}$\\
+\ &\ &\ & \ \\[-9pt]
+\hline
+0& 0,9993& 0,0007& 1,0000\\
+1& 0,5325& 0,0356& 0,5681\\
+2& 0,2885& 0,0285& 0,3170\\
+3& 0,1597& 0,0237& 0,1834\\
+4&0,0908& 0,0205& 0,1113\\
+5& 0,0535& 0,0182& 0,0717\\
+6& 0,0329& 0,0166& 0,0496\\
+7&0,0214& 0,0154& 0,0368\\
+8& 0,0146& 0,0146& 0,0292\\
+9& 0,0107& 0,0139& 0,0246\\
+10\hphantom{9} & 0,0082& 0,0134& 0,0216\\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{5pt}
+\end{table*}
+  
+  
+  
+  Цифры на изображениях нормированы по размеру и~центрированы в~поле 
+изображения. Параметры изображений: $N\hm=32$; $q\hm=256$; число 
+уровней пред\-став\-ле\-ния изоб\-ра\-же\-ний $L\hm=\log_2 N \hm=5$; мощность набора 
+данных $\hat{\mathbf{X}}$ равна $n\hm=60\,000$. Параметры~$N$, $q$ и~$n$ 
+удовлетворяют необходимому условию $N^2\hm> \log_q n$. 
+Набору~$\hat{\mathbf{X}}$ предъявлялось~10\,000 изображений, не входящих 
+в~набор данных~$\hat{\mathbf{X}}$, так что $\tilde{D}_L(\mathbf{x}, 
+\hat{\mathbf{x}}^*_{\mathrm{AN}})\hm\geq \tilde{D}_L (\mathbf{x}, 
+\hat{\mathbf{x}}^*_{\mathrm{NN}})\hm>0$. Для каждого~$\mathbf{x}$ 
+и~соответствующей пары $\hat{\mathbf{x}}^*_{\mathrm{AN}}, 
+\hat{\mathbf{x}}^*_{\mathrm{NN}}$ вы\-чис\-ля\-лась погрешность поиска вида~(6) 
+и~на~10\,000 предъяв\-ля\-емых изображений строилось семейство эмпирических 
+распределений вида~(8) с~па\-ра\-мет\-ром $\lfloor n^*\hm= n/2^k \rceil$, 
+$k\hm=0,5,\ldots ,10$, 
+при значениях допустимой погрешности $0\hm\leq\varepsilon\hm\leq 0{,}1$. 
+Графики семейства распределений даны на рис.~3.
+
+\setcounter{figure}{3}
+\begin{figure*}[b] %fig4
+\vspace*{6pt}
+\begin{center}
+\mbox{%
+\epsfxsize=160mm
+\epsfbox{lan-4.eps}
+}
+\end{center}
+\vspace*{-6pt}
+\Caption{Аэрокосмический снимок участка земной поверхности: (\textit{а})~без шума; 
+(\textit{б})~с гауссовым шумом с~нулевым средним и~дисперсией $\sigma^2\hm=0{,}25$}
+\end{figure*}
+
+
+{ \begin{center}  %fig3
+ \vspace*{-3pt}
+ \mbox{%
+\epsfxsize=77.97mm
+\epsfbox{lan-3.eps}
+}
+
+
+\end{center}
+
+\vspace*{-6pt}
+
+
+\noindent
+{{\figurename~3}\ \ \small{Эмпирические распределения 
+  погрешностей поиска рукописных цифр на наборе
+   изображений с~па\-ра\-мет\-ра\-ми $N \hm= 32$, $q \hm= 256$, $n \hm= 60\,000$,
+$k\hm=5$, 6, 7, 8, 9,~10}}
+
+}
+
+%\vspace*{9pt}
+
+\addtocounter{figure}{1}
+ 
+  
+ 
+  Численные оценки сложности алгоритма поиска представлены значениями 
+$C_{n^*\leq n}/C_{n^*=n}$, вы\-чис\-лен\-ны\-ми в~точках $\lfloor n^*\hm= n/2^k \rceil$, 
+$k=0,1,\ldots ,10$, при $N\hm=32$, $n\hm=60\,000$. Полученные оценки 
+сложности алгоритма поиска даны в~табл.~1.
+  
+
+  
+  Из приведенных распределений и~оценок сложности следует, что при 
+значениях $8\hm\leq k\hm\leq 10$ иерархический алгоритм реализует 
+нулевую погрешность поиска ближайшего соседа ($\varepsilon^s_{n^*}\hm=0$) 
+с~вероятностью~0,980--0,997 и~обеспечивает вы\-чис\-ли\-тель\-ный выигрыш  
+в~34--46 раз по сравнению с~переборным алгоритмом. 
+С~ростом допустимой 
+погрешности $\varepsilon\hm>0$ вероятность нахождения ближайшего соседа 
+с~точ\-ностью $\varepsilon^s_{n^*}\hm\leq\varepsilon$ увеличивается при тех же 
+значениях вычислительного вы\-иг-\linebreak рыша. 
+
+\columnbreak
+
+{ %\looseness=1
+
+}
+  
+  \section{Оценки качества и~сложности координатной привязки 
+изображений}
+
+\vspace*{-12pt}
+  
+  Экспериментальные оценки эффективности алгоритма поиска для 
+координатной привязки к~карте местности получены на цифровом 
+аэрокосмическом снимке участка земной поверхности~\cite{13-lan}. Обработка 
+данных выполнена программным кодом~\cite{15-lan}.
+  
+  
+
+  
+  Размеры аэрокосмического снимка $300\times 236$ (в~пикселях), число 
+уровней яркости $q\hm=256$. Использованный снимок и~его зашумленная 
+версия даны на рис.~4. 
+
+
+
+\pagebreak
+
+\end{multicols}
+
+\setcounter{figure}{4}
+  
+  \begin{figure*} %fig5
+  \vspace*{1pt}
+\begin{center}
+\mbox{%
+\epsfxsize=156.651mm
+\epsfbox{lan-5.eps}
+}
+\end{center}
+\vspace*{-8pt}
+  \Caption{Эмпирические распределения погрешностей координатной привязки при 
+различных дисперсиях гауссова шума
+((\textit{а})~0,1; (\textit{б})~0,15;
+(\textit{в})~0,2; (\textit{г})~0,25) и~параметрах $N \hm= 64$, $q \hm= 256$, $n \hm= 
+10\,353$, $k\hm=0$, 3, 6, 9}
+\vspace*{9pt}
+\end{figure*}
+
+
+
+\begin{multicols}{2}
+
+
+Привязка в~координатах снимка
+ проводилась по 
+изображению размера $64\times 64$ ($N\hm=64$). Мощность набора 
+данных~$\hat{\mathbf{X}}$ определялась количеством всевозможных 
+изображений указанного размера, взятых на снимке с~шагом в~два пикселя, 
+и~равна $n\hm=10\,353$. Параметры~$N$, $q$ и~$n$ удовлетворяют необходимому 
+условию $N^2\hm>\log_q n$. 
+
+Набору~$\hat{\mathbf{X}}$ предъявлялись 
+поочередно все~$n$~изоб\-ра\-же\-ний с~аддитивным гауссовым шумом 
+с~дис\-пер\-си\-ей $0\hm\leq \sigma^2\hm\leq 0{,}25$. Для любого предъяв\-ля\-емо\-го 
+изображения $\mathbf{x}\hm\in \hat{\mathbf{X}}$ с~координатами $(a,b)$ 
+вычис-\linebreak лялись координаты $(a^*,b^*)$ найденного алгоритмом 
+изображения~$\hat{\mathbf{x}}^*_{\mathrm{AN}}$ и~погрешность привязки 
+вида~(\ref{e7-lan}). При различных значениях~$\sigma^2$ строились семейства 
+эмпирических распределений~(\ref{e9-lan}) с~параметром~$n^*$ 
+в~диапазоне значений погрешности $0\hm\leq \varepsilon\hm\leq 2{,}5$. 
+{\looseness=1
+
+}
+
+На 
+рис.~5 даны семейства распределений, полученные для четырех значений 
+дисперсии шума при $\lfloor n^*\hm= n/2^k\rceil$, $k\hm=0,3,6,9$. 
+
+\begin{table*}\small %tabl2
+\begin{center}
+\parbox{260pt}{\Caption{Оценки относительной сложности иерархического алгоритма привязки 
+изображений к~карте местности ($N = 64$, $q \hm= 256$, $n = 10\,353$)}
+
+}
+
+\vspace*{2ex}
+
+\tabcolsep=9pt
+\begin{tabular}{|c|c|c|c|}
+\hline
+&&&\\[-9pt]
+ $k$& $C^{\mathrm{msr}}_{n^*\leq n}/C_{n^*=n}$ &
+  $C^{\mathrm{srt}}_{n^*\leq  n}/C_{n^*=n}$&  $C_{n^*\leq n}/C_{n^*=n}$\\
+  \ & \ &\ &\ \\[-9pt]
+  \hline
+ 0&0,9998& 0,0002& 1,0000\\
+ 3&0,1504& 0,0059& 0,1563\\
+ 4& 0,0824& 0,0050& 0,0874\\
+ 5&0,0462& 0,0044& 0,0506\\
+ 6&0,0265& 0,0039& 0,0304\\
+ 7& 0,0158& 0,0036& 0,0194\\
+ 8& 0,0098& 0,0034& 0,0132\\
+ 9&0,0063& 0,0032& 0,0095\\
+ 10\hphantom{9}& 0,0028&0,0034& 0,0062\\
+  \hline
+  \end{tabular}
+ \end{center}
+ \vspace*{6pt}
+ \end{table*}
+
+В~табл.~2 приведены 
+численные оценки относительной сложности $C_{n^*\leq n}/C_{n^*=n}$ при
+значениях $k\hm=0, 3, \ldots , 10$.
+  
+  Экспериментально установлено, что при отсутствии шума ($\sigma^2\hm=0$) 
+иерархический алгоритм\linebreak с~параметром $n^*\hm\geq 1$ с~вероятностью единица 
+дает нуле\-вую погрешность привязки $\varepsilon^g_{n^*}\hm=0$ 
+и,~следовательно, по качеству эквивалентен алгоритму перебора. В~случае 
+шума с~дисперсией $\sigma^2\hm\leq 0{,}10$ погрешность $\varepsilon^g_{n^*} 
+\hm=0$ реализуется практически\linebreak с~единичной вероятностью при более 
+чем~\mbox{100-крат}\-ном вы\-чис\-ли\-тель\-ном выигрыше иерархического алгоритма 
+относительно переборного ал\-го\-ритма. 
+{ %\looseness=1
+
+}
+
+
+Семейства распределений, полученные 
+при значениях $\sigma^2\hm=0{,}15$, 0{,}20 и~0{,}25, демонстрируют динамику 
+соотношения показателей качества привязки и~быст\-ро\-дей\-ст\-вия иерархического 
+алгоритма. При любой фиксированной дисперсии шума~$\sigma^2$ и~заданной 
+допустимой погрешности привязки~$\varepsilon$ вероятность реализации 
+точности привязки $\varepsilon^g_{n^*}\hm\leq\varepsilon$ уменьшается 
+с~ростом вычислительного выигрыша алгоритма. При 
+фиксированных значениях~$\varepsilon$ и~$n^*$ вероятность реализации %\linebreak 
+точ\-ности $\varepsilon^g_{n^*}\hm\leq \varepsilon$ уменьшается с~увеличением 
+дисперсии шума. 
+
+Необходимо отметить, что пред\-став\-ле\-ние циф\-ро\-вой карты 
+местности набором всевозможных изображений, взятых с~шагом в~один %\linebreak 
+пиксель, должно привести к~увеличению ве\-ро\-ят\-ности тре\-бу\-емой точ\-ности при 
+заданных значениях~$\varepsilon$, $n^*$ и~$\sigma^2$.
+{ %\looseness=1
+
+} 
+
+
+
+
+  
+  \section{Заключение }
+  
+  Исследована эффективность иерархического алгоритма поиска в~заданном 
+наборе изображений приближенного ближайшего соседа к~заданному 
+изображению в~терминах эмпирического распределения значений погрешности и~вычислительной сложности алгоритма. Рассматриваемый алгоритм 
+предназначен для реализации поиска с~заданным быстродействием 
+и~надежностью выполнения требования по точности. 
+
+Эффективность 
+алгоритма продемонстрирована на двух источниках изображений: на наборе 
+изображений рукописных цифр из базы MNIST и~на наборе пересекающихся 
+изображений аэрокосмической карты местности, взятой из  
+ин\-тер\-нет-сер\-ви\-са Google Maps. При фиксированной вероят\-ности 
+реализации требуемой точности показана возможность <<размена>> точности 
+и~вы\-чис\-ли\-тельной слож\-ности путем варьирования па\-ра\-мет\-ром алгоритма. 
+{\looseness=1
+
+}
+
+Полученные экспериментальные результаты показали достаточно высокую 
+надежность требуемой точности поиска в~наборе изображений рукописных 
+цифр и~требуемой точности координатной привязки зашумленного 
+изоб\-ра\-же\-ния к~цифровой карте местности. Для уменьшения порядка роста 
+вычислительной сложности поиска от мощности набора изображений 
+планируется исследовать модификацию иерархического алгоритма 
+с~использованием структуры, которая объединяет представление 
+с~многоуровневым разрешением и~решающее дерево.
+
+ {\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-lan}
+\Au{Datta R., Joshi D., Li~J., Wang~J.} Image retrieval: Ideas, influences, and trends of the new 
+age~// ACM Comput. Surv., 2008. Vol.~40. No.\,2. P.~1--60.
+\bibitem{2-lan}
+\Au{Friedman J., Bentley~J., Finkel~R.} An algorithm for finding best matches in logarithmic 
+expected time~// ACM T. Math. Software, 1977. Vol.~3. No.\,3. P.~209--226. 
+\bibitem{3-lan}
+\Au{Cleary J.} Analysis of an algorithm for finding nearest neighbors in Euclidean space~// ACM 
+T. Math. Software, 1979. Vol.~5. No.\,2. P.~183--192. 
+\bibitem{4-lan}
+\Au{Soleymani M., Morgera~S.} An efficient nearest neighbor search method~// IEEE T. 
+Commun., 1987. Vol.~35. No.\,6. P.~677--679. 
+\bibitem{5-lan}
+\Au{Arya S., Mount~D., Netanyahu~N., Silverman~R., Wu~A.} An optimal algorithm for 
+approximate nearest neighbor searching in fixed dimensions~// J.~ACM, 1998. Vol.\,45. No.\,6. 
+P.~891--923.
+\bibitem{6-lan}
+\Au{Andoni А., Indyk~P.} Near-optimal hashing algorithms for approximate nearest neighbor in 
+high dimensions~// Commun.  ACM, 2008. Vol.~51. No.\,1. P.~117--122.
+\bibitem{7-lan}
+\Au{Lange M.\,M., Ganebnykh~S.\,N., Lange~A.\,M.} Algorithm of approximate search for the 
+nearest digital array in a~hierarchical data set~// Machine Learning Data Analysis, 2016. Vol.~2. 
+No.\,1. P.~6--16. 
+\bibitem{8-lan}
+\Au{Rosenfeld A.} Quadtrees and pyramids for pattern recognition and image analysis~// 5th  
+Conference (International) on Pattern Recognition Proceedings, 1980. P.~802--811.
+\bibitem{9-lan}
+\Au{Jackins C., Tanimoto~S.} Quadtrees, octtrees, and K-trees: A~generalized approach to 
+recursive decomposition of Euclidean space~// IEEE T. Pattern Anal., 1983. Vol.~5. No.\,5.  
+P.~533--539.
+\bibitem{10-lan}
+\Au{Samet H.} The quadtree and related hierarchical data structures~// Comput. Surv., 1984. 
+Vol.~16. No.\,2. P.~187--260.
+\bibitem{11-lan}
+\Au{Ланге М.\,М., Новиков~Н.\,А.} Представление данных с~многоуровневым разрешением 
+для быстрой координатной привязки изображений~// Техническое зрение в~системах 
+управления: Сб. тр. науч.-технич. конф.~---  М.: ИКИ РАН, 2012. С.~242--249.
+
+\pagebreak
+
+\bibitem{12-lan}
+MNIST database. {\sf http://yann.lecun.com/exdb/mnist/\linebreak index.html}. 
+\bibitem{13-lan}
+Network service Google Maps. {\sf http://www.maps.google. com}.
+\bibitem{14-lan}
+\Au{Cormen T., Leiserson~C., Rivest~R., Stein~C.} Introduction to algorithms.~--- 3rd ed.~--- MIT 
+Press, 2009. 1312~p.
+\bibitem{15-lan}
+Algorithm for searching approximate nearest neighbor. {\sf 
+http://sourceforge.net/projects/edivis/files/}.
+
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 13.12.16}}
+
+\vspace*{8pt}
+
+%\newpage
+
+%\vspace*{-24pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{8pt}
+
+
+\def\tit{ON EFFICIENCY OF~THE~HIERARCHICAL ALGORITHM FOR~SEARCHING APPROXIMATE 
+NEAREST NEIGHBOR\\  IN~A~GIVEN SET OF~IMAGES}
+
+\def\titkol{On efficiency of~the~hierarchical algorithm for~searching approximate 
+nearest neighbor  in~a~given set of~images}
+
+\def\aut{M.\,M.~Lange, S.\,N.~Ganebnykh, and~A.\,M.~Lange}
+
+\def\autkol{M.\,M.~Lange, S.\,N.~Ganebnykh, and~A.\,M.~Lange}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+  
+    
+  
+  \Abste{The efficiency of the hierarchical algorithm for searching
+  approximate nearest neighbor 
+in a given set of images subject to an unwarranted error about the nearest image is 
+investigated. The algorithm uses a~space of quad pyramidal image representations as well as 
+a~guided search strategy in successive representation levels of increasing resolution. The efficiency 
+is studied in terms of both an empirical distribution of search errors and computational complexity 
+of the hierarchical algorithm relative to the exhaustive search. The above characteristics are 
+obtained for two applications, namely, search for approximate nearest image in a~set of hand-written 
+digits from the MNIST data base and gridding a given noisy image in an aerospace digital map 
+from the Google maps network service.}
+  
+  \KWE{image; quad pyramidal representation; digital map; nearest neighbor; approximate 
+nearest neighbor; search error; empirical distribution; computational complexity}
+
+\DOI{10.14357/19922264170306}
+%\vspace*{-18pt}
+
+  \Ack
+  \noindent
+  The research was supported by the Russian Foundation for Basic Research (projects  
+15-07-07516 and~15-07-09324).
+
+
+
+%\vspace*{3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+  
+\bibitem{1-lan-1}
+\Aue{Datta, R., D.~Joshi, J.~Li, and J.~Wang.} 2008. Image retrieval: Ideas, influences, and trends 
+of the new age. \textit{ACM Comput. Surv.} 40(2):1--60.
+\bibitem{2-lan-1}
+\Aue{Friedman, J., J. Bentley, and R.~Finkel.} 1977. An algorithm for finding best matches in 
+logarithmic expected time. \textit{ACM T. Math. Software} 3(3):209--226.
+\bibitem{3-lan-1}
+\Aue{Cleary, J.} Analysis of an algorithm for finding nearest neighbors in Euclidean space. 1979. 
+\textit{ACM T. Math. Software} 5(2):183--192.
+\bibitem{4-lan-1}
+\Aue{Soleymani, M., and S.~Morgera.} 1987. An efficient nearest neighbor search method. 
+\textit{IEEE T. Commun.} 35(6):677--679.
+\bibitem{5-lan-1}
+\Aue{Arya, S., D. Mount, N.~Netanyahu, R.~Silverman, and A.~Wu.} 1998. An optimal algorithm 
+for approximate nearest neighbor searching in fixed dimensions. \textit{J.~ACM} 45(6):891--923.
+\bibitem{6-lan-1}
+\Aue{Andoni, А., and P.~Indyk.} 2008. Near-optimal hashing algorithms for approximate nearest 
+neighbor in high dimensions. \textit{Commun. ACM} 51(1):117--122.
+\bibitem{7-lan-1}
+\Aue{Lange, M.\,M., S.\,N.~Ga\-neb\-nykh, and A.\,M.~Lange.} 2016. Algorithm of approximate 
+search for the nearest digital array in a hierarchical data set. \textit{Machine Learning Data 
+Analysis} 2(1):6--16. 
+\bibitem{8-lan-1}
+\Aue{Rosenfeld, A.} 1980. Quadtrees and pyramids for pattern recognition and image analysis. 
+\textit{5th Conference (International) on Pattern Recognition Proceedings}. 802--811.
+\bibitem{9-lan-1}
+\Aue{Jackins, C., and S.~Tanimoto.} 1983. Quadtrees, octtrees, and K-trees: A~generalized 
+approach to recursive decomposition of Euclidean space. \textit{IEEE T. Pattern
+Anal.} 5(5):533--539.
+\bibitem{10-lan-1}
+\Aue{Samet, H.} 1984. The quadtree and related hierarchical data structures. 
+\textit{Comput. Surv.} 16(2):187--260.
+\bibitem{11-lan-1}
+\Aue{Lange, M.\,M., and N.\,A.~Novikov.} 2012. Predstavlenie dannykh s mnogourovnevym 
+razresheniem dlya bystroy koordinatnoy privyazki izobrazheniy [Multiresolution data 
+representation for fast image gridding]. \textit{Sb. tr. nauch.-tekhnich. konf. ``Tekhnicheskoe zrenie 
+v~sistemakh upravleniya} [Scientific-Technical Conference ``Computing\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+ Vision in Control 
+Systems'' Proceedings]. Moscow: IKI RAN. 242--249.
+\bibitem{12-lan-1}
+MNIST database. Available at: {\sf http://yann.lecun.com/ exdb/mnist/index.html} (accessed 
+January~10, 2017). 
+\bibitem{13-lan-1}
+Network service Google Maps. Available at: {\sf http:// www.maps.google.com} (accessed 
+January~10, 2017). 
+\bibitem{14-lan-1}
+\Aue{Cormen, T., C.~Leiserson, R.~Rivest, and C.~Stein.} 2009. \textit{Introduction to 
+algorithms}. 3rd ed. MIT Press. 1312~p.
+\bibitem{15-lan-1}
+Algorithm for searching approximate nearest neighbor. Available at: {\sf 
+http://sourceforge.net/projects/edivis/ files/} (accessed January~10, 2017).
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Received December 13, 2016}}
+\Contr
+
+\noindent
+\textbf{Lange Mikhail M.} (b.\ 1945)~--- Candidate of Science (PhD) in technology, leading 
+scientist, Federal Research Center ``Computer Sciences and Control'' of the Russian Academy of 
+Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{lange\_mm@ccas.ru} 
+
+\vspace*{3pt}
+  
+\noindent
+\textbf{Ganebnykh Sergey N.} (b.\ 1968)~--- scientist, Federal Research Center ``Computer 
+Sciences and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, 
+Russian Federation; \mbox{sng@ccas.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Lange Andrey M.} (b. 1979) - Candidate of Science (PhD) in physics and mathematics, 
+scientist, Federal Research Center ``Computer Sciences and Control'' of the Russian Academy of 
+Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{lange\_am@mail.ru}
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература} 

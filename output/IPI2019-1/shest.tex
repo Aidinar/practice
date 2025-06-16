@@ -1,0 +1,759 @@
+\def\stat{shestakov}
+
+\def\tit{ОБРАЩЕНИЕ ОДНОРОДНЫХ ОПЕРАТОРОВ С~ПОМОЩЬЮ
+СТАБИЛИЗИРОВАННОЙ ЖЕСТКОЙ ПОРОГОВОЙ ОБРАБОТКИ
+ПРИ~НЕИЗВЕСТНОЙ ДИСПЕРСИИ ШУМА$^*$}
+
+\def\titkol{Обращение однородных операторов с~помощью
+стабилизированной жесткой пороговой обработки}
+%при~неизвестной дисперсии шума}
+
+\def\aut{О.\,В.~Шестаков$^1$}
+
+\def\autkol{О.\,В.~Шестаков}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Шестаков О.\,В.}
+\index{Shestakov O.\,V.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при частичной финансовой поддержке РФФИ (проект 19-07-00352).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет им.\ М.\,В.~Ломоносова, 
+кафедра математической статистики факультета вычислительной математики и~кибернетики; 
+Институт проб\-лем информатики Федерального исследовательского центра 
+<<Информатика и~управ\-ле\-ние>> Российской академии наук, \mbox{oshestakov@cs.msu.su}}
+
+
+\vspace*{-6pt}
+
+
+\Abst{При обращении линейных однородных операторов обычно необходимо использовать 
+методы регуляризации, поскольку наблюдаемые данные, как правило, зашумлены. 
+Для подавления шума часто используется пороговая обработка 
+вейвлет-ко\-эф\-фи\-ци\-ен\-тов функции наблюдаемого сигнала. 
+Пороговая обработка стала популярным инструментом подавления 
+шума благодаря своей простоте, вы\-чис\-ли\-тель\-ной эффективности и~воз\-мож\-ности 
+адаптации к~функциям, имеющим на разных участках разную степень регулярности. 
+Рассматривается предложенный недавно стабилизированный метод жесткой 
+пороговой обработки, в~котором устранены основные недостатки мягкой и~жесткой 
+пороговой обработки, и~исследуются статистические свойства этого метода. 
+В~модели данных с~аддитивным гауссовским шумом с~неизвестной дисперсией 
+проведен анализ несмещенной оценки среднеквадратичного риска и~показано, 
+что при определенных условиях данная оценка является асимптотически нормальной, 
+при этом дисперсия предельного распределения зависит от способа оценивания 
+дисперсии шума.}
+
+\KW{вейвлеты; пороговая обработка; несмещенная оценка риска; 
+асимптотическая нормальность; сильная состоятельность}
+
+\DOI{10.14357/19922264190107}
+  
+%\vspace*{4pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+В медицинских, физических, астрономических и~других научных проблемах часто 
+возникает задача получить представление об объекте, который описывается 
+некоторой функцией~$f$, имея возможность наблюдать только функцию~$Kf$, где~$K$~--- 
+некоторый линейный оператор. При этом часто нельзя просто применить 
+к~наблюдаемым данным обратный оператор~$K^{-1}$, поскольку эти данные, как правило, 
+содержат шум и~задача обращения оператора~$K$ некорректно поставлена. 
+К~тому же обычно дис\-пер\-сия шума неизвестна и~ее необходимо оценивать 
+по наблюдаемым данным. 
+
+Одним из популярных инструментов при регуляризации 
+процедуры обращения служит вейв\-лет-раз\-ло\-же\-ние с~последующей 
+пороговой обработкой вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов. Наиболее распростра\-нен\-ные 
+виды пороговой обработки~--- жесткая и~мягкая. В~работе~\cite{HL10} 
+был предложен метод стабилизированной жесткой пороговой обработки, который 
+объединяет в~себе преимущества этих двух видов. 
+В~ситуации, когда дисперсия шума предполагается известной, в~работе~\cite{SH18} 
+доказана асимптотическая нормальность оценки среднеквадратичного риска пороговой 
+обработки. 
+
+В~данной работе исследуется влияние способов оценивания дисперсии шума 
+на характеристики предельного распределения оценки среднеквадратичного риска. 
+Для метода мягкой пороговой обработки подобные исследования проводились 
+в~работах~\cite{KS11-1, KS11-2}.
+
+\section{Обращение линейных однородных операторов с~помощью вейглет-вейвлет-разложения}
+
+В данной работе рассматривается метод обращения линейных однородных операторов, 
+основанный на вейг\-лет-вейв\-лет-раз\-ло\-же\-нии~\cite{AS98}. Линейный оператор~$K$ 
+называется однородным, если
+$$
+K\left[f\left(a\left(x-x_0\right)\right)\right]=a^{-\alpha}(Kf)\left[a\left(x-x_0\right)\right]
+$$
+для любого $x_0$ и~любого $a\hm>0$. Параметр~$\alpha$ называется показателем 
+однородности. Примерами линейных однородных операторов служат оператор 
+интегрирования, преобразование Гильберта и~преобразование Абеля.
+
+Относительно наблюдаемой функции~$Kf$ будем предполагать, что она определена на 
+конечном отрезке и~равномерно регулярна по Липшицу с~некоторым показателем $\gamma\hm>0$. 
+Вейв\-лет-разложение~$Kf$ представляет собой ряд по ортонормированному базису
+\begin{equation}
+\label{wavelet_decomp}
+Kf = \sum\limits_{j,k \in Z} \langle Kf,\psi_{j,k} \rangle \psi_{j,k}\,,
+\end{equation}
+где $\psi(t)$~--- некоторая материнская вейв\-лет-функ\-ция, 
+а~$\psi_{j,k}(t) \hm= 2^{j/2}\psi(2^jt \hm- k)$. Индекс~$j$ в~(\ref{wavelet_decomp}) 
+называется масштабом, а~индекс~$k$~--- сдвигом. Если вейв\-лет-функ\-ция 
+обладает определенными свойствами регулярности~\cite{Mal99}, 
+то для коэффициентов разложения в~(\ref{wavelet_decomp}) справедливо
+\begin{equation}
+\label{wavelet_decay}
+\abs{\langle Kf, \psi_{j,k} \rangle} \leqslant \fr{C_f}
+{2^{j \left( \gamma + 1/2 \right)}}\,,
+\end{equation}
+где $C_f$~--- некоторая положительная константа.
+
+Поскольку оператор~$K$ линеен и~однороден, существуют такие функции~$u_{j,k}$, 
+что $\langle f,u_{j,k}\rangle\hm=\langle Kf,\psi_{j,k}\rangle$. При этом функция~$f$ 
+представляется в~виде ряда
+\begin{equation}
+\label{VWD}
+f = \sum\limits_{j,k \in Z}\beta_{j,k}\langle Kf,\psi_{j,k}\rangle u_{j,k},
+\end{equation}
+где $u_{j,k} = K^{-1}\psi_{j,k}/\beta_{j,k}$, $\beta_{j,k}\hm=2^{\alpha j}\beta_{00}$, 
+$\beta_{00} \hm= \norm{K^{-1}\psi}$ (функции~$u_{j,k}$, как и~$\psi_{j,k}$, 
+представляют собой сдвиги и~растяжения одной материнской функции~$u$ и~называются 
+вейглетами). При соответствующем выборе~$\psi(t)$ последовательность~$\{u_{j,k}\}$ 
+образует устойчивый базис~\cite{L97}. Формула~(\ref{VWD}) и~есть основа метода 
+вейг\-лет-вейв\-лет-раз\-ло\-же\-ния.
+
+\section*{Пороговая обработка эмпирических коэффициентов}
+
+При фактических измерениях значения функции сигнала регистрируются 
+в~дискретных отсчетах, при этом такие значения, как правило, зашумлены. 
+Рассмотрим сле\-ду\-ющую модель данных \mbox{с~шумом}:
+\begin{equation*}
+%\label{Data_Model}
+X_i = (Kf)_i + \epsilon_i\,, \enskip i = 1, \dots, 2^J\,, %\notag
+\end{equation*}
+где $2^J$~--- число отсчетов; $(Kf)_i$~--- незашумленные значения функции сигнала; 
+$\epsilon_i$~--- независимые нормально распределенные случайные величины с~нулевым 
+средним и~дисперсией~$\sigma^2$.
+После применения дискретного вейв\-лет-пре\-об\-ра\-зо\-ва\-ния 
+получается следующая модель зашумленных вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов:
+\begin{equation*}
+Y_{j,k}=\mu_{j,k}+\epsilon^W_{j,k},\enskip 
+j=0,\ldots,J-1,\ k=0,\ldots,2^{j}-1\,,
+\end{equation*}
+где $\epsilon^W_{j,k}$ независимы и~распределены так же, как и~$\epsilon_i$, 
+а~$\mu_{j,k}\hm= 2^{J/2}\langle Kf,\psi_{j,k}\rangle$~\cite{Mal99}.
+
+Для подавления шума и~построения оценки функции сигнала к~коэффициентам~$Y_{j,k}$ 
+обычно применяется функция жесткой пороговой обработки 
+$\rho_{H}(y,T)\hm=x\textbf{I}(\abs{y}>T)$ или мягкой пороговой 
+обработки $\rho_{S}(y,T)\hm=\textbf{sgn}(x)\left(\abs{y}-T\right)_{+}$ 
+с~порогом~$T$. При таком подходе обнуляются коэффициенты, абсолютная величина 
+которых ниже порога, так как в~силу~(\ref{wavelet_decay}) основная часть
+ полезного сигнала содержится в~относительно небольшом числе больших по 
+ модулю коэффициентов.
+
+Каждому из этих видов пороговой обработки присущи свои недостатки. 
+Жесткая пороговая функция разрывна, и~это приводит к~отсутствию устойчивости 
+при выборе порога~\cite{B96} и~невозможности построения несмещенной оценки 
+среднеквадратичного риска~\cite{J01}. При мягкой пороговой обработке в~оценке 
+функции появляется дополнительное смещение. Чтобы частично избежать этих недостатков, 
+в~работе~\cite{HL10} был предложен новый вид пороговой обработки, представляющий 
+собой сглаженный (стабилизированный) аналог жесткой пороговой обработки. 
+В~этом методе оценки~$\mu_{j,k}$ вычисляются по формулам:
+\begin{equation*}
+\widehat{\mu}_{j,k}=\Expect 
+\left[\rho_{H}(Y_{j,k}+\lambda\xi_{j,k},T_j)|Y_{j,k}\right], %\notag
+\end{equation*}
+где случайные величины~$\xi_{j,k}$ имеют стандартное нормальное распределение и~не 
+зависят от~$Y_{j,k}$, а~$\lambda\hm>0$~--- 
+параметр стабилизации, отвечающий за степень сглаживания. Вычисляя математическое 
+ожидание, получаем:
+\begin{multline*}
+\hspace*{-8.37947pt}\widehat{\mu}_{j,k}=Y_{j,k}\left[\Phi\!\left(-\fr{T_j+Y_{j,k}}
+{\lambda}\right)+1-\Phi\left(\fr{T_j-Y_{j,k}}{\lambda}\right)\!\right]+{}\\
+{}+
+\lambda\left[\phi\left(\fr{T_j-Y_{j,k}}{\lambda}\right)-
+\phi\left(\fr{T_j+Y_{j,k}}{\lambda}\right)\right]. %\notag
+\end{multline*}
+Достоинством такого метода является бесконечная дифференцируемость~$\widehat{\mu}_{j,k}$ 
+по~$Y_{j,k}$, что приводит к~более робастным оценкам~\cite{HL10}. Заметим также, 
+что при $\lambda\hm\to0$ получается обычный метод жесткой пороговой обработки. 
+В~данной работе параметр~$\lambda$ предполагается фиксированным, а~в~качестве~$T_j$ 
+для каждого масштаба~$j$ выбирается порог $T_j\hm=\sigma\sqrt{2\ln 2^j}$. 
+Такой порог получил название <<универсальный>>, так как он не зависит 
+от наблюдаемых данных. И~при жесткой, и~при мягкой пороговой обработке этот 
+порог обеспечивает близость среднеквадратичного риска к~минимальному~\cite{Mal99}.
+
+\section{Несмещенная оценка среднеквадратичного риска}
+
+Среднеквадратичный риск метода пороговой обработки определяется по формуле:
+\begin{equation}
+\label{Risk}
+R_J(\sigma)=\sum\limits_{j=0}^{J-1}\sum\limits_{k=0}^{2^j-1}\beta^2_{j,k}
+\Expect\left(\widehat{\mu}_{j,k}(\sigma)-\mu_{j,k}\right)^2.
+\end{equation}
+В~\cite{HL10} показано, что при стабилизированной жесткой пороговой обработке
+\begin{multline*}
+\Expect\left(\widehat{\mu}_{j,k}(\sigma)-\mu_{j,k}\right)^2={}\\
+{}=
+\Expect\left[(Y_{j,k}-\widehat{\mu}_{j,k}(\sigma))^2+
+2\sigma^2\fr{\partial}{\partial Y_{j,k}}\,\widehat{\mu}_{j,k}(\sigma)\right]-
+\sigma^2, %\notag
+\end{multline*}
+где
+\begin{multline*}
+\fr{\partial}{\partial Y_{j,k}}\widehat{\mu}_{j,k}(\sigma)={}\\
+{}=\Phi\left(-\fr{T_j+Y_{j,k}}{\lambda}\right)+1-
+\Phi\left(\fr{T_j-Y_{j,k}}{\lambda}\right)+{}\\
+{}+
+\fr{T_j}{\lambda}\left[\phi\left(\fr{T_j-Y_{j,k}}{\lambda}\right)+
+\phi\left(\fr{T_j+Y_{j,k}}{\lambda}\right)\right]. %\notag
+\end{multline*}
+Таким образом, величина
+\begin{multline}
+\label{Risk_Estimate}
+\widehat{R}_J(\sigma)=\sum\limits_{j=0}^{J-1}\sum\limits_{k=0}^{2^j-1}
+\beta^2_{j,k}
+\Bigg[
+\left(
+Y_{j,k}-
+\widehat{\mu}_{j,k}(\sigma)\right)^2+{}\\
+{}+2\sigma^2\fr{\partial}{\partial Y_{j,k}}\,\widehat{\mu}_{j,k}(\sigma)-
+\sigma^2
+\Bigg]
+\end{multline}
+является несмещенной оценкой~$R_J$, не зависящей от ненаблюдаемых значений~$\mu_{j,k}$.
+
+В работе~\cite{SH18} доказано следующее утверждение, устанавливающее 
+асимптотическую нормальность оценки~(\ref{Risk_Estimate}) и~позволяющее строить 
+асимптотические доверительные интервалы для риска~(\ref{Risk}).
+
+\smallskip
+
+\noindent
+\textbf{Теорема 1.} 
+\textit{Пусть $K$~--- линейный однородный оператор с~показателем 
+однородности $\alpha\hm>0$, а~$Kf$ задана на конечном отрезке и~равномерно 
+регулярна по Липшицу с~показателем $\gamma\hm>0$. Тогда}
+\begin{equation*}
+%\label{Normality}
+{\sf P}\left(\fr{\widehat{R}_J(\sigma)-
+R_J(\sigma)}{D_J}<x\right)\Rightarrow\Phi(x)\,, %\notag
+\end{equation*}
+\textit{где}
+$$
+D^2_J=\fr{2\sigma^4\beta_{0,0}^4}{2^{4\alpha+1}-1}2^{(4\alpha+1)J}\,.
+$$
+
+\section{Виды оценок дисперсии шума}
+
+Как правило, дисперсия~$\sigma^2$ неизвестна и~вместо ее точного значения 
+необходимо использовать некоторую оценку~$\hat{\sigma}^2$, которая обычно 
+строится по половине всех вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов для $j\hm=J\hm-1$, 
+так как в~силу~(\ref{wavelet_decay}) эти коэффициенты фактически содержат только шум. 
+При этом порог вычисляется по формуле $\hat{T}_j\hm=\hat{\sigma}\sqrt{2\ln 2^j}$.
+
+В качестве оценки~$\sigma^2$ (или $\sigma$) в~данной работе 
+рассматривается выборочная дисперсия
+\begin{equation}
+\label{SampleVarianceDef}
+\widehat{\sigma}_S^2=\fr{1}{2^{J-1}}
+\sum\limits_{k=0}^{2^{J-1}-1}Y_{J-1,k}^2-\overline{Y}^2,
+\end{equation}
+где
+\begin{equation*}
+\overline{Y}=\fr{1}{2^{J-1}}\sum\limits_{k=0}^{2^{J-1}-1}Y_{J-1,k}\,,
+\end{equation*}
+а также соответствующим образом нормированный выборочный интерквартильный 
+размах~$\widehat{\sigma}_{R}$ и~выборочное абсолютное медианное 
+отклонение~$\widehat{\sigma}_{M}$, которые определяются сле\-ду\-ющим образом:
+\begin{align}
+\widehat{\sigma}_{R}&=\fr{Y_{(J-1,3/4)}-Y_{(J-1,1/4)}}{2\xi_{3/4}}\,;
+\label{IQR_Definition}
+\\
+\widehat{\sigma}_{M}&=\fr{\mathop{\mbox{med}}\limits_{0\leqslant k\leqslant 2^{J-1}-1}|Y_{J-1,k}-\mathop{\mbox{med}}\limits_{0\leqslant l\leqslant 2^{J-1}-1} Y_{J-1,l}|}{\xi_{3/4}}\,.
+\label{MAD_Definition}
+\end{align}
+Здесь $Y_{(J-1,1/4)}$ и~$Y_{(J-1,3/4)}$~--- выборочные квантили порядка~$1/4$ и~$3/4$, 
+построенные по выборке из половины всех вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов при 
+$j\hm=J\hm-1$; $\xi_{3/4}$~--- теоретическая квантиль порядка~$3/4$ 
+стандартного нормального распределения ($\xi_{3/4}\hm\approx0,6745$); $\mbox{med}$ 
+обозначает выборочную медиану.
+
+Выборочная дисперсия служит самой популярной оценкой величины~$\sigma^2$, и~в~случае 
+отсутствия выбросов она наиболее предпочтительна. Однако в~случае, когда 
+оценка дисперсии строится по выборке сигнала, естественно ожидать, 
+что выборка не будет однородной. Преимущество использования последних 
+двух оценок заключается в~их ро\-баст\-ности, т.\,е.\ нечувствительности к~выбросам.
+
+\section{Предельная дисперсия оценки среднеквадратичного риска}
+
+Способ оценивания дисперсии шума влияет на вид предельной дисперсии 
+оценки среднеквадратичного риска. Подобный эффект наблюдается и~при 
+мягкой пороговой обработке~[4].
+
+\noindent
+\textbf{Теорема~2.}\ \textit{Пусть $Kf$ задана на конечном отрезке и~равномерно 
+регулярна по Липшицу с~показателем $\gamma\hm>1/4$, а оценка дисперсии 
+шума задана соотношением}~\eqref{SampleVarianceDef}. \textit{Тогда}
+\begin{equation}
+\label{CLT_Operator_SampleVar_Sigma}
+\mathsf{P}\left(\frac{\widehat{R}_J(\widehat{\sigma}_S)-R_J(\sigma)}{D_J}<x\right)
+\Rightarrow \Phi_{\Upsilon_1}(x),\notag
+\end{equation}
+\textit{где $\Phi_{\Upsilon_1}(x)$~--- функция распределения нормального 
+закона с~нулевым средним и~дисперсией}
+$$
+\Upsilon_1^2=\fr{1}{2^{4\alpha+1}}+
+\fr{2^{4\alpha+1}-1}{2^{4\alpha+1}\left(2^{2\alpha+1}-1\right)^2}\,.
+$$
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ Обозначим
+\begin{multline*}
+\widehat{U}_J(\sigma)=\sum\limits_{j=0}^{J-1}\sum\limits_{k=0}^{2^j-1}
+\beta^2_{j,k}\Bigg[
+\left(Y_{j,k}-\widehat{\mu}_{j,k}(\sigma)\right)^2+{}\\
+{}+2\sigma^2\fr{\partial}{\partial Y_{j,k}}\widehat{\mu}_{j,k}(\sigma)\Bigg] %\notag
+\end{multline*}
+и запишем $\widehat{R}_J(\hat{\sigma}_S)-R_J(\sigma)$ в~виде
+\begin{multline*}
+%\label{Three_Sums}
+\widehat{R}_J(\hat{\sigma}_S)-R_J(\sigma)={}\\
+{}=\left[\widehat{U}_J(\hat{\sigma}_S)-\widehat{U}_J(\sigma)\right]+
+\left[\widehat{R}_J(\sigma)-R_J(\sigma)\right]+{}\\
+{}+
+\fr{2^{(2\alpha+1)J}-1}{2^{2\alpha+1}-1}(\sigma^2-\hat{\sigma}^2_S)
+\equiv S_1+S_2+S_3\,.
+\end{multline*}
+
+Повторяя рассуждения из работ~\cite{KS11-1, KS11-2} и~учитывая, что если $\gamma\hm>1/4$, 
+то выполнено $2^{J/2}\overline{Y}^2\stackrel{{\sf P}}{\to} 0$ при 
+$J\hm\rightarrow\infty$~\cite{KS11-2}, можно показать, что
+\begin{equation*}
+{\sf P}\left(\fr{S_2+S_3}{D_J}<x\right)\Rightarrow\Phi_{\Upsilon_1}(x)\,.%\notag
+\end{equation*}
+% на самом деле с~условием Линдеберга чуть по-другому (без ограниченности слагаемых). Но дисперсия равномерно ограничена -- значит выполнено.
+
+Докажем, что $D_J^{-1}S_1\stackrel{{\sf P}}{\to}0$ при $J\hm\rightarrow\infty$. 
+Пусть $C_\delta\hm>0$~--- некоторая константа, а $\delta_J\hm=C_\delta J^{1/2}2^{-J/2}$. 
+Запишем
+\begin{multline*}
+S_1=\mathbf{1}\left(\abs{\sigma^2-\hat{\sigma}^2_S}>\delta_J\right)S_1+{}\\
+{}+
+\mathbf{1}\left(\abs{\sigma^2-\hat{\sigma}^2_S}\leqslant\delta_J\right)
+S_1\equiv S'_1+S''_1. %\notag
+\end{multline*}
+Для произвольного $\varepsilon\hm>0$
+\begin{equation*}
+{\sf P}\left(S'_1>\varepsilon\right)\leqslant{\sf P}
+\left(\abs{\sigma^2-\hat{\sigma}^2_S}>\delta_J\right). %\notag
+\end{equation*}
+При выполнении условий теоремы, если константа~$C_\delta$ достаточно велика, 
+то найдется константа~$\tilde{C}_\delta>0$ такая, что~\cite{KS11-2}
+\begin{equation*}
+{\sf P}\left(\abs{\sigma^2-\hat{\sigma}^2_S}>\delta_J\right)
+\leqslant\tilde{C}_\delta2^{-J/2}. %\notag
+\end{equation*}
+%% комментарии по поводу этого неравенства и~загрязнения выборки есть в~диссертации
+Следовательно, $S'_1\stackrel{P}{\to}0$ при $J\hm\rightarrow\infty$.
+
+Обозначим слагаемые в~сумме~$S''_1$ через~$F_{j,k}(\hat{\sigma}_S)$. Пусть 
+$A_j\hm=\sqrt{A\ln 2^j}$, где $0\hm<A\hm<2(\sigma^2\hm-\delta_J)$. Имеем:
+
+\noindent
+\begin{multline*}
+\hspace*{-9.9pt}\sum\limits_{j=0}^{J-1}\sum\limits_{k=0}^{2^j-1}F_{j,k}\left(\hat{\sigma}_S\right)=
+\sum\limits_{j=0}^{J-1}\sum\limits_{k=0}^{2^j-1}
+\mathbf{1}(\abs{Y_{j,k}}\leqslant A_j)F_{j,k}(\hat{\sigma}_S)+{}\\
+{}+
+\sum\limits_{j=0}^{J-1}\sum\limits_{k=0}^{2^j-1}
+\mathbf{1}\left(\abs{Y_{j,k}}>A_j\right)F_{j,k}(\hat{\sigma}_S)
+\equiv  W_1+W_2. %\notag
+\end{multline*}
+Рассмотрим $W_1$. Учитывая определения $\widehat{\mu}_{j,k}(\sigma)$, 
+$({\partial}/{\partial Y_{j,k}})\widehat{\mu}_{j,k}(\sigma)$ и~$A_j$, 
+можно убедиться, что найдут\-ся константы $C_1\hm>0$ и~$\theta\hm>0$ такие, что
+\begin{equation*}
+\abs{\mathbf{1}\left(\abs{Y_{j,k}}\leqslant A_J\right)
+F_{j,k}(\hat{\sigma}_S)}\leqslant C_1 
+J^{5/2}2^{(2\alpha-\theta)j-J/2}\;\;\mbox{п.в.} %\notag
+\end{equation*}
+% поскольку выполнено \mathbf{1}(\abs{\sigma^2-\hat{\sigma}^2_S}\leqslant\delta_J). В логарифме степень: от Y идет 1, от T идет 1, от \delta_J идет 1/2 но для J, а не для j, поэтому берем для всех J^{5/2}. В степени 2: 2\alpha от \beta{j,k}, \theta из-за выбора A, J/2 от \delta_J
+Следовательно, $D_J^{-1}W_1\hm\rightarrow 0$ п.в.\ при $J\hm\rightarrow\infty$.
+
+Далее для слагаемых~$W_2$ имеем:
+\begin{multline*}
+\left\vert \mathbf{1}\left(
+\left\vert Y_{j,k}\right\vert
+> A_J\right)F_{j,k}
+\left(\hat{\sigma}_S\right)\right\vert
+\leqslant{}\\
+{}\leqslant C_2 J^{3/2}2^{2\alpha j-J/2} 
+\mathbf{1}\left( \left\vert Y_{j,k}\right\vert > A_J\right) 
+\left\vert Y_{j,k}\right\vert^2\;\;\mbox{п.в.},
+%\notag
+\end{multline*}
+% поскольку выполнено \mathbf{1}(\abs{\sigma^2-\hat{\sigma}^2_S}\leqslant\delta_J). В логарифме от T идет 1, от \delta_J идет 1/2.
+где $C_2>0$~--- некоторая константа. Учитывая распределение~$Y_{j,k}$, 
+нетрудно убедиться, что
+\begin{equation*}
+\Expect\frac{1}{D_J} \sum\limits_{j=0}^{J-1}
+\sum\limits_{k=0}^{2^j-1} J^{3/2}2^{2\alpha j-J/2} 
+\mathbf{1}\left(\abs{Y_{j,k}}> A_j\right)
+\abs{Y_{j,k}}^2\to 0
+\end{equation*}
+при $J\rightarrow\infty$. %\notag
+Следовательно, используя неравенство Маркова, получаем, что
+\begin{equation*}
+D_J^{-1}W_2\stackrel{{\sf P}}{\to}0\;\;\mbox{при}\;J\rightarrow\infty\,. %\notag
+\end{equation*}
+Таким образом, $D_J^{-1}S_1\stackrel{{\sf P}}{\to}0$ при $J\hm\rightarrow\infty$.
+
+Теорема доказана.
+
+\smallskip
+
+Рассмотрим теперь ситуацию, когда в~качестве оценки~$\sigma$ используется 
+величина~$\widehat{\sigma}_{R}$ или~$\widehat{\sigma}_{M}$. 
+В~этом случае повышаются требования к~гладкости функции сигнала.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~3.}\
+\textit{Пусть~$Kf$ задана на конечном отрезке и~равномерно регулярна по 
+Липшицу с~показателем $\gamma\hm>1/2$, а оценка дисперсии шума~$\hat{\sigma}$ 
+задана соотношением}~\eqref{IQR_Definition} 
+\textit{или соотношением}~\eqref{MAD_Definition}. \textit{Тогда}
+\begin{equation*}
+\label{CLT_Operator_RobVar_Sigma}
+\mathsf{P}\left(\fr{\widehat{R}_J(\widehat{\sigma})-R_J(\sigma)}{D_J}<x\right)
+\Rightarrow \Phi_{\Upsilon_2}(x)\,, %\notag
+\end{equation*}
+где $\Phi_{\Upsilon_2}(x)$~--- функция распределения нормального закона 
+с~нулевым средним и~дисперсией
+\begin{multline*}
+\Upsilon_2^2=1+\fr{2^{4\alpha+1}-1}{4(2^{2\alpha+1}-1)^2
+\xi_{3/4}^2(\phi(\xi_{3/4}))^2}-{}\\
+{}-
+\fr{2^{4\alpha+1}-1 }{2^{2\alpha-1}(2^{2\alpha+1}-1)}\,.
+\end{multline*}
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \
+Как и~в~предыдущей теореме, запишем
+$\widehat{R}_J(\hat{\sigma})\hm-R_J(\sigma)\hm=S_1\hm+S_2\hm+S_3.$
+Учитывая,\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+ что $\gamma\hm>1/2$, и~поступая, как в~работах~\cite{SH18, KS11-2, SH12}, 
+с~использованием разложения Бахадура для выборочных квантилей~\cite{S80} и~выборочного 
+абсолютного медианного отклонения~\cite{SM09}, можно показать, что
+\begin{equation*}
+{\sf P}\left(\fr{S_2+S_3}{D_J}<x\right)\Rightarrow\Phi_{\Upsilon_2}(x)\,. %\notag
+\end{equation*}
+% на самом деле с~условием Линдеберга чуть по-другому (без ограниченности слагаемых). Но дисперсия равномерно ограничена -- значит выполнено.
+
+Используя экспоненциальные неравенства для выборочных квантилей~\cite{S80} 
+и~выборочного абсолютного медианного отклонения~\cite{SM09}, получаем, что при 
+выполнении условий теоремы найдется такая константа $C_\delta\hm>0$, что при 
+$\delta_J\hm=C_\delta J^{1/2}2^{-J/2}$ для некоторой константы~$\widetilde{C}_\delta>0$ 
+выполнено:
+\begin{align*}
+\mathsf{P}\left(\abs{\widehat{\sigma}_{R}-\sigma}>\delta_J\right)
+&\leqslant\widetilde{C}_\delta2^{-J/2}\,;
+\\
+\mathsf{P}\left(\abs{\widehat{\sigma}_{M}-\sigma}>\delta_J\right)
+&\leqslant\widetilde{C}_\delta2^{-J/2}\,. %\notag
+\end{align*}
+%% комментарии по поводу этого неравенства и~загрязнения выборки есть в~диссертации
+Далее, повторяя рассуждения предыдущей теоремы, заключаем, что 
+$D_J^{-1}S_1\stackrel{{\sf P}}{\to}0$ при $J\hm\rightarrow\infty$.
+
+
+Теорема доказана.
+
+
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+\bibitem{HL10}
+\Au{Huang H.-C., Lee~T.\,C.\,M.} 
+Stabilized thresholding with generalized sure for image denoising~// 
+IEEE 17th  Conference (International) on Image Processing
+Proceedings.~--- IEEE, 2010. P.~1881--1884.
+
+\bibitem{SH18}
+\Au{Shestakov O.\,V.} 
+Nonlinear regularization of inverse problems for linear homogeneous transforms 
+by the stabilized hard thresholding~// J.~Math. Sci., 2018. Vol.~234. No.\,6. P.~780--785.
+
+\bibitem{KS11-1}
+\Au{Кудрявцев А.\,А., Шестаков~О.\,В.} 
+Асимптотика оценки риска при вейг\-лет-вейв\-лет разложении наблюдаемого сигнала~// 
+T-Comm~--- телекоммуникации и~транспорт, 2011. №\,2. С.~54--57.
+
+\bibitem{KS11-2}
+\Au{Кудрявцев А.\,А., Шестаков~О.\,В.} 
+Асимптотическое распределение оценки риска пороговой обработки 
+вейг\-лет-ко\-эф\-фи\-ци\-ен\-тов сигнала при неизвестном уровне шума~// 
+T-Comm~--- телекоммуникации и~транспорт, 2011. №\,5. С.~24--30.
+
+\bibitem{AS98}
+\Au{Abramovich F., Silverman~B.\,W.} 
+Wavelet decomposition approaches to statistical inverse problems~// 
+Biometrika, 1998. Vol.~85. No.\,1. P. 115--129.
+
+\bibitem{Mal99}
+\Au{Mallat S.} A~Wavelet tour of signal processing.~--- 
+New York, NY, USA: Academic Press, 1999. 857~p.
+
+\bibitem{L97}
+\Au{Lee N.} Wavelet-vaguelette decompositions and homogenous equations.~--- 
+West Lafayette, IN, USA: Purdue University, 1997.  PhD Thesis. 103~p.
+
+\bibitem{B96}
+\Au{Breiman L.} Heuristics of instability and stabilization in model selection~// 
+Ann. Stat., 1996. Vol.~24. No.\,6. P.~2350--2383.
+
+\bibitem{J01}
+\Au{Jansen M.} Noise reduction by wavelet thresholding.~--- 
+Lecture notes in statistics ser.~--- New York, NY, USA: Springer Verlag,
+2001. Vol.~161. 196~p.
+
+\bibitem{SH12}
+\Au{Шестаков О.\,В.} О~скорости сходимости оценки риска пороговой обработки 
+вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов к~нормальному закону при использовании 
+робастных оценок дисперсии~// Информатика и~её применения, 2012. Т.~6. Вып.~2. 
+С.~122--128.
+
+\bibitem{S80}
+\Au{Serfling R.} Approximation theorems of mathematical statistics.~--- 
+New York, NY, USA: John Wiley \& Sons, 1980. 371~p.
+
+\bibitem{SM09}
+\Au{Serfling R., Mazumder~S.} 
+Exponential probability inequality and convergence results for the median 
+absolute deviation and its modifications~// Stat. Probabil. Lett., 2009. 
+Vol.~79. No.\,16. P.~1767--1773.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 14.12.18}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{INVERSION OF~HOMOGENEOUS OPERATORS USING~STABILIZED HARD THRESHOLDING 
+WITH~UNKNOWN NOISE VARIANCE}
+
+\def\titkol{Inversion of~homogeneous operators using~stabilized hard thresholding 
+with~unknown noise variance}
+
+\def\aut{O.\,V.~Shestakov}
+
+\def\autkol{O.\,V.~Shestakov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+\noindent
+Department of Mathematical Statistics, Faculty of Computational Mathematics and Cybernetics, M.V. Lomonosov Moscow State University, 1-52 Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation
+Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., 
+Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{6pt}
+
+
+
+\Abste{When inverting linear homogeneous operators, it is necessary to use 
+regularization methods, since observed data are usually noisy. For noise suppression, 
+threshold processing of  wavelet coefficients of the observed signal function 
+is often used. Threshold processing has become a~popular noise suppression tool 
+due to its simplicity, computational efficiency, and ability to adapt to functions 
+that have different degrees of regularity at different domains. The paper 
+discusses the recently proposed stabilized hard thresholding method that eliminates 
+the main
+drawbacks of soft and hard thresholding methods and studies statistical 
+properties of this method. In the data model\linebreak\vspace*{-12pt}}
+
+\Abstend{with an additive Gaussian noise with 
+unknown variance, an unbiased estimate of the mean square risk is analyzed and it 
+is shown that under certain conditions, this estimate is asymptotically normal and 
+the variance of the limit distribution depends on the type of estimate of noise variance.}
+
+
+\KWE{wavelets; threshold processing; unbiased risk estimate; asymptotic normality;
+strong consistency}
+
+
+
+
+\DOI{10.14357/19922264190107}
+
+%\vspace*{-14pt}
+
+\Ack
+\noindent
+This research was partly supported by the Russian  
+Foundation for Basic Research (project No.\,19-07-00352).
+
+
+
+
+%\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-sh-1}
+\Aue{Huang, H.-C., and T.\,C.\,M.~Lee.} 2010. 
+Stabilized thresholding with generalized sure for image denoising. 
+\textit{IEEE 17th Conference (International) on Image Processing}. IEEE. 1881--1884.
+
+ 
+
+\bibitem{2-sh-1}
+\Aue{Shestakov, O.\,V.} 2018. 
+Nonlinear regularization of inverse problems for linear homogeneous transforms 
+by the stabilized hard thresholding. 
+\textit{J.~Math. Sci.} 234(6):780--785.
+
+\bibitem{3-sh-1}
+\Aue{Kudryavtsev, A.\,A., and O.\,V.~Shestakov.} 2011. Аsimptotika otsenki riska pri 
+veyglet-veyvlet razlozhenii nablyuda\-emo\-go signala [The average risk assessment 
+of the wavelet decomposition of the signal].
+\textit{T-Comm~--- Telecommunications and Their Application in
+Transport Industry} 2:54--57.
+
+\bibitem{4-sh-1}
+\Aue{Kudryavtsev, A.\,A., and O.\,V.~Shestakov.} 2011. Аsimptoticheskoe raspredelenie 
+otsenki riska porogovoy ob\-ra\-bot\-ki veyglet-koeffitsientov signala pri 
+neizvestnom urovne shuma [Asymptotic distribution of the risk estimate of 
+the signal vaguelette coefficients thresholding at the unknown noise level]. 
+\textit{T-Comm~--- Telecommunications and Their Application in
+Transport Industry} 5:24--30.
+
+\bibitem{5-sh-1}
+\Aue{Abramovich, F., and B.\,W.~Silverman.} 1998. Wavelet 
+decomposition approaches to statistical inverse problems. 
+\textit{Biometrika} 85(1):115--129.
+
+\bibitem{6-sh-1}
+\Aue{Mallat, S.} 1999. \textit{A~wavelet tour of signal processing.} New York, NY: 
+Academic Press. 857 p.
+
+\bibitem{7-sh-1}
+\Aue{Lee, N.} 1997. Wavelet-vaguelette decompositions and homogenous equations. 
+ West Lafayette, IN: Purdue University. PhD Thesis. 103~p.
+
+\bibitem{8-sh-1}
+\Aue{Breiman, L.} 1996. 
+Heuristics of instability and stabilization in model selection. 
+\textit{Ann. Stat.} 24(6):2350--2383.
+
+\bibitem{9-sh-1}
+\Aue{Jansen, M.} 2001. \textit{Noise reduction by wavelet thresholding.} 
+Lecture notes in statistics ser.
+New York, NY: Springer Verlag.  Vol.~161. 196~p.
+
+\bibitem{10-sh-1}
+\Aue{Shestakov, O.\,V.} 2012. O~skorosti skhodimosti otsenki riska porogovoy 
+obrabotki veyvlet-koeffitsientov k~nor\-mal'\-no\-mu zakonu pri ispol'zovanii robastnykh 
+otsenok dispersii [On the rate of convergence to the normal law of risk estimate for 
+wavelet coefficients thresholding when using robust variance estimates]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.}  6(2):122--128.
+
+\bibitem{11-sh-1}
+\Aue{Serfling, R.} 1980. \textit{Approximation theorems of mathematical statistics}.
+New York, NY: John Wiley \& Sons. 371~p.
+
+\bibitem{12-sh-1}
+\Aue{Serfling, R., and S.~Mazumder.} 2009. Exponential probability inequality 
+and convergence results for the median absolute deviation and its modifications. 
+\textit{Stat. Probabil. Lett.} 79(16):1767--1773.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received December 14, 2018}}
+
+%\pagebreak
+
+%\vspace*{-18pt}  
+
+\Contrl
+
+\noindent
+\textbf{Shestakov Oleg V.} (b.\ 1976)~--- 
+Doctor of Science in physics and mathematics, professor, Department of 
+Mathematical Statistics, Faculty of Computational Mathematics and Cybernetics, 
+M.\,V.~Lomonosov Moscow State University, 1-52~Leninskiye Gory, GSP-1, Moscow 119991, 
+Russian Federation; senior scientist, Institute of Informatics Problems, 
+Federal Research Center ``Computer Science and Control'' 
+of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, 
+Russian Federation; \mbox{oshestakov@cs.msu.su}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 
+    

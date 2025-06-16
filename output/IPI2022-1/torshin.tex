@@ -1,0 +1,1005 @@
+\def\stat{torshin}
+
+\def\tit{О ПРИМЕНЕНИИ ТОПОЛОГИЧЕСКОГО ПОДХОДА К~АНАЛИЗУ ПЛОХО 
+ФОРМАЛИЗУЕМЫХ ЗАДАЧ ДЛЯ~ПОСТРОЕНИЯ АЛГОРИТМОВ ВИРТУАЛЬНОГО 
+СКРИНИНГА КВАНТОВО-МЕХАНИЧЕСКИХ СВОЙСТВ\\ ОРГАНИЧЕСКИХ МОЛЕКУЛ~I: ОСНОВЫ
+ ПРОБЛЕМНО ОРИЕНТИРОВАННОЙ ТЕОРИИ$^*$}
+
+\def\titkol{О применении топологического подхода к~анализу плохо 
+формализуемых задач для~построения алгоритмов~I} %виртуального 
+%скрининга}
+% квантово-механических свойств органических молекул.  Часть~1: Основы проблемно ориентированной теории}
+
+\def\aut{И.\,Ю.~Торшин$^1$}
+
+\def\autkol{И.\,Ю.~Торшин}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Торшин И.\,Ю.}
+\index{Torshin I.\,Yu.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при поддержке РФФИ (проекты 19-07-00356, 18-07-00944, 20-07-00537).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{tiy135@yahoo.com}}
+
+%\vspace*{-6pt}
+
+
+
+      \Abst{Топологический подход к~анализу плохо формализованных задач и~теория 
+хемографов являются расширениями алгебраического подхода к~распознаванию, 
+развиваемого в~научной школе академика РАН Ю.\,И.~Журавлёва. В~первой части статьи 
+предложен проблемно ориентированный формализм для разработки алгоритмов 
+скрининговых оценок кван\-то\-во-ме\-ха\-ни\-че\-ских (КМ) свойств молекул по их химической 
+структуре. Предложены способы введения метрик на множествах молекул и~процедуры 
+порождения <<синтетических>> признаковых описаний, основанные на согласовании 
+значений <<экспертной>> метрики на множестве значений свойств молекул со значениями 
+настраиваемой метрики на множестве структур молекул. }
+      
+      \KW{алгебраический подход; хемоинформатика; размеченные графы; комбинаторный 
+анализ разрешимости}
+
+\DOI{10.14357/19922264220106}
+  
+\vspace*{12pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+      
+\section{Введение. Проблемная область}
+
+     Алгебраический подход к~анализу проблем распознавания, 
+классификации включает формулировку и~исследование критериев 
+разрешимости и~регулярности задач~[1--3], корректности и~полноты моделей 
+алгоритмов~[4--6]. Исследуются алгоритмы в~виде композиций 
+$A\hm= {B}\circ {C}\circ {D}$, где 
+${B}$~--- распознающий оператор; ${C}$~--- кор\-рек\-ти\-ру\-ющая 
+операция (корректор); ${D}$~--- решающее правило. Исходно в~рамках 
+алгебраического подхода наибольшее внимание уделяется именно 
+формулировке и~исследованию критериев разрешимости и~регулярности задач 
+рас\-по\-зна\-ва\-ния/клас\-си\-фи\-ка\-ции, корректности и~полноты моделей 
+алгоритмов~[1]. 
+     
+     Исследование выполнимости этих критериев и~<<обучение>> алгоритмов 
+подразумевает, что задано формальное описание: \textit{матрица информации} 
+(набор признаковых описаний объектов) и~\textit{информационная матрица} 
+(отнесение объектов к~определенным классам). В~то же время во многих 
+прикладных областях (биология, химия, медицина) встречаются задачи, 
+формальные описания которых могут быть получены очень многими 
+спо\-со\-бами. 
+{ %\looseness=1
+
+}
+
+     
+     Прикладные задачи, для которых не существует однозначного метода 
+выделения объектов, определения признаковых описаний и~классов объектов на 
+основе имеющегося <<исходного описания>> считаются \textit{плохо 
+формализуемыми}~\cite{6-tr}. Адекватная формализация задач позволяет 
+улучшить аккуратность и~обобщающую способность со\-от\-вет\-ст\-ву\-ющих 
+алгоритмов распознавания. С~этой целью в~русле алгебраического подхода 
+разрабатываются топологическая и~метрическая тео\-рии анализа данных~[\mbox{7--9}].
+{\looseness=1
+
+} 
+     
+     К плохо формализуемым относятся и~рас\-смат\-ри\-ва\-емые в~настоящей 
+работе задачи типа <<струк\-ту\-ра--свой\-ст\-во>>, где существенную 
+неоднозначность представляют собой способы порождения признаковых 
+описаний молекул. 
+
+В~статье пред\-став\-ле\-ны результаты совместного 
+применения топологического подхода к~плохо формализованным 
+задачам~\cite{6-tr} и~методов теории анализа хемографов~\cite{7-tr, 8-tr} для 
+разработки алгоритмов виртуального скрининга  
+КМ свойств молекул.
+
+\section{Введение. О~виртуальных скринингах молекул}
+
+     Квантовая механика~--- один из ярких примеров успешного 
+применения теории вероятностей, теории операторов, теории групп 
+и~функционального анализа в~теоретической физике. Тем не менее точное 
+аналитическое решение уравнения Шредингера имеется только для атома 
+водорода, а~высокоточные полуэмпирические схемы КМ-рас\-че\-тов 
+вычислительно затратны. В~то же время задачи поиска перспективных 
+материалов и~лекарств подразумевают проведение скринингов пространства 
+всех возможных <<малых>> органических молекул 
+(более~10$^{11}$~структур~\cite{10-tr}).
+     
+     Для осуществления первоначальных стадий таких виртуальных 
+скринингов необходимы алгоритмы для оценочных расчетов КМ-свойств 
+молекул, позволяющие выделять подмножества \mbox{молекул} с~экстремальными 
+значениями КМ-свойств. Практически важны (а)~точ\-ность, (б)~обоб\-ща\-ющая 
+способность, (в)~производительность вычислений и~(г)~интерпретируемость 
+таких алгоритмов. В~случае оценочных расчетов КМ-свойств молекул 
+необходимо особо акцентировать интерпретируемость таких алгоритмов 
+в~терминах теории химической связи на уровне, доступном для химиков-прак\-ти\-ков. 
+Одно из возможных решений~--- алгоритмы, построенные на 
+основании теории хемографов в~рамках топологического подхода к~анализу 
+данных.
+
+\vspace*{-6pt}
+     
+\section{Основы топологической теории анализа данных}
+
+\vspace*{-2pt}
+
+     Алгебраический подход требует определения множества \textit{начальных 
+информаций} (I$_i$) и~множества \textit{конечных информаций} 
+ (I$_f$)~\cite{1-tr}. Исследуемые алгоритмы ${A}(\theta): 
+\mathrm{I}_i\hm\to \mathrm{I}_f$ ($\theta$~--- вектор внут\-рен\-них  
+па\-ра\-мет\-ров) <<обучаются>> на основе конечных множеств прецедентов 
+$\mathrm{Pr}\subset \mathrm{I}_i \times \mathrm{I}_f$. Топологическая теория 
+анализа данных позволяет проводить систематические исследования различных 
+способов определения множеств~$\mathrm{I}_i$ и~$\mathrm{I}_f$ и~так 
+называемого множества оценок (об\-ласть значений распознающего 
+оператора~${B}$).
+
+     
+     Пусть $\mathbf{X}\hm= \{ x_1, x_2, \ldots , x_\alpha, \ldots , x_{N_0}\}$~--- 
+множество исходных описаний объектов, $\mathbf{X}\hm\subseteq 
+{S}$, где ${S}$~--- пространство таких описаний. 
+Пусть~${J}_{\mathrm{ob}}$~--- пространство допустимых 
+признаковых описаний\linebreak объектов и~определена функция~${D}: 
+{S}\hm\to {J}_{\mathrm{ob}}$. Определим 
+${J}_{\mathrm{ob}}\hm\subseteq \mathrm{I}_1\times 
+\mathrm{I}_2\times \cdots \times \mathrm{I}_k\times \cdots \times 
+\mathrm{I}_{n+1}$, $\mathrm{I}_i\hm\subseteq \mathrm{I}_1\times 
+\mathrm{I}_2\times\cdots \times \mathrm{I}_k\times \cdots \times \mathrm{I}_n$ 
+и~$\mathrm{I}_f\hm\subseteq \mathrm{I}_{n+1} \times 
+\mathrm{I}_{n+2}\times\cdots\times \mathrm{I}_{n+l}$ на основе 
+$\mathrm{I}_k\hm= \{ \lambda_{k_1},\lambda_{k_2}, \ldots, \lambda_{k_b}, 
+\ldots , \lambda_{k_{\vert \mathrm{I}_k\vert -1}}, \Delta\}$~--- множеств 
+значений $k$-х компонент признакового описания, $k\hm= 1,\ldots , n\hm+l$, 
+где~$\Delta$~--- неопределенность; $n$~--- чис\-ло признаков; $l$~--- число 
+таргетных (прогнозируемых) переменных. 
+     
+     Формализация задачи, т.\,е.\ переход от множе\-ст\-ва 
+$\mathbf{X}\hm\subseteq {S}$ к~множеству прецедентов 
+$\mathbf{Q}\hm\subseteq {J}_{\mathrm{ob}}$,\linebreak заключается 
+в~определении таких функций $\Gamma_k: {S}\hm\to \mathrm{I}_k$, 
+$k\hm= 1,\ldots ,n \hm+l$, что ${D}(x_\alpha) \hm= \left( \Gamma_1(x_\alpha)\times 
+\cdots \times \Gamma_k(x_\alpha)\times \cdots \times 
+\Gamma_{n+l}(x_\alpha)\right)_\Delta$~\cite{5-tr, 6-tr}, $\mathrm{m}_\alpha\hm= \left( 
+\Gamma_1(x_\alpha)\times \cdots \times \Gamma_n(x_\alpha)\right)_\Delta$~--- 
+\textit{вектор значений признаков}, а~$t_\alpha\hm= \left( \Gamma_{n+1}(x_\alpha) \times 
+\cdots\times \Gamma_{n+l}(x_\alpha)\right)_\Delta$~--- \textit{вектор значений}~$l$ 
+\textit{таргетных переменных}, обра\-зу\-ющих \textit{матрицу информации} 
+$\mathbf{M}_{\mathrm{I}}\hm= (m_\alpha)$, $m_\alpha\hm\in \mathrm{I}_i$, 
+и~\textit{информационную матрицу} $\mathbf{M}_{\mathrm{F}}\hm= (t_\alpha)$, 
+$t_\alpha\hm\in \mathrm{I}_f$, соответственно. Функции~${D}$ 
+соответствует функция $\varphi: 2^{{S}}\hm\to 
+2^{{J}_{\mathrm{ob}}}$, $\varphi(\mathbf{X})\hm= \left\{ 
+{D}(x_\alpha)\vert x_\alpha\hm\in \mathbf{X}\right\}$, фор\-ми\-ру\-ющая 
+множество прецедентов $\mathbf{Q}\hm= \{q_i\vert q_i \hm= (m_i, t_i)\} 
+\hm\subseteq \mathrm{I}_i\times \mathrm{I}_f$, $q_i[k]\hm\in 
+\mathrm{I}_k$, $i\hm= 1,\ldots , \vert \mathbf{X}\vert$, $\mathbf{Q}\hm= 
+\varphi(\mathbf{X})$~\cite{6-tr}. Для~$\Gamma_k$ определена функция полного 
+прообраза значения $\lambda_{k_b}\hm\in \mathrm{I}_k$ 
+в~множестве~$\mathbf{X}$, $\Gamma^{-1}_k (\lambda_{k_b}) \hm\subseteq 
+\mathbf{X}$, а~для функции~${D}$~--- функция полного прообраза 
+объекта, ${D}^{-1}(q)\hm= \bigcap\limits_{k=1,n} \Gamma^{-1}_k(q[k])$. 
+
+\vspace*{2pt}
+
+\noindent
+\textbf{Определение~1.} \textit{Регулярным будем называть множество 
+прецедентов~$\mathbf{Q}$, для которого выполнено} 
+$\underset{\mathbf{Q}^2}{\forall} (q_1,q_2): {D}^{-1}(q_1)\not= 
+{D}^{-1}(q_2)$. 
+%
+Если множества~$\mathbf{X}$ и~$\mathbf{Q}$ 
+изоморфны, так что $\forall\,x\hm\in \mathbf{X}: x={D}^{-
+1}({D}(x))$, то~$\mathbf{X}$ также регулярно~\cite{6-tr}. 
+В~дальнейшем рас\-смат\-ри\-ва\-ют\-ся только регулярные множества 
+$\mathbf{X}/\mathbf{Q}$.
+     
+     \vspace*{2pt}
+     
+     В~подавляющем большинстве реальных задач 
+множества~$\mathrm{I}_k$ выбираются произвольно. Для получения более 
+информативных <<синтетических признаковых описаний>>~\cite{6-tr} 
+множество $\mathbf{U}(\mathbf{X})\hm= \left\{ \Gamma_k^{-1} 
+(\lambda_{k_b})\right\}$ рассматривается как предбаза \textit{топологии} 
+     $\mathbf{T}(\mathbf{X})\hm= \left\{ \emptyset, \mathrm{I}, a\cup b, a\cap b 
+: a,b \hm\in \mathbf{U}(\mathbf{X})\right\}$, где $\mathrm{I}\hm= 
+\{\mathbf{X}\}$~--- единичный элемент. Введение отношения порядка на 
+элементах $\mathbf{T}(\mathbf{X})$ позволяет частично упорядочить 
+элементы топологии $\mathbf{T}(\mathbf{X})$ в~\textit{решетку} 
+$\mathbf{L}(\mathbf{T}(\mathbf{X}))\hm=\left\{ a\vee b, a \wedge b: a,b\hm\in 
+\mathbf{T}(\mathbf{X}), (a\hm\geq b)\ \mbox{или}\ (a\hm\leq b) \right\}$ так, что 
+$a\hm\leq b\hm\equiv a\hm\subseteq b$ и~$a\vee b\hm=  
+\mathrm{sup}\,(a,b)$~---  объединение, а $a\wedge b\hm= \mathrm{inf}\,(a,b)$~--- 
+пересечение множеств $a$ и~$b$. Показано, что при регулярности 
+$\mathbf{X}/\mathbf{Q}$ (определение~1) решетка 
+$\mathbf{L}(\mathbf{T}(\mathbf{X}))$~--- булева и~элементы 
+$\mathbf{U}(\mathbf{X})$ являются вершинами 
+$\mathbf{L}(\mathbf{T}(\mathbf{X}))$~\cite{6-tr}. При этом возникают три 
+фундаментальные разновидности признаков: \textit{булевы} (вершина решетки 
+$\Gamma_k^{-1}(1)$), \textit{категорные} (антицепи решетки) 
+и~\textit{числовые} (цепи решетки)~\cite{6-tr}. 
+{\looseness=-1
+
+}
+  
+     
+     Таким образом, $k$-я числовая величина, заданная на $\mathbf{Q}$ 
+посредством~$\mathrm{I}_k$, соответствует некоторой цепи 
+$A_k(\mathbf{X})$ в~$\mathbf{L}(\mathbf{T}(\mathbf{X}))$, образованной 
+множествами $u(\lambda_{k_b}) \hm= \bigcup^b_{\beta=1} \Gamma_k^{-1} 
+(\lambda_{k_\beta})$, $\lambda_{k_{b-1}}\hm\leq \lambda_{k_b}\hm\leq 
+\lambda_{k_{b+1}}$. Каж\-до\-му значению~$\lambda_{k_b}$ соответствует 
+множество объектов $u(\lambda_{k_b})$ и~единственное дополнение $\neg 
+u(\lambda_{k_b})$ (так как решетка булева). Совокупность точек 
+$\mathrm{cdf}\,(A_k(\mathbf{X}))\hm= \{ ( \lambda_{k_b}, \vert 
+u(\lambda_{k_b})\vert / N)\}$ представляет \textit{эмпирическую функцию 
+распределения} (э.ф.р.)\ $k$-й переменной.
+
+\vspace*{-6pt}
+     
+\section{Порождение <<синтетических>> числовых признаков}
+
+\vspace*{-2pt}
+
+     Булевой решетке $\mathbf{L}(\mathbf{T}(\mathbf{X}))$ сопоставляется 
+\textit{метрическое пространство значений признаков} 
+$\mathbf{M}_{\mathbf{L}} (\mathbf{L}(\mathbf{T}(\mathbf{X})), 
+\rho_{\mathbf{L}})$ с~метрикой $\rho_{\mathbf{L}}: \mathbf{L}^2\hm\to 
+\mathbf{R}^+$. Над $\mathbf{L}(\mathbf{T}(\mathbf{X}))$ также 
+определяется \textit{метрическое пространство объектов} $\mathbf{M}_q 
+[\mathbf{L}(\mathbf{T}(\mathbf{X}))](\mathbf{Q},\rho_q)$ с~мет\-ри\-кой 
+$\rho_q: \mathbf{Q}^2\hm\to \mathbf{R}^+$. Для определения 
+метрик~$\rho_{\mathbf{L}}$ и~$\rho_q$ вводятся понятия \textit{изотонной 
+оценки} на решетки и~\textit{окрест\-ности} элемента в~топологии~\cite{6-tr}.
+     
+     \smallskip
+     
+     \noindent
+     \textbf{Определение~2.}\ \textit{Оценка на решетке~$\mathbf{L}$ есть 
+такая функция $v: \mathbf{L}\hm\to \mathbf{R}^+$, что 
+$\underset{\mathbf{L}}{\forall}\, a,b: v[a]\hm+v[b]\hm= v[a\wedge b]\hm+ v[a\vee b].
+$
+ Оценка изотонна, если} 
+ $\underset{\mathbf{L}}{\forall}\, a,b: a\hm\subseteq 
+b\hm\Rightarrow v[a]\hm\geq v[b]$ 
+(например, высота элемента $h[x]$). Функция 
+$\rho(x,y)\hm= v[x\vee y]\hm- v[x\wedge y]$, где~$v$ изотонна, является 
+метрикой типа~$\rho_{\mathbf{L}}$~\cite{6-tr}.
+
+\smallskip
+
+\noindent
+\textbf{Определение~3.} \textit{Окрестность $u(x)$ точки $x\hm\in 
+\mathbf{X}$ в~топологии $\mathbf{T}(\mathbf{X})$ есть произвольное $u\hm\in 
+\mathbf{T}(\mathbf{X})$, $x\hm\in \mathbf{u}$; $u(x)$ разделяет $x,y\hm\in 
+\mathbf{X}$ при} $(x\hm\in {u})\not= (y\hm\in {u})$. 
+     
+     Любой объект $q\hm\in \mathbf{Q}$ представлен 
+в~$\mathbf{L}(\mathbf{T}(\mathbf{X}))$ как набор окрестностей 
+$\Gamma_k^{-1}(q[k])$, $k\hm=1, \ldots , n$, что позволяет определить метрику 
+$\rho_q(q_1,q_2)$ как функцию $f_q: \mathbf{R}^n\hm\to \mathbf{R}^+$, 
+$\rho_q(q_1,q_2)\hm= f_q((\rho_{\mathbf{L}}(\Gamma^{-1}_k (q_1[k]), 
+\Gamma_k^{-1}(q_2[k])))$, $k\hm= 1, \ldots , n$. 
+
+\smallskip
+
+\noindent
+\textbf{Определение~4.} \textit{Для аддитивных~$f_q$ расстояние 
+$\rho_q(q_1,q_2)$ между объектами $q_1$ и~$q_2$ определяется посредством 
+линейной комбинации $S\left( \sum\nolimits_{k=\overline{1,n}} \omega_k 
+{s}\left(\rho_{\mathbf{L}} \left(\Gamma_k^{-1}(q_1[k]),  
+\Gamma_k^{-1}\left(q_2[k]\right)\right)\right)\right)$, где ${S}, {s}: 
+\mathbf{R}\hm\to \mathbf{R}^+$~--- произвольные <<сглаживающие>> 
+функции, а~$\omega_k$~--- вес $k$-го признакового описания}. 
+     
+     Если ${S}\hm=1$, ${s}\hm= 1/\vert\mathbf{Q}\vert$, 
+$\rho_{\mathbf{L}}(x,y)\hm= (x\not= y)$, $(\omega_k=1)$, а~$\Gamma_k^{-1}$ 
+и~$\Gamma_k$ определены для $\mathrm{I}_k\hm= [0,1]$, то $\rho_q$~--- 
+метрика Хэмминга. При ${S}\hm= \sqrt[p]{\vphantom{1}}$,  ${s}(x)\hm= x^p$, 
+$\rho_{\mathbf{L}}(x,y)\hm= \vert x\Delta y\vert$, $\mathrm{I}_k\hm\subset 
+\mathbf{R}$, $\rho_q$~--- взвешенная мет\-ри\-ка Минковского и~т.\,д. 
+В~рамках топологического подхода порождение синтетических признаков 
+осуществляется посредством метрики~$\rho_{\mathbf{L}}$ либо 
+метрики~$\rho_q$ (последнее требует определения~$\rho_{\mathbf{L}}$). 
+
+\vspace*{-6pt}
+     
+\section{Синтетические признаки на~основании 
+метрики~$\rho_{\mathbf{L}}$}
+
+\vspace*{-2pt}
+
+\noindent
+\textbf{Определение~5.} \textit{Расстояние $\rho_A: 
+\mathbf{A}(\mathbf{X})^2\hm\to \mathbf{R}^+$ между цепями $a\hm= \langle 
+a_1, \ldots , a_i, \ldots \mathrm{I}\rangle$ и~$b\hm= \langle b_1, \ldots , b_j, 
+\ldots \mathrm{I}\rangle$ есть сумма расстояний между 
+соответствующими элементами}: 
+\begin{multline*}
+\rho_{\mathbf{A}}(a,b)= \min \left( \sum\limits_{i=1, \vert a\vert} \!\rho_{\mathbf{L}} \!\left( a_i, \argmin\limits_{b_j\in b}
+\rho_{\mathbf{L}}\left(a_i, b_j\right)\!\right) \!,\right.\\
+\left.\sum\limits_{i=1,\vert b\vert} \!\rho_{\mathbf{L}}\left(b_j, \argmin\limits_{a_i\in 
+a} \rho_{\mathbf{L}} \left(b_j,a_i\right)\right)\right).
+\end{multline*}
+     
+     
+     
+     Пусть $\mathbf{A}(\mathbf{X})$~--- множество всех цепей 
+$\mathbf{L}(\mathbf{T}(\mathbf{X}))$. Алгоритмы прогнозирования $k$-й 
+переменной соответствуют цепям в~$\mathbf{A}(\mathbf{X})$, наиболее 
+близким к~цепи $\mathbf{A}_k(\mathbf{X})$. Пусть 
+$\mathbf{A}(\mathbf{X})_{1,n}\hm\subset \mathbf{A}(\mathbf{X})$  соответствует 
+цепям над элементами $\mathbf{U}(\mathbf{X})$, $k\hm=1,\ldots , n$. Тогда 
+искомые алгоритмы соответствуют решению задачи
+     \begin{equation}
+     aa=\argmin\limits_{a\in \mathbf{A}(\mathbf{X})_{i,n}} \rho_{\mathbf{A}} 
+(A_k(\mathbf{X}),a)\,.
+     \label{e1-tr}
+     \end{equation}
+     
+     \vspace*{-12pt}
+
+\section{Синтетические признаки на~основании метрики~$\rho_q$}
+
+\vspace*{-2pt}
+
+     В рамках данного подхода согласовываются значения настраиваемой 
+<<признаковой>> метрики $\rho_q$ с~вектором весов ($\omega_k$) 
+     \begin{multline}
+     \argmin\limits_{\{\omega_k\}} \sum\limits_{m=1}^{\vert\mathbf{X}\vert} 
+\sum\limits^{\vert\mathbf{X}\vert}_{j\not= m} \mathbf{L}_{\mathrm{F}} \left(\rho_q \left( 
+(\omega_k), \mathrm{X}_m, \mathrm{X}_j\right) -{}\right.\\[-2pt]
+\left.{}- \rho_e (\mathrm{X}_m, 
+\mathrm{X}_j)\right)\,,
+     \label{e2-tr}
+     \end{multline}
+     
+   
+     
+     
+     \noindent
+где $\mathbf{L}_{\mathrm{F}}$~--- та или иная функция потерь. Например, в~настоящей 
+работе в~качестве~$\mathbf{L}_{\mathrm{F}}$ используется функция модуля 
+$\mathbf{L}_{\mathrm{F}}(x)\hm= \vert x\vert$. Практически важным случаем экспертной 
+метрики~$\rho_e$ является <<скалярная>> метрика (например, модуль 
+разности значений).
+
+\vspace*{2pt}
+
+\noindent
+\textbf{Теорема~1.} \textit{При использовании скалярной метрики~$\rho_e$ 
+условие}~(\ref{e1-tr}) \textit{для метрики Хэмминга~$\rho_q$ соответствует 
+аддитивной схеме учета признаков}. 
+
+\vspace*{2pt}
+
+\noindent
+     Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ Для~$\rho_e$ в~виде модуля 
+разности выполнены все три аксиомы метрики (так как они выполнены для 
+любых трех коллинеарных точек). Пусть нулевой элемент входит во все 
+множества~$\mathrm{I}_k$, так что можно определить расстояние от нулевого 
+элемента до любого другого элемента множества~$\mathrm{I}_k$ посредством 
+экспертной метрики $\rho_e$.  
+В~$\rho$-кон\-фи\-гу\-ра\-ции объектов, образованной метрикой~$\rho_q$, за 
+нулевую точку с~номером~$m_0$ можно, вообще говоря, принять любой 
+объект (например, центральный объект, соответствующий минимальной сумме 
+расстояний до всех остальных). Пусть в~$m$-сум\-ме в~выражении~(\ref{e2-tr}) 
+одна из $j$-сумм соответствует нулевому элементу~$\mathbf{X}_{m_0}$.
+     
+     Использование скалярной метрики~$\rho_e$ в~условии~(\ref{e2-tr}) 
+соответствует проекции $\vert\mathbf{X}\vert$-мер\-ной  
+$\rho_q$-кон\-фи\-гу\-ра\-ции на одномерную числовую ось 
+значений~$\mathrm{I}_k$. Любая из $j$-сумм в~(\ref{e1-tr}) включает все 
+объекты из~$\mathbf{X}$ и~покрывает все множество 
+значений~$\mathrm{I}_k$. Разница между любыми двумя значениями 
+из~$\mathrm{I}_k$ (т.\,е.\ $\rho_e(\mathbf{X}_m, \mathbf{X}_j)$) также 
+является отрезком на числовой оси $k$-й переменной, соответствующим сдвигу 
+значений в~множестве~$\mathrm{I}_k$ на константу~$\lambda_{k_\beta}$. 
+     
+     Так как каждая из $j$-сумм в~(\ref{e2-tr}) соответствует одной и~той же 
+(с~точ\-ностью до константы) задаче согласования метрик, то 
+ задача~(\ref{e2-tr}) с~$\mathbf{L}_{\mathrm{F}}(x)\hm= \vert x\vert$ может быть 
+переформулирована через расстояния от нулевого элемента, т.\,е.\ произведен 
+переход от оценки попарных расстояний к~суммированию по всем объектам:
+     \begin{equation}
+     \argmin\limits_{\{\omega_k\}} \sum\limits^{\vert \mathbf{X}\vert}_{m\not= 
+m_0} \left\vert \rho_q (\{\omega_k\}, \mathbf{X}_{m_0}, \mathbf{X}_m) -
+\mathbf{T}_m\right\vert,
+     \label{e2.1-tr}
+     \end{equation}
+     где $\mathbf{T}_m\hm= \rho_e(\mathbf{X}_{m_0}, \mathbf{X}_m)$~--- 
+значение прогнозируемой $k$-й числовой переменной для 
+объекта~$\mathbf{X}_m$ (так как, по построению, 
+точка~$\mathbf{X}_{m_0}$ соответствует нулевому значению). Если~$\rho_q$ 
+определена как метрика Хэмминга (см.\ комментарий к~определению~4), то 
+задача в~постановке~(\ref{e2.1-tr}) соответствует представлению~$\rho_q$ 
+в~виде линейной формы, т.\,е.\ аддитивной схеме учета признаков. Тео\-ре\-ма 
+доказана.
+
+\smallskip
+
+    Таким образом, в~случае скалярных~$\rho_e$ расстояния~$\rho_q$ служат 
+своего рода <<синтетическими>> числовыми признаками объектов 
+в~множествах $\mathbf{X}/\mathbf{Q}$. Для практического 
+применения~(\ref{e2-tr}) необходимо определить функции~$\Gamma_k$, а~для 
+определения метрических пространств~$\mathbf{M}_{\mathbf{L}}$ 
+и~$\mathbf{M}_q$~--- метрики~$\rho_{\mathbf{L}}$ и~$\rho_q$. В~случае 
+задач типа <<струк\-ту\-ра--свой\-ст\-во>> молекул для этого применяется 
+теория хемографов.
+
+\vspace*{-6pt}
+
+\section{О теории анализа размеченных графов}
+
+\vspace*{-2pt}
+
+     Для порождения признаковых описаний молекулярных структур в~рамках 
+теории анализа размеченных графов вводится понятие 
+хемогр$\acute{\mbox{а}}$фа~\cite{7-tr}. Признаковые описания порождаются 
+над разметками хемографов~\cite{8-tr}.
+     
+     \smallskip
+     
+     \noindent
+\textbf{Определение~6.} \textit{Граф $G\hm= (\mathbf{V}, \mathbf{E})$~--- совокупность 
+множества вершин $\mathbf{V}\hm= \mathbf{V}(G)$ и~множества ребер $\mathbf{E}\hm=\mathbf{E}(G)$, 
+$\mathbf{E}\hm\subset \mathbf{V}^2$. Хемограф ($\chi$-граф)~--- конечный, связный, 
+неориентированный, размеченный граф без петель, с~кликовым числом не 
+более}~3. Множество $\boldsymbol{\Gamma}\hm= \{ (\mathbf{V}, \mathbf{E})\vert \mathbf{V} \hm\subset \mathbf{N}, 
+\mathbf{E}\hm\subset \mathbf{N}^2\}$, где $\mathbf{N}$~--- натуральный ряд, есть 
+\textit{множество всех графов}.
+
+\smallskip
+
+     Множество вершин $\chi$-гра\-фа~$\mathbf{X}$ соответствует\linebreak 
+множеству атомов молекулы, а~множество ребер~--- множеству химических 
+связей молекулы. Хемографы строятся на основе <<внеш\-них>> (декартовых) 
+координат ядер атомов $\mathbf{\mathbf{R}}(X)\hm= \{ \vec{R}_i(X)\vert \vec{R}_i\hm\in 
+\mathbf{R}^3\}$,\linebreak $i\hm= 1,\ldots , \vert \mathbf{V}(\mathrm{X})\vert$, или  
+<<внут\-рен\-них>> координат (межатомные расстояния), так что $\chi$-гра\-фу~${X}$ 
+со\-по\-став\-лен ряд мат\-риц $\mathbf{M}({X})\hm= 
+(m_{ij}({X}))$, $m_{ij}\hm\in \mathbf{R}$, $i,j\hm= 1,\ldots , \vert 
+\mathbf{V}({X})\vert$ (матрица межатомных расстояний, матрица смежности 
+и~др.). Химические формулы в~различных <<машинных>> форматах (SMILES, 
+XYZ и~др.)\ суть упрощенные пред\-став\-ле\-ния мат\-риц 
+$\mathbf{M}({X})$ или координат~$\mathbf{R}(X)$.
+     
+     Признаковые описания $\chi$-гра\-фов вводятся на основании анализа 
+специальной разновидности подграфов $\chi$-гра\-фов~--- цепей и~узлов, для 
+описания которых в~работах~\cite{7-tr, 8-tr} вводится комплекс понятий 
+и~соответствующих обозначений: \textit{множество всех замкнутых 
+подграфов $\chi$-гра\-фа}~${X}$, $\boldsymbol{\Pi}({X})$ 
+(включает \textit{множество связных подграфов} $\mathbf{S}(X)$, множество 
+\textit{цепей} $\mathbf{C}(X)$, \textit{множество  
+$\chi$-уз\-лов}~$\mathbf{K}(X)$), \textit{операции  
+объеди\-не\-ния/пе\-ре\-се\-че\-ния множества подграфов} 
+($\overset{\smile}{\Pi}\hm= \bigcup_{i=1}^{\vert\Pi\vert} \pi_i\hm= ( 
+\bigcup_{i=1}^{\vert\Pi\vert} \mathbf{v}_i, \bigcup_{i=1}^{\vert\Pi\vert} 
+\mathbf{e}_i)$; $\overset{\frown}{\Pi}\hm= \bigcap_{i=1}^{\vert\Pi\vert} 
+\pi_i$), \textit{условие образования} графа $\overset{\smile}{{O}}\hm= 
+{X}$ множеством $\mathbf{O}\hm\subseteq 
+\boldsymbol{\Pi}({X})$, оператор $\hat{c}^n$ вычисления \textit{цепей 
+длины}~$n$, \textit{множество смеж\-ности} (\textit{окружение}) 
+вершины~$v$: $\Gamma(v)\hm= \hat{v}\hat{e} v$, \textit{узел} вершины~$v$, 
+($\Gamma(v),\hat{e}v$) \textit{и др.}~\cite{7-tr}. Такие подграфы необходимы 
+для исследования изоморфизма $\chi$-гра\-фов.
+     
+     \smallskip
+     
+     \noindent
+     \textbf{Определение~7.} \textit{Графы $G_1$ и~$G_2$ изоморфны 
+($G_1\simeq G_2$) если существует взаимно однозначное соответствие 
+между их вершинами и~ребрами}. Изоморфизм $G_1\simeq G_2$ соответствует 
+существованию функции перенумерации $\mu_{\mathbf{I}}: \mathbf{N}\hm\to 
+\mathbf{N}$, так что из $G_2\hm=\mu_{\mathrm{I}}(G_1)$ следует $G_1\simeq 
+G_2$. Определяется класс $\mathbf{\mathbf{I}}(G)\hm= \{ g\hm\in 
+\boldsymbol{\Gamma}\vert \exists\,\mu_{\mathbf{I}}: G\hm= 
+\mu_{\mathbf{I}}(g)\}$.
+     
+     \smallskip
+     
+     \noindent
+     \textbf{Определение~8.} \textit{Пусть задан алфавит меток $\mathbf{Y}\hm= \{ 
+\upsilon_1, \upsilon_2, \ldots, \upsilon_{n(Y)}\}$. Функция разметки $\mu_{\mathbf{V}}: 
+\mathbf{V}\hm\to \mathbf{Y}$ сопоставляет метку каждой вершине $\chi$-графа}. 
+     
+     \smallskip
+     
+     Для комбинаторного анализа свойств изоморфизма графов и~для 
+порождения признаковых описаний $\chi$-гра\-фов в~тео\-рии анализа 
+размеченных \mbox{графов} вводятся \textit{множество} $\chi$-\textit{це\-пей} 
+$\tilde{\mathbf{Y}}$ над алфавитом~$\mathbf{Y}$ (\textit{в~том числе подмножества всех  
+$\chi$-це\-пей длины}~$n$, $\tilde{\mathbf{Y}}^n \hm\subset \tilde{\mathbf{Y}}$), множество 
+$\chi$-\textit{уз\-лов} $\hat{\mathbf{Y}}\hm= \bigcup_{k=2} \hat{\mathbf{Y}}(k)$, 
+$\hat{\mathbf{Y}}(k)\hm= \{\mathbf{Y}\times 2^{\mathbf{Y}^k}\}$, понятия \textit{инварианта 
+графа}  ($\iota: \boldsymbol{\Gamma}\hm\to \mathbf{R}^n, n\hm\in \mathbf{N}: 
+\forall\,a \hm\in \boldsymbol{\Gamma}: b\hm\in \mathbf{I}(a)\hm\Rightarrow 
+\iota (b)\hm= \iota(a)$), \textit{кор\-теж-ин\-ва\-ри\-ан\-та} $\iota: 
+\boldsymbol{\Gamma}\hm\to \mathbf{R}^n$, $n\geq 2$, \textit{полноты 
+инварианта} $\forall\,a\hm\in \boldsymbol{\Gamma}: b\hm\in \mathbf{I}(G) 
+\hm\Leftrightarrow \iota(a) \hm= \iota(b)$, \textit{изомерных по 
+инварианту}~$\iota$ \textit{графов}, \textit{функции разметки $\chi$-це\-пей}  
+$\mu_c: \mathbf{C}\hm\to \tilde{\mathbf{Y}}$ и~$\chi$-\textit{узлов} 
+$\mu_\kappa: \mathbf{K}\hm\to \hat{\mathbf{Y}}$,  
+$\chi$-\textit{фраг\-мен\-тов} как элементов множеств $\hat{\mu}_c^{-1}\alpha$ 
+и~$\hat{\mu}_\kappa^{-1}\kappa$, \textit{оператора вхождения множества 
+подграфов} $\boldsymbol{\pi}\hm\subset \boldsymbol{\Gamma}$ в~$\chi$-граф 
+$\mathbf{X}$ $\hat{\beta}[\mathbf{X}]: 2^{\boldsymbol{\Gamma}}\hm\to \{0,1\}$, 
+\textit{оператора числа вхождений множества подграфов} в~$\mathbf{X}$ 
+$\hat{\eta}[\mathbf{X}]: 2^{\boldsymbol{\Gamma}}\hm\to \mathbf{N}$ и~др.~\cite{8-tr}. 
+     
+     Эти понятия позволяют проводить комбинаторный анализ изоформизма 
+$\chi$-гра\-фов и~порождать признаковые описания $\chi$-гра\-фов как 
+$\hat{\eta}[\mathbf{X}]\hat{\mu}^{-1}_c \alpha$, 
+$\hat{\eta}[\mathbf{X}]\hat{\mu}_\kappa^{-1}\kappa$, 
+     $\hat{\beta}[\mathbf{X}]\hat{\mu}_c^{-1}\alpha$, 
+$\hat{\beta}[\mathbf{X}]\hat{\mu}^{-1}_\kappa \kappa$ (лемма~1 
+в~работе~\cite{9-tr}). Результат последовательного применения 
+     $\hat{\mu}_c^{-1}$ к~$\boldsymbol{\alpha}\hm= \{\alpha \hm\in 
+\tilde{\mathbf{Y}}\}$ обозначим $\hat{\boldsymbol{\mu}}_c^{-1}
+\boldsymbol{\alpha} \hm= \{ \hat{\mu}_c^{-1}\alpha, \alpha\hm\in 
+\boldsymbol{\alpha}\}$, оператора $\hat{\mu}_\kappa^{-1}$ ко множеству  
+$\chi$-уз\-лов $\boldsymbol{\kappa}\hm= \{\kappa\hm\in \hat{\mathbf{Y}}\}$~---
+$\hat{\boldsymbol{\mu}}_\kappa^{-1}\boldsymbol{\kappa}\hm= \{  
+\hat{\mu}^{-1}_\kappa \kappa, \kappa\hm\in \boldsymbol{\kappa}\}$, 
+оператора~$\hat{\beta}$ ко множеству $\tilde{\boldsymbol{\pi}}\hm= \{ 
+\boldsymbol{\pi}_1, \boldsymbol{\pi}_2, \ldots , \boldsymbol{\pi}_n\}$, 
+$\tilde{\boldsymbol{\pi}}\hm\subset \boldsymbol{\Gamma}$ обозначим 
+$\hat{\boldsymbol{\beta}}\tilde{\boldsymbol{\pi}}\hm= \{ 
+\hat{\beta}\boldsymbol{\pi}_1, \hat{\beta}\boldsymbol{\pi}_2, \ldots , 
+\hat{\beta}\boldsymbol{\pi}_n\}$. 
+     
+     Комбинаторный анализ разрешимости задачи\linebreak анализа изоморфизма  
+$\chi$-гра\-фов сводится к~уста\-нов\-ле\-нию локальной полноты некоторых 
+ кор\-теж-ин\-ва\-ри\-ан\-тов~\cite{8-tr}. Пусть $\iota: 
+\boldsymbol{\Gamma}\hm\to \mathbf{R}^n$, $n\hm\geq 2$,~---  
+кор\-теж-ин\-ва\-ри\-ант, построенный над некоторым \textit{\mbox{множеством} 
+из}~$n$~\textit{элементарных инвариантов} $\boldsymbol{\iota}_e\hm\subset 
+\mathbf{E}$. Пусть для графа~$G$ выражение $\boldsymbol{\iota}_i(G)\hm= \{ 
+\iota_i(G), i\hm= 1,\ldots , n\}$ будет означать множество значений инвариантов 
+из~$\boldsymbol{\iota}_e$. Определим \textit{функцию нумерации 
+элементарных инвариантов} $\lambda: \boldsymbol{\iota}_e\hm\to \mathbf{N}$ и~\textit{оператор формирования  
+кор\-теж-ин\-ва\-ри\-ан\-та}. \textit{Оператор формирования  
+кор\-теж-ин\-ва\-ри\-ан\-та} $\hat{\iota}: 2^{\mathbf{E}}\hm\to \mathbf{R}^n$ по 
+заданному~$\boldsymbol{\iota}_e$ определим как 
+$\hat{\iota}\boldsymbol{\iota}_e\hm= (\iota_j, \iota_k, \ldots , \iota_l)$, $\iota_j, 
+\iota_k,\ldots , \iota_l\hm\in \boldsymbol{\iota}_e$, $\lambda(\iota_j)\hm= 1\hm\leq 
+\lambda(\iota_k)< \cdots < \lambda(\iota_l)\hm=n$, а~значение $i$-го элемента 
+кортежа~$\hat{\iota}\boldsymbol{\iota}_e$ обозначим 
+$\hat{\iota}[i]\boldsymbol{\iota}_e(G)\hm=\iota(G)\vert \lambda(\iota)\hm=i$. 
+В~теореме~2 показана взаимосвязь между изоморфизмом $\chi$-гра\-фов 
+и~полнотой кор\-теж-ин\-ва\-ри\-ан\-тов.
+     
+     \smallskip
+     
+     \noindent
+     \textbf{Теорема~2.} $\forall\,a,b\in\boldsymbol{\Gamma}: \vert 
+\mathbf{I}(a)\cap \mathbf{I}(b)\vert >0 \hm\Leftrightarrow 
+\underset{i=\overline{1,n}}{\exists}\, i: \hat{\iota}[i] \boldsymbol{\iota}_e (a)\not= 
+\hat{\iota}[i]\boldsymbol{\iota}_e(b)$, \textit{так что 
+$\hat{\iota}\boldsymbol{\iota}_e$~--- полный кор\-теж-ин\-ва\-ри\-ант}. 
+
+\smallskip
+     
+     Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\ \ приведено в~работе~\cite{9-tr}. 
+Следствия теоремы важны для анализа множества прецедентов~Pr.
+     
+     \smallskip
+
+\noindent
+\textbf{Следствие~1.} Полные инварианты могут быть образованы над 
+подмножествами множеств~$\tilde{\mathbf{Y}}$ и~$\hat{\mathbf{Y}}$, если 
+для каждого $\chi$-гра\-фа~$\mathbf{X}$ множества прецедентов 
+$\mathrm{Pr}$ существуют $\boldsymbol{\kappa}^\prime(\mathbf{X}) \hm= 
+\{\kappa\hm\in \boldsymbol{\kappa} \vert \hat{\eta}[\mathbf{X}] 
+\hat{\mu}_\kappa^{-1} \kappa \hm=1\}$ и~$\boldsymbol{\alpha}^\prime 
+(\mathbf{X})\hm= \{\alpha \hm\in \boldsymbol{\alpha}^\prime \vert 
+\hat{\eta}[\mathbf{X}] \hat{\mu}^{-1}_{c}\alpha \hm=1\}$ такие, что при 
+$\boldsymbol{\pi}^\prime(\mathbf{X})\hm= \hat{\boldsymbol{\mu}}_\kappa^{-1}
+\boldsymbol{\kappa}^\prime(\mathbf{X})\cup \hat{\boldsymbol{\mu}}_c^{-1}
+\boldsymbol{\alpha}^\prime(\mathbf{X})\ 
+\overset{\smile}{\boldsymbol{\pi}}(\mathbf{X})\hm=\mathbf{X}$. 
+
+\smallskip
+
+\noindent
+\textbf{Следствие~2.} Пусть в~конечном $\mathrm{Pr}\hm\subset 
+\boldsymbol{\Gamma}$ каждый граф~$G$ помечен меткой изоморфности $\mathrm{iso} 
+(G): \mathbf{I}(\boldsymbol{\Gamma})\hm\to \mathbf{N}$. Разрешимость 
+$$
+\underset{a,b\in \mathrm{Pr}}{\forall}\, \mathrm{iso}(a)\not= \mathrm{iso}(b)\hm\Rightarrow 
+\iota(a)\hm\not= \iota(b)
+$$
+эквивалентна полноте 
+$$
+\underset{a,b\in \mathrm{Pr}}{\forall}\,\mathrm{iso}(a)\not= 
+\mathrm{iso}(b)\hm\Rightarrow
+\underset{i=\overline{1,\vert\chi\vert}}{\exists}\, i: \hat{\iota}[i] \chi(a) \not= \hat{\iota} [i] 
+\chi(b).
+$$
+
+
+%\columnbreak
+
+\noindent
+\textbf{Следствие~3.} Задача распознавания изоморфных графов разрешима 
+тогда и~только тогда, когда $\sum\nolimits_{a\in\mathrm{Pr}} \vert 
+\mathbf{i}\boldsymbol{\mu}(a,\iota,\mathrm{Pr})\backslash 
+\mathbf{i}(a,\mathrm{Pr})\vert \hm=0$, где $\mathbf{i}\boldsymbol{\mu}(G,\iota, 
+\mathrm{Pr})$~--- множество изомерных $G$ графов; $\mathbf{i}(G, 
+\mathrm{Pr})$~--- множество изоморфных $G$ графов. 
+
+\smallskip
+
+
+\noindent
+\textbf{Следствие~4.} Инвариант~$\iota$ полон при $r_\iota (\iota, 
+\mathrm{Pr})=1-(1/\vert \mathrm{Pr}\vert^2)\sum\nolimits_{a\in\mathrm{Pr}} 
+\mathbf{i}\boldsymbol{\mu}(a,\iota,\mathrm{Pr})\backslash 
+\mathbf{i}(a,\mathrm{Pr})\vert \hm=1$. 
+
+\smallskip
+
+\noindent
+\textbf{Следствие~5.} Пусть 
+$\phi(\hat{\iota}\boldsymbol{\chi},i,\mathrm{Pr})\hm= \{(a,b)\vert a,b\hm\in 
+\mathrm{Pr},\ \hat{\iota}[i]\boldsymbol{\chi}(a)\not= 
+\hat{\iota}[i]\boldsymbol{\chi}(b)\}$ 
+и~$\phi(\hat{\iota}\boldsymbol{\chi},i,\mathrm{Pr})\cap\phi(\hat{\iota}\boldsymbol{\chi},j,\mathrm{Pr})
+\hm=\emptyset$. Тогда $r_\iota(\iota, \mathrm{Pr})\hm= 
+\sum\nolimits_{i=1}^{\vert\chi\vert} \varphi_\iota 
+(\hat{\iota}\boldsymbol{\chi},i,\mathrm{Pr})$,  где
+$\varphi_\iota(\hat{\iota}\boldsymbol{\chi},i,\mathrm{Pr})\hm= \vert 
+\phi(\hat{\iota}\boldsymbol{\chi}, i,\mathrm{Pr}) \vert\backslash 
+\vert\mathrm{Pr}\vert^2$. 
+
+\vspace*{-6pt}
+
+\section{Топологическая теория анализа $\chi$-графов}
+
+\vspace*{-2pt}
+
+     На основании алфавита $\mathbf{Y}$ строятся различные множества $\chi$-це\-пей 
+длины~$m$, $\tilde{\mathbf{Y}}^m$, $m\hm=1,\ldots , m_{\max}$, множество всех  
+$\chi$-уз\-лов~$\hat{\mathbf{Y}}$ и~затем со\-от\-вет\-ст\-ву\-ющие элементарные  
+$\chi$- и~кор\-теж-ин\-ва\-ри\-ан\-ты. Для $\chi$-гра\-фа 
+${X}\hm\in \mathbf{X}$ вычисляются множество всех  
+$\chi$-це\-пей~${X}$, $\tilde{\mathbf{Y}}({X})$, и~множество 
+всех $\chi$-уз\-лов~${X}$, $\hat{\mathbf{Y}}({X})$. Для 
+любых $\alpha\hm\in \tilde{\mathbf{Y}}({X})$, $\kappa\hm\in 
+\hat{\mathbf{Y}}({X})$  
+пусть $\hat{\beta}[{X}]\hat{\mu}^{-1}_c\alpha$, 
+$\hat{\beta}[\mathrm{X}]\hat{\nu}^{-1}_\kappa \kappa$~--- булевы инварианты. 
+Тогда для выбранных $\boldsymbol{\alpha}\hm\subseteq \tilde{\mathbf{Y}}$ 
+и~$\boldsymbol{\kappa}\hm\subseteq \hat{\mathbf{Y}}$ таких, что $\vert 
+\boldsymbol{\alpha}\vert \hm+ \vert \boldsymbol{\kappa}\vert \hm= n$, 
+вычисляются множества $\hat{\boldsymbol{\mu}}_c^{-1}\boldsymbol{\alpha}$ 
+и~$\hat{\boldsymbol{\mu}}_\kappa^{-1}\boldsymbol{\kappa}$. Если 
+множества~$\mathbf{I}_k$ определены как~$[0,1]$, то множество 
+элементарных инвариантов $\boldsymbol{\iota}_e\hm= 
+\hat{\boldsymbol{\beta}}\hat{\boldsymbol{\mu}}_c^{-1}\boldsymbol{\alpha}\cup 
+\hat{\boldsymbol{\beta}}\hat{\boldsymbol{\mu}}_\kappa^{-
+1}\boldsymbol{\kappa}$, а~если $\mathbf{I}_k \hm\subset \mathbf{N}$, то 
+$\boldsymbol{\iota}_e\hm=\hat{\boldsymbol{\eta}}\hat{\boldsymbol{\mu}}_c^{-1}
+\boldsymbol{\alpha}\cup 
+\hat{\boldsymbol{\eta}}\hat{\boldsymbol{\mu}}_\kappa^{-
+1}\boldsymbol{\kappa}$. Определив функцию нумерации инвариантов $\lambda: 
+\boldsymbol{\iota}_e\hm\to \mathbf{N}$, определяем функцию $\Gamma_k$ как 
+$\Gamma_k({X})\hm= \hat{\iota}[k]\boldsymbol{\iota}_e({X})$, 
+а~функцию~$D$~--- как $D({X})\hm= 
+\hat{\iota}\boldsymbol{\iota}_e(\mathrm{X})$. 
+     
+     Таким образом, предбаза $\mathbf{U}(\mathbf{X})$ топологии 
+$\mathbf{T}(\mathbf{X})$ состоит из подмножеств $\chi$-гра\-фов, 
+соответствующих $\chi$-це\-пям или $\chi$-уз\-лам. Для $D(\mathbf{X})\hm= 
+\hat{\iota}\boldsymbol{\iota}_e(\mathbf{X})$ задача~(\ref{e2-tr}) реализуется 
+как \textit{хемометрический анализ}~\cite{9-tr}:
+
+\vspace*{-12pt}
+
+\noindent
+     \begin{multline*}
+     \argmin\limits_{\{\omega_k\}} \sum\limits_{m_0=1}^{\vert 
+\mathrm{X}\vert} \sum\limits_{m\not=m_0}^{\vert \mathrm{X}\vert}
+     \left\vert
+     \sum\limits_{k=1}^{n} 
+\omega_k\hat{\iota}[k]\hat{\boldsymbol{\beta}}[X_{m_0}] \boldsymbol{\pi}\oplus{}\right.\\[-4pt]
+\left.{}\oplus 
+\hat{\iota}[k]\hat{\boldsymbol{\beta}}[X_m]\boldsymbol{\pi} -\vert T_m -
+T_{m_0}
+\vphantom{\sum\limits_{k=1}^{n}}
+\vert \right\vert,
+%     \label{e2.2-tr}
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+где $\boldsymbol{\pi} \subseteq \hat{\boldsymbol{\mu}}_c^{-1}\boldsymbol{\alpha}
+\cup \hat{\boldsymbol{\mu}}_\kappa^{-1}{\boldsymbol{\kappa}}$~--- 
+некоторое <<опорное>> множество подграфов; $T_m$~--- оцениваемое 
+свойство \mbox{$m$-й} молекулы, а~выражение под знаком суммы по~$k$ 
+соответствует $\rho_q$-мет\-ри\-ке Хэмминга. Применяя теорему~1 
+и~<<сглаживающую>> функцию $S: \mathbf{R}\hm\to 
+\mathbf{R}^+$ (определение~4), получаем:
+\begin{equation*}
+\argmin\limits_{\{\omega_k\}} \sum\limits_{m=1}^{\vert\mathrm{X}\vert} 
+\left\vert S\left( \sum\limits^n_{k=1} \omega_k 
+s\left(\hat{\iota}[k]\hat{\boldsymbol{\beta}}[X_m]\boldsymbol{\pi}\right)\right)-T_m\right\vert.
+%\label{e2.3-tr}
+\end{equation*}
+
+\vspace*{-18pt}
+
+\section{Заключение}
+
+\vspace*{-2pt}
+
+     Для построения проблемно ориентированных метрик и~алгоритмов 
+прогнозирования  КМ свойств\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+ молекул по их 
+химической структуре разработанные признаковые описания хемографов 
+анализируются посредством теории топологического анализа данных. 
+В~результате анализа топологии $\mathbf{T}(\mathbf{X})$ и~решетки 
+$\mathbf{L}(\mathbf{T}(\mathbf{X}))$ с~использованием условий~(\ref{e1-tr}) 
+и~(\ref{e2-tr}) могут быть получены различные алгоритмы прог\-но\-зи\-ро\-вания 
+произвольной числовой переменной на основе структуры хемографов. Эти 
+алгоритмы одновременно являются алгоритмами порождения 
+<<синтетических>> числовых признаков, информативных относительно этой 
+переменной. Такие <<синтетические>> признаки могут использоваться 
+в~алгоритмических конструкциях алгебраического подхода и~в обычных 
+методах машинного обучения (регрессия, нейронные сети, метрические методы 
+и~др.). Сопоставление полученных моделей алгоритмов с~формализмом 
+квантовой механики, равно как и~экспериментальная апробация 
+соответствующих алгоритмов, будут представлены во второй части статьи.
+
+\vspace*{-6pt}
+     
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+ \vspace*{-2pt}
+ 
+\bibitem{1-tr}
+\Au{Журавлев Ю.\,И.} Об алгебраическом подходе к~решению задач распознавания или 
+классификации~// Проб\-ле\-мы кибернетики, 1978. №\,33. С.~5--68.
+\bibitem{2-tr}
+\Au{Рудаков К.\,В., Торшин~И.\,Ю.} Вопросы разрешимости задачи распознавания 
+вторичной структуры белка~// Информатика и~её применения, 2010. Т.~4. Вып.~2. С.~25--35.
+\bibitem{3-tr}
+\Au{Рудаков К.\,В., Торшин~И.\,Ю.} Анализ ин\-фор\-ма\-тив\-ности мотивов на основе критерия 
+разрешимости в~задаче распознавания вторичной структуры белка~// Информатика и~её 
+применения, 2011. Т.~5. Вып.~4. С.~40--50.
+
+\bibitem{6-tr} %4
+\Au{Torshin I.\,Yu., Rudakov~K.\,V.} On the theoretical basis of metric analysis of poorly 
+formalized problems of recognition and classification~// Pattern Recognition Image Analysis, 2015. 
+Vol.~25. No.\,4. P.~577--587.
+
+\bibitem{4-tr} %5
+\Au{Torshin I.\,Yu., Rudakov~K.\,V.} Combinatorial analysis of the solvability properties of the 
+problems of recognition and completeness of algorithmic models. Part~2: Metric approach within 
+the framework of the theory of classification of feature values~// Pattern Recognition Image Analysis, 
+2017. Vol.~27. No.\,2. P.~184--199.
+\bibitem{5-tr} %6
+\Au{Torshin I.\,Yu., Rudakov~K.\,V.} On the procedures of generation of numerical features over 
+partitions of sets of objects in the problem of predicting numerical target variables~// Pattern 
+Recognition  Image Analysis, 2019. Vol.~29. No.\,4. P.~654--667. doi: 10.1134/S1054661819040175.
+
+\bibitem{9-tr} %7
+\Au{Ruddigkeit L., van Deursen~R., Blum~L., Reymond~J.} Enumeration of 166~billion organic 
+small molecules in the chemical universe database GDB-17~// J.~Chem. Inf. Model., 2012. Vol.~52. 
+No.\,11. P.~2864--2875. doi: 10.1021/ci300415d.
+
+\bibitem{7-tr} %8
+\Au{Torshin I.\,Yu., Rudakov~K.\,V.} On the application of the combinatorial theory of solvability 
+to the analysis of chemographs. Part~1: Fundamentals of modern chemical bonding theory and the 
+concept of the chemograph~// Pattern Recognition Image Analysis, 2014. Vol.~24. No.\,1.  
+P.~11--23.
+\bibitem{8-tr} % 9
+\Au{Torshin I.\,Yu., Rudakov~K.\,V.} On the application of the combinatorial theory of solvability 
+to the analysis of chemographs. Part~2: Local completeness of invariants of chemographs in view 
+of the combinatorial theory of solvability~// Pattern Recognition Image Analysis, 2014. Vol.~24. No.\,2. 
+P.~196--208.
+
+\bibitem{10-tr}
+\Au{Torshin I.\,Yu., Rudakov~K.\,V.} Topological data analysis in materials science: The case of 
+high-temperature cuprate superconductors~// Pattern Recognition Image Analysis, 2020. Vol.~30. No.\,2. 
+P.~262--274. doi: 10.1134/S1054661820020157.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 30.03.21}}
+
+\vspace*{6pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{ON THE APPLICATION OF~A~TOPOLOGICAL APPROACH TO~ANALYSIS OF~POORLY 
+FORMALIZED PROBLEMS FOR~CONSTRUCTING ALGORITHMS FOR~VIRTUAL 
+SCREENING OF~QUANTUM-MECHANICAL PROPERTIES OF~ORGANIC MOLECULES~I:
+THE BASICS OF~THE~PROBLEM-ORIENTED~THEORY}
+
+
+\def\titkol{On the application of~a~topological approach to~analysis of~poorly 
+formalized problems for~constructing algorithms~I}
+% for %~virtual 
+%screening}
+% of~quantum-mechanical properties of~organic molecules.  Part~1: The basics of~the~problem-oriented theory}
+
+
+\def\aut{I.\,Yu.~Torshin}
+
+\def\autkol{I.\,Yu.~Torshin}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-15pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+
+
+\Abste{The topological approach to the analysis of poorly formalized problems and the theory of 
+chemographs are extensions of Zhuravlev's algebraic approach to recognition. In the first part of the 
+article, a~problem-oriented
+formalism is proposed aimed at development of algorithms for 
+screening assessments of the quantum-mechanical\linebreak\vspace*{-12pt}}
+
+\Abstend{properties of molecules on the basis of their 
+chemical structure. Methods for introducing metrics on sets of molecules and procedures for 
+generating ``synthetic'' feature descriptions are proposed. The latter are generated by matching the 
+values of some ``expert'' metric on the set of molecular properties to a~tunable metric on the set of 
+molecular structures.}
+
+\KWE{algebraic approach; chemoinformatics; labeled graphs; combinatorial solvability analysis}
+
+
+
+\DOI{10.14357/19922264220106}
+
+%\vspace*{-16pt}
+
+\Ack
+\noindent
+This work was supported in part by RFBR grants 19-07-00356, 18-07-00944, 20-07-00537.
+
+
+
+
+%\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-tr-1}
+\Aue{Zhuravlev, Yu.\,I.} 1978. Ob algebraicheskom podkhode k~resheniyu zadach raspoznavaniya 
+ili klassifikatsii [On algebraic approach to recognition and classification problems]. 
+\textit{Problemy kibernetiki} [Cybernetic Problems] 33:5--68.
+\bibitem{2-tr-1}
+\Aue{Rudakov, K.\,V., and I.\,Yu.~Torshin}. 2010. Voprosy razreshimosti zadachi raspoznavaniya 
+vtorichnoy struktury belka [Questions of solvability of the problem of recognition of the secondary 
+structure of a protein]. \textit{Informatika i~ee Primeneniya~--- Inform Appl.} 4(2):25--35.
+\bibitem{3-tr-1}
+\Aue{Rudakov, K.\,V., and I.\,Yu.~Torshin.} 2011. Analiz informativnosti motivov na osnove 
+kriteriya razreshimosti v~zadache raspoznavaniya vtorichnoy struktury belka [Analysis of the 
+informativeness of motives based on the criterion of solvability in the problem of recognizing the 
+secondary structure of a~protein]. \textit{Informatika i~ee Primeneniya~--- Inform Appl.} 
+5(4):40--50.
+
+\bibitem{6-tr-1} %4
+\Aue{Torshin, I.\,Yu., and K.\,V.~Rudakov.} 2015. On the theoretical basis of metric analysis of 
+poorly formalized problems of recognition and classification. \textit{Pattern Recognition Image 
+Analysis} 25(4):577--587.
+\bibitem{4-tr-1} %5
+\Aue{Torshin, I.\,Yu., and K.\,V.~Rudakov.} 2017. Combinatorial analysis of the solvability 
+properties of the problems of recognition and completeness of algorithmic models. Part~2: Metric 
+approach within the framework of the theory of classification of feature values. 
+\textit{Pattern Recognition Image Analysis} 27(2):184--199. 
+\bibitem{5-tr-1} %6
+\Aue{Torshin, I.\,Yu., and K.\,V.~Rudakov.} 2019. On the procedures of generation of numerical 
+features over partitions of sets of objects in the problem of predicting numerical target variables. 
+\textit{Pattern Recognition Image Analysis} 29(4):654--667.  doi: 10.1134/S1054661819040175.
+
+\bibitem{9-tr-1} %7
+\Aue{Ruddigkeit, L., R.~van Deursen, L.~Blum, and J.~Reymond.} 2012. Enumeration of 
+166~billion organic small molecules in the chemical universe database GDB-17. \textit{J.~Chem. 
+Inf. Model.} 52(11):2864--2875.  doi: 10.1021/ci300415d.
+\bibitem{7-tr-1} %8
+\Aue{Torshin, I.\,Yu., and K.\,V.~Rudakov.} 2014. On the application of the combinatorial theory 
+of solvability to the analysis of chemographs. Part~1: Fundamentals of modern chemical bonding 
+theory and the concept of the chemograph. \textit{Pattern Recognition Image Analysis} 24(1):11--23. 
+\bibitem{8-tr-1} %9
+\Aue{Torshin, I.\,Yu., and K.\,V.~Rudakov.} 2014. On the application of the combinatorial theory 
+of solvability to the analysis of chemographs. Part~2: Local completeness of invariants of 
+chemographs in view of the combinatorial theory of solvability. \textit{Pattern Recognition Image 
+Analysis} 24(2):196--208.
+
+\bibitem{10-tr-1}
+\Aue{Torshin, I.\,Yu., and K.\,V.~Rudakov.} 2020. Topological data analysis in materials science: 
+The case of high-temperature cuprate superconductors. \textit{Pattern Recognition Image Analysis} 
+30(2):262--274.  doi: 10.1134/S1054661820020157.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received March 30, 2021}}
+
+%\pagebreak
+
+%\vspace*{-18pt}
+
+  \Contrl
+  
+  \noindent
+  \textbf{Torshin Ivan Yu.} (b.\ 1972)~--- Candidate of Science (PhD) in physics and mathematics, 
+Candidate of Science (PhD) in chemistry, senior scientist, A.\,A.~Dorodnicyn Computing Center, 
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 
+40~Vavilov Str., Moscow 119333, Russian Federation; \mbox{tiy135@yahoo.com}
+
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

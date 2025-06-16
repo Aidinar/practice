@@ -1,0 +1,1415 @@
+\renewcommand{\figurename}{\protect\bf Figure}
+\renewcommand{\tablename}{\protect\bf Table}
+
+\def\stat{razumchik}
+
+
+\def\tit{ALGEBRAIC METHOD FOR APPROXIMATING JOINT STATIONARY DISTRIBUTION IN FINITE CAPACITY
+QUEUE WITH NEGATIVE CUSTOMERS AND TWO QUEUES$^*$}
+
+\def\titkol{Algebraic method for approximating joint stationary distribution in finite capacity
+queue with negative customers and two queues}
+
+\def\autkol{R.~Razumchik}
+
+\def\aut{R.~Razumchik$^1$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\footnotetext[1] {This work was supported in part by the
+Russian Foundation for Basic Research (grants 15-07-03007 and 13-07-00223).}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences,
+44-2 Vavilov Str., Moscow 119333, Russian Federation;
+Peoples' Friendship University, 6 Miklukho-Maklaya Str., Moscow 117198, Russian Federation,
+rrazumchik@ipiran.ru}
+
+
+\vspace*{-9pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2015\ \ \ volume~9\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2015\ \ \ volume~9\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+
+\Abste{Consideration is given to the single-server
+queueing system (QS) with a~Poisson flow of (ordinary)
+customers and Poisson flow of negative customers.
+There is a~queue of capacity~$k$ ($0<k<\infty$), where ordinary customers
+wait for service. 
+If an ordinary customer finds the queue full upon an arrival, it is considered to be lost.
+Each negative customer upon arrival 
+moves one ordinary customer from the queue, if it not empty, to 
+another queue (bunker) of capacity~$r$ ($0<r<\infty$) and after that it leaves the system. 
+If upon arrival of a negative customer the queue is not empty 
+and the bunker is full, the negative customer and one ordinary customer from
+the queue leave the system. In all other cases, an
+arrival of a~negative customer has no effect on the system.
+Customers from bunker are served with relative priority (i.\,e.,
+a customer from bunker enters server if only there 
+are no customers in the queue to be served).
+Service times of customers from both the queue and the bunker 
+are exponentially distributed with the same parameter. 
+Purely algebraic method based on generating functions, 
+Chebyshev and Gegenbauer polynomials
+for approximate calculation of
+joint stationary probability distribution
+is presented for the case $k=r$. 
+Numerical examples, showing both pros and cons of the method are provided.}
+
+
+\KWE{queueing system; negative customers; Gegenbauer polynomials; 
+stationary distribution; approximation}
+
+\DOI{10.14357/19922264150407} 
+
+\vspace*{6pt}
+
+
+\vskip 12pt plus 9pt minus 6pt
+
+      \thispagestyle{myheadings}
+
+      \begin{multicols}{2}
+
+                  \label{st\stat}
+
+
+\section{Introduction}
+
+\noindent
+Queueing systems and networks with negative customers have received
+significant attention from researches since they appeared in
+early 1990s~[1--4].
+This topic has already collected a big body of knowledge
+and it is neither possible nor intended to state here
+the comprehensive list of related papers.
+For review of the publications up to~2011, one
+can be referred to~[5--7].
+Detailed bibliography up to~2011 can be found in~\cite{tien}.
+Among the latest research results, one can mention, 
+for example,~[7--19]. %\cite{newnew}--\cite{mikl}. %~\cite{aaa3}, 
+%\cite{aaa1}--\cite{aaa4}.
+The novel approach to the analysis of networks with negative customers one
+can find in~\cite{z1, z2}.
+
+The concept of negative customer turned out to be versatile.
+Quite often, it is assumed that the arrival of a~negative customer leads to
+permanent removal of other (ordinary) customers residing
+in the system. It can also be the case that 
+negative arrivals move ordinary customers
+between queues or nodes in the network.
+One of the problems' statements introduced in~\cite{ros-cas} implies that negative
+customers do not remove ordinary customers
+waiting for service in the buffer 
+from the system, but delay their service by
+displacing them into another queue (bunker)
+wherefrom they are served according to a certain discipline
+(say, for example, relative priority).
+Latest results of the analysis of QS with such type of
+negative customers are presented in~\cite{new8, new7, new9, mikl}.
+Particular interest in the analysis of
+such QS presents the case
+when queues' capacities (of buffer and bunker) are finite.
+{\looseness=-1
+
+}
+
+It is shown in~\cite{aaa6} that apart from matrix analytic approach,
+Gaussian elimination method, and known numerical methods,
+it is possible to obtain joint stationary distribution
+utilizing properties of generating functions
+and special functions (Chebyshev and Gegenbauer polynomials).
+Note that such approach is not new as it was already used in~\cite{avrach} 
+(and later in some other papers, for example, in~\cite{peter})
+but for the analysis of another types of QS.
+The method presented in~\cite{aaa6}
+which allows one to do it is direct and suitable for exact arithmetics implementation
+though still suffers from computational problem.
+{It is expressed} in the need to efficiently perform basic operations with arbitrary big numbers.
+
+In this paper, the modification of
+method from~\cite{aaa6} is presented, which makes it, from the one hand, approximate
+and, from the other hand, allows one to carry out the computations
+of stationary performance characteristics
+for higher values of queues' capacities almost without
+loosing accuracy. One interesting feature of the proposed method revealed during numerical
+experiments (see section~4) indicates that
+depending on initial values, one can obtain exact values for several
+performance characteristics using worst-case approximation (which substantially cuts computation time).
+
+
+The rest of the paper is organized as follows. Section~2 is devoted to
+the detailed description of the system, equilibrium equations for
+joint stationary probabilities, and several useful relations
+that follow from rate-in-rate-out principle.
+In section~3, it is shown how to use
+generating functions and Chebyshev and Gegenbauer polynomials in order
+to obtain expressions for joint stationary probability distribution
+and to calculate stationary performance characteristics.
+Computational results are provided in section~4. In conclusion,
+the summary of the paper and future research plans are given.
+
+\section{Description of~the~System}
+
+\noindent
+Consideration is given to the QS with
+incoming Poisson flow of ordinary customers of intensity~$\lambda$
+and Poisson flow of negative customers of intensity~$\lambda^-$.
+For ordinary customers, there is a finite buffer of size~$k$.
+If upon arrival of ordinary customer buffer is full, it is lost.
+A~negative customer upon arrival moves one ordinary customer from buffer
+(if it is not empty; negative customers cannot remove customer which is
+in service) to another queue of finite capacity~$r$ (bunker).
+If upon arrival of a negative customer the queue in the buffer is not empty but
+bunker is full, the customer that is displaced from buffer is lost.
+Customers from both queues are served according
+to exponential distribution with the same parameter~$\mu$,
+FIFO (first in, first out) discipline, but the customers from 
+the bunker are served with relative
+priority. This means that the customer from the bunker goes to the server
+only when server finished service of all customers from the buffer.
+
+Denote by $p_{ij}$ stationary probability of the fact that
+there are~$i$~customers in buffer, $j$~customers in bunker,
+and server is busy. By~$p_0$, denote stationary probability of empty system.
+Stationary distribution satisfies the following system of equilibrium equations:
+\begin{equation}    
+\lambda p_0 = \mu p_{00}\,;
+\label{eq31}
+\end{equation}
+\begin{equation}    
+(\lambda+\mu)p_{00}=\lambda p_0 + \mu p_{10} + \mu p_{01}\,,\ \ i=0\,, \ j=0\,;
+\label{eq32}
+\end{equation}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\left(\lambda+\mu+\lambda^-\right)
+p_{i0}=\lambda p_{i-1,0} + \mu p_{i+1,0}\,, \\ 
+i=1\,, \dots, k-1\,, \ j=0\,;
+\label{eq33}
+\end{multline}
+%%%%%%%%%%%%%%%%
+
+\vspace*{-6pt}
+
+\noindent
+\begin{equation}
+\left(\mu+\lambda^-\right)p_{kj}=\lambda p_{k-1,j}\,,\
+i=k\,, \ j=0\,, \dots, r\,;
+\label{eq34}
+\end{equation}
+%%%%%%%%%%%%%%%%
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\left(\lambda+\mu\right) p_{0j}=\mu p_{1j} + \lambda^- p_{1,j-1} + 
+\mu p_{0,j+1}\,,\\ 
+i=0\,, \ j=1\,, \dots , r-1\,;
+\label{eq35}
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\left(\lambda+\mu\right) p_{0r}=(\mu + \lambda^- ) p_{1r}+ \lambda^- p_{1,r-1}\,,\\
+i=0\,, \ j=r\,;
+\label{eq36}
+\end{multline}
+
+%\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\left(\lambda+\mu+\lambda^-\right)p_{ij}=\lambda p_{i-1,j} + \mu p_{i+1,j} +
+ \lambda^- p_{i+1,j-1}\,,\\  
+ i=1,\dots , k-1\,, \ j=1,\dots ,r-1\,;
+\label{eq37}
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\left(\lambda+\mu+\lambda^-\right)p_{ir}=\lambda p_{i-1,r}+ \lambda^- p_{i+1,r-1}\\ +
+\left(\mu + \lambda^-\right) p_{i+1,r}\,,\  
+i=1 ,\dots , k-1\,, \ j=r\,,
+\label{eq38}
+\end{multline}
+%%%%%%%%%%%%%%%%
+with the normalization condition
+\begin{equation*}
+p_{0} + \sum\limits_{i=0}^k \sum\limits_{j=0}^r p_{ij} = 1\,.
+%\label{eq39}
+\end{equation*}
+
+Although for the sake of clarity further the case $k=r$
+and $r \ge 6$ will be considered, there appears nothing new (but only technical details) 
+in the general case $0<k<\infty$, $0<r<\infty$.
+
+One of the key relations that allows the computation
+of stationary joint probability distribution is the one which shows how
+probability of empty system~$p_0$ depends on boundary probabilities
+$\{ p_{0j}, \ j=1,\dots ,r \}$, $\{ p_{i0}, \ i=1,\dots ,r-1 \}$,
+$\{ p_{ir}, \ i=1,\dots ,r-1 \}$, and $\{ p_{rj}, \ j=0 ,\dots , r \}$.
+It is shown in~\cite{aaa6} using rate-in-rate-out principle
+that for probability~$p_0$, it holds
+\begin{equation}
+p_0 = 1- \fr{ (1-q^{r+1} )\rho }{(1-\rho + \lambda^-/\mu) q^{r+1}}
+ \sum\limits_{j=0}^{r}p_{rj} 
+\label{eq54}
+\end{equation}
+where here and henceforth $\rho=\lambda/\mu$, $q=\lambda/(\mu+\lambda^-)$.
+ Thus, for the considered QS, the probability~$p_0$, 
+ besides initial parameters $r$, $\lambda$, $\lambda^-$, and $\mu$, depends only on the boundary 
+probabilities $\{ p_{rj}, \ j=0 ,\dots , r \}$.
+In \cite{aaa6}, it is shown how it is possible to find such values~$X_{rj}$ 
+that $p_{rj}=X_{rj} p_0$ and how then, using~(\ref{eq54}), one can compute 
+the probability~$p_0$ and, consequently, the whole joint probability distribution. 
+In the next section, the author follows the argumentation from~\cite{aaa6}
+and suggests modifications for several steps that lead to approximate solution. 
+
+\section{Approximation of~Joint Stationary Probability Distribution}
+
+\noindent
+Introduce double probability generating function (PGF)
+\begin{equation*}
+P(u,v) = \sum\limits_{i=0}^r \sum\limits_{j=0}^r p_{ij} u^i v^j\,,
+\ \ 0 \le u \le 1\,, \ \ 0 \le v \le 1\,.
+\end{equation*}
+Multiplying~(\ref{eq31})--(\ref{eq38}) by $u^i v^j$ and summing over all
+values of~$i$ and~$j$, having collected common terms, one obtains
+\begin{multline*}
+- \left[\lambda u^2 -\left(\lambda +\mu +\lambda^-\right) u + \mu + \lambda^- v \right] P(u,v)
+\\
+{}=\fr{\mu u (v-1)}{v}\, p_{00} + \lambda u^{r+1} (1-u) \sum\limits_{j=0}^{r} p_{rj} v^j
+\end{multline*}
+
+\noindent
+\begin{multline}
+{}+ \fr{(\mu + \lambda^- v)(u-v)}{v} \sum\limits_{j=0}^{r} p_{0j} v^j{}\\
++ \lambda^- v^r (1-v) \sum\limits_{i=1}^{r} p_{ir} u^i\,.
+\label{eq519}
+\end{multline}
+The expression in the square brackets in the left part of the Eq.~(\ref{eq519})
+is a~polynomial of a second degree in~$u$.
+Its roots have the form: 
+\begin{multline*}
+u_{1,2} = u_{1,2} (v)\\
+{}= \fr{\lambda + \mu + \lambda^- \mp
+\sqrt{(\lambda + \mu + \lambda^-)^2 -
+4\lambda (\mu + \lambda^- v)}}{2 \lambda}\,.
+\end{multline*}
+
+It can be seen that $u_2(v)>1$ and $0<u_1(v) \le 1$ for $0 \le v \le 1$.
+Generating function $P(u,v)$ is the ratio of two polynomial functions.
+For each value of~$v$, PGF $P(u,v)$ is the continuous function of~$u$
+on the whole set~$\mathbf{R}$ of real numbers.
+Then, as left part in~(\ref{eq519})
+vanishes at points $(u_1(v),v)$ and $(u_2(v),v)$,
+the right part must vanish at these points too. Therefore, one obtains two equations:
+\begin{multline}
+%\label{(5-1n)}
+\label{eq520}
+\fr{\mu u_1 (v-1)}{v}\, p_{00} +
+\lambda u_1^{r+1} (1-u_1) \sum\limits_{j=0}^{r} p_{rj} v^j 
+{}\\
+{}+
+\fr{(\mu + \lambda^- v)(u_1-v)}{v} \sum\limits_{j=0}^{r} p_{0j} v^j \\
+{}+
+\lambda^- v^r (1-v) \sum\limits_{i=1}^{r} p_{ir} u_1^i = 0\,;
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+%\label{(5-2n)}
+\label{eq521}
+\fr{\mu u_2 (v-1)}{v}\, p_{00} + \lambda u_2^{r+1} (1-u_2) \sum\limits_{j=0}^{r} p_{rj} v^j
+ \\
+{}+ \fr{(\mu + \lambda^- v)(u_2-v)}{v} \sum\limits_{j=0}^{r} p_{0j} v^j\\
+{} +
+\lambda^- v^r (1-v) \sum\limits_{i=1}^{r} p_{ir} u_2^i =0\,.
+\end{multline}
+If one now expresses the term with~$p_{00}$ from~(\ref{eq520})
+and put it into~(\ref{eq521}), after collecting common terms,
+one gets the following equation:
+\begin{multline}
+%\label{(5-3n)}
+\label{eq522}
+\left (
+\fr{u_2^r -u_1^r }{u_2 - u_1} -
+\fr{u_2^{r+1} -u_1^{r+1}}{u_2 - u_1} \right ) \sum\limits_{j=0}^{r} p_{rj} v^j +{}
+\\
+{}+
+\fr{\lambda^- v^r (1-v)}{\lambda } \sum\limits_{i=1}^{r} p_{ir} 
+\fr{u_2^{i-1} -u_1^{i-1}}{u_2 - u_1}\\
+{} +\sum\limits_{j=0}^{r} p_{0j} v^j = 0\,.
+\end{multline}
+But if one expresses term with
+$\sum_{j=0}^{r} p_{0j} v^j$ from~(\ref{eq520}) and puts it into~(\ref{eq521}), one obtains:
+
+\noindent
+\begin{multline}
+\label{eq523}
+%\label{(5-4n)}
+\mu (1-v)p_{00} + \mu \left (
+\fr{u^r_2 - u^r_1 }{u_2-u_1} -
+\fr{u^{r+1}_2 - u^{r+1}_1}{u_2-u_1} \right ) \sum\limits_{j=0}^{r} p_{rj} v^j  \\
+{}+ \left (
+\lambda^- \fr{u^r_2 - u^r_1}{ u_2-u_1} -
+\left(\lambda + \lambda^-\right)\fr{u^{r+1}_2 - u^{r+1}_1}{u_2-u_1}\right.\\
+\left. +
+\lambda \fr{u^{r+2}_2 - u^{r+2}_1}{u_2-u_1} \right) 
+\sum\limits_{j=0}^{r} p_{rj} v^{j+1}
+\\
+{}+ \fr{\mu \lambda^- v^r (1-v)}{\lambda}
+\sum\limits_{i=1}^{r} p_{ir} \fr{u_2^{i-1} - u_1^{i-1} }{ u_2-u_1}\\
+{}- \lambda^- v^{r+1} (1-v) \sum\limits_{i=1}^{r} p_{ir} 
+\fr{u_2^{i} - u_1^{i}}{u_2-u_1} + {} \\
+{}+ \fr{(\lambda^-)^2 v^{r+1} (1-v)}{\lambda}
+\sum\limits_{i=1}^{r} p_{ir} \fr{ u_2^{i-1} - u_1^{i-1} }{u_2-u_1} = 0\,.
+\end{multline}
+
+Though the expressions for the roots $u_{1}(v)$ and $u_{2}(v)$ are known,
+use the  Lagrange interpolating polynomials ($L^1_{n}(v)$ and $L^2_{n}(v)$,
+respectively), which coincide with
+$u_{1}(v)$ and $u_{2}(v)$ at $n+1$ different points.
+It is known (see, e.\,g.,~\cite{suetin})
+that the {approximation error $u_{1}(v) \approx L^1_{n}(v)$
+(and $u_{2}(v) \approx L^2_{n}(v)$)}
+is minimum if the interpolation nodes $\overline{v}_k$  are
+the zeros of the Chebyshev polynomials $T_{n+1}(v)$ of the first kind
+of degree $n+1$, i.\,e.,
+
+\noindent
+$$
+\overline{v}_k = \cos \left (
+\fr{(2k-1) \pi }{2n+2}\right )\,, \ k=1,2, \dots ,n+1\,.
+$$
+Given that Chebyshev polynomials of the first kind are defined on $[-1,1]$
+and functions $u_{1,2}(v)$ are defined
+for $v \in [0,1]$, then the values of nodes must
+be recalculated using linear transformation, i.\,e., the new nodes have the values
+
+\noindent
+$$
+v_k = \fr{\overline{v}_k+1}{2}\,, \ k=1,2, \dots , n+1\,.
+$$
+Now, the expressions $(u_2^i - u_1^i)/(u_2-u_1)$, $i \ge 1$,
+that enter Eqs.~(\ref{eq522}) and~(\ref{eq523}),
+can be rewritten in the form:
+
+\noindent
+\begin{multline*}
+%\label{(5-6n)}
+\fr{u_2^i - u_1^i}{ u_2-u_1}=
+\fr{u_2(v)^i - u_1(v)^i }{u_2(v)-u_1(v)}=
+\fr{L^2_n(v)^i - L^1_n(v)^i}{L^2_n(v)-L^1_n(v)}\\
+{}=
+f_{in}(v)\,, \ i \ge 1\,, v \in [0,1]\,.
+\end{multline*}
+\noindent 
+It is known (see, e.\,g.,~\cite{cheb})
+that the function $f_{in}(v)$
+that interpolates the fraction $(u_2^i - u_1^i)/(u_2-u_1)$
+at $n+1$ zeros of Chebyshev polynomials of the first kind
+can be written as their combination, that is,
+
+\noindent
+\begin{equation}
+\label{funap}
+f_{in}(v) \approx \sum\limits_{k=0}^n w_{ik} T_{k}(2v-1)
+\end{equation}
+where the coefficients $w_{k}$
+
+\pagebreak
+
+\noindent
+\begin{align*}
+w_{i1}&=\fr{\sum\nolimits_{j=1}^{n+1} f_{in}(v_j) T_{1}(\overline{v}_j)
+}{n+1}\,; 
+\\
+w_{ik}&=
+\fr{2 \sum\nolimits_{j=1}^{n+1} f_{in}(v_j) T_{k}(\overline{v}_j)
+}{n+1}\,, \ \ k=1 ,\dots , n \,.
+\end{align*}
+In~\cite{aaa6}, there was found the closed-form expression
+for $(u_2^i - u_1^i)/(u_2-u_1)$
+which is a polynomial of integer degree $\lfloor{i/2}\rfloor$ in~$v$ with real coefficients.
+{Here is the main point of modification.}
+In~(\ref{funap}), the \textbf{same} number of interpolation nodes~$n$ for 
+every $i>1$ in  such way that $n < \lfloor{r/2}\rfloor$. This reduces 
+the degrees of the polynomials
+ that need to be computed and, consequently, leads to the simplification of
+ calculations (of course, at the expense of  {accuracy loss}).
+
+Using the exact relations between the Chebyshev polynomials $T_{k}(v)$ 
+and $U_{k}(v)$ of the first and the second kind, respectively, 
+$T_{k}(v) = U_{k}(v) - v U_{k-1}(v)$ and noticing that $U_{-1}(v)=0$,
+one can rewrite~(\ref{funap}) in the form:
+\begin{multline}
+\label{funap1}
+f_{in}(v)\approx \sum\limits_{k=0}^n w_{ik} U_{k}(2v-1)\\
+{} -
+(2v-1) \sum\limits_{k=0}^{n-1} w_{i,k+1} U_{k}(2v-1)\,.
+\end{multline}
+
+Denote by $U^{(m)}_{n}(v)$ the $m$th derivative of $U_n(v)$ at point~$v$.
+Derivatives $U^{(m)}_{n}(v)$ are related with Gegenbauer polynomials $C^m_n(v)$
+by equality (see, e.\,g.,~\cite[p.\,186]{erdelyi})
+\begin{equation}
+U^{(m)}_{n}(v)= 2^m m! C_{n-m}^{m+1} (v)\,.
+\label{eq47}
+\end{equation}
+The values of $C^m_n(v)$ at point $v=0$ are given by (see, 
+e.\,g.,~\cite[p.\,175]{erdelyi}):
+\begin{equation*}
+%\label{eq48}
+C_{n}^{m} (0)= 
+\begin{cases}
+    0, &\ n \ne 2l\,;  \\
+   \fr{(-1)^{n/2} {\Gamma} (m + {n/2})}{({n/2})! {\Gamma} (m)}, &\ n=2l\,.
+\end{cases}
+%\label{(14n)}
+\end{equation*}
+Here, ${\Gamma} (n)$ denotes gamma function. Expanding in~(\ref{funap1}) 
+functions $U_{k}(2v-1)$ in Maclaurin series and using~(\ref{eq47}), one obtains
+\begin{multline*}
+f_{in}(v) \approx \sum\limits_{k=0}^n w_{ik} \sum\limits_{m=0}^{k}
+2^m (2v-1)^m C_{k-m}^{m+1} (0)\\
+{} -
+\sum\limits_{k=0}^{n-1} w_{i,k+1} \sum\limits_{m=0}^{k} 2^m (2v-1)^{m+1} 
+C_{k-m}^{m+1} (0)\,.
+\end{multline*}
+The latter expression
+is the polynomial of integer degree~$n$ in~$v$, that is,
+\begin{equation}
+\label{funap2}
+f_{in}(v) \approx \sum\limits_{j=0}^n h_{ij} v^j
+\end{equation}
+where the coefficients~$h_j$ are computed using the following relations:
+\begin{align*}
+h_{i0}&=\! \sum\limits_{m=0}^{n-1} \!(-2)^m \sum\limits_{k=m}^{n-1} \left[w_{ik}
+C_{k-m}^{m+1} (0) + w_{i,k+1} C_{k-m}^{m+1} (0)\right]\\
+& \hspace*{30mm}{}+ \sum\limits_{m=0}^{n} (-2)^m w_{i,n} C_{n-m}^{m+1} (0)\,;
+\\
+h_{ij}&= 2^j \left( \sum\limits_{m=j}^{n} 2^m \begin{pmatrix}{m}\\{j}\end{pmatrix}
+(-1)^{m-j} \sum\limits_{k=m}^n w_{ik} C_{k-m}^{m+1} (0)\right.\\
+&\hspace*{20mm}{}- 2^{j-1} \sum\limits_{k=j-1}^{n-1} w_{i,k+1} C_{k-j+1}^{j} (0) 
+\\
+&\hspace*{-7mm}\left. {}-\sum\limits_{m=j}^{n-1}\! 2^m \begin{pmatrix}{m+1}\\{j}\end{pmatrix}
+ (-1)^{m+1-j} \sum\limits_{k=m}^{n-1}\!
+w_{i,k+1} C_{k-m}^{m+1} (0) \right)\!;
+\\
+h_{in}&= w_{in} 2^{2n-1} \left ( 2 C_{0}^{n+1} (0) -
+C_{0}^{n} (0) \right)\,.
+\end{align*}
+Here, $\begin{pmatrix}{n}\\{k}\end{pmatrix}$ is the number of the $k$th combination from~$n$.
+
+Now, let go back to the simplification of equalities~(\ref{eq522}) and~(\ref{eq523}).
+The coefficient in front of the sum in the first term 
+of~(\ref{eq522}) can be represented, with respect to~(\ref{funap2}), as
+\begin{multline}
+\label{(5-9n)}
+\fr{u_2^r -u_1^r}{u_2 - u_1}- \fr{u_2^{r+1} -u_1^{r+1}}{u_2 - u_1}\\
+{}=\sum\limits_{j=0}^n h_{rj} v^j- \sum\limits_{j=0}^n h_{r+1,j} v^j
+=
+\sum\limits_{j=0}^n A_j v^j 
+\end{multline}
+where $A_j=h_{rj} - h_{r+1,j}$. The second term in~(\ref{eq522})
+can be rewritten as 
+\begin{equation}
+\label{(5-10n)}
+\sum\limits_{i=1}^{r} p_{ir} \fr{u_2^{i-1} -u_1^{i-1} }{u_2 - u_1}
+=p_{2r} + \sum\limits_{j=0}^n B_j v^j
+\end{equation}
+where $B_j=\sum_{i=3}^{r} p_{ir} h_{i-1,j}$. Now, if one puts~(\ref{(5-9n)})
+and~(\ref{(5-10n)}) into~(\ref{eq522}) and
+collects the common terms, one obtains the following equation:
+\begin{multline*}
+\sum\limits_{m=0}^{n}  v^m \left[ \sum\limits_{i=0}^m
+p_{r,m-i} A_i + p_{0m}\right]\\
+{} + \sum\limits_{m=n+1}^{r}  v^m \left[\sum_{i=0}^n
+p_{r,m-i} A_i + p_{0m}\right]  \\
+{}+
+\sum\limits_{m=r+1}^{r+n}  v^m \left[ \sum\limits_{i=m-r}^n p_{r,m-i} A_i +
+\fr{\lambda^- }{\lambda }B_{m-r}\right]\\
+{} +
+\fr{\lambda^-}{\lambda }\, v^r \left[p_{2r}+B_0\right]  - 
+\fr{\lambda^-}{\lambda }\, v^{r+1} \left[p_{2r}+B_0\right]\\
+{} -
+\fr{\lambda^- }{\lambda } \sum\limits_{m=r+2}^{r+n+1} B_{m-r-1} v^{m}=0\,.
+\end{multline*}
+This is polynomial in a single variable~$v$ of integer degree $r+n+1$.
+From the fact that it equals zero $\forall v \in [0,1]$ and,
+therefore, its coefficients are all equal to zero, one obtains the following system
+of algebraic equations with constant coefficients:
+\begin{equation}
+\label{(5-18n)}
+\sum\limits_{i=0}^m p_{r,m-i} A_i + p_{0m}=0\,, \enskip 0 \le m \le n\,;
+\end{equation}
+\begin{equation}
+\sum\limits_{i=0}^n p_{r,m-i} A_i + p_{0m}=0\,, \enskip n+1 \le m \le r-1\,;
+\label{5-18na}
+\end{equation}
+\begin{equation}
+\sum\limits_{i=0}^n p_{r,r-i} A_i + p_{0r} + \fr{\lambda^-}{\lambda }
+\left[p_{2r}+B_0\right] =0\,, \enskip m=r\,; 
+\label{5-18nb}
+\end{equation}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\sum\limits_{i=1}^n p_{r,r+1-i} A_i + \fr{\lambda^- }{\lambda }\,B_{1}
+- \fr{\lambda^-}{\lambda } \left[p_{2r}+B_0\right] =0\,,
+\\ m = r+1\,;
+\label{e5-18nc}
+\end{multline}
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\sum\limits_{i=m-r}^n p_{r,m-i} A_i + \fr{\lambda^-}{\lambda }B_{m-r}
+- \fr{\lambda^- }{\lambda } \,B_{m-r-1} =0\,, \\
+ r+2 \le m \le r+n\,;
+\label{e5-18nd}
+\end{multline}
+\begin{equation}
+-\fr{\lambda^-}{\lambda }\, B_{n}=0\,, \enskip  m = r+n+1\,. 
+\label{e5-18ne}
+\end{equation}
+
+If one sums up all equations starting from $m=r+1$, one obtains
+\begin{equation}
+\label{conn}
+\fr{\lambda^- }{\lambda } \left[p_{2r}+B_0\right] =
+\sum\limits_{m=r+1}^{r+n} \sum\limits_{i=m-r}^n p_{r,m-i} A_i\,.
+\end{equation}
+
+Now, simplify relation~(\ref{eq523}) by analogy with~(\ref{eq522}).
+It is straightforward to show that the coefficient in front of the sum
+in the third term, with respect to~(\ref{funap2}), equals
+\begin{multline}
+\label{da}
+\lambda^- \fr{u^r_2 - u^r_1 }{u_2-u_1} -
+\left(\lambda + \lambda^-\right) \fr{u^{r+1}_2 - u^{r+1}_1}{u_2-u_1}\\
+{}+
+\lambda \fr{u^{r+2}_2 - u^{r+2}_1}{u_2-u_1} = \sum\limits_{j=0}^n
+D_j v^j 
+\end{multline}
+where $D_j = \lambda^- h_{rj} - (\lambda + \lambda^-) h_{r+1,j} +
+\lambda h_{r+2,j}$. The last term in~(\ref{eq523}) simply equals
+\begin{equation}
+\label{da2}
+\sum\limits_{i=1}^{r} p_{ir} \fr{ u_2^{i} - u_1^{i} }{u_2-u_1} = p_{1r} +
+ \sum\limits_{j=0}^n E_j v^j
+\end{equation}
+where $E_j= \sum_{i=2}^{r} p_{ir} h_{ij}$.
+By putting the representations~(\ref{(5-9n)}), (\ref{(5-10n)}), (\ref{da}) 
+and~(\ref{da2}) in~(\ref{eq523}), having collected the common terms, one arrives at the
+following equation: 
+\begin{multline*}
+\mu (1-v)p_{00} + \mu \left (
+\sum\limits_{m=0}^n \!v^m \sum\limits_{i=0}^{m} \!p_{r,m-i} A_i\right.\\
+\left.{} +
+\sum\limits_{m=n+1}^r\!\!\! v^m \!
+\sum\limits_{i=0}^{n} p_{r,m-i} A_i + 
+\sum\limits_{m=r+1}^{n+r}\!\! \!v^m \! \sum\limits_{i=m-r}^{n} p_{r,m-i} A_i
+\right)\hspace*{-9.41606pt}
+\end{multline*}
+
+\noindent
+\begin{multline*}
+\hspace*{-3mm}{} + \left(
+\sum\limits_{m=1}^{n+1} v^{m}\! \sum\limits_{i=0}^{m-1} p_{r,m-i-1} D_i
++\!\!\!\sum\limits_{m=n+2}^{r+1}\! \!\!v^{m} \!\sum\limits_{i=0}^{n} p_{r,m-i-1} D_i\right.\\
+\left.{}+ \sum\limits_{m=r+2}^{n+r+1} v^{m}\!\! \!
+\sum\limits_{i=m-r-1}^{n}\! p_{r,m-i-1} D_i\!
+\right)
+ +
+\fr{\mu \lambda^-}{\lambda}\,v^r \left[
+p_{2r}+B_0\right ]\\
++v^{r+1} \lambda^- \left (
+\left[p_{2r} + B_0\right] \fr{(\lambda^- - \mu) }{\lambda}
+-\left[p_{1r} + E_0\right] \right) \\
+{}+ v^{r+2} \lambda^- \left (
+p_{1r} + E_0 - \fr{\lambda^-}{\lambda} \left[ p_{2r} + B_0\right]
+\right)\\
+{}+ \fr{\mu \lambda^-}{\lambda} \sum\limits_{j=1}^n B_j v^{r+j} 
+-
+\fr{\mu \lambda^-  }{\lambda} \sum\limits_{j=1}^n
+B_j v^{r+j+1}\\
+{} + \fr{(\lambda^-)^2  }{\lambda} \sum\limits_{j=1}^n B_j v^{r+j+1}
+-\fr{(\lambda^-)^2 }{\lambda} \sum\limits_{j=1}^n B_j v^{r+j+2} 
+\\
+{}-
+\lambda^- \sum\limits_{j=1}^n  E_j v^{r+j+1} +  \lambda^- \sum\limits_{j=1}^n  E_j v^{r+j+2}
+=0\,.
+\end{multline*}
+This is a polynomial in a single-variable~$v$ of integer degree $r+n+2$.
+From the fact that it equals zero $\forall v \in [0,1]$ and,
+therefore, its coefficients are all equal to zero,
+one can obtain the system of algebraic equations with constant coefficients. 
+Only
+first (starting from the lowest degree of~$v$) $r+1$ equations which are
+\begin{equation}
+\label{sys2}
+\mu p_{00} + \mu p_{r0} A_0=0\,, \enskip m=0\,;
+\end{equation}
+\begin{equation}
+\label{sys2a}
+-\mu p_{00} + \mu  \sum\limits_{i=0}^{1} p_{r,1-i} A_i +
+p_{r0} D_0 =0\,, \enskip m=1\,; 
+\end{equation}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\label{sys2b}
+\mu \sum\limits_{i=0}^{m} p_{r,m-i} A_i + \sum\limits_{i=0}^{m-1} p_{r,m-i-1} D_i
+=0\,, \\ 2 \le m \le n\,;
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\label{sys2c}
+\mu \sum\limits_{i=0}^{n} p_{r,n+1-i} A_i
++ \sum\limits_{i=0}^{n} p_{r,n-i} D_i =0\,, \\ m=n+1\,;
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\label{sys2d}
+\mu \sum\limits_{i=0}^{n} p_{r,m-i} A_i +
+\sum\limits_{i=0}^{n} p_{r,m-i-1} D_i =0\,, \\ n+2 \le m \le r-1\,;
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\label{sys2e}
+\hspace*{-4.53584pt}\mu \sum\limits_{i=0}^{n} p_{r,r-i} A_i +
+\sum\limits_{i=0}^{n} p_{r,r-i-1} D_i + \fr{\mu \lambda^- }{\lambda}
+\left[ p_{2r} + B_0\right] =0\,, \\ 
+m=r\,,
+\end{multline}
+
+\noindent
+are needed. The last term in Eqs.~(\ref{sys2e})
+depends on~$p_{ir}$, $i= 2 ,\dots , r$.
+But it can be replaced according to~(\ref{conn}) by the expression
+that contains only
+ probabilities~$p_{rj}$, $j= 0 ,\dots , r$,
+thus making the whole system~(\ref{sys2})--(\ref{sys2e}) solvable (up to a constant).
+Let one  now express from Eq.~(\ref{sys2}) probability~$p_{r0}$,
+from the Eq.~(\ref{sys2a})~--- probability~$p_{r1}$,
+from the Eq.~(\ref{sys2b})~--- probability~$p_{r2}$, etc.
+Consequently, one obtains the following recursive formulas for
+probabilities~$p_{rj}$, $j= 0 ,\dots , r$:
+
+\pagebreak
+
+\noindent
+\begin{equation}
+\label{fprj}
+\left.
+  \begin{array}{rl}
+p_{r0}& = - \fr{\lambda}{\mu A_0}\, p_0 \,, \ m=0\,; \\[6pt]
+p_{r1} &= -\fr{1}{\mu A_0} \left (
+ \mu A_1+D_0 + \mu  A_0 \right ) p_{r0} \,, \\[6pt]
+ &\hspace*{35mm} m=1\,; \\[6pt]
+p_{rm} &=\displaystyle  -\fr{1}{\mu A_0} \sum\limits_{i=0}^{m-1} p_{r,m-i-1} 
+(\mu A_{i+1} + D_i) \,, \\[6pt]
+& \hspace*{35mm}2 \le m \le n\,; \\[6pt]
+p_{r,n+1} &=\displaystyle-\fr{1}{\mu A_0} \left 
+( \mu \sum\limits_{i=0}^{n-1} p_{r,n-i} A_{i+1}\right.\\[6pt]
+&\left.{} +
+\displaystyle\sum\limits_{i=0}^{n} p_{r,n-i} D_i \right )\,, \ m=n+1\,; \\[6pt]
+p_{rm} &=\displaystyle-\fr{1}{\mu A_0} \left ( \mu \sum\limits_{i=1}^{n} p_{r,m-i} A_i\right.\\[6pt]
+&\hspace*{-10mm}\left. {}  + \displaystyle\sum\limits_{i=0}^{n} p_{r,m-i-1} D_i \right )\,, \
+n+2 \le m \le r-1\,; \\[6pt]
+p_{rr} &=\displaystyle-\fr{1}{\mu \sum\limits_{m=0}^{n} A_{m}} \left (
+\sum\limits_{i=0}^{n} p_{r,r-i-1} D_i\right.\\[6pt]
+&\left.{} + \displaystyle\mu \sum\limits_{m=0}^{n-1} 
+\sum\limits_{i=1}^{n-m} p_{r,r-i} A_{m+i} \right ) \,,\  m=r\,. 
+  \end{array}
+\right\}
+\end{equation}
+
+
+\noindent
+Notice that here,~$A_i$ and~$D_i$
+are the constants defined in~(\ref{(5-9n)}) and~(\ref{da}),
+and their values depend on the quality of approximation~(\ref{funap2}).
+
+From Eqs.~(\ref{(5-18n)})--(\ref{5-18nb}), taking into account~(\ref{conn}),
+one immediately obtains
+recurrence relations for probabilities $\{p_{0j}, \ j= 0 ,\dots , r \}$:
+\begin{equation}
+\label{ot2}
+\left.
+  \begin{array}{rl}
+p_{0,m}&= \displaystyle- \sum\limits_{i=0}^m p_{r,m-i} A_i \,, \ 0 \le m \le n\,; \\[6pt]
+p_{0,m}&= \displaystyle-  \sum\limits_{i=0}^n p_{r,m-i} A_i\,, \ n+1 \le m \le r-1\,; \\[6pt]
+p_{0,r}& = \displaystyle - \sum\limits_{m=r}^{r+n} 
+\sum\limits_{i=m-r}^n p_{r,m-i} A_i \,. 
+  \end{array}
+\right\}
+\end{equation}
+
+Now, the algorithm for the computation of the stationary
+joint probability distribution~$p_{ij}$ is 
+straightforward\footnote{In fact, it is the same as in~\cite{aaa6}; 
+so, here, it is just repeated for the sake of completeness.}:
+\begin{itemize}
+ \item
+ compute values $X_{rj}=p_{rj}/p_0$, $j= 0 ,\dots , r$,
+ using Eqs.~(\ref{fprj});
+
+ \item
+ compute probability~$p_0$ from~(\ref{eq54}) using representation $p_{rj}=p_0X_{rj}$;
+
+ \item
+compute  probabilities~$\{p_{rj}$, $j= 0 ,\dots , r \}$,
+using equation $p_{rj}=X_{rj} p_0$;
+
+  \item
+ compute probabilities $\{p_{0j}$, $j=0 ,\dots , r \}$,
+ using Eqs.~(\ref{ot2});
+   \item
+ compute probabilities $\{p_{r-1,j}$, $j=0 ,\dots , r \}$  using Eq.~(\ref{eq34});
+
+     \item
+     compute probabilities $\{p_{i0}$, $j=r-2 ,\dots , 1 \}$  using Eq.~(\ref{eq33});
+
+      \item
+     compute probabilities $\{p_{r-2,j}$, $j= r-1 ,\dots , 1 \}$  using Eq.~(\ref{eq37});
+     and
+
+    \item
+    for each $i=r-2 ,\dots , 1$, compute probabilities $\{p_{i-1,j}$, $j= r-1 ,\dots , 1\}$
+     using Eq.~(\ref{eq37}) and probabilities~$p_{i,r}$ using Eq.~(\ref{eq38}).
+\end{itemize}
+
+For some important performance characteristics of the system,
+one needs to perform only the first three steps of the algorithm,
+For example, the probability that the arriving customer
+is lost due to the full buffer equals $\pi_{1}=\sum\nolimits_{j=0}^{r}p_{rj}$.
+The probability~$\pi_{2}$ that the ordinary customer
+will be lost due to the full bunker equals
+$\pi_{2}=\lambda^- \sum_{i=1}^{r}p_{ir} /  (\lambda (1-\pi_{1})).$
+Other quantities such as the expected number and the variance of  
+number of customers in the buffer and in the bunker can be computed
+using the corresponding formulas given in~\cite{aaa6}.
+
+In the next section, the author presents some numerical examples
+which show how performance characteristics behave when
+one varies the quality of approximation~(\ref{funap2}).
+
+\vspace*{-6pt}
+
+\section{Numerical Examples}
+
+\noindent
+Here, the results of numerical computations of the following stationary 
+performance characteristics are presented:
+the probability that the arriving customer is lost due to the full buffer~($\pi_{1}$),
+probability customer displaced from buffer is lost due to the full bunker~($\pi_{2}$), 
+mean waiting time in buffer ($\omega_{\mathrm{buff}}$) and bunker~($\omega_{\mathrm{bunk}}$).
+
+Four different combinations of initial parameters are considered: 
+\begin{enumerate}[(1)]
+  \item $r=26$, $\lambda=7$, $\lambda^-=5$, $\mu=10$ (Table~1);
+  \item $r=26$, $\lambda=12$, $\lambda^-=5$, $\mu=10$ (Table~2);
+  \item $r=26$, $\lambda=20$, $\lambda^-=5$, $\mu=10$ (Table~3); and
+  \item $r=26$, $\lambda=20$, $\lambda^-=12$, $\mu=10$ (Table~4).
+\end{enumerate}
+For each of these cases, numerical computations were carried out
+using different number of interpolation nodes~$n$, specifically, $3 \le n < \lfloor r /2\rfloor$.
+The results are presented in Tables~1--4.
+Last line in each table states exact values of performance
+characteristics, obtained using algorithm from~\cite{aaa6}.
+
+
+From the results in the tables, one can see that {it is possible 
+to obtain (though not always)} the accurate
+values for the considered performance characteristics if
+the number of interpolation points is less than
+the degree of polynomials used in direct method (i.\,e., less
+than~$\lfloor{r/2}\rfloor$). Numerical experiments
+show that compu-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+%\begin{center}  %fig1
+
+\noindent
+%\noindent
+{{\tablename~1}\ \ \small{Performance characteristics for $r=26$, $\lambda=7$, $\lambda^-=5$, and $\mu=10$}}
+ 
+ \vspace*{-3pt}
+
+{\small\begin{center}
+\tabcolsep=6.8pt
+\begin{tabular}{ccrcr}
+\hline
+$n$ & $\pi_{1}$ & \multicolumn{1}{c}{$\pi_{2}$} & $\omega_{\mathrm{buff}}$ & 
+\multicolumn{1}{c}{$\omega_{\mathrm{bunk}}$}\\
+\hline
+3&      0.000000&  $ -0.426874$&      0.124851&   $-40.620061$\\
+4&      0.000000&   $-0.427355$&  0.124894&   $-0.053369$\\
+5&      0.000000&   $-0.743357$&      0.152544&   3.467104\\
+6&      0.000000&   $-0.084505$&      0.094894&   1.839610\\
+7&      0.000000&   0.007251&       0.086866&   0.364169\\
+8&      0.000000&   $-0.000211$&      0.087518&   0.637415\\
+9&      0.000000&   0.000004&       0.087500&   0.624550\\
+\hline
+&   0.000000&   0.000007&   0.087499&   0.624747\\
+\hline
+\end{tabular}
+\end{center}}
+%\end{table*}
+
+%%%2
+
+
+\noindent
+{{\tablename~2}\ \ \small{Performance characteristics for $r=26$, $\lambda=12$, $\lambda^-=5$, and
+$\mu=10$}}
+ 
+ \vspace*{-3pt}
+
+{\small\begin{center}
+\tabcolsep=7.5pt
+\begin{tabular}{ccccr}
+\hline
+$n$ & $\pi_{1}$ & $\pi_{2}$ & $\omega_{\mathrm{buff}}$ & 
+\multicolumn{1}{c}{$\omega_{\mathrm{bunk}}$}\\
+\hline
+3&  0.000606&   0.166082&   0.328110    &$-14.288452$\\
+4&  0.000606&   0.166201&       0.328063&   $-14.598858$\\
+5&      0.000605&   0.166759&   0.327844    &$-15.622581$\\
+6&      0.000606&   0.166190&   0.328068    &3.012986\\
+7&      0.000606&   0.166627&   0.327896    &12.247301\\
+8&      0.000606&   0.166654&   0.327885    &11.335891\\
+9&      0.000606&   0.166656&   0.327884    &11.366810\\
+\hline
+& 0.000606& 0.166656    &   0.327884    &11.366303\\
+\hline
+\end{tabular}
+\end{center}}
+%\end{table*}
+
+\noindent
+{{\tablename~3}\ \ \small{Performance characteristics for $r=26$, $\lambda=20$, $\lambda^-=5$, 
+and $\mu=10$}}
+ 
+ \vspace*{-3pt}
+
+{\small\begin{center}
+\tabcolsep=7.1pt
+\begin{tabular}{ccccr}
+\hline
+$n$ & $\pi_{1}$ & $\pi_{2}$ & $\omega_{\mathrm{buff}}$ & 
+\multicolumn{1}{c}{$\omega_{\mathrm{bunk}}$}\\
+\hline
+3&  0.250106 &  0.333239 &  1.534312    & $-14.854582$ \\
+4&  0.250106 &  0.333240 &      1.534311 & $ -12.811167$ \\
+5&      0.250106 &  0.333239 &  1.534312    & $-19.689504 $\\
+6&      0.250106 &  0.333239 &  1.534312    & 36.261106 \\
+7&      0.250106 &  0.333239 &  1.534312    &$ -892.561062$ \\
+8&      0.250106 &  0.333239 &  1.534312    & 10237.695931 \\
+9&      0.250106 &  0.333239 &  1.534312    & 18727.217279 \\
+\hline
+& 0.250106 &    0.333239    &   1.534312    &18414.922135\\
+\hline
+\end{tabular}
+\end{center}}
+
+
+\noindent
+{{\tablename~4}\ \ \small{Performance characteristics for $r=26$, $\lambda=20$, $\lambda^-=12$, 
+and $\mu=10$}}
+ 
+ \vspace*{-3pt}
+
+{\small\begin{center}
+\tabcolsep=7.9pt
+\begin{tabular}{ccccr}
+\hline
+$n$ & $\pi_{1}$ & $\pi_{2}$ & $\omega_{\mathrm{buff}}$ & 
+\multicolumn{1}{c}{$\omega_{\mathrm{bunk}}$}\\
+\hline
+3&  0.008258  & 0.495837  & 0.391757    & $-3.781687$ \\
+4&  0.008258  & 0.495837 &      0.391757 &  $-3.828509$ \\
+5&      0.008258 &  0.495837  & 0.391756    &$ -3.784435 $\\
+6&      0.008258 &  0.495837 &  0.391757    & $-3.584416$ \\
+7&      0.008258 &  0.495837 &  0.391757    & $-5.855355$ \\
+8&      0.008258 &  0.495837  & 0.391757    & 12.740076 \\
+9&      0.008258  & 0.495837  & 0.391757    &  26.932748  \\
+\hline
+& 0.008258 &    0.495826    &   0.391757    & 23.646577 \\
+\hline
+\end{tabular}
+\end{center}}
+%\end{table*}
+
+\vspace*{10pt}
+
+
+\noindent
+tational time decreases substantially
+with slow decrease of~$n$. Nevertheless, it remains an
+open questing how to choose appropriate number of nodes~$n$
+so as not to lose much in accuracy but noticeably gain in computation time
+and whether the value of~$n$ is the same for all performance characteristics
+independently of combination of initial parameters.
+
+
+
+\section{Concluding Remarks}
+
+
+\noindent
+In this paper, the algebraic method for
+approximate calculation of joint stationary probability distribution
+in single server QS with Poisson flows of ordinary and negative customers,
+finite buffer, and finite bunker for customers that were displaced from 
+the buffer is presented.
+Obtained relations were verified by comparing with the results provided by direct methods.
+The method heavily relies on the opportunity to  solve the equilibrium equations recursively.
+This opportunity is established by considering additional equations obtained from 
+the properties of the generation function of  the joint distribution.
+Though the results are presented for the special case
+when the queues' capacities are equal, it is straightforward 
+to generalize the method for different (finite) capacities  and heterogeneous servers.
+Future research efforts are worth concentrating in two directions.
+The first one is the in-depth analysis of the approximation and
+the study of cases in which it works either well or bad.
+The second one is the application of the proposed method for the analysis
+of more complex QS which behavior 
+can be represented as multidimensional Markov processes with finite-state space.
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+
+
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\begin{thebibliography}{99}
+
+\bibitem{new11} %1
+\Aue{Gelenbe, E., P. Glynn, and K.~Sigman}. 1991. Queues with negative arrivals. 
+\textit{J.~Appl. Probab.} 28:245--250.
+\bibitem{z3} %8???@
+\Aue{Gelenbe, E.} 1993. G-networks with instantaneous customer movement. 
+\textit{J.~Appl. Probab.} 30(3):742--748.
+\bibitem{new33} %2
+\Aue{Harrison, P.\,G., and E.~Pitel}. 1993. 
+Sojourn times in single-server queues with negative customers.
+\textit{J.~Appl. Probab.} 30:943--963.
+\bibitem{new3} %3
+\Aue{Fourneau, J., E. Gelenbe, and R.~Suros}. 1996. 
+\mbox{G-networks} with multiple classes of negative and positive customers.
+\textit{Theor. Comput. Sci.} 155(1):141--156.
+
+
+
+\bibitem{new1} %4
+\Aue{Artalejo, J.\,R.} 2000. G-networks: A~versatile approach for work 
+removal in queueing systems. 
+\textit{Eur. J.~Oper. Res.} 126:233--249.
+
+
+
+\bibitem{new10} %5
+\Aue{Bocharov, P.\,P., and V.\,M.~Vishnevskii}. 2003. 
+G-networks: Development of the theory of multiplicative networks.
+\textit{Automat. Rem. Contr.} 64(5):714--739.
+
+\bibitem{newnew} %6
+Boucherie,~R.\,J., and N.~van~Dijk, eds. 2011. \textit{Queueing networks: A~fundamental approach}. 
+International ser. in operations research and management science.
+New York, NY: Springer. 154. 800~p.
+
+\bibitem{tien} %7
+\Aue{Van Do, T.} 2011. An initiative for a classified bibliography on G-networks.
+\textit{Perform. Evaluation} 68(4):385--394.
+
+
+
+\bibitem{suetin} %8
+\Aue{Suetin, P.\,K.} 1979. \textit{Klassicheskie ortogonal'nye mnogochleny} 
+[{Classical orthogonal polynomials}]. Moscow: Nauka. 416~p. 
+
+
+\bibitem{ros-cas} %9
+\Aue{Manzo, R., N. Cascone, and R.\,V.~Razumchik}. 2008. 
+Exponential queuing system with negative customers and bunker for ousted customers.
+\textit{Automat. Rem. Contr.} 69:1542--1551.
+
+\bibitem{aaa1} %10
+\Aue{Klimenok, V., and A.~Dudin}. 2012. A~BMAP/PH/$N$ queue 
+with negative customers and partial protection of service. 
+\textit{Commun. Stat. Simulat.} 41(7):1062--1082.
+
+\bibitem{new8} %11
+\Aue{Pechinkin, A.\,V., and R.\,V.~Razumchik}. 2012. Stationary waiting time
+distribution in queueing system with negative customers and bunker
+for ousted customers under Last-LIFO-LIFO service discipline.
+\textit{J.~Commun. Technol. El.} 57(12):1331--1339.
+
+\bibitem{new7} %12
+\Aue{Pechinkin, A.\,V., and R.\,V.~Razumchik}. 2012. A~method for calculating stationary
+queue distribution in a queuing system with flows of ordinary and negative
+claims and a bunker for superseded claims. \textit{J.~Commun. Technol.
+El.} 57(8):882--891.
+
+\bibitem{aaa3} %4-1@
+\Aue{Dao-Thi, T., J.~Fourneau, and M.~Tran}. 2013. Networks of 
+order independent queues with signals. \textit{21st  Symposium 
+(International) on Modeling, Analysis and Simulation of Computer and 
+Telecommunication Systems Proceedings}. 131--140.
+
+
+\bibitem{aaa2} %13
+\Aue{Krishna Kumar,~B., S.~Pavai Madheswari, and S.\,R.~Anantha Lakshmi}. 2013. 
+An $M$/$G$/1 Bernoulli feedback retrial queueing system with negative customers.
+\textit{Oper. Res.} 13(2):187--210.
+
+
+\bibitem{new9} %14
+\Aue{Razumchik, R.\,V.} 2013. Statsionarnoe raspredelenie vremeni ozhidaniya 
+v~sisteme obsluzhivaniya s~otritsatel'nymi zayavkami, bunkerom dlya vytesnennykh 
+zayavok, raz\-lich\-ny\-mi intensivnostyami obsluzhivaniya pri discipline 
+First-FIFO-FIFO [Stationary waiting time distribution in queueing system with negative customers and bunker for ousted customers 
+under First-FIFO-FIFO service discipline]. 
+\textit{Informatika i~ee Primenenija}~---
+\textit{Inform. Appl.} 7(2):34--39.
+
+\bibitem{aaa6} %15
+\Aue{Razumchik, R.\,V.} 2014. Analysis of finite capacity queue with negative customers and bunker for ousted customers using chebyshev and gegenbauer polynomials. 
+\textit{Asia Pac. J.~Oper. Res.} 31(4):1450029. 21~p.
+
+\bibitem{aaa4} %16
+\Aue{Van Do, T., D. Papp, R.~Chakka, J.~Sztrik, and J.~Wang}. 2014. 
+$M$/$M$/1 retrial queue with working vacations and negative customer arrivals.
+\textit{Int. J.~Adv. Intelligence Paradigms} 6(1):52--65.
+
+\bibitem{mikl} %17
+\Aue{Razumchik, R., and M.~Telek}. 2015. 
+Delay analysis of a queue with re-sequencing buffer and Markov environment.
+\textit{Queueing Syst.} 22~p. doi: 10.1007/S11134-015-9444-Z.
+
+
+\bibitem{z1} %18
+\Aue{Balsamo, S., P.\,G.~Harrison, and A.~Marin}. 2010. 
+A~unifying approach to product-forms in networks with finite capacity constraints. 
+\textit{SIGMETRICS} 38(1):25--36.
+
+\bibitem{z2} %19
+\Aue{Harrison, P.\,G., and A.~Marin}. 2014. Product-forms in multi-way synchronisations. 
+\textit{Comput.~J.} 57(11):1693--1710.
+
+\bibitem{avrach} %20
+\Aue{Avrachenkov, K.\,E., N.\,O.~Vilchevsky, and G.\,L.~Shevljakov}. 2003.
+Priority queueing with finite buffer size and randomized push-out mechanism. 
+\textit{ACM  Conference (International) on Measurement and Modelling of Computer
+Proceedings}. San Diego. 324--335.
+
+\bibitem{peter} %21
+\Aue{Ilyashenko, A., O. Zayats, V.~Muliukha, and L.~Laboshin}. 2014. 
+Further investigations of the priority queuing system with preemptive priority 
+and randomized push-out mechanism. 
+\textit{Internet of things, smart spaces, and next generation networks and systems}. 
+Eds.\ S.~Balandin, S.\,D.~Andreev, and  Y.~Koucheryavy. 
+Lecture notes in computer science ser. 
+Springer. 8638:433--443.
+
+\bibitem{cheb} %22
+\Aue{Gil, A., J. Seguram, and N.\,M.~Temme}. 2007. 
+\textit{Numerical methods for special functions}. Philadelphia, PA: 
+Society for Industrial and Applied Mathematics. 431~p.
+
+\bibitem{erdelyi} %23
+\Aue{Erdelyi, A., and H.~Bateman}. 1985. 
+\textit{Higher transcendental functions.} II. Malabar: Robert
+E.~Krieger Publishing Co. 396~p.
+
+
+\end{thebibliography} } }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received October 19, 2015}}
+
+\vspace*{-12pt}
+
+\Contrl
+
+\vspace*{-3pt}
+
+\noindent
+\textbf{Razumchik Rostislav V.} (b.\ 1984)~--- Candidate of Science (PhD) in 
+physics and mathematics, senior scientist, Institute of Informatics Problems, 
+Federal Research Center ``Computer Science and Control'' of the Russian Academy 
+of Sciences, 44-2 Vavilov Str., Moscow 119333, Russian Federation; 
+associate professor, Peoples' Friendship University of Russia, 
+6 Miklukho-Maklaya Str., Moscow 117198, Russian Federation; rrazumchik@ipiran.ru 
+
+
+%\vspace*{8pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+\newpage
+
+\vspace*{-24pt}
+
+
+
+\def\tit{АЛГЕБРАИЧЕСКИЙ МЕТОД ПРИБЛИЖЕННОГО РАСЧЕТА СТАЦИОНАРНОГО РАСПРЕДЕЛЕНИЯ 
+В~СИСТЕМЕ ОБСЛУЖИВАНИЯ КОНЕЧНОЙ ЕМКОСТИ С~ОТРИЦАТЕЛЬНЫМИ ЗАЯВКАМИ И~ДВУМЯ ОЧЕРЕДЯМИ}
+
+\def\aut{Р.\,В.~Разумчик}
+
+
+\def\titkol{Алгебраический метод приближенного расчета стационарного распределения 
+в~системе обслуживания} % конечной емкости с~отрицательными заявками и двумя очередями}
+
+\def\autkol{Р.\,В.~Разумчик}
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+%\footnotetext[1]{Работа проводится при финансовой поддержке Программы
+%стратегического развития Петрозаводского государственного университета в рамках
+%на\-уч\-но-ис\-сле\-до\-ва\-тель\-ской деятельности.}}
+
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-12pt}
+
+\noindent
+Институт проблем информатики Федерального исследовательского
+центра <<Информатика и~управление>> Российской академии наук, Российский
+университет дружбы народов, rrazumchik@ipiran.ru
+
+\vspace*{6pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 9\ \ \ выпуск\ 4\ \ \ 2015}
+}%
+ \def\rightfootline{\small{ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 9\ \ \ выпуск\ 4\ \ \ 2015
+\hfill \textbf{\thepage}}}
+
+\Abst{Рассматривается система массового обслуживания с пуассоновским потоком
+обычных и~пуассоновским потоком отрицательных заявок. Для обычных заявок
+имеется накопитель конечной емкости~$k$. Если обычная заявка при поступлении
+застает накпитель полностью заполненным, она теряется. Отрицательная
+заявка при поступлении вытесняет одну обычную заявку
+из очереди в~накопителе (если он не пуст) в другую очередь
+(бункер) конечной емкости~$r$, после чего покидает систему, 
+не оказывая на нее никакого воздействия. 
+Если в~момент вытеснения обычной заявки из накопителя бункер
+полностью заполнен, обе заявки (обычная и отрицательная) 
+покидают систему. В~других случаях поступления отрицательной заявки не оказывают
+влияния на функционирование системы. Заявки из бункера обслуживаются
+с~относительным приоритетом. Времена обслуживания заявок как из накопителя, 
+так и~из бункера имеют экспоненциальное распределение
+с~одинаковым параметром. Предложен алгебраический метод 
+приближенного расчета совместного стационарного распределения очередей 
+для случая $k\hm=r$. Представлены некоторые результаты численных экспериментов, 
+показывающие достоинства и~недостатки метода.}
+
+\KW{система обслуживания; отрицательные заявки; многочлены Гегенбауэра; 
+стационарное распределение}
+
+
+\DOI{10.14357/19922264150407}
+
+\vspace*{6pt}
+
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily Литература}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\begin{thebibliography}{99}
+\bibitem{f2} %1
+\Au{Gelenbe E., Glynn P., Sigman~K.} Queues with negative arrivals~// 
+J.~Appl. Probab., 1991. Vol.~28. P.~245--250.
+
+\bibitem{f3} %2
+\Au{Gelenbe E.} 
+G-networks with instantaneous customer movement~// J.~Appl. Probab., 1993. 
+Vol.~30. No.\,3. P.~742--748.
+\bibitem{f5} %3
+\Au{Harrison P.\,G., Pitel E.} 
+Sojourn times in single-server queues with negative customers~// 
+{J.~Appl. Probab.}, 1993. Vol.~30. P.~943--963.
+\bibitem{f1} %4
+\Au{Fourneau J.,  Gelenbe~E.,  Suros~R.}
+G-networks with multiple classes of negative and positive customers~// 
+Theor. Comput. Sci., 1996. Vol.~155. No.\,1. P.~141--156.
+
+\bibitem{d1} %5
+\Au{Artalejo J.\,R.} G-networks: A~versatile approach for work removal in queueing systems~// 
+Eur. J.~Oper. Res., 2000. Vol.~126. P.~233--249.
+
+\bibitem{d3} %6
+\Au{Bocharov P.\,P., Vishnevskii~V.\,M.}
+G-networks: Development of the theory of multiplicative networks~// 
+Automat. Rem. Contr., 2003. Vol.~64. No.\,5. P.~714--739.
+
+\bibitem{h3} %7
+Queueing networks: A~fundamental approach~/
+Eds.\ Buncherie~R.\,J., N.~Van Dijk.~--- 
+International ser. in operations research and management science.~---
+New York, NY, USA: Springer, 2011.  Vol.~154. 800~p.
+
+\bibitem{h4} %8
+\Au{Van Do T.} An initiative for a classified bibliography on G-networks~// 
+{Perform. Evaluation}, 2011. Vol.~68. No.\,4. P.~385--394.
+
+\bibitem{h2} %9
+\Au{Суетин П.\,К.} Классические ортогональные многочлены.~---
+М.: Наука, 1979. 416~с.
+
+
+
+
+
+
+
+\bibitem{g2} %10
+\Au{Manzo R., Cascone~N., Razumchik~R.\,V.}
+Exponential queuing system with negative customers and bunker for ousted customers~// 
+{Automat. Rem. Contr.}, 2008. 
+Vol.~69. P.~1542--1551.
+
+\bibitem{f6} %11
+\Au{Klimenok  V., Dudin A.} A~BMAP/PH/$N$ queue with negative customers and partial protection of service~//
+{Commun. Stat. Simul.}, 2012. Vol.~41. No.\,7. P.~1062--1082.
+
+\bibitem{g3} %12
+\Au{Pechinkin A.\,V., Razumchik~R.\,V.} Stationary waiting time
+distribution in queueing system with negative customers and bunker
+for ousted customers under Last-LIFO-LIFO service discipline~//
+{J.~Commun. Technol. El.}, 2012. Vol.~57. No.\,12. P.~1331--1339.
+
+\bibitem{g4} %13
+\Au{Pechinkin A.\,V., Razumchik R.\,V.} A~method for calculating stationary
+queue distribution in a queuing system with flows of ordinary and negative
+claims and a~bunker for superseded claims // {J.~Commun. Technol.
+El.}, 2012. Vol.~57. No.\,8. P.~882--891.
+
+\bibitem{d4} %14
+\Au{Dao-Thi T., Fourneau~J., Tran~M.}
+Networks of order independent queues with signals~// 
+21st  Symposium (International) on Modeling, Analysis and Simulation of Computer 
+and Telecommunication Systems Proceedings, 2013. P.~131--140.
+
+\bibitem{g1} %15
+\Au{Krishna Kumar B., Pavai Madheswari~S.,  Anantha Lakshmi~S.\,R.}  
+An $M$/$G$/1 Bernoulli feedback retrial queueing system with negative customers~// 
+{Oper. Res.}, 2013. Vol.~13. No.\,2. P.~187--210.
+
+\bibitem{g6} %16
+\Au{Разумчик Р.\,В.}
+Стационарное распределение времени ожидания в~системе обслуживания 
+с~отрицательными заявками, бункером для вытесненных заявок, различными интенсивностями 
+обслуживания при дисциплине First-FIFO-FIFO~// Информатика и~её\linebreak применения, 2013. 
+Т.~7. Вып.~2. С.~34--39. 
+
+\bibitem{g5} %17
+\Au{Razumchik R.\,V.}
+Analysis of finite capacity queue with negative customers and bunker for ousted customers using chebyshev and gegenbauer polynomials~//
+{Asia Pac. J.~Oper. Res.}, 2014. Vol.~31. No.\,1450029. 21~p.
+
+
+
+\bibitem{h5} %18
+\Au{Van Do T., Papp D., Chakka~R.,  Sztrik~J.,  Wang~J.} 
+$M$/$M$/1 retrial queue with working vacations and negative customer arrivals~// 
+{Int. J.~Adv. Intelligence Paradigms}, 2014. Vol.~6. No.\,1. P.~52--65.
+
+\bibitem{h1} %19
+\Au{Razumchik R., Telek~M.}
+Delay analysis of a~queue with re-sequencing buffer and Markov environment~// 
+{Queueing Syst.}, 2015. 22~p. doi: 10.1007/S11134-015-9444-Z.
+
+
+\bibitem{h6} %20
+\Au{Balsamo S., Harrison~P.\,G.,  Marin~A.} 
+A~unifying approach to product-forms in networks with finite capacity constraints~// 
+{SIGMETRICS}, 2010. Vol.~38. No.\,1. P.~25--36.
+
+\bibitem{h7} %21
+\Au{Harrison P.\,G., Marin~A.} Product-forms in multi-way synchronisations~// 
+{Comput.~J.}, 2014. Vol.~57. No.\,11. P.~1693--1710.
+\bibitem{d2} %22
+\Au{Avrachenkov K.\,E., Vilchevsky~N.\,O., Shevljakov~G.\,L.} 
+Priority queueing with finite buffer size and randomized push-out mechanism~// 
+ACM  Conference (International) on Measurement and Modelling of Computer
+Proceedings. San Diego, 2003. P.~324--335.
+
+\bibitem{h8} %23
+\Au{Ilyashenko A., Zayats~O., Muliukha~V., Laboshin~L.}
+Further investigations of the priority queuing system with preemptive priority 
+and randomized push-out mechanism~// 
+{Internet of things, smart spaces, and next generation networks and systems}~/
+Eds.\ S.~Balandin, S.\,D.~Andreev, and  Y.~Koucheryavy.~--- 
+Lecture notes in computer science ser.~--- 
+Springer, 2014. Vol.~8638. P.~433--443.
+
+\bibitem{f4} %24
+\Au{Gil A., Seguram J., Temme~N.\,M.}
+Numerical methods for special functions.~--- 
+Philadelphia, PA, USA: Society for Industrial and Applied Mathematics, 2007. 431~p.
+
+\bibitem{d5} %25
+\Au{Erdelyi A., Bateman H.} Higher transcendental functions. II.~--- Malabar: Robert
+E.~Krieger Publishing Co., 1985. 396~p.
+\end{thebibliography}
+} }
+
+\end{multicols}
+
+ \label{end\stat}
+
+ \vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в редакцию  19.10.2015}}
+%\renewcommand{\bibname}{\protect\rm Литература}
+\renewcommand{\figurename}{\protect\bf Рис.}
+\renewcommand{\tablename}{\protect\bf Таблица}

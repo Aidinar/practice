@@ -1,0 +1,740 @@
+\newcommand{\sumk}{\sum\limits_{k=0}^{2^j-1}}
+\newcommand{\mujk}{\mu_{j,k}}
+
+\def\stat{shestakov}
+
+\def\tit{СВОЙСТВА ВЕЙВЛЕТ-ОЦЕНОК СИГНАЛОВ,
+РЕГИСТРИРУЕМЫХ В~СЛУЧАЙНЫЕ МОМЕНТЫ ВРЕМЕНИ$^*$}
+
+\def\titkol{Свойства вейвлет-оценок сигналов,
+регистрируемых в~случайные моменты времени}
+
+\def\aut{О.\,В.~Шестаков$^1$}
+
+\def\autkol{О.\,В.~Шестаков}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Шестаков О.\,В.}
+\index{Shestakov O.\,V.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при финансовой поддержке Российского научного фонда (проект 18-11-00155).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет им.\ М.\,В.~Ломоносова, 
+кафедра математической статистики факультета вычислительной математики и~кибернетики; 
+Институт проб\-лем информатики Федерального исследовательского центра 
+<<Информатика и~управ\-ле\-ние>> Российской академии наук, \mbox{oshestakov@cs.msu.su}}
+
+%\vspace*{-2pt}
+
+
+
+
+\Abst{Алгоритмы вейвлет-анализа в~сочетании с~процедурами пороговой обработки 
+широко используются в~задачах непараметрической регрессии при оценивании 
+функции сигнала по зашумленным данным. Преимущества данных методов заключаются 
+в~их вычислительной эффективности и~возможности адаптации к~локальным особенностям 
+оцениваемой функции. Анализ погрешностей методов пороговой обработки представляет 
+собой важную практическую задачу, поскольку позволяет оценить качество как самих 
+методов, так и~используемого оборудования. Иногда природа данных такова, что 
+регистрация наблюдений производится в~случайные моменты времени. Если точки 
+отсчета образуют вариационный ряд, построенный по выборке из равномерного 
+распределения на отрезке регистрации данных, то использование обычных процедур 
+пороговой обработки оказывается адекватным. 
+В~данной работе проведен анализ оценки среднеквадратичного риска пороговой обработки 
+и~показано, что при определенных условиях данная оценка оказывается сильно 
+состоятельной и~асимптотически нормальной.}
+
+\KW{вейвлеты; пороговая обработка; случайные отсчеты; оценка среднеквадратичного риска}
+
+\DOI{10.14357/19922264190203}
+  
+%\vspace*{4pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+Одним из популярных инструментов в~задачах непараметрической регрессии, 
+к~которым относится подавление шума в~наблюдаемом сигнале, является метод 
+пороговой обработки. Наблюдаемые данные преобразуются в~эмпирические 
+вейв\-лет-ко\-эф\-фи\-ци\-ен\-ты, к~которым применяется функция пороговой обработки, 
+после чего осуществляется обратное преобразование. Наиболее распространены функции 
+жесткой и~мягкой пороговой обработки. Для модели отсчетов сигнала, заданных на 
+равномерной неслучайной сетке и~содержащих белый гауссовский шум, эти методы 
+хорошо изучены. Предложены способы вычисления пороговых значений,
+ обеспечивающих <<почти>> оптимальный порядок среднеквадратичного риска 
+ в~различных классах функций сигнала~\cite{DonJ94, DonJ95, MAJ98}. Также изучены 
+ статистические свойства оценки среднеквадратичного риска. Показано, что при 
+ определенных условиях она оказывается сильно состоятельной и~асимптотически 
+ нормальной~\cite{Mar09, SH12, SH16-1, SH16-2}.
+
+В некоторых приложениях нет возможности (или она сильно затруднена) 
+регистрировать отсчеты сигнала через равные промежутки времени~\cite{CB98}. Иногда 
+природа сигнала такова, что регистрация его отсчетов производится в~случайные 
+моменты времени. В~работе~\cite{CB99} показано, что если точки отсчета образуют 
+вариационный ряд, построенный по выборке из равномерного распределения на отрезке 
+регистрации сигнала, то при использовании обычной пороговой обработки 
+вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов порядок среднеквадратичного риска остается 
+с~точностью до логарифмического множителя равным оптимальному порядку в~классе 
+функций, регулярных по Липшицу. В~данной работе доказывается, что статистические 
+свойства оценки риска также не меняются при переходе от фиксированной равномерной 
+сетки отсчетов к~случайной.
+
+\vspace*{-5pt}
+
+\section{Модель непараметрической регрессии со случайными точками отсчета}
+
+\vspace*{-2pt}
+
+Пусть функция сигнала $f(x)$ задана на отрезке $[0,1]$ и~равномерно 
+регулярна по Липшицу с~некоторым показателем $\gamma\hm>0$ и~константой Липшица $L\hm>0$: 
+$f\hm\in\mathrm{Lip}(\gamma,L)$. Предположим, что отсчеты~$f(x)$ 
+регистрируются в~случайные моменты времени и~содержат аддитивный белый 
+гауссовский шум, т.\,е.\ рассмотрим следующую модель данных:
+$$
+Y_i=f(x_i)+\eps_i\,,\enskip i=1,\ldots,N\enskip \left(N=2^J\right)\,,
+$$
+где $x_i$ независимы и~равномерно распределены на $[0,1]$, а~$\eps_i$ 
+независимы между собой и~от~$x_i$ и~име-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+ют нормальное распределение с~нулевым 
+средним и~дисперсией~$\sigma^2$. Пусть $0\hm\leqslant x_{(1)}<\cdots< x_{(N)}\hm\leqslant 1$~--- 
+вариационный ряд, построенный по выборке~$x_i$, $i\hm=1,\ldots,N$. Тогда, 
+перенумеровав~$Y_i$ и~$\eps_i$, получаем модель:
+\begin{equation}
+\label{rand_sample}
+Y_i=f\left(x_{(i)}\right)+\eps_i\,,\enskip i=1,\ldots,N\enskip \left(N=2^J\right)\,.
+\end{equation}
+Наблюдения состоят из пар $(x_{(1)},Y_1),\ldots$\linebreak $\ldots, (x_{(N)},Y_N)$, 
+в~которых расстояния между отсчетами в~общем случае не равны. При этом
+ $\e x_{(i)}\hm=i/(N+1)$. Наряду с~\eqref{rand_sample} рассмотрим выборку 
+ с~равными расстояниями между отсчетами:
+\begin{equation}
+\label{eqspace_sample}
+\left(\fr{1}{N+1},Z_1\right),\ldots, \left(\fr{N}{N+1},Z_N\right),
+\end{equation}
+где
+\begin{equation*}
+Z_i=f\left(\fr{i}{N+1}\right)+\eps_i\,,\enskip i=1,\ldots,N\,.
+\end{equation*}
+Для выборки~\eqref{eqspace_sample} Донохо и~Джонстон разработали методы 
+пороговой обработки, эффективно по\-дав\-ля\-ющие шум и~обеспечивающие <<почти>> 
+оптимальный порядок среднеквадратичного риска~\cite{DonJ94}. 
+К~\eqref{eqspace_sample} применяется дискретное ортогональное вейв\-лет-пре\-обра\-зо\-ва\-ние 
+и~получается набор эмпирических вейв\-лет-ко\-эф\-фи\-ци\-ентов:
+$$
+W_{j,k}=\mu_{j,k}+\xi_{j,k}\,,\enskip j=0,\ldots,J-1\,,\ k=0,\ldots,2^{j}-1\,,
+$$
+где $\xi_{j,k}$ независимы и~имеют такое же распределение, как и~$\eps_i$, 
+а~$\mu_{j,k}$~--- коэффициенты дискретного вейв\-лет-пре\-обра\-зо\-ва\-ния выборки
+$f\left({1}/({N\hm+1})\right),\ldots, f\left({N}/({N\hm+1})\right).$
+
+Далее к~$W_{j,k}$ применяется функция жесткой пороговой обработки 
+$\rho_{H}(y,T)\hm=x\mathbf{1}(\abs{y}\hm>T)$\linebreak или мягкой пороговой обработки 
+$\rho_{S}(y,T)\hm=\mathrm{sgn}\,(x)\left(\abs{y}\hm-T\right)_{+}$ 
+с~некоторым порогом~$T$ и~получаются оценки коэффициентов~$\widehat{W}_{j,k}$. 
+После этого осуществляется обратное вейв\-лет-пре\-обра\-зо\-ва\-ние. 
+Идея пороговой обработки заключается в~том, что вейв\-лет-пре\-обра\-зо\-ва\-ние 
+обеспечивает <<разреженное>> пред\-став\-ле\-ние функции полезного сигнала, т.\,е.\
+сигнал пред\-став\-ля\-ет\-ся относительно небольшим числом больших по модулю коэффициентов. 
+При этом характеристики шума остаются неизменными. Следовательно, при обнулении малых 
+по модулю коэффициентов полезный сигнал будет затронут несильно и~практически весь 
+шум будет удален. Чтобы обеспечить <<разреженное>> пред\-став\-ле\-ние функции, равномерно 
+регулярной по Липшицу с~показателем~$\gamma$, вейв\-лет-функ\-ция, 
+участвующая в~дискретном вейв\-лет-пре\-обра\-зо\-ва\-нии, 
+должна удовлетворять определенным условиям. В~част\-ности, она должна иметь~$M$~непрерывных 
+производных ($M\hm\geqslant\gamma$), $M$ нулевых моментов 
+и~достаточно быст\-ро убывать на бес\-ко\-неч\-ности~\cite{Mall99}. Далее предполагается, 
+что все необходимые условия выполнены.
+
+Если применить дискретное вейв\-лет-пре\-обра\-зо\-ва\-ние 
+к~выборке~\eqref{rand_sample}, то получится набор эмпирических вейв\-лет-ко\-эф\-фи\-ци\-ентов
+$$
+V_{j,k}=\nu_{j,k}+\xi_{j,k}\,,\enskip j=0,\ldots,J-1\,,\ k=0,\ldots,2^{j}-1\,.
+$$
+Здесь $\nu_{j,k}$~--- коэффициенты дискретного вейв\-лет-пре\-обра\-зо\-ва\-ния 
+выборки $f\left(x_{(1)}\right),\ldots, f\left(x_{(N)}\right).$
+
+В общем случае~$V_{j,k}$ не равны~$W_{j,k}$, а~$\nu_{j,k}$ не равны~$\mu_{j,k}$. 
+Однако к~$V_{j,k}$ можно применить ту же процедуру, что и~к~коэффициентам~$W_{j,k}$, 
+и~получить оценки~$\widehat{V}_{j,k}$. В~сле\-ду\-ющих разделах обсуждаются 
+свойства полученных оценок.
+
+\section{Среднеквадратичный риск пороговой обработки}
+
+Среднеквадратичный риск пороговой обработки для выборки со случайными точками 
+отсчетов определим как
+\begin{equation}
+\label{MSE_Rand}
+R_{\nu}(f,T)=\sum\limits_{j=0}^{J-1}\sumk\e\left(\widehat{V}_{j,k}-\mu_{j,k}\right)^2.
+\end{equation}
+Определим также среднеквадратичный риск для выборки 
+с~равными расстояниями между отсчетами:
+\begin{equation*}% \label{MSE_Eq}
+R_{\mu}(f,T)=\sum\limits_{j=0}^{J-1}\sumk\e\left(\widehat{W}_{j,k}-\mu_{j,k}\right)^2.
+\end{equation*}
+Способ выбора порога является одной из основных проблем при пороговой 
+обработке. При выборе так называемого универсального порога\linebreak 
+$T_U\hm=\sigma\sqrt{2\ln 2^J}$ в~работе~\cite{CB99} доказано следующее утверждение 
+о~порядке~$R_{\nu}(f,T)$.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~1.}\ 
+\textit{Пусть $f\hm\in\mathrm{Lip}(\gamma,L)$ на отрезке $[0,1]$ с~$\gamma\hm\geqslant1/2$. 
+Для модели}~\eqref{rand_sample} \textit{при использовании вейв\-лет-функ\-ции, 
+удовлетворяющей перечисленным выше условиям, и~выборе порога~$T_U$ справедливо}
+\begin{equation*}% \label{MSE_Rand_Rate}
+R_{\nu}(f,T)\leqslant C\cdot 2^{{J}/({2\gamma+1})} J^{{2\gamma}/({2\gamma+1})}\,, %\notag
+\end{equation*}
+\textit{где $C$~--- некоторая положительная константа}.
+
+Аналогичное утверждение справедливо и~для $R_{\mu}(f,T)$~\cite{DonJ95}. 
+Таким образом, замена равноотстоящих точек отсчета на случайные не оказывает 
+влияния на оценку порядка среднеквадратичного риска.
+
+В~\cite{Jan01} для класса $\mathrm{Lip}(\gamma,L)$ предложено использовать 
+порог 
+$$
+T_\gamma\hm=\sigma\sqrt{\fr{4\gamma}{2\gamma+1}\,\ln 2^J}\,.
+$$
+ При этом оценка порядка $R_{\mu}(f,T)$ останется такой же. Используя лемму~3 
+ из~\cite{CB99} и~повторяя рас\-суж\-де\-ния, приводимые в~этой работе при доказательстве 
+ теоремы~1, несложно убедиться, что теорема~1 также останется верна при замене 
+ порога~$T_U$ на~$T_\gamma$. Порог~$T_\gamma$ является более адекватным для 
+ класса~$\mathrm{Lip}(\gamma,L)$, чем порог~$T_U$, поскольку при том же порядке 
+ среднеквадратичного риска он меньше <<сглаживает>> полезный сигнал~\cite{Jan01}.
+
+
+\section{Оценка среднеквадратичного риска}
+
+В выражении~(\ref{MSE_Rand}) присутствуют неизвестные величины <<чистых>> 
+коэффициентов~$\mu_{j,k}$, поэтому вычислить значение риска~$R_{\nu}(f,T)$ 
+на практике \mbox{нельзя}. Однако его
+можно оценить непосредственно по наблюдаемым данным. По аналогии с~\cite{Mall99} 
+в~качестве оценки риска будем использовать величину
+\begin{equation}
+\label{MSE_Estimate}
+\widehat{R}_{\nu}(f,T)=\sum\limits_{j=0}^{J-1}\sumk F\left[V_{j,k},T\right],
+\end{equation}
+где 
+\begin{multline*}
+F\left[V_{j,k},T\right]={}\\
+{}=
+\begin{cases}
+\left(V_{j,k}^2-\sigma^2\right)\mathbf{1}(\left\vert V_{j,k}\right\vert
+\leqslant T)+\sigma^2\mathbf{1}\left(\left\vert V_{j,k}\right\vert >T\right)&\\[6pt]
+&\hspace*{-65mm}\mbox{в~случае\ жесткой\ пороговой\ 
+обработки}\,;\\[6pt]
+\left(V_{j,k}^2-\sigma^2\right)\mathbf{1}\left(\left\vert V_{j,k}\right\vert \leqslant T\right)
++{}&\\[6pt]
+&\hspace*{-42mm}{}+\left(\sigma^2+T^2\right)\mathbf{1}\left(\left\vert V_{j,k}\right\vert >T\right)\\[6pt] 
+&\hspace*{-65mm}\mbox{в~случае~мягкой пороговой обработки}. 
+\end{cases}\hspace*{-2pt}
+\end{multline*}
+
+В~ситуации с~неслучайной равномерной сеткой отсчетов при использовании мягкой 
+пороговой обработки такая оценка риска является несмещенной. Если же используется 
+жесткая пороговой обработка, то оценка содержит смещение, которое, однако, при
+ достаточной гладкости функции сигнала не оказывает влияния на статистические свойства 
+ оценки.
+
+ Оценка риска~\eqref{MSE_Estimate} дает возможность получить представление 
+ о~погрешности, с~которой оценивается функция сигнала, используя только наблюдаемые 
+ данные.  Докажем утверждение об асимптотической нормальности оценки~\eqref{MSE_Estimate}, 
+ которое, в~частности, позволяет строить асимптотические доверительные
+  интервалы для теоретического риска~$R_{\nu}(f,T)$.
+  
+  \vspace*{2pt}
+  
+  \noindent
+  \textbf{Теорема~2.}\ \textit{Пусть $f\hm\in\mathrm{Lip}(\gamma,L)$ 
+  на отрезке $[0,1]$ с~$\gamma\hm>1/2$ и~вейв\-лет-функ\-ция 
+  удовлетворяет пе\-ре\-чис\-лен\-ным выше условиям. Тогда при жесткой и~мягкой пороговой 
+  обработке при выборе порога~$T_\gamma$}
+\begin{equation*}
+%\label{MSE_CLT}
+\p\left(\fr{\widehat{R}_{\nu}(f,T_\gamma)-R_{\nu}(f,T_\gamma)}
+{\sigma^2\sqrt{2^{J+1}}}<x\right)\!\to\! \Phi(x)\ \mbox{при}\ J\to\infty,
+\end{equation*}
+\textit{где $\Phi(x)$~--- функция распределения стандартного нормального закона}.
+
+%\smallskip
+\vspace*{2pt}
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \  
+Докажем теорему для случая жесткой пороговой обработки. 
+В~случае мягкой пороговой обработки доказательство аналогично.
+
+Наряду с~$\widehat{R}_{\nu}(f,T_\gamma)$ рассмотрим
+
+\vspace*{2pt}
+
+\noindent
+\begin{equation*}
+\widehat{R}_{\mu}\left(f,T_\gamma\right)=\sum\limits_{j=0}^{J-1}\sumk F\left[W_{j,k},T_\gamma\right]
+\end{equation*}
+
+\vspace*{-2pt}
+
+\noindent
+и запишем разность $\widehat{R}_{\nu}(f,T_\gamma)\hm-R_{\nu}(f,T_\gamma)$ в~виде
+$$
+\widehat{R}_{\nu}\left(f,T_\gamma\right)-R_{\nu}\left(f,T_\gamma\right)=
+\widehat{R}_{\mu}\left(f,T_\gamma\right)
+-R_{\mu}(f,T_\gamma)+\widetilde{R}\,,
+$$
+где
+$$
+\widetilde{R}=\widehat{R}_{\nu}\left(f,T_\gamma\right)-
+\widehat{R}_{\mu}\left(f,T_\gamma\right)-\left(R_{\nu}(f,T_\gamma)-
+R_{\mu}\left(f,T_\gamma\right)\right).\hspace*{-0.3272pt}
+$$
+
+\vspace*{-2pt}
+
+\noindent
+В~\cite{SH16-1} показано, что
+
+\noindent
+\begin{multline*}
+\p\left(\fr{\widehat{R}_{\mu}\left(f,T_\gamma\right)-R_{\mu}\left(f,T_\gamma\right)}
+{\sigma^2\sqrt{2^{J+1}}}<x\right)\to \Phi(x)\\[-2pt]
+ \mbox{при}\ J\to\infty\,.
+\end{multline*}
+
+\vspace*{-2pt}
+
+\noindent
+Следовательно, для доказательства теоремы достаточно показать, что
+$$
+\fr{\widetilde{R}}{\sqrt{2^{J}}}\xrightarrow{\sf P} 0\ \mbox{при}\ J\to\infty\,.
+$$
+Если $\gamma>1/2$, то в~силу аналога теоремы~1 для порога~$T_\gamma$ 
+и~аналогичного утверждения из работы~\cite{DonJ95}
+$$
+\fr{R_{\nu}\left(f,T_\gamma\right)-R_{\mu}\left(f,T_\gamma\right)}
+{\sqrt{2^{J}}}\to 0\ \mbox{при}\ J\to\infty\,.
+$$
+Далее, поскольку $f\hm\in\mathrm{Lip}(\gamma,L)$, то выполняется
+\begin{equation*}
+%\label{Wavelet_CoeffDecacy}
+\abs{\mujk}\leqslant\fr{A \cdot2^{J/2}}{2^{j\left(\gamma+1/2\right)}}
+\end{equation*}
+для некоторой константы~$A$, зависящей от~$L$~\cite{Mall99}. Пусть
+
+\vspace*{-1pt}
+
+\noindent
+$$
+j_0\approx\fr{J}{2\gamma+1}+\fr{1}{2\gamma+1}\log_2 J\,.
+$$
+
+\noindent
+Представим $\widehat{R}_{\nu}(f,T_\gamma)\hm-\widehat{R}_{\mu}(f,T_\gamma)$ в~виде
+$$
+\widehat{R}_{\nu}\left(f,T_\gamma\right)-\widehat{R}_{\mu}\left(f,T_\gamma\right)=S_1+S_2\,,
+$$
+где
+\begin{align*}
+S_1&=\sum\limits_{j=0}^{j_0-1}\sumk \left(F\left[V_{j,k},T_\gamma\right]-
+F\left[W_{j,k},T_\gamma\right]\right);\\
+S_2&=\sum\limits_{j=j_0}^{J-1}\sumk \left(F\left[V_{j,k},T_\gamma\right]-
+F\left[W_{j,k},T_\gamma\right]\right).
+\end{align*}
+Поскольку как в~случае жесткой, так и~в~случае мягкой пороговой обработки
+\begin{equation}
+\label{Term_Bound}
+\left.
+\begin{array}{rl}
+\abs{F[V_{j,k},T_\gamma]}&\leqslant T_\gamma^2+\sigma^2;\\[6pt]
+\abs{F[W_{j,k},T_\gamma]}&\leqslant T_\gamma^2+\sigma^2\ \mbox{п.~в.,}
+\end{array}
+\right\}
+\end{equation}
+то, если $\gamma>1/2$,
+$$
+\fr{S_1}{\sqrt{2^{J}}}\xrightarrow{\sf P} 0\ \mbox{при}\ J\to\infty\,.
+$$
+Далее
+\begin{multline}
+S_2=\sum\limits_{j=j_0}^{J-1}\sumk \left(F\left[V_{j,k},T_\gamma\right]-
+F\left[W_{j,k},T_\gamma\right]\right)={}\\
+{}=
+\sum\limits_{j=j_0}^{J-1}\sumk\left(V_{j,k}^2-W_{j,k}^2\right)+{}\\
+{}+\sum\limits_{j=j_0}^{J-1}\sumk\left(W_{j,k}^2-2\sigma^2\right)\mathbf{1}
+\left(|V_{j,k}|\leqslant T_\gamma, \left\vert W_{j,k}\right\vert > T_\gamma\right)+{}\\
+{}+\sum\limits_{j=j_0}^{J-1}\sumk\left(2\sigma^2-V_{j,k}^2\right)\mathbf{1}
+\left(|V_{j,k}|> T_\gamma, \left\vert W_{j,k}\right\vert \leqslant T_\gamma\right)+{}\\
+\!\!{}+\!\sum\limits_{j=j_0}^{J-1}\!\sumk\!\!\left(W_{j,k}^2-V_{j,k}^2\right)
+\mathbf{1}\left(\left\vert V_{j,k}\right\vert \!>\! T_\gamma, \left\vert W_{j,k}\right\vert \!>\! T_\gamma\right)\!.\!\!\!
+\label{Sums}
+\end{multline}
+Рассмотрим сумму $\sum\nolimits_{j=j_0}^{J-1}\sum\nolimits_{k=0}^{2^j-1}(V_{j,k}^2-W_{j,k}^2)$:
+\begin{multline*}
+\sum\limits_{j=j_0}^{J-1}\sumk\left(V_{j,k}^2-W_{j,k}^2\right)=
+\sum\limits_{j=j_0}^{J-1}\sumk\left(\nu_{j,k}^2-\mu_{j,k}^2\right)+{}\\
+{}+
+2\sum\limits_{j=j_0}^{J-1}\sumk\xi_{j,k}\left(\nu_{j,k}-\mu_{j,k}\right).
+\end{multline*}
+Учитывая результаты работы~\cite{CB99}, можно показать, что условное распределение 
+этой суммы при фиксированных~$x_i$ нормально с~математическим ожиданием
+$\sum\nolimits_{i=1}^{N}\left(f_*^2(x_{(i)})\hm-f_*^2\left({i}/({N\hm+1})\right)\right)$
+и~дисперсией
+$4\sigma^2\sum\nolimits_{i=1}^{N}\left(f_*(x_{(i)})\hm-f_*\left({i}/({N\hm+1})\right)\right)^2,$
+где $f_*(x)$~--- функция, вейв\-лет-раз\-ло\-же\-ние которой состоит только из 
+коэффициентов при $j_0\hm\leqslant j\hm\leqslant J\hm-1$. Эта функция имеет ту же 
+гладкость, что и~$f(x)$~\cite{Mall99}.
+
+Учитывая, что $f\hm\in\mathrm{Lip}(\gamma,L)$, имеем:
+\begin{multline*}
+\abs{\e_x\sum\limits_{i=1}^{N}\left(f_*^2(x_{(i)})-
+f_*^2\left(\fr{i}{N+1}\right)\right)}={}\\
+{}=
+\abs{N\left(\int\limits_0^1 f_*^2(x)\,dx-\fr{1}{N}\sum\limits_{i=1}^{N}
+f_*^2\left(\fr{i}{N+1}\right)\right)}\leqslant{}\\
+{}\leqslant C_1 N^{1-\min(2,\gamma)}= C_1 2^{J(1-\min(2,\gamma))}\,,
+\end{multline*}
+где $C_1$~--- некоторая константа. Кроме того, в~силу вида функции~$f_*(x)$ 
+для некоторой константы $C_2>0$
+\begin{multline*}
+\fr{1}{N}\sum\limits_{i=1}^{N}f_*^2\left(\fr{i}{N+1}\right)\leqslant {}\\
+{}\leqslant
+C_2 N^{-{2\gamma}/({2\gamma+1})}=C_2\cdot 2^{-({2\gamma}/({2\gamma+1}))J}.
+\end{multline*}
+Следовательно,
+\begin{multline*}
+\e_x\sum\limits_{i=1}^{N}f_*^2(x_{(i)})\leqslant C_1\cdot 2^{J(1-\min(2,\gamma))}+{}\\
+{}+
+C_2\cdot 2^{\left(1-{2\gamma}/({2\gamma+1})\right)J}.
+\end{multline*}
+
+Также в~\cite{CB99} доказана оценка
+\begin{multline}
+\label{VAR_Decay}
+\e_x\sum\limits_{i=1}^{N}\left(f_*(x_{(i)})-f_*\left(\fr{i}{N+1}\right)\right)^2
+\leqslant {}\\
+{}\leqslant C_3 N^{1-\min(1,\gamma)}=C_3 2^{J(1-\min(1,\gamma))},
+\end{multline}
+где $C_3$~-- некоторая константа. Следовательно, если $\gamma\hm>1/2$, то, 
+применяя неравенство Маркова, получаем, что
+\begin{align*}
+\fr{1}{\sqrt{N}}\sum\limits_{i=1}^{N}\left(f_*^2(x_{(i)})-f_*^2\left(\fr{i}{N+1}\right)\right)&\xrightarrow{\sf P} 0\,;\\
+\fr{1}{N}\sum\limits_{i=1}^{N}\left(f_*(x_{(i)})-f_*\left(\fr{i}{N+1}\right)\right)^2&\xrightarrow{\sf P} 0
+\end{align*}
+при $N\to\infty$. Таким образом,
+$$
+\fr{\sum\nolimits_{j=j_0}^{J-1}\sum\nolimits_{k=0}^{2^j-1}
+\left(V_{j,k}^2-W_{j,k}^2\right)}{\sqrt{2^{J}}}\xrightarrow{\sf P} 0\ \mbox{при}\ 
+J\to\infty\,.
+$$
+
+В оставшихся суммах в~\eqref{Sums} содержатся индикаторы, в~которых либо 
+$|V_{j,k}|\hm> T_\gamma$, либо $|W_{j,k}|\hm> T_\gamma$, причем для всех слагаемых
+ $$
+ \abs{\mujk}\leqslant C_4 J^{-1/2}
+ $$ 
+ с~некоторой константой $C_4\hm>0$. 
+ Повторяя рас\-суж\-де\-ния из работы~\cite{SH10} с~использованием~\eqref{VAR_Decay},
+  можно показать, что эти суммы при делении на~$\sqrt{2^{J}}$ также сходятся к~нулю 
+  по вероятности. Теорема дока-\linebreak зана.
+  
+  \smallskip
+
+Помимо асимптотической нормальности оценка~\eqref{MSE_Estimate} также обладает
+ свойством сильной состоятельности.
+ 
+ \smallskip
+ 
+ \noindent
+ \textbf{Теорема~3.}\  \textit{Пусть 
+ выполнены условия теоремы~$2$. Тогда при жесткой и~мягкой пороговой обработке 
+ для любого $\lambda\hm>1/2$}
+\begin{equation*}
+\fr{\widehat{R}_{\nu}\left(f,T_\gamma\right)-R_{\nu}\left(f,T_\gamma\right)}
+{2^{\lambda J}}\rightarrow 0 \ \mbox{п. в. при } J\rightarrow\infty\,.
+\end{equation*}
+
+Поскольку выполнено~\eqref{Term_Bound} и~при фиксированных~$x_i$ слагаемые 
+в~\eqref{MSE_Estimate} условно независимы, доказательство этой теоремы 
+аналогично доказательству соответствующего утверждения из работы~\cite{SH16-2}.
+
+\smallskip
+
+\noindent
+\textbf{Замечание.}\ Теоремы~2 и~3 останутся справедливыми, если вместо 
+порога~$T_\gamma$ выбрать универсальный порог~$T_U$.
+
+
+ {\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{DonJ94}
+\Au{Donoho D., Johnstone~I.\,M.} Ideal spatial adaptation via wavelet shrinkage~// 
+Biometrika, 1994. Vol.~81. No.\,3. P.~425--455.
+
+\bibitem{DonJ95}
+\Au{Donoho D., Johnstone I.\,M., Kerkyacharian~G., Picard~D.} 
+Wavelet shrinkage: Asymptopia?~// J.~Roy. Stat. Soc.~B, 1995. Vol.~57. No.\,2. P.~301--369.
+
+\bibitem{MAJ98}
+\Au{Marron J.\,S., Adak~S., Johnstone I.\,M., Neumann~M.\,H., Patil~P.} 
+Exact risk analysis of wavelet regression~// J.~Comput. Graph. Stat., 1998. Vol.~7. 
+P.~278--309.
+
+\bibitem{Mar09}
+\Au{Маркин А.\,В.} Предельное распределение оценки риска при пороговой обработке 
+вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов~// Информатика и~её применения, 2009. Т.~3. Вып.~4. 
+С.~57--63.
+
+\bibitem{SH12}
+\Au{Шестаков О.\,В.} 
+Асимптотическая нормальность оценки риска пороговой обработки вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов 
+при выборе адаптивного порога~// Докл. Акад. наук, 2012. Т.~445. №\,5. С.~513--515.
+
+\bibitem{SH16-1}
+\Au{Шестаков О.\,В.} Вероят\-но\-ст\-но-ста\-ти\-сти\-че\-ские методы анализа 
+и~обработки сигналов на основе вейв\-лет-ал\-го\-рит\-мов.~--- 
+М.:~Аргамак-Медиа, 2016. 200~с.
+
+\bibitem{SH16-2}
+\Au{Shestakov O.\,V.} On the strong consistency of the adaptive risk estimator for
+ wavelet thresholding~// J.~Math. Sci., 2016. Vol.~214. No.\,1. P.~115--118.
+
+\bibitem{CB98}
+\Au{Cai T., Brown~L.} Wavelet shrinkage for nonequispaced samples~// 
+Ann. Stat., 1998. Vol.~26. No.\,5. P~1783--1799.
+
+\bibitem{CB99}
+\Au{Cai T., Brown~L.} Wavelet estimation for samples with random uniform design~// 
+Stat. Probabil. Lett., 1999. Vol.~42. P.~313--321.
+
+\bibitem{Mall99}
+\Au{Mallat S.} A~wavelet tour of signal processing.~--- 
+New York, NY, USA: Academic Press, 1999. 857~p.
+
+\bibitem{Jan01}
+\Au{Jansen M.} Noise reduction by wavelet thresholding.~--- 
+Lecture notes in statistics ser.~--- New York, NY, USA: Springer Verlag, 2001. Vol.~161. 196~p.
+
+\bibitem{SH10}
+\Au{Шестаков О.\,В.} Аппроксимация распределения оценки риска 
+пороговой обработки вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов 
+нормальным распределением при использовании выборочной дисперсии~// Информатика и~её 
+применения, 2010. Т.~4. Вып.~4. С.~73--81.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 28.02.19}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-29pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{PROPERTIES OF WAVELET ESTIMATES OF~SIGNALS RECORDED AT~RANDOM TIME POINTS}
+
+
+\def\titkol{Properties of wavelet estimates of~signals recorded at~random time points}
+
+\def\aut{O.\,V.~Shestakov$^{1,2}$}
+
+\def\autkol{O.\,V.~Shestakov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+\noindent
+$^1$Department of Mathematical Statistics, Faculty of Computational 
+Mathematics and Cybernetics, M.\,V.~Lo\-mo-\linebreak 
+$\hphantom{^1}$no\-sov Moscow State University, 
+1-52~Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation
+
+
+\noindent
+$^2$Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 44-2~Vavilov Str., 
+Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{6pt}
+
+
+\Abste{Wavelet analysis algorithms in combination with threshold 
+processing procedures are widely used in nonparametric regression 
+problems when estimating the signal function from noisy data. The 
+advantages of these methods are their computational efficiency and 
+the ability to adapt to the local features of the function being 
+estimated. The error analysis of threshold processing methods is an 
+important practical task, since it allows assessing the quality of both 
+the methods themselves and the equipment used. Sometimes, the nature of 
+the data is such that observations are recorded at random times. If the
+ sampling points form a variation series constructed from a~sample 
+ of a~uniform distribution over the data recording interval, then the use 
+ of conventional threshold processing procedures is adequate. In this paper, 
+ the author analyzes the estimate of the mean square risk of
+ threshold processing
+  and shows that under certain conditions, 
+this estimate is strongly consistent and asymptotically normal.}
+
+
+\KWE{wavelets; threshold processing; random samples;  mean square risk estimate}
+
+
+
+
+ \DOI{10.14357/19922264190203}
+
+%\vspace*{-14pt}
+
+\Ack
+\noindent
+This research is supported by Russian Science Foundation (project No.\,18-11-00155).
+
+
+%\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+\bibitem{1-shest-1}
+\Aue{Donoho, D., and I.\,M.~Johnstone.} 
+1994. Ideal spatial adaptation via wavelet shrinkage. \textit{Biometrika} 81(3):425--455.
+
+\bibitem{2-shest-1}
+\Aue{Donoho, D., I.\,M.~Johnstone, G.~Kerkyacharian, and D.~Picard.}
+1995. Wavelet shrinkage: Asymptopia? \textit{J.~Roy. Stat. Soc.~B}
+57(2):301--369.
+
+\bibitem{3-shest-1}
+\Aue{Marron, J.\,S., S.~Adak, I.\,M.~Johnstone, M.\,H.~Neumann, and P.~Patil.} 
+1998. Exact risk analysis of wavelet regression. \textit{J.~Comput. Graph. Stat.} 7:278--309.
+
+\bibitem{4-shest-1}
+\Aue{Markin, A.\,V.} 2009. Predel'noe raspredelenie otsenki riska pri 
+porogovoy obrabotke veyvlet-koeffitsientov 
+[Limit distribution of risk estimate of wavelet coefficient thresholding]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.}  3(4):57--63.
+
+\bibitem{5-shest-1}
+\Aue{Shestakov, O.\,V.} 2012. Asymptotic normality of adaptive wavelet thresholding 
+risk estimation. \textit{Dokl. Math.} 86(1):556--558.
+
+\bibitem{6-shest-1}
+\Aue{Shestakov, O.\,V.} 2016. \textit{Veroyatnostno-statisticheskie metody analiza 
+i~obrabotki signalov na osnove veyvlet-algoritmov} [Probabilistic-statistical 
+methods of signal analysis and processing based on wavelet algorithms].
+ Moscow: Argamak-Media Publs. 200~p.
+
+\bibitem{7-shest-1}
+\Aue{Shestakov, O.\,V.}  2016. On the strong consistency of the adaptive risk 
+estimator for wavelet thresholding. \textit{J.~Math. Sci.} 214(1):115--118.
+
+\bibitem{8-shest-1}
+\Aue{Cai, T., and L. Brown.} 
+1998. Wavelet shrinkage for nonequispaced samples. 
+\textit{Ann. Stat.} 26(5):1783--1799.
+
+\bibitem{9-shest-1}
+\Aue{Cai, T., and L.~Brown.} 1999. 
+Wavelet estimation for samples with random uniform design.
+\textit{Stat. Probabil. Lett.} 42:313--321.
+
+\bibitem{10-shest-1}
+\Aue{Mallat, S.} 1999. 
+\textit{A~wavelet tour of signal processing.} New York, NY: Academic Press. 857~p.
+
+\bibitem{11-shest-1}
+\Aue{Jansen, M.} 2001. \textit{Noise reduction by wavelet thresholding.} 
+Lecture notes in statistics ser.
+New York, NY: Springer Verlag.  Vol.~161. 196~p.
+
+\bibitem{12-shest-1}
+\Aue{Shestakov, O.\,V.} 2010. 
+Approksimatsiya raspredeleniya otsenki riska porogovoy obrabotki 
+veyvlet-koeffitsientov normal'nym raspredeleniem pri ispol'zovanii 
+vy\-bo\-roch\-noy dispersii
+[Normal approximation for distribution of risk estimate for wavelet 
+coefficients thresholding when using sample variance]. 
+\textit{Informatika i~ee Pri\-me\-ne\-niya~--- Inform. Appl.}  4(4):73--81.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received February 28, 2019}}
+
+%\pagebreak
+
+%\vspace*{-18pt}
+
+\Contrl
+
+\noindent
+\textbf{Shestakov Oleg V.} (b.\ 1976)~--- 
+Doctor of Science in physics and mathematics, professor, 
+Department of Mathematical Statistics, Faculty of Computational Mathematics and 
+Cybernetics, M.\,V.~Lomonosov Moscow State University, 1-52~Leninskiye Gory, 
+GSP-1, Moscow 119991, Russian Federation; senior scientist, Institute of 
+Informatics Problems, Federal Research Center ``Computer Science and Control'' 
+of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian 
+Federation; \mbox{oshestakov@cs.msu.su}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}  

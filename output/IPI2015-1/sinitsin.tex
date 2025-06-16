@@ -1,0 +1,918 @@
+\def\stat{sinitsin}
+
+\def\tit{МОДЕЛИРОВАНИЕ НОРМАЛЬНЫХ ПРОЦЕССОВ В~СТОХАСТИЧЕСКИХ
+   СИСТЕМАХ СО~СЛОЖНЫМИ ИРРАЦИОНАЛЬНЫМИ НЕЛИНЕЙНОСТЯМИ$^*$}
+
+\def\titkol{Моделирование нормальных процессов в~стохастических
+   системах со~сложными иррациональными нелинейностями}
+
+\def\aut{И.\,Н.~Синицын$^1$, В.\,И.~Синицын$^2$, Э.\,Р.~Корепанов$^3$}
+
+\def\autkol{И.\,Н.~Синицын, В.\,И.~Синицын, Э.\,Р.~Корепанов}
+
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при поддержке РФФИ (проект 15-07-02244).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем
+информатики Российской академии наук, sinitsin@dol.ru}
+\footnotetext[2]{Институт проблем
+информатики Российской академии наук, vsinitsin@ipiran.ru}
+\footnotetext[3]{Институт проблем
+информатики Российской академии наук, ekorepanov@ipiran.ru}
+
+
+\vspace*{-6pt}
+
+\Abst{Рассматриваются  дифференциальные стохастические системы (СтС),
+в~том числе и~на многообразиях, с~винеровскими и~пуассоновскими шумами
+и~со сложными иррациональными нелинейностями (СИРН). Такие модели  описывают
+поведение многих современных нано- и~квантовооптических  технических средств
+информатики. Приводятся уравнения методов нормальной аппроксимации (МНА)
+и~статистической линеаризации (МСЛ) для аналитического моделирования нестационарных
+и~стационарных нормальных процессов. Рассматриваются методы вычисления типовых
+интегралов для детерминированных и~стохастических одно-
+и~многомерных  СИРН скалярного и~векторного аргумента. Отмечается
+возможность использования цилиндрических функций для аналитического
+расчета интегралов. Обсуждается алгоритмическое обеспечение аналитического
+и~статистического моделирования. Приводится 7~тестовых примеров для типовых
+СИРН. Рассматривается возможность использования МСЛ для нормализации гиббсовских
+распределений и~распределений с~инвариантной мерой для СтС  с~СИРН.}
+
+\KW{аналитическое и статистическое моделирование;
+гиббсовское распределение; метод нормальной аппроксимации (МНА);
+метод статистической линеаризации (МСЛ); распределение с~инвариантной мерой;
+сложные иррациональные нелинейности (СИРН);
+сложные конечные, дифференциальные и~интегральные нелинейности;
+стохастические системы (СтС);
+цилиндрические функции}
+
+\vspace*{-6pt}
+
+\DOI{10.14357/19922264150101}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+\section{Введение}
+
+Вопросам аналитического и~статистического моделирования нормальных (гауссовских)
+стохастических процессов (СтП) в~нелинейных СтС (в~том числе на многообразиях)
+на основе МНА и~МСЛ посвящена обширная литература (см.\ обзоры в~[1--5]).
+В~[6, 7] дано развитие МНА (МСЛ) для СтС со сложными конечными дифференциальными
+и~интегральными нелинейностями.
+
+Рассмотрим обобщение~[6, 7] на случай СтС на многообразиях, содержащих одно-
+и~многомерные детерминированные и~стохастические СИРН скалярного
+и~векторного аргумента.
+Статья состоит из введения, четырех разделов и~заключения. В~разд.~2
+приведены исходные дифференциальные стохастические уравнения (понимаемые
+в~смысле Ито), а~также уравнения МНА (МСЛ) для СтС с~детерминированными
+и~стохастическими СИРН. Алгоритмическое обеспечение  аналитического
+и~статистического моделирования рассмотрено в~разд.~3. Типовые интегралы
+и~тестовые примеры для типовых СИРН содержатся в~разд.~4. В~разд.~5
+обсуждаются вопросы моделирования нормальных гиббсо\-вских и~распределений
+с~инвариантной мерой в~гамильтоновых СтС с~линейной диссипацией.
+
+\section{Уравнения нормальной аппроксимации (статистической линеаризации)
+для~систем со~сложными иррациональными нелинейностями}
+
+Как известно~\cite{1-sin, 2-sin},  уравнения конечномерных непрерывных
+нелинейных систем со стохастическими возмущениями путем расширения вектора
+состояния СтС могут быть записаны в~виде сле\-ду\-юще\-го векторного стохастического
+дифференциального уравнения Ито:
+\begin{multline}
+dY_t = a(Y_t, t)\, dt + b (Y_t, t) \,dW_0+ {}\\
+{}+\iii_{R_0} c (Y_t, t, v) P^0 (dt, dv)\,,\enskip Y(t_0) = Y_0\,.\label{e2.1-sin}
+\end{multline}
+Здесь $Y_t$~--- $(p\times 1)$-мер\-ный вектор состояния, $Y_t \hm\in \Delta_y$
+($\Delta_y$~--- многообразие состояний);  $a\hm=a(Y_t, t)$ и~$b\hm=b(y_t, t)$~---
+известные  $(p\times 1)$-мер\-ная и  $(p\times m)$-мер\-ная функции~$Y_t$ и~$t$;
+$W_0\hm= W_0(t)$~--- $(r\times 1)$-мер\-ный винеровский СтП интенсивности
+$\nu_0 \hm= \nu_0(t)$; $c(Y_t, t, v)$~--- $(p\times 1)$-мер\-ная функция
+$Y_t, t$ и~вспомогательного $(q\times 1)$-мер\-но\-го параметра~$v$;
+$\iii\limits_{\Delta} dP^0 (t, A)$~--- центрированная пуассоновская мера,
+опре\-де\-ля\-емая следующим образом:
+\begin{equation*}
+\iii\limits_{\Delta} dP^0 (t, A) = \iii\limits_{\Delta} dP (t,A) =\iii\limits_{\Delta} \nu_P (t,A)\, dt\,.
+%\label{e2.2-sin}
+\end{equation*}
+В~(\ref{e2.1-sin}) принято: $\iii\limits_{\Delta}$~---
+число скачков пуассоновского СтП
+в~интервале времени  $\Delta \hm= (t_1, t_2]$; $\nu_P (t, A)$~---
+интенсивность пуассоновского СтП  $P(t,A)$; $A$~--- некоторое
+борелевское множество пространства~$R_0^q$ с~выколотым началом.
+Начальное значение~$Y_0$ представляет собой случайную величину
+(с.в.), не зависящую от приращений $W_0(t)$ и~$P(t,A)$ на
+интервалах времени, следующих за  $t_0, t_0\hm \le t_1\hm\le t_2$, для
+любого множества~$A$.
+
+В случае аддитивных нормальных (гауссовских) и~обобщенных пуассоновских
+возмущений уравнение~(\ref{e2.1-sin}) имеет вид:
+\begin{equation}
+\dot Y = a(Y_t,t)+ b_0 (t) V\,, \enskip
+V = \dot W\,,\enskip Y(t_0) = Y_0\,.\label{e2.3-sin}
+\end{equation}
+Здесь $W$~--- СтП с~независимыми приращениями, представляющий собой смесь
+нормального и~обобщенного пуассоновского СтП.
+
+Для компонент $\vrp(Y_t, t) \hm= \{a_h, b_{kj}, c_h\}$ функций $a$, $b$ и~$c$,
+являющихся СИРН, примем следующие типовые представления:
+\begin{align}
+\vrp(Y_t, t) &= \sss\limits_{r=1}^p l_{rt}^\vrp \left\vert
+Y_{rt}+d_{rt}\right\vert^{\alpha_{r}^\vrp} \rho_r (Y_t)\,;\label{e2.4-sin}\\
+\vrp(Y_t, t) &= \sss\limits_{r=1}^p l_{r,ht}^\vrp
+\prod\limits_{h=1}^p \left\vert Y_{ht}+d_{ht}\right\vert^{\alpha_{h,r}^\vrp}
+\rho_{h,r} (Y_t)\,,\label{e2.5-sin}
+\end{align}
+где $l_{rt}^\vrp$, $l_{r,ht}^\vrp$, $\alpha_r^\vrp$, $\alpha_{h,r}^\vrp$,
+$d_{rt}$, $d_{ht}$ и $\rho_{r}(Y_t)$, $\rho_{h,r}(Y_t)$~---
+параметры и~структурные функции СИРН.
+
+Если предположить существование конечных вероятностных моментов
+второго порядка для моментов времени~$t_1$ и~$t_2$, то уравнения
+МНА примут следующий вид~\cite{2-sin, 3-sin}:
+\begin{itemize}
+\item  для характеристических функций:
+    \begin{align}
+       \hspace*{-8mm}g_1^N (\lambda;t) &=\exp \lk i\lambda^{\mathrm{T}} m_t - \fr{1}{2}\,
+     \lambda^{\mathrm{T}} K_t \lambda\rk\,;\label{e2.6-sin}\\
+   \hspace*{-8mm}g_{t_1, t_2}^N (\lambda_1, \lambda_2;t_1, t_2 ) &=\exp \lk i\bar \lambda^{\mathrm{T}}
+    \bar m_2 - \fr{1}{2}\, \bar \lambda^{\mathrm{T}} \bar K_2 \lambda\rk\,,\label{e2.7-sin}
+    \end{align}
+где
+    $$
+    \bar \lambda =\lk \lambda_1^{\mathrm{T}}\lambda_2^{\mathrm{T}}\rk^{\mathrm{T}}\,;
+    \quad\bar m_2 = \lk m_{t_1}^{\mathrm{T}}\, m_{t_2}^{\mathrm{T}}\rk^{\mathrm{T}}\,;
+    $$
+    $$
+    \bar K_2 \begin{bmatrix}
+    K(t_1, t_1)& K(t_1, t_2)\\
+    K(t_2, t_1)& K(t_2, t_2)\end{bmatrix};
+    $$
+\item  для математических ожиданий~$m_t$, ковариационной матрицы~$K_t$
+и~матрицы ковариационных функций $K(t_1, t_2)$:
+  \begin{gather}
+  \dot m_t = a_1 (m_t, K_t, t)\,,\enskip m_0 = m(t_0)\,;\label{e2.8-sin}\\
+\dot K_t = a_2 (m_t, K_t, t)\,,\enskip K_0 = K(t_0)\,;\label{e2.9-sin}
+\end{gather}
+\begin{equation}
+\left.
+\begin{array}{rl}
+\hspace*{-8mm}\fr{\prt K(t_1, t_2)}{\prt t_2 }&= K(t_1, t_2) a_{21} (m_{t_2}, K_{t_2}, t_2)^{\mathrm{T}}\,,
+\\[6pt]
+\hspace*{-8mm} K(t_1, t_1) &= K_{t_1}\,.
+ \end{array}
+ \right\}
+ \label{e2.10-sin}
+\end{equation}
+    \end{itemize}
+Здесь приняты следующие обозначения:
+    \begin{align}
+a_1 &= a_1 (m_t, K_t, t) = M_{\Delta_y}^N a (Y_t, t)\,;\label{e2.11-sin}\\
+a_2 &= a_2 (m_t, K_t, t) = a_{21} (m_t, K_t, t)+{}\notag\\
+&\hspace*{5mm}{}+ a_{21} (m_t, K_t, t)^{\mathrm{T}} +
+a_{22}(m_t, K_t, t)\,;\label{e2.12-sin}\\
+a_{21} &= a_{21}(m_t, K_t, t)=  M_{\Delta_y}^N a(Y_t, t) Y_{t}^{0T}\,;\label{e2.13-sin}\\
+a_{22} &= a_{22}(m_t, K_t, t)= M_{\Delta_y}^N \si (Y_t, t)\,;\label{e2.14-sin}
+\\
+\sigma (Y_t, t) &= b(Y_t, t) \nu_0(t) b(Y_t, t)^{\mathrm{T}} +{}\notag\\
+&\hspace*{5mm}{}+\iii\limits_{R_0^q}
+c (Y_t, t, v) c(Y_t, t,v)^{\mathrm{T}} \nu_P (t, dv)\,;\label{e2.15-sin}
+\\
+m_t &= M_{\Delta_y}^N Y_t\,,\enskip
+Y_t^0 = Y_t - m_t\,;\notag\\
+K_t &= M_{\Delta_y}^N Y_0^0 Y_t^{0\mathrm{T}}\,;\enskip
+K(t_1, t_2) = M_{\Delta_y}^N Y_{t_1}^{0} Y_{t_2}^{0T}\,;\notag
+%\label{e2.16-sin}
+\end{align}
+$M_{\Delta_y}^N$~--- символ вычисления математического ожидания для
+нормальных распределений~(\ref{e2.6-sin}) и~(\ref{e2.7-sin}).
+
+Для стационарных СтС нормальные стационарные СтП~--- если они
+существуют, то  $m_t\hm =\bar m$, $ K_t\hm =\bar K$, $K(t_1, t_2) \hm=
+k(\tau)$ $(\tau \hm= t_1-t_2)$,~--- определяются уравнениями~\cite{2-sin, 3-sin}:
+\begin{equation}
+a_1 (\bar m, \bar K) =0\,;\quad a_2 (\bar m, \bar K)=0\,;\label{e2.17-sin}
+\end{equation}
+\begin{equation}
+\left.
+\begin{array}{rl}
+\dot k_\tau (\tau) &= a_{21} (\bar m, \bar K)\bar K^{-1} k(\tau)\,,\\[6pt]
+&\hspace*{20mm}k(0) =\bar K \enskip (\forall \tau >0)\,; \\
+k(\tau) &= k(-\tau)^{\mathrm{T}} \enskip (\forall\tau <0)\,.
+\end{array}
+\right\}
+\label{e2.18-sin}
+\end{equation}
+При этом необходимо, чтобы матрица  $a_{21} (\bar m, \bar K)\hm=\bar a_{21}$
+была асимптотически устойчивой.
+
+В случае СтС~(\ref{e2.3-sin}) уравнения МНА переходят в~уравнения МСЛ
+Казакова~\cite{2-sin, 3-sin}, если принять
+\begin{equation}
+a(Y_t,t) = a_1 (m_t, K_t) + k_1^a (m_t, K_t) Y_t^0;\label{e2.19-sin}
+\end{equation}
+\begin{equation}
+\left.
+\begin{array}{rl}
+b(Y_t,t) &= b_0 (t)\,;\\[6pt]
+\sigma(Y_t, t)&= b_0(t) \nu(t) b_0(t)^{\mathrm{T}} =
+\sigma_0(t)\,;
+\end{array}
+\right\}
+\label{e2.20-sin}
+\end{equation}
+\begin{equation}
+k_1^a (m_t, K_t, t) =\lk \left(\fr{\prt}{\prt m_t} \right)a_0 (m_t, K_t, t)^{\mathrm{T}}\rk^{\mathrm{T}}\,;\label{e2.21-sin}
+\end{equation}
+\begin{equation}
+\dot m_t = a_1 (m_t, K_t, t) \,;\quad m_0 = m(t_0)\,;\label{e2.22-sin}
+\end{equation}
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\dot K_t = k_1^a (m_t, K_t, t) K_t + K_t k_1^a (m_t, K_t, t)^{\mathrm{T}} +{}\\
+{}+\sigma_0(t)\,,\quad K_0 = K(t_0)\,;
+\label{e2.23-sin}
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\fr{\prt K(t_1, t_2)}{\prt t_2} = K(t_1, t_2) K_{t_2} k_1^a
+(m_{t_2}, K_{t_2}, t_2)^{\mathrm{T}}\,,\\
+K(t_1, t_2) = K_{t_1}\,.
+\label{e2.24-sin}
+\end{multline}
+
+
+Для стационарных СтС~(\ref{e2.3-sin}) при условии асимптотической устойчивости
+матрицы $k_1^a (\bar m, \bar K)$ в~основе МСЛ лежат уравнения~(\ref{e2.17-sin})
+и~(\ref{e2.18-sin}), записанные в виде:
+\begin{gather}
+a_1 (\bar m, \bar K) =0\,; \label{e2.25-sin}\\
+k_1^a (\bar m, \bar K) \bar K + \bar K k_1^a (\bar m, \bar K)^{\mathrm{T}} +\bar \sigma_0 =0\,;\label{e2.26-sin}
+\end{gather}
+
+\noindent
+\begin{equation}
+\left.
+\begin{array}{c}
+\!\dot k_\tau (\tau) = k_1^a (\bar m, \bar K)k(\tau)\,,\enskip
+k(0) =\bar K \enskip (\forall \tau >0)\,;\\[6pt]
+\!k(\tau) = k (-\tau)^{\mathrm{T}} \enskip (\forall \tau <0)\,.
+\end{array}\!
+\right\}\!
+\label{e2.27-sin}
+\end{equation}
+
+Уравнения~(\ref{e2.6-sin})--(\ref{e2.10-sin}) лежат в~основе МНА для СтС~(\ref{e2.1-sin}),
+а~уравнения~(\ref{e2.19-sin})--(\ref{e2.24-sin})~--- в~основе МСЛ для СтС~(\ref{e2.3-sin}).
+Для определения стационарных СтП согласно МНА служат соотношения~(\ref{e2.17-sin}) и~(\ref{e2.18-sin}),
+а~МСЛ~--- (\ref{e2.25-sin})--(\ref{e2.27-sin}).
+
+В задачах практики для СтС со стохастическими СИРН  $a$, $b$ и~$c$
+являются нормальными случайными функциями состояния~$Y_t$ и~времени:
+$$
+A=A(Y_t, t)\,;\ B=B(Y_t, t)\,;\  C\hm=C(Y_t, t, v).
+$$
+
+При известных
+условиях~[1--3] они могут быть представлены в виде соответствующих
+канонических разложений по случайным нормальным скалярным с.в.
+В~этом случае в представлениях~(\ref{e2.4-sin}) и~(\ref{e2.5-sin}) величины
+$l_{rt}^\vrp$ и~$l_{r,ht}^\vrp$ будут независимыми с.в.~$L_{rt}^\vrp$
+и~$L_{r,ht}^\vrp$ с~известными математическими ожиданиями
+$m_{rt}^{L_\vrp}$ и~$m_{r,ht}^{L_\vrp}$ и~дисперсиями
+$D_{rt}^{L_\vrp}$ и~$l_{r,ht}^{L_\vrp}$. Введя расширенный вектор
+состояния~$\bar Y_t$, состоящий из~$Y_t$ и~с.в.~$L_{rt}^\vrp$
+и~$L_{r,ht}^\vrp$, и~добавив к~уравнениям~(\ref{e2.1-sin}) уравнения $dL_{rt}^\vrp
+\hm=0$ и~$dL_{rh,t}^\vrp \hm=0$, придем к~СтС вида~(\ref{e2.1-sin}).
+
+\section{Алгоритмическое обеспечение аналитического и~статистического моделирования}
+
+Как следует из уравнений~(\ref{e2.11-sin})--(\ref{e2.15-sin}),
+для МНА необходимо уметь вычислять следующие инте\-гралы:
+\begin{multline}
+I_0^a = I_0^a (m_t, K_t, t) = a_1 (m_t, K_t, t)={} \\
+{}=M_{\Delta_y}^N a(Y_t, t)\,;\label{e3.1-sin}
+\end{multline}
+\noindent
+\begin{align}
+I_1^a &= I_1^a (m_t, K_t, t)= a_{21}(m_t, K_t, t)={}\notag\\
+&\hspace*{30mm}{}=M_{\Delta_y}^N a(Y_t , t) Y_t^{0\mathrm{T}}\,;\label{e3.2-sin}\\
+I_0^{\bar \sigma} &= I_0^{\bar \sigma} (m_t, K_t, t) = a_{22}(m_t, K_t, t) ={}\notag\\
+&\hspace*{30mm}{}=M_N \bar \sigma (Y_t, t)\,.\label{e3.3-sin}
+\end{align}
+
+Для МСЛ достаточно вычислить интеграл~(\ref{e3.1-sin}), причем интеграл~$I_1^a$
+вычисляется по формуле~[2--4]:
+\begin{equation*}
+k_1^a = k_1^a (m_t, K_t, t)=\lk \left( \fr{\prt}{\prt m_t}\right)
+I_0^a (m_t, K_t, t)^{\mathrm{T}}\rk^{\mathrm{T}}\,. %\label{e3.4-sin}
+\end{equation*}
+
+В основе аналитического вычисления интегралов~(\ref{e3.1-sin})--(\ref{e3.3-sin})
+лежат методы, основанные на свойствах цилиндрических функций~[8--10].
+Для чис\-лен\-ных расчетов этих интегралов используются \mbox{методы}~\cite{8-sin}.
+
+ Важно иметь в виду, что уравнения МНА (МСЛ) содержат интегралы
+ $I_0^a$, $I_1^a$ и~$I_0^\sigma$ в~виде соответ\-ст\-ву\-ющих коэффициентов.
+ Поэтому процедура вы\-числе\-ния интегралов должна быть согласована с~мето\-дом
+ численного решения обыкновенных дифференциальных уравнений для~$m_t$, $K_t$
+ и~$K(t_1, t_2)$ Эти коэффициенты допускают дифференцирование по~$m_t$ и~$K_t$,
+ так как под интегралом стоит сглаживающая нормальная плотность.
+
+В~\cite{5-sin} изложены общие алгоритмы аналитического и статистического
+моделирования распределений, в~том числе нормальных в~нелинейных
+СтС на многообразиях. Алгоритмы аналитического, статистического
+моделирования для СтС с~СИРН, а~также смешанные алгоритмы различной
+степени точности относительно шага интегрирования представлены в~\cite{5-sin}.
+
+\section{Тестовые примеры}
+
+\textbf{1.}
+Рассмотрим вычисление интегралов~(\ref{e3.1-sin}) и~(\ref{e3.2-sin})
+для одномерных СИРН скалярного аргумента
+\begin{equation}
+\vrp (Y_t, t) =\left\vert Y_t\right\vert^{\alpha-1}\, \mathrm{sign}\, Y_t
+\label{e4.1-sin}
+\end{equation}
+($\alpha$~--- нецелый показатель).
+
+Пользуясь~(\ref{e2.19-sin}), представим~(\ref{e4.1-sin}) в~виде
+\begin{equation*}
+\vrp(Y_t, t) = \vrp_0 (m_t, D_t, t) + k_1^\vrp(m_t, D_t, t) Y_t^0\,.
+%\label{e4.2-sin}
+\end{equation*}
+Здесь введены следующие обозначения:
+\begin{align}
+\vrp_0(m_t, D_t, t) &={}\notag\\
+&\hspace*{-10mm}{}=\sqrt{\fr{2}{\pi}}\,\Gamma(\alpha)
+    D_t^{(\alpha-1)/2} e^{-\xi_t^2/4} D_{-\alpha} (-\xi_t)\,;\label{e4.3-sin}\\
+k_1^\vrp (m_t, D_t, t) &= \fr{\prt \vrp_0(m_t, D_t, t)}{\prt m_t}={}\notag\\
+&\hspace*{-10mm}{}=
+\sqrt{\fr{2}{\pi}}\,\Gamma(\alpha) D_t^{(\alpha/2)-1} e^{-\xi_t^2/4} D_{1-\alpha}
+(-\xi_t) \,,\label{e4.4-sin}
+\end{align}
+где  $\Gamma(\alpha)$~--- гамма-функ\-ция,  $\xi_t \hm= m_t/\sqrt{D_t}$~---
+отношение <<сигнал--шум>>; $D_{-\alpha} (\xi_t)$~--- функция параболического
+цилиндра~\cite{9-sin}.
+При вычислении были учтены следующие соотношения~\cite{9-sin, 8-sin}:
+   \begin{multline}
+   \iii\limits_0^\infty x^{\alpha-1} e^{-\beta x^2 - \gamma x}\,dx ={}\\
+   {}= (2\beta)^{-\alpha/2} \Gamma(\alpha) \exp
+   \left(\fr{\gamma^2}{8\beta}\right) D_{-\alpha}
+   \left(\fr{\gamma}{\sqrt{2\beta}}\right)\\
+   (\mathrm{Re}\,\beta>0\,,\enskip \mathrm{Re}\,\alpha >0)\,;\label{e4.5-sin}
+   \end{multline}
+
+   \vspace*{-12pt}
+
+   \noindent
+   \begin{multline}
+\hspace*{-3mm}\fr{dD_{\nu}(z)}{dz} =
+   -\fr{z}{2}\,D_{\nu} (z) - D_{\nu-1} (z) = \fr{z}{2}\, D_{\nu} (z) -
+   D_{\nu+1} (z) \\
+(\mathrm{Re}\, \beta>0\,,\enskip \mathrm{Re}\,\alpha>0\,,\enskip \nu=-\alpha)\,.
+\label{e4.6-sin}
+\end{multline}
+
+Соотношения~(\ref{e4.5-sin}) и~(\ref{e4.6-sin}) могут быть использованы
+ также для вычисления интегралов~(\ref{e3.3-sin}).
+
+Применяя известное асимптотическое разложение для
+функции параболического цилиндра  $D_\nu(z)$~\cite{9-sin, 8-sin}
+\begin{multline*}
+D_\nu (z) \approx e^{-z^2/4} z^\nu \left[
+1- \fr{\nu(\nu-1)}{2z^2} +{}\right.\\
+\left.{}+ \fr{\nu(\nu-1) (\nu-2) (\nu-3)}{2\cdot 4 z^2} +\cdots\right]
+\\
+\left( |z|\gg1\,, \enskip |z|\gg\nu\right)\,,
+\label{e4.7-sin}
+\end{multline*}
+придем к следующим асимптотическим выражениями для
+$\vrp_0 (\xi_t, D_t)$ и~$k_1^\vrp (\xi_t, D_t)$:
+  \begin{align*}
+  \vrp_0 (\xi_t, D_t) &= \sqrt{\fr{2}{\pi}}\, \Gamma(\alpha)
+  D_t^{(\alp-1)/2} e^{-\xi_t^2/2} |\xi_t|^{-\alpha}\left[
+  \vphantom{\fr{\alpha(\alpha+1)(\alpha+2)(\alpha+3)}{8\xi_t^4}}
+  1-{}\right.\notag\\
+&\hspace*{-15mm}\left.{}- \fr{\alpha(\alpha+1)}{2\xi_t^2}+
+\fr{\alpha(\alpha+1)(\alpha+2)(\alpha+3)}{8\xi_t^4}+\cdots\right]>0\,; \\ %\label{e4.8-sin}\\
+k_1^\vrp (\xi_t, D_t) &= \fr{\prt \vrp_0 (\xi_t, D_t)}{\prt \xi_t}\,
+\fr{1}{\sqrt{D_t}}\,. %\label{e4.9-sin}
+\end{align*}
+
+\textbf{2.}
+Для одномерной СИРН
+   \begin{equation}
+   \vrp (Y_t) =\left\vert Y_t\right\vert^{\alpha-1} \mathbf{1}\, (Y_t)\label{e4.10-sin}
+   \end{equation}
+имеем
+      \begin{align*}
+   \vrp_0 (\xi_t, D_t) &= \fr{1}{\sqrt{2\pi}}\, \Gamma (\alpha+1) D_t^{\alpha/2}
+   e^{-\xi_t^2/4} D_{-(\alpha+1)} (-\xi_t);\\ %\label{e4.11-sin}\\
+k_1^\vrp (\xi_t, D_t) &=\fr{\prt \vrp_0 (\xi_t, D_t)}{\prt \xi_t}\,
+\fr{1}{\sqrt{D_t}}. %\label{e4.12-sin}
+\end{align*}
+
+\textbf{3.}
+Для нелинейной одномерной дифференциальной СтС с~СИРН вида
+\begin{equation}
+\dot Y_t = a_{0t} - a_t |Y_t|^{\alpha-1} \mathrm{sign}\, Y_t + b_t V
+    \label{e4.13-sin}
+    \end{equation}
+($\alpha$, $a_t$, $b_t$~--- коэффициенты;
+$V$~--- нормальный белый шум интенсивности~$\nu_t$) МСЛ приводит
+к~сле\-ду\-ющим уравнениями:
+\begin{align*}
+\dot m_t &= a_{0t} - a_t \vrp_0 (m_t, D_t)\,;\\ %\label{e4.14-sin}\\
+\dot D_t &= -2a_t k_1^\vrp (m_t, D_t) + b_t^2 \nu_t\,. %\label{e4.15-sin}
+\end{align*}
+Здесь $\vrp_0$ и $k_1^\vrp$ определены по~(\ref{e4.3-sin}) и~(\ref{e4.4-sin}).
+
+Для статистической системы~(\ref{e4.13-sin}) при
+$a_t \hm=\bar a\hm>0$ имеет место стационарный режим, для которого
+$m_t\hm=\bar m$, $D_t \hm= \bar D$ определяются из уравнений
+   \begin{equation*}
+   \bar a_0 - \bar a \vrp_0 (\bar m, \bar D) =0\,;\quad
+   -2\bar a k_1^\vrp (\bar m, \bar D) + \bar b^2 \bar \nu =0\,. %\label{e4.16-sin}
+   \end{equation*}
+
+\textbf{4.}
+Для одномерной дифференциальной СтС с~СИРН и~параметрическим шумом
+\begin{equation*}
+\dot Y_t = a_{0t} - a_t Y_t + b_t \left( \left\vert Y_t\right\vert^{\delta-1}
+\mathrm{sign}\, Y_t\right) V
+%\label{e(4.17-sin}
+\end{equation*}
+с~учетом результатов примера~1 согласно МНА \mbox{имеем}:
+\begin{align*}
+\dot m _t &= a_{0t} - a_t m_t\,;\\ %\label{e4.18-sin}\\
+\dot D_t &=-2a_t D_t + b_t^2 \nu_t \vrp_0 (m_t, D_t)\,. %\label{e4.19-sin}
+\end{align*}
+Здесь $\vrp_0$ определяется по~(\ref{e4.3-sin}) при $\delta \hm= 2\alpha \hm-1$.
+
+\textbf{5.}
+Для некоторых типовых одномерных нелинейных дифференциальных СтС с~СИРН вида
+\begin{equation*}
+\dot Y_t =\psi (Y_t) +b_t V\,, %\label{e4.20-sin}
+\end{equation*}
+допускающих стационарный режим $m_t \hm= \bar m \hm=0$, $D_t \hm= \bar D \hm\ne 0$,
+выражения для  $\bar \psi_0 \hm=\bar\psi_0 (0, \bar D)$ имеют соответственно вид:
+    \begin{align}
+    \psi (Y_t) &= Y_t (Y_t^2 + d^2)^{-1/2};\notag\\
+\bar \psi_0 &= \sqrt{\fr{\pi}{\mu}}\, e^{d^2\mu} \lk 1-\tilde\Phi (d\sqrt{\mu})\rk\,,
+\label{e4.21-sin}
+\end{align}
+где
+\begin{gather}
+\tilde\Phi (x) = \fr{2}{\sqrt{\pi}}
+\iii\limits_0^x e^{-t^2}dt\,,\quad
+\mu =\fr{1}{2\bar D};\notag
+\\
+\psi(Y_t) = Y_t^{\alpha-1} \exp (-\gamma Y_t^{-2})\,;\notag\\
+\bar \psi_0 = 2 \left(\fr{\gamma}{\beta}\right)^{\alpha/4} K_{\alpha/2}
+(2\sqrt{\beta\gamma})\,,
+\label{e4.22-sin}
+\end{gather}
+где $K_z (x)$~--- цилиндрическая функция мнимого аргумента, $\beta \hm=
+1/(2\bar D)$;
+\begin{gather}
+\psi (Y_t) = Y_t^{\mu-1} \sin\gamma Y_t\,;\notag\\
+\bar\psi_0 = \gamma e^{-\gamma^2/4\beta} \Gamma
+\left(\fr{1+\mu}{2}\right){}_1\! F_1 \left(-\fr{\mu}{2};\fr{3}{2};\fr{\gamma^2}{4\beta}\right)\,,
+\label{e4.23-sin}
+\end{gather}
+где ${ }_1\! F_1$~--- вырожденная гипергеометрическая функция, $\beta =
+{1}/{\bar D} >0$, Re $\mu>-1$;
+    $$\psi (Y_t) = Y_t^{\mu-1} \cos a Y_t\,;$$
+\begin{equation}
+\bar\psi_0 = \fr{\Gamma\left({\mu}/{2}\right)}
+{\beta^{\mu/2}}{ }_1\! F_1\left(\fr{\mu}{2};\fr{1}{2};-\fr{a^2}{4\beta}\right)
+\label{e4.24-sin}
+\end{equation}
+при
+$\beta ={1}/({2\bar D})$, $\mathrm{Re}\, \mu\hm>0$,
+$a\hm>0$;
+      $$\psi (Y_t) = Y_t^{2\mu-1} \mathrm{sh}\,\gamma Y_t\,;$$
+
+      \vspace*{-12pt}
+
+      \noindent
+\begin{multline}
+\bar\psi_0 = \Gamma (2\mu) (2\beta)^{-\mu} \exp \left(
+\fr{\gamma^2}{8\beta}\right) \left[ D_{-2\mu} \left( -\fr{\gamma}{\sqrt{2}\beta}\right) -
+{}\right.\\
+\left.{}- D_{-2\mu}  \left( \fr{\gamma}{\sqrt{2}\beta}\right) \right]
+\label{e4.25-sin}
+\end{multline}
+при
+$\beta ={1}/({2 \bar D})$, $\mu\hm>-0{,}5$;
+   $$\psi (Y_t) = Y_t^{2\mu-1} \mathrm{ch}\,\gamma Y_t\,;$$
+
+
+\vspace*{-12pt}
+
+   \noindent
+   \begin{multline}
+\bar\psi_0 = \Gamma (2\mu) (2\beta)^{-\mu} \exp \left(
+\fr{\gamma^2}{8\beta}\right) \left[ D_{-2\mu} \left( -\fr{\gamma}
+{\sqrt{2}\beta}\right) +{}\right.\\
+\left.{}+ D_{-2\mu}  \left( \fr{\gamma}{\sqrt{2}\beta}\right) \right]
+\label{e4.26-sin}
+\end{multline}
+при
+$\beta ={1}/({2 \bar{D}})$, $\mu\hm>0$.
+
+
+
+\textbf{6.}
+Статистическая линеаризация одномерной СИРН двумерного аргумента
+$Y_t\hm=\lk Y_{1t} \, Y_{2t}\rk^{\mathrm{T}}$ для независимых нормальных $Y_{it}$
+$(i\hm=1,2)$ определяется следующими выражениями:
+\begin{equation*}
+\vrp (Y_{1t}, Y_{2t}) =\vrp_0 + k_{11}^\vrp Y_1^0 +
+k_{12}^\vrp Y_2^0\,,\enskip k_{1i}^\vrp =\fr{\prt \vrp_0}
+{\prt m_{it}}\,. %\label{e4.27-sin}
+\end{equation*}
+Здесь $\vrp_0$, $k_{it}^\vrp$ зависят от~$m_{it}$
+и~$D_{it}$. Выражения для~$\vrp_0$ в~случаях~(\ref{e4.1-sin}), (\ref{e4.10-sin}),
+(\ref{e4.21-sin})--(\ref{e4.26-sin}) получаются путем перемножения
+соответствующих выражений для~$Y_{it}$. Аналогично рассматривается случай СИРН
+$n$-мер\-но\-го аргумента $(n\hm>2)$.
+
+\textbf{7.}
+Пусть одномерная гауссовская стохастическая СИРН аппроксимирована
+согласно~\cite{3-sin} отрезком канонического разложения
+\begin{equation*}
+A(Y_t) =\sss\limits_{j=1}^{n_j} L_j \left\vert Y_t\right\vert^{\alpha_j -1}
+\mathrm{sign}\, Y_t\,, %\label{e4.28-sin}
+\end{equation*}
+где $L_j$~--- независимые между собой и от $Y_t$ гауссовские с.в.\
+с~математическими ожиданиями $m^{L_j}$ и~дисперсиями $D^{L_j}$. Тогда
+МСЛ приводит к~сле\-ду\-юще\-му представлению:
+\begin{equation*}
+A(Y_t) = \vrp_0^A + k_1^A Y_t^0 +\sss\limits_{j=1}^{n_j} k_1^{L_j} L_j^0\,.
+%\label{e4.29-sin}
+\end{equation*}
+Здесь коэффициенты $\vrp_0^A$, $k_1^{L_j}$ и~$k_1^A$ зависят
+от $m_t^y$, $m^{L_j}$, $D_t^y$ и~$D^{L_j}$ и~вычисляются по формулам примера~1.
+
+
+\section{Применение к~моделированию нормальных распределений с~инвариантной мерой}
+
+\vspace*{-2pt}
+
+В~\cite{11-sin} описан ряд многомерных гамильтоновских систем типа Холта,
+Фо\-ки\-са--Ла\-гер\-стре\-ма и~др., содержащих СИРН. Для аналитического
+моделирования нормальных процессов, аппроксимирующих гиббсовские
+и~распределения с~инвариантной мерой, если учесть линейные диссипативные силы
+и~нелинейные и~параметрические  стохастические возмущения,  могут быть
+непосредственно применимы методы~\cite{1-sin, 2-sin, 12-sin}.
+
+\vspace*{-12pt}
+
+\section{Заключение}
+
+\vspace*{-2pt}
+
+Рассматриваются  дифференциальные СтС, в~том числе и~на многообразиях,
+с~винеровскими и~пуассоновскими шумами и~с~СИРН. Такие модели описывают
+поведение многих современных на\-но- и~квантовооптических  технических средств
+информатики.
+
+Приводятся уравнения МНА
+и~МСЛ для аналитического моделирования нестационарных
+и~стационарных нормальных процессов.
+
+Рассматриваются методы вычисления типовых интегралов для детерминированных
+и~стохастических одно- и~многомерных  СИРН скалярного и~векторного аргумента.
+Отмечается возможность использования цилиндрических функций для аналитического
+расчета интегралов. Обсуждается алгоритмическое обеспечение аналитического
+и~статистического моделирования.
+
+Приводятся 7~тес\-то\-вых примеров для типовых СИРН.
+
+Рассматривается возможность использования МСЛ для нормализации
+гиббсовских распределений и~распределений с~инвариантной мерой для СтС  с~СИРН.
+
+Результаты допускают обобщение на случай дискрет\-ных, интегродифференциальных
+и~операторных СтС и~СИРН, приводимых к~дифференциальным, в~том числе
+с~автокоррелированными шумами. Как отмечалось в~\cite{6-sin, 7-sin},
+особый интерес представляет развитие МНА (МСЛ) на случай сложных алгебраических
+и~трансцендентных нелинейностей.
+
+\vspace*{-9pt}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+ \vspace*{-2pt}
+
+\bibitem{1-sin}
+\Au{Пугачев В.\,С., Синицын И.\,Н.}
+Стохастические дифференциальные системы. Анализ и фильтрация.~---
+М.: Наука,  1990.  632~с. (\Au{Pugachev V.\,S., Sinitsyn I.\,N.}\linebreak\vspace*{-12pt}
+\pagebreak
+
+\noindent
+Stochastic differential systems.
+Analysis and filtering.~--- Chichester, New York: Jonh Wiley, 1987.
+549~p.)
+
+\bibitem{2-sin}
+\Au{Пугачев В.\,С., Синицын И.\,Н.}
+Теория стохастических систем.~--- М.: Логос, 2000; 2004. 1000~с.
+(\Au{Pugachev V.\,S., Sinitsyn I.\,N.}
+Stochastic systems. Theory and  applications.~---
+Singapore: World Scientific, 2001. 908~p.)
+
+\bibitem{3-sin}
+\Au{Синицын И.\,Н.}
+Канонические представления случайных функций и их применение в~задачах
+компьютерной поддержки научных исследований.~--- М.: ТОРУС
+ПРЕСС, 2009. 768~с.
+
+
+\bibitem{4-sin}
+\Au{Синицын И.\,Н.,  Синицын В.\,И.}
+Лекции по нормальной и эллипсоидальной аппроксимации распределений
+в~стохастических системах.~--- М.: ТОРУС ПРЕСС, 2013. 488~с.
+
+\bibitem{5-sin}
+\Au{Синицын И.\,Н.}
+Параметрическое статистическое и~аналитическое моделирование распределений
+в~нелинейных стохастических системах на многообразиях~//
+Информатика и~её применения, 2013. Т.~7. Вып.~2. С.~4--16.
+\bibitem{6-sin}
+\Au{Синицын И.\,Н., Синицын В.\,И.}
+Аналитическое моделирование нормальных процессов в~стохастических системах
+со сложными нелинейностями~// Информатика и~её применения, 2014. Т.~8.
+Вып.~3. С.~2--4.
+
+\bibitem{7-sin}
+\Au{Синицын И.\,Н., Синицын В.\,И., Сергеев~И.\,В., Белоусов~В.\,В., Шоргин~В.\,С.}
+Математическое обеспечение аналитического моделирования стохастических систем
+со сложными нелинейностями~// Системы и~средства информатики, 2014.
+Т.~24. №\,3. С.~4--29.
+
+
+
+\bibitem{9-sin}
+\Au{Градштейн И.\,С., Рыжик И.\,М.}
+Таблицы интегралов, сумм, рядов и~произведений.~--- М.: ГИФМЛ, 1963. 1100~с.
+
+\bibitem{10-sin}
+Справочник по специальным функциям~/ Под ред. М.~Абрамовича и~И.~Стигана.~---
+М.: Наука, 1979. 832~с.
+
+\bibitem{8-sin}
+\Au{Попов Б.\,А., Теслер Г.\,С.}
+Вычисление функций на ЭВМ: Справочник.~--- Киев: Наукова Думка, 1984. 599~с.
+
+\bibitem{11-sin}
+\Au{Переломов А.\,М.}
+Интегрируемые системы классической механики и~ал\-геб\-ры Ли.~---
+М.: Наука, 1990. 240~с.
+
+\bibitem{12-sin}
+\Au{Синицын И.\,Н.}
+Аналитическое моделирование распределений с~инвариантной мерой
+в~стохастических системах с~разрывными характеристиками~// Информатика
+и~её применения, 2013. Т.~7. Вып.~1. С.~3--11.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в редакцию 15.01.15}}
+
+%\newpage
+
+\vspace*{8pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{12pt}
+
+\def\tit{ANALYTICAL MODELING OF~NORMAL
+PROCESSES IN~STOCHASTIC SYSTEMS WITH~COMPLEX IRRATIONAL NONLINEARITIES}
+
+\def\titkol{Analytical modeling of~normal
+processes in~stochastic systems with~complex irrational  nonlinearities}
+
+\def\aut{I.\,N.~Sinitsyn, V.\,I.~Sinitsyn, and~E.\,R.~Korepanov}
+
+\def\autkol{I.\,N.~Sinitsyn, V.\,I.~Sinitsyn, and~E.\,R.~Korepanov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+ \noindent
+Institute of Informatics Problems, Russian Academy of Sciences,
+44-2 Vavilov Str., Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2015\ \ \ volume~9\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2015\ \ \ volume~9\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+\Abste{Stochastic systems (including manifolds) with Wiener and
+Poisson noises and complex irrational nonlinearities (CIRN) are considered.
+Equations and algorithms of analytical modeling based on the normal approximation
+method (NAM) and the statistical linearization method (SLM) are given. Typical
+integrals and software based on cylindrical functions for computing deterministic
+and stochastic CIRN are presented. Seven test examples for typical CIRN are given.
+Applications to Gibbs distributions and distributions with invariant measure are
+discussed.}
+
+
+\KWE{analytical and statistical modeling; complex irrational nonlinerarity (CIRN);
+normal approximation method (NAM);  statistical linearization method (SLM); test
+examples }
+
+
+\DOI{10.14357/19922264150101}
+
+\vspace*{-9pt}
+
+\Ack
+\noindent
+The research was supported by the Russian
+Foundation for Basic Research (project 15-07-02244).
+
+
+
+
+%\vspace*{3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+
+\bibitem{1-sin-1}
+\Aue{Pugachev, V.\,S., and  I.\,N.~Sinitsyn}.  1987.
+\textit{Stochastic differential systems. Analysis and filtering.}
+Chichester, New York: Jonh Wiley. 549~p.
+
+\bibitem{2-sin-1}
+\Aue{Pugachev, V.\,S., and I.\,N.~Sinitsyn}. 2001.
+\textit{Stochastic systems. Theory and  applications.}
+Singapore: Worls Scientific. 908~p.
+
+\bibitem{3-sin-1}
+\Aue{Sinitsyn, I.\,N.} 2009.
+Kanonicheskie predstavleniya sluchaynykh funktsiy i~ikh primenenie
+v~zadachakh kom\-p'yu\-ter\-noy podderzhki nauchnykh issledovaniy
+[Canonical expansions of random functions and their application to scientific
+computer-aided support]. Moscow: TORUS PRESS. 768~p.
+
+\bibitem{4-sin-1}
+\Aue{Sinitsyn, I.\,N., and  V.\,I.~Sinitsyn}.  2013.
+Lektsii po normal'noy i ellipsoidal'noy approksimatsii raspredeleniy
+v~stokhasticheskikh sistemakh [Lectures on normal and ellipsoidal
+approximation of distributions in stochastic systems]. Moscow: TORUS PRESS. 488~p.
+
+\bibitem{5-sin-1}
+\Aue{Sinitsyn, I.\,N.}  2013.
+Parametricheskoe statisticheskoe i~analiticheskoe modelirovanie raspredeleniy
+v~nelineynykh stokhasticheskikh sistemakh na mnogo\-ob\-ra\-zi\-yakh
+[Parametric statistical and analytical modeling of distributions in
+stochastic systems on manifolds].
+\textit{Informatika i~ee Primeneniya}~--- \textit{Inform. Appl.} 7(2):4--16.
+
+\bibitem{6-sin-1}
+\Aue{Sinitsyn, I.\,N., and V.\,I.~Sinitsyn}. 2014.
+ Analiticheskoe modelirovanie normal'nykh protsessov v~sto\-kha\-sti\-che\-skikh
+ sistemakh so slozhnymi nelineynostyami [Analytical modeling of normal
+  processes in stochastic systems with complex nonlinearities].
+  \textit{Informatika i~ee Primeneniya}~--- \textit{Inform. Appl.}  8(3):2--4.
+
+\bibitem{7-sin-1}
+\Aue{Sinitsyn, I.\,N., V.\,I.~Sinitsyn, I.\,V.~Sergeev, V.\,V.~Belousov,
+and V.\,S.~Shorgin}. 2014.
+Matematicheskoe obespechenie analiticheskogo modelirovaniya stokhasticheskikh
+sistem so slozhnymi nelineynostyami [Mathematical software for
+analytical modeling of stochastic systems with complex nonlinearities].
+\textit{Sistemy i~Sredstva Informatiki}~---
+\textit{Systems and Means of Informatics}  24(3):4--29.
+
+
+\bibitem{9-sin-1}
+\Aue{Gradshteyn, I.\,S., and I.\,M.~Ryzhik}.  1963.
+\textit{Tablitsy integralov, summ, ryadov i~proizvedeniy}
+[Tables of integrals, sums, series, and products]. Moscow:  GIFML.  1100~p.
+
+\bibitem{10-sin-1}
+Abramovich, M.,  and I.~Stigan, eds. 1979.
+\textit{Spravochnik po spetsial'nym funktsiyam} [Handbook on special functions].
+Moscow:  Nauka.  832~p.
+
+\bibitem{8-sin-1}
+\Aue{Popov, B.\,A., and G.\,S.~Tesler}.  1984.
+\textit{Vychislenie funktsiy na EVM. Spravochnik} [Computing of functions].
+Kiev: Naukova Dumka.  599~р.
+
+\bibitem{11-sin-1}
+\Aue{Perelomov, A.\,M.}  1990.
+\textit{Integriruemye sistemy klassicheskoy mekhaniki i~algebry Li}
+[Integrable systems of classical mechanics and Li algebra]. Moscow: Nauka.  240~p.
+
+\bibitem{12-sin-1}
+\Aue{Sinitsyn, I.\,N.}  2013.
+Analiticheskoe modelirovanie raspredeleniy s~invariantnoy meroy
+v~stokhasticheskikh sistemakh s~razryvnymi kharakteristikami
+[Analytical modeling
+of distributions with invariant measure in stochastic systems with
+discontinuous characteristics].
+\textit{Informatika i~ee Primeneniya}~---
+\textit{Inform. Appl.}  7(1):3--11.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Received January 15, 2015}}
+
+%\vspace*{-18pt}
+
+\Contr
+
+\noindent
+\textbf{Sinitsyn Igor N.} (b.\ 1940)~--- Doctor of Science in technology,
+professor, Honored scientist of Russian Federation, Head of Department,
+Institute of Informatics Problems, Russian Academy of Sciences,
+44-2 Vavilov Str., Moscow 119333,
+Russian Federation; sinitsin@dol.ru
+
+
+\vspace*{3pt}
+
+
+\noindent
+\textbf{Sinitsyn Vladimir I.} (b.\ 1968)~---
+Doctor of Science in physics and mathematics, associate professor,
+Head of Department, Institute of Informatics Problems,
+Russian Academy of Sciences, 44-2 Vavilov Str., Moscow 119333,
+Russian Federation;  vsinitsin@ipiran.ru
+
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Korepanov Eduard R.} (b.\ 1966)~--- Candidate of Science (PhD)
+in technology, Head of Laboratory, Institute of Informatics Problems,
+Russian Academy of Sciences, 44-2 Vavilov Str., Moscow 119333,
+Russian Federation;   ekorepanov@ipiran.ru
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}

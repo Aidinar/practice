@@ -1,0 +1,878 @@
+\def\stat{kovalev}
+
+\def\tit{МОНАДА ДИАГРАММ КАК МАТЕМАТИЧЕСКАЯ МЕТАМОДЕЛЬ СИСТЕМНОЙ 
+ИНЖЕНЕРИИ}
+
+\def\titkol{Монада диаграмм как математическая метамодель системной 
+инженерии}
+
+\def\aut{С.\,П.~Ковалёв$^1$}
+
+\def\autkol{С.\,П.~Ковалёв}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Ковалёв С.\,П.}
+\index{Kovalyov S.\,P.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Исследование выполнено за счет гранта Российского научного фонда (проект 22-28-00588). Работа 
+%РАН, Москва).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем управления им.\ В.\,А.~Трапезникова Российской академии наук, 
+\mbox{kovalyov@sibnet.ru}}
+
+%\vspace*{-12pt}
+
+
+
+
+
+  
+  \Abst{Рассматриваются вопросы разработки перспективных математических методов 
+системной инженерии, способных лечь в~основу компьютерных инструментов 
+автоматического синтеза и~анализа систем и~процессов. В~русле современных тенденций 
+в~качестве аппарата для этих методов выбрана теория категорий. Ее применение 
+отталкивается от представления структуры систем, процессов, требований и~других 
+результатов системного проектирования диаграммами в~категориях, объектами которых 
+служат алгебраические модели составных частей, а~морфизмы описывают взаимосвязи 
+между частями. При помощи фундаментальной уплощающей конструкции Гротендика 
+описано явное построение категорий диаграмм, монады диаграмм, монады и~комонады 
+диаграмм с~отмеченной точкой. Указаны области приложения этих конструкций 
+в~процедурах системной инженерии. Предложен подход к~реализации 
+высокоавтоматизированных технологий типа порождающего проектирования для сложных 
+многоуровневых сис\-тем.}
+  
+  \KW{теория категорий; монада диаграмм; конструкция Гротендика; копредел; системная 
+инженерия; система систем; порождающее проектирование}
+
+\DOI{10.14357/19922264230202}{FDUVDU}
+  
+\vspace*{-3pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+  
+\section{Введение}
+
+%\vspace*{-3pt}
+
+     Эффективность традиционных узкопрофильных инженерных дисциплин 
+(механика, гидравлика, электроника и~др.), в~особенности в~условиях 
+циф\-ро\-ви\-за\-ции, обусловлена широким применением математического аппарата, 
+включающего аналитическую геометрию, дифференциальные уравнения, 
+математическое программирование и~др. Однако для решения задач системной 
+инженерии математические методы развиты слабо, они проигрывают 
+<<практикам>> и~<<техникам>>~[1]. Поэтому успешные системные проекты 
+плохо поддаются тиражированию и~сборке в~мегапроекты: не хватает 
+формальных абстрактных схем выполненных процедур и~правил расчета 
+влияния контекста на достигнутые результаты. Тем более трудно передать 
+проектирование систем компьютеру: приходится ограничиваться средствами 
+редактирования и~несложного анализа <<наглядных>> цифровых схем, 
+изображающих придуманные инженером структуры систем и~процессов.
+     
+     В ряде публикаций (см., например,~[2--4]) предлагается решить эту 
+проблему путем привлечения теории категорий~--- раздела высшей алгебры, 
+направленного на унифицированное представление объектов различной 
+природы и~отношений между ними. В~основе приложения теории категорий 
+лежит представление структуры систем, процессов, требований и~др.\ 
+диаграммами в~категориях типа <<каталогов>>, объектами которых служат 
+ал\-геб\-ра\-и\-че\-ские модели составных частей, а морфизмы описывают те или иные 
+взаимосвязи между частями. Известны ка\-те\-го\-рии-ка\-та\-ло\-ги 
+геометрических форм, сценариев поведения частей, энергетических ресурсов 
+и~т.\,д.~[5].
+     
+     Однако диаграммы чаще всего рассматриваются фрагментарно 
+и~специфично для конкретного прикладного контекста. Отрывочность 
+и~разнобой наблюдаются даже на уровне метамодели~--- языка, на котором 
+описываются и~верифицируются свойства и~преобразования диаграмм в~ходе 
+моделирования объектов и~процедур системной инженерии. При этом 
+терминологически выверенные глубокие исследования диаграммных 
+конструкций, написанные <<чистыми>> математиками, совершенно 
+непостижимы для инженеров, да и~не очень им интересны.
+
+\begin{figure*}[b]     %fig1-2
+\vspace*{-6pt}
+\begin{minipage}[b]{80mm}
+     \begin{center}
+   \mbox{%
+\epsfxsize=23.362mm 
+\epsfbox{kov-1.eps}
+}
+\end{center}
+\vspace*{-12pt}
+\Caption{Уплощающая конструкция Гротендика}
+\end{minipage}
+\hfill
+\begin{minipage}[b]{80mm}
+ \begin{center}
+   \mbox{%
+\epsfxsize=25.998mm 
+\epsfbox{kov-2.eps}
+}
+
+\end{center}
+\vspace*{-12pt}
+\Caption{Канонический функтор формы диаграмм}
+\end{minipage}
+\end{figure*}
+     
+     Настоящая работа нацелена на преодоление этого недостатка, вводя 
+универсальный (в~строгом тео\-ре\-ти\-ко-ка\-те\-го\-ри\-аль\-ном смысле) язык, 
+основанный на известной конструкции монады диаграмм~[6, 7]. Основным 
+рабочим инструментом служат элементарные универсальные конструкции 
+в~<<категории>> \textbf{CAT}, состоящей из всех категорий и~всех функторов. 
+Такие конструкции (в~том числе компоненты рассматриваемых в~работе 
+монад) определены с~точ\-ностью до изоморфизма, но для ясности изложения 
+предполагается, что у~них задан некоторый канонический вид. Описано явное 
+построение и~об\-ласти приложения категорий диаграмм, монады диаграмм, 
+монады и~комонады диаграмм с~отмеченной точкой.
+
+\section{Категории структур систем}
+
+     Предполагается, что читатель знаком с~основами теории категорий. 
+Используются элементарные теоретико-категориальные конструкции 
+и~обозначения, введенные в~работах~\cite{7-kov, 8-kov}. Начнем с~конструкции 
+универсального расслоения (universal bundle) для категорий~--- это 
+канонический функтор $\mathbf{B}: \dot{\mathbf{C}}\mathbf{AT} \hm\to 
+\mathbf{CAT}$, где через $\dot{\mathbf{C}}\mathbf{AT}$ обозначена 
+<<категория>> всех категорий с~отмеченной точкой, в~которой объектом 
+служит любая пара $(A, C)$, $C \hm\in \mathrm{Ob}\,\mathbf{CAT}$, $A \hm\in 
+\mathrm{Ob}\,C$, а~морфизмом $(A, C)$ в~$(A^\prime, C^\prime)$ служит любая 
+пара ($f : GA \hm\to  A^\prime, G : C \hm\to C^\prime$); функтор~$\mathbf{B}$ 
+<<забывает>> отмеченную точку. Для произвольного функтора 
+$F : D \hm\to\mathbf{CAT}$ декартов квадрат с~универсальным расслоением 
+из\-вес\-тен как уплощающая конструкция Гротендика $\int F$ (Grothendieck 
+flattening construction)~\cite{9-kov} (рис.~1).
+
+
+
+
+
+     В явном виде объектом категории $\int F$ служит любая пара $(A, X)$, $X 
+\hm\in \mathrm{Ob} \,D$, $A \hm\in \mathrm{Ob}\, FX$, а морфизмом пары $(A, X)$ 
+в~$(A^\prime, X^\prime)$ служит любая пара ($f : (Fg)A \hm\to  A^\prime, g : X 
+\hm\to  X^\prime$) (с~законом композиции вида $(f, g) \circ (h, q) \hm= (f \circ 
+(Fg)h, g \circ q)$). Можно принять такое описание конструкции Гротендика за 
+ее определение~\cite[п.~12.2.10]{10-kov} (и~построить универсальное 
+расслоение как $\int 1_{\mathbf{CAT}}$).
+     
+     Отображение $(A, X) \hm\mapsto X$ задает канонический 
+<<забывающий>> функтор из $\int F$ в~$D$, представленный левой 
+вертикальной стрелкой в~вышеприведенном декартовом квадрате. Полный 
+прообраз (декартов квадрат) этого функтора относительно любого элемента 
+$\ulcorner X\urcorner: \bm{1}\hm\to D$ (где~$\bm{1}$~--- сингулярная 
+категория, терминальный объект в~$\mathbf{CAT}$) задает каноническое 
+вложение $\bm{i}_X : FX \hm\hookrightarrow \int F : A \hm\mapsto (A, X)$, $f 
+\hm\mapsto  (f, 1_X)$. В~сумме получается вложение $[\bm{i}_X]_{X \in \mathrm{Ob}\,D} : 
+\coprod_{X \in \mathrm{Ob}\,D} FX \hm\hookrightarrow \int F$, биективное на объектах. 
+Если категория~$D$ дискретна, то это суммарное вложение является 
+изоморфизмом.
+     
+     Для контравариантного функтора $F : D^{\mathrm{op}}\hm\to \mathbf{CAT}$ 
+в~качестве правой вертикальной стрелки вышеприведенного декартового 
+квадрата используется универсальное <<op-рас\-сло\-ение>>~$\mathbf{B} : 
+\dot{\mathbf{C}}\mathbf{AT}^{\mathrm{op}} \hm\to 
+\mathbf{CAT}^{\mathrm{op}}$ (а~функтор~$F$ рассматривается как 
+действующий из $D$ в~$\mathbf{CAT}^{\mathrm{op}}$). Применим такую\linebreak \mbox{контравариантную} конструкцию 
+Гротендика к~функтору $C^-: \mathbf{Cat}^{\mathrm{op}} \hm\to 
+\mathbf{CAT} : X \hm\mapsto C^X$ для некоторой категории~$C$. 
+(Универсальный характер этого функтора вытекает из того, что 
+экспонента~$C^X$ вычисляется посредством эндофунктора, правого 
+сопряженного к~эндофунктору произведения $C\hm \mapsto X \times 
+C$~\cite[\S\,IV.6]{8-kov}, которое, в~свою очередь, сводится к~декартову 
+квадрату функторов $!_X : X \hm\to \bm{1}$ и~$!_C : C\hm\to \bm{1}$, каждый из 
+которых определен единственным образом.) В~результате получается 
+категория диаграмм, которая обозначается через $\mathbf{D}C$ и~служит 
+<<нестрогим ко-пополнением>> (lax cocompletion)~[6] категории~$C$. Класс 
+объектов категории $\mathbf{D}C$ состоит из всех $C$-диа\-грамм, 
+а~морфизмом диаграммы $\Delta  : X \hm\to  C$ в~$\Delta^\prime : X^\prime\hm\to  
+C$ служит любая пара вида $\langle \gamma, \mathfrak{f}\rangle$, состоящая из 
+функтора $\mathfrak{f} : X \hm\to  X^\prime$ и~естественного 
+преобразования~$\gamma : \Delta \hm\to \Delta^\prime \mathfrak{f}$; закон 
+композиции имеет вид $\langle \gamma, \mathfrak{f}\rangle  \circ \langle \varphi, 
+\mathfrak{g}\rangle \hm= \langle \gamma\mathfrak{g}\circ \varphi, 
+\mathfrak{fg}\rangle$. Имеется каноническое вложение $[\bm{i}_I]_{I \in \mathrm{Ob}\, 
+\mathbf{Cat}} : \coprod_{I \in \mathrm{Ob}\,\mathbf{Cat}} C^I \hm\hookrightarrow \mathbf{D}C$, 
+биективное на объектах.
+     
+     Процедура построения категории $\mathbf{D}C $ функториальна по $C$: 
+любой функтор~$F : C\hm\to  C^\prime$ индуцирует функтор
+     $$
+     F- : \mathbf{D}C  \to \mathbf{D}C^\prime : \Delta \mapsto F\Delta, \langle 
+\gamma, \mathfrak{f}\rangle \mapsto \langle F\gamma, \mathfrak{f}\rangle.
+     $$
+Тем самым определен эндофунктор
+$$
+     \mathbf{D} : \mathbf{CAT}\to \mathbf{CAT} : C \mapsto  
+\mathbf{D}C ,\ F \mapsto F-
+     $$
+(так что можно построить категорию \textit{всех} диаграмм $\int \mathbf{D}$). 
+Отметим, что $\mathbf{D1}\hm\cong \mathbf{Cat}$ и~левая вертикальная 
+стрелка в~декартовом квадрате конструкции Гротендика для $\mathbf{D}C$ 
+представляет собой канонический функтор формы диаграмм (рис.~2):
+$$
+     \mathbf{D}!_C : \mathbf{D}C  \to \mathbf{Cat} : \Delta 
+\mapsto \mathrm{dom}\,\Delta, \langle \gamma, 
+\mathfrak{f}\rangle \mapsto \mathfrak{f}.
+     $$
+     
+     \begin{figure*} %fig3
+    \vspace*{1pt}
+      \begin{center}
+   \mbox{%
+\epsfxsize=106.769mm 
+\epsfbox{kov-3.eps}
+}
+\end{center}
+\vspace*{-12pt}
+\Caption{Отрисовка~--- умножение в монаде диаграмм}
+\vspace*{-6pt}
+\end{figure*}
+     
+     В приложениях в~области системной инженерии диаграммы 
+представляют структуры систем,\linebreak а~их морфизмы описывают структурные 
+преобразования систем на алгебраическом языке~[5]. Функтор~$\mathbf{D}$ 
+описывает естественный переход от каталогов объектов к~каталогам структур 
+сис\-тем, \mbox{которые} можно составить из объектов. Подходящие подкатегории 
+в~$\mathbf{D}C $ могут служить пространствами проектирования (design 
+space) для автоматического поиска суб- и~Па\-ре\-то-оп\-ти\-маль\-ных структур 
+сис\-тем. Для такой оптимизации целевые функции, изначально заданные 
+заинтересованными сторонами систем, преобразуются в~функторы, 
+действующие из пространств проектирования в~линейно упорядоченные 
+множества значений, рассматриваемые как категории~\cite{11-kov}. Для 
+эффективной навигации в~пространствах проектирования вдоль морфизмов 
+диаграмм могут привлекаться средства компьютерной алгебры. Открывается 
+возможность реализации высокоавтоматизированных технологий типа 
+порождающего проектирования (generative design)~[12] для сложных систем.
+
+\vspace*{-6pt}
+
+\section{Монада диаграмм}
+
+     Как известно~[6, 7], функтор $\mathbf{D}$ определяет в~$\mathbf{CAT}$ 
+монаду, которая по ряду свойств аналогична монаде степени $\langle 2^-, \{-\}, 
+\cup\rangle$ в~категории множеств $\mathbf{Set}$. Компонента единицы 
+монады~$\mathbf{ }$D, соответствующая категории~$C$~--- это полное 
+вложение~$C$ в~$\mathbf{D}C$, которое переводит объект~$A$  
+в~диа\-грам\-му-точ\-ку~$\ulcorner A\urcorner$. Умножение задает 
+<<отрисовку>> $\mathbf{D}C $-диа\-грам\-мы в~виде $C$-диа\-грам\-мы: 
+отрисовка $\mathbf{K}\Xi$ диаграммы~$\Xi : I \hm \to \mathbf{D}C $ 
+порождается заменой каж\-дой точки $i \hm\in \mathbf{Ob}\, I$  
+$C$-диа\-грам\-мой $\Xi i$ и~разделением каждого морфизма 
+диаграмм~$\Xi k$, $k\hm\in \mathrm{Mor}\,I$, на составляющие его 
+морфизмы из категории~$C$. Таким образом, точка диаграммы 
+$\mathbf{K}\Xi$~--- это пара $(l, i)$, $i \hm\in \mathrm{Ob} \,I$, $l \hm\in 
+\mathrm{Ob}\,\mathrm{dom}\, \Xi i$, помеченная объектом $(\Xi i)l$, 
+а~стрелка из нее в~$(l^\prime, i^\prime)$~--- это пара $(q : \mathfrak{h}l \hm\to  
+l^\prime, k : i \hm\to  i^\prime)$, помеченная морфизмом $(\Xi i^\prime)q \circ 
+\theta_l$, где $\langle\theta, \mathfrak{h}\rangle \hm= \Xi k$ (рис.~3).
+    
+
+     Формально отрисовка вычисляется при помощи ковариантной 
+конструкции Гротендика для композиции~$\Xi$ с~функтором формы 
+$\mathbf{D}!_C$ и~каноническим вложением $\mathbf{Cat}$ в~$\mathbf{CAT}$. 
+Приведем композицию соответствующих декартовых квадратов (рис.~4).
+Здесь правый декартов квадрат задает универсальное расслоение для 
+малых категорий. Центральный декартов квадрат приводит к~категории 
+диаграмм с~отмеченной точкой $\dot{\mathbf{D}}C$~--- это конструкция 
+Гротендика для конструкции Гротендика $\mathbf{D}C$. Ее объектом служит 
+любая пара $(x, \Delta)$, состоящая из диаграммы $\Delta : X \hm\to C$ и~точки 
+$x \hm\in \mathrm{Ob} X$, а~морфизмом такой пары в~$(x^\prime, \Delta^\prime : 
+X^\prime \hm\to  C)$ служит любая тройка $\langle q, \gamma, 
+\mathfrak{f}\rangle$, где $\langle \gamma, \mathfrak{f}\rangle : \Delta \hm\to  
+\Delta^\prime$~--- морфизм диаграмм и~$q : \mathfrak{f}x \hm\to  x^\prime$~--- 
+стрелка в~$X^\prime$; закон композиции морфизмов имеет вид:
+$$
+\langle q, 
+\gamma, \mathfrak{f}\rangle \circ \langle r, \varphi, \mathfrak{g}\rangle\hm = 
+\langle q \circ \mathfrak{f}r, \gamma \mathfrak{g} \circ \varphi, 
+\mathfrak{fg}\rangle.
+$$ 
+
+\vspace*{-3pt}
+
+\noindent
+Имеется канонический функтор $\bm{b}_C : 
+\dot{\mathbf{D}}C\hm\to \mathbf{D}C$, забывающий отмеченную точку. Кроме 
+того, имеется функтор означения $\bm{e}_C : \dot{\mathbf{D}}C \hm\to  C$, 
+переводящий пару $(x, \Delta)$ в~$\Delta x$ и~морфизм $\langle q, \gamma, 
+\mathfrak{f}\rangle : (x, \Delta) \hm\to  (x^\prime, \Delta^\prime)$ 
+в~$\Delta^\prime q \circ \gamma_x : \Delta x \hm\to  \Delta^\prime x^\prime$. 
+Отложим более подробное рассмотрение конструкции $\dot{\mathbf{D}}C$ до 
+следующего раздела; приведенных здесь сведений о~ней достаточно для 
+проверки того, что левый декартов квадрат задает искомую отрисовку 
+диаграммы~$\Xi$.
+
+
+     
+     Имеется вложение диаграмм $[\langle 1_{\Xi i}, \bm{i}_i : 
+\mathrm{dom}\, \Xi i \hm\hookrightarrow 
+\mathrm{dom}\,\mathbf{K}\Xi\rangle]_{i \in \mathrm{Ob}\, I} : \coprod_{i \in \mathrm{Ob}\, I} 
+\Xi i \hm\hookrightarrow \mathbf{K}\Xi$, биективное на точках. Если 
+диаграмма~$I$ дискретна, то это вложение является изоморфизмом, 
+а~отрисовка~--- вершиной копредела диаграммы~$\Xi$.
+     
+     Определим отрисовку произвольного морфизма  
+$\mathbf{D}C$-диа\-грамм~$\phi  : \Xi \hm\to \Xi^\prime$. Рассмотрим 
+$\mathbf{DD}C$-диа\-грам\-му со схемой~$\bm{2}$ (это граф $0\hm\to  1$), 
+единственная нетождественная стрелка которой помечена морфизмом~$\phi$. 
+Двукратная отрисовка этой диаграммы дает C-диа\-грам\-му со схемой, 
+снабженной забывающим функтором в~$\bm{2}$, прообраз нетождественной 
+стрелки относительно которого позволяет восстановить морфизм 
+$\mathbf{K}\phi : \mathbf{K}\Xi \hm\to \mathbf{K}\Xi^\prime$. 
+В~явной\linebreak\vspace*{-12pt}
+
+ { \begin{center}  %fig4
+ \vspace*{6pt}
+    \mbox{%
+\epsfxsize=66.827mm 
+\epsfbox{kov-4.eps}
+}
+
+
+\vspace*{6pt}
+
+
+\noindent
+{{\figurename~4}\ \ \small{Вычисление отрисовки
+}}
+\end{center}
+}
+
+%\vspace*{6pt}
+
+\addtocounter{figure}{1}
+
+
+
+
+ %
+\noindent
+форме пусть $\phi\hm = \langle \varphi, \mathfrak{g}\rangle$, где 
+естественное преобразование $\varphi : \Xi\hm\to \Xi^\prime 
+\mathfrak{g}$ составлено из компонентов $\varphi_i \hm= \langle \gamma^i, 
+\mathfrak{f}^ i\rangle : \Xi i \hm\to  \Xi^\prime \mathfrak{g}i$, $i 
+\hm\in\mathrm{Ob}\, I$. Рассмотрим функтор~$\mathfrak{e} : 
+\mathrm{dom}\,\mathbf{K}\Xi \hm\to 
+\mathrm{dom}\,\mathbf{K}\Xi^\prime$, сопоставляющий точке $(l, i)$ точку 
+$(\mathfrak{f}^il, \mathfrak{g}i)$, а~стрелке $(q, k) : (l, i) \hm\to  (l^\prime, 
+i^\prime)$~--- пару $(\mathfrak{f}^{i^\prime}q, \mathfrak{g}k)$, которая задает 
+стрелку в~диаграмме $\mathbf{K}\Xi^\prime$, направленную из 
+$\mathfrak{e}(l, i)$ в~$\mathfrak{e}(l^\prime, i^\prime)$, ввиду соотношения 
+$\langle \gamma^{i^\prime}, \mathfrak{f}^{i^\prime}\rangle \circ \Xi k \hm= 
+\Xi^\prime \mathfrak{g}k \circ \langle \gamma^i, \mathfrak{f}^i\rangle$. 
+Семейство морфизмов $\gamma^i_l : (\Xi i)l \hm\to  (\Xi^\prime 
+\mathfrak{g}i)(\mathfrak{f}^il)$, $(l, i) \hm\in 
+\mathrm{Ob}\,\mathrm{dom}\,\mathbf{K}\Xi$, составляет естественное 
+преобразование $\mathbf{K}\Xi$ 
+в~$(\mathbf{K}\Xi^\prime)\mathfrak{e}$, которое в~паре 
+с~функтором~$\mathfrak{e}$ и~образует морфизм~$\mathbf{K}\phi$. 
+Непосредственно проверяется, что таким путем действительно задается 
+функтор~$\mathbf{K}$ и~все такие функторы образуют естественное 
+преобразование $\mathbf{DD}$ в~$\mathbf{D}$, удовле\-тво\-ря\-ющее аксиомам 
+монады.
+     
+     Рассмотрим алгебры монады диаграмм. Свободные алгебры порождаются 
+компонентами отрисовки~$\mathbf{K}$. Единица также вносит свой вклад: 
+если ее компонента, соответствующая категории~$C$, имеет левый 
+сопряженный функтор (а~правого сопряженного она иметь не может), то 
+единица этого сопряжения состоит из копределов $C$-диа\-грамм, так что 
+категория $C$ кополна и, более того, указанный левый сопряженный $\mathrm{colim}\,: 
+\mathbf{D}C \hm\to  C$ задает алгебру~\cite{7-kov}. Поскольку функтор, 
+сопряженный к~заданному, определяется однозначно с~точностью до 
+изоморфизма~\cite[\S\,~IV.1]{8-kov}, получается, что конструкция копредела 
+<<закодирована>> в~тривиальной процедуре построения одноточечных 
+диаграмм.
+     
+     Другим примером алгебры монады~$\mathbf{D}$ служит $\int : 
+\mathbf{D}(\mathbf{CAT}) \hm\to  \mathbf{CAT} : \Delta \hm\mapsto \int \Delta$, 
+устроенная аналогично свободной алгебре над~$\bm{1}$. При помощи 
+отрисовки строятся и~другие алгебры, неизоморфные ни копределам, ни 
+свободным алгебрам. Например, обозначим через $\mathbf{PrCAT}$ полную 
+подкатегорию в~$\mathbf{CAT}$, состоящую из всех тонких категорий 
+(предпорядков). Она рефлективна: ее вложение в~$\mathbf{CAT}$ имеет левый 
+сопряженный $\mathbf{P} : \mathbf{CAT} \hm\to \mathbf{PrCAT}$ 
+с~тождественной коединицей (для произвольной категории~$C$,  
+$\bm{P}C$~--- это класс $\mathrm{Ob}\,C$, предупорядоченный бинарным 
+предикатом $\mathrm{Mor}(-, -) \not= \varnothing$). Далее, пусть 
+$\Check{\mathbf{D}} : \mathbf{CAT}\hm\to \mathbf{ CAT}$~--- подфунктор 
+в~$\mathbf{D}$, сопоставляющий категории~$C$ полную подкатегорию 
+в~$\mathbf{D}C$, состоящую из всех тонких $C$-диа\-грамм, и~действующий 
+на функторы так же, как~$\mathbf{D}$. Если~$C$~--- тонкая категория, то 
+имеется алгебра $\bm{P}(\mathbf{K}-) : \mathbf{D}\Check{\mathbf{D}}C \hm\to 
+\Check{\mathbf{D}}C$.
+     
+     Алгебры строятся и~при помощи морфизмов монады~$\mathbf{D}$ в~другие монады~\cite[упражнение~6.2.3(б)]{8-kov}. Так, $\mathbf{D}$ имеет две 
+под\-мо\-на\-ды-ре\-трак\-та: одна из них сопоставляет произвольной категории 
+$C$ категорию всех дискретных $C$-диа\-грамм, а другая~--- категорию всех  
+$C$-диа\-грамм в~форме группоидов. Следовательно, если в~$C$ есть суммы, то 
+существуют две в~общем случае неизоморфные друг другу алгебры над~$C$: 
+одна сопоставляет произвольной \mbox{$C$-диа}\-грам\-ме сумму всех ее вершин, 
+а~вторая~--- сумму всех вершин ее скелета.
+     
+     Что касается приложений монады диаграмм, то компонента ее единицы 
+задает представление любого объекта как бесструктурной сингулярной 
+системы, а левый сопряженный к~ней (при его наличии) представляет сборку 
+систем в~цельные объекты. Функтор отрисовки строит детальную <<плоскую>> 
+структуру многоуровневых систем, состоящих из систем (systems of systems, 
+SoS), путем разрешения взаимосвязей верхнего уровня, причем 
+ассоциативность умножения монады гарантирует независимость итоговой 
+структуры от порядка анализа промежуточных уровней. Алгебры задают 
+шаблоны различных процедур <<упаковки>> систем в~сложные объекты 
+с~соблюдением условий естественности относительно  
+модификаций~\cite{7-kov}. Из <<материала>> монады диаграмм строятся и~другие конструкции.
+
+\section{Монада и~комонада систем систем}
+
+     Существует сопряжение функторов, свя\-зы\-ва\-ющее конструкцию 
+Гротендика с~функтором формы диаграмм~\cite{6-kov}. Рассмотрим категорию 
+$\mathbf{CAT}/\mathbf{Cat}$, в~которой объектами служат все функторы вида 
+$F : D \hm \to \mathbf{Cat}$, а морфизмом такого функтора в~$F^\prime 
+ : D^\prime \hm\to \mathbf{Cat}$ служит любой функтор $G : D \hm\to D^\prime$, 
+такой что $F^\prime G \hm= F$ (эту категорию можно построить посредством 
+декартова квадрата в~$\mathbf{CAT}$~\cite{13-kov}). Поскольку $!_{C^\prime}H 
+\hm= !_C$ для произвольного функтора $H : C \hm\to C^\prime$, функтор формы 
+диаграмм индуцирует функтор
+     $$
+\mathbf{D}_! : \mathbf{CAT}\to \mathbf{CAT}/\mathbf{Cat} : 
+C \mapsto \mathbf{D}!_C,\enskip  H \mapsto \mathbf{D}H.
+$$
+
+\setcounter{figure}{5}
+\begin{figure*}[b] %fig6
+\vspace*{1pt}
+ \begin{center}
+   \mbox{%
+\epsfxsize=103.315mm 
+\epsfbox{kov-6.eps}
+}
+
+\end{center}
+\vspace*{-9pt}
+\Caption{Коумножение в~комонаде диаграмм с~отмеченной точкой
+}
+\end{figure*}
+     
+
+     В свою очередь, любой функтор $F : D \hm\to \mathbf{Cat}$ в~композиции с~каноническим вложением категории $\mathbf{Cat}$ в~$\mathbf{CAT}$ дает 
+функтор, обозначаемый через ${\mbox{\ptb{\^{\,}}}}\!F : D \hm\to 
+\mathbf{CAT}$, для которого определена конструкция Гротендика $\int 
+{\mbox{\!\!\!\ptb{\^{\,}}}}\!F$. Отображение $F \hm\mapsto 
+\int{\mbox{\!\!\!\ptb{\^{\,}}}}\!F$ служит функцией объектов функтора $\int 
+{\mbox{\!\!\!\ptb{\^{\,}}}} : \mathbf{CAT}/\mathbf{Cat}\hm\to  
+\mathbf{CAT}$, который переводит морфизм~$G$ в~единственную стрелку из 
+$\int {\mbox{\!\!\!\ptb{\^{\,}}}} \!F$ в~$\int {\mbox{\!\!\!\ptb{\^{\,}}}} \!F^\prime$, делающую коммутативной диаграмму, в~которой 
+все пунктирные стрелки изображают ребра декартовых квадратов (рис.~5).
+
+
+
+     В явном виде имеем 
+\begin{multline*}
+     \int {\mbox{\!\!\!\ptb{\^{\,}}}}\! G : \int{\mbox{\!\!\!\ptb{\^{\,}}}}\!F \to 
+\int {\mbox{\!\!\!\ptb{\^{\,}}}} \!F^\prime : (A, X) \mapsto (A, GX),\\
+ (f, g) \mapsto  (f, Gg).
+   \end{multline*}
+   
+   { \begin{center}  %fig5
+ \vspace*{-1pt}
+     \mbox{%
+\epsfxsize=49.793mm 
+\epsfbox{kov-5.eps}
+}
+
+\vspace*{6pt}
+
+
+
+\noindent
+{{\figurename~5}\ \ \small{Конструкция Гротендика как функтор
+}}
+\end{center}
+}
+
+\vspace*{6pt}
+
+\addtocounter{figure}{1}
+  
+     
+     Как показывает диаграмма (см.\ рис.~4), описывающая 
+построение отрисовки $\mathbf{K}\Xi$ (см.\ композицию правого 
+и~центрального декартовых квадратов), категория $\int 
+{\mbox{\!\!\!\ptb{\^{\,}}}}\! (\mathbf{D}!_C)$ совпадает с~категорией диаграмм с~отмеченной точкой $\dot{\mathbf{D}}C$. Тем самым определен эндофунктор
+     $$
+     \dot{\mathbf{D}} = \int 
+{\mbox{\!\!\!\ptb{\^{\,}}}}\!\mathbf{D}_! : \mathbf{CAT}\to 
+\mathbf{CAT} : C \mapsto \dot{\mathbf{D}}C\,,
+     $$
+действующий на функторы так же, как~$\mathbf{D}$, не затрагивая 
+отмеченные точки диаграмм. Более того, функтор $\int 
+{\mbox{\!\!\!\ptb{\^{\,}}}}$ сопряжен слева к~функтору~$\mathbf{D}_!$, 
+причем коединица этого сопряжения~$\bm{e} : \int 
+{\mbox{\!\!\!\ptb{\^{\,}}}} \!\mathbf{D}_! \hm= \dot{\mathbf{D}}\hm\to 
+1_{\mathbf{CAT}}$ состоит из функторов означения $\bm{e}_C$, $C \hm\in 
+\mathrm{Ob}\,\mathbf{CAT}$ (так что верхний треугольник на 
+вышеупомянутой диаграмме~--- это частный случай треугольного тож\-дест\-ва 
+сопряжения, что свидетельствует об универсальности конструкции отрисовки). 
+Компонента единицы $\bm{t}: 1_{\mathbf{CAT}/\mathbf{Cat}} \hm\to  \mathbf{D}_! \int{\mbox{\!\!\!\ptb{\^{\,}}}}$, 
+со\-от\-вет\-ст\-ву\-ющая функтору $F : D \hm\to \mathbf{Cat}$, 
+представляет собой функтор $\bm{t}_F : D \hm\to \mathbf{D}\int 
+{\mbox{\!\!\!\ptb{\^{\,}}}} \!F$, сопоставляющий объекту~$X$\linebreak диаграмму  
+$\bm{i}_X : FX \hookrightarrow \int {\mbox{\!\!\!\ptb{\^{\,}}}}\! F$, а морфизму 
+$g : X \hm\to  X^\prime$~--- морфизм $\langle\rho, Fg\rangle : \bm{i}_X \hm\to  
+\bm{i}_{X^\prime}$, где естественное преобразование $\rho : \bm{i}_X \hm\to 
+\bm{i}_{X^\prime}(Fg)$\linebreak со\-став\-ле\-но из компонентов $\rho_A\hm = (1_{(Fg)A}, g) : (A, 
+X) \hm\to  ((Fg)A, X^\prime)$, $A \hm\in \mathrm{Ob}\,FX$; ясно, что 
+$(\mathbf{D}!_{\int {\mbox{\!\!\!\ptb{\^{\,}}}} \!F})\bm{t}_F \hm= F$.
+
+     Это сопряжение стандартным способом~\cite[\S\,VI.1]{8-kov} задает 
+комонаду~$\dot{\mathbf{D}}$ в~$\mathbf{CAT}$, коединица которой состоит 
+из функторов~$\bm{e}_C$, а~коумножение состоит из <<размножителей 
+диаграмм>> вида
+
+\noindent
+\begin{multline*}
+\mathbf{M} = \int {\mbox{\!\!\!\ptb{\^{\,}}}} \!\bm{t}_{\mathbf{D}!_C} : 
+\dot{\mathbf{D}}C \to \dot{\mathbf{D}} \dot{\mathbf{D}}C : (x, \Delta : X \to C) 
+\mapsto {}\\
+{}\mapsto (x, \bm{i}_\Delta : X \hookrightarrow  \dot{\mathbf{D}}C), \langle q, 
+\gamma, \mathfrak{f}\rangle \mapsto  \langle q, \gamma^{\mathbf{M}}, 
+\mathfrak{f}\rangle,
+\end{multline*}
+где $\gamma^{\mathbf{M}} : \bm{i}_\Delta \hm\to  
+\bm{i}_{\Delta^\prime}\mathfrak{f}$~--- естественное преобразование, 
+сопоставляющее каждому $x \hm\in \mathrm{Ob}\,X$ морфизм $\langle 
+1_{\mathfrak{f}x}, \gamma, \mathfrak{f}\rangle : (x, \Delta) \hm\to  (\mathfrak{f}x, 
+\Delta^\prime)$. Тем самым~$\mathbf{M}$ размещает в~каждой точке~$x$ 
+диаграммы~$\Delta$ копию~$\Delta$, у~которой точка~$x$ отмечена (рис.~6).
+
+
+     Рассмотрим коалгебры комонады $\dot{\mathbf{D}}$. Воспользуемся 
+конструкцией сравнивающего функтора~\cite[\S\,~VI.3]{8-kov}: таковым 
+служит функтор~$K$, действующий из $\mathbf{CAT}/\mathbf{Cat}$ 
+в~категорию коалгебр, сопоставляя функтору $F : D \hm\to \mathbf{Cat}$ 
+коалгебру $\int {\mbox{\!\!\!\ptb{\^{\,}}}}\! \bm{t}_F: \int 
+{\mbox{\!\!\!\ptb{\^{\,}}}} \!F \hm\to  \dot{\mathbf{D}} 
+\int{\mbox{\!\!\!\ptb{\^{\,}}}} \!F$. Любая коалгебра 
+комонады~$\dot{\mathbf{D}}$ изоморфна коалгебре такого вида~\cite{6-kov}. 
+В~частности, $K(\mathbf{D}!_C) \hm= \mathbf{M} : \dot{\mathbf{D}}C \hm\to 
+\dot{\mathbf{D}}\dot{\mathbf{D}}C$ (это косвободная коалгебра). А~если $F$ 
+переводит любой объект в~$\bm{1}$, т.\,е.\ $F \hm= \ulcorner \bm{1}\urcorner 
+!_D$, то конструкция Гротендика дает~$D$ и~коалгебра $K(\ulcorner 
+\bm{1}\urcorner !_D) : D \hm\to  \dot{\mathbf{D}}D$ переводит объект~$A$ 
+в~диа\-грам\-му-точ\-ку $\ulcorner A\urcorner$ с~единственно возможной 
+отмеченной точкой. В~свою очередь, если $F$~--- это некоторая  
+диа\-грам\-ма-точ\-ка $\ulcorner I\urcorner : \bm{1}\hm\to \mathbf{Cat}$, то $\int 
+{\mbox{\!\!\!\ptb{\^{\,}}}} \ulcorner I\urcorner \hm = I$ и~$K(\ulcorner 
+I\urcorner) : I \hm\to \dot{\mathbf{D}}I$: $i \mapsto (i, 1_I)$, $k \hm\mapsto \langle 
+k, 1_{1I}, 1_I\rangle$.
+     
+     Кроме комонады, эндофунктор $\dot{\mathbf{D}}$ определяет в~$\mathbf{CAT}$ и~монаду, устроенную аналогично монаде диаграмм: 
+компонента единицы совпадает с~$K(\ulcorner \bm{1}\urcorner !_C)$, 
+а~умножение переводит $\dot{\mathbf{D}}C$-диа\-грам\-му~$\Xi$ 
+с~отмеченной точкой~$i$ в~отрисовку $\mathbf{K}(\bm{b}_C\Xi)$ 
+с~отмеченной точкой $(l, i)$, где $l$~--- отмеченная точка $\Xi i$ (т.\,е.\ 
+$\Xi i \hm= (l, \bm{b}_C(\Xi i))$). Тем самым семейство функторов 
+$\bm{b}_C$, $C \hm\in\mathrm{Ob}\,\mathbf{CAT}$, образует морфизм монады 
+$\dot{\mathbf{D}}$ в~$\mathbf{D}$. В~частности, любая алгебра $a : 
+\mathbf{D}C \hm\to  C$ монады~$\mathbf{D}$ порождает алгебру $a\bm{b}_C : 
+\dot{\mathbf{D}}C \hm\to  C$ монады~$\dot{\mathbf{D}}$. Легко проверить, 
+что алгебру задает также любой функтор означения $\bm{e}_C : 
+\dot{\mathbf{D}}C \hm\to C$.
+     
+     С прикладной точки зрения конструкция $\dot{\mathbf{D}}$ формально 
+выражает первый принцип системной инженерии: целевая система (system of 
+interest, SoI) рассматривается в~контексте как элемент некоторой известной 
+объемлющей системы~[14]. Именно из такого рассмотрения возникают 
+требования к~целевой системе и~начинается ее жизненный цикл. А~структурная 
+схема объемлющей системы с~со\-став\-ля\-ющи\-ми из каталога~$C$, снабженная 
+указанием места целевой сис\-те\-мы в~ней~--- это и~есть объект категории 
+$\dot{\mathbf{D}}C$. Разумеется, целевая сис\-те\-ма, в~свою очередь, служит 
+объемлющей для своих под\-сис\-тем, так что возникают приложения конструкций 
+вида $\dot{\mathbf{D}}^nC$, где $n \hm> 1$~--- чис\-ло рассматриваемых 
+системных уровней, в~инженерии систем систем (SoS).
+     
+     Монада $\dot{\mathbf{D}}$ показывает, как корректно учесть\linebreak вхождение 
+целевой системы при проведении с~объемлющими сис\-те\-ма\-ми процедур 
+структурного анализа и~синтеза из разд.~3. 
+А~комонада~$\dot{\mathbf{D}}$ предоставляет специфические средства для 
+работы\linebreak с~системой в~контексте: коединица извлекает из объемлющей систему 
+целевую, <<забывая>> все остальное, а~коумножение порождает самоподобные 
+многоуровневые системы, в~которых каж\-дый элемент воспроизводит структуру 
+предыдущего уровня с~сохранением своей иден\-тич\-ности.\linebreak Самоподобие 
+относится к~ключевым свойствам сис\-тем~--- как природных, вплоть до 
+Вселенной как целого~[15], так и~технических, например в~сфере 
+телекоммуникаций~[16]. Генерация самоподобных структур расширяет 
+возможности автоматического синтеза сис\-тем, в~том чис\-ле бионического типа.
+
+\section{Заключение}
+     
+     При помощи универсальных конструкций в~$\mathbf{CAT}$ (в~основном 
+декартовых квадратов, в~том чис\-ле конструкции Гротендика, и~сопряжений) 
+в~настоящей работе построены математические\linebreak объекты, в~которых 
+<<закодированы>> ключевые процедуры системной инженерии. Показана 
+основополагающая роль монады диаграмм. Целесообразно рекомендовать ее и~производные \mbox{конструкции}
+ к~реализации в~<<умных>> инструментах цифровой 
+системной инженерии, способных автоматически генерировать оптимальные 
+структуры систем и~процессов.
+     
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-kov}
+\Au{Левенчук А.\,И.} Системноинженерное мышление.~--- М.: TechInvestLab, 2015. 305~с.
+\bibitem{2-kov}
+\Au{Mabrok M.\,A., Ryan~M.\,J.} Category theory as a formal mathematical foundation for  
+model-based systems engineering~// Appl. Math. Inform. Sci., 2017. Vol.~11. No.\,1. P.~43--51. 
+doi: 10.18576/amis/110106.
+\bibitem{3-kov}
+   \Au{Breiner S., Subrahmanian~E., Jones~A.} Categorical\linebreak foundations for system engineering~// 
+Disciplinary convergence in systems engineering research~/ Eds. A.~Madni, B.~Boehm, 
+R.~Ghanem, D.~Erwin, D.~Wheaton.~--- Springer, 2018. P.~449--463. doi:  
+10.1007/978-3-319-62217-0\_32.
+
+\bibitem{4-kov}
+   \Au{Watson M.\,D.} Future of systems engineering~// INCOSE INSIGHT, 2019. Vol.~22. 
+Iss.~1. P.~8--12. doi: 10.1002/\linebreak inst.12231.
+
+\bibitem{5-kov}
+   \Au{Ковалёв С.\,П.} Методы теории категорий в~модельно-ориентированной системной 
+инженерии~// Информатика и~её применения, 2017. Т.~11. Вып.~3. С.~42--50. doi: 
+10.14357/1992226417030.
+
+\bibitem{6-kov}
+\Au{Guitart R., van den Bril~L.} D$\acute{\mbox{e}}$compositions et lax-
+compl$\acute{\mbox{e}}$tions~// Cahiers Topologie 
+G$\acute{\mbox{e}}$om$\acute{\mbox{e}}$trie Diff$\acute{\mbox{e}}$rentielle 
+Cat$\acute{\mbox{e}}$goriques, 1977. Vol.~18. No.\,4. P.~333--407.
+
+\bibitem{7-kov}
+   \Au{Ковалёв С.\,П.} Теория категорий как математическая прагматика  
+мо\-дель\-но-ори\-ен\-ти\-ро\-ван\-ной сис\-тем\-ной инженерии~// Информатика и~её 
+применения, 2018. Т.~12. Вып.~1. С.~95--104. doi: 10.14357/19922264180112.
+
+\bibitem{8-kov}
+\Au{Маклейн С.} Категории для работающего математика~/ Пер. с~англ.~--- М.: Физматлит, 
+2004. 352~с. (\Au{Mac Lane~S.} Categories for the working mathematician.~--- Springer, 1978. 
+317~p.)
+\bibitem{9-kov}
+Grothendieck construction.~--- nLab, 2020. {\sf 
+https://\linebreak ncatlab.org/nlab/show/Grothendieck+construction}.
+\bibitem{10-kov}
+\Au{Barr M., Wells~C.} Category theory for computing science.~--- London: Prentice Hall, 1990. 
+538~p.
+\bibitem{11-kov}
+\Au{Ковалёв С.\,П.} Алгебраические методы порождающего проектирования 
+крупномасштабных технических сис\-тем~// Управ\-ле\-ние развитием крупномасштабных 
+систем: Мат-лы XII Междунар. конф.~--- М.: ИПУ РАН, 2019. С.~384--386.
+\bibitem{12-kov}
+\Au{Kowalski J.} CAD is a lie: Generative design to the rescue.~--- San Rafael, CA, USA: 
+Autodesk, 2016. {\sf https://www.autodesk.com/redshift/generative-design}.
+\bibitem{13-kov}
+Comma category.~--- nLab, 2019. {\sf https://ncatlab.org/ nlab/show/comma+category}.
+\bibitem{14-kov}
+   \Au{Hitchins D.} What are the general principles applicable to systems?~// Incose Insight, 
+2009. Vol.~12. Iss.~4. P.~59--64. doi: 10.1002/INST.200912459.
+
+\bibitem{15-kov}
+\Au{Iovane G., Laserra~E., Tortoriello~F.\,S.} Stochastic self-similar and fractal universe~// 
+Chaos Soliton. Fract., 2004. Vol.~20. Iss.~3. P.~415--426. doi: 10.1016/j.chaos. 2003.08.004.
+\bibitem{16-kov}
+   \Au{Larijani H.} Local area networks and self-similar traffic~// Network performance 
+engineering~/ Ed. D.\,D.~Kouvatsos.~--- Lecture notes in computer science ser.~--- Springer, 2011. 
+Vol.~5233. P.~174--190. doi: 10.1007/978-3-642-02742-0\_8.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Поступила в~редакцию 25.02.21}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{THE MONAD OF DIAGRAMS AS~A~MATHEMATICAL METAMODEL OF~SYSTEMS 
+ENGINEERING\\[-5pt]}
+
+
+\def\titkol{The monad of diagrams as~a~mathematical metamodel of~systems 
+engineering}
+
+
+\def\aut{S.\,P.~Kovalyov}
+
+\def\autkol{S.\,P.~Kovalyov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-15pt}
+
+
+\noindent
+   V.\,A.~Trapeznikov Institute of Control Sciences of the Russian Academy of Sciences, 
+65~Profsoyuznaya Str., Moscow 117997, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{1pt}
+   
+   
+   
+   
+   \Abste{The paper addresses issues associated with the development of advanced 
+mathematical methods for systems engineering suitable as the basis of computer tools for automatic 
+synthesis and analysis of systems and processes. Following recent trends, category theory is 
+employed as the framework for the methods. Its application is based on representing the structure of 
+systems, processes, requirements, and other system design results as diagrams in categories whose 
+objects are the algebraic models of parts and morphisms describe relationships between parts. 
+Applying the fundamental Grothendieck flattening construction, the following constructions are 
+described explicitly: categories of diagrams, the monad of diagrams, and the monad and the comonad of 
+pointed diagrams. Application areas of these constructions in systems engineering procedures are 
+identified. An approach is proposed to implement highly automated technologies of the generative 
+design kind for complex multilevel systems.}
+   
+   \KWE{category theory; monad of diagrams; Grothendieck construction; colimit; systems 
+engineering; system of systems; generative design}
+   
+\DOI{10.14357/19922264230202}{FDUVDU}
+
+\vspace*{-6pt}
+
+%\Ack
+%\noindent
+
+%\vspace*{4pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+ \vspace*{-3pt} 
+\bibitem{1-kov-1}
+   \Aue{Levenchuk, A.\,I.} 2015. \textit{Sistemnoinzhenernoe myshlenie} [Systems engineering 
+thinking]. Moscow: TechInvestLab. 305~p.
+\bibitem{2-kov-1}
+   \Aue{Mabrok, M.\,A., and M.\,J.~Ryan.} 2017. Category theory as a formal mathematical 
+foundation for model-based systems engineering. \textit{Appl. Math. Inform. Sci.} 11(1):43--51. 
+doi: 10.18576/amis/110106.
+\bibitem{3-kov-1}
+   \Aue{Breiner, S., E.~Subrahmanian, and A.~Jones.} 2018. Categorical foundations for system 
+engineering.  \textit{Disciplinary convergence in systems engineering research.} Eds. A.~Madni, 
+B.~Boehm, R.~Ghanem, D.~Erwin, and D.~Wheaton. Springer. 449--463. doi:  
+10.1007/978-3-319-62217-0\_32.
+\bibitem{4-kov-1}
+   \Aue{Watson, M.\,D.} 2019. Future of systems engineering. \textit{INCOSE INSIGHT}  
+22(1):8--12. doi: 10.1002/inst.12231.
+\bibitem{5-kov-1}
+   \Aue{Kovalyov, S.\,P.} 2017. Metody teorii kategoriy v~model'no-orientirovannoy sistemnoy 
+inzhenerii [Methods of category theory in model-based systems engineering]. \textit{Informatika 
+i~ee Primeneniya~--- Inform. Appl.} 11(3):42--50. doi: 10.14357/1992226417030.
+\bibitem{6-kov-1}
+   \Aue{Guitart, R., and L.~van den Bril.} 1977. Decompositions et lax-completions. \textit{Cahiers 
+Topologie Geometrie Differentielle Categoriques} 18(4):333--407.
+\bibitem{7-kov-1}
+   \Aue{Kovalyov, S.\,P.} 2018. Teoriya kategoriy kak ma\-te\-ma\-ti\-che\-skaya pragmatika  
+model'no-orientirovannoy sistemnoy inzhenerii [Category theory as a~mathematical\linebreak pragmatics of 
+model-based systems engineering]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.}  
+12(1):95--104. doi: 10.14357/19922264180112.
+\bibitem{8-kov-1}
+   \Aue{Mac Lane, S.} 1978. \textit{Categories for the working mathematician}. New York, NY: 
+Springer. 317~p.
+\bibitem{9-kov-1}
+   nLab. 2020. Grothendieck construction. Available at: {\sf 
+https://ncatlab.org/nlab/show/Grothendieck+\linebreak construction/} (accessed May~29, 2023).
+\bibitem{10-kov-1}
+   \Aue{Barr, M., and C.~Wells.} 1990. \textit{Category theory for computing science}. London: 
+Prentice Hall. 538~p.
+\bibitem{11-kov-1}
+   \Aue{Kovalyov, S.\,P.} 2019. Algebraicheskie metody porozhdayushchego proektirovaniya 
+krupnomasshtabnykh tekhnicheskikh sistem [Algebraic methods of generative design of large-scale 
+technical systems]. \textit{12th Conference (International) ``Management of Large-Scale System 
+Development'' Proceedings}. Moscow: IPU RAN. 384--386.
+\bibitem{12-kov-1}
+   \Aue{Kowalski, J.} 2015. CAD is a lie: Generative design to the rescue. San Rafael, CA: Autodesk. Available at: {\sf 
+https://www.themanufacturer.com/articles/cad-is-a-lie-generative-design-to-the-rescue/} (accessed May~29, 
+2023).
+\bibitem{13-kov-1}
+   nLab. 2019. Comma category. Available at: {\sf  
+https://\linebreak ncatlab.org/nlab/show/comma+category/} (accessed May~29, 2023).
+\bibitem{14-kov-1}
+   \Aue{Hitchins, D.} 2009. What are the general principles applicable to systems? \textit{Incose 
+Insight} 12(4):59--64. doi: 10.1002/ INST.200912459.
+\bibitem{15-kov-1}
+   \Aue{Iovane, G., E.~Laserra, and F.\,S.~Tortoriello.} 2004. Stochastic self-similar and fractal 
+universe.  \textit{Chaos Soliton. Fract.} 20(3):415--426. doi: 10.1016/j.chaos.2003.08.004.
+\bibitem{16-kov-1}
+   \Aue{Larijani, H.} 2011. Local area networks and self-similar traffic. \textit{Network 
+performance engineering.} Ed. D.\,D.~Kouvatsos. Lecture notes in computer science ser. Springer. 
+5233:174--190. doi: 10.1007/978-3-642-02742-0\_8.
+   \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Received February 25, 2021}} 
+   
+   
+   \vspace*{-22pt}
+   
+\Contrl
+
+\vspace*{-4pt}
+
+\noindent
+\textbf{Kovalyov Sergey P.} (b.\ 1972)~--- Doctor of Science in physics and mathematics, leading scientist, 
+V.\,A.~Trapeznikov Institute of Control Sciences of the Russian Academy of Sciences, 65~Profsoyuznaya Str., Moscow 
+117997, Russian Federation; \mbox{kovalyov@sibnet.ru}
+   
+   
+
+   
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 
+   

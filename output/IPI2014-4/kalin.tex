@@ -1,0 +1,1723 @@
+\renewcommand{\figurename}{\protect\bf Figure}
+\renewcommand{\tablename}{\protect\bf Table}
+
+\def\stat{kalinich}
+
+
+\def\tit{CONCEPTUAL MODELING OF~MULTIDIALECT WORKFLOWS}
+
+\def\titkol{Conceptual modeling of~multidialect workflows}
+
+\def\autkol{L.~Kalinichenko, S.~Stupnikov, A.~Vovchenko,
+and~D.~Kovalev}
+
+\def\aut{L.~Kalinichenko$^{1,2}$, S.~Stupnikov$^1$, A.~Vovchenko$^1$,
+and~D.~Kovalev$^1$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+%\footnotetext[1] {}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Institute of Informatics Problems, Russian Academy of Sciences,
+44-2 Vavilov Str., Moscow 119333, Russian Federation}
+\footnotetext[2]{Faculty of
+Computational Mathematics and Cybernetics, M.\,V.~Lomonosov Moscow State University,
+1-52~Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation}
+
+
+%\vspace*{6pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2014\ \ \ volume~8\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2014\ \ \ volume~8\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+%\vspace*{6pt}
+
+
+\Abste{This paper contributes to the techniques for conceptual representation of
+data analysis algorithms and data integration facilities as well as processes to
+specify data and behavior semantics in one paradigm. An investigation of a~novel
+approach for applying a~combination of semantically different
+platform-independent rule-based languages (dialects) for interoperable conceptual
+specifications over various rule-based systems (RSs) relying on the rule-based
+program transformation technique recommended by the W3C Rule Interchange
+Format (RIF) is extended here. Such approach is combined with the facilities
+aimed at the semantic rule-based mediation intended for the heterogeneous data
+base integration. This paper extends a~previous research of the authors in the
+direction of workflow modeling for definition of compositions of algorithmic
+modules in a~process structure. A~capability of the multidialect workflow
+support specifying the tasks in semantically different languages mostly suited to
+the task orientation is presented. A~practical workflow use case, the
+interoperating tasks of which are specified in several rule-based languages
+(RIF-CASPD, RIF-BLD, RIF-PRD), is introduced. In addition, OWL~2 is used
+for the conceptual schema definition, RIF-PRD is used also for the workflow
+orchestration. The use case implementation infrastructure includes a~production
+rule-based system (IBM ILOG), a~logic rule-based system (DLV), and
+a~mediation system.}
+
+\KWE{conceptual specification; workflow; RIF; production rule languages;
+database integration; mediators; PRD; multidialect infrastructure}
+
+\DOI{10.14357/19922264140413}
+
+%\vspace*{6pt}
+
+
+\vskip 12pt plus 9pt minus 6pt
+
+      \thispagestyle{myheadings}
+
+      \begin{multicols}{2}
+
+                  \label{st\stat}
+
+\section{Introduction}
+
+  \noindent
+  This work keeps on the intention of developing the facilities for conceptual
+declarative problem specification and solving in data intensive domains (DID). In [1]
+it was claimed that conceptual data semantics alone (e.\,g., formalized in ontology
+languages based on description logic) are insufficient, so that conceptual
+representation of data analysis algorithms as well as processes for problem solving are
+required to specify data and behavior semantics in one paradigm.
+
+The results presented in this paper\footnote[3]{This paper is an extended for the journal version of
+the results presented in the ``Multidialect Workflows'' report at the ADBIS'2014
+Conference.} extend the research~[1] aimed at the definition and implementation of the
+facilities for conceptually-driven problems specification and solving in DID aiming at
+ensuring eventually the following capabilities for expressing the specifications:
+\begin{enumerate}[(1)]
+\item an ability to provide complete and precise specification of the abstract
+structure and behavior of the domain entities, their consistency, relationship, and
+interaction;
+\item well-grounded diversity of semantics of the modeling facilities providing for
+the best attainable expressiveness, compactness, and precision of the definition of
+the problem solving algorithm specifications;
+\item arrangements for the extensions of the modeling facilities satisfying the
+changing technological and practical needs;
+\item specification independence from implementation platforms (languages,
+systems);
+\item specification independence from concrete information resources (IRs)
+(databases,
+services, ontologies, etc.)\ combined with facilities for their semantic
+integration and interoperability; and
+\item built-in methodologies for creation of unifying specification languages
+providing for construction of semantics-preserving mappings of conceptual
+specifications into their implementations in specific platforms.
+\end{enumerate}
+
+  The research reported in~[1] investigated the conceptual modeling facilities for
+DID applying rule-based declarative logic languages possessing different,
+complementary semantics and capabilities combined with the methods and languages
+for heterogeneous data mediation and integration. Two fundamental techniques were
+combined: ($i$)~constructing of the unifying extensible language providing for
+semantics-preserving mapping into it of various IR
+specification languages (e.\,g., such as data definition (DDL) and
+data manipulation (DML) languages for databases); and ($ii$)~creation of
+the unified extensible family of rule-based languages (dialects) and a~model of
+interoperability of the programs expressed in such dialects with different semantics.
+
+  The first technique is based on the experience obtained in course of the
+SYNTHESIS language development~[2]. The kernel of the SYNTHESIS language is
+based on the object-frame data model used together with the declarative rule-based
+facilities in the logic language similar to a~stratified Datalog with functions and
+negation. The extensions of the kernel are constructed in such a~way that each
+extension together with the kernel is a~result of semantic preserving mapping of some
+IR language into the SYNTHESIS~[2]. The canonical information model is
+constructed as a~union of the kernel with such extensions defined for various resource
+languages. Canonical model is used for development of \textit{mediators} positioned
+between the users, conceptually formulating problems in terms of the mediators, and
+distributed resources. A~schema of a~subject mediator for a~class of problems
+includes the specification of the domain concepts defined by the respective
+ontologies.
+{ %\looseness=1
+
+}
+
+  Another, multidialect technique for rule-based programs interoperability applied is
+based on the RIF standard [3] of W3C. The RIF standard introduces a~unified family of rule-based
+languages together with a~methodology for constructing of semantic preserving
+mappings of specific languages used in various RSs into RIF
+dialects. Examples of RSs include {SILK}, {OntoBroker}, {DLV},
+{IBM Websphere ILOG JRules}, {RIF4J}\;+\;{IRIS}, and others
+(more examples can be found at {\sf
+http:// www.w3.org/2005/rules/wiki/Implementations}). From the RIF point of view, an
+IR is a~program developed in a~specific language of some RS.
+
+  In [1], the first results obtained were presented including the description of an
+approach and an infrastructure supporting:
+  \begin{itemize}
+\item application domain conceptual specification and problem solving algorithms
+definitions based on the combination of the heterogeneous database mediation
+technique and the rule-based multidialect facilities;
+\item interoperability of distributed multidialect rule-based programs and mediators
+integrating heterogeneous databases; and
+\item rule delegation approach for the peer interactions in the multidialect
+environment.
+\end{itemize}
+
+  The proof-of-concept prototype of the infrastructure based on the SYNTHESIS
+environment and RIF standards has been implemented. The approach for multidialect
+conceptualization of a~problem domain, rule delegation, rule-based programs, and
+mediators interoperability were explained in detail and illustrated on an use-case in
+the finance domain~[1]. For the conceptual definition of the use-case problem, the
+OWL was used for the domain concepts definition and two RIF logic dialects
+RIF-BLD~[4] and RIF-CASPD~[5] were used and mapped for implementation into the
+SYNTHESIS formula language and the ASP (answer set programming)
+based DLV~[6] language, respectively.
+
+  The results obtained so far are quite encouraging for future work: they show that
+the mentioned in the beginning capabilities~(1)--(6) sought for conceptual modeling
+become feasible. This paper reports the results of extending the research in the
+direction of modeling of the processes for the problem solving following the approach
+briefly outlined above. These results include extensions of the infrastructure and
+specification languages considered in~[1] to the workflow level keeping the same
+approach and paradigm as well as aiming at the capabilities of the
+conceptualization~(1)--(6) that were stated in~[1] and mentioned in the beginning of
+the introduction.
+
+  For investigation of such extension with respect to the choice of rule-based languages, it was
+decided not to go outside the limits of the existing set of the published RIF dialects.
+Such decision would allow to retain well-defined semantics of the conceptual
+rule-based languages with a~possibility to check preservation of their semantics by various
+languages of the implementing systems.
+
+  The production rule dialect RIF PRD~[7] has been chosen as the language for the
+workflow modeling in such a~way that the tasks of the workflow can have
+multidialect rule-based representation (as defined in~[1]). This paper reporting the results
+of such investigation is structured as follows. To make the paper self-contained, the
+next section provides a~brief overview of the infrastructure supporting multidialect
+programming defined in details in~[1]. Here, it is stressed
+ that this infrastructure is
+suitable for the workflow tasks specification. Workflow-oriented extension of the
+multidialect infrastructureis considered in section~3. Use case implementation in
+the proof-of-concept prototype is given in section~4. Related works are reviewed
+in section~5. Concluding Remarks summarize contributions of the research.
+
+%\vspace*{-24pt}
+
+\begin{figure*} %fig1
+\vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=164.734mm
+ \epsfbox{kal-1.eps}
+ }
+ \end{center}
+ \vspace*{-9pt}
+\Caption{Conceptual schema and peer specifications }
+\vspace*{-2pt}
+  \end{figure*}
+
+\section{Basic Principles of the Workflow Tasks Representation
+in~the~Multidialect Infrastructure}
+
+  \noindent
+  Each workflow task (besides those that for pragmatic reasons are defined as
+externally specified functions) is assumed to be represented in the novel infrastructure
+defined in details in~[1]. Conceptual programming of tasks is performed using the
+RIF dialects (now not only logic but also PRDs can be
+used).
+
+Conceptual tasks are implemented by their transformation into the rule-based
+programs of the respective RSs and mediation systems (MSs). \textit{Conceptual
+specification of a~task} is defined in the context of a~subject domain and consists of
+a~set of RIF-documents (document is a~specification unit of RIF). The
+\textit{conceptual schema} of the domain is defined using OWL 2~\cite{8-kal}
+ontologies. Such usage of ontology is analogous to~\cite{22-kal}; however, it is
+specifically important in the multidialect environment due to the formally defined
+compatibility between RIF and OWL. The ontologies contain entities of the domain
+and their relationships (Fig.~1, right-hand part). Conceptual specification of a~task is
+defined over conceptual schema. Ontologies are imported into the RIF-documents
+specifying an import profile, for instance, {OWL Direct}. Documents
+\textit{import} other documents having the same semantics (the \textit{Import}
+directive), \textit{link} documents defined using other dialects and having different
+semantics (remote module directive \textit{Module}) or \textit{refer} to entities
+contained in other documents using \textit{external terms}.
+{\looseness=1
+
+}
+
+  Semantics of a~conceptual task definition in such setting becomes a~multidialect
+one. The specification modules of a~task are treated as peers. Mediation modules are
+assumed to be defined in RIF-BLD for representation of the mediator rules (to be
+interpreted in SYNTHESIS) supporting schema mapping and semantic integration of
+the IRs. Multidialect task is implemented by means of
+transformation of conceptual specifications into modular, component-based
+peer-to-peer (P2P)
+program represented in the languages of the MSs and RSs
+with the respective semantics. Interoperability of logic rule components of such
+distributed program is carried out by means of the delegation technique [1,
+section~3.3]. Production rule components are considered as external functions,
+interoperability is achieved through the mechanism of external terms.
+
+  A schema $S_R$ of a~peer~$R$ is a~set of entities (classes or relations and their
+attributes) corresponding to extensional and intensional predicates of the resource
+implementing the peer~$R$.
+
+  The RS or the MS of each peer~$R$ should be
+a~conformant~$D_R$ consumer where~$D_R$ is the~respective RIF dialect (Fig.~1,
+left-hand part). Conformance is formally defined using formula entailment and
+language mappings~[3].
+
+  The peer $R$ is relevant to a~RIF-document~$d$ of a~conceptual specification of a~problem
+  (Fig.~1, right-hand part) if ($i$)~$D_R$ is a~subdialect of the document~$d$
+dialect (subdialect is a~language obtained from some dialect by removing certain
+syntactic constructsand imposing respective restrictions on its semantics~[4]; each
+program that conforms with the subdialect also conforms with the dialect) and
+($ii$)~entities of the peer schema~$S_R$ (if they exist) are \textit{ontologically
+relevant} to entities of the conceptual schema the names of which are used
+in~$d$~for extensional predicates.
+
+  The schema of a~relevant peer is mapped into the conceptual schema. The mapping
+establishes the correspondence of the conceptual entities referred in the
+document~$d$ to their expressions in terms of entities of the schema~$S_R$ using
+rules of the $D_R$ dialect. These schema mapping rules constitute separate
+  RIF-document (Fig.~1, middle part).
+
+  Peers communicate using a~technique for distributed execution of the rule-based
+programs. The basic notion of the technique is delegation-transferring facts and
+rules from one peer to another. A~peer is installed on a~node of the multidialect
+infrastructure. A~node is a~combination of a~wrapper, an RS or an MS, and a~peer
+(for the details, refer~[1, Fig.~3]). A~wrapper
+transforms programs and facts from the specific RIF dialect into the language of the
+RS or MS and \textit{vice versa}. A~wrapper also implements the delegation mechanism.
+Transferring facts and rules among peers is performed in the RIF dialects.
+
+  A~special component (\textit{Supervisor}) of the architecture defined in~[1] stores
+shared information of the environment, i.\,e., conceptual specifications related to the
+domain and to the problem, a~list of the relevant resources, RIF-documents combining
+rules for the conceptual specification and a~resource schema mapping.
+
+  Implementation of the conceptual specification includes the following steps:
+  \begin{enumerate}[(1)]
+\item rewriting of the conceptual documents into the RIF-programs of the peers
+performed by the \textit{Supervisor}. The rewriting includes also ($i$)~replacing the
+document identifiers (used to mark predicates) by peer identifiers and ($ii$)~adding
+schema mapping rules to programs (Fig.~1, middle part); %\\[-14pt]
+\item a transfer of the rewritten programs to nodes containing peers relevant to the
+respective conceptual documents. The transfer is performed by the \textit{Supervisor}
+by calling the method \textit{loadRules} of the respective node wrappers; %\\[-14pt]
+\item a transformation of the RIF-programs into the concrete RS or MS languages.
+The transformation is performed by the \textit{NodeWrapper} or by the RS or MS
+itself (if the RS or MS supports the respective RIF dialect); and %\\[-14pt]
+\item an execution of the produced programs in P2P environment.
+\end{enumerate}
+
+  During the process of rewriting of the conceptual schema into the resource
+programs, the relationships between RIF-documents of the conceptual schema defined
+by remote or imported terms are replaced by relationships between peers also defined
+by remote or imported terms. To implement remote and imported terms, a~\textit{rule
+delegation} mechanism is used to transfer facts and rules from one peer to another.
+The details of rule delegation approach including description of the related algorithms
+are provided in~[1].
+
+\vspace*{-7pt}
+
+\section{Workflow-Oriented Extension of~the~Multidialect
+Infrastructure}
+
+\vspace*{-2pt}
+
+  \noindent
+  The aim of the infrastructure proposed is a~conceptual programming of problems in
+the RIF-dialects and an implementation of conceptual specifications using rule-based
+languages of the RSs and MSs. One of the objectives of this particular paper is to
+introduce an extension of the existing multidialect infrastructure~[1] aiming at the
+conceptual specification of rule-based workflows.
+
+  Conceptual specification of a~problem (class of problems) is defined in the context
+of a~subject domain and consists of a~set of
+  RIF-documents. Besides the documents expressed in the logic dialects of RIF, the
+documents expressed in the production rule dialect (RIF-PRD) also can be a~part of
+conceptual specification of a~problem. In particular, these documents are aimed to
+express a~process of solving the problem as the production rule-based workflow.
+
+\vspace*{-4pt}
+
+\subsection{Specification of~workflow orchestration}
+
+  A workflow consists of a~set of tasks orchestrated by specific constructs
+(\textit{workflow patterns}~\cite{9-kal}, for instance, \textit{sequence}, \textit{split},
+\textit{join}) defining the order of tasks execution. The specification of such
+orchestration is called here a~\textit{workflow skeleton}. A~skeleton is defined using
+RIF-PRD production rules. Workflows and workflow patterns can be represented
+using production rules in various ways, e.\,g., as in~\cite{9-kal, 17-kal}. The
+approach applied in this paper to represent workflows requires the extension of
+  RIF-PRD dialect by several built-in predicates (they are considered to be a~part of
+\textit{wkfl} namespace referenced by
+  {\sf http://www.w3.org/2014/rif-workflow-predicate\#} URI similarly to
+\textit{func} and \textit{pred} namespaces defined in~\cite{21-kal} for built-in
+functions and predicates of RIF):
+  \begin{itemize}
+\item predicate {\sf wkfl:end-of-task(?arg)} where \textit{\sf ?arg} is an identifier of a~task. The value space of
+{\sf ?arg} is the XML-Schema built-in data type
+{\sf xsd:Name} representing XML names. The predicate turns into true if a~task
+\textit{?arg} has been completed;
+\item predicate {\sf wkfl:variable-definition(?arg1\, ?arg2)} where {\sf ?arg1}
+is the identifier of a~variable and {\sf ?arg2} is the identifier of a~type of the
+variable.
+The value space for both arguments is {\sf xsd:Name}. Turning the predicate into
+true means that a~variable {\sf ?arg1} of type {\sf ?arg2} is defined in the
+context of a~workflow;
+\item predicate {\sf wkfl:variable-value(?arg1\,?arg2)} where {\sf ?arg1} is the
+identifier of a~variable and {\sf ?arg2} is the value of the variable. The value space for
+the first argument is {\sf xsd:Name}, the value space for the second argument is the
+union of value spaces of all RIF built-in datatypes. Turning the predicate into true
+means that a~variable {\sf ?arg1} has the value {\sf ?arg2};
+\item predicate {\sf wkfl:parameter-definition(?arg1\,?arg2\,
+?arg3)} where
+{\sf ?arg1} is the identifier of a~workflow parameter; {\sf ?arg2} is the identifier
+of a~type of the parameter; and {\sf ?arg3} is the direction of the parameter. The value
+space for the first and for the second arguments is {\sf xsd:Name}. The value space
+for the third argument is {\sf \{IN, OUT, IN\_OUT\}}
+(\textit{input}, \textit{output}, or
+\textit{input--output} parameter).
+Turning the predicate into true means that a~parameter {\sf ?arg1} of
+type {\sf ?arg2}, and direction {\sf ?arg3} is defined
+for a~workflow; and
+\item predicate {\sf wkfl:parameter-value(?arg1\,?arg2)} defines values of
+workflow parameters in the same way as {\sf wkfl:variable-value} defines values
+of workflow variables.
+  \end{itemize}
+
+  Predicates {\sf wkfl:variable-definition} and
+  {\sf wkfl:}\linebreak {\sf variable-value} allow
+to specify workflow variables and their values and thus to organize the data flow
+within a~workflow. Predicates {\sf wkfl:parameter-definition} and
+{\sf wkfl:parameter-value} allow to specify workflow parameters and their values
+and thus to define the interface of a~workflow in terms of input and output parameters.
+Using of workflow parameters and variables is illustrated in the Appendix.
+
+  The predicate {\sf wkfl:end-of-task(?arg)} allows to orchestrate the order of
+execution of workflows tasks using conditions and actions of production rules. In this
+section, the template rules intended for representation of several basic workflow
+patterns (Fig.~2) are provided.
+
+\begin{center}  %fig2
+\vspace*{6pt}
+\mbox{%
+ \epsfxsize=76.913mm
+ \epsfbox{kal-2.eps}
+ }
+  \vspace*{2pt}
+
+{{\figurename~2}\ \ \small{Basic workflow patterns}}
+  \end{center}
+
+\vspace*{6pt}
+
+
+\addtocounter{figure}{1}
+
+  Three well-known workflow patterns are considered below: {\sf Sequence},
+{\sf AND-Split}, and {\sf AND-Join}.
+
+  The \textit{AND-Split}\footnote{In this paper, the simplified \textit{presentation
+syntax}~\cite{7-kal} is used.} workflow pattern is represented in RIF-PRD by the
+following production ruletemplate using {\sf wkfl:end-of-task} predicate:
+  \begin{verbatim}
+If Not(External(wkfl:end-of-task(A)))
+Then Do (Act(A)
+ Assert(External(wkfl:end-of-task(A))))
+If And(Not(External(wkfl:end-of-task(B)))
+ External(wkfl:end-of-task(A)))
+Then Do (Act(B)
+ Assert(External(wkfl:end-of-task(B))))
+If And(Not(External(wkfl:end-of-task(C)))
+ External(wkfl:end-of-task(A)))
+Then Do (Act(C)
+ Assert(External(wkfl:end-of-task(C))))
+\end{verbatim}
+
+  The template includes three rules for tasks~$A$, $B$, and~$C$, respectively.
+${\sf Act}(A)$, ${\sf Act}(B)$, and ${\sf Act}(C)$ denote \textit{actions} associated with tasks~$A$,
+$B$, and $C$. Orchestration (tasks~$B$ and~$C$ are executed concurrently right after
+task~$A$ is completed) is specified using {\sf wkfl:end-of-task} predicate in
+conditions and {\sf Assert} actions of rules.
+
+  Similarly, the {\sf AND-Split} pattern is represented in RIF-PRD by the
+following production rule template:
+
+\vspace*{-1.5pt}
+
+\noindent
+  \begin{verbatim}
+If Not(External(wkfl:end-of-task(A)))
+Then Do (Act(A)
+ Assert(External(wkfl:end-of-task(A))))
+If And(Not(External(wkfl:end-of-task(B)))
+ External(wkfl:end-of-task(A)))
+Then Do (Act(B)
+ Assert(External(wkfl:end-of-task(B))))
+If And(Not(External(wkfl:end-of-task(C)))
+ External(wkfl:end-of-task(A)))
+Then Do (Act(C)
+ Assert(External(wkfl:end-of-task(C))))
+\end{verbatim}
+
+\vspace*{-1.5pt}
+
+  The {\sf Sequence} pattern is represented in RIF-PRD by the following
+production rule template:
+
+\vspace*{-1.5pt}
+
+\noindent
+  \begin{verbatim}
+If Not(External(wkfl:end-of-task(A)))
+Then Do (Act(A)
+ Assert(External(wkfl:end-of-task(A))))
+If And(Not(External(wkfl:end-of-task(B)))
+ External(wkfl:end-of-task(A)))
+Then Do (Act(B)
+ Assert(External(wkfl:end-of-task(B))))
+\end{verbatim}
+
+\vspace*{-1.5pt}
+
+  More complicated patterns like OR-, XOR- splits and joins, structured loops,
+subflows, and others are represented in RIF-PRD similarly.
+
+\vspace*{-6pt}
+
+\subsection{Workflow tasks specification}
+
+  \noindent
+  Workflow taskscan be specified as:
+  \begin{itemize}
+\item separate RIF-documents in various logic RIF-dialects (this is the way how
+multidialect infrastructure~[1] is extended with workflow capabilities);\\[-15pt]
+\item separate RIF-documents in the RIF-PRD dialect;\\[-15pt]
+\item set of production rules embedded into the workflow skeleton; and\\[-15pt]
+\item external functions treated as ``black boxes.''
+\end{itemize}
+
+  Semantics of tasks specified as multidialect logic programs are defined in
+accordance with the RIF-FLD~[3] standard and standards for the respective
+  RIF-dialects (BLD, CASPD, etc.). Semantics of tasks specified as production
+rule programs are defined in accordance with the RIF-PRD standard. Semantics of
+external functions ``are assumed to be specified externally in some document''~[3].
+
+  All kinds of tasks (except those that are embedded into a~workflow skeleton) are
+referenced in the workflow skeleton as \textit{external terms}~[3] like
+${\sf External}\left({\sf t}\right)$
+where term~{\sf t} is defined by an external resource identified by internationalized
+resource identifier (IRI)~[3].
+
+\begin{figure*} %fig3
+\vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=163.675mm
+ \epsfbox{kal-3.eps}
+ }
+ \end{center}
+ \vspace*{-9pt}
+\Caption{Extended multidialect infrastructure}
+\end{figure*}
+
+
+\vspace*{-6pt}
+
+\subsection{Workflow implementation infrastructure}
+
+  \noindent
+  Workflows defined in the conceptual specification are implemented in the
+environment shown in Fig.~3. Peer-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+to-peer environment~[1] intended to implement logic
+programs is extended with a~production rule-based system (PRS) (for
+instance, a~production system compliant with the OMG Production Rule
+Representation~\cite{16-kal}) and with external functions, implemented as
+  web-services. Implementation of the conceptual specification includes the
+following steps:
+  \begin{enumerate}[(1)]
+\item transfer of the conceptual RIF-documents constituting a~workflow skeleton to
+the production rule-based system node (performed by the \textit{Supervisor} component);\\[-14pt]
+\item transformation of the conceptual RIF-documents constituting a~workflow
+skeleton into the language of the production rule-based system (performed by the PRS
+Wrapper component);\\[-14pt]
+\item transferring RIF logic programs related to tasks to the relevant nodes of the
+environment and transformation of the RIF-programs into the concrete RS or MS
+languages~[1]; and\\[-14pt]
+\item execution of the workflow.
+\end{enumerate}
+
+
+  The interface of the \textit{Supervisor} includes methods for submitting and
+executing a~workflow represented as a~set of RIF-documents, and for getting the
+result of the workflow execution.
+
+  To provide a~proof of the multidialect infrastructure concept, a~use case in the
+financial domain has been implemented. The problem to be solved in the use case is
+called the \textit{investment portfolio diversification problem}. The detailed
+description of the use case is included in the Appendix.
+
+\vspace*{-9pt}
+
+\section{Related Work}
+
+  \noindent
+  Two types of workflow models, namely, abstract and concrete, were
+identified~\cite{15-kal}. In the abstract model, a~workflow is described in an abstract
+form, without re-\linebreak\vspace*{-12pt}
+\columnbreak
+
+\noindent
+ferring to specific resources. In this paper, workflow
+representation in abstract and platform-independent  form is suggested.
+
+  A classification model for scientific workflow characteristics~\cite{9-kal}
+contributes to better understanding of scientific workflow requirements. The list of
+structural patterns discovered during this analysis (including sequential, parallel,
+parallel-split, parallel-merge, and mesh) influenced the choice of the required workflow
+patterns.
+
+  The OMG standard~\cite{16-kal} reflects an attitude to production rules from the
+industrial side providing an OMG MDA (model-driven architecture)
+platform-independent model (PIM)  with a~high probability of
+support at the PSM (platform-specific model) level from the rule engine vendors.
+Similar capabilities though formally defined are used as the basis for the
+RIF-PRD~\cite{7-kal}.
+
+  Some vendors of such production rule engines have extended their languages with
+the workflow specification capabilities. IBM has extended ILOG to provide the
+ruleflow capability. Microsoft supports Windows Workflow Foundation as a~platform
+providing the workflow and rules capabilities. The examples of specific formalisms for
+PIM rule-based process specifications are also provided in~\cite{17-kal}.
+
+  Comparing to the known variants of the PIM production rule representations,
+  selection of the RIF-PRD is considered to be well grounded:
+  \begin{enumerate}[(1)]
+\item the RIF-PRD is formally defined;
+\item RIF ensures support of interoperability of modules written in different
+rule-based dialects with different semantics;
+\item RIF provides foundations for PIM to PSM semantic preserving
+transformation; and
+\item RIF also provides ability for specification of the concepts in application
+domain terms combining rule-based specifications with the OWL ontologies.
+\end{enumerate}
+
+  Importance of providing the interdialect interoperation is advocated
+  in~\cite{18-kal} for combining the functionalities of production systems and logic
+programs for abductive logic programming (ALP). The ALP framework gives a~model-theoretic semantics to both kinds of rules and provides them with powerful
+proof procedures, combining backward and forward reasoning.
+
+  Papers related to RIF-PRD experimentations are focused mainly on the issue of the
+PRD programs transformation to an implementation system. In~\cite{19-kal}, a~case
+study of bridging the ILOG Rule Language (IRL) to RIF-PRD and vice versa is
+considered. In~\cite{20-kal}, implementation of RIF-PRD in three different
+paradigms: Answer Set Programming, Production Rules, and Logic Programming
+(XSB) is investigated.
+
+  The contribution of this paper with regard to previous works of the authors~[1] consists in
+extensions of the infrastructure and specification languages considered in~[1] to the
+workflow level.
+
+\section{Concluding Remarks}
+
+  \noindent
+  Progress in the investigation of the infrastructure~[1] for the conceptual
+multidialect interoperable programming in the abstract, rule-based,
+platform-independent notations is reported. An extension of the coherent
+combination of the multidialect rule-based programming technique recommended by
+the W3C RIF with the approach for unifying modeling of heterogeneous data bases
+for their semantic mediation is presented. The extension of the infrastructure and specification
+languages considered in~[1] in the direction of the workflow modeling is presented.
+
+  Sticking to the limits of the existing set of the published RIF dialects,
+   a~capability of the multidialect workflow support
+   is presented with the tasks specified in
+semantically different languages mostly suited to the task orientation.
+Also, a~realistic problem solving use case containing the interoperating tasks
+specified in
+several platform-independent rule-based languages: RIF-CASPD, RIF-BLD,
+  RIF-PRD, is presented. In addition, OWL~2 is used for the conceptual schema definition,
+  RIF-PRD is applied for the workflow orchestration. The platforms selected for
+implementation of the tasks include: DLV, SYNTHESIS, IBM ILOG. Such approach
+retains well-defined semantics of the platform-independent rule-based languages with
+a possibility to check preservation of their semantics by various languages of the
+implementing systems. The principle of independence of tasks from the specific IRs is
+carried out by the heterogeneous database mediation facilitates contributing to the
+  reuse of tasks and workflows. Alongside with the further extension of the
+approach, in the future work, the authors plan to apply the conceptual multidialect
+programming philosophy for support of the experiments in data intensive sciences. In
+particular, they plan to investigate modeling hypotheses in astronomy representing them
+as a~set of rules applying the multiplicity of the dialects required.
+
+
+%\setcounter{equation}{0}
+
+\vspace*{12pt}
+
+{{\hfill \textbf{APPENDIX A}}}
+
+\vspace*{-12pt}
+
+\subsection*{MULTIDIALECT WORKFLOW USE CASE}
+
+
+{\small
+
+
+ %\section*{\raggedleft Appendix~A.\\ Multidialect Workflow Use-Case}
+
+
+%\renewcommand{\thesection}{A\arabic{equation}}
+
+\subsection*{A.1\ Investment portfolio diversification\\
+\hspace{20pt}problem extended}
+
+  \noindent
+  Motivation of the use case that illustrates the proposed approach comes from the
+finance area. The use case extends the \textit{investment portfolio diversification
+problem} defined in~[1, Appendix] by adding workflow orchestration applying the
+RIF-PRD. The idea of the portfolio diversification problem is
+as follows. The portfolio is a~collection of securities of companies, and its size is the
+number of securities in the portfolio. The problem is to build a~diversified portfolio of
+maximum size. Diversification means that the prices of the securities in portfolio
+should be almost independent of each other. If the price of one security falls, it will
+not significantly affect the prices of others. Thus, the risk of a~portfolio sharp decrease
+is reduced.
+
+  The input data for the problem is a~set of securities and respective time series of
+indicators of the security price for each security. Time series for each security is a~set
+of pairs $(d, v)$ where $d$ is a~date and~$v$ is an indicator of the security price (for
+instance, closing price). The financial services \textit{Google Finance} ({\sf
+https://www.google.com/finance}) and \textit{Yahoo! Finance} ({\sf
+http://finance.yahoo.com/}) are considered. They include various indicators of the
+security price for all trading days of the last decades. For the diversified portfolio, the
+securities having noncorrelated time series should be used. Noncorrelation of the
+time series means that their correlation is less than some predetermined price
+correlation value. The output data for the problem is a~set of subsets of securities of
+the maximum size, for which the pair wise correlation will be less than the
+predetermined one.
+
+  The maximum satisfying subset of securities is calculated in the following way.
+Let~$G$ be a~graph where the vertices are the securities. An edge between two
+securities exists if absolute value of their correlation is less than a~specified number.
+So, any two securities connected by an edge are considered as noncorrelated. In such
+case, the problem of finding the portfolio of the maximum size is exactly the problem
+of finding a~maximum clique in an undirected graph. A~maximal clique is a~maximal
+portfolio. Note that several different maximal portfolios can be found.
+
+  The conceptual specification of the use case~[1] used two RIF-dialects: RIF-BLD
+and RIF-CASPD. The use case was implemented in the environment containing a~mediation system used as a~platform for RIF-BLD~[4] and ASP-based DLV
+system~\cite{6-kal}~--- a~platform for RIF-CASPD. The RIF-BLD was used to
+specify the problem of data integration, and RIF-CASPD~--- the problem of finding
+a~maximum clique in an undirected graph.
+
+In this work, the portfolio use case is extended in the following way. The goal is
+not only to build a~set of diversified portfolios, but
+also to choose the ``best'' of them
+according to some criteria. There are several approaches to choose the most
+appropriate portfolio.
+
+  The most recognized one is based on the Markovitz portfolio theory~\cite{10-kal}.
+The idea is to choose the portfolio, which has the maximum risk/return ratio. The
+most well-known metric to operate with risk/return is Sharpe-ratio~\cite{11-kal}:
+  $(r_p -r_f)/\sigma^2$. Here, $r_p$ denotes the expected return of the portfolio;
+$r_f$ denotes the~risk free rate; and $\sigma^2$ denotes the~portfolio standard deviation (risk).
+The more the Sharpe-ratio is, the better the investment is.
+
+  Another approach is based on an idea that with the advent of social networks, it
+became possible to monitor ideas, sentiments, actions of people and lots of available
+information has to do with the markets and investments. In~\cite{12-kal}, Bollen
+\textit{et al.}\ draw the connection between the mood of investor tweets and the move
+of Dow Jones Index, stating that correlation between them is more than 80\%. The
+idea of using tweets to assess market movements has been implemented in several
+hedge funds.
+
+  Combining these two strategies could provide benefits of both of them, which
+leads to the following problem statement: having S\&P500 (a stock market index
+maintained by the Standard\,\&\,Poor's, comprising 500~large-cap American
+companies) list of companies, compute the diversified portfolio of maximum size
+with the best risk/return and sentiment ratios.
+
+%\vspace*{-6pt}
+
+\subsection*{A.2\	Conceptual specification\\
+\hspace*{20pt}of~the~application domain\\
+\hspace*{20pt}and~the~problem}
+
+%\vspace*{-2pt}
+
+  \noindent
+  Conceptual schema (ontology) of the application domain of historical prices of
+securities is written in the simplified OWL functional syntax~\cite{8-kal}
+({\sf Declaration} keyword is omitted; {\sf property}, {\sf domain}, and {\sf range}
+declarations are combined).
+  \begin{verbatim}
+Ontology(<http://synthesis.ipi.ac.ru/portfolio/
+    ontology>
+ Class(Portfolio)
+  ObjectProperty(securities domain(Portfolio)
+   range(Portfolio))
+  DataProperty(expected_return domain(Portfolio)
+   range(xsd:double))
+  DataExactCardinality(1 expected_return
+   Portfolio)
+  DataProperty(std_dev domain(Portfolio)
+   range(xsd:double))
+  DataExactCardinality(1 std_dev Portfolio)
+  DataProperty(sharpe_ratio domain(Portfolio)
+   range(xsd:double))
+  DataExactCardinality(1 sharpe_ratio Portfolio)
+  DataProperty(twitter_positive_ratio
+   domain(Portfolio) range(xsd:double))
+  DataExactCardinality(1 twitter_positive_ratio
+   Portfolio)
+  DataProperty(risk_free_rate domain(Portfolio)
+   range(xsd:double))
+  DataExactCardinality(1 risk_free_rate
+   Portfolio)
+  DataProperty(recommended domain(Portfolio)
+   range(xsd:boolean))
+  DataExactCardinality(1 recommended Portfolio)
+
+ Class(Security)
+  DataProperty(ticker  domain(Security)
+   range(xsd:string))
+  DataExactCardinality(1 ticker Security)
+  DataProperty(rates  domain(Security)
+   range(StockRate))
+  DataProperty(positive_tweets domain(Security)
+   range(xsd:double))
+  DataExactCardinality(1 positive_tweets
+   Security)
+  DataProperty(sec_expected_return
+   domain(Security) range(xsd:double))
+  DataExactCardinality(1 sec_expected_return
+   Security)
+  DataProperty(sec_std_dev domain(Security)
+   range(xsd:double))
+  DataExactCardinality(1 sec_std_dev Security)
+
+ Class(StockRate)
+  DataProperty(date domain(StockRate)
+   range(xsd:date))
+  DataExactCardinality(1 date StockRate)
+  DataProperty(price domain(StockRate)
+   range(xsd:double))
+  DataExactCardinality(1 price StockRate)
+)
+  \end{verbatim}
+
+  \vspace*{-6pt}
+
+  A~portfolio (the {\sf Portfolio} class) is characterized by a~set of securities
+({\sf securities} attribute) contained in the portfolio, by several metrics: expected
+return ({\sf expected\_return} attribute), standard deviation ({\sf std\_dev}
+attribute), Sharpe ratio ({\sf sharpe\_ratio attribute}), risk free rate
+({\sf risk\_free\_rate} attribute), and
+ratio of positive tweets mentioning securities of
+the portfolio ({\sf twitter\_positive\_ratio} attribute).
+
+  A security (the {\sf Security} class) is characterized by identifier ({\sf ticker}
+attribute), time series of historical prices (attribute {\sf
+rates}), ratio of positive
+tweets mentioning the security ({\sf positive\_tweets} attribute), expected return
+({\sf sec\_expected\_return} attribute), and standard deviation ({\sf sec\_std\_dev}
+attribute).
+
+\begin{figure*} %fig4
+\vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=126.24mm
+ \epsfbox{kal-4.eps}
+ }
+ \end{center}
+ \vspace*{-11pt}
+\Caption{Portfolio workflow}
+\vspace*{-6pt}
+  \end{figure*}
+
+The workflow of the extended portfolio problem is demonstrated in Fig. 4. The workflow
+contains six tasks\footnote{To save space, specifications are provided only for
+{\sf getPortfolios}, {\sf getPositiveTweetRatio}, and
+{\sf computePortfolioTwitterMetrics} tasks.}:
+\begin{enumerate}[(1)]
+\item {\sf getPortfolios}. A~set of diversified portfolio candidates is computed. The
+multidialect task specification consists of two RIF-documents in BLD and CASPD
+dialects~[1, Appendix]. Portfolios received as a~result contain only security tickers,
+they have to be augmented by financial and sentiments ratios;
+\item {\sf getPositiveTweetRatio}. This task is responsible for computing a~sentiment ratio of tweets for every security. Every tweet is assessed
+to be positive,
+negative, or neutral. The task is specified as a~call of external function;
+\item {\sf computePortfolioTwitterMetrics}. The portfolio sentiment ratio is
+computed as the average of its securities sentiment ratio. The task is specified using
+RIF-PRD;
+{\looseness=1
+
+}
+\item {\sf getSecurityFinancialMetrics}. For every security in a~portfolio the
+financial rates (the {\sf expected return} and the {\sf standard deviation}) are
+calculated on the basis of historical rates of securities specified as an OWL~2 class of
+the ontology of the application domain. The task is specified using RIF-BLD dialect;
+\item {\sf computePortfolioFinancialMetrics}. The computation of the portfolio
+expected return, risk, and Sharpe-ratio is done within this task. The task is specified
+using RIF-PRD dialect; and
+\item {\sf choosePortfolio}. The best portfolio is chosen according to maximizing
+the (\textit{Sharpe ratio * sentiment ratio}) coefficient. The task is specified using
+RIF-PRD dialect.
+  \end{enumerate}
+
+  Workflow skeleton is specified as a~RIF-PRD document importing the ontology of
+the application domain:
+  \begin{verbatim}
+Document( Dialect(RIF-PRD)
+ Base(<http://synthesis.ipi.ac.ru/portfolio/
+  workflow#>)
+ Import(<http://synthesis.ipi.ac.ru/portfolio/
+  ontology#>
+ <http://www.w3.org/ns/entailment/OWL-Direct>)
+Prefix(ont<http://synthesis.ipi.ac.ru/portfolio/
+ ontology#>)
+Prefix(ofws<http://synthesis.ipi.ac.ru/
+ synthesis/projects/RuleInt/OpinionFinderWS#>)
+Prefix(mws<http://synthesis.ipi.ac.ru/
+ synthesis/projects/RuleInt/MediatorWS#>)
+
+Group 2 (
+ Do(
+  Assert(External(wkfl:parameter-definition(
+   startDatexsd:string IN)))
+  Assert(External(wkfl:parameter-definition(
+   endDatexsd:string IN)))
+  Assert(External(wkfl:parameter-definition(
+   bestPortfolioont:Portfolio OUT)))
+  Assert(External(wkfl:variable-definition(
+   ps  List<ont:Portfolio> IN)))
+  Assert(External(wkfl:
+   variable-value(ps List())))
+ )
+)
+\end{verbatim}
+
+\noindent
+\begin{verbatim}
+
+Group 1 (
+ Forall ?sd ?ed such that (
+  External(wkfl:parameter-value(startDate ?sd))
+  External(wkfl:parameter-value(endDate ?ed))  )
+( If Not(External(wkfl:
+   end-of-task(getPortfolios)))
+  Then
+   Do( Modify(External(wkfl:variable-value(ps
+    External(mws:getPortfolios(?sd ?ed) )))
+   Assert(External(wkfl:
+    end-of-task(getPortfolios))) )
+ )
+
+ Forall ?ps ?p ?scs ?s ?t such that (
+  External(wkfl:variable-value(ps ?ps))
+  ?p#?ps  ?p[securities->?scs]
+   ?s#?scs ?s[ticker->?t] )
+( If And( Not(External(wkfl:
+     end-of-task(getTweets)))
+   External(wkfl:end-of-task(getPortfolios)))
+  Then
+  Do( Modify(?s[positive_tweets->
+   External(ofws:computeSecPosTweets(?t))] )
+   Assert(External(wkfl:
+    end-of-task(getTweets))) )
+)
+
+Forall ?ps ?p such that (
+ External(wkfl:variable-value(ps  ?ps))
+  ?p#?ps)
+( If And(Not(External(wkfl:
+   end-of-task(countTwitterMetrics)))
+   External(wkfl:end-of-task(getTweets)) )
+  Then Do(
+   Modify(?p[twitter_positive_ratio->
+    External(func:numeric-divide(
+    Sum{?pt | Exists
+     ?scs ?s(?p[securities->?scs]
+     ?s#?scs  ?s[positive_tweets->?pt])}
+    External(func:count(?ps))))])
+   Assert(External(wkfl:
+    end-of-task(countTwitterMetrics)))
+)	)) )
+\end{verbatim}
+
+\begin{figure*}[b] %fig5
+\vspace*{-4pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=162.319mm
+ \epsfbox{kal-5.eps}
+ }
+ \end{center}
+ \vspace*{-9pt}
+\Caption{Portfolio problem implementation infrastructure}
+  \end{figure*}
+
+  Production rules of the document are divided into two groups. The first group with
+priority~2 contains rules defining workflow parameters and variable. Input parameters
+are \textit{start date} and \textit{end date} of historical rates used for calculation of
+\textit{portfolio metrics}. Workflow variable {\sf ps} denotes a~set containing
+\textit{portfolio candidates}.
+
+  The second group with priority~1 contains the orchestration rules~--- workflow
+skeleton. The only orchestration rule provided in the example above corresponds to
+the task {\sf getPortfolios}. The external function {\sf getPortfolios}
+encapsulates a~multidialect logic program calculating portfolio candidates~[1,
+Appendix]. A~{\sf Modify} action is used to call the function and to put the
+returned result into the {\sf ps} variable.
+
+\vspace*{-6pt}
+
+\subsection*{A.3\	Revised portfolio problem infrastructure}
+
+  \noindent
+  The implementation structure of the use case is shown in Fig.~5.
+
+
+
+
+  The RIF-PRD workflow skeleton was transformed into a~program (rule set) in the
+ILOG~\cite{13-kal} language combining production rules and workflow facilities
+(like {\sf fork} and {\sf sequence}). The ILOG program was executed in the
+{IBM Operational Decision Manager} tool~\cite{24-kal}. In order to execute
+ILOG programs, the underlying execution model (XOM)~\cite{25-kal}
+was defined as a~set of
+Java classes: {\sf Portfolio}, {\sf Security}, and {\sf StockRate}. The
+{\sf Portfolio class} corresponds to a~financial portfolio and contains as attributes a~set of
+securities in it, its expected return, standard deviation, Sharpe ratio, and twitter
+positive ratio. Code of this class is provided below:
+  \begin{verbatim}
+public class Portfolio {
+ private Collection<Security> securities;
+ private double expected_return;
+ private double std_dev;
+ private double sharpe_ratio;
+ private double twitter_positive_ratio;
+ // as of 05.04.14 US 5-year treasuries
+ private static double risk_free_rate = 0.0169;
+ private boolean recommended;
+}
+\end{verbatim}
+
+  Class {\sf Security} corresponds to real world financial securities. The class
+contains as attributes a~ticker, ratio of positive tweet number to the sum of positive
+and negative tweets, a~set of stock rates, security's standard deviation, and expected
+return. These attributes are set as responses to corresponding web services queries:
+
+\vspace*{-2pt}
+
+\noindent
+  \begin{verbatim}
+public class Security {
+ public String ticker;
+ public double positive_tweets;
+ public Collection<StockRate> rates;
+ public double std_dev;
+ public double expected_return;
+ public static int number_of_periods = 5;
+}	
+\end{verbatim}
+
+\vspace*{-2pt}
+
+{\sf StockRate} is a~simple class and contains just two attributes~--- price and date:
+
+\vspace*{-2pt}
+
+\noindent
+  \begin{verbatim}
+public class StockRate {
+ public float price;
+ public String date;
+}
+\end{verbatim}
+
+\vspace*{-2pt}
+
+  It is easy to see that the one-to-one mapping exists between conceptual schema
+entities and execution model entities.
+
+  Parameters of RIF-PRD workflow skeleton ({\sf startDate}, {\sf endDate}, and
+{\sf bestPortfolio}) are mapped into the respective parameters of ILOG rule set
+(Fig.~6).
+
+\begin{figure*} %fig6
+\vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=115mm
+ \epsfbox{kal-6.eps}
+ }
+ \end{center}
+ \vspace*{-9pt}
+\Caption{Rule set parameters}
+  \end{figure*}
+
+  The variable of RIF-PRD workflow skeleton ({\sf ps}) is mapped into a~local variable
+of the rule set. Specification of the variable looks as follows:
+
+\vspace*{-2pt}
+
+\noindent
+  \begin{verbatim}
+<?xml version="1.0" encoding="UTF-8"?>
+<ilog.rules.studio.model.base:VariableSetxmi:
+  version="2.0"
+xmlns:xmi="http://www.omg.org/XMI"
+  xmlns:ilog.rules.studio.model.base =
+"http://ilog.rules.studio/model/base.ecore">
+ <name>local_vars</name>
+ <variables name="ps" type="java.util.ArrayList"
+   initialValue=""verbalization="ps"/>
+</ilog.rules.studio.model.base:VariableSet>
+\end{verbatim}
+
+  Rules of the RIF-PRD workflow skeleton are mapped into ILOG
+\textit{ruleflow}~\cite{25-kal}:
+
+\vspace*{-6pt}
+
+\noindent
+  \begin{verbatim}
+flowtask portfolio$_$flow {
+ property mainflowtask = true;
+ property ilog.rules.business_name =
+  "portfolio_flow";
+ body {
+  portfolio$_$flow#getPortfolios;
+  fork {
+   portfolio$_$flow#getRates;
+   portfolio$_$flow
+   #computePortfolioFinancialMetrics;} &&
+  { portfolio$_$flow#getTweets;
+   portfolio$_$flow#
+    computePortfolioTwitterMetrics;}
+  portfolio$_$flow#choosePortfolio;
+ }
+};
+
+ruletask portfolio$_$flow#getPortfolios {
+ property ilog.rules.business_name =
+   "portfolio_flow>getPortfolios";
+ body { getPortfolios.*}
+};
+
+ruletask portfolio$_$flow#
+   computePortfolioTwitterMetrics {
+ propertyilog.rules.business_name =
+  "portfolio_flow>
+   computePortfolioTwitterMetrics";
+ body { computePortfolioTwitterMetrics.* }
+};
+
+ruletask portfolio$_$flow#getTweets {
+ property ilog.rules.business_name =
+  "portfolio_flow>getTweets";
+ property ilog.rules.package_name = "";
+ body {getTweets.*}
+};
+\end{verbatim}
+
+  The {\sf computePortfolioTwitterMetrics},
+{\sf computePortfolioFinancialMetrics}, and {\sf choosePortfolio} tasks are
+implemented as production rules in ILOG:
+
+\vspace*{-6pt}
+
+\noindent
+  \begin{verbatim}
+package computePortfolioTwitterMetrics {
+ use ps;
+ import portfolio.*;
+
+ rule computePortfolioTwitterMetrics {
+  property status = "new";
+  when {	IlrContext() from ?context;	}
+  then {
+   foreach (Portfolio p in ps) {
+    double ?twitter_metrics = 0;
+    int ?length = 0;
+     foreach (Security security
+       in p.securities) {
+      ?twitter_metrics= ?twitter_metrics +
+       security.positive_tweets;
+      ?length = ?length + 1; }
+     p.twitter_positive_ratio=
+      ?twitter_metrics / ?length;
+}}}}
+\end{verbatim}
+
+  The {\sf getPortfolios} and {\sf computeSecurityFinancialMetrics} tasks are
+implemented by the following production rules in ILOG:
+
+
+\noindent
+  \begin{verbatim}
+package getPortfolios {
+ use ps;
+ import portfolio.*;
+
+ rule getPortfolios {
+  when { IlrContext() from ?context; }
+  then {
+   ps = Supervisor.getPortfolios(startDate,
+    endDate);
+} } }
+\end{verbatim}
+
+\begin{table*}\small
+\begin{center}
+\Caption{Metrics for the securities}
+  \vspace*{2ex}
+
+  \begin{tabular}{cccc}
+  \hline
+Security identifier&Expected return&Standard deviation&Positive tweet ratio\\
+\hline
+COG&0.163&0.201&0.507\\
+DO&0.015&0.019&0.651\\
+EQR&0.150&0.022&0.846\\
+FOSL&0.513&0.030&0.579\\
+SCG&0.050&0.010&0.622\\
+\hline
+\end{tabular}
+\end{center}
+%\end{table*}
+%\begin{table*}\small
+\begin{center}
+\Caption{Metrics for the portfolio candidates}
+  \vspace*{2ex}
+
+  \begin{tabular}{lcccccc}
+  \hline
+\multicolumn{1}{c}{\tabcolsep=0pt\begin{tabular}{c}Portfolio\\ identifier\end{tabular}}&
+\tabcolsep=0pt\begin{tabular}{c}Expected\\ return\end{tabular}&
+\tabcolsep=0pt\begin{tabular}{c}Standard\\ deviation\end{tabular}&
+\tabcolsep=0pt\begin{tabular}{c}Risk free\\ rate\end{tabular}&
+\tabcolsep=0pt\begin{tabular}{c}Sharpe\\ ratio\end{tabular}&
+\tabcolsep=0pt\begin{tabular}{c}Positive\\ tweet ratio\end{tabular}&
+\tabcolsep=0pt\begin{tabular}{c}Sharpe ratio\\$\times$\;Positive tweet ratio\end{tabular}\\
+\hline
+1&0.111&0.008&0.0169&11.755&0.660&7.758\\
+2&2.400&0.507&0.0169&\hphantom{9}4.701&0.508&2.388\\
+3&2.381&0.508&0.0169&\hphantom{9}4.662&0.557&2.597\\
+4&2.347&0.505&0.0169&\hphantom{9}4.606&0.708&3.261\\
+5 (best)&0.178&0.011&0.0169&14.227&0.641&9.120\\
+6&0.147&0.008&0.0169&15.577&0.521&8.166\\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{-3pt}
+\end{table*}
+
+
+
+\noindent
+  Here, the {\sf Supervisor} is the~Java class wrapping execution of logic programs
+in multidialect infrastructure including two nodes~[1]. The nodes correspond to the
+mediation system (which integrates \textit{Google Finance} and the \textit{Yahoo!
+Finance} services) and to a~rule-based programming system DLV.
+
+  The {\sf getSecurityFinancialMetrics} task uses the same instance of the
+mediation system as the {\sf getPortfolios} task. The reason is that financial
+metrics are calculated using the historical rates of the securities. This is exactly the
+information that is extracted by the mediation system from {Google Finance}
+and {Yahoo! Finance}. The difference between two tasks is that the
+{\sf getPortfolios} is implemented as a~submission of a~query to the DLV node, but
+the {\sf getSecurityFinancialMetrics} is implemented as a~submission of a~different
+query to the Mediation Node.
+
+  The {\sf getPositiveTweetRatio} task is implemented by the following
+production rule in ILOG:
+
+%\pagebreak
+
+\noindent
+  \begin{verbatim}
+package getTweets {
+ use ps;
+ import portfolio.*;
+
+ rule getTweets {
+  when { IlrContext() from ?context; }
+  then {
+   foreach (Portfolio p in ps) {
+    foreach (Security s in p.securities) {
+     s.positive_tweets =
+      WebServices.computeSecPosTweets(s.ticker);
+} } } } }
+\end{verbatim}
+
+
+
+
+\noindent
+Here, {\sf WebServices} is the~Java-class wrapping invocation of a~web-service.
+The WSDL specification of the web-service can be found at {\sf
+http://synthesis.ipi.ac.ru/synthesis/ projects/RuleInt/OpinionFinderWS}. The
+  web-service, in its turn, encapsulates a~Java-program. The program first collects
+tweets using the {\sf Twitter Streaming API}. After that, a~sentiment analysis is
+done by the {\sf Polarity Classifier} of the {\sf OpinionFinder}
+  tool~\cite{14-kal} which assesses if tweet is positive, negative, or neutral. Finally,
+the sentiment ratio for every security in a~portfolio is calculated and returned as the
+result.
+
+\vspace*{-6pt}
+
+\subsection*{A.4\	Result of~the~use case workflow execution}
+
+  \noindent
+  The results obtained by one of the use case runs are as follows. The task
+{\sf getPortfolios} computes portfolio candidates on the basis of historical rates of
+daily closing prices of securities from S\&P500 list for the 2011--2013. Six portfolios
+of size~5 were calculated. Each portfolio is a~set of identifiers (tickers) of
+companies:
+  \begin{verbatim}
+Candidate 1: { ALXN, BF.B, EW, POM, VNO }
+Candidate 2: { BMC, JBL, LUK, MNST, POM }
+Candidate 3: { AVP, BMC, JPL, MNST, POM }
+Candidate 4: { ALTR, BF.B, BMC, DGX, PEG }
+Candidate 5: { COG, DO, EQR, FOSL, SCG }
+Candidate 6: { ADSK, GILD, INTC, POM, TJX }
+\end{verbatim}
+
+  The task {\sf getSecurityFinancialMetrics} computes the expected return and
+the standard deviation for every security mentioned in portfolio candidates.
+ The task
+{\sf getPositiveTweetRatio} computes positive sentiment ratios for every security
+mentioned in portfolio candidates (500~latest tweets for every security were used for
+the computation). Financial and twitter metrics for several securities are provided in
+Table~1.
+
+
+
+  The task {\sf computePortfolioFinancialMetrics} computes financial metrics for
+every portfolio candidate on the basis of respective metrics for
+securities in a~portfolio. The task {\sf computePortfolioTwitterMetrics} computes sentiment
+metrics for every portfolio candidate on the basis of sentiment metrics for securities in
+a~portfolio. Financial and twitter metrics for portfolio candidates are provided in
+Table~2. The task {\sf choosePortfolio} identifies the best portfolio by maximum
+value of the products of Sharpe ratio and positive tweet ratio obtained for every
+portfolio (see Table~2).
+
+
+}
+
+\vspace*{-9pt}
+
+\Ack
+\noindent
+This research has been done under the support of the \mbox{RFBR} (projects13-07-00579,
+14-07-00548) and the Program for Basic Research of the Presidium of RAS.
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+
+\vspace*{-9pt}
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\begin{thebibliography}{99}
+
+\bibitem{1-kal}
+\Aue{Kalinichenko, L.\,A., S.\,A.~Stupnikov, A.\,E.~Vovchenko, and D.\,Y.~Kovalev}.
+2013. Conceptual declarative problem specification and solving in data intensive domains.
+\textit{Informatics and Applications}~--- \textit{Inform \mbox{Appl.}} 7(4):112--139.
+Available at: {\sf http://synthesis.ipi.ac.\linebreak ru/synthesis/publications/13ia-multidialect}
+ (accessed December~9, 2014).
+\bibitem{2-kal}
+\Aue{Kalinichenko, L.\,A., S.\,A.~Stupnikov, and D.\,O.~Martynov}. 2007.
+\textit{SYNTHESIS: A~language for canonical information modeling and mediator
+definition for problem solving in heterogeneous information resource environments}.
+Moscow: IPIRAN. 171~p.
+\bibitem{3-kal}
+Boley, H., and M.~Kifer, eds. 2013. {RIF framework for logic dialects. W3C
+recommendation}. 2nd ed. Available at:
+{\sf http://www.w3.org/TR/2013/REC-rif-fld-20130205/}
+(accessed December~9, 2014).
+
+\bibitem{4-kal}
+Boley, H., and M.~Kifer, eds. 2013. {RIF basic logic dialect. W3C Recommendation}.
+2nd ed. Available at:
+{\sf http://www.w3.org/TR/2013/REC-rif-bld-20130205/}
+(accessed December~9, 2014).
+
+
+\bibitem{5-kal}
+Heymans, S., and M.~Kifer, eds. 2009. {RIF core answer set programming dialect}.
+Available at: {\sf http:// ruleml.org/rif/RIF-CASPD.html} (accessed November~5, 2014).
+\bibitem{6-kal}
+\Aue{Leone, N., G.~Pfeifer, W.~Faber, T.~Eiter,  G.~Gottlob, S.~Perri, and F.~Scarcello}.
+2006. The DLV system for knowledge representation and reasoning. \textit{ACM Trans.
+Comput. Logic} 7(3):499--562.
+\bibitem{7-kal}
+DeSante, M.\,C., G.~Hallmark, and A.~Paschke, eds. 2013. {RIF production rule
+dialect. W3C Recommendation}. 2nd ed.
+Available at: {\sf http://www.w3.org/TR/2013/REC-rif-prd-20130205/}
+(accessed December~9, 2014).
+
+\bibitem{8-kal}
+Motik, B., P.\,F.~Patel-Schneider, and B.~Parsia, eds.
+2012. {OWL~2 Web Ontology Language structural
+specification and functional-style syntax. W3C Recommendation}. 2nd ed.
+Available at:
+{\sf http://www.w3.org/TR/owl2-syntax/} (accessed November~5, 2014).
+\bibitem{22-kal} %9
+\Aue{Calvanese, D., G.~De Giacomo, D.~Lembo, M.~Lenzerini, A.~Poggi, and
+R.~Rosati}.
+ 2007. Ontology-based database access. \textit{15th
+Italian Symposium on Advanced Database Systems Proceedings}. 324--331.
+
+\bibitem{9-kal} %10
+\Aue{Ramakrishnan, L., and B.~Plale}. 2010. A~multi-dimensional classification model for
+scientific workflow\linebreak characteristics. \textit{1st Workshop (International) on Workflow
+Approaches to New Data-Centric Science Proceedings}. New York: ACM.
+Article No.\,4. 12~p.
+Available at: {\sf http://dl.acm.org/citation.cfm?id=1833402}\linebreak
+(accessed December~9, 2014).
+
+\bibitem{17-kal} %11
+\Aue{Boukhebouze, M, Y.~Amghar, A.-N.~Benharkat,  and Z.~Maamar}. 2011.
+A~rule-based approach to model and verify flexible business processes. \textit{Int.
+J.~Business Process Integration Management} 5(4):287--307.
+
+\bibitem{21-kal} %12
+Polleres, A., H.~Boley, and M.~Kifer, eds. 2013. {RIF datatypes and Built-Ins~1.0
+W3C Recommendation.} 2nd ed.
+Available at: {\sf http://www.w3.org/TR/2013/REC-rif-dtb-20130205/}
+(accessed December~9, 2014).
+
+
+
+
+\bibitem{16-kal} %13
+Production Rule Representation (PRR), Version 1.0. OMG Document Number:
+formal/2009-12-01. Available at: {\sf http://www.omg.org/spec/PRR/1.0} (accessed
+November~5, 2014).
+
+\bibitem{15-kal} %14
+\Aue{Yu,~J., and R.~Buyya}. 2005. A~taxonomy of scientific workflow systems for grid
+computing. \textit{ACM SIGMOD Records} 34(3):44--49.
+
+\bibitem{18-kal} %15
+\Aue{Kowalski, R., and F.~Sadri}. 2009. Integrating logic programming and production
+systems in abductive logic programming agents.
+\textit{Web reasoning and rule systems}. Eds. A.~Polleres and T.~Swift.
+Lecture notes in computer science ser. Springer.
+5837:1--23.
+
+\bibitem{19-kal} %16
+\Aue{Cosentino, V., M.\,D.~Del Fabro, and A.~El Ghali}. 2012. A~model driven approach
+for bridging ILOG rule language and RIF. \textit{6th Symposium (International) on Rules
+RuleML Proceedings}. CEUR-WS.org. 874:96--102.
+\bibitem{20-kal} %17
+\Aue{Veiga, F.\,D.\,J.} 2011. Implementation of the RIF-PRD.  Universidade
+Nova de Lisboa. Master Thesis. Available at: {\sf
+http://run.unl.pt/bitstream/10362/6310/1/Veiga\_\linebreak 2011.pdf} (accessed November~5, 2014).
+
+\bibitem{10-kal} %18
+\Aue{Markowitz, H.\,M.} 1991. \textit{Portfolio selection: Efficient diversification of
+investments}. Wiley. 402~p.
+\bibitem{11-kal} %19
+\Aue{Sharpe, W.\,F.} 1966. Mutual fund performance. \textit{J.~Business}
+39(S1):119--138.
+\bibitem{12-kal} %20
+\Aue{Bollen,~J., H.~Maoa, and X.~Zeng}. 2011. Twitter mood predicts the stockmarket.
+\textit{J.~Comput. Sci.} 2(1):1--8.
+\bibitem{13-kal} %21
+IBM WebSphere ILOG JRules Version~7.0. Online documentation. Available at: {\sf
+http://pic.dhe.ibm.com/\linebreak infocenter/brjrules/v7r0/index.jsp} (accessed November~5, 2014).
+
+\bibitem{24-kal} %22
+IBM Operational Decision Manager. Available at:
+{\sf http:// www-03.ibm.com/software/products/en/odm} (accessed November~5, 2014).
+\bibitem{25-kal} %23
+IBM Operational Decision Manager Version~8.5 Information Center. Available at: {\sf
+http://pic.dhe.ibm.com/\linebreak infocenter/dmanager/v8r5/index.jsp} (accessed November~5, 2014).
+
+
+\bibitem{14-kal} %24
+\Aue{Wilson, T., J.~Wiebe, and P.~Hoffmann}. 2005.
+Recognizing contextual polarity in phrase-level sentiment Analysis. \textit{Conference on
+Human Language Technology and Empirical Methods in Natural Language Processing
+Proceedings}. Stroudsburg: Association for Computational Linguistics. 347--354.
+
+
+%\bibitem{23-kal}
+%Bock, C., \textit{et. al.}, eds. 2012. \textit{OWL~2 Web Ontology Language Structural
+%Specification and Functional-Style Syntax. W3C Recommendation}. 2nd ed.
+
+
+\end{thebibliography} } }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Received November 3, 2014}}
+
+\vspace*{-18pt}
+
+\Contr
+
+\noindent
+\textbf{Kalinichenko Leonid A.} (b.\ 1937)~---
+ Doctor of Science in physics and mathematics, professor;
+ Head of Laboratory, Institute of Informatics Problems, 44-2 Vavilov Str.,
+ Moscow 119333, Russian Federation; professor,
+ Faculty of Computational Mathematics and Cybernetics, M.\,V.~Lomonosov Moscow
+ State University, 1-52 Leninskiye Gory, GSP-1, Moscow 119991,
+ Russian Federation; leonidandk@gmail.com
+
+ \vspace*{3pt}
+
+ \noindent
+ \textbf{Stupnikov Sergey A.} (b.\ 1978)~---
+ Candidate of Science (PhD) in technology, senior scientist,
+ Institute of Informatics Problems, Russian Academy of Sciences,
+ 44-2 Vavilov Str.,
+ Moscow 119333, Russian Federation; ssa@ipi.ac.ru
+
+ \vspace*{3pt}
+
+ \noindent
+ \textbf{Vovchenko Alexey E.} (b.\ 1984)~---
+ Candidate of Science (PhD) in technology, senior scientist,
+ Institute of Informatics Problems, Russian Academy of Sciences,
+ 44-2 Vavilov Str.,
+ Moscow 119333, Russian Federation; itsnein@gmail.com
+
+ \vspace*{3pt}
+
+ \noindent
+ \textbf{Kovalev Dmitry Yu.} (b.\ 1988)~---
+ junior scientist, Institute of Informatics Problems, Russian Academy of Sciences,
+ 44-2 Vavilov Str.,
+ Moscow 119333, Russian Federation; dm.kovalev@gmail.com
+
+
+%\vspace*{24pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-6pt}
+
+\newpage
+
+
+\def\tit{КОНЦЕПТУАЛЬНОЕ МОДЕЛИРОВАНИЕ МУЛЬТИДИАЛЕКТНЫХ ПОТОКОВ РАБОТ$^*$}
+
+\def\aut{Л.\,А.~Калиниченко$^{1,2}$, С.~Ступников$^1$, А.~Вовченко$^1$, Д.~Ковалев$^1$}
+
+
+\def\titkol{Концептуальное моделирование мультидиалектных потоков работ}
+
+\def\autkol{Л.\,А.~Калиниченко, С. Ступников, А. Вовченко, Д. Ковалев}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\footnotetext[1]{Работа выполнена при поддержке РФФИ (проекты
+13-07-00579, 14-07-00548) и~Программы фундаментальных исследований Президиума РАН.}}
+
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-12pt}
+
+\noindent
+$^1$Институт проблем информатики Российской академии наук
+
+\noindent
+$^2$Московский государственный университет им.\ М.\,В.~Ломоносова, факультет вычислительной
+матема-\linebreak
+$\hphantom{^1}$тики и~кибернетики
+
+\vspace*{6pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 8\ \ \ выпуск\ 4\ \ \ 2014}
+}%
+ \def\rightfootline{\small{ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 8\ \ \ выпуск\ 4\ \ \ 2014
+\hfill \textbf{\thepage}}}
+
+
+\Abst{Рассматриваются методы концептуального представления
+алгоритмов анализа данных, средств интеграции данных, а~также процессов,
+направленных на спецификацию семантики данных и~поведения в~единой парадигме.
+Расширяется новый подход к~применению комбинации семантически различных
+плат\-фор\-мо\-не\-за\-ви\-си\-мых языков на правилах (диалектов) для создания
+интероперабельных концептуальных спецификаций над различными системами на правилах.
+Подход опирается на методику трансформации программ на правилах, рекомендованную
+стандартом W3C Rule Interchange Format (RIF). Подход, предлагаемый в~стандарте RIF,
+сочетается со технологией семантической интеграции неоднородных баз данных
+в~предметных посредниках. Статья расширяет предыдущие исследования авторов
+в~направлении моделирования потоков работ для определения композиций
+алгоритмических модулей в~процессной структуре. Рассмотрены возможности
+спецификации задач в~мультидиалектных потоках работ с~применением семантически
+различных языков, наиболее подходящих для конкретных задач. Приведен практический
+пример потока работ, задачи которого специфицированы с~использованием нескольких
+ языков на правилах (RIF-CASPD, RIF-BLD, RIF-PRD). Для определения концептуальной
+ схемы использован язык OWL~2, для оркестровки потока работ использован язык
+ RIF-PRD. Инфраструктура реализации примера включает систему на продукционных
+ правилах (IBM ILOG), систему на логических правилах (DLV) и~предметный посредник.}
+
+\KW{концептуальные спецификации; потоки работ; RIF; языки продукционных правил;
+интеграция баз данных; посредники; PRD; мультидиалектная инфраструктура}
+
+\DOI{10.14357/19922264140413}
+
+\vspace*{6pt}
+
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily Литература}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\begin{thebibliography}{99}
+
+\bibitem{1-kal-1}
+\Au{Kalinichenko L.\,A., Stupnikov S.\,A.. Vovchenko~A.\,E.,
+Kovalev~D.\,Y.}
+Conceptual declarative problem specification and solving in data intensive domains~//
+Информатика и~её применения, 2013. Т.~7. Вып.~4. С.~112--139.
+{\sf http://synthesis.ipi.ac.ru/synthesis/publications/13ia-multidialect}.
+\bibitem{2-kal-1}
+\Au{Kalinichenko L.\,A., Stupnikov~S.\,A., Martynov~D.\,O.}
+ SYNTHESIS: A~language for canonical information modeling and mediator definition
+ for problem solving in heterogeneous information resource environments.~---
+ Moscow: IPI RAN, 2007. 171~p.
+\bibitem{3-kal-1}
+RIF framework for logic dialects. W3C Recommendation~/
+Eds. H.~Boley, M.~Kifer. 2nd ed.
+{\sf http:// www.w3.org/TR/2013/REC-rif-fld-20130205/}.
+\bibitem{4-kal-1}
+RIF basic logic dialect. W3C Recommendation~/
+Eds. H.~Boley, M.~Kifer. 2nd ed.
+{\sf http://www.w3.org/ TR/2013/REC-rif-bld-20130205/}.
+\bibitem{5-kal-1}
+RIF core answer set programming dialect~/
+Eds.\ S.~Heymans, M.~Kifer, 2009. {\sf  http://ruleml.org/rif/RIF-CASPD.html}.
+\bibitem{6-kal-1}
+\Au{Leone N., Pfeifer G., Faber~W., Eiter~T., Gottlob~G., Perri~S., Scarcello~F.}
+The DLV system for knowledge representation and reasoning~//
+ ACM Trans. Comput. Logic, 2006. Vol.~7. No.\,3. P.~499--562.
+\bibitem{7-kal-1}
+RIF production rule dialect. W3C Recommendation~/
+Eds.\ De Sante Marie~C., Hallmark~G., A.~Paschke.~ 2nd ed.
+{\sf http://www.w3.org/TR/2013/REC-rif-prd-20130205/}.
+\bibitem{8-kal-1}
+OWL~2 Web Ontology Language Structural Specification and Functional-Style Syntax.
+W3C Recommendation~/ Eds. B.~Motik, P.\,F.~Patel-Schneider, B.~Parsia. 2nd ed.
+{\sf http://www.w3.org/TR/owl2-syntax/}.
+
+\bibitem{22-kal-1} %9
+\Au{Calvanese, D., De Giacomo~G., Lembo~D., Lenzerini~M., Poggi~A.,
+Rosati~R.}
+Ontology-based database access~// 15th Italian Symposium on Advanced
+Database Systems Proceedings, 2007. P.~324--331.
+
+\bibitem{9-kal-1} %10
+\Au{Ramakrishnan L., Plale~B.}
+A~multi-dimensional classification model for scientific workflow characteristics~//
+1st  Workshop (International) on Workflow Approaches to New Data-Centric Science
+Proceedings.  New York: ACM, 2010. Aricle No.\,4. 12~p.
+{\sf http://dl. acm.org/citation.cfm?id=1833402}.
+\pagebreak
+
+\bibitem{17-kal-1} %11
+\Au{Boukhebouze M., Amghar~Y., Benharkat~A.-N., Maamar~Z.}
+A~rule-based approach to model and verify flexible business processes~//
+Int. J.~Business Process Integration Management, 2011. Vol.~5. No.\,4. P.~287--307.
+
+\bibitem{21-kal-1} %12
+RIF Datatypes and Built-Ins 1.0. W3C Recommendation~/
+Eds.\ A.~Polleres, H.~Boley, M.~Kifer. 2nd ed.
+{\sf http://www.w3.org/TR/2013/REC-rif-dtb-20130205/}.
+
+
+
+%\pagebreak
+
+\bibitem{16-kal-1} %13
+Production Rule Representation (PRR), Version~1.0.
+OMG Document Number: formal/2009-12-01. {\sf http:// www.omg.org/spec/PRR/1.0}.
+
+\bibitem{15-kal-1} %14
+\Au{Yu J., Buyya~R.}
+ A~taxonomy of scientific workflow systems for grid computing~//
+ ACM SIGMOD Records, 2005. Vol.~34. No.\,3. P.~44--49.
+
+ \bibitem{18-kal-1} %15
+\Au{Kowalski R., Sadri~F.}
+Integrating logic programming and production systems in abductive logic programming
+agents~//
+Web reasoning and rule systems~/ Eds. A.~Polleres, T.~Swift.
+Lecture notes in computer science ser.~--- Springer, 2009. Vol.~5837. P.~1--23.
+\bibitem{19-kal-1} %16
+\Au{Cosentino V., Del Fabro~M.\,D., El Ghali~A.}
+ A~model driven approach for bridging ILOG rule language and RIF~//
+ 6th  Symposium (International) on Rules, RuleML 2012 Proceedings.  2012.
+ CEUR-WS.org. Vol.~874. P.~96--102.
+\bibitem{20-kal-1} %17
+\Au{Veiga F.\,D.\,J.}
+Implementation of the RIF-PRD. Universidade Nova de Lisboa, 2011. Master Thesis.
+
+
+\bibitem{10-kal-1} %18
+\Au{Markowitz H.\,M.}
+Portfolio selection: Efficient diversification of investments. Wiley, 1991.
+402~p.
+\bibitem{11-kal-1} %19
+\Au{Sharpe, W.\,F.}
+Mutual fund performance~// J.~Business, 1966. Vol.~39(S1). P.~119--138.
+
+\bibitem{12-kal-1} %20
+\Au{Bollen J., Maoa H., Zeng~X.}
+Twitter mood predicts the stock market~// J.~Comput. Sci., 2011. Vol.~2. No.\,1.
+P.~1--8.
+
+\bibitem{13-kal-1} %21
+IBM WebSphere ILOG JRules Version 7.0. Online documentation.
+{\sf http://pic.dhe.ibm.com/infocenter/\linebreak brjrules/v7r0/index.jsp}.
+
+ \bibitem{24-kal-1} %22
+ IBM Operational Decision Manager.
+ {\sf http://www-03.\linebreak ibm.com/software/products/en/odm}.
+\bibitem{25-kal-1} %23
+IBM Operational Decision Manager Version~8.5 Information Center.
+{\sf http://pic.dhe.ibm.com/infocenter/\linebreak dmanager/v8r5/index.jsp}.
+
+\bibitem{14-kal-1} %24
+\Au{Wilson T., Wiebe~J., Hoffmann~P.}
+Recognizing contextual polarity in phrase-level sentiment analysis.
+\textit{Conference on Human Language Technology and Empirical Methods in Natural
+Language Processing Proceedinhgs}.
+Stroudsburg: Association for Computational Linguistics, 2005. P.~347--354.
+
+\end{thebibliography}
+} }
+
+\end{multicols}
+
+ \label{end\stat}
+
+ \vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в редакцию 03.11.2014}}
+%\renewcommand{\bibname}{\protect\rm Литература}
+\renewcommand{\figurename}{\protect\bf Рис.}

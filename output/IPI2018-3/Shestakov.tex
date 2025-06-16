@@ -1,0 +1,554 @@
+
+\newcommand{\mujk}{\mu_{j,k}}
+\newcommand{\sumk}{\sum_{k=0}^{2^j-1}}
+%\newcommand{\abs}[1]{\left|#1\right|}
+%\newcommand{\p}{{\sf P}}
+
+%\newcommand{\I}{\mathbf{1}}
+
+
+\def\stat{shest}
+
+\def\tit{СРЕДНЕКВАДРАТИЧНЫЙ РИСК ПОРОГОВОЙ ОБРАБОТКИ
+ПРИ~СЛУЧАЙНОМ ОБЪЕМЕ ВЫБОРКИ$^*$}
+
+\def\titkol{Среднеквадратичный риск пороговой обработки
+при~случайном объеме выборки}
+
+\def\aut{О.\,В.~Шестаков$^1$}
+
+\def\autkol{О.\,В.~Шестаков}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Шестаков О.\,В.}
+\index{Shestakov O.\,V.}
+
+
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при финансовой поддержке Российского научного фонда (проект 18-11-00155).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет им.\ М.\,В.~Ломоносова, 
+кафедра математической статистики факультета вычислительной математики и~кибернетики; 
+Институт проб\-лем информатики Федерального исследовательского центра 
+<<Информатика и~управ\-ле\-ние>> Российской академии наук, \mbox{oshestakov@cs.msu.su}}
+
+\vspace*{12pt}
+
+
+
+\Abst{Нелинейные методы удаления шума из сигналов, основанные на пороговой 
+обработке вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов, широко используются в~различных 
+прикладных областях. Свою популярность эти методы приобрели за счет быстроты 
+алгоритмов построения оценок и~возможности лучшей, чем линейные методы, 
+адаптации к~функциям, принадлежащим различным классам ре\-гу\-ляр\-ности. 
+При использовании методов пороговой обработки обычно предполагается, 
+что число вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов фиксировано, а~распределение шума 
+является гауссовым. Эта модель хорошо изучена в~литературе, и~для разных классов 
+сигналов вы\-чис\-ле\-ны оптимальные значения порогов. Однако в~некоторых ситуациях 
+объем выборки заранее не известен и~моделируется случайной величиной. 
+В~данной работе рас\-смат\-ри\-ва\-ет\-ся модель со случайным чис\-лом наблюдений, содержащих 
+гауссов шум и~оценивается порядок среднеквадратичного риска при растущем объеме 
+выборки.}
+
+\KW{пороговая обработка; случайный объем выборки; среднеквадратичный риск}
+
+\DOI{10.14357/19922264180302}
+  
+%\vspace*{4pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+\section{Введение}
+
+Во многих областях, таких как физика плазмы, медицина, геофизика, 
+астрономия, радиолокация, сис\-те\-мы связи и~передачи информации, компьютерная 
+графика и~т.\,д., возникает по\-треб\-ность в~анализе и~обработке сигналов самых 
+разных видов и~происхождения. В~некоторых случаях объем данных, доступных для 
+анализа (объем выборки), заранее не известен. Такие ситуации могут возникать, 
+например, в~случае пропуска данных (по техническим причинам), огра\-ни\-чен\-ности 
+времени сбора данных при случайных временах регистрации наблюдений или недостатке 
+информации о~характеристиках используемого оборудования (например, ис\-поль\-зу\-емый 
+прибор может принадлежать некоторой партии, внут\-ри которой определенные 
+технические характеристики могут быть жест\-ко не фиксированы~--- это может приводить 
+к~тому, что <<разрешение>> сигнала заранее не известно). 
+В~таком случае предполагается, что объем выборки данных пред\-став\-ля\-ет 
+собой случайную величину с~некоторым распределением вероятностей.
+
+На одном из первых этапов обработки данных обычно осуществляется 
+преобразование, приводящее к~их <<экономному>> (разреженному) пред\-став\-ле\-нию, т.\,е.\
+ фактически разложение функции, опи\-сы\-ва\-ющей наблюдения (сигнал) по некоторому\linebreak 
+ базису, зависящему от конкретного класса рас\-смат\-ри\-ва\-емых сигналов. 
+ Примерами подобных базисов могут служить различные классы вейв\-ле\-тов. 
+ В~данной работе рас\-смат\-ри\-ва\-ют\-ся именно такие вейв\-лет-ба\-зи\-сы. 
+ Затем осуществляется пороговая обработка коэффициентов; в~результате 
+часть коэффициентов разложения, которая считается несущественной, 
+ обнуляется. Такие процедуры, во-пер\-вых, позволяют подавить б$\acute{\mbox{о}}$льшую часть 
+ шума, возникающего из-за дискретизации исходной информации, несовершенства 
+ оборудования, случайных помех, наличия фонового излучения и~других причин. 
+ Во-вто\-рых, таким образом осуществляется сжатие данных с~незначительной 
+ потерей информации, что позволяет более экономно хранить информацию и~быст\-рее 
+ передавать ее по каналам цифровой связи. 
+ 
+ В~моделях с~фиксированным объемом выборки 
+ статистические свойства данных процедур хорошо изучены и~получены 
+ выражения для <<оптимальных>> порогов, ориентированных на различные 
+ классы функций сигналов и~различные распределения шума (см., например,~\cite{DJ94, DJ95, DJ98, Jan01, Jan06, SH17}). 
+ 
+ В~данной работе рассматривается модель со случайным чис\-лом 
+ вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов 
+ функции сигнала, <<загрязненных>> белым гауссовым шумом, и~оценивается 
+ порядок сред\-не\-квад\-ра\-тич\-но\-го риска пороговой обработки.
+
+
+\section{Пороговая обработка вейвлет-коэффициентов}
+
+Пусть функция наблюдаемого сигнала принадлежит классу 
+функций, регулярных по Липшицу с~показателем $\gamma\hm>0$. 
+После вейв\-лет-пре\-об\-ра\-зо\-ва\-ния сигнала получается набор 
+эмпирических вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов, 
+име\-ющих сле\-ду\-ющий вид:
+\begin{multline}
+\label{data_model}
+Y_{j,k}=\mujk+z_{j,k}\,, \\
+ j=0,\ldots,J-1\,,\enskip k=0,\ldots,2^j-1\,,
+\end{multline}
+где $\mujk$ --- вейв\-лет-ко\-эф\-фи\-ци\-ен\-ты <<чис\-то\-го>> 
+сигнала, а~$z_{j,k}$~--- <<шумовые>> коэффициенты, относительно которых 
+предполагается, что они независимы и~имеют нормальное распределение с~нулевым 
+средним и~дис\-пер\-си\-ей~$\sigma^2$. Если базисные вейв\-лет-функ\-ции
+ удовлетворяют некоторым дополнительным условиям глад\-кости~\cite{Mal99}, то, 
+ поскольку функция сигнала регулярна по Липшицу, существует такая положительная 
+ константа~$A$, что
+ \begin{equation}
+\label{Wavelet_CoeffDecacy}
+\abs{\mujk}\leqslant\fr{A \cdot2^{J/2}}{2^{j\left(\gamma+1/2\right)}}\,.
+\end{equation}
+Через $\mathrm{Lip}\,(A,\gamma)$ обозначим класс регулярных по Липшицу функций, 
+вейв\-лет-ко\-эф\-фи\-ци\-ен\-ты которых удовлетворяют~\eqref{Wavelet_CoeffDecacy}.
+
+Популярным методом удаления шума является пороговая обработка эмпирических 
+вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов, смысл которой заключается в~обнулении коэффициентов, 
+чьи абсолютные значения не превышают заданного порога. Оценка~$\hat{Y}_{j,k}$ 
+вы\-чис\-ля\-ет\-ся с~по\-мощью пороговой функции~$\rho_T(Y_{j,k})$ с~порогом~$T$.
+ Наиболее распространены функ\-ция жест\-кой пороговой обработки $\rho_T^{(h)}(x)\hm=
+ x \mathbf{1} (|x|\hm>T)$ и~мягкой пороговой обработки $\rho_T^{(s)}(x)\hm=
+ {\mathrm{sign}}\,(x)(|x|\hm-T)_+$. Смысл такой обработки заключается в~том, что,
+  поскольку большинство <<чис\-тых>> коэффициентов малы по абсолютному\linebreak значению, 
+  обнуление эмпирических коэффициентов должно удалить шум, не сильно за\-тро\-нув
+   полезный сигнал.
+
+Основным критерием качества методов пороговой обработки является 
+среднеквадратичный риск
+\begin{equation}\label{Risk_Definition}
+r_J(f)=\fr{1}{2^J}\sum\limits_{j=0}^{J-1}\sumk\limits 
+{\sf E}\left(\hat{Y}_{j,k}-\mujk\right)^2.
+\end{equation}
+
+В ситуации, когда число эмпирических вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов 
+не случайно, вы\-чис\-ле\-ны оптимальные значения порогов и~оценен порядок 
+сред\-не\-квад\-ра\-тич\-но\-го рис\-ка для различных классов функций сигналов. 
+В~част\-ности, в~работе~\cite{DJ95} доказано сле\-ду\-ющее утверж\-де\-ние, 
+оценивающее минимаксный 
+порядок~\eqref{Risk_Definition}.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~1.}\ \textit{При выборе асимптотически оптимального 
+порога для жест\-кой и~мяг\-кой пороговой обработки справедливо соотношение}:
+$$
+\sup\limits_{f\in \mathrm{Lip}\left(A,\gamma\right)}{r_J(f)}\leqslant 
+C_M2^{-({2\gamma}/({2\gamma+1}))J}
+J^{{2\gamma}/({2\gamma+1})}\,,
+$$
+\textit{где $C_M$~--- некоторая положительная константа}.
+
+\smallskip
+
+Асимптотически оптимальный порог в~тео\-ре\-ме~1 при $J\hm\to\infty$ удовлетворяет 
+соотношению~\cite{Jan01}:
+$$
+T\simeq\sigma\sqrt{\fr{4\gamma}{2\gamma+1}\ln2^J}\,.
+$$
+
+% Таким образом, с~точностью до множителя, имеющего не более чем логарифмический порядок от числа вейвлет-коэффициентов, порядок функции потерь равен $O(2^{-\frac{2\gamma}{2\gamma+1}J})$.
+
+В следующем разделе оценивается порядок сред\-не\-квад\-ра\-тич\-но\-го риска 
+пороговой обработки в~модели со случайным чис\-лом эмпирических вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов.
+
+\vspace*{-6pt}
+
+\section{Случайное число вейвлет-коэффициентов}
+
+Пусть $M$~--- положительная целочисленная случайная величина и~$N\hm=2^M$. 
+Тогда сред\-не\-квад\-ра\-тич\-ный риск для 
+модели~\eqref{data_model} принимает вид:
+
+\noindent
+\begin{multline}
+\label{Risk_Definition_Rand}
+r(f)={}\\
+{}=\sum\limits_{J=0}^{\infty}{\sf P}\left(N=2^J\right)
+\fr{1}{2^J}\sum\limits_{j=0}^{J-1}\sumk\limits 
+{\sf E}\left(\hat{Y}_{j,k}-\mujk\right)^2
+\end{multline}
+и его асимптотический порядок в~значительной степени 
+зависит от распределения~$N$. Чтобы получить осмысленные оцен\-ки порядка 
+рис\-ка~\eqref{Risk_Definition_Rand}, величина~$N$ долж\-на быть <<большой>>. 
+Рас\-смот\-рим по\-сле\-до\-ва\-тель\-ность~$N_n$, $n\hm=1, 2,\ldots$,  и~предположим, 
+что существует неслучайная возрастающая по\-сле\-до\-ва\-тель\-ность 
+натуральных чисел~$J_n$, $n\hm=1, 2,\ldots$, такая, что~$N_n/2^{J_n}$ 
+имеет некоторый предел (в~смыс\-ле равномерной схо\-ди\-мости по распределению) при 
+$n\hm\to\infty$, т.\,е.
+
+\noindent
+\begin{equation}
+\label{converge}
+\sup\limits_{x\geqslant0}\abs{H_n(x)-H(x)}<\fr{\eps_n}{2}\to0\,, \enskip  n\to\infty\,,
+\end{equation}
+где
+
+\noindent
+\begin{equation*}
+H_n(x)={\sf P}\left(\fr{N_n}{2^{J_n}}<x\right)\,,
+\end{equation*}
+а $H(x)$~--- предельная функция распределения. Предположим, что~$H(x)$ 
+не имеет атома в~нуле и~исследуем поведение
+\begin{equation*}
+%\label{Risk_Definition_Rand2}
+r_n(f)=\sum\limits_{J=0}^{\infty}{\sf P}\left(N_n=2^J\right)\fr{1}{2^J}
+\sum\limits_{j=0}^{J-1}\sumk\limits 
+{\sf E}\left(\hat{Y}_{j,k}-\mujk\right)^2 
+\end{equation*}
+при $n\hm\to\infty$.
+
+\pagebreak
+
+Пусть $\delta_n\to0$, $\alpha_n\hm\to0$ при $n\hm\to\infty$ так, 
+что $J_n\hm+\log_2\delta_n\hm\to\infty$ и~$H(\delta_n)\hm+1\hm-H(\delta^{-1}_n)
+\hm<\alpha_n$ при всех $n\hm=1, 2,\ldots$
+% Условие $J_n+\log_2\delta_n\to\infty$ гарантирует, что \log_2\delta_n=o(J_n) или O(J_n) и~не повлияет на порядок главных множителей в~средней сумме. Можно было бы взять и~другое поведение $H(x)$ на бесконечности, а не завязывать на поведение в~нуле. Было бы более громоздко, но принципиально не отличалось бы.
+Тогда
+
+\noindent
+\begin{multline*}
+r_n(f)={}\\
+\!{}=\sum\limits_{J=0}^{[J_n+\log_2\delta_n]}\hspace*{-5mm}
+{\sf P}\left(N_n=2^J\right)\fr{1}{2^J}\sum\limits_{j=0}^{J-1}\sumk\limits 
+{\sf E}\left(\hat{Y}_{j,k}-\mujk\right)^2+{}\\
+{}+\hspace*{-2.1mm}\sum\limits_{J=[J_n+\log_2\delta_n]+1}^{[J_n-\log_2\delta_n]}\hspace*{-8mm}
+{\sf P}\left(N_n=2^J\right)\fr{1}{2^J}\!\sum\limits_{j=0}^{J-1}\sumk\limits 
+{\sf E}\left(\hat{Y}_{j,k}-\mujk\right)^{\!2}+{}\\
++\hspace*{-2.1mm}\sum\limits_{J=[J_n-\log_2\delta_n]+1}^{\infty}\hspace*{-8.1mm}{\sf P}
+\left(N_n=2^J\right)\fr{1}{2^J}\!\sum\limits_{j=0}^{J-1}\sumk\limits 
+{\sf E}\left(\hat{Y}_{j,k}-\mujk\right)^{\!2}\!\equiv{}\hspace*{-0.3115pt}\\
+{}\equiv S_1+S_2+S_3\,.
+\end{multline*}
+Учитывая~\eqref{converge}, для $S_1\hm+S_3$ имеем
+\begin{equation*}
+S_1+S_3\leqslant H_n\left(\delta_n\right)+1-H_n\left(\delta^{-1}_n\right)
+\leqslant\alpha_n+\eps_n\,. %\notag
+\end{equation*}
+Для $S_2$ с~помощью тео\-ре\-мы~1 можно получить \mbox{оценку}:
+
+\noindent
+\begin{multline*}
+S_2\leqslant{}\\
+\!{}\leqslant C_1 2^{-({2\gamma}/({2\gamma+1}))(J_n+\log_2\delta_n)}
+\left(J_n+\log_2\delta_n\right)^{{2\gamma}/({2\gamma+1})},\hspace*{-7.95976pt}
+\end{multline*} 
+% В S_2 вид оптимального порога в~пределах суммирования не влияет на порядок логарифмического множителя, и~начиная с~некоторого n максимальным будет первое слагаемое в~S_2. Слагаемые в~сумме риска не превосходят $C min(T^2,с\mu^2+\rho(0))$ (\rho(0) слагаемое риска с~нулевым \mu). Эта сумма разбивается на две, в~первой (S_21) оцениваются T^2, во второй \rho(0) (Cai со случайными отсчетами, DJ94 формулы 37-39), и~в пределах суммирования в~S_2 вид T^2 влияет только на константу в~S_21. Порог надо брать как можно меньше, т.к. порядок риска не ухудшается, а вероятность задеть полезный сигнал ниже. Итак, в~S_2 заменяем все слагаемые на первое, но есть еще p_n и~их сумма <1. Таким образом вся S_2 имеет меньший (или равный) порядок, как ее первое слагаемое. См. Kushe5 и~Cai со случайными отсчетами.
+справедливую для всех $f\hm\in \mathrm{Lip}\,(A,\gamma)$ (здесь $C_1$~--- 
+некоторая положительная константа). Таким образом, справедливо сле\-ду\-ющее утверж\-дение.
+
+\smallskip
+
+
+\noindent
+\textbf{Теорема~2.}\ \textit{В~модели со случайным чис\-лом вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов 
+при выборе асимптотически оптимального порога начиная с~некоторого~$n$ 
+справедлива оценка}:
+
+\noindent
+\begin{multline*}
+\sup_{f\in Lip(A,\gamma)}{r_n(f)}\leqslant 
+\alpha_n+\eps_n+{}\\
+{}+C_1 2^{-({2\gamma}/({2\gamma+1}))
+(J_n+\log_2\delta_n)}(J_n+\log_2\delta_n)^{{2\gamma}/({2\gamma+1})}.
+\end{multline*}
+\textit{Сам асимптотически оптимальный порог при $n\hm\to\infty$ 
+удовлетворяет соотношению}:
+$$
+T_n\simeq\sigma\sqrt{\fr{4\gamma}{2\gamma+1}\ln 2^{J_n+\log_2\delta_n}}\,.
+$$
+% этот порог минимальный для S_2. рассуждения см. выше.
+
+{Вид~$\alpha_n$, $\eps_n$ и~$\delta_n$ в~тео\-ре\-ме~$2$ существенно зависит от поведения 
+по\-сле\-до\-ва\-тель\-ности~$N_n/2^{J_n}$ и~предельной функции распределения~$H(x)$. 
+Так, $\eps_n$ характеризует ско\-рость сходимости~$H_n(x)$ к~$H(x)$, 
+а~$\alpha_n$ и~$\delta_n$ зависят от поведения~$H(x)$ в~окрест\-ности 
+нуля и~бес\-ко\-неч\-ности}.
+
+\smallskip
+
+\noindent
+\textbf{Следствие~1.}\ Если предельное распределение~$N_n/2^{J_n}$ вы\-рож\-ден\-но: 
+$N_n/2^{J_n}\xrightarrow{{\sf P}}1$ при $n\hm\to\infty$, тогда начиная с~некоторого~$n$
+
+\noindent
+\begin{equation*}
+\sup_{f\in Lip(A,\gamma)}{r_n(f)}
+\leqslant \eps_n+C_2 2^{-({2\gamma}/({2\gamma+1}))J_n}
+J_n^{{2\gamma}/({2\gamma+1})}\,,
+\end{equation*}
+где $C_2$~--- некоторая положительная константа.
+
+Если $\eps_n$ убывает достаточно быст\-ро, то эта оценка сов\-па\-да\-ет с~оценкой 
+для сред\-не\-квад\-ра\-тич\-но\-го рис\-ка в~модели с~неслучайным чис\-лом 
+вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов.
+
+\smallskip
+
+\noindent
+\textbf{Следствие~2.}\ Пусть~$H(x)$ дифференцируема в~окрест\-ности нуля и~для 
+некоторых положительных констант~$b$ и~$B$ в~этой окрест\-ности 
+выполнено $b\hm\leqslant H'(x)\hm\leqslant B$. Пусть
+$\delta_n=2^{-({2\gamma}/({4\gamma+1}))J_n}.$ Тогда  начиная с~некоторого~$n$ 
+справедлива оценка:
+\begin{multline}
+\label{hard_col1}
+\sup_{f\in Lip(A,\gamma)} r_n(f)\leqslant {}\\
+{}\leqslant
+\eps_n+C_3 2^{-({2\gamma}/({4\gamma+1}))J_n}
+J_n^{{2\gamma}/({2\gamma+1})},
+\end{multline}
+где $C_3$~--- некоторая положительная константа.
+% В условиях следствия 2 степень $-\frac{2\gamma}{4\gamma+1}$ неулучшаема.
+
+Заметим, что ${2\gamma}/({4\gamma+1})<{1}/{2}$ 
+при $\gamma\hm>0$, и~если $\eps_n\hm=O(2^{-J_n/2})$ (что 
+является распространенной оценкой для ско\-рости схо\-ди\-мости 
+по распределению), то второе сла\-га\-емое в~\eqref{hard_col1} определяет 
+ско\-рость убывания сред\-не\-квад\-ра\-тич\-но\-го рис\-ка. Таким образом, среднеквадратичный 
+риск для случайного числа вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов может стремиться к~нулю 
+значительно медленнее, чем сред\-не\-квад\-ра\-тич\-ный риск для неслучайного чис\-ла 
+вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов.
+
+\vspace*{-9pt}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+ 
+\bibitem{DJ94}
+\Au{Donoho D., Johnstone~I.\,M.} 
+Ideal spatial adaptation via wavelet shrinkage~// Biometrika, 1994. 
+Vol.~81. No.\,3. P.~425--455.
+
+\bibitem{DJ95}
+\Au{Donoho D., Johnstone~I.\,M., Kerkyacharian~G., Picard~D.} 
+Wavelet shrinkage: Asymptopia?~// J.~Roy. Stat. Soc.~B, 1995. 
+Vol.~57. No.\,2. P.~301--369.
+
+\bibitem{DJ98}
+\Au{Donoho D., Johnstone~I.\,M.} Minimax estimation via wavelet shrinkage~// 
+Ann. Stat., 1998. Vol.~26. No.\,3. P.~879--921.
+
+\bibitem{Jan01}
+\Au{Jansen M.} Noise reduction by wavelet thresholding.~--- Lecture notes in statistics
+ser.~---
+New York, NY, USA: Springer Verlag, 2001.  Vol.~161. 196~p.
+
+\bibitem{Jan06}
+\Au{Jansen M.} Minimum risk thresholds for data with heavy noise~// 
+IEEE Signal Proc. Let., 2006. Vol.~13. No.\,5. P.~296--299.
+
+\bibitem{SH17}
+\Au{Шестаков О.\,В.} Минимаксный среднеквадратичный риск пороговой обработки 
+в~моделях с~негауссовым распределением шума~// Вестн. Моск. ун-та. Сер.~15: 
+Вычисл. матем. и~киберн., 2017. №\,4. C.~35--40.
+
+\bibitem{Mal99}
+\Au{Mallat S.} A~wavelet tour of signal processing.~--- New York, NY, USA:
+Academic Press, 1999. 857~p.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 10.05.18}}
+
+%\vspace*{6pt}
+
+\newpage
+
+\vspace*{-24pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+\vspace*{-2pt}
+
+
+\def\tit{MEAN-SQUARE THRESHOLDING RISK\\ WITH~A~RANDOM~SAMPLE~SIZE}
+
+\def\titkol{Mean-square thresholding risk with~a~random sample size}
+
+\def\aut{O.\,V.~Shestakov$^{1,2}$}
+
+\def\autkol{O.\,V.~Shestakov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+\noindent
+$^1$Department of Mathematical Statistics, Faculty of Computational Mathematics 
+and Cybernetics, M.\,V.~Lo-\linebreak
+$\hphantom{^1}$monosov Moscow State University, 1-52~Leninskiye Gory, 
+GSP-1, Moscow 119991, Russian Federation
+
+\noindent
+$^2$Institute of Informatics Problems, Federal Research Center ``Computer 
+Science and Control'' of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 44-2~Vavilov Str., 
+Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+
+\Abste{Nonlinear methods of signal de-noising based on the threshold 
+processing of wavelet coefficients are widely used in various application areas. 
+These methods have gained their popularity due to the speed of the algorithms 
+for constructing estimates and the possibility of adapting to functions belonging 
+to different classes of regularity better than linear methods. When applying 
+thresholding techniques, it is usually assumed that the number of wavelet 
+coefficients is fixed and the noise distribution is Gaussian. This model 
+has been well studied in the literature, and optimal threshold values have 
+been calculated for different classes of signals. However, in some situations, 
+the sample size is not known in advance and is modeled by a random variable. 
+The present author considers a~model with a random number of 
+observations containing Gaussian noise and estimates the order of the mean-square 
+risk with increasing sample size.}
+
+\KWE{thresholding; random sample size; mean-square risk}
+
+
+
+
+\DOI{10.14357/19922264180302}
+
+%\vspace*{-14pt}
+
+ \Ack
+\noindent
+This research is supported by the Russian Science Foundation (project No.\,18-11-00155).
+
+
+
+%\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+\bibitem{1-s}
+\Aue{Donoho,~D., and I.\,M.~Johnstone.} 1994. 
+Ideal spatial adaptation via wavelet shrinkage. \textit{Biometrika} 81(3):425--455.
+
+\bibitem{2-s}
+\Aue{Donoho, D., I.\,M.~Johnstone, G.~Kerkyacharian, and D.~Picard.} 1995. 
+Wavelet shrinkage: Asymptopia? \textit{J.~Roy. Stat. Soc.~B} 57(3):301--369.
+
+\bibitem{3-s}
+\Aue{Donoho, D., and I.\,M.~Johnstone.} 1998. 
+Minimax estimation via wavelet shrinkage. \textit{Ann. Stat.}  26(3):879--921.
+
+\bibitem{4-s}
+\Aue{Jansen, M.} 2001. \textit{Noise reduction by wavelet thresholding.}
+ Lecture notes in statistics ser. New York, NY: Springer Verlag.  Vol.~161. 196~p.
+
+\bibitem{5-s}
+\Aue{Jansen, M.} 2006. Minimum risk thresholds for data with heavy noise. 
+\textit{IEEE Signal Proc. Let.} 13(5):296--299.
+
+\bibitem{6-s}
+\Aue{Shestakov, O.\,V.} 2017. 
+Minimax mean-square thresholding risk in models with non-Gaussian noise distribution. 
+\textit{Mosc. Univ. Comput. Math. Cybern.} 41(4):187--192.
+
+\bibitem{7-s}
+\Aue{Mallat, S.} 1999. 
+\textit{A~wavelet tour of signal processing}. New York, NY: Academic Press. 857~p.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received May 10, 2018}}
+
+%\pagebreak
+
+\vspace*{-18pt}
+
+
+\Contrl
+
+
+\noindent
+\textbf{Shestakov Oleg V.} (b.\ 1976)~--- 
+Doctor of Science in physics and mathematics, associate professor, 
+Department of Mathematical Statistics, Faculty of Computational Mathematics 
+and Cybernetics, M.\,V.~Lomonosov Moscow State University, 1-52~Leninskiye Gory, GSP-1, 
+Moscow 119991, Russian Federation; senior scientist, 
+Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{oshestakov@cs.msu.su}
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература} 

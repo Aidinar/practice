@@ -1,0 +1,832 @@
+\renewcommand{\figurename}{\protect\bf Figure}
+\renewcommand{\tablename}{\protect\bf Table}
+
+\def\stat{dulin}
+
+
+\def\tit{INFORMATION FUSION OF~DOCUMENTS}
+
+\def\titkol{Information fusion of~documents}
+
+\def\autkol{S.\,K.~Dulin, N.\,G.~Dulina, and~P.\,V.~Ermakov}
+
+\def\aut{ S.\,K.~Dulin$^1$, N.\,G.~Dulina$^2$, and~P.\,V.~Ermakov$^3$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Institute of Informatics Problems, Federal Research Center ``Computer Science and Control'' 
+of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation, 
+skdulin@mail.ru}
+\footnotetext[2]{A.\,A.~Dorodnicyn Computing Center, Federal Research Center ``Computer Science and 
+Control'' of the Russian Academy of Sciences, 40~Vavilov Str., Moscow 119333, Russian Federation, 
+ngdulina@mail.ru}
+\footnotetext[3]{ TeleRetail GmbH, 30~\mbox{Markenstra{\!\ptb{\ss}}e}, 
+D$\ddot{\mbox{u}}$sseldorf 40227,  Germany; petcazay@gmail.com}
+
+
+\index{Dulin S.\,K.}
+\index{Dulina N.\,G.}
+\index{Ermakov P.\,V.}
+\index{Дулин С.\,К.}
+\index{Дулина Н.\,Г.}
+\index{Ермаков П.\,В.}
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+%\vspace*{-2pt}
+
+
+
+       \Abste{The paper considers the problems associated with the 
+creation of an expert base of documents that require prompt 
+processing of incoming information and, as a consequence, 
+restructuring of the knowledge base. The authors propose procedures 
+that reduce the search of the optimal consistent state of 
+interrelated documents. An approach to assessing the relationship of 
+text documents and informational messages as poorly structured 
+objects was developed. The practical implementation of this approach 
+is described.}
+      
+      \KWE{information fusion; controlled data and knowledge consistency; 
+knowledge base restructuring}
+      
+\DOI{10.14357/19922264200117} 
+      
+      %\vspace*{8pt}
+      
+      
+      \vskip 12pt plus 9pt minus 6pt
+      
+       \thispagestyle{myheadings}
+      
+       \begin{multicols}{2}
+      
+       \label{st\stat}
+     
+     \section{Introduction}
+      
+     \noindent
+     Combining information of various origins for integrative analysis and 
+processing has been called ``Information Fusion''[1], implying that the synthesized 
+data carrying information combine type properties of source data and possess 
+more information than merely conjunction of information sources considered 
+separately. The main difficulty of the synthesis problem is that information sources 
+contain heterogeneous data represented by various formats and structures and 
+employed in different types of platforms.
+     
+     The main factors of data heterogeneity and their sources are: various types 
+of data, diversity in data origin, various models of database representation, various 
+data presentation formats, differentiating in the organization of data storage 
+systems, differences in the degree of reliability and accuracy of data, and
+variety of  a~degree and form of data structure.
+     
+     The process of information fusion is a~multilevel process that includes five 
+basic stages~\cite{2-d, 3-d, 4-d}:
+     \begin{itemize}
+\item zero stage~--- the stage of combining sensor signals, designed to obtain 
+data indicating semantically clear and interpretable attributes of objects and 
+participating in the applications of the research being performed;
+\item the first stage is aimed at processing data of the zero stage in order to 
+make a decision on the classes of the objects in question and the states of these 
+objects;
+\item the second stage of Information Fusion, designed to assess the situation, 
+including the zero and the first stages. It is used to assess the situational 
+interaction of objects considered as a whole;
+\item the third stage~--- the stage of evaluation of the interaction ``Impact 
+Assessment,'' designed to perform an antagonistic assessment, based on the 
+prediction of the situation;
+\item the fourth stage~--- the stage of feedbacks, evaluating the possibility of 
+using feedbacks in the system in question; and
+\item the fifth stage~--- the final stage, the level of man--machine interaction, 
+performing correctional actions of the operator for the sake of the system 
+control.
+\end{itemize}
+
+     Research in the field of Information Fusion mainly focuses on the synthesis 
+of data represented by digital images and arrays of data and  
+documents~\cite{1-d, 4-d, 5-d}.
+     
+     Current trends in the development of corporative informational systems 
+show that, along with traditional informational resources, the results of intelligent 
+activity of experts and analysts become very important for the successful operation 
+of large and middle-sized companies. A~unified informational environment of the 
+company incorporates these formalized results in an accumulated form such that 
+all executives can jointly use this resource in the context of their assignments. The 
+role played by the knowledge accumulated in such a~way in the enterprise-wide 
+systems allows us to consider this knowledge as very valuable and a~notably 
+important resource for a~company, which, together with the traditional resources, 
+such as financial, material, human, etc., characterizes the reliability of the 
+company. The totality of this knowledge, presented mainly in text form, is the 
+intelligent assets of the company, and the competitiveness of the company and its 
+adaptability to changing the business environment depends on how efficiently this 
+resource is used.
+{\looseness=-1
+
+}
+     
+     An intelligent asset is a~specific resource that requires specialized 
+knowledge management systems. These systems enable the search, accumulation, 
+and processing of knowledge by experts in solving various analytical problems. 
+This tendency in knowledge engineering appeared relatively recently, but interest 
+in the development and usage of such systems is permanently growing. This is 
+largely due to the significant results achieved by some companies that have 
+successfully implemented knowledge management systems into their 
+manufacturing activity.
+     
+     Complex technological solutions designed to support various stages of 
+composition and usage of corporative data and knowledge have been embodied in 
+the knowledge management systems. At each of these stages, individual problems 
+are solved, with the most important of them being associated with tasks related to 
+searching, processing documents, and extracting knowledge from them.
+     
+     Text processing tasks are solved in practically all fields of human activity, 
+and the analysis of the current environment is an integral part of practically 
+each 
+corporative management system securing a timely and adequate reaction to 
+changes in the business environment. Actually, operativeness is the basic 
+characteristics of monitoring problems, which distinguishes them from the problems 
+related to prediction, planning, etc., because the main goal of the monitoring is the 
+timely reaction of corresponding management subsystems of the general 
+technological scheme of company functioning to changes of internal or external 
+factors.
+     
+     In the general case, the purpose of text processing tasks is to accumulate 
+necessary information from different sources, process it analytically, and, on this 
+basis, generate corresponding decisions. The character of text processing tasks is 
+permanent in the sense that the environment and the parameters of the company 
+operation are subject to permanent changes, which requires regular (or periodic) 
+sampling of ever changing information.
+     
+     Text processing tasks can conventionally be divided into two classes: internal 
+monitoring and external monitoring.
+     
+     Internal monitoring is associated mainly with the monitoring of internal 
+operation parameters, e.\,g., regular monitoring of the operation of complex installa-
+tions, cargo moving, etc. Possible examples are control systems for energy plants, 
+freight management, etc. The typical feature of these problems is a relatively 
+constant set of parameters used to estimate the state of the process (production, 
+physical parameters of an installation, etc.).
+     
+     In contrast to the internal monitoring, the external monitoring is mainly 
+related to the estimation of the state of the environment and external conditions of 
+the company operation. As an example, an analysis of consumer demand carried 
+out by a commodity-producing company falls into this category. The typical 
+feature of these problems is that, first, the parameters to be estimated are poorly 
+formalized and, second, the set of these parameters is variable. The latter factor 
+requires the restructuring of the analyst knowledge according to the changed 
+conditions. All this makes us consider the ``restructurability'' of the expert 
+knowledge base as one of the characteristic features of the problems of external 
+monitoring.
+     
+     In the problems of external monitoring, special requirements must be 
+imposed on the sources of information used by experts for the localization of 
+required knowledge and data. The development of informational technologies 
+during recent years has strongly suggested that the Internet is gradually becoming 
+the most important source of information in solving analytical problems in 
+practically all areas of human activity. Coming up to printed and electronic mass 
+media, Internet is often ranked first in operativeness, which makes the Internet the 
+most valuable information source in monitoring problems. It is for this reason that, 
+in this work, special attention is paid to the solution of monitoring problems 
+associated with search and processing of text information in Internet.
+     
+     \section{Approach to~Provision of~Knowledge Consistency}
+     
+     \noindent
+     In previous works (see~\cite{4-d, 7-d, 6-d}), the authors put forward a procedure 
+providing the consistency of the knowledge base dynamically formed by an 
+expert, which is based on the analysis of structural interrelations between separate 
+components of the knowledge base with subsequent restructuring of it aimed at 
+reducing existing inconsistency. In so doing, the basic criterion of structural 
+consistency was a concept of polyconsonance of power~$n$~\cite{2-d}.
+     
+     Consider a knowledge base formed on the basis of search and analysis of 
+Internet information. In solving the monitoring problems associated with the 
+formation of such a knowledge base, the application of this procedure faces certain 
+difficulties resulting from poor formalization and an obscure or ambiguous 
+structure of the data (text or multimedia documents). Besides, for the monitoring 
+problems considered here, a large number of informational messages directed to the 
+expert for analytical processing and replenishment of the knowledge base are 
+characteristic. As a result, the amount of resources (especially, time) required for 
+the restructuring of a dynamically changing knowledge base is increased 
+significantly, which is, perhaps, the main obstacle to the successful practical 
+implementation of any procedure of the above type.
+     
+     One of the major disadvantages of the algorithm proposed in~\cite{4-d} is 
+that it is oriented to problems of the search type; that is why, the authors made 
+special efforts to reduce the search and thus increase the algorithm efficiency in its 
+practical implementation. The results presented below are aimed at the solution of 
+the latter problem.
+     
+     Consider a set of mutually related objects $O = \{o_i\}$ with a similarity 
+function~$f$~\cite{3-d} satisfying the condition
+     $$
+     0\leq f\left( o_i, o_j\right)\leq 1\,.
+     $$
+     
+     Numbers $\alpha$ and~$\beta$ will denote the lower and upper similarity 
+thresholds, respectively, satisfying the condition
+     $$
+     0\leq \alpha\leq \beta\leq 1\,.
+     $$
+     
+    Now, let us introduce the concepts of a negative, positive, and indifferent link 
+between two arbitrary elements~$o_i$ and~$o_j$ of the set~$O$. The link is called 
+``negative'' if its value does not exceed the lower similarity threshold: $0\leq 
+f(o_i,o_j)\leq \alpha$; it is called ``positive'' if the value of the similarity function is 
+not less than the upper similarity threshold: $\beta\leq f(o_i,o_j)\leq 1$; and, if 
+$\alpha<f<\beta$, it is called ``indifferent'' (zero).
+     
+     Consider a partition of the given set into a number of nonempty subsets 
+$K_1,\ldots , K_n$.
+     
+     A link between two arbitrary elements~$o_i$ and~$o_j$ of the entire 
+set~$O$ is called ``bad'' if one of the following conditions is satisfied:
+     \begin{enumerate}[(1)] 
+     \item the elements~$o_i$ and~$o_j$ belong to the same subset~$K_x$, and 
+the link between them is negative; or
+\item the elements~$o_i$ and~$o_j$ belong to different subsets~$K_1$ 
+and~$K_2$, and the link between them is positive.
+\end{enumerate}
+
+     Using this definition, let us to each object~$o_k$ from the set 
+considered   assign the number~$v_k$ of its bad links for a~given partition into subsets. 
+Now, let us construct a~vector~$V$ consisting of these values (this vector has 
+a~dimension equal to the number of objects in the set) and call it the nodewise 
+difference vector (NDV)~\cite{4-d}. The sum of the elements of this vector is 
+denoted by $S_{\mathrm{NDV}}$.
+     
+     Clearly, different partitions of the original set correspond to different NDVs 
+and different values of $S_{\mathrm{NDV}}$. According to the algorithm considered, 
+the main problem is to find a partition of the given set~$O$ such that the sum 
+$S_{\mathrm{NDV}}$ 
+takes its minimal value; i.\,e., the total number of bad links tends to zero.
+     
+     The algorithm~\cite{4-d} developed by the authors consists in 
+successive transformations of the set of informational objects on the basis of the 
+condition
+     $$
+     S_{\mathrm{NDV}} > \fr{n(N-n)}{2}
+     $$
+     where $S_{\mathrm{NDV}}$ is the sum of nodewise differences for the given 
+set of~$n$ elements belonging to a pair of consonant subsets of the total 
+cardinality~$N$.  If this condition is fulfilled, then the restructuring of the 
+considered set results in a decrease of the total sum~$S_{\mathrm{NDV}}$.
+     \smallskip
+     
+     \noindent
+     \textbf{Theorem~1.} \textit{Let~$K_1$ and~$K_2$ be two subsets of 
+a~given set of mutually related objects~$O$}:
+     \begin{align*}
+     K_1 &= \left\{ o_i\right\}\,,\ i=1,\ldots, n_1\,;\\
+     K_2&= \left\{ o_j\right\}\,, \ j=1,\ldots , n_2\,.
+     \end{align*}
+     
+     \textit{A set containing~$m$~elements from these two subsets satisfies the 
+condition of the algorithm if, and only if, the set consisting of all remaining 
+elements of these two subsets satisfies the same condition.}
+     
+     \smallskip
+     
+     \noindent
+     P\,r\,o\,o\,f\,.\ \  First, let us prove the necessity. Let the set of 
+objects~$\{o_k\}$, $k = 1,\ldots , m$, satisfy the condition of the algorithm:
+     $$
+     \sum v_k> \fr{m(n_1+n_2-m)}{2}
+     $$
+     where $v_k$ are the NDV values for the element with the number~$k$. 
+This formula can be transformed to the form:
+     $$
+     \sum v_k > \fr{\left(n_1+n_2-m\right)
+     \left(\left(n_1+n_2\right)-\left(n_1+n_2-m\right)\right)}{2}
+     $$
+     which means that the set of $n_1+n_2-m$ vectors not belonging to the 
+original set also satisfies the condition of the algorithm.
+     
+     The sufficiency of the condition is proved similarly. The theorem is proved.
+     
+     \smallskip
+     
+     \noindent
+     \textbf{Corollary.} In order to find a set of objects from two given subsets 
+that satisfies the condition of the algorithm, it is sufficient to check the fulfillment 
+of this condition only for the subsets consisting of $(n_1+n_2)/2$ objects. In other 
+words, only subsets with cardinalities not exceeding half of the sum of the 
+cardinalities of the original subsets~$K_1$ and~$K_2$ should be checked.
+     \smallskip
+     
+     \noindent
+     P\,r\,o\,o\,f\,.\ \ Indeed, if some set consisting of more than $(n_1+n_2)/2$ 
+elements satisfies the condition, then the complement to it also satisfies this 
+condition, with the cardinality of the complement being not greater than 
+$(n_1+n_2)/2$.
+
+\begin{figure*}[b] %fig1
+\vspace*{1pt}
+    \begin{center}  
+  \mbox{%
+ \epsfxsize=160.967mm 
+ \epsfbox{dul-1.eps}
+ }
+\end{center}
+\vspace*{-10pt}
+\Caption{Determination of vocabulary groups}
+\end{figure*}
+
+     
+     \smallskip
+     
+     \noindent
+     \textbf{Theorem~2.}\  \textit{Let~$K_1$ and~$K_2$ be two subsets of 
+a~given set of mutually related objects~$O$}:
+     \begin{align*}
+     K_1 &= \left\{o_i\right\}\,,\ i=1,\ldots , n_1\,;\\
+     K_2&= \left\{o_j\right\}\,,\ i=1,\ldots , n_2\,.
+     \end{align*}
+     \textit{Let a set $\{o_k\}$ of $m < (n_1 + n_2)/2$ elements belonging to 
+these two subsets satisfy the condition of the algorithm. If a zero NDV element 
+corresponds to some element~$o_x$ from this set, then the set of the vectors 
+corresponding $O^*=\{o_1, \ldots, o_{x-1}, o_{x+1}, \ldots, o_m\}$ also satisfies the 
+condition of the algorithm.}
+     
+     \smallskip
+     
+     \noindent
+     P\,r\,o\,o\,f\,.\ \ According to the assumption of the theorem, the sum 
+$S^*_{\mathrm{NDV}}$ for the set $O^*=\{o_1, \ldots\linebreak
+\ldots, o_{x-1}, o_{x+1}, \ldots, o_m\}$ is 
+equal to the sum $S_{\mathrm{NDV}}$ of the original set of the elements from the two 
+subsets~$K_1$ and~$K_2$:
+     $$
+S^*_{\mathrm{NDV}} = S_{\mathrm{NDV}}\,.
+$$
+     
+     Denote by~$N$ the total cardinality of the considered subsets: $N = 
+n_1+n_2$. Then,
+     $$
+     (m-1)(N-(m-1)) = m(N-m)+(2m-N-1)\,.
+     $$
+     
+     According to the assumption of the theorem, $m \leq N/2$; hence, $2m-N-1 
+< 0$. To complete the proof, let us write the following inequality:
+     \begin{multline*}
+     S^*_{\mathrm{NDV}} = S_{\mathrm{NDV}} = \sum v_k >\fr{m(N - 
+m)}{2} >{}\\
+{}> \fr{(m-1)(N - (m-1))}{ 2}
+   \end{multline*}
+     which means that the set $\{o_1, \ldots, o_{x-1}, o_{x+1}, \ldots, o_m\}$ satisfies 
+the condition of the algorithm.
+     
+     Obviously enough, it follows from this theorem that, in the practical 
+implementation of the proposed algorithm, it is sufficient to search for a set of 
+elements for the next iteration among those with nonzero NDV values.
+{\looseness=1
+
+}
+     
+\section{Thematic Role of~Similarity}
+
+     \noindent
+     The most significant factor affecting the operation of the algorithm 
+considered is the similarity function on the basis of which interrelations between 
+different elements of a given set are determined. As far as the support of 
+monitoring problems is considered, with the texts (in particular, news) and the 
+Internet being the elements and the main information source, respectively, the 
+construction of the similarity function becomes a fairly difficult problem. Perhaps, 
+one of the solutions to this problem could be the use of various methods of 
+linguistic analysis to determine the degree of ``likeness'' of two different 
+documents, although these methods are not free from some shortcomings 
+associated with the hardship of their implementation, adjustment, etc. To 
+determine the similarity function in practical applications, the authors have put 
+forward another approach. One of the advantages of this new approach is the 
+simplicity of implementation and the ``notional transparency.''
+     
+     The basis of this approach schematically shown in Fig.~1 is the 
+determination of vocabulary groups~\cite{7-d}, which denote the sets of keywords 
+defined by the expert. The expert assorts the keywords according to 
+some criterion, e.\,g., ``thematic meaning:''
+     $$
+     G_k= \left\{w_i\right\},\enskip i = 1,\ldots ,n_k.
+     $$
+
+\begin{figure*}[b] %fig2
+\vspace*{1pt}
+    \begin{center}  
+  \mbox{%
+ \epsfxsize=94.043mm 
+ \epsfbox{dul-2.eps}
+ }
+\end{center}
+\vspace*{-10pt}
+\Caption{A general scheme of operation of iiProcessor system}
+\end{figure*}
+
+     Consider an arbitrary element~$o_j$ from a given set~$O$. This object is a 
+text document; so, it can be represented as an aggregate of lexical units, i.\,e., 
+words. For~$o_j$, let us define its coefficient of correspondence with the dictionary 
+group~$G_i$ as the ratio $S(G_i)_j$ of the number of keywords specified in this 
+dictionary group and available in the text of the information object itself, to the 
+total number of keywords from all dictionary groups, $S(G)_j$ found in this text. 
+Then, one can define the factor of correspondence of the object~$o_j$ to the 
+vocabulary group~$G_i$ as
+     $$
+     L^i_j = \fr{S(G_i)_j}{S(G)_j}.
+        $$
+     
+     On the basis of these coefficients, let us define the degree of thematic coupling 
+between two arbitrary informational objects as follows:
+     \begin{itemize}
+     \item[(A)] $f(o_k, o_l) = 1$ if $ S(G)_k = 0$ and  $S(G)_l = 0$;
+     \item[(B)] $f(o_k, o_l) = 0$ if  $S(G)_k\not= S(G)_l$ 
+     and $S(G)_k S(G)_l\linebreak = 0$; and
+     \item[(C)] $f(o_k, o_l) = \max\left( \min\left(L^i_k, L^i_l\right) \right)$, $i = 1, 
+\ldots, n$,  for $S(G)_k  S(G)_l\not= 0$
+     where $n$ is the number of the vocabulary groups.
+     \end{itemize}
+
+     
+     Note that the similarity function defined above takes the values on the 
+interval from~0 to~1 but lacks associativity, because $0 \leq f(o_i, o_j) \leq 1$. In 
+the works devoted to the theoretical grounds of the considered algorithm of 
+structural transformations of a set of objects, the associativity of the similarity 
+function has not been used; therefore, the fact that the function introduced above is 
+not associative does not require any changes in the proposed algorithm. Moreover, 
+the lack of associativity here has an additional meaning, which makes it possible to 
+treat the function introduced above as a~\textit{thematic} similarity function.
+     
+     Indeed, if, in the considered text, there are keywords from different 
+vocabulary groups, then all the coefficients~$L^i_j$ for this element will be less 
+than one. Hence, the value of the similarity function~$f$ will also be less than one, 
+and the more the number of the vocabulary groups, the less this value. In practice, 
+this could mean that the considered document is of a review nature and, most 
+probably, has no distinct ``thematic meaning.''
+
+\begin{figure*} %fig3
+\vspace*{1pt}
+    \begin{center}  
+  \mbox{%
+ \epsfxsize=156.872mm 
+ \epsfbox{dul-3.eps}
+ }
+\end{center}
+\vspace*{-10pt}
+\Caption{Example of use of vocabulary group technique to establish
+links between different documents}
+\end{figure*}
+     
+\section{Consistency Controlling Module iiProcessor}
+
+     \noindent
+     The authors' technique for providing structural consistency of the knowledge 
+base in solving monitoring problems has been implemented in a specialized system 
+called an iiProcessor. This system is designed to compose expert knowledge bases 
+for social, political, and international sciences. The knowledge bases are 
+constructed from the information supplied by various mass media through their 
+Internet servers. The main purpose of the system is to accumulate informational 
+messages (news) related to the themes of user's interest from various Internet 
+sources, to integrate the information into a unified knowledge base, to create links 
+between different elements of the knowledge base, and to make subsequent 
+restructuring of the knowledge base on the basis of these links, with the result of 
+this restructuring being the representation of the body of the information 
+accumulated as a logical system of classes. The latter system can be treated as an 
+informational model of the problem examined by the expert (for example, the 
+social and political situation in a particular region of the world). A~general scheme 
+of operation of the system is shown in Fig.~2.
+
+
+
+     As a source of information, this system uses the CNN Internet site ({\sf 
+http://cnn.com}). Several times a day, this site publishes information covering many 
+aspects of social and political life in many countries. In most cases, the 
+informational messages are weakly-structured text documents. In order to establish 
+links between different documents, the vocabulary group technique described 
+above is used (Fig.~3). If various informational messages contain common 
+keywords belonging to different vocabulary groups, this technique estimates the 
+``likeness'' of the messages. The similarity function classifies these links as 
+positive or negative, which makes it possible to construct a~connectivity matrix on 
+the set of the informational messages received by the user (see Fig.~3).
+     
+    
+
+
+     The mode of ``Keywords'' allows one to get~10 of the most significant key 
+words for a~given document with an indication of their weighting factors (Fig.~4).
+     
+     
+     The mode of interrelations (``Correlations'') will allow to get several 
+documents that have the greatest interrelations with selected document. This mode 
+works only if the loaded document belongs to the current project of the iiProcessor 
+system, in which the relationship was evaluated (Fig.~5).
+    
+     The choice of the CNN server as a source of information is explained by the 
+fact that this server is one of the most informationally abundant servers providing 
+real-time information. Of course, the choice of the sources of information is 
+strongly determined by the character of the problem considered. In this sense, the 
+CNN server is not universal. In view of the above considerations, the Restructor 
+system is implemented as a~complex of two program modules. The rsn.exe module 
+is the basic one. An auxiliary iip.class module executes a real-time search for new 
+information in a specified information source in the Internet. With such an 
+architecture, this\linebreak\vspace*{-12pt}
+
+{ \begin{center}  %fig4
+ \vspace*{-7pt}
+     \mbox{%
+ \epsfxsize=79mm 
+ \epsfbox{dul-4.eps}
+ }
+
+
+\vspace*{4pt}
+
+
+\noindent
+{{\figurename~4}\ \ \small{``Keywords'' mode}}
+\end{center}
+}
+
+\vspace*{2pt}
+
+
+{ \begin{center}  %fig5
+ \vspace*{-1pt}
+    \mbox{%
+ \epsfxsize=79mm 
+ \epsfbox{dul-5.eps}
+ }
+
+
+\vspace*{4pt}
+
+
+\noindent
+{{\figurename~5}\ \ \small{``Correlation'' mode}}
+\end{center}
+}
+
+%\vspace*{3pt}
+
+
+
+\noindent
+ system can be adopted to operation with any informational 
+servers in the Internet (and beyond) by replacing only the auxiliary module, 
+without changing its kernel where the major mathematical results of the authors' 
+approach are implemented.
+     
+\section{Concluding Remarks}
+
+\noindent
+The implementation of the results of Theorems~1 and~2 in the inference engine 
+made it possible to considerably reduce the time expenses of the built-in algorithm 
+for restructuring the database. The use of the connectivity matrix as the major 
+visualization means for the informational objects improved the clearness of the 
+representation of the information model of the problem considered by an expert. 
+The system has been tested in analyzing the events related to NASA's 
+aerospace research.
+     
+    % \Ack
+    % \noindent
+    % This work was supported by the Russian Foundation for Basic Research, 
+%project No.\,20-07-00329~А.
+     
+     \renewcommand{\bibname}{\protect\rmfamily References}
+     
+     
+     \vspace*{-9pt}
+     
+     {\small\frenchspacing
+     {\baselineskip=10.45pt
+     \begin{thebibliography}{99}
+     
+     \bibitem{1-d} %1
+\Aue{Dasarathy, B.} 2001. Information fusion~--- what, where, why, when, and how? 
+\textit{Inform. Fusion} 2(2):75--76.
+     
+     \bibitem{4-d} %2
+\Aue{Dulin, S.\,K.} 1995. The approach to structural consistency of situations' models in 
+an active knowledge base. \textit{Workshop of 10th IEEE Symposium 
+(International) on Intelligent Control Proceedings}. Monterey, CA: AdRem, Inc. 
+253--258.
+
+\bibitem{3-d} %3
+\Aue{Duckham, M., and M.~Worboys.} 2007. Automated geographic information 
+fusion and ontology alignment. \textit{Spatial data on the Web}. Eds. A.~Belussi, 
+B.~Catania, E.~Clementini, and E.~Ferrari.
+Berlin: Springer. Ch.~6:109--132. 
+
+\bibitem{2-d} %4
+\Aue{Pravia, M.} 2008. Generation of a~fundamental data set for hard/soft information 
+fusion. \textit{11th Conference (International) on Information Fusion Proceedings}. 
+Cologne: International Society of Information Fusion. 134--145.
+
+
+
+
+
+\bibitem{5-d} %5
+\Aue{Landauer, T.\,K., K.~Kireyev, and C.~Panaccione.} 2011. Word maturity: A~new 
+metric for word knowledge. \textit{Sci. Stud. Read.} 15(1):92--108. 
+
+\bibitem{7-d} %6
+\Aue{Dulina, N., and O.~Kozhunova.} 2010. Information monitoring system: 
+A~problem 
+of linguistic resources consistency and verification. \textit{Problems of Cybernetics and 
+Informatics: 3rd Conference (International) Proceedings}. Baku.  
+56--58.
+\bibitem{6-d} %7
+\Aue{Dulin, S.\,K., and  N.\,G.~Dulina.} 2018. Ispol'zovanie disseminatsionnykh 
+algoritmov dlya formirovaniya nestrukturirovannoy tekstovoy informatsii v~baze 
+geodannykh [Using dissemination algorithms for the formation of unstructured textual 
+information in the geodatabase]. \textit{Sistemy i~Sredstva Informatiki~--- Systems and 
+Means of Informatics} 28(2):42--59.
+
+\end{thebibliography}}}
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received February 26, 2019}}
+
+\vspace*{-16pt}
+
+\Contr
+
+%\vspace*{-3pt}
+
+\noindent
+\textbf{Dulin Sergey K.} (b.\ 1950)~--- Doctor of Science in technology, 
+professor, leading scientist, Institute of Informatics Problems, Federal Research 
+Center ``Computer Science and Control'' of the Russian Academy of Sciences,  
+44-2~Vavilov Str., Moscow 119333, Russian Federation; principal scientist, 
+Research \& Design Institute for Information Technology, Signalling and 
+Telecommunications on Railway Transport (JSC NIIAS), 27-1~Nizhegorodskaya 
+Str., Moscow 109029, Russian Federation; \mbox{skdulin@mail.ru} 
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Dulina Natalia G.} (b.\ 1947)~--- Candidate of Science (PhD) in 
+technology, leading programmer, A.\,A.~Dorodnicyn Computing Center, Federal 
+Research Center ``Computer Science and Control'' of the Russian Academy of 
+Sciences, 40~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{ngdulina@mail.ru}
+\vspace*{3pt}
+
+\noindent
+\textbf{Ermakov Petr V.} (b.\ 1985)~--- Senior Software Developer, TeleRetail 
+GmbH, 30~\mbox{Markenstra{\!\ptb{\ss}}e}, D$\ddot{\mbox{u}}$sseldorf 
+40227,  Germany; \mbox{petcazay@gmail.com}
+
+ 
+
+%\newpage
+
+\vspace*{8pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-7pt}
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\def\tit{ИНФОРМАЦИОННЫЙ СИНТЕЗ ДОКУМЕНТОВ}
+
+\def\titkol{Информационный синтез документов}
+
+\def\aut{С.\,К.~Дулин$^1$, Н.\,Г.~Дулина$^2$, П.\,В.~Ермаков$^3$}
+
+\def\autkol{С.\,К.~Дулин, Н.\,Г.~Дулина, П.\,В.~Ермаков}
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа was supported by the Russian Foundation for Basic Research, project No.\,20-07-00329~А.}}
+
+
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+\noindent
+$^1$Институт проблем информатики Федерального исследовательского центра <<Информатика 
+и~управление>>\linebreak
+$\hphantom{^1}$Российской академии наук, \mbox{skdulin@mail.ru}
+
+\noindent
+$^2$Вычислительный центр им.\ А.\,А.~Дородницына Федерального исследовательского центра 
+<<Информатика\linebreak
+$\hphantom{^1}$и~управление>> Российской академии наук, \mbox{ngdulina@mail.ru}
+
+\noindent
+$^3$TeleRetail GmbH, D$\ddot{\mbox{u}}$sseldorf, Germany
+
+\vspace*{1pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 14\ \ \ выпуск\ 1\ \ \ 2020}
+}%
+ \def\rightfootline{\small{ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 14\ \ \ 
+выпуск\ 1\ \ \ 2020
+\hfill \textbf{\thepage}}}
+
+\vspace*{-1pt}
+
+
+
+\Abst{Рассматриваются проблемы, связанные с созданием экспертной 
+базы документов, требующей оперативной обработки поступающей 
+информации и, как следствие, реструктуризации базы знаний. 
+Предложены процедуры, уменьшающие время поиска оптимального 
+согласованного состояния взаимосвязанных документов. Был 
+разработан подход к~оценке взаимосвязи текстовых документов 
+и~информационных сообщений как плохо структурированных 
+объектов. Описана практическая реализация этого подхода.}
+
+\KW{информационный синтез; контролируемая согласованность 
+данных и~знаний; реструктуризация базы знаний}
+
+
+\DOI{10.14357/19922264200117} 
+
+%\vspace*{-3pt}
+
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily Литература}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+{\baselineskip=10.5pt
+\begin{thebibliography}{99}
+%\vspace*{-3pt} 
+
+\bibitem{1-d-1} %1
+\Au{Dasarathy B.} Information fusion~--- what, where, why, when, and how?~// 
+Inform. Fusion, 2001. Vol.~2. Iss.~2. P.~75--76.
+
+\bibitem{4-d-1} %2
+\Au{Dulin S.\,K.} The approach to structural consistency of situations' models in an 
+active knowledge base~// Workshop of 10th IEEE Symposium 
+(International) on Intelligent Control Proceedings.~--- Monterey, CA, USA: AdRem, 
+Inc., 1995. P.~253--258.
+
+\bibitem{3-d-1} %3
+\Au{Duckham M., Worboys~M.} Automated geographic information fusion and 
+ontology alignment~// Spatial data on the Web~/ Eds. A.~Belussi, B.~Catania, 
+E.~Clementini, E.~Ferrari.~--- Berlin: Springer, 2007. Ch.~6. P.~109--132. 
+
+\bibitem{2-d-1} %4
+\Au{Pravia M.} Generation of a fundamental data set for hard/soft information 
+fusion~// 11th Conference (International) on Information Fusion.~--- Cologne: 
+International Society of Information Fusion, 2008. P.~134--145.
+
+
+
+
+\bibitem{5-d-1} %5
+\Au{Landauer T.\,K., Kireyev~K., Panaccione~C.} Word maturity: A~new metric 
+for word knowledge~// Sci. Stud. Read., 2011. Vol.~15. Iss.~1. 
+P.~92--108. 
+
+\bibitem{7-d-1} %6
+\Au{Dulina N., Kozhunova~O.} Information monitoring system: A~problem of 
+linguistic resources consistency and verification~// Problems of Cybernetics and 
+Informatics: 3rd Conference (International) Proceedings.~--- Baku, 2010.  
+P.~56--58.
+\bibitem{6-d-1} %7
+\Au{Дулин С.\,К., Дулина~Н.\,Г.} Использование диссеминационных 
+алгоритмов для формирования неструктурированной текстовой информации 
+в базе геоданных~// Системы и средства информатики, 2018. Т.~28. №\,2. 
+С.~42--59. 
+
+\end{thebibliography}
+} }
+
+\end{multicols}
+
+ \label{end\stat}
+
+ \vspace*{-9pt}
+
+\hfill{\small\textit{Поступила в~редакцию 26.02.2019}}
+
+
+%\renewcommand{\bibname}{\protect\rm Литература}
+\renewcommand{\figurename}{\protect\bf Рис.}
+\renewcommand{\tablename}{\protect\bf Таблица}

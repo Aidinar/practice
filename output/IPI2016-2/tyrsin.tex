@@ -1,0 +1,873 @@
+\def\stat{tyrsin}
+
+\def\tit{РАСПОЗНАВАНИЕ ЗАВИСИМОСТЕЙ НА~ОСНОВЕ ОБРАТНОГО ОТОБРАЖЕНИЯ$^*$}
+
+\def\titkol{Распознавание зависимостей на основе обратного отображения}
+
+\def\aut{А.\,Н.~Тырсин$^1$, С.\,М.~Серебрянский$^2$}
+
+\def\autkol{А.\,Н.~Тырсин, С.\,М.~Серебрянский}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Тырсин А.\,Н.}
+\index{Серебрянский С.\,М.}
+\index{Tyrsin A.\,N.}
+\index{Serebryanskii S.\,M.}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при поддержке РФФИ (проект 16-06-00048).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Научно-инженерный центр <<Надежность и~ресурс больших систем и~машин>> УрО РАН, Екатеринбург, 
+at2001@yandex.ru}
+\footnotetext[2]{Троицкий филиал Челябинского государственного университета, 
+tf\_chelgu@mail.ru}
+
+\vspace*{-6pt}
+
+
+  \Abst{Описан метод распознавания зависимостей, основанный на использовании 
+обратного отображения. Из заданного конечного множества моделей выбирают ту, которая 
+в~наибольшей степени соответствует выборке данных. Для каждой модели по выборке 
+определяют соответствующую ей выборочную зависимость. Для одномерного случая 
+с~помощью обратного отображения каждой выборочной зависимости ставится 
+в~соответствие одна и~та же эталонная модель в~виде уравнения прямой. Для каждой модели 
+выборочные данные отображаются с~некоторыми ошибками на одно и~то же уравнение 
+прямой. В~качестве критерия адекватности построенной модели выборки данных 
+предложено использовать минимум дисперсии ошибок. В случае многомерных зависимостей 
+предложен эвристический прием, согласно которому для каждой модели рассматривают 
+совокупность обратных функций для каждой из независимых переменных. Проведена 
+апробация метода с~помощью статистического моделирования методом Монте Карло.}
+  
+  \KW{распознавание; функциональная зависимость; модель; обратная функция; выборка; 
+дисперсия; аппроксимация}
+
+\DOI{10.14357/19922264160206} 
+
+%\vspace*{-2pt}
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+  
+\section{Введение}
+
+  Одной из актуальных проблем во многих приложениях является 
+установление типа модели по выборке экспериментальных данных. 
+Действительно, за исключением относительно малого числа задач, приходится 
+исследовать плохо организованные системы, для которых установить 
+адекватную математическую модель очень сложно или невозможно~[1--4]. 
+В~этом случае истинный вид модели неизвестен.
+  
+  В настоящее время предложен ряд методов восстановления зависимостей по 
+экспериментальным данным. Данная задача не может быть строго решена, так 
+как между конечной выборкой и~бесконечным количеством функциональных 
+моделей невозможно построить однозначное соответствие. Поэтому на 
+практике упрощают постановку задачи, используя ту или иную априорную 
+информацию. Кроме того, данный подход требует наличия экспериментальных 
+данных сравнительно большого объема, что часто бывает затруднительно 
+обеспечить практически.
+  
+  Часто может оказаться эффективным подход, не требующий восстанавливать 
+по конечной выборке неизвестную зависимость, а выбрать модель, адекватно ее 
+описывающую. Это означает, что по экспериментальным данным из заданного 
+мно\-жества моделей выбирают ту, которая в~наибольшей степени соответствует 
+выборке. Одна и~та же выборка может принадлежать с~различной вероятностью 
+каждой из рассматриваемых зависимостей. В~качестве искомой зависимости 
+выбираем из конечного мно\-жества моделей наиболее вероятную модель для 
+данной выборки. Очевидно, без гарантии, что выбрана действительно 
+<<наилучшая модель>>. Однако включение во множество возможных моделей 
+таких, которые достаточно адекватно описывают исследуемую зависимость, 
+позволит получить приемлемое решение.
+  
+  Один из таких методов распознавания равномерно дискретизированных 
+зависимостей основан на сопоставлении каждой модели соответствующей 
+структурной разностной схемы~[5, 6]. Как отмечено в~[7, с.~67--73], метод 
+показал свою эффективность для распознавания. Его основным недостатком 
+является ограниченность применения, поскольку не все зависимости можно 
+представить в~виде разностных схем.
+
+\begin{table*}[b]\small
+\begin{center}
+\Caption{Примеры обратных функций}
+\vspace*{2ex}
+
+\begin{tabular}{|c|c|c|}
+\hline
+&&\\[-8pt]
+$j$&Модель $y=F_j(x)$ &Обратное преобразование $x=F_j^{-1}(y)$\\[3pt]
+\hline
+&&\\[-8pt]
+1&$y=A+Bx^C$&$x=\left( \fr{y-A}{B}\right)^{1/C}$\\
+&&\\[-8pt]
+\hline
+&&\\[-8pt]
+2&$y=A+B\ln x$&$x=\exp \left( \fr{y-A}{B}\right)$\\
+&&\\[-8pt]
+\hline
+&&\\[-8pt]
+3&$y=A+B e^{Cx}$&$x=\fr{1}{C}\,\ln \left( \fr{y-A}{B}\right)$\\
+&&\\[-8pt]
+\hline
+&&\\[-8pt]
+4&$y=\fr{A}{1+Be^{Cx}}+D$&$x=\fr{1}{C}\,\ln \left( \fr{A- (y-D)}{B(y-
+D)}\right)$\\
+&&\\[-8pt]
+\hline
+&&\\[-8pt]
+5&$y=A\exp \left\{ Be^{Cx}\right\}+D\,,\enskip A>0,\ B<0,\ 
+C<0$&$x=\fr{1}{C}\,\ln \left( \fr{1}{B}\ln \fr{y-D}{A}\right)$\\
+&&\\[-8pt]
+\hline
+&&\\[-8pt]
+6&$y=\fr{A+Bx}{C+x}$&$x=\fr{A-Cy}{y-B}$\\
+&&\\[-8pt]
+\hline
+&&\\[-8pt]
+7&$y=\fr{Ax^2+B}{C+x}$&$x=\fr{y-D\pm \sqrt{(y-D)^2 +4A(C(y-D)-B)}}{2A}$
+\\[8pt]
+\hline
+\end{tabular}
+\end{center}
+\end{table*}
+
+  
+  Задача этой статьи~--- расширение области применения метода 
+распознавания на основе структурных разностных схем. Это расширение 
+включает в~себя следующие случаи: (1)~распознавание зависимостей во 
+временных рядах; (2)~распознавание одномерных зависимостей; 
+(3)~распознавание многомерных зависимостей.
+  
+\section{Метод распознавания зависимостей по~экспериментальным 
+данным на~основе обратного отображения}
+
+\subsection{Распознавание одномерных зависимостей}
+
+  Рассмотрим некоторую строго монотонную и~непрерывную в~заданной 
+области~$D$ функцию $y\hm= F_0(x)$. Также зададим конечное множество 
+строго монотонных и~непрерывных в~заданной области~$D$ модельных 
+функций $W\hm= \{ F_1(x),\ldots , F_J(x)\}$.
+  
+  Так как функция $F_0(x)$ является строго монотонной, то она имеет 
+обратную функцию. Зададим произвольную монотонную и~непрерывную 
+в~об\-ласти~$D$ функцию $F(x)$. Для функций $F(x)$ и~$F_0(x)$ введем 
+отображение $G(F,F_0)$: $F(x)\hm\to f(x)$ как
+     \begin{equation}
+     \left\{ F^{-1}\left[ F_0(x)\right]\right\} =f(x)\,,
+     \label{e1-t}
+     \end{equation}
+где $F^{-1}$~--- функция, обратная к~функции~$F$.
+  
+  Из свойств обратной функции следует, что если $F_0(x)\hm= F(x)$, то 
+согласно~(1) 
+  $F_0(x)  \xrightarrow{G(F_0,F_0)} x$, или $\{ F_0^{-1} [F_0(x)]\}=x$, т.\,е.\ 
+в~этом случае отображение~(1) даст прямую линию $y\hm=x$. Очевидно, что 
+$\forall\ F(x)$, такой что $F_0(x)\not= F(x)$, получим $\{ F^{-1} 
+[F_0(x)]\}\not=x$. Поскольку обратное преобразование является непрерывным, 
+то в~результате удается установить отношение порядка на любом конечном 
+множестве модельных функций~$W$. В~идеале, если одна из функций 
+множества~$W$ совпадет с~функцией $F_0(x)$, отображение~(1) полностью 
+совпадет с~линейной функцией $y\hm=x$. В~противном случае получим 
+множество функций $\{ F_j^{-1}[F_0(x)]\}\hm= f_j(x)\not= x$,  
+$j\hm=1,2,\ldots ,J$.
+  
+  В табл.~1 приведены примеры нескольких распространенных моделей 
+функций и~обратных к~ним. Не всегда обратную функцию можно выразить 
+в~явном виде. Например, для функции $y\hm= xe^x$ обратная функция 
+задается неявно как $x\ln x\hm=y$.
+
+
+\begin{figure*}[b] %fig1
+\vspace*{1pt}
+\begin{minipage}[t]{79mm}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=77.766mm
+ \epsfbox{tyr-1.eps}
+ }
+ \end{center}
+ \vspace*{-9pt}
+\Caption{Построение зависимости $\hat{F}(x)$ по выборке данных: \textit{1}~--- $y$; 
+\textit{2}~--- $\hat{F}(x)$; \textit{3}~--- $e_{11}$}
+\end{minipage}
+\hfill
+%\end{figure*}
+%\begin{figure*} %fig2
+\vspace*{1pt}
+\begin{minipage}[t]{79mm}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=77.766mm
+ \epsfbox{tyr-2.eps}
+ }
+ \end{center}
+ \vspace*{-9pt}
+\Caption{Построение обратного отображения $\hat{x}_i\hm= \hat{F}^{-1} (y_i)$ по выборке 
+данных: \textit{1}~--- $y\hm=x$; \textit{2}~--- $\hat{x}_i$; \textit{3}~--- $e_{11}$}
+\end{minipage}
+\end{figure*}
+
+  
+  Пусть имеется экспериментальная выборка данных $(x_1,y_1),\ldots , (x_n, 
+y_n)$, состоящая из измеренных значений независимой и~зависимой 
+переменной. Величины~$y_i$~--- это измеренные со случайными 
+погрешностями~$\varepsilon_i$ оценки значений~$z_i$, которые описываются 
+некоторой строго монотонной и~непрерывной в~заданной области~$D$ 
+функциональной зависимостью $z\hm= F_0(x)$. Считаем, что дис\-пер\-сия 
+случайных погрешностей конечна. Зададим конечное множество строго 
+монотонных и~непрерывных в~заданной области~$D$ модельных функций 
+$W\hm= \{F_1(x), \ldots, F_J(x)\}$. Также потребуем, чтобы количество 
+параметров модельных функций было значительно меньше числа наблюдений.
+  
+  Необходимо определить среди множества функций~$W$ наиболее 
+вероятную модель для данной выборки.
+  
+  Для выборки данных $(x_1,y_1),\ldots, (x_n,y_n)$ в~результате 
+аппроксимации, например с~помощью метода наименьших квадратов~\cite{8-t}, 
+вместо функции $F_0(x)$ получим функцию $\hat{F}_0(x)$ того же типа, но ее 
+параметры будут отличаться от параметров функции $F_0(x)$. В~результате 
+получим множество значений $\hat{F}_0(x_i)$, $i\hm= 1,2,\ldots, n$. Отметим, 
+что в~случае конечной дисперсии случайных погрешностей~$\varepsilon_i$ 
+метод наименьших квадратов дает состоятельные оценки параметров модели, 
+т.\,е.\ имеет место сходимость по вероятности $\hat{F}_0(x)\overset{P}{\to} 
+F_0(x)$. Если плотность вероятности случайных погрешностей имеет более 
+вытянутые хвосты по сравнению с~нормальным законом, то оценку параметров 
+модели можно выполнить иначе, например с~помощью метода наименьших 
+модулей~\cite{9-t}.
+  
+  Суть распознавания состоит в~следующем. Для каждого типа 
+модели~$F_j(x)$, $j\hm= 1,2,\ldots, J$, строим соответствующую 
+оценку~$\hat{F}_j(x)$.
+  
+  Далее всем значениям~$y_i$, $i\hm= 1,2, \ldots, n$, с~по\-мощью~(1) ставим 
+в~соответствие некоторые величины:
+  \begin{equation}
+  \hat{x}_i^{(j)} = \hat{F}_j^{-1}\left (y_i\right)\,,\enskip j=1,2,\ldots, J\,,
+  \label{e2-t}
+  \end{equation}
+где $\hat{F}_j^{-1}(\cdot)$~--- функция, обратная функции~$\hat{F}_j(\cdot)$.
+
+  Очевидно, что преобразование~(2) не даст прямой линии $y\hm=x$ и~имеет 
+ошибки:
+  $$
+  e_i^{(j)} = \hat{x}_i^{(j)} -x_i\,,\enskip i=1,2,\ldots , n\,.
+  $$
+  
+  Ошибки $e_i^{(j)}$ отображения~$\hat{F}_j^{-1}(y_i)$ обусловлены 
+случайной погрешностью, а также различием между функцией~$\hat{F}_j(x)$ 
+и~истинной зависимостью $F_0(x)$.
+  
+  Пусть $\hat{F}_j(x_i^{(j)*}= y_i$, где $x_i^{(j)*}$~--- решение уравнения:
+  \begin{equation}
+  \hat{F}_j\left(x_i^{(j)*}\right)=y_i\,.
+  \label{e3-t}
+  \end{equation}
+Тогда
+\begin{multline}
+e_i^{(j)} =\hat{x}_i^{(j)} -x_i = \hat{F}_j^{-1}\left(y_i\right) -x_i = {}\\
+{}=\hat{F}_j^{-1} 
+\left( \hat{F}_j \left( x_i^{(j)*}\right)\right) -x_i = x_i^{(j)*}- x_i\,.
+\label{e4-t}
+  \end{multline}
+Отсюда~(2) с~учетом~(3) и~(4) примет вид:
+\begin{equation}
+\hat{x}^{(j)} = \hat{F}_j^{-1} \left( y_i\right) =x_i^{(j)*}\,.
+\label{e5-t}
+  \end{equation}
+  
+  Соотношение~(5) позволяет строить обратные отображения~(2) без 
+непосредственного вычисления обратной функции. Вместо решения 
+уравнения~(5) можно рассматривать задачу минимизации:
+  \begin{equation}
+  \hat{x}_i^{(j)} = \mathrm{arg}\,\min\limits_x \left( \hat{F}_j(x)- y_i\right)^2\,.
+  \label{e6-t}
+  \end{equation}
+  Использование задачи~(6) значительно упрощает реализацию метода, так как 
+нахождение обратной функции в~ряде случаев может оказаться трудоемкой 
+процедурой, например, если обратная функция может быть задана только 
+неявно. Кроме того, можно расширить область применения и~рассматривать 
+и~немонотонные функции. При этом согласно~(\ref{e6-t}) в~качестве 
+оценки~$\hat{x}_i^{(j)}$ следует использовать ближайшее к~$x_i$ решение 
+уравнения~(\ref{e6-t}).
+  
+  Отметим, что если уравнения~(2) или~(6) для некоторого значения~$y_i$ не 
+имеют решения, то это говорит о том, что для этого значения не существует 
+обратного отображения $\hat{F}_j^{-1}(y_i)$, т.\,е.\ модель $F_j(x)$ не 
+соответствует экспериментальным данным и~должна быть исключена из 
+рассмотрения.
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Пример~1.}\ Проиллюстрируем преобразование~(2) с~по\-мощью 
+рис.~1 и~2.
+  
+  На рис.~1 показаны:
+  \begin{itemize}
+\item  исходное множество наблюдений $(x_i, y_i)$~(\textit{1}), $i\hm= 1,2,\ldots, 20$, для 
+наглядности задано $\forall\,i \ x_i\hm=i$;
+
+\item  график полученной в~результате аппроксимации моделью $F(x) \hm= 
+b_0\hm+ b_1\sqrt{x}$\ зависимости $\hat{F}(x)\hm= 0{,}945\hm+ 
+3{,}758\sqrt{x}$~(\textit{2});
+
+\item  точки $(x_{11}, y_{11})$ и~$(x_{11}^*, y_{11})$, обозначенные 
+треугольниками, где $x_{11}^*$~--- решение уравнения 
+$\hat{F}(x^*_{11})\hm= y_{11}$;
+
+\item  ошибка для 11-го наблюдения $e_{11}\hm= x^*_{11}\hm- x_{11}$, 
+выделенная пунктиром~(\textit{3}).
+\end{itemize}
+
+  На рис. 2 изображены:
+  \begin{itemize}
+\item график прямой $y\hm=x$~(\textit{1}), соответствующей идеальному случаю, когда 
+в~(1) $F_0(x)\hm= F(x)$;
+\item множество точек $(x_i, \hat{x}_i)$~(\textit{2}), $i\hm= 1,2,\ldots, 20$, где 
+$\hat{x}_i\hm= \hat{F}^{-1}(y_i)\hm= \left( (y_i-0{,}945)/3{,}758\right)^2$;
+\item точки $(x_{11}, x_{11})$ и~$(x_{11}, \hat{x}_{11})$, обозначенные 
+треугольниками;
+\item ошибка для 11-го наблюдения $e_{11}\hm= \hat{x}_{11}\hm- x_{11}$, 
+выделенная пунктиром~(\textit{3}).
+  \end{itemize}
+
+
+  
+  Далее из множества моделей~$W$ на основании рассмотрения множеств 
+наборов
+  \begin{equation}
+  \left\{ \left( x_1,\hat{x}_1^{(j)}\right),\ldots, \left(x_n, 
+\hat{x}_n^{(j)}\right)\right\}\,,\enskip j=1,2,\ldots, J\,,
+  \label{e7-t}
+  \end{equation}
+выбираем тот, который наиболее соответствует линейной зависимости  
+$y\hm=x$. В~качестве критерия соответствия считаем выбор наиболее 
+вероятной модели.
+  
+  Возможны два случая.
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Случай~1.} Данные имеют вид временн$\acute{\mbox{о}}$го ряда $y_k\hm= y(t_k) 
+\hm= y(k\Delta)$, где $\Delta$~--- интервал дискретизации, т.\,е.\ вместо 
+независимой переменной имеем номер измерения.
+  %
+  При этом вместо множеств наборов~(\ref{e7-t}) имеем множество временн$\acute{\mbox{ы}}$х рядов
+$\left\{ \hat{x}_1^{(j)},\ldots , \hat{x}_n^{(j)}\right\}$, $j\hm= 1,2,\ldots ,J$.
+
+  \smallskip
+  
+  \noindent
+  \textbf{Утверждение.}\ \textit{Пусть задана числовая последовательность 
+$\{f(k)\}$, где $f(k)$~--- некоторая непрерывная монотонная функция. Зададим 
+произвольное мно\-же\-ст\-во последовательностей $W\hm=\{f_j(k)\}$, $f_j(k)$~--- 
+непрерывная монотонная функция, $j\hm\in \Omega$, $\Omega$~--- множество 
+индексов. Тогда множество~$W$ упорядочено по отношению порядка в~смысле 
+близости $\{f_j(k)\}$ к~$\{f(k)\}$.}
+  
+  \smallskip
+  
+  \noindent
+  Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ Пусть $\{u_k\}$~--- некоторая чис\-ло\-вая 
+последовательность. Поставим ей в~соответствие вектор $\mathbf{a}\hm= (a_1, 
+a_2)$ коэффициентов разностной схемы с~помощью отображения $\Gamma 
+\left( \left\{ u_k\right\}\right)$: $\left\{ u_k\right\} \hm\to \mathbf{a}$ как
+  \begin{multline}
+  \mathbf{a} ={}\\
+\hspace*{-1.4mm}{}= \mathrm{arg}\min\limits_{a_i\in\mathrm{R}} \!\left[ 
+\lim\limits_{k\to \infty} \fr{1}{k}\sum\limits_{k=1}^\infty \!\left( u_k -a_1u_{k-1} -
+a_2 u_{k-2}\right)^2\right]\!.\!\!\!\!
+  \label{e8-t}
+  \end{multline}
+  
+  Из определения обратного отображения следует $\left\{ f^{-1} f(k)]\right\} 
+\hm=\{k\}$, где $f^{-1}$~--- отображение, обрат-\linebreak\vspace*{-12pt}
+
+\columnbreak
+
+\noindent
+ное к~$f$. 
+Последовательности~$\{ k\}$ согласно~(8) будет соответствовать вектор 
+$\mathbf{a}^*\hm= (a_1^*, a_2^*) = (2, -1)$~\cite{5-t}. Таким образом, $\{k\} 
+\xrightarrow{\Gamma(\{k\})} \mathbf{a}^*$.
+  
+  Очевидно, что для каждой функции~$f_j$ существует последовательность 
+$\left\{ u_k^j\right\}$, элементы которой $u_k^j\hm= f_j^{-1} [f(k)]$, где $f_j^{-
+1}$~--- отображение, обратное к~$f_j$. Если $f_j\not= f$, то $\left\{ u_k^j\right\} 
+\xrightarrow{\Gamma(\{u_k^j\})} \left( a_1^j, a_2^j\right) \hm= \mathbf{a}^j\not= 
+\mathbf{a}^*$.
+  
+  Поставим в~соответствие каждой последовательности $\{f_j(k)\}$ 
+функционал $d_j(\{f(k)\}) \hm= \sqrt{(\mathbf{a}^j, \mathbf{a}^*)}$. Из 
+непрерывности отображения~(\ref{e8-t})~\cite{10-t} вытекает упорядоченность 
+множества~$W$ по отношению порядка: если $d_j (\{ f(k)\})\hm\leq d_l (\{ 
+f(k)\})$, то $f_j \preceq f_l$.
+  
+  На основании утверждения реализуем алгоритм распознавания. Для 
+всех~$J$~последовательностей $\left\{ \hat{x}_k^{(j)}\right\}$, $j\hm= 1,2,\ldots 
+,J$, определяем векторы $\hat{\mathbf{a}}^{(j)}$, решая задачи минимизации:
+ \begin{multline*}
+  \hat{\mathbf{a}}^{(j)} = \mathrm{arg}\,\min\limits_{a_i\in \mathbf{R}}  
+\sum\limits_{k=3}^n \left( u_k -a_1 u_{k-1} -a_2 u_{k-2}\right)^2\,,\\ 
+j=1,2,\ldots ,J\,.
+  \end{multline*}
+  
+  В качестве наилучшей модели выбираем ту, для которой
+  $$
+  d_j \left( \left\{ \hat{x}_k^{(j)}\right\} \right) = \sqrt{\left( \mathbf{a}^{(j)}, 
+\mathbf{a}^*\right)}
+  $$
+имеет минимальное значение.
+
+\smallskip
+  
+  \noindent
+  \textbf{Случай~2.}\ Исходные данные $(x_1,y_1),\ldots, (x_n,y_n)$, а~значит, 
+и~множество наборов~(\ref{e7-t}) имеют общий вид.
+  
+  Если модель $F_0(x)$ входит в~состав множества~$W$, то с~учетом 
+сходимости по вероятности $\hat{F}_0(x) \overset{P}{\to} F_0(x)$ получим, что 
+$\hat{x}^{(0)}_i \overset{P}{\to} x_i$.
+  
+  Преобразование~(\ref{e2-t}) независимо от функциональной формы моделей 
+из множества~$W$ отображает их оценки $\hat{F}_j(x_i)$ на одну и~ту же 
+прямую $y\hm= x$. Чем более адекватна прямая $y\hm=x$ множеству точек 
+$\left\{ \left(x_1,\hat{x}_1^{(j)}\right),\ldots , 
+\left(x_n,\hat{x}_n^{(j)}\right)\right\}$, а~значит, по 
+ве\-ро\-ят\-ности и~функции $F_0(x)$, тем ближе будут расположены 
+точки~$\hat{x}_i^{(k)}$ к~значениям~$x_i$. Известно~\cite{8-t, 11-t}, что для 
+однотипных моделей критерием качества (степени адекватности построенной 
+модели выборочной совокупности) является дисперсия ошибок:
+  \begin{equation}
+  s_j^2 = \fr{1}{n-l_j} \sum\limits_{i=1}^n \left( e_i^{(j)} \right)^2\,,
+  \label{e9-t}
+  \end{equation}
+где $l_j$~--- число параметров в~$j$-й модели.
+  
+  Согласно этому критерию в~качестве наиболее достоверной модели для 
+исходной выборки выбираем модельную функцию~$F_j(x)$, которая обеспечит 
+минимум дисперсии ошибок~(\ref{e9-t}).
+
+\subsection{Распознавание многомерных зависимостей}
+
+  Пусть имеем выборку данных $(y_i, x_{i1}, x_{i2}, \ldots$\linebreak $\ldots , x_{im})$, $i\hm= 
+1,2,\ldots ,n$. Требуется подобрать из заданного множества моделей $F_j(x_1, 
+x_2, \ldots, x_m)$, $j\hm=1,2,\ldots ,J$, наилучшую для этой выборки данных.
+  
+  Для функций нескольких переменных непосредственно задать обратную 
+функцию нельзя. Поэтому воспользуемся следующим приемом. Для каждой 
+функции $F_j (x_1, x_2, \ldots ,x_m)$ будем рас\-смат\-ри\-вать 
+совокупность~$m$~обратных функций одной переменной~$F_{jk}^{-1}(y)$, 
+область значений каждой из которых принадлежит оси $Ox_k$, $k\hm=1,2,\ldots 
+,m$.
+  
+  Для всех моделей строим по выборке данных оценки $\hat{F}_j (x_1,x_2, 
+\ldots,x_m)$, $j\hm= 1,2,\ldots, J$.
+  
+  Далее для каждой зависимости $\hat{F}_j (x_1, x_2, \ldots$\linebreak $\ldots, x_m)$ решаем 
+  задачу Лагранжа:
+  \begin{equation}
+  \left.
+  \begin{array}{l}
+  \left( x_{i1}^{(j)*}, x_{i2}^{(j)*}, \ldots, x_{im}^{(j)*}\right) ={}\\[6pt]
+  \hspace*{6.5mm}{}=\mathrm{arg}\, 
+\min\limits_{(x_1,\ldots, x_m)\in \mathbf{R}^m}\displaystyle
+ \sum\limits_{k=1}^m \left(x_i-
+x_{ik}\right)^2\,;\\[6pt]
+  \hat{F}_j(x_1,x_2,\ldots, x_m) =y_i\,,\enskip i=1,2,\ldots, n\,.
+  \end{array}
+  \right\}
+  \label{e10-t}
+  \end{equation}
+  
+  По аналогии с~(\ref{e4-t}) суммарные ошибки совокупности отображений 
+$F^{-1}_{jk}(y)$, $k\hm= 1,2,\ldots, m$, будут равны: 
+  $$
+  e_i^{(j)} =\sqrt{\sum\limits_{k=1}^m \left( x_i^{*(j)} - x_{ik}\right)^2}\,.
+  $$
+  
+  В качестве наиболее вероятной модели выбираем ту, у~которой дисперсия 
+ошибок~(\ref{e9-t}) будет минимальной.
+  
+  Таким образом, в~многомерном случае вместо уравнения~(\ref{e5-t}) или 
+задачи безусловной минимизации~(\ref{e6-t}) приходится решать задачу 
+Лагранжа~(\ref{e10-t}) с~одним ограничением в~форме равенства, согласно 
+которому поиск оптимального вектора~$\mathbf{x}_i^{(j)*}$ ищут на 
+поверхности уровня $\hat{F}_j (x_1, x_2, \ldots, x_m) \hm=y_i$.
+  
+\section{Результаты вычислительных экспериментов}
+
+  Воспользуемся методом статистических испытаний Монте Карло~\cite{12-t}.
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Пример~2.}\ Рассмотрим множество~$W$ из семи моделей~$F_j$, 
+приведенных в~табл.~1. Проведем чис-\linebreak ленный эксперимент. Для каждой из 
+моделей~$F_j$, $j\hm=1,2,\ldots, 7$, смоделируем выборку $(x_1,y_1), \ldots , 
+(x_n,y_n)$, где $x_i$~--- случайное число, равномерно распределенное от~1 
+до~20; $y_i^{(j)} \hm= F_j(x_i, \mathbf{b}^{(j)})\hm+\varepsilon_i$, 
+где $\varepsilon_i$~--- случайные погрешности измерений, имеющие нормальное 
+распределение $N(0,\sigma_\varepsilon^2)$; $n\hm=100$; $\mathbf{b}^{(j)}$~--- 
+векторы параметров каж\-дой из моделей, число повторений эксперимента 
+зададим $M\hm= 100$. Для определенности выберем 
+векторы~$\mathbf{b}^{(j)}$ так, чтобы конкретные функции~$F_j(x)$ были 
+достаточно похожи на отрезке $ $, а именно:
+  \begin{itemize}
+\item  для 1-й модели $A\hm= 0{,}2$, $B\hm=4$, $C\hm=0{,}5$;
+\item для 2-й модели $A\hm=1$, $B\hm=5$;
+\item для 3-й модели $A\hm= -11$, $B\hm= 11$, $C\hm= 0{,}05$;
+\item для 4-й модели $A\hm=20$, $B\hm= 60$, $C\hm= -0{,}4$, $D\hm=0$;
+\item для 5-й модели $A\hm=20$, $B\hm=-3$, $C\hm= -0{,}18$, $D\hm=0$;
+\item для 6-й модели $A\hm= -8$, $B\hm= 21$, $C\hm=6$;
+\item для 7-й модели $A\hm=2$, $B\hm= 15$, $C\hm= 20$, $D\hm=0$.
+\end{itemize}
+  
+  В каждом эксперименте для всех моделей~$F_j$, $j\hm= 1,2,\ldots, 7$, 
+выполним по~7~преобразований~(\ref{e5-t}) и~(\ref{e4-t}), т.\,е.\ определим
+ \begin{multline*}
+  \hat{x}_i^{(j,k)} = \hat{F}_k^{-1}\left(\hat{y}_i^{(j)}\right)\,,\ 
+  e_i^{(j,k)} =\hat{x}_i^{(j,k)}- x_i\,,\\
+   k=1,2,\ldots ,7\,,
+  \end{multline*}
+а затем по формуле~(\ref{e9-t}) вычислим дисперсии ошибок как
+\begin{equation}
+s^2_{j,k} =\fr{1}{n-l_j} \sum\limits_{i=1}^n \left( e_i^{(j,k)} \right)^2\,.
+\label{e11-t}
+  \end{equation}
+  
+  Очевидно, что в~идеале минимальными значения дисперсий~(\ref{e11-t}) 
+должны быть при совпадении моделей, т.\,е. когда $k\hm= j$.
+  
+  Результаты статистического моделирования показали, что при среднем 
+квадратическом отклонении случайных погрешностей измерений 
+$\sigma_\varepsilon\hm< 0{,}14$ практически всегда минимальное значение 
+оценки~(\ref{e11-t}) достигалось при $k\hm=j$. В~качестве иллюстрации 
+в~табл.~2 приведены усредненные по~100~испытаниям значения оценок 
+дисперсий~(\ref{e11-t}) для случая $\sigma_\varepsilon\hm = 0{,}1$.
+
+\begin{table*}\small
+\begin{center}
+\Caption{Усредненные значения оценок дисперсий $s^2_{j,k}$  для случая  $\sigma_\varepsilon=0{,}1$}
+\vspace*{2ex}
+
+\tabcolsep=8pt
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+\multicolumn{1}{|c|}{\raisebox{-6pt}[0pt][0pt]{$j$}}&\multicolumn{7}{c|}{$k$}\\
+\cline{2-8}
+& 1&2&3&4&5&6&7\\
+\hline
+1&\textbf{0,0293}&2,3709&0,8086&0,0888&0,0816&0,0486&0,0374\\
+2&0,1022&\textbf{0,0661}&4,0069&1,1407&1,3204&0,1823&0,0933\\
+3&0,0473&29,7966\hphantom{9}&\textbf{0,0135}&3,0720&0,0167&2,7542&0,1455\\
+4&0,9851&7,8095&1,1530&\textbf{0,0566}&0,4344&3,3365&0,9882\\
+5&0,3657&1,6192&1,0961&0,3881&\textbf{0,0319}&0,2322&0,4834\\
+6&0,6450&0,1349&4,1431&1,5220&0,4890&\textbf{0,0851}&1,4468\\
+7&0,0291&32,1426\hphantom{9}&0,0793&32,9608\hphantom{9}&0,0222&3,1160&\textbf{0,0189}\\
+\hline
+\end{tabular}
+\end{center}
+\end{table*}
+  
+  
+  В табл.~3 приведены относительные частоты правильного выбора модели 
+($k\hm= j$) в~процентах от общего числа испытаний $M\hm = 100$ для 
+нескольких значений среднего квадратического отклонения случайных 
+погрешностей измерений~$\sigma_\varepsilon$.
+  
+
+  
+  Анализируя полученные результаты, можно сказать, что метод для 
+рассматриваемых моделей показал хорошие результаты. Фактическая модель 
+для приемлемых на практике значений~$\sigma_\varepsilon$ в~большинстве 
+случаев правильно распознается.
+
+\pagebreak
+
+
+ \noindent
+\noindent
+{{\tablename~3}\ \ \small{Относительные частоты выбора фактической модели в~качестве истинной, \%}}
+
+ \vspace*{6pt}
+
+\begin{center}  %tabl3
+\tabcolsep=4.8pt
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+$\sigma_\varepsilon$&1&2&3&4&5&6&7\\
+\hline
+0\hphantom{,99}&100\hphantom{9}&100\hphantom{9}&100\hphantom{9}&100& 
+100&100\hphantom{9}&100\hphantom{9}\\
+0,1\hphantom{9}&100\hphantom{9}&97&98&100&100&99&97\\
+0,15&96&91&93&100&100&94&90\\
+0,2\hphantom{9}&84&77&80&100&100&82&75\\
+0,25&65&55&61&100&100&62&53\\
+0,3\hphantom{9}&44&33&37&100&100&40&30\\
+\hline
+\end{tabular}
+\end{center}
+  
+\section{Заключение}
+
+
+\noindent
+\begin{enumerate}[1.]
+  \item Рассмотрен метод распознавания зависимостей на основе обратного 
+отображения. Метод позволяет выбрать среди заданного множества 
+зависимостей наиболее вероятную модель на основе минимума дисперсии 
+ошибок обратного отображения для соответствующей модели. При этом 
+экспериментальные данные отображаются на одну и~ту же линейную 
+зависимость $y\hm=x$. Дисперсия ошибок для однотипных зависимостей 
+является показателем адекватности моделей экспериментальным данным.
+  \item Множество рассматриваемых зависимостей формируется из 
+приемлемых для конкретных экспериментальных данных моделей. Число 
+типовых зависимостей может быть любым.
+  \item Примеры реализации метода на тестовых данных показали его 
+работоспособность.
+  \end{enumerate}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-t}
+\Au{Налимов В.\,В.} Теория эксперимента.~---  М.: Наука, 1971. 208~с.
+\bibitem{2-t}
+\Au{Айвазян С.\,А., Енюков И.\,С., Мешалкин~Л.\,Д.} Прикладная статистика: 
+Исследование зависимостей.~--- М.: Финансы и~статистика, 1985. 487~с.
+\bibitem{3-t}
+\Au{Клейнер Г.\,Б., Смоляк С.\,А.} Эконометрические зависимости: принципы 
+и~методы построения.~--- М.: Наука, 2000. 104~с.
+\bibitem{4-t}
+\Au{Орлов А.\,И.} Прикладная статистика.~--- 2-е изд., перераб. и~доп.~--- М.: 
+Экзамен, 2007. 671~с.
+\bibitem{5-t}
+\Au{Тырсин А.\,Н.} Идентификация зависимостей на основе моделей 
+авторегрессии~// Автометрия, 2005. Т.~41. №\,1. С.~43--49.
+\bibitem{6-t}
+\Au{Тырсин А.\,Н., Серебрянский~С.\,М.} Распознавание зависимостей во 
+временных рядах на основе структурных разностных схем~// Автометрия, 2015. 
+Т.~51. №\,2. С.~54--60.
+\bibitem{7-t}
+\Au{Букреев В.\,Г., Колесникова~С.\,И., Янковская~А.\,Е.} Выявление 
+закономерностей во временных рядах в~задачах распознавания состояний 
+динамических объектов.~--- 2-е изд., испр. и~доп.~--- Томск: ТПУ, 2011. 254~с.
+\bibitem{8-t}
+\Au{Магнус Я.\,Р., Катышев~П.\,К. Пересецкий~А.\,А.} Эконометрика. 
+Начальный курс.~--- 6-е изд., перераб. и~доп.~--- М.: Дело, 2004. 576~с.
+\bibitem{9-t}
+\Au{Мудров В.\,И., Кушко~В.\,Л.} Методы обработки измерений: 
+Квазиправдоподобные оценки.~--- 2-е изд., перераб. и~доп.~--- М.: Радио и~
+связь, 1983. 304~с.
+\bibitem{10-t}
+\Au{Тырсин А.\,Н.} Модель авторегрессии как отображение функциональной 
+зависимости временного ряда~// Системы управления и~информационные 
+технологии, 2005. №\,1(18). С.~27--29.
+\bibitem{11-t}
+\Au{Greene W.\,H.} Econometric analysis.~--- 7th ed.~--- Prentice Hall, 2011. 
+1230~p.
+\bibitem{12-t}
+\Au{Михайлов Г.\,А., Войтишек~А.\,В.} Численное статистическое 
+моделирование. Методы Мон\-те-Кар\-ло.~--- М.: Академия, 2006. 368~с.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 16.02.16}}
+
+%\vspace*{8pt}
+
+\newpage
+
+%\vspace*{-24pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+\vspace*{-24pt}
+
+
+\def\tit{RECOGNITION OF DEPENDENCES ON~THE~BASIS OF~INVERSE~MAPPING\\[-7pt]}
+
+\def\titkol{Recognition of dependences on~the~basis of~inverse 
+mapping}
+
+\def\aut{A.\,N.~Tyrsin$^1$ and  S.\,M.~Serebryanskii$^2$\\[-7pt]}
+
+\def\autkol{A.\,N.~Tyrsin and  S.\,M.~Serebryanskii}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-18pt}
+
+\noindent
+$^1$Science and Engineering Center ``Reliability and Resource of Large Systems 
+and Machines,'' Ural Branch\linebreak
+$\hphantom{^1}$of the Russian Academy of Sciences; 
+54a~Studencheskaya Str., Yekaterinburg 620049, Russian Federation
+
+\noindent
+$^2$Troitsk Branch of Chelyabinsk State University, 9~S.~Rasin Str., Troitsk 457100, 
+Russian Federation 
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2016\ \ \ volume~10\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2016\ \ \ volume~10\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+  \Abste{The article describes the method of recognition of dependences 
+  based on the use of inverse mapping. From a~given finite set of models, one 
+  chooses the model that best fits the sample data. For each model, the selective 
+  dependence corresponding to it is determined by the sample. For the one-dimensional 
+  case, each selective dependence is mapped to the same reference model in the form 
+    of the straight line equation by means of inverse mapping. For each model, sample 
+    data are mapped to the same equation of the straight line with some mistakes. It 
+    is suggested to use the minimum of variance of mistakes as the criterion of adequacy 
+    of the constructed model of sample of data. In the case of multidimensional 
+    dependences, a~heuristic method is suggested according to which a~set of inverse 
+    functions for each of explanatory variables is considered for each model. 
+    Approbation of the method by means 
+  of statistical modeling by the Monte-Carlo method is carried out.}
+  
+  \KWE{recognition; functional dependence; model; inverse function; sample; 
+variance; approximation}
+
+
+
+\DOI{10.14357/19922264160206}
+
+\vspace*{-22pt}
+
+\Ack
+
+\vspace*{-2pt}
+
+\noindent
+The work is supported by the Russian Foundation for Basic Research (grant 
+No.\,16-06-00048).
+
+
+\vspace*{-5pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+ \vspace*{-2pt}
+  
+\bibitem{1-t-1}
+\Aue{Nalimov, V.\,V.} 1971. \textit{Teoriya eksperimenta} [The theory of the 
+experiment]. Moscow: Nauka. 
+208~p.
+\bibitem{2-t-1}
+\Aue{Ajvazyan, S.\,A., I.\,S.~Enjukov, and L.\,D.~Meshalkin}. 1985. \textit{Prikladnaya 
+statistika: Issledovanie zavisimostey} [Applied statistics: Research of dependences]. 
+Moscow: Finance and Statistics. 487~p.
+\bibitem{3-t-1}
+\Aue{Kleyner, G.\,B., and S.\,A.~Smolyak}. 2000. \textit{Ekono\-met\-ri\-che\-skie 
+zavisimosti: Printsipy i~metody postroeniya} [Econometric dependences: Principles 
+and methods of construction]. Moscow: Nauka. 104~p.
+\bibitem{4-t-1}
+\Aue{Orlov, A.\,I.} 2007. \textit{Prikladnaya statistika} [Applied statistics].  2nd ed. 
+Moscow: Examen. 671~p.
+\bibitem{5-t-1}
+\Aue{Tyrsin, A.\,N.} 2005. Identifikatsiya zavisimostey na osno\-ve modeley 
+avtoregressii [Identification of dependences on the basis of autoregressive models]. 
+\textit{Avtometriya} 41(1):43--49.
+\bibitem{6-t-1}
+\Aue{Tyrsin, A.\,N., and S.\,M.~Serebryanskii}. 2015. Ras\-po\-zna\-va\-nie zavisimostey 
+vo vremennykh ryadakh na osnove strukturnykh raznostnykh skhem [Dependence 
+identification in a time series on the basis of structural difference schemes]. 
+\textit{Avtometriya} 51(2):54--60.
+\bibitem{7-t-1}
+\Aue{Bukreev, V.\,G., S.\,I.~Kolesnikova, and A.\,E.~Jankovskaya}. 2011. 
+\textit{Vyyavlenie zakonomernostey vo vremennykh ryadakh v~zadachakh 
+raspoznavaniya sostoyaniy dinamicheskikh ob''ektov} [To identify patterns in time 
+series in the tasks of recognition of dynamic objects].  2nd ed. 
+Tomsk: Tomsk Polytechnic University Publ. 254~p.
+\bibitem{8-t-1}
+\Aue{Magnus, Ja.\,R., P.\,K.~Katyshev, and A.\,A.~Pereseckiy}. 2004. 
+\textit{Ekonometrika. Nachal'nyy kurs}  [Econometrics. Basic course].  6th ed. 
+Moscow: Delo. 576~p.
+\bibitem{9-t-1}
+\Aue{Mudrov, V.\,I., and V.\,L.~Kushko}. 1983. \textit{Metody obrabotki 
+izmereniy: Kvazipravdopodobnye otsenki} [Treatment methods of measurement: 
+Quasi-plausible estimations]. 2nd ed. Moscow: Radio and 
+Communication. 304~p.
+\bibitem{10-t-1}
+\Aue{Tyrsin, A.\,N.} 2005. Model' avtoregressii kak otobrazhenie funktsional'noy 
+zavisimosti vremennogo ryada [Autoregressive model as a mapping of the functional 
+dependence of time series]. \textit{Sistemy Upravleniya i~Informatsionnye 
+Tekhnologii} [Control Systems and Information Technology] 1(18):27--29.
+\bibitem{11-t-1}
+\Aue{Greene, W.\,H.} 2011. \textit{Econometric analysis}. 7th ed. Prentice Hall. 
+1230~p.
+\bibitem{12-t-1}
+\Aue{Mikhaylov, G.\,A., and A.\,V. Voytishek}. 2006. \textit{Chislennoe 
+statisticheskoe modelirovanie. Metody Monte-Karlo} [Numerical statistical modeling. 
+Monte-Carlo methods]. Moscow: Academy Publ. 368~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Received February 16, 2016}}
+
+\vspace*{-24pt}
+
+\Contr
+
+\noindent
+\textbf{Tyrsin Alexander N.} (b.\ 1961)~--- Doctor of Science in technology, leading 
+researcher, Science and Engineering Center ``Reliability and Resource of Large 
+Systems and Machines,'' Ural Branch of the Russian Academy of Sciences; 
+54a~Studencheskaya Str., Yekaterinburg 620049, Russian Federation; 
+at2001@yandex.ru
+
+%\vspace*{3pt}
+
+\noindent
+\textbf{Serebryanskii Sergey M.} (b.\ 1983)~--- senior lecturer, Troitsk Branch of 
+Chelyabinsk State University, 9~S.~Rasin Str., Troitsk 457100, Russian Federation; 
+tf\_chelgu@mail.ru
+
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература}
+   

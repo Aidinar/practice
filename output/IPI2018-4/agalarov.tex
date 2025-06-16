@@ -1,0 +1,958 @@
+\def\stat{agalarov}
+
+\def\tit{ОПТИМИЗАЦИЯ ОБЪЕМА БУФЕРНОЙ ПАМЯТИ УЗЛА КОММУТАЦИИ ПРИ~СХЕМЕ 
+ПОЛНОГО РАЗДЕЛЕНИЯ ПАМЯТИ$^*$}
+
+\def\titkol{Оптимизация объема буферной памяти узла коммутации при~схеме 
+полного разделения памяти}
+
+\def\aut{Я.\,М.~Агаларов$^1$}
+
+\def\autkol{Я.\,М.~Агаларов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Агаларов Я.\,М.}
+\index{Agalarov Yа.\,M.}
+
+
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при частичной финансовой поддержке РФФИ (проекты 18-07-00692, 17-07-000717  
+и~17-07-00851).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского центра 
+<<Информатика 
+и~управление>> Российской академии наук, \mbox{agglar@yandex.ru}}
+
+%\vspace*{8pt}
+
+
+  
+
+\Abst{Рассматривается задача оптимизации объема буферной памяти (БП) узла коммутации 
+(УК) сети 
+с~коммутацией пакетов (КП), в~котором используется схема полного разделения памяти между выходными линиями 
+передачи, с~учетом потерь пакетов из-за переполнения памяти и~средних задержек пакетов. 
+Для модели УК с~пуассоновскими входящими потоками, общими 
+распределениями времени обслуживания и~одноканальными выходными линиями передачи 
+получены свойства решения задачи и~разработан алгоритм поиска оптимального объема. 
+В~рамках указанной модели разработан алгоритм поиска оптимального плана распределения 
+БП при заданном ее объеме. Приведены результаты вычислительных 
+экспериментов с~использованием разработанных алгоритмов. Показана применимость 
+полученных в~работе подходов и~алгоритмов к~решению рассматриваемой задачи в~рамках 
+модели УК с~рекуррентными входящими потоками, экспоненциальными 
+временами обслуживания и~одноканальными линиями передачи.}
+
+\KW{узел коммутации; управление потоками; распределение буферной памяти; 
+оптимальный объем буферной памяти}
+
+\DOI{10.14357/19922264180404}
+  
+%\vspace*{4pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+  Технико-экономические характеристики сети КП
+в~значительной степени зависят от управления ресурсами и~потоками 
+требований в~уз\-лах-ис\-точ\-ни\-ках и~УК сети. 
+Управление потоками предназначено для эффективной загрузки основных 
+ресурсов (БП и~каналов связи) в~условиях их ограниченного 
+объема с~целью обеспечения требований к~качеству обслуживания (Quality of 
+Service~--- QoS) в~сети. Зависимость качества обслуживания от объема памяти 
+УК возникает из того, что при ограниченной пропускной способности каналов 
+связи и~небольшом объеме памяти могут быть недопустимо большие потери 
+пакетов, что вызывает рост числа повторных передач пакетов и, как следствие, 
+резкий рост нагрузки на отдельных участках сети (возможно, и~в сети в~целом), 
+а~при большом объеме памяти возможны недопустимо большие задержки 
+пакетов в~УК. Отсюда и~возникает задача выбора оптимального объема БП УК с~точки зрения выполнения определенных требований к~качеству обслуживания 
+пакетов и~затратам, связанным со стоимостью оборудования и~технической 
+эксплуатации УК~[1, 2]. При этом следует учитывать зависимость качества 
+обслуживания в~узле коммутации (и во всей сети в~целом) и~от схем (планов) 
+распределения БП, из которых наиболее часто применяемыми на практике 
+являются статические схемы управления~[3, 4]: CS (Complete Sharing); CP 
+(Complete Partitioning); SMQ (Sharing with Maximum Queue Length); SMA 
+(Sharing with Minimum Allocation); SMQMA (Sharing with Maximum Queue 
+Length and Minimum Allocation). Зависимость качества обслуживания в~УК от 
+схем распределения БП вызвана тем, что при бесконтрольном допуске пакетов 
+в~УК происходит захват буферов пакетами более интенсивных потоков, что 
+приводит к~неэффективному использованию выходных линий. 
+  
+  С момента зарождения сетей разработано великое множество алгоритмов 
+локального управления потоками, многие из которых успешно применяются 
+и~в~современных сетях. Основные результаты по управлению потоками в~УК 
+получены методом математического моделирования с~использованием 
+различных типов систем массового обслуживания (СМО). Некоторые из этих 
+результатов описаны в~работах~\cite{4-ag, 5-ag, 6-ag}, которые посвящены 
+сравнительному анализу различных схем распределения БП, 
+и~в~работах~[7--13], в~которых получены явные или алгоритмические решения 
+задач по оптимизации параметров управления потоками в~УК (объема БП, схем 
+распределения БП~УК). 
+  
+  В работе~\cite{5-ag} приводится подробное описание методов анализа 
+и~расчета некоторых наиболее известных схем распределения БП и~анализ 
+известных результатов оптимизации схем CP и~SMQ в~предположении 
+пуассоновских входящих потоков, экспоненциального времени обслуживания 
+и~одноканальных линий передачи. 
+
+В~работе~\cite{7-ag} при этом же 
+предположении рас\-смот\-ре\-но динамическое управ\-ле\-ние рас\-пре\-де\-ле\-нием БП 
+и~получен для случая трех каналов вид\linebreak допустимого пространства состояний, 
+соответствующий оптимальному решению. В~работе~\cite{8-ag} рассмотрена 
+двухступенчатая схема управления потоками в~УК и~приведен алгоритм 
+оптимизации интенсивностей потоков пакетов, допускаемых на первой ступени 
+в~УК, при схеме SMQ на второй ступени и~в предположении пуассоновских 
+входных потоков, экспоненциальных времен обслуживания и~многоканальных 
+выходных линий передачи. 
+
+В~работе~\cite{9-ag} предложен эвристический 
+алгоритм решения задачи совместного управления объемом БП
+и~пропускной способностью линий передачи, который рассматривается 
+в~следующих аспектах: 
+\begin{enumerate}[(1)]
+\item при заданной степени загрузки каналов и~заданной 
+пропускной способности найти необходимый объем БП УК, 
+обеспечивающий заданную среднюю задержку в~сети 
+и~требуемую вероятность потери ячеек вследствие переполнения буферов; 
+\item при заданной степени загрузки каналов и~известных объемах 
+БП найти необходимую пропускную способность, обеспечивающую 
+заданную среднюю задержку в~сети и~требуемую вероятность потери ячеек 
+вследствие переполнения буферов.
+\end{enumerate}
+
+ В~работе~\cite{10-ag} авторы решили 
+задачу выбора объема БП для СМО типа $M/M/1/r$, сформулировав ее как 
+задачу нелинейного программирования:
+\begin{enumerate}[(1)]
+\item для фиксированной входной 
+нагрузки найти объем накопителя (БП), при котором средняя задержка 
+достигает минимума, а интенсивность потерь не превышает заданной 
+величины; 
+\item для фиксированного объема накопителя (БП) найти значение 
+входной нагрузки, при которой средняя задержка достигает минимума, 
+а~интенсивность потерь не превышает заданной величины.
+\end{enumerate}
+
+ Для СМО типа 
+$G/M/1$ и~$M/G/1$ с~интегральной целевой функцией, учитывающей среднюю 
+задержку в~БП и~вероятности потерь пакетов из-за переполнения БП, 
+оптимизационная задача ограничения длины очереди решена 
+в~работах~\cite{11-ag, 12-ag, 13-ag}. 
+  
+  Ниже рассматривается экономическая модель УК с~$L$ выходными линиями 
+передачи, пред\-став\-лен\-ная в~виде~$L$~СМО типа 
+$M/G/1/N$, в~которой качество обслуживания регулируется методом штрафных 
+функций. В~рамках этой модели решается задача выбора оптимального объема 
+БП УК и~оптимальной схемы распределения типа~CP. 
+
+\section{Модель узла коммутации и~постановка задачи} 
+  
+  В качестве модели УК рассматривается многопотоковая СМО типа 
+$M_L/G/L$ с~накопителем емкости~$K$ и~$L$~приборами, на которую 
+поступает $L\hm\leq K$ пуассоновских потоков заявок $\lambda_j\hm> 0$, 
+$j\hm=1,\ldots, L$, к~каждому из которых для обслуживания заявок прикреплен 
+отдельный прибор, время обслуживания на котором является независимой 
+случайной величиной с~заданной функцией распределения~$G_j(t)$, 
+$j\hm=1,\ldots, L$. Накопитель СМО моделирует БП, приборы~--- линии 
+передачи. Заявки каждого потока обслуживаются в~порядке поступления, места 
+в~накопителе распределяются по схеме СР, т.\,е.\ за каждой $j$-й линией 
+закрепляется $k_j\hm>0$ мест накопителя, где $\sum\nolimits_{i=1}^L k_i\hm=K$. 
+В~дальнейшем вектор $\overline{k}\hm= (k_1,\ldots , k_L)$, удовлетворяющий 
+указанному условию, будем называть планом распределения БП. Поступившая 
+заявка $j$-го потока занимает любое свободное место в~накопителе, если 
+в~момент ее поступления число занятых мест в~накопителе меньше~$k_j$. Если 
+заявка поступила в~накопитель, она занимает любое свободное место 
+в~накопителе и~обслуживается на приборе в~порядке поступления. Заявка 
+покидает систему только при завершении обслуживания, освободив 
+одновременно прибор и~накопитель, а~на освободившийся прибор поступает 
+очередная заявка соответствующего типа (если таковая есть в~накопителе). 
+Качество работы системы оценивается с~помощью интегральной целевой 
+функции (функцией дохода системы) со стоимостными па\-ра\-мет\-ра\-ми (весовыми 
+коэффициентами), зависящей от среднего времени ожидания и~вероятности 
+потерь заявок. Функция дохода имеет следующие стоимостные параметры:
+  \begin{description}
+  \item[\,]
+  $C_{0j}>0$~--- плата, получаемая системой за обслуживание единицы длины 
+заявки $j$-го потока; 
+  \item[\,]
+  $C_{1j}>0$~--- величина штрафа, который платит сис\-те\-ма, если отклонена 
+(потеряна) заявка $j$-го потока;
+  \item[\,]
+  $C_{2j}>0$~--- величина штрафа системы за единицу времени задержки 
+заявки $j$-го потока;
+  \item[\,]
+  $C_{3j}>0$~--- величина штрафа системы за единицу времени простоя $j$-й 
+линии; 
+  \item[\,]
+  $C_{4j}>0$~--- затраты системы в~единицу времени на техническое 
+обслуживание $j$-й линии.
+  \end{description}
+  
+  Считается, что плату за обслуживание система получает в~момент 
+завершения обслуживания каж\-дой заявки в~зависимости от длины заявки 
+(длительности занятия прибора).
+  
+  Как следует из определения схемы СР, для каж\-до\-го фиксированного 
+значения~$K$ и~фиксированного плана распределения БП рассматриваемая 
+СМО представляет собой совокупность~$L$~независимых СМО типа 
+$M/G_j/1/k_j$ (в~работе используются обозначения СМО по классификации 
+Кендалла). Это делает возможным использование в~дальнейшем результатов 
+работ~\cite{11-ag, 12-ag, 13-ag}, полученных для систем $M/G/1$ и~$G/M/1$ 
+с~ограничением на длину очереди.
+  
+  Введем обозначения:
+  \begin{description}
+  \item[\,]
+  $\pi_{ji}^{k_j}$, $0\leq i\leq k_j\hm=1$,~--- стационарная вероятность того, 
+что в~системе находится~$i$ заявок потока~$j$ в~момент завершения 
+обслуживания заявки $j$-м прибором;
+  \item[\,]
+  $g_j^{k_j}$~--- значение предельного дохода подсистемы $M/G_j/1/k_j$, 
+усредненного по числу обслуженных $j$-й линией заявок, $j\hm=1,\ldots, L$;
+  \item[\,]
+  $g^{\overline{k}}$~--- значение суммарного предельного дохода всей 
+системы, усредненного по числу обслуженных заявок при плане 
+$\overline{k}\hm= (k_1, \ldots, k_L)$;
+  \item[\,]
+  $Q_j^{k_j}$~--- предельный средний доход, получаемый системой 
+$M/G_j/1/k_j$ в~единицу времени;
+  \item[\,]
+  $Q^{\overline{k}}$~--- предельный суммарный средний доход, получаемый 
+всей системой в~единицу времени при заданном плане~$\overline{k}$;
+  \item[\,]
+  $\overline{v}_j=\int\nolimits_0^\infty t\,dG_j(t)$~--- среднее время 
+обслуживания заявки потока~$j$, $0\hm< \overline{v}_j\hm<\infty$, 
+$j\hm=1,\ldots, L$;
+  \item[\,]
+  $\rho_j=\lambda_j \overline{v}_j$~--- нагрузка на линию~$j$, $j\hm=1,\ldots, 
+L$.
+  \end{description}
+  
+  Пусть $A_K\hm= \left\{ \overline{k}>0:\ \sum\nolimits_{i=1}^L k_i\hm= K\right\}$, 
+$U_{\mathrm{CP}}\hm= \left\{ A_K, K\hm\geq L\right\}$, $U_{\mathrm{CP},N}\hm= \left\{ 
+\overline{k}:\ L\hm\leq \sum\nolimits^L_{j=1} k_j \hm\leq N\right\}$, 
+$Q^k\hm=\max\nolimits_{\overline{k}:\ \overline{k}\in A_K} Q^{\overline{k}}$.
+  
+  Ставятся следующие две задачи: 
+  \noindent
+  \begin{enumerate}[1.]
+\item Для множества планов~$U_{\mathrm{CP}}$ найти значение $K^*\hm\geq L$ 
+такое, что 
+\begin{equation}
+\max\limits_{K\geq L} Q^K=Q^{K^*}\,.
+\label{e1-ag}
+\end{equation}
+\item Найти $\overline{k}^0\hm\in U_{\mathrm{CP},N}$ такой, что
+\begin{equation}
+\max\limits_{\overline{k}\in U_{\mathrm{CP},N}} k^{\overline{k}}=g^{\overline{k}^0}\,.
+\label{e2-ag}
+\end{equation}
+\end{enumerate}
+  
+  Ниже всюду через~$K^*$ будем обозначать решение задачи~(1), через 
+$\overline{k}^0\hm\in U_{\mathrm{CP},N}$~--- решение задачи~(2).
+     
+\section{Решение задачи~(1)}
+
+     Так как при схеме СР рассматриваемая модель УК есть совокупность 
+независимых СМО типа $M/G_j/1/k_j$, $j\hm=1,\ldots ,L$, то ее доход при 
+заданном $\overline{k}\hm\in U_{\mathrm{CP},K}$ представляется в~виде суммы:
+     $$
+     Q^{\overline{k}}=\sum\limits^L_{j=1} Q_j^{k_j}\,.
+     $$
+Тогда, очевидно, верны равенства:
+\begin{multline}
+\max\limits_{K\geq L} Q^K =\max\limits_{K\geq L} \max\limits_{\overline{k}:\ 
+\overline{k}\in A_K} \!\! Q^{\overline{k}} ={}\\
+{}=\max\limits_{K\geq L} 
+\max\limits_{\overline{k}:\ \overline{k}\in A_K} \sum\limits^L_{j=1} Q_j^{k_j} 
+=\sum\limits^L_{j=1} \max\limits_{k_j>0} Q_j^{k_j}\,,
+\label{e3-ag}
+\end{multline}
+т.\,е.\ решением задачи~(1) является $K^*\hm= \sum\nolimits^L_{j=1} k_j^*$, 
+где $k_j^*$~--- решение задачи
+\begin{equation}
+\max\limits_{k_j>0} Q_j^{k_j}\,,\enskip j=1,\ldots, L\,.
+\label{e4-ag}
+\end{equation}
+Таким образом, задача~(1) сводится к~задаче, аналогичной~(\ref{e4-ag}), 
+рассмотренной в~работе~\cite{12-ag} для СМО типа $M/G/1$ с~ограничением на 
+длину очереди.
+
+  В работе~\cite{12-ag} для дохода СМО типа $M/G/1$ при заданном 
+пороговом значении длины очереди~$k$ получено выражение:
+  $$
+  Q^k=\lambda\left( 1-\theta^k\right) g^k\,,
+  $$
+где $g^k$~--- значение предельного дохода системы $M/G/1/k$, усредненного 
+по числу обслуженных линией заявок; $\theta^k$~--- вероятность того, что 
+поступившая заявка будет потеряна (для величин~$g^k$ и~$\theta^k$ 
+в~\cite{12-ag} приведены явные аналитические выражения). Эта формула для 
+системы $M/G_j/1/k_j$ ($j\hm=1,\ldots, L$) в~новых обозначениях записывается 
+в~виде:
+$$
+Q_j^{k_j}=\lambda_j\left( 1-\theta_j^{k_j}\right) g_j^{k_j}\,.
+$$
+Здесь (см.~\cite{12-ag}) 
+$$
+\theta_{k_j}^{k_j} =1-\fr{1}{\pi_{j_0}^{k_j}+\rho}\,,\enskip 
+g^{k_j}=\sum\limits_{i=0}^{k_j-1} q^{k_j}_{ji} \pi^{k_j}_{ji}\,,
+$$
+где
+\begin{multline*}
+q_{ji}^{k_j}=C_{0j} \overline{v}-C_{1j}\sum\limits^\infty_{m=k_j-i+1}\left( m-
+k_j+i\right) r_{jm}-{}\\
+{}-\fr{C_{2j}}{\lambda_j}\left[ \fr{1}{2}\sum\limits_{m=2}^{k_j-i+1}\! \!\!(m-1) 
+mr_{jm} +\left( k_j-i\right)\!\!\!\!\!\sum\limits^\infty_{m=k_j-i+2}\!\!\!\!\!\!\! mr_{jm}-{}\right.\hspace*{-6.5886pt}\\
+\left.{}-\fr{1}{2}\left( k_j-i\right) \left( k_j-i+1\right) \sum\limits^\infty_{m=k_j-
+i+2} r_{jm}\right] -{}\\
+{}- C_{2j} (i-1)\overline{v}_j -C_4\overline{v}_j\,,\enskip 1\leq 
+i\leq k_j-1\,;
+\end{multline*}
+
+\noindent
+\begin{align*}
+q^{k_j}_{j_0}&=q^{k_j}_{j_1}-\fr{C_{3j}+C_{4j}}{\lambda_j}\,;
+\\
+r_{jm}&=\int\limits_0^\infty \fr{(\lambda_j v)^m}{m!}\,e^{-\lambda_j v}\,dG_j(v)\ \mbox{при}\ 
+m\geq 0\,.
+\end{align*}
+
+Для системы $M/G_j/1/k_j$ функции $\tilde{G}(k)$ и~$\tilde{F}(k)$, введенные 
+в~\cite{12-ag}, в~новых обозначениях примут вид:
+\begin{multline}
+H_j(k_j)=C_{0j}-\fr{C_{1j}}{\overline{v}_j} \left( \rho_j-1\right) -C_{4j} -{}\\
+{}- \fr{C_{2j}}{\rho_j} \left[ \tilde{F}_j(k_j)+(k_j-1)\rho_j\right]\,;
+\label{e5-ag}
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+\tilde{F}(k_j)=\left( \sum\limits_{i=1}^{k_j} \pi_{ji}^{k_j+1} \!\!\!\!
+\sum\limits^\infty_{m=k_j-i+1}\!\!\!\!\! \!\left[ m-(k_j-i+1)\right] k_m+{}\right.\\
+\left.{}+ \pi_{j_0}^{k_j+1}\sum\limits^\infty_{m=k_j} \left(m-k_j\right)k_m
+\vphantom{\sum\limits_{i=1}^{k_j}}
+\right)\Bigg/ \pi_{jk_j}^{k_j+1}\,.
+\end{multline*}
+  
+  Из~(\ref{e3-ag}), (\ref{e5-ag}) и~утверждений~1 и~2 работы~\cite{12-ag} 
+вытекают следующие два свойства решения задачи~(1).
+  
+  \smallskip
+  
+  \noindent
+   \textbf{Свойство~1.}\ При любых значениях параметров $0\hm\leq 
+C_{ij}\hm<\infty$, $i\hm=0$, 1,  3, 4, и~$0\hm< C_{2j}\hm<\infty$, $j\hm=1,\ldots 
+,L$, существует оптимальное значение $0\hm< K^*\hm<\infty$, причем 
+$$
+K^*= \sum\limits^L_{j=1} k_j^*\,,
+$$ 
+где $k_j^*\hm= \min\left\{ k_j>0:\ 
+H_j(k_j)\hm\leq Q_j^{k_j}\right\}$. Eсли $C_{2j}\hm=0$ и~$Q_j^1\hm< H_j(1)$  
+хотя бы для одного $j\hm\in \overline{1,L}$, то $k_j^*\hm=\infty$, 
+$K^*\hm=\infty$.
+   
+   \smallskip
+   
+   \noindent
+   \textbf{Свойство~2.}\ Значение $0\hm< K^*\hm<\infty$ удовлетворяет условию 
+$\max\nolimits_{K>0} Q^K\hm= Q^{K^*}$ тогда и~только тогда, когда 
+$$
+K^*= \sum\limits^L_{j=1} 
+k_j^*$$ 
+и~$\overline{k}^*\hm= (k_1^*, \ldots, k_L^*)$ удовлетворяет одному из двух условий:
+   \begin{itemize}
+\item[(a)] для каждого $j\hm\in \overline{1,L}$
+$$
+k_j^*=\begin{cases}
+\min\left\{ r_j>0:\ H_j(k_j)\leq Q_j^{k_j}\right\} &\\
+& \hspace*{-40mm}\mbox{при}\ 
+0<C_{2j}<\infty\ \mbox{и}\ H_j(1)>Q_j^1\,;\\
+1 & \hspace*{-40mm}\mbox{при}\ H_j(1)\leq Q_j^1\,;
+\end{cases}
+$$
+\item[(б)] для каждого $j\in \overline{1,L}$
+$$
+Q_j^{k_j^*-1}< Q_j^{k_j^*}\,;\enskip Q_j^{k_j^*+1}\leq Q_j^{k_j^*}\,.
+$$ 
+  \end{itemize}
+  
+  Из условия~(а) свойства~2 вытекает следующий алгоритм нахождения 
+оптимальных значений~$\overline{k}^*$ и~$K^*$~\cite{12-ag}.
+  \begin{enumerate}[1.]
+\item Положить $j=1$.
+\item Положить $k_j=1$.
+\item Вычислить $H_j(k_j)$ и~$Q^{k_j}$.
+\item Если $C_{2j}=0$ и~$Q^{k_j}\hm< H_j(k_j)$, то положить 
+$k_j^*\hm=\infty$ и~перейти к~п.~9.
+\item Если выполняется неравенство $Q^{k_j}\hm\geq H_j(k_j)$, то 
+перейти к~п.~8.
+\item Увеличить $k_j$ на единицу.
+\item Вычислить $H_j(k_j)$ и~$Q^{k_j}$ и~перейти к~п.~4.
+\item Положить $k_j^*\hm=k_j$.
+\item Если $j<L$, то увеличить~$j$ на единицу и~перейти к~п.~2.
+\item Положить $K^*\hm=\sum\nolimits^L_{j=1} k_j^*$.
+\item  Конец алгоритма.
+\end{enumerate}
+
+  
+  
+  Приведем некоторые выражения, упрощающие расчет величин 
+$\tilde{F}_j(k_j)$ и~$H_j(k_j)$, $j\hm=1,\ldots, L$, и~показывающие некоторые 
+их свойства. Использовав соотношения для $\pi^{k_j}_{ji}$ 
+и~$\overline{F}_j(k_j)$, полученные в~\cite{12-ag} (см.~(4) и~(12)), находим:
+  \begin{equation}
+  \tilde{F}_j(k_j)=\overline{F}_j(k_j)+\rho_j -1 =\fr{\pi_{j_0}^{k_j+1}+\rho_j-1} 
+{\pi_{jk_j}^{k_j+1}}-r_{j_0}\,.
+  \label{e6-ag}
+  \end{equation}
+Отсюда получаем:
+\begin{multline*}
+\tilde{F}_j(k_j) -\tilde{F}_j(k_j+1)={}\\
+{}= \fr{\pi_{j_0}^{k_j+1}}{\pi_{jk_j}^{k_j+1}}+ 
+\fr{\rho_j-1}{\pi^{k_j+1}_{jk_j}}- \fr{\pi_{j_0}^{k_j+2}}{\pi_{jk_j}^{k_j+2}}-
+\fr{\rho_j-1}{\pi_{jk_j}^{k_j+2}}=
+\fr{\pi_{j_0}^{k_j+1}}{\pi_{jk_j}^{k_j+1}} -{}\\
+{}- \fr{\pi_{j_0}^{k_j+1}\left(1-
+\pi_{jk_j}^{k_j+2}\right)}{\pi_{jk_j}^{k_j+2}}+
+\left( \rho_j-1\right) \!\left(\! \fr{1}{\pi_{jk_j}^{k_j+1}}-
+\fr{1} {\pi_{jk_j}^{k_j+2}}\!\right)={}\\
+{}= \left( \pi_{j_0}^{k_j+1}+\rho_j -1\right) \left( \fr{1}{ \pi_{jk_j}^{k_j+1}}-
+\fr{1}{\pi_{jk_j}^{k_j+2}}\right) +\pi_{j_0}^{k_j+1}\,.
+\end{multline*}
+Из правой части последнего равенства следует, например, что величины 
+$\tilde{F}_j(k_j)\hm-\tilde{F}_j(k_j\hm+1)\hm< \rho_j$ (т.\,е.~$H_j(k_j)$~--- 
+убывающая функция по~$k_j$) при условии $\pi_{j_0}^{k_j+1}\hm\leq \rho_j$ 
+(заметим, что выполняются неравенства $\pi_{j_0}^{k_j+1} \hm+\rho_j\hm- 
+1\hm>0$, $1/\pi_{jk_j}^{k_j+1} \hm- 1/\pi_{jk_j}^{k_j+2} \hm<0$, так как 
+$\pi_{j_0}^{k_j+1}$ и~$\pi_{jk_j}^{k_j+1}$ убывают по $k_j\hm\geq 0$ 
+и~$\lim\nolimits_{k_j\to\infty} \pi_{j_0}^{k_j+1} \hm= 1\hm- \rho_j$~\cite{14-ag}). 
+
+Из формул~(\ref{e5-ag}), (\ref{e6-ag}) данной статьи и~(4) из~\cite{12-ag} 
+следует, что при известных значениях величин~$r_{ji}$, $i\hm=1,\ldots, k_j$, 
+$j\hm=1,\ldots , L$, для вычисления значений~$\overline{k}^*$ и~$K^*$ 
+предложенный алгоритм требует порядка $\sum\nolimits^L_{j=1} k_j^{*\,2}$ 
+арифметических операций.
+
+ \section{Решение задачи (2)}
+
+  Для решения задачи~(2) предлагается алгоритм, состоящий из следующих 
+пунктов.
+  \begin{enumerate}[1.]
+\item Если $N=L$, то положить $k_j^0\hm= 1$, $j\hm=1,\ldots, L$, 
+$K^0\hm=L$ и~перейти к~п.~12. 
+\item Положить $K=L$, $m\hm=0$, $k_j\hm=1$, $\varphi_j\hm=0$, 
+$j\hm=1,\ldots ,L$.
+\item Вычислить $q_j^{k_j}$, $j\hm=1,\ldots ,L$.
+\item Для $j=1,\ldots, L$ выполнить:
+\begin{enumerate}[1.{1}]
+\item Вычислить $g_j^{k_j+1}$, $\Delta_j(k_j)\hm= g_j^{k_j+1}\hm- 
+g_j^{k_j}$;
+\item Если $\Delta_j(k_j)\hm\leq 0$, то положить $\varphi_j\hm=1$, 
+$m\hm= m\hm+1$. 
+\end{enumerate}
+\item Если $m=L$, то перейти к~п.~11.
+\item Найти $j_0:\ \Delta_{j_0}(k_{j_0})\hm= \max \{ \Delta_j(k_j), 
+\varphi_j\not=1$, $j\hm=1,\ldots ,L\}$.
+\item Положить $K\hm=K\hm+1$, $k_j\hm= k_j\hm+1$ для $j\hm=j_0$.
+\item Если  $K=N$, то перейти к~п.~11.
+\item Вычислить $g_j^{k_j+1}$, $\Delta_j(k_j)\hm= g_j^{k_j+1}\hm- 
+g_j^{k_j}$ для $j\hm=j_0$. 
+\item Если $\Delta_{j_0}(k_{j_0})\hm\leq 0$ то положить 
+$\varphi_{j_0}\hm=1$, $m\hm= m\hm+1$ и~перейти к~п.~5. 
+\item Положить $k_j^0\hm=k_j$, $j\hm=1,\ldots ,L$, $K^0\hm= 
+\sum\nolimits^L_{j=1} k_j^0$.
+\item Конец алгоритма.
+\end{enumerate}
+  
+  Справедливо следующее 
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Утверждение~1.}\ \textit{Результат работы алгоритма является 
+решением задачи}~(2).
+  
+  \smallskip
+  
+  \noindent
+  Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \
+  Справедливость утверждения при $N\hm=\infty$ следует непосредственно из 
+условия~(б) свойства~2 решения задачи~(1). Действительно, согласно алгоритму 
+в~этом случае для каждого $j\hm=1,\ldots ,L$ величина~$k_j$ увеличивается до 
+тех пор, пока не выполнятся неравенства упомянутого выше условия 
+свойства~2. В~этом случае $K^0\hm=K^*$.
+  
+  Докажем для случая $N\hm<\infty$. Если $K^*\hm= \sum\nolimits^L_{j=1} 
+k_j^*\hm<N$, то, как легко видеть, алгоритм работает так же, как и~при 
+$N\hm=\infty$, и,~следовательно, утверждение справедливо и~$K^0\hm=K^*$.
+  
+  Пусть $K^*\geq N$. В~работах~\cite{11-ag, 12-ag} для~$g_j^{k_j}$, 
+$j\hm=1,\ldots ,L$, приводится равенство:
+  \begin{equation}
+  q_j^{k_j}-g_j^{k_j+1}=\pi_{jk_j}^{k_j+1} \left[ g_j^{k_j}-G_j(k_j)\right]\,,
+  \label{e7-ag}
+  \end{equation}
+где $G_j(k_j)=H_j(k_j)\overline{v}_j$.
+
+Согласно следствию теоремы~1 из~\cite{11-ag} (см.\ пп.~1 и~3) верны 
+неравенства $g_j^{k_j}\hm< g_j^{k_j+1}$ при $0\hm< k_j\hm < k_j^*$, 
+$j\hm=1,\ldots, L$. Тогда, так как $\pi_{jk_j}^{k_j+1}\hm<1$ 
+и~$H_j(k_j)\overline{v}_j$~--- убывающие по~$k_j$ функции, из~(\ref{e6-ag}) 
+получаем неравенства:
+\begin{multline}
+\Delta_j (k_j) <\Delta_j(k_j+1)\\
+\mbox{для}\ 0<k_j\leq k_j^*-2\ \mbox{при}\ 
+k_j^*>2\,.
+\label{e8-ag}
+\end{multline}
+
+Рассмотрим последовательности $\{\Delta_j (k_j), k_j\hm>0\}$, $j\hm=1,\ldots ,L$, 
+и~объединим их в~одну последовательность $\{ \Delta (k), k\hm>0\}$, 
+упорядоченную по убыванию элементов. Обратим внимание, что алгоритм 
+каждый раз, перед тем как увеличить~$K$ на единицу, в~п.~6 находит элемент 
+$\Delta (K\hm+1)\hm= \Delta_{j_0} (k_{j_0})$ объединенной 
+последовательности и~выполняет п.~7. Заметим также, что 
+\begin{multline*}
+g^{\overline{k}} 
+= \sum\limits^L_{j=1} g_j^{k_j} = \sum\limits^L_{j=1} \left[ 
+\sum\limits^{k_j-1}_{m=1} \Delta_j (m)+g_j^1\right] = {}\\
+{}=
+\sum\limits^L_{j=1} \sum\limits_{m=1}^{k_j-1} \Delta_j(m)+ 
+\sum\limits^L_{j=1} g_j^1\,,
+\end{multline*}
+и,~если $\overline{k}^\prime\hm= (k^\prime_1, 
+\ldots , k_L^\prime) \hm\in U_{\mathrm{CP},K}$ удовле\-тво\-ря\-ет условию 
+$g^{\overline{k}^\prime}\hm= \max\nolimits_{\overline{k}\in U_{\mathrm{CP},K}} 
+g^{\overline{k}}$, то $\max\nolimits_{\overline{k}\in U_{\mathrm{CP},K+1}} 
+g^{\overline{k}^\prime}\hm= 
+g^{\overline{k}^\prime} \hm+\Delta_{j_0}(k_{j_0}^\prime)$, где~$j_0$ 
+вычисляется согласно п.~6 алгоритма. Тогда, так как $K^*\hm\geq N$ и~имеет 
+место~(\ref{e8-ag}), согласно алгоритму по завершении п.~11 имеют место 
+равенства:
+$$
+K^0= \sum\limits^L_{j=1} k_j^0 =N\,;
+$$
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+g^{\overline{k}^0} 
+= \sum\limits^L_{j=1} g_j^{k_j^0} = \sum\limits^L_{j=1} 
+\sum\limits_{m=1}^{k_j^0-1}\Delta_j (m) + \sum\limits^L_{j=1} 
+g_j^1={}\\
+{}= \sum\limits^N_{k=L+1}\Delta(k) + \sum\limits^L_{j=1} 
+g_j^1= {}\\
+{}=\max\limits_{\overline{k}\in U_{\mathrm{CP},N}} \left[ \sum\limits^L_{j=1} 
+\sum\limits_{m=1}^{k_j-1}\! \Delta_j(m)+ \sum\limits^L_{j=1} g_j^1\right]= 
+\max\limits_{\overline{k}\in U_{\mathrm{CP},N}}\hspace*{-5pt} g^{\overline{k}}\,.
+\end{multline*}
+
+Следовательно,  утверждение~1 справедливо.
+
+\begin{figure*} %fig1
+\vspace*{1pt}
+\begin{minipage}[t]{80mm}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=79.0mm 
+ \epsfbox{aga-1.eps}
+ }
+ \end{center}
+\vspace*{-9pt}
+\Caption{Зависимость величины дохода системы от интенсивности входного потока: 
+\textit{1}~--- оптимальная схема СР;
+\textit{2}~--- схема квадратного корня; \textit{3}~--- схема CS}
+\end{minipage}
+%\end{figure*}
+\hfill
+%\begin{figure*} %fig2
+\vspace*{1pt}
+\begin{minipage}[t]{80mm}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=79.0mm 
+ \epsfbox{aga-2.eps}
+ }
+ \end{center}
+\vspace*{-9pt}
+\Caption{Зависимость дохода системы от интенсивности входного потока и~времени 
+обслуживания приборами:
+\textit{1}~--- $\mu_{11}\hm 
+= 1{,}5$, $\mu_{12}\hm=3$, $\mu_{21}\hm=2$ и~$\mu_{22}\hm=4$; \textit{2}~--- 
+ $\mu_{11}\hm=1$, $\mu_{12}\hm=2$, $\mu_{21}\hm= 
+1{,}5$ и~$\mu_{22}\hm=3$}
+\end{minipage}
+\end{figure*}
+
+\section{Примеры}
+
+  Рассмотрим СМО $M_2/G/2$ с~функциями распределения времени 
+обслуживания 
+\begin{align*}
+G_1(t)&=f_{11}\left(1- e^{-\mu_{11}t}\right)+ f_{12}\left(1- e^{-
+\mu_{12}t}\right)\,;\\
+G_2(t)&= f_{21}\left(1- e^{-\mu_{21}t}\right)+ f_{22}\left(1- 
+e^{-\mu_{22}t}\right)\,,
+\end{align*}
+ стоимостными параметрами $C_{10}\hm= C_{20}\hm= 30$, 
+$C_{11}\hm= C_{21} \hm= 15$, $C_{12}\hm=C_{22} \hm=4$, $C_{13}\hm= 
+C_{23}\hm=0$, $C_{14}\hm= C_{24}\hm=0{,}4$ и~одинаковыми входными 
+потоками на приборы (выходные линии передачи) $\lambda_1\hm=\lambda_2$. 
+На графиках рис.~1 проиллюстрированы за\-ви\-си\-мости величины дохода~$Q^k$ 
+рас\-смат\-ри\-ва\-емо\-го СМО от интенсивности входного потока для трех схем 
+распределения БП: оптимальной схемы СР, схемы квад\-рат\-но\-го корня при 
+$K\hm=K^*$, схемы CS при $K\hm=K^*$. На всех трех графиках доход 
+обозначен через~$Q^K$. Значения па\-ра\-мет\-ров функций~$G_1(t)$ и~$G_2(t)$ 
+соответственно равны: $f_{11}\hm= f_{12}\hm= f_{21}\hm= f_{22}\hm= 0{,}5$; 
+$\mu_{11}\hm= 1$; $\mu_{12}\hm= 2$; $\mu_{21}\hm= 1{,}5$; 
+$\mu_{22}\hm=3$. 
+
+На рис.~2 изображена зависимость значения 
+дохода~$Q^{K^*}$ системы от интенсивности входного потока и~времени 
+обслуживания приборами. 
+
+
+
+
+На рис.~3 приведена диаграмма зависимости оптимального значения~$K^*$ от 
+интенсивности входного потока. 
+
+{ \begin{center}  %fig3
+ \vspace*{20pt}
+  \mbox{%
+ \epsfxsize=75.551mm 
+ \epsfbox{aga-3.eps}
+ }
+
+
+\end{center}
+
+
+\noindent
+{{\figurename~3}\ \ \small{Зависимость оптимального объема БП от интенсивности входного потока 
+и~времени обслуживания приборами:
+\textit{1}~---  
+$\mu_{11}\hm=1{,}5$, $\mu_{12}\hm= 3$, $\mu_{21}\hm= 2$ 
+и~$\mu_{22}\hm=4$; \textit{2}~--- $\mu_{11}\hm=1$, 
+$\mu_{12}\hm=2$, $\mu_{21}\hm= 1{,}5$ и~$\mu_{22}\hm=3$}}
+}
+
+%\vspace*{9pt}
+
+\addtocounter{figure}{1}
+
+\section{Заключение}
+
+  На основании проведенных выше исследований можно сделать следующие 
+выводы:
+  \begin{itemize}
+\item при схеме СР, если параметр стоимости для времени задержки~--- 
+положительная величина, то существует конечный объем БП, при котором 
+функция дохода~$Q^K$ достигнет максимального значения на множестве 
+планов~$U_{\mathrm{CP}}$; 
+\item функция $Q^K$ является унимодальной функцией от переменной 
+$K\hm>0$;
+\item функция дохода УК зависит от объема БП, интенсивностей входных 
+потоков и~распределения БП между выходными линиями (см.\ рис.~1 и~2), 
+т.\,е.\ оптимальная процедура локального управления потоками в~УК должна 
+управлять всеми тремя указанными параметрами; 
+\item оптимальный объем БП существенно зависит от 
+интенсивности входной нагрузки, механизма распределения БП 
+и~пропускной спо\-соб\-ности каналов связи (см.\ рис.~1 и~3).
+\end{itemize}
+
+  Отметим, что соотношение вида~(\ref{e7-ag}), использованное при 
+доказательстве приведенного выше утверждения~1, получено также 
+и~в~работе~\cite{13-ag} для СМО типа $G/M/1$ с~пороговым значением длины 
+очереди. Указанное соотношение (см.~(12) в~\cite{13-ag}) имеет вид:
+  $$
+  g^k-g^{k+1} =\pi_0^{k+1}\left[ g^k -G(k)\right]\,,\enskip k>0\,,
+  $$
+где $k$ соответствует объему БП; $\pi_0^{k+1}$ и~$G(k)$ обладают 
+аналогичными свойствами величин $\pi_{jk_j}^{k_j+1}$ и~$G_j(k_j)$, 
+использованным выше в~доказательстве утверждения~1. Следовательно, 
+алгоритм и~утверж\-де\-ние~1, приведенные в~разд.~3, применимы для 
+рассмотренной выше модели УК также при предположениях: входящие 
+потоки~--- рекуррентные; времена обслуживания~--- экспоненциальные. 
+Однако заметим, что в~этом случае, в~отличие от рас\-смот\-рен\-но\-го выше, 
+согласно работе~\cite{13-ag} $g^k$~--- предельный доход, усредненный по 
+числу поступивших в~систему заявок.
+
+  Отметим также, что каждая из схем СР, CS, SMQ, SMA и~SMQMA 
+предпочтительней в~смысле эффективности, чем остальные, только 
+в~соответствующей области значений параметров системы и~выбранного 
+критерия эффективности~\cite{5-ag}. Полученные с~помощью предложенных 
+выше алгоритмов оптимальные при схеме СР значения объема БП и~плана 
+распределения БП могут рассматриваться для других схем как оценочные. 
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-ag}
+\Au{Клейнрок Л.} Вычислительные системы с~очередями~/ Пер. с~англ.~--- М.: 
+Мир, 1979. 600~с. 
+(\Au{Kleinrock~L.} {Queueing systems. Vol.~II: Computer applications}.~--- 
+New York, NY, USA: Wiley, 1976. 549~p.)
+\bibitem{2-ag}
+\Au{Дэвис Д., Барбер~Д., Прайс~У., Соломонидес~С}. 
+Сети связи для вычислительных систем~/ Пер. с~англ.~--- 
+М.: Мир, 1982. 563~с. 
+(\Au{Davies~D.\,W., Barber D.\,L.\,A., Price~W.\,L., Solomonides~C.\,M.} 1979. 
+{Computer networks and their protocols}.~--- New York, NY, USA: Wiley. 487~p.)
+\bibitem{3-ag}
+\Au{Irland M.} Buffer management in a~packet switch~// IEEE T.~Commun., 
+1978. Vol.~26. No.\,3. P.~328--337.
+\bibitem{4-ag}
+\Au{Kamoun F., Kleinrock~L.} Analysis of shared finite storage in a~computer 
+networks node environment under general traffic conditions~// IEEE 
+T.~Commun., 1980. Vol.~28. No.\,7. P.~992--1003.
+\bibitem{5-ag}
+\Au{Башарин Г.\,П., Самуйлов~К.\,Е.} Об оптимальной структуре буферной 
+памяти в~сетях передачи данных с~коммутацией пакетов.~--- М., 1982. 70~с. 
+\bibitem{6-ag}
+\Au{Михеев П.\,А.} Анализ стратегий разделения конечной буферной памяти 
+маршрутизатора между выходными каналами~// Автоматика и~телемеханика, 
+2014. №\,10. С.~125--128.
+\bibitem{7-ag}
+\Au{Forschini G., Gopinath~B.} Sharing memory optimally~// IEEE 
+T.~Commun., 1983. Vol.~31. No.\,3. P.~352--359.
+\bibitem{8-ag}
+\Au{Агаларов Я.\,М.} Двухступенчатое адаптивное управление потоками в~узле 
+коммутации телекоммуникационной сети~// Вестник РУДН. Сер.
+Прикладная математика и~информатика, 2003. №\,1. С.~134--141.
+\bibitem{9-ag}
+\Au{Линец Г.\,И.} Управление объемом буферной памяти и~пропускной 
+способностью каналов в~мультисервисных сетях~// 
+Инфокоммуникационные технологии, 2008. Т. 6. №\,2. С.~62--64. 
+\bibitem{10-ag}
+\Au{Жерновый Ю.\,В.} Решение задач оптимального синтеза для некоторых 
+марковских моделей обслуживания~// Информационные процессы, 2010. 
+Т. 10. №\,3. C.~257--274.
+\bibitem{11-ag}
+\Au{Агаларов Я.\,М., Агаларов~М.\,Я., Шоргин~В.\,С.} Об оптимальном 
+пороговом значении длины очереди в~одной задаче максимизации дохода 
+СМО типа $M/G/1$~// Информатика и~её применения, 2016. Т.~10. Вып.~2. С.~70--79.
+\bibitem{12-ag}
+\Au{Агаларов Я.\,М.} Максимизация среднего стационарного дохода СМО типа 
+$M/G/1$~// Информатика и~её применения, 2017. Т.~11. Вып.~2. С.~25--32. 
+\bibitem{13-ag}
+\Au{Агаларов Я.\,М., Шоргин~В.\,С.} Об одной задаче максимизации дохода 
+системы массового обслуживания типа $G/M/1$ с~пороговым управлением 
+очередью~// Информатика и~её применения, 2017. Т.~11. Вып.~4. С.~55--64.
+\bibitem{14-ag}
+\Au{Бочаров П.\,П., Печинкин~А.\,В.} Теория массового обслуживания.~--- 
+М.: РУДН, 1995. 529~с.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 10.06.18}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{OPTIMIZATION OF~BUFFER MEMORY SIZE OF~SWITCHING NODE 
+IN~MODE OF~FULL MEMORY SHARING}
+
+\def\titkol{Optimization of~buffer memory size of~switching node 
+in~mode of~full memory sharing}
+
+\def\aut{Yа.\,M.~Agalarov}
+
+\def\autkol{Yа.\,M.~Agalarov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+\noindent
+Institute of Informatics Problems, Federal Research Center ``Computer Sciences and 
+Control'' of the Russian Academy of Sciences; 44-2~Vavilov Str., Moscow 119133, 
+Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{6pt}
+  
+\Abste{The problem of optimizing the volume of the buffer memory of the network 
+switching node with the CP (Complete Partitioning)
+is considered, which uses a~scheme for the complete 
+memory sharing between the output transmission lines, taking into account packet 
+loss due to memory overflow and average packet delays. The
+properties of the 
+solution of the problem are obtained, and an algorithm for searching for the optimal 
+volume is developed for the switching node model with Poisson incoming flows, 
+common service time distributions, and single-channel output transmission lines. 
+Within the given model, an algorithm for finding the optimal buffer\linebreak\vspace*{-12pt}}
+
+\Abstend{memory 
+allocation plan for a~given volume is developed. The results of computational 
+experiments using the developed algorithms are presented. The applicability of the 
+proposed algorithms and approaches is obtained in the framework of the switching 
+node model with recurrent incoming flows, exponential service times, and 
+single-channel transmission lines.}
+
+\KWE{switching node; flow management; buffer memory allocation; optimal buffer 
+memory capacity}
+  
+  
+\DOI{10.14357/19922264180404}
+
+%\vspace*{-14pt}
+
+\Ack
+\noindent
+The work was partly supported by
+the Russian Foundation for Basic Research (projects 
+18-07-00692, 17-07-000717,  
+and 17-07-00851).
+
+
+
+%\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+\bibitem{1-ag-1}
+\Aue{Kleinrock, L.} 1976. \textit{Queueing systems. Vol.~II: Computer applications}. 
+New York, NY: Wiley. 549~p. 
+\bibitem{2-ag-1}
+\Aue{Davies, D.\,W., D.\,L.\,A.~Barber, W.\,L.~Price, and C.\,M.~Solomonides.} 1979. 
+\textit{Computer networks and their protocols}. New York, NY: Wiley. 487~p.
+\bibitem{3-ag-1}
+\Aue{Irland, M.} 1978. Buffer management in a~packet switch. 
+\textit{IEEE T.~Commun.} 26(3):328--337.
+\bibitem{4-ag-1}
+\Aue{Kamoun, F., and L.~Kleinrock.} 1980. Analysis of shared finite storage in 
+a~computer networks node environment under general traffic conditions. \textit{IEEE 
+Trans. Commun.} 28(7):992--1003.
+\bibitem{5-ag-1}
+\Aue{Basharin, G.\,P., and K.\,E.~Samuilov.} 1982. \textit{Ob optimal'noy strukture bufernoy 
+pamyati v~setyakh peredachi dannykh s~kommutatsiey paketov} [On the optimal 
+structure of BP in data transmission networks with packet commutation].~--- 
+Moscow. 70~p. 
+\bibitem{6-ag-1}
+\Aue{Mikheev, P.\,A.} 2014. Analyzing sharing strategies for finite buffer memory in 
+a~router among outgoing channels. \textit{Automat. Rem. Contr.} 
+75(10):1814--1825.
+\bibitem{7-ag-1}
+\Aue{Forschini, G., and B.~Gopinath.} 1983. Sharing memory optimally. 
+\textit{IEEE T.~Commun.} 31(3):~352--359.
+\bibitem{8-ag-1}
+\Aue{Agalarov, Ya.\,M.} 2003. Dvukhstupenchatoe adaptivnoe upravlenie potokami 
+v~uzle kommutatsii te\-le\-kom\-mu\-ni\-ka\-tsi\-on\-noy seti [Two-level flow control for 
+a~switching node of communication network]. \textit{Vestnik RUDN. Ser. Prikladnaya 
+matematika i~informatika} [PFUR Bull., Applied Mathematics and Computer 
+Science] 1:134--141.
+\bibitem{9-ag-1}
+\Aue{Linets, G.\,I.} 2010. Upravlenie ob''emom bufernoy pa\-mya\-ti i~propusknoy 
+sposobnost'yu kanalov v~mul'tiservisnykh setyakh [Volume management of 
+buffer memory and throughput of channels in multiservice networks]. 
+\textit{Infokommunikatsionnye tekhnologii} [Information  
+Communication Technologies] 6(2):62--64. 
+\bibitem{10-ag-1}
+\Aue{Zhernovyy, Ju.\,V.} 2010. Reshenie zadach optimal'nogo sinteza dlya 
+nekotorykh markovskikh modeley obsluzhivaniya [Solution of optimum 
+synthesis problem for some Markov models of service]. \textit{Informatsionnye 
+protsessy} [Information Processes] 10(3):257--274.
+\bibitem{11-ag-1}
+\Aue{Agalarov, Ya.\.M., M.\,Ya.~Agalarov, and V.\,S.~Shorgin.} 2016. Ob optimal'nom 
+porogovom znachenii  dliny ocheredi v~od\-noy zadache maksimizatsii dokhoda 
+SMO tipa $M/G/1$ [About the optimal threshold of queue length in particular 
+problem of profit maximization in $M/G/1$ queueing system]. 
+\textit{Informatika i~ee 
+Primeneniya~--- Inform. Appl.} 10(2):70--79.
+\bibitem{12-ag-1}
+\Aue{Agalarov, Ya.\,M.} 2017. Maksimizatsiya srednego sta\-tsi\-o\-nar\-no\-go dokhoda 
+SMO tipa  $M/G/1$ [Maximization of average stationary profit in $M/G/1$ queuing 
+system]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 
+11(2):25--32. 
+\bibitem{13-ag-1}
+\Aue{Agalarov, Ya.\,M., and V.\,S.~Shorgin.} 2016. Ob odnoy zadache maksimizatsii 
+dokhoda sistemy massovogo obsluzhivaniya tipa $G/M/1$ s~porogovym 
+upravleniem ochered'yu [Profit maximization in $G/M/1$ queuing system on a~set 
+of threshold strategies with two switch points]. \textit{Informatika i~ee Primeneniya~--- 
+Inform. Appl.} 11(4):\linebreak 55--64.
+{ %\looseness=1
+
+}
+\bibitem{14-ag-1}
+\Aue{Bocharov, P.\,P., and A.\,V.~Pechinkin.} 1995. \textit{Teoriya massovogo obsluzhivaniya} 
+[Queueing theory]. Moscow: RUDN. 529~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received June 10, 2018}}
+
+%\pagebreak
+
+%\vspace*{-18pt}
+  
+  \Contrl
+  
+  \noindent
+\textbf{Agalarov Yaver M.} (b.\ 1952)~--- Candidate of Science (PhD) in technology, associate 
+professor; leading scientist, Institute of Informatics Problems, Federal Research Center ``Computer 
+Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, 
+Russian Federation; \mbox{agglar@yandex.ru}
+ 
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}       

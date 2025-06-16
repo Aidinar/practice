@@ -1,0 +1,981 @@
+\def\stat{vasiliev}
+
+\def\tit{О ФУНКТОРНОМ ПРЕДСТАВЛЕНИИ ОПТИМИЗИРУЕМЫХ ДИНАМИЧЕСКИХ 
+МУЛЬТИАГЕНТНЫХ СИСТЕМ}
+
+\def\titkol{О функторном представлении оптимизируемых динамических 
+мультиагентных систем}
+
+\def\aut{Н.\,С.~Васильев$^1$}
+
+\def\autkol{Н.\,С.~Васильев}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Васильев Н.\,С.}
+\index{Vasilyev N.\,S.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Исследование выполнено за счет гранта Российского научного фонда №\,22-28-00588, {\sf 
+%https://rscf.ru/project/22-28-00588/}. Работа проводилась с~использованием инфраструктуры Центра 
+%коллективного пользования <<Высокопроизводительные вычисления и~большие данные>> (ЦКП 
+%<<Информатика>> ФИЦ ИУ РАН, Москва).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный технический университет имени Н.\,Э.~Баумана, \mbox{nik8519@yandex.ru}}
+
+\vspace*{2pt}
+
+
+
+
+
+
+    \Abst{Топос функторов выбран в~качестве компьютерного инструмента синтеза 
+динамических игр многих лиц. Задаваемая шкала упорядочивает объекты, 
+отвечающие сопутствующим статическим подыграм. Последние служат 
+состояниями динамической мультиагентной сис\-те\-мы (ДМАС). Исходная 
+динамическая игра и~все статические подзадачи пред\-став\-ля\-ют\-ся в~моноидальной 
+категории бинарных отношений. Под рациональным решением игры понимается 
+равновесие. Композициональное строение оп\-ти\-ми\-зи\-ру\-емой ДМАС выражено 
+в~форме динамического результирующего отношения (ДРО) игры. Поиску равновесия 
+отвечает максимизация ДРО. Это делается методом Беллмана, обобщенным на 
+задачи оптимального управления, поставленные в~форме отношений. Программная 
+реализация предложенного подхода может быть основана на нейросетевых 
+вычислениях ввиду согласованности архитектур применяемых графов отношений и~нейросетей.}
+    
+    \KW{категория функторов; композициональность; моноидальная категория; 
+обратный образ; динамическое отношение игры; статическая подыгра; отношение 
+предпочтения; динамическое результирующее отношение; рациональное решение; 
+морфизм Беллмана}
+
+\DOI{10.14357/19922264240201}{CLMBXC}
+  
+%\vspace*{-6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+    
+\section{Введение}
+
+    В ДМАС агенты принимают 
+решения в~каждом состоянии системы в~за\-ви\-си\-мости от рас\-по\-ла\-га\-емой ими 
+информации о~поведении других участников конфликта~[1--4]. Воздействие 
+стратегий на ДМАС распределено во времени и~связано с~выбором ситуаций 
+в~череде со\-пут\-ст\-ву\-ющих статических игровых подзадач. 
+    
+    Процесс изменения состояний ДМАС традиционно задают с~по\-мощью 
+дифференциальных или итерационных уравнений, в~которые входят управ\-ля\-ющие 
+воздействия игроков. От этого описания динамики приходится отходить даже 
+в~антагонистических дифференциальных играх с~полной ин\-фор\-ми\-ро\-ван\-ностью 
+игроков. Управляемую систему представляют дифференциальным уравнением 
+в~контингенциях~\cite{3-vas}, т.\,е.\ применяют многозначные отоб\-ра\-же\-ния. 
+В~стохастических постановках так\-же возникает дополнительная не\-опре\-де\-лен\-ность, 
+связанная с~прогнозированием будущих со\-сто\-яний сис\-те\-мы~\cite{4-vas}. 
+    
+    Зачастую целесообразно отказаться от функционального описания динамики 
+игры и~перейти на\linebreak язык отношений~[5]. Благодаря этому значительно расширяется 
+круг приложений~\cite{4-vas, 6-vas, 7-vas, 8-vas, 9-vas}, приобретается свойство 
+композициональности моделей ДМАС, удобное для модификации игровых \mbox{задач}. 
+Этот подход поддерживается компьютерной алгеброй тео\-рии категорий~\cite{10-vas, 11-vas}. 
+Кроме того, графовая структура отношений и~сетевая структура игровой задачи 
+допускают эффективную нейросетевую программную реализацию~\cite{6-vas, 7-vas, 12-vas, 13-vas}. 
+    
+    Категорный подход охватывает общий случай динамических игр многих лиц 
+    с~разнообразными классами допустимых стратегий игроков~\cite{5-vas, 11-vas}. 
+В~качестве со\-сто\-яний динамической системы рассматриваются со\-пут\-ст\-ву\-ющие 
+статические игры, связанные динамическим отношением.
+    
+    Традиционное моделирование игровой задачи проводится средствами 
+категории множеств SET. Естественным обобщением классического подхода 
+становится формализация игровой операции, вы\-пол\-ня\-емая на языке моноидальной 
+категории бинарных отношений REL. Применяемый аппарат позволяет 
+единообразно выражать и~модифицировать интересы агентов, проводить 
+эквивалентные преобразования игровой задачи, описывать поиск рационального 
+решения~\cite{5-vas}. С~по\-мощью введения ДРО игры исследование ДМАС может быть сведено 
+к~последовательной максимизации ДРО.
+    
+    Итак, вместо многошагового процесса игры предлагается перейти 
+    к~представлению динамики задачи с~по\-мощью функтора $\tau: S\hm\to \mathrm{SET}_T$, 
+который преобразует вы\-би\-ра\-емую шкалу~$S$ в~категорию $\mathrm{SET}_T$ монады 
+$(T,\eta,\psi)$, $T: A\hm\to 2^A$~\cite{11-vas}. Объектами монады служат конечные 
+множества, а~морфизмами~--- отношения между ними. Равенство $\mathrm{SET}_T\hm=\mathrm{REL}$ 
+означает, что функторная модель ДМАС строится на языке отношений. 
+Единообразно выражаются правила игры, интересы участников, классы стратегий 
+агентов, динамика задачи и~даже алгоритм ее решения. Строгость функтора 
+вложения $\mathrm{SET}\hm\to \mathrm{SET}_T$ обеспечивает пре\-емст\-вен\-ность новой формы 
+пред\-став\-ле\-ния задачи и~классической.
+    
+    Функтор $\tau$ порождает динамическое отношение игры $R\hm= R(\tau)$, 
+регламентирующее смену со\-сто\-яний~--- ре\-ша\-емых в~текущий момент времени 
+статических подыгр $\Gamma(X)$ с~множеством \mbox{до\-пус\-ти\-мых} ситуаций~$X$. 
+Динамическое отношение определяет по\-сле\-до\-ва\-тель\-ность смены со\-сто\-яний 
+$\Gamma(X_0), \ldots , \Gamma(X_T)$ и~вводит отношение предшествования подыгр 
+$\Gamma(X)\overset{R}{\prec} \Gamma(Y)$. В~соответствии с~ним определена 
+преемственность ситуаций $x\overset{R}{\prec} y$, причем выбор любой пары 
+ситуаций $x\hm\in X$ и~$y\hm\in Y$, относящихся к~разным состояниям системы, 
+возможен, только если выполнено включение $(x,y)\hm\in R$. Таким образом, из 
+решений подзадач $\Gamma(X_0), \ldots , \Gamma(X_T)$ строится 
+по\-сле\-до\-ва\-тель\-ность $x_0, \ldots , x_T$ вы\-би\-ра\-емых ситуаций подобно тому, как это 
+делается в~многошаговых играх с~по\-мощью уравнений. 
+    
+    Интересы агентов в~задаче заданы в~форме отношений предпочтения для 
+терминального со\-сто\-яния сис\-те\-мы~$\Gamma(X^T)$: 
+    \begin{equation}
+    \tilde{\rho}^{kT} \in \mathrm{REL} \left( X^T, X^T\right)\,,\enskip k\in K\,.
+    \label{e1.1-vas}
+    \end{equation}
+    
+    Правила функционирования ДМАС формулируются во всех подыграх 
+$\Gamma(X_i)$. Во-пер\-вых, определены цели игроков~--- максимизация 
+отношений предпочтения $\rho_i^k\hm\in \mathrm{REL}\left( X_i, X_i\right)$, $k\hm\in 
+K(X_i)$, по\-лу\-ча\-емых из заданных~(\ref{e1.1-vas}) с~по\-мощью вы\-чис\-ле\-ния 
+обратных образов морфизмов~$\tilde{\rho}^{kT}$ относительно динамического 
+отношения~$R$. Во-вто\-рых, агенты выбирают классы допустимых стратегий 
+посредством графа коммуникаций и~функции, размечающей его дуги. Тем самым 
+задается сетевая структура в~статических подыграх~\cite{12-vas, 13-vas}. Разметка 
+графа детализирует информацию, которой обмениваются партнеры при совершении 
+ходов и~формировании коалиций~\cite{5-vas}. Стратегии агентов в~исходной 
+динамической задаче включают процедуру принятия решений в~каж\-дом состоянии 
+сис\-темы. 
+    
+    Далее изучено композициональное стро\-ение динамического результирующего 
+отношения игры, поз\-во\-ля\-ющее искать рациональное решение, т.\,е.\ такое, которое 
+оптимизирует функционирование ДМАС. Поиск проводится методом 
+динамического программирования, обоб\-щен\-ным на задачи оптимального 
+управ\-ле\-ния, по\-став\-лен\-ные в~форме отношений. 
+
+\section{Постановка задачи}
+
+    В качестве шкалы~$S$ выберем категорию 
+    \begin{equation}
+ S: L \overset{\underset{\mathrm{out}}{\longrightarrow}}{\underset{\overset{\mathrm{in}}{\longrightarrow}}
+ {\vphantom{{\mbox{\scriptsize{$\circ$}}}} \ }} M\,.
+    \label{e2.1-vas}
+    \end{equation}
+    
+    Динамику мультиагентной системы зададим функтором $\tau: S\hm\to \mathrm{SET}_T$, 
+которому отвечает ориентированный граф динамического отношения~$\Gamma_R$, 
+$R\hm=R(\tau)$. Граф должен быть ацик\-ли\-че\-ским и~связ\-ным. В~его вершинах 
+находятся множества до\-пус\-ти\-мых ситуаций статических подыгр~$\Gamma(X_i)$, 
+а~дуги отвечают отношениям $R_{ij}\hm\in \mathrm{REL}\left( X_i, X_j\right)$. 
+    
+    \smallskip
+    
+    \noindent
+    \textbf{Определение~2.1.}\  Скажем, что ситуация $x_i\hm\in X_i$ 
+непосредственно предшествует ситуации $x_j\hm\in X_j$, если и~только если $(x_i, 
+x_j)\hm\in R_{ij}$. Отношением предшествования со\-сто\-яний назовем транзитивное 
+замыкание $\overline{R}\hm= \overline{R}_{ij}$ динамического отношения. 
+    
+    \smallskip
+    
+    Последовательная смена состояний ДМАС происходит в~соответствии 
+с~отношением непосредственного предшествования $\Gamma(X_i) 
+\overset{R_{ij}}{\prec} \Gamma(X_j)$. Каж\-до\-му со\-сто\-янию соответствует некоторая 
+\mbox{статическая} подыгра. Процесс функционирования сис\-те\-мы складывается из 
+последовательного выбора игроками ситуаций $x_0, \ldots , x_T$, где  
+$x_0$ и~$x_T$~--- решения начальной и~терминальной подыгр. Итак, имеем 
+множество всех допустимых ситуаций исходной динамической задачи вида
+ \begin{multline*}
+    \tilde{X} ={}\\
+    {}=\!\left\{\! \tilde{x} =\left( x_0, \ldots , x_T\right): \left( \forall_i x_i\in 
+X_i\right) \wedge x_0\overset{R}{\prec} \cdots \overset{R}{\prec} x_T\!\right\}\!.\hspace*{-5.73415pt}
+    \end{multline*}
+    
+    Правила проведения каждой подыгры $\Gamma(X_i)$ задаются сле\-ду\-ющим 
+функтором и~функ\-цией: 
+    \begin{equation}
+    g_i: S\to \mathrm{SET}\,;\enskip h_i: E\to \overline{2}\,.
+    \label{e2.2-vas}
+    \end{equation}
+Игроки стремятся по возможности максимизировать свои отношения предпочтения 
+$\rho_l^k: X_l\hm\to X_l$,\linebreak $k\hm\in K_l$. (Иначе рас\-смат\-ри\-ва\-ют\-ся противоположные 
+отношения $(\rho_i^k)^{\mathrm{op}}$.) Функторы~(\ref{e2.1-vas}) и~(\ref{e2.2-vas}) 
+опре\-де\-ля\-ют сетевую структуру игры. Шкала~$S$ выделяет множество дуг~$E$, по 
+которым участники\linebreak $k\hm\in K(X_i)$ статической игры осуществляют 
+коммуникацию. Функциями in и~out в~(\ref{e2.1-vas}) вводят порядок ходов. 
+Функция~$h_i$ из формулы~(\ref{e2.2-vas}) осуществляет разметку дуг графа 
+коммуникаций~$\gamma_i$, определяя данные, которыми обмениваются игроки при 
+своих ходах~\cite{5-vas}. Не\-пус\-тые сообщения могут содержать либо выбранную 
+стра\-те\-гию-конс\-тан\-ту, либо стра\-те\-гию-функ\-цию~\cite{1-vas, 5-vas}. 
+Предполагается так\-же, что никто из агентов не блефует. 
+    
+    Понятие рационального поведения игроков зависит от сетевой 
+структуры~(\ref{e2.2-vas}) статических игр~\cite{5-vas, 12-vas, 13-vas}. Будем 
+применять принцип равновесия как к~исходной динамической задаче, так и~ко всем 
+по отдельности подыграм~$\Gamma(X_i)$.
+    
+    \smallskip
+    
+    \noindent
+    \textbf{Пример~2.1.}\ Рассмотрим функтор~(\ref{e2.1-vas}), которому отвечает 
+граф
+    \begin{equation}
+    \Gamma_R: \mbox{\fbox{$X_1$}} \xrightarrow{R_{12}} \mbox{\fbox{$X_2$}} 
+\xrightarrow{R_{23}} \cdots \xrightarrow{R_{n-1,n}} \mbox{\fbox{$X_n$}}\,.
+    \label{e2.3-vas}
+    \end{equation}
+    
+    Функции out и~in определяют начало $X_i\hm\in M$ и~конец $X_j\hm\in M$ 
+каж\-дой дуги, обозначенной стрелкой $R_{i,i+1}\hm\in L$. В~моменты времени 
+$i\hm= 1,2,\ldots , n$ решаются игры~$\Gamma(X_i)$.
+    
+    Схема~(\ref{e2.3-vas}) свойственна многошаговым опе\-ра\-циям.
+    
+    \smallskip
+    
+    \noindent
+    \textbf{Пример~2.2.}\ Пусть в~позиционной многошаговой игре двух лиц 
+известна сле\-ду\-ющая динамическая сис\-те\-ма, начальное условие и~фазовое 
+ограничение:
+    \begin{gather*}
+    \left\{
+    \begin{array}{c}
+    y_{t+1}^1 =y_t^1+u_t^1\,;\\[6pt]
+    y_{t+1}^2 = y_t^2-u_t^2\,;
+    \end{array}
+    \right.\\[2pt]
+    y_0^1 =0\,,\enskip y_0^2 =0\,;\\[2pt]
+    \left\vert y_t^1 -y_t^2\right\vert \leq 2\,,\enskip t=\overline{0, T}\,.
+    \end{gather*}
+Агенты $k=1, 2$ стремятся по возможности максимизировать функции выигрыша
+\begin{equation*}
+J_1=-\sum\limits_{t=1}^{T-1} y_t u_t^1;\quad J_2= \sum\limits_{t=1}^{T-1} y_t u_t^2,
+\end{equation*}
+где
+$$
+y_t=y_t^1 - y_t^2,\quad u_t^k \in U_0\equiv \{ -1, 0, 1\}.
+$$
+    
+    Интересы игроков $\tilde{\rho}^k \hm\in \mathrm{REL}( \tilde{X}, 
+\tilde{X})$~(\ref{e1.1-vas}) заданы функционалами~$J_k$. В~статических 
+подыг\-рах~$\Gamma(X_t)$, $X_t\hm= \cup y_t X(y_t)$, $X_0\hm= U_0^2$, с~по\-мощью 
+функций $f^1\hm= -y_t u_t^1$, $f^2\hm= y_t u_t^2$ введем отношения предпочтения 
+игроков~$\rho_t^k$. Видно, что интересы участников подыгр противоположны 
+$\rho_t^2\hm= \rho_t^{1\mathrm{op}}$, а~множества допустимых ситуаций расслоены 
+в~за\-ви\-си\-мости от позиций $y_t\hm= y_t^1\hm- y_t^2$, $\vert y_t\vert \hm\leq 2$, 
+в~которых может пребывать динамическая сис\-те\-ма. Ситуация $(u_t^1, u_t^2)\hm\in 
+X(y_t)$ допустима, только если ее выбор не нарушает заданное фазовое 
+ограничение. 
+    
+    Во все моменты времени отношения предпочтения $\rho_t^k(y_t): X(y_t) \hm\to 
+X(y_t)$, $k\hm=1,2$,  одинаковы: $\rho_t^k \hm= \rho_1^k$, $X_t\hm= X_1$, $t\hm= 
+\overline{1,T-1}$, причем
+    $$
+    \rho_t^k\triangleq \bigcup\limits_{y_t} \rho_t^k (y_t).
+    $$
+
+    
+    Вычисления показывают, что при $t\hm= \overline{1, T-1}$ имеем
+    
+    \vspace*{-8pt}
+    
+    \noindent
+    \begin{multline*}
+    X_t=\coprod\limits^2_{y_t=-2} X(y_t),\ X(\pm 2) = \{ (\pm 1,\pm1)\},\\
+     X(\pm1) = \{ (\pm1,0), (0,\pm1)\},\\
+      X(0)=\{ (1,-1), (0,0), (-1,1)\}\,;
+    \end{multline*}
+    
+    \vspace*{-13pt}
+    
+    \noindent
+    \begin{multline*}
+    \rho_t^1(0): (0,-1)\sim (-1,0) \sim (0,0),\\
+     \rho_t^1(1)=\{ ((0,-1), (-1,0))\},\\
+    \rho^1_t(-1) =\{ ((-1,0), (0,-1))\}\,,\\ 
+    \rho_1^1(\pm2) =\{ (\pm 1, \pm1)\}.
+    \end{multline*}
+    
+    \vspace*{-4pt}
+    
+    Динамическое отношение игры, равное $R_{t,t+1}: X_t\hm\to X_{t+1}$, $t\hm= 
+\overline{1, T-1}$, связывает до\-пус\-ти\-мую текущую $u_m\hm\equiv (u_m^1, u_m^2) 
+\hm\in X(y_m)$ и~выбираемую сле\-ду\-ющую $u_{m+1}\hm\in X(y_{m+1})$ ситуации 
+в~состояниях сис\-те\-мы $\Gamma(X_m)$, $m\hm= t, t\hm+1$. Таким образом, 
+отношение непосредственного пред\-шест\-во\-ва\-ния ситуаций определено включением
+    $$
+    u_t \xrightarrow{R_{tt+1}} u_{t+1},\ u_{t+1} \in X(y_{t+1}),\ y_{t+1} \!=\! y_t+\left( 
+u_t^1+ u_t^2\right).
+    $$
+    
+    \vspace*{-2pt}
+    
+    Пусть сетевая структура~(\ref{e2.2-vas}) такова, что во всех играх 
+$\Gamma(X_t)$ один из участников сообщает другому свое управ\-ля\-ющее 
+воздействие~$u_t^k$. Тогда рациональное решение игры состоит в~выборе 
+ситуации, ста\-би\-ли\-зи\-ру\-ющей траекторию сис\-те\-мы $y_t\hm\equiv 0$, а~многошаговая 
+игра имеет седловые точки  $\forall_t u_t^1 \hm= -u_t^2$.
+    
+    При поиске рационального решения игровых задач применяются 
+вспомогательные морфизмы, стро\-ящи\-еся из исходных~(\ref{e1.1-vas}) с~по\-мощью 
+операций алгебры отношений $A\hm= \left( \circ, \cup, \cap, {}^{\mathrm{op}}, \times; 
+\sigma,\varnothing \right)$~\cite{5-vas, 10-vas, 11-vas}. Получение ка\-ким-ли\-бо 
+игроком дополнительной информации уменьшает неопределенность выбора 
+подходящей стратегии (см.\ пример~2.2). Выбор сетевой структуры  
+игры~(\ref{e2.2-vas}) изменяет отношения предпочтений участников~$\rho$. Игроки 
+руководствуются сужениями $\rho\vert_A\hm= \rho \cap A^2$, $A\hm\subset X$, 
+исходных отношений~$\rho$ на некоторые, вполне определенные подмножества 
+ситуаций. 
+    
+    При условии сделанных предположений граф динамического отношения 
+содержит минимальные и~максимальные элементы~--- вершины $X^0$ и~$X^T$ 
+(см.~пример~2.1). Процесс функционирования ДМАС начинается с~решения 
+статических \mbox{подыгр}~$\Gamma(X^0)$ и~заканчивается подзадачами~$\Gamma(X^T)$. 
+Они названы начальным и~терминальным со\-сто\-яни\-ями сис\-те\-мы соответственно. 
+В~отличие от примера~2.2, в~рас\-смат\-ри\-ва\-емой по\-ста\-нов\-ке задаются терминальные 
+отношения предпочтения агентов~(\ref{e1.1-vas}).
+
+     \begin{figure*}[b] %fig1
+\vspace*{1pt}
+\begin{minipage}[t]{79mm}
+\begin{center}  
+    \mbox{%
+\epsfxsize=17.323mm 
+\epsfbox{vas-1.eps}
+}
+\end{center}
+\end{minipage}
+\hfill
+\vspace*{1pt}
+\begin{minipage}[t]{79mm}
+\begin{center}
+     \mbox{%
+\epsfxsize=25.462mm 
+\epsfbox{vas-2.eps}
+}
+\end{center}
+\end{minipage}
+\begin{minipage}[t]{79mm}
+\vspace*{-12pt}
+\Caption{Образ $r=R\circ r^\prime$ и~обратный образ $r^\prime \hm= R^{\mathrm{op}}\circ r$ 
+относительно функтора~$R$}
+\end{minipage}
+%\end{figure*}
+\hfill
+% \begin{figure*} %fig3.2
+      \begin{minipage}[t]{79mm}
+      \vspace*{-12pt}
+           \Caption{Граф $\Gamma_R$ динамического отношения~$R$: $R_{ij}\hm\in \mathrm{REL}\,(X_i, X_j)$ }
+     \label{f3.2-vas}
+     \end{minipage}
+%     \vspace*{-24pt}
+     \end{figure*} 
+
+    
+    Рациональное поведение игроков заключается в~том, что они стремятся 
+максимизировать свои 
+ предпочтения на множестве всех допустимых ситуаций:
+    \begin{equation}
+    \forall_k \tilde{\rho}^{kT} \to \mathop{\mathrm{MAX}}\limits_{\tilde{X}}\,.
+    \label{e2.4-vas}
+    \end{equation}
+В~задаче~(\ref{e1.1-vas}), (\ref{e2.1-vas}), (\ref{e2.2-vas}), (\ref{e2.4-vas}) требуется 
+найти ситуацию равновесия~\cite{1-vas, 5-vas}. 
+    
+    Существование равновесия во многом зависит от свойств 
+морфизмов~$\rho_i^k$, $k\hm\in K$. Наложим одно из таких требований. Пусть 
+партнеры предлагают некоторому игроку~$k$ принять решение в~ситуации~$s$, для 
+которой $\rho_i^k\vert_{s_k} \hm= \varnothing$, $s\hm\in X_i$. Предполагается, что 
+возникшую неопределенность выбора каж\-дый игрок $k\hm \in K$ разрешит  
+с~по\-мощью изменения своего отношения предпочтения, положив 
+$\rho_i^k\vert_{s_k} \hm= \{ s\}$. (Игрок соглашается с~выбором ситуации~$s$.) Это 
+требование выполняется для рефлексивных отношений.
+    
+\section{Эквивалентные преобразования динамических~игр}
+
+    Категорное представление допускает применение моноидальных операций для 
+преобразования игровой задачи~\cite{11-vas}. Морфизмы $R: \mathrm{REL}\left(Y\right)\hm\to 
+\mathrm{REL}\,(X)$ представляют собой функторы, срав\-ни\-ва\-ющие однообъектные 
+подкатегории в~категории REL. Образ морфизма $\rho\hm\in \mathrm{REL}\,(Y,Y)$ 
+относительно~$R$ будем записывать как композицию $R\circ \rho \hm\in \mathrm{REL}\,(X,X)$.
+    
+    \smallskip
+    
+    \noindent
+    \textbf{Определение~3.1.} Обратным образом (или кообразом) отношения $r: 
+X\hm\to X$ относительно морфизма $R: Y\hm\to X$ назовем стрелку $r^\prime: 
+Y\hm\to Y$, превращающую сле\-ду\-ющий квад\-рат в~коммутативный  
+(рис.~1).
+    
+    
+     
+     
+    Ввиду того что морфизм $R^{\mathrm{op}} \hm\in \mathrm{REL}\,(X,Y)$ сохраняет композиции 
+стрелок, он сам становится функтором $R^{\mathrm{op}}: \mathrm{REL}\,(X)\hm\to \mathrm{REL}\,(Y)$. Так как 
+$\forall_{ij} (x,y) \hm\in R_{ij}^{\mathrm{op}} \hm\Leftrightarrow  (y,x)\hm\in R_{ij}$, то 
+назовем~$R^{\mathrm{op}}$ противоположным к~$\{ R_{ij}\}$ динамическим отношением. 
+Его можно изобразить, изменив на\-прав\-ле\-ния всех дуг в~графе~$\Gamma_R$ 
+(вертикальных стрелок на рис.~1). 
+
+
+
+
+    
+    Пусть вершины $X_1$ и~$X_l$ графа динамического отношения~$\Gamma_R$ 
+связаны некоторым путем $L\hm= (X_1, \ldots, X_l)$. Взяв композицию $R_L\hm= 
+R_{l-1}\circ\cdots\linebreak \cdots \circ R_1$ морфизмов $R_i\hm \in \mathrm{REL}\,(X_i, X_{i+1})$ вдоль цепи
+$L\hm= (X_1, \ldots , X_l)$, мож\-но <<опустить>> произвольное бинарное отношение 
+$r_l: X_l\hm\to X_l$ с~$X_l$ на множество~$X_1$ и~по\-стро\-ить его обратный образ 
+$r_1\hm= R_L^{\mathrm{op}} \circ r_l$.
+    
+    Пусть теперь множество $\{ L\hm= (X_1, \ldots , X_l)\}$ всех попарно 
+различных путей, свя\-зы\-ва\-ющих вершины $X_1$ и~$X_l$, состоит более чем из одного 
+элемента. Под обратным образом отношения $\rho_l: X_l\hm\to X_l$, переносимого 
+на множество~$X_1$, будем понимать копроизведение
+    \begin{multline}
+    \rho_1^\prime =R^{\mathrm{op}}\circ \rho_l =\coprod\limits_{\{L\}} R_L^{\mathrm{op}} \circ 
+\rho_l;\\
+ \rho_1^\prime: \coprod\limits_{\{ L\}} X_1\to \coprod\limits_{\{L\}} X_1\,.
+    \label{e3.1-vas}
+    \end{multline}
+    
+    <<Поднятием>> морфизма~$\rho_1$ вдоль путей $\{L\}$ мож\-но по\-стро\-ить 
+образ $\rho_L\hm= R\circ \rho_1$. Это отношение $\coprod_{\{L\}} R_L\circ \rho_1$ на 
+копроизведении объектов $\coprod_{\{L\}} X_l$ с~числом сомножителей, рав\-ным 
+мощ\-ности набора~$\{L\}$.
+    
+    По формуле~(\ref{e3.1-vas}) заданные в~терминальных со\-сто\-яни\-ях сис\-те\-мы 
+морфизмы~(\ref{e1.1-vas}) переносятся во все остальные со\-сто\-яния. Так вводятся 
+отношения предпочтения игроков~$\rho_i^k$ в~играх~$\Gamma(X_i)$:
+    \begin{equation*}
+    \forall_{ik} \rho_i^k =R^{\mathrm{op}}\circ \tilde{\rho}_i^{kT}.
+%    \label{e3.2-vas}
+    \end{equation*}
+    
+    \noindent
+    \textbf{Замечание~3.1.}\ Общее определение кообраза~(\ref{e3.1-vas}) мож\-но 
+заменить двойственной конструкцией, основанной на произведении 
+отношений~\cite{11-vas}: 
+    \begin{equation}
+    \rho^{\prime\prime} \!=\!R^{\mathrm{op}} \circ \rho \!=\!\prod\limits_{\{L\}} R^{\mathrm{op}}_L \circ \rho\,;\ \rho\! =\!R\circ \rho^{\prime\prime}= 
+\prod\limits_{\{L\}} R_L\circ \rho^{\prime\prime}\!.\!
+    \label{e3.3-vas}
+    \end{equation}
+Получим морфизмы~(\ref{e3.3-vas}) вида 
+$$
+\rho: \prod\limits_{\{L\}} X_1\to \prod\limits_{\{L\}} X_1,\ \rho^{\prime\prime}: \prod\limits_{\{L\}} X_l\to \prod\limits _{\{L\}} X_l.
+$$
+
+    \smallskip
+    
+    \noindent
+    \textbf{Пример~3.1.}\ Воспользуемся формулой~(\ref{e3.1-vas}) 
+применительно к~ДМАС, пред\-став\-лен\-ной на рис.~2. 
+    
+    % \end{multicols}
+     
+
+
+     
+  %   \begin{multicols}{2}
+    
+     
+Кообразом $R^{\mathrm{op}}\circ \rho_4$ отношения $\rho_4: X_4\hm\to X_4$ служит морфизм 
+\begin{multline*}
+\rho_1^\prime: X_1\coprod X_1 \to X_1\coprod X_1;
+\\
+\rho_1^\prime =\left( R_{13}^{\mathrm{op}} \circ R_{34}^{\mathrm{op}}\coprod R_{12}^{\mathrm{op}} \circ 
+R_{24}^{\mathrm{op}}\right)\circ \rho_4.
+\end{multline*}
+Опуская~$\rho_4$ на множества $X_2$ и~$X_3$, получим $\rho_2^\prime \hm= 
+R_{24}^{\mathrm{op}} \circ \rho_4$, $\rho_3^\prime\hm= R_{34}^{\mathrm{op}} \circ \rho_4$ 
+соответственно. Поднятием отношения $\rho_1^\prime: X_1\hm\to X_1$ на 
+множество~$X_4$ строится образ  $R\circ \rho_1^\prime$ как
+\begin{multline*}
+\rho_4: X_4\coprod X_4 \to X_4\coprod X_4\,;\\
+ \rho_4=\left( R_{24}\circ R_{12} \coprod 
+R_{34} \circ R_{13}\right) \circ \rho_1^\prime.
+\end{multline*}
+    
+    Конструкция~(\ref{e3.3-vas}) дает структуру
+\begin{multline*}
+    \rho_4: X_4\times X_4 \to X_4\times X_4\,;\\
+     \rho_4=\left( R_{24}\circ R_{12} \prod 
+R_{34} \circ R_{13}\right) \circ \rho_1^{\prime\prime}.
+\end{multline*}
+    
+    Формулы~(\ref{e3.1-vas}) и~(\ref{e3.3-vas}) позволяют строить эквивалентные 
+модели игры. Свойство универсальности объектов $X_2\times X_3$ и~$X_2\coprod 
+X_3$, вы\-ра\-жа\-емое по\-средст\-вом коммутативных диаграмм~\cite{11-vas}, однозначно 
+определяет новое динамическое отношение с~со\-от\-вет\-ст\-ву\-ющи\-ми морфизмами. 
+Например, вместо графа из рис.~2 мож\-но работать с~более прос\-той 
+графовой структурой, пред\-став\-лен\-ной в~любой из сле\-ду\-ющих форм:
+    \begin{gather}
+    \mbox{\fbox{$X_1$}} \xrightarrow{\left\langle R_{12}, R_{13}\right\rangle} 
+\mbox{\fbox{$X_2\times X_3$}} \xrightarrow{\left\langle R_{24}^{\mathrm{op}}, 
+R_{34}^{\mathrm{op}}\right\rangle^{\mathrm{op}}} \mbox{\fbox{$X_4$}}\,;
+    \label{e3.4-vas}\\
+    \mbox{\fbox{$X_1$}} \xrightarrow{[ R_{12}, R_{13}]^{\mathrm{op}}} 
+\mbox{\fbox{$X_2\coprod X_3$}} \xrightarrow{[ R_{24}, R_{34}]} 
+\mbox{\fbox{$X_4$}}\,.
+    \label{e3.5-vas}
+    \end{gather}
+Возможность эквивалентного перехода от произвольного графа~$\Gamma_R$ (см.\ 
+рис.~2) к~цепи~(\ref{e2.3-vas}) (см.\ (\ref{e3.4-vas}) и~(\ref{e3.5-vas})) 
+обоснована в~тео\-ре\-ме~3.1. 
+    
+    \smallskip
+    
+    \noindent
+    \textbf{Теорема~3.1.} \textit{Граф всякого динамического отношения 
+приводится к~виду}~(\ref{e2.3-vas}).
+
+\vspace*{-6pt}
+
+\section{Результирующее отношение динамической игры}
+
+    Введением результирующего отношения игра сводится к~проблеме 
+оптимального управ\-ле\-ния, по\-став\-лен\-ной в~форме отношений. Для ее решения\linebreak 
+мож\-но применить обобщенный метод динамического программирования. 
+Напомним~\cite{5-vas}, что в~любой статической игре $\Gamma(Y)$ существует 
+ре\-зуль\-ти\-ру\-ющее отношение~$P_Y$. Оно выражает \mbox{композициональное} свойство 
+игры, учи\-ты\-ва\-ющее интересы всех участников операции, сетевую структуру их 
+взаимодействия и~ра\-ци\-о\-наль\-ность поведения. Решение игры $\Gamma(Y)$ сводится
+ к~поиску максимальных элементов $P_Y\hm\to \mathrm{MAX}_Y$. Благодаря\linebreak этому, мож\-но 
+по-но\-во\-му определить состояния \mbox{исходной} ДМАС. Вместо игр $\Gamma(X_i)$ 
+будем рас\-смат\-ри\-вать оптимизационные задачи $(\tilde{X}_i, P_{\tilde{X}_i})$, 
+$P_{\tilde{X}_i} \hm\in \mathrm{REL}\,(\tilde{X}_i, \tilde{X}_i)$. Иначе говоря, теперь во всех 
+со\-сто\-яни\-ях сис\-те\-мы решение принимает единственный агент. 
+    
+    %\smallskip
+    
+    \noindent
+    \textbf{Определение~4.1.}\ Пусть $(\tilde{Y}_1, P_{\tilde{Y}_1} ) 
+\overset{R}{\prec} (\tilde{Y}_2, P_{\tilde{Y}_2})$; $\tilde{y}_1, \tilde{y}_2 \hm\in 
+\tilde{Y}_1$. Ситуация~$\tilde{y}_2$ называется более перспективной по сравнению 
+с~$\tilde{y}_1$, если выполнено свойство
+    \begin{equation}
+    \left( \tilde{y}_1, \tilde{y}_2\right) \in \left( R^{\mathrm{op}}\circ P_{\tilde{Y}_2} \right)\circ 
+P_{\tilde{Y}_1}.
+    \label{e4.1-vas}
+    \end{equation}
+    
+    В каждом состоянии ДМАС игрокам целесообразно использовать более 
+перспективные ситуации и~из них формировать рациональное решение 
+задачи~(\ref{e1.1-vas}), (\ref{e2.1-vas}), (\ref{e2.2-vas}), (\ref{e2.4-vas}). В~этом 
+заключается прин\-цип Бел\-лмана. 
+    
+    В случае динамического отношения с~графом~(\ref{e2.3-vas}) (см.\ 
+тео\-ре\-му~3.1) рас\-смот\-рим сле\-ду\-ющую итерационную схему по\-стро\-ения 
+<<оп\-ти\-ми\-зи\-ру\-ющих>> морфизмов $\{ \tilde{P}_{\tilde{X}_k}\}$:
+
+\vspace*{-4pt}
+
+\noindent
+    \begin{multline}
+    \tilde{P}_{\tilde{X}_T} =P_{X_T},\ \tilde{P}_{\tilde{X}_{T-k}} =\left( 
+R^{\mathrm{op}}\circ \tilde{P}_{\tilde{X}_{T-k+1}}\right) \circ P_{\tilde{X}_{T-k}},\\
+    k=\overline{1, T}\,.
+    \label{e4.2-vas}
+    \end{multline}
+    
+    \vspace*{-4pt}
+
+\noindent
+Назовем~(\ref{e4.2-vas}) уравнениями Беллмана в~форме отношений. 
+    
+    \smallskip
+    
+    \noindent
+    \textbf{Определение~4.2.} Динамическим ре\-зуль\-ти\-ру\-ющим отношением 
+называется семейство морфизмов Беллмана $\{ \tilde{P}_{\tilde{X}_k},\ k\hm= 
+\overline{1, T}\}$ из уравнений~(\ref{e4.2-vas}).
+    
+    \smallskip
+    
+    \noindent
+    \textbf{Теорема~4.1.} \textit{Во всякой ДМАС существует ре\-зу\-ль\-ти\-ру\-ющее 
+отношение.}
+    
+    \smallskip
+    
+    \noindent
+    Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ Построение ДРО проведем методом 
+математической индукции. На начальном шаге, в~терминальном со\-сто\-янии сис\-те\-мы, 
+ДРО совпадает с~ре\-зуль\-ти\-ру\-ющим отношением $\tilde{P}_{X^T} \triangleq 
+P_{X^T}$, $\tilde{X}^T\hm= X^T$, статической игры~$\Gamma(X^T)$. Опус\-тим 
+этот морфизм на все множества $\tilde{X}^{T-1}$, для которых имеет мес\-то 
+непосредственное предшествование $\Gamma(\tilde{X}^{T-1}) \overset{R}{\prec} 
+\Gamma(\tilde{X}^T)$. Композиция морфизмов~(\ref{e4.1-vas}), $\tilde{Y}_1\hm= 
+\tilde{X}^{T-1}$, $\tilde{Y}_2\hm= \tilde{X}^T$, определяет компоненту ДРО 
+$\tilde{P}_{\tilde{X}^{T-1}}$, от\-ве\-ча\-ющую со\-сто\-янию сис\-те\-мы $(\tilde{X}^{T-1}, 
+P_{\tilde{X}^{T-1}})$. Пусть отношение~$\tilde{P}_{\tilde{X}_i}$ уже построено. 
+Тогда опять по формуле~(\ref{e4.1-vas}) его можно продолжить на все со\-сто\-яния 
+$\Gamma(\tilde{X}_j) \overset{R_{ij}}{\prec} \Gamma(\tilde{X}_i)$ исходной ДМАС, 
+т.\,е.\ построить очередные морфизмы~$\tilde{P}_{\tilde{X}_j}$. Процесс 
+завершается в~начальных состояниях сис\-темы. 
+
+\vspace*{-11pt}
+
+\section{Поиск рационального решения игры}
+
+\vspace*{-1pt}
+
+    Для решения задачи~(\ref{e1.1-vas}), (\ref{e2.1-vas}), (\ref{e2.2-vas}),  
+(\ref{e2.4-vas}) предложим сле\-ду\-ющее обобщение метода динамического\linebreak 
+программирования. Сначала из системы уравнений Беллмана~(\ref{e4.2-vas}) 
+найдем ДРО игры. Затем последовательно для моментов времени $1,\ldots, T$ 
+вычислим сле\-ду\-ющие множества максимальных \mbox{элементов} отношения Беллмана:
+
+\pagebreak
+
+
+
+\noindent
+    \begin{multline}
+    X_1^*=\mathop{\mathrm{ARGMAX}}\,\tilde{P}_{\tilde{X}_1};\enskip 
+    X_2^*=\mathop{\mathrm{ARGMAX}}\limits_{RX_1^*}\, \tilde{P}_{\tilde{X}_2}; \ldots  \\
+\ldots ;    X_T^* = \mathop{\mathrm{ARGMAX}}\limits_{RX^*_{T-1}}\,\tilde{P}_{\tilde{X}_T}.
+       \label{e5.1-vas}
+    \end{multline}
+    
+\vspace*{-3pt}
+
+    \noindent
+    \textbf{Теорема~5.1.}\ \textit{Рациональному решению динамической игровой 
+задачи}~(\ref{e1.1-vas})--(\ref{e2.4-vas}) \textit{отвечает ситуация 
+$\tilde{x}^*\hm= (x_1^*, \ldots , x_T^*)$; $x_s^*\hm\in X_s^*$, $s\hm= \overline{1, T}$, 
+найденная методом Беллмана}~(\ref{e4.2-vas}), (\ref{e5.1-vas}).
+    
+    \smallskip
+    
+    \noindent
+    \textbf{Пример~5.1.} Графом~$\Gamma_R$~(\ref{e2.3-vas}), $n\hm=2$, 
+динамического отношения задана ДМАС 
+
+\vspace*{-4pt}
+
+\noindent
+    \begin{multline*}
+    R: (x_1, x_2, x_3) \to (x_3, x_1, x_1\vee x_2) \cup (x_2, x_3, x_1\wedge x_2);\\
+    x=(x_1, x_2, x_3)\in\underline{8}\simeq \{0,1\}^3.
+    \end{multline*}
+    
+    \vspace*{-3pt}
+    
+    \noindent
+Терминальная задача представляет собой игру Гермейера трех лиц 
+$\Gamma^{2,3}$~\cite{1-vas, 5-vas}, где $X^T\hm=\underline{8}$~--- бинарный куб. 
+Отношения предпочтений агентов $\tilde{\rho}_2^k \hm\in \mathrm{REL}\,(\underline{8},\underline{8})$ равны:
+\begin{align*}
+\tilde{\rho}_2^1 &=\{ 01, 05, 40, 34, 32, 76\};\\
+\tilde{\rho}_2^2&= \{ 02, 10, 24, 32, 35, 45, 64, 67\};\\
+\tilde{\rho}_2^3 &=\{ 20, 40, 35, 31, 64, 76\}.
+\end{align*}
+Найдем интересы игроков $\rho_1^k\hm= R^{\mathrm{op}}(\tilde{\rho}_2^k)$ в~начальном 
+состоянии сис\-те\-мы~$\Gamma^{1,3}$, $X^0\hm= \underline{8}$: 
+
+\vspace*{-4pt}
+
+\noindent
+\begin{multline*}
+\rho_1^1= \{ 01, 02, 03, 04, 06, 12, 13, 14, 16, 20, 21, 62, 63,\\
+ 64, 65, 72, 73, 74, 75\}\,;
+ \end{multline*}
+ 
+ \vspace*{-14pt}
+ 
+ \noindent
+ \begin{multline*}
+ \rho_1^2=\{ 03, 04, 05, 13, 14, 15, 20, 21,23, 26, 32, 40, 41,\\
+  42, 52, 61, 63, 64, 65, 71, 73, 74, 75, 76\};
+  \end{multline*}
+  
+  \vspace*{-14pt}
+ 
+ \noindent
+ \begin{multline*}
+\rho_1^3 = \{ 20, 21, 30, 31, 40, 41, 50, 51, 61, 62, 63, 64, 71,\\
+ 72, 73, 74, 76\}.
+\end{multline*}
+
+\vspace*{-5pt}
+
+\noindent
+Вычислим результирующие отношения статических подыгр $\Gamma(X^T)$, 
+$\Gamma(X^0)$ ~\cite{5-vas}:
+
+\vspace*{-4pt}
+
+\noindent
+\begin{multline*}
+P_{X^T} =\tilde{\rho}_1^3 \vert_{x_3} \circ \tilde{\rho}_1^2 \circ \left( \tilde{\rho}_1^1 
+\cup \tilde{\rho}_1^{2G}\right),\\
+\rho_{1}^{2G} =\tilde{\rho}_1^2 \vert_{\mathrm{MIN} \tilde{\rho}_1^2\vert_{{x_1}}}
+\Rightarrow P_{X^T} =\{ 40, 05, 42, 35, 30, 70\},\\
+P_{X^0} =\rho_1^1\vert_{x_1} \circ \rho_1^2\vert_{x_2}\circ\rho_1^3\vert_{x_3} =\{ 41, 53, 61, 73\}.
+\end{multline*}
+
+\vspace*{-4pt}
+
+\noindent
+Из уравнений Беллмана~(\ref{e4.2-vas}) найдем искомое ДРО игры:
+$$
+\tilde{P}_{X^T} =\{ 40, 05, 42, 35, 30, 70\},\ \tilde{P}_{X^0} = \{40, 00, 60, 70\}.
+$$
+
+\vspace*{-3pt}
+
+\noindent
+По формулам~(\ref{e5.1-vas}) и~тео\-ре\-ме~5.1 рациональное решение игры равно 
+$\tilde{x}^*\hm=(0,0)$.
+
+\vspace*{-12pt}
+
+\section{Заключение}
+
+\vspace*{-4pt}
+
+    Функторная модель стала наследником традиционной формы представления 
+ДМАС. Обладая композициональной структурой, она создает условия для 
+модификации игровой задачи и~выполнения эквивалентных преобразований 
+средствами алгебры тео\-рии категорий. Доказано существование ре\-зуль\-ти\-ру\-юще\-го 
+отношения динамической игры многих лиц. Для задач оптимального управ\-ле\-ния 
+в~форме динамических отношений предложено обобщение метода Беллмана.  
+С~по\-мощью ДРО этим методом строится рациональное решение задачи. 
+Функторный подход поддерживается компьютерной алгеброй тео\-рии категорий. 
+Сетевая архитектура применяемых морфизмов допускает эффективную 
+нейросетевую программную реализацию, которую еще только пред\-сто\-ит 
+осуществить. 
+
+\vspace*{-12pt}
+
+{\small\frenchspacing
+ {\baselineskip=10.6pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+\vspace*{-3pt}
+
+\bibitem{2-vas}
+\Au{Моисеев~Н.\,Н.} Элементы теории оптимальных сис\-тем.~--- М.: Наука, 1974. 526~с.
+
+\bibitem{1-vas} %2
+\Au{Гермейер~Ю.\,Б.} Игры с~непротивоположными интересами.~--- М.: Наука, 1976. 326~с.
+
+\bibitem{3-vas}
+\Au{Красовский Н.\,Н., Субботин~А.\,И.} Позиционные дифференциальные игры.~--- M.: Наука, 
+1976. 456~с.
+\bibitem{4-vas}
+\Au{Dockner E.\,J., Jorgensen~S., Long~N.\,V., Sorger~G.} Differential games in economics and management
+science.~--- Cambridge: Cambridge University 
+Press, 2000. 382~p. doi: 10.1017/CBO9780511805127.
+\bibitem{5-vas}
+\Au{Васильев Н.\,С.} Композициональное представление структуры игры многих лиц 
+в~моноидальной категории бинарных отношений~// Информатика и~её применения, 2023. Т.~17. 
+Вып.~2. С.~18--26. doi: 10.14357/19922264230203. EDN: GPMZTS.
+\bibitem{9-vas}  %6
+\Au{Dixit~A.\,K., Natebuff~B.\,J.} The art of strategy.~--- New York; London: W.\,W.~Norton~\&~Co., 
+2008. 446~p.
+
+\bibitem{7-vas}
+\Au{Shoham~Y., Leyton-Brown~R.} Multiagent systems: Algorithmic, game-theoretic, and logical 
+foundations.~--- Cambridge: Cambridge University Press, 2010. 532~p.
+\bibitem{6-vas} %8
+\Au{Bai~Q., Ren~F., Fujita~K., Znang~M.} Multi-agent and complex systems.~--- Studies in computational 
+intelligence ser.~--- Springer Singapore, 2016. Vol.~670. 210~p.
+\bibitem{8-vas} %9
+\Au{Dixit~A.\,K., Skeath~S., Reiley~W.\,W., Jr.} Games of strategy.~--- New York; London: 
+W.\,W.~Norton \&~Co., 2017. 880~p.
+
+\bibitem{10-vas}
+\Au{Скорняков Л.\,А.} Элементы общей алгебры.~--- М.: Наука, 1983. 272~с.
+
+%\pagebreak
+
+\bibitem{11-vas}
+\Au{Маклейн~С.} Категории для работающего математика~/ Пер.\ с~англ.~--- М.: Физматлит, 2004. 352~с. 
+(\Au{Mac Lane~S.} Categories for the working mathematician.~--- 2nd ed.~--- New York, NY, USA: 
+Springer, 1998. 318~p.)
+\bibitem{12-vas}
+\Au{Губко М.\,В.} Управление организационными системами с~сетевым взаимодействием агентов. 
+Обзор теории сетевых игр~// Автоматика и~телемеханика, 2004. №\,8. С.~115--132.
+\bibitem{13-vas}
+Group formation in economics: Networks, clubs, and coalitions~/ Eds.\ G.~Demange, M.~Wooders.~--- 
+Cambridge: Cambridge University Press, 2005. 475~p.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Поступила в~редакцию 02.02.24}}
+
+%\vspace*{6pt}
+
+\pagebreak
+
+%\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+
+
+\def\tit{ON FUNCTOR REPRESENTATION OF~OPTIMIZED\\ DYNAMIC~MULTIAGENT~SYSTEMS}
+
+
+\def\titkol{On functor representation of~optimized dynamic multiagent systems}
+
+
+\def\aut{N.\,S.~Vasilyev}
+
+\def\autkol{N.\,S.~Vasilyev}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-15pt}
+
+
+\noindent
+N.\,E.~Bauman Moscow State Technical University, 5-1~Baumanskaya 2nd Str., Moscow 105005, Russian 
+Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{4pt}
+
+
+
+\Abste{Functors' topoi is chosen as a computational tool for synthesizing dynamic multiagent systems (DMAS). The scale orders the objects as 
+multiagent system states to solve attendant static subgames in them. 
+The initial dynamic game and all static subproblems are represented in the monoidal category of binary relations. 
+Players' preference relations might be maximized in DMAS. The game rational solution is understood as
+ equilibrium. The 
+compositional structure of the optimized DMAS can be described in the form of the game dynamic resulting relation (DRR). 
+Players' rational behavior search is reduced to DRR subsequent maximization. For this purpose, the Bellman's method 
+is generalized to solve control problems stated in the form of relations. 
+The program implementation of the approach can be based on neural networks due to the consistency of the architectures 
+of the applied relation graphs and neural networks.}
+
+\KWE{functor category; compositionality; monoidal category; opposite image; game dynamic relation; 
+static subgame; preference relation; dynamic resulting relation; rational solution; Bellman morphism}
+
+\DOI{10.14357/19922264240201}{CLMBXC}
+
+%\vspace*{-12pt}
+
+%\Ack
+
+%\vspace*{-3pt}
+
+%    \noindent
+ 
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99} 
+
+\bibitem{2-vas-1}
+\Aue{Moiseev, N.\,N.} 1975. \textit{Elementy teorii optimal'nykh sistem} [Elements of optimal systems 
+theory]. Moscow: Nauka. 527~p.
+
+\bibitem{1-vas-1}
+\Aue{Germeyer, Yu.\,B.} 1976. \textit{Igry s~neprotivopolozhnymi interesami} [Games with  
+nonopposing interests]. Moscow: Nauka. 326~p.
+
+\bibitem{3-vas-1}
+\Aue{Krasovskiy, N.\,N., and A.\,I.~Subbotin.} 1974. \textit{Pozitsionnye differentsial'nye igry} 
+[Positional differential games]. Moscow: Nauka. 456~p.
+\bibitem{4-vas-1}
+\Aue{Dockner, E.\,J., S.~Jorgensen, N.\,V.~Long, and G.~Sorger.} 2000. \textit{Differential games in 
+economics and management science}. Cambridge: Cambridge University Press. 382~p. doi: 
+10.1017/CBO9780511805127.
+\bibitem{5-vas-1}
+\Aue{Vasilyev, N.\,S.} 2023. Kompozitsional'noe predstavlenie struktury igry mnogikh lits 
+v~monoidal'noy kategorii binarnykh otnosheniy [Multiplayers' games compositional structure in the 
+monoidal category of binary relations]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 
+ 17(2):18--26. doi: 10.14357/19922264230203. EDN: GPMZTS.
+ 
+ \bibitem{9-vas-1} %6
+\Aue{Dixit, A.\,K., and B.\,J.~Nalebuff.} 2008. \textit{The art of strategy}. New York, London: 
+W.\,W.~Norton \&~Co. 446~p.
+
+
+\bibitem{7-vas-1}
+\Aue{Shoham, Y., and R.~Leyton-Brown.} 2010. \textit{Multiagent systems: Algorithmic,  
+game-theoretic, and logical foundations}. Cambridge University Press. 532~p.
+
+\bibitem{6-vas-1} %8
+\Aue{Bai, Q., F.~Ren, K.~Fujita, and M.~Znang.} 2016. \textit{Multi-agent and complex systems}. Studies 
+in computational intelligence ser.  Springer Singapore. 210~p.
+
+\bibitem{8-vas-1} %9
+\Aue{Dixit, A.\,K., S.~Skeath, and D.\,H.~Reiley, Jr.} 2017. \textit{Games of strategy}. New York, 
+London: W.\,W.~Norton \&~Co.\linebreak 880~p.
+
+\bibitem{10-vas-1}
+\Aue{Skornyakov, L.\,A.} 1983. \textit{Elementy obshchey algebry} [Elements of general algebra]. 
+Moscow: Nauka. 272~p.
+\bibitem{11-vas-1}
+\Aue{Mac Lane, S.} 1998. \textit{Categories for the working mathematician}. 2nd ed. New York, NY: 
+Springer. 318~p. 
+\bibitem{12-vas-1}
+\Aue{Gubko, M.\,V.} 2004. Control of organizational systems with network interaction of agents. 
+II.~Stimulation problems. \textit{Automat. Rem. Contr.} 65(9):1470--1485. doi: 
+10.1023/B:AURC.0000041425.34118.7d. EDN: \mbox{LFMUCG}.
+\bibitem{13-vas-1}
+Demange, G., and M.~Wooders, eds. 2005. \textit{Group formation in economics: Networks, clubs, and 
+coalitions}. Cambridge: Cambridge University Press. 475~p. 
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-8pt}
+
+\hfill{\small\textit{Received February 2, 2024}} 
+
+\vspace*{-18pt}
+
+
+\Contrl
+
+\vspace*{-3pt}
+
+\noindent
+\textbf{Vasilyev Nikolai S.} (b.\ 1952)~--- Doctor of Science in physics and mathematics, professor, 
+N.\,E.~Bauman Moscow State Technical University, 5-1 Baumanskaya 2nd Str., Moscow 105005, Russian 
+Federation; \mbox{nik8519@yandex.ru}
+
+
+
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

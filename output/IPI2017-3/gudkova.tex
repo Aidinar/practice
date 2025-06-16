@@ -1,0 +1,954 @@
+\def\stat{gudkova}
+
+\def\tit{ВЕРОЯТНОСТНАЯ МОДЕЛЬ СОВМЕСТНОГО ИСПОЛЬЗОВАНИЯ РЕСУРСОВ 
+БЕСПРОВОДНОЙ СЕТИ С~АДАПТИВНЫМ УПРАВЛЕНИЕМ МОЩНОСТЬЮ$^*$}
+
+\def\titkol{Вероятностная модель совместного использования ресурсов 
+беспроводной сети с~адаптивным управлением} % мощностью}
+
+\def\aut{И.\,А.~Гудкова$^1$, С.\,Я.~Шоргин$^2$}
+
+\def\autkol{И.\,А.~Гудкова, С.\,Я.~Шоргин}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Гудкова И.\,А.}
+\index{Шоргин С.\,Я.}
+\index{Gudkova I.\,A.}
+\index{Shorgin S.\,Ya.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Исследование выполнено при финансовой поддержке Российского научного фонда (проект 16-11-10227).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Российский университет дружбы народов;
+ Институт проблем информатики Федерального исследовательского 
+центра <<Информатика и~управление>> Российской академии наук, \mbox{gudkova\_ia@rudn.university}}
+
+\footnotetext[2]{Институт проблем информатики Федерального исследовательского центра <<Информатика 
+и~управление>> Российской академии наук, \mbox{sshorgin@ipiran.ru}}
+
+\vspace*{18pt}
+
+
+
+\Abst{Развивающиеся беспроводные сети последующего поколения 
+(next generation 
+network, NGN)
+предполагают новые 
+приложения и~услуги как для обычных пользователей, так и~для устройств межмашинного 
+взаимодействия (machine-to-machine, M2M). Решение проблемы увеличения требований 
+к~пропускной способности сети и~недостаточности спектра радиочастот, в~частности 
+в~случае умных городов, может быть достигнуто посредством концепции совместного 
+использования радиочастот (licensed shared access, LSA). Авторы предлагают 
+математическую модель совместного использования ресурсов с~адаптивным управ\-ле\-ни\-ем 
+мощностью. Заложенный в~ней алгоритм позволит избежать интерференции M2M-устройств с~владельцем спектра, в~том числе благодаря тому, что учитывает пространственное 
+расположение устройств и~их сессионную активность.}
+ 
+\KW{беспроводная сеть; умный город; межмашинное взаимодействие; совместное 
+использование радиочастот; адаптивное управление мощностью; случайный процесс; 
+рекуррентный алгоритм; вероятность блокировки; вероятность прерывания обслуживания; 
+среднее число устройств}
+
+\DOI{10.14357/19922264170310} 
+
+\vspace*{6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+  Согласно прогнозам развития сетей по\-сле\-ду\-юще\-го поколения, 
+  уже в~2025~г.\ беспроводные сети будут перегружены~[1], что 
+повлечет за собой необходимость уточнения и~разработки новых стратегий 
+использования спектра радиочастот~[2]. Широкое распространение получают 
+автономно функционирующие и~взаимодействующие друг с~другом  
+(М2М) недорогие устройства, являющиеся неотъемлемой 
+частью <<умных городов>> (smart city). Особенностью M2M-устройств 
+является их дистанционное управ\-ле\-ние и~высокая плот\-ность расположения. 
+Рост числа M2M-устройств существенно сказывается на использовании спектра 
+ра\-дио\-час\-тот ввиду того, что сети изначально разрабатывались для 
+взаимодействия между людьми (human-to-human, H2H). 
+{\looseness=1
+
+}
+
+Один из вариантов 
+решения проб\-ле\-мы~--- это динамическое управление спектром в~рамках 
+концепции совместного использования радиочастот 
+(LSA)~[3--5]. Доступ к~спектру получают две стороны~--- владелец и~временный 
+пользователь~[6, 7]. 
+
+  В статье исследуется один из сценариев применения системы LSA~[8--11], 
+где владелец запрашивает спектр радиочастот изредка на непродолжительное 
+время. В~остальное же время спектр доступен M2M-устрой\-ст\-вам для 
+передачи данных. Статья имеет следующую структуру. 
+
+В~разд.~2 описана 
+системная модель совместного использования радиоресурсов с~учетом 
+расположения устройств на разном расстоянии от базовой станции~[12--15]. 
+
+В~разд.~3 проводится построение математической модели в~виде двух 
+случайных процессов (СП), один из которых фиксирует уровень качества 
+канала каж\-до\-го из активных устройств, а~второй, укрупненный,~--- только 
+суммарное число устройств. Для СП с~укрупненными со\-сто\-яни\-ями представлен 
+рекуррентный алгоритм расчета стационарного распределения вероятностей. 
+
+В~разд.~4 предложены формулы для расчета ключевых показателей 
+эффективности системы~--- среднего числа устройств и~вероятностей 
+блокировки и~прерывания обслуживания, приведен пример численного анализа.
+
+\section{Системная модель совместного использования ресурсов 
+с~разноудаленными от базовой станции устройствами}
+
+Рассмотрим одну соту беспроводной сети радиуса~$R$ с~равномерно 
+распределенными по зоне покрытия M2M-устройствами (рис.~1). Устройства 
+с~интенсивностью~$\lambda$ переходят в~активное состояние и~передают 
+данные в~восходящем канале. Время передачи данных одним устройством 
+распределено экспоненциально с~параметром~$\mu$. Каждому устройству 
+в~зависимости от дальности расположения от базовой станции (БС) 
+присваивается один из пятнадцати уровней качества канала (channel quality 
+indicator, CQI)~--- $c\hm=1,\ldots ,15$, причем чем больше~$c$, тем ближе 
+устройство к~БС и~выше скорость передачи данных. Объединим устройства 
+с~одинаковыми уровнями CQI в~логические группы, тогда скорость передачи 
+для всех устройств в~группе будет одинаковая. Далее под расстоянием от 
+устройства до БС будем понимать максимально возможное расстояние, на 
+котором может быть расположено устройство с~таким же уровнем CQI. Введем 
+дополнительное обозначение: $\eta\hm=16-c$; уровень CQI~$c$, 
+величина~$\eta$ и~расстояние~$\xi_d(\eta)=RL^{-1}\eta$ от устройства до БС 
+являются случайными величинами (СВ). Плотность расстояния от устройства 
+до БС $$
+f_{\xi_d(\eta)}(d)=\fr{2d}{R^2}\,,
+$$
+ а~функция распределения (ФР)
+$$
+F_{\xi_d(\eta)}(d)=\left(\fr{d}{R}\right)^2,\enskip 0\leq d\leq R\,.
+$$
+
+
+ { \begin{center}  %fig1
+ \vspace*{5pt}
+ \mbox{%
+\epsfxsize=72mm %.723mm
+\epsfbox{gud-1.eps}
+}
+
+
+\vspace*{4pt}
+
+
+\noindent
+{{\figurename~1}\ \ \small{Пример расположения M2M-устройств в~соте}}
+\end{center}
+}
+
+
+\addtocounter{figure}{1}
+
+ \noindent
+ Ряд распределения для 
+параметра~$\eta$:  
+$$
+q_l=\fr{2L-2l-1}{L^2}\,,\enskip l=1,\ldots ,L\,.
+$$
+
+  
+  В качестве примера реализации системы LSA рассмотрим случай 
+использования владельцем спектра радиочастот для воздушной телеметрии. 
+Предположим, что время, в~течение которого владелец (аэропорт) не 
+использует спектр, т.\,е.\ время, когда полоса доступна для M2M-устройств, 
+и~время пролета самолета над сотой, т.\,е.\ время, когда полоса недоступна для 
+устройств, распределены по экспоненциальному закону с~параметрами~$\alpha$ 
+и~$\beta$ соответственно.
+  
+  Управление радиоресурсами предполагает разделение ресурсов по времени, 
+т.\,е.\ деление ширины полосы радиочастот~$\omega$ не происходит, 
+а~передача данных осуществляется на постоянной мощности. Если полоса не 
+требуется аэропорту, то мощность составляет~$p_1^{\max}$, в~противном 
+случае для регулирования интерференции мощность снижается до значения 
+$p_0^{\max}\hm<p_1^{\max}$. Такое динамическое изменение мощности 
+приводит к~изменению достижимой скорости передачи данных $r\left( 
+\xi_{d(\eta)},p_s^{\max}\right)$, $s\hm=0,1$, зависящей также от расстояния 
+между устройством и~БС. Согласно формуле Шеннона,
+  \begin{multline}
+  r\left( \xi_{d(\eta)}, p_s^{\max}\right) =\omega \ln\left( 
+1+\fr{Gp_s^{\max}}{((R/L)\eta)^\kappa N_0}\right)\,,\\ s=0,1\,,\enskip 
+\eta=1,\ldots ,15\,,
+  \label{e1-gud}
+  \end{multline}
+где $N_0$~---  уровень шума; $G$~--- константа затухания сигнала; $\kappa$~--- 
+экспонента затухания сигнала.
+
+  Скорость передачи данных каждым активным M2M-устройством не может 
+быть ниже порогового (гарантированного) значения~$r_0$. Если устройству не 
+может быть обеспечена скорость~$r_0$, то запрос на передачу данных будет 
+заблокирован. Если устройство расположено в~непосредственной близости от 
+БС, то скорость передачи согласно формуле Шеннона стремится 
+к~бесконечности, поэтому определим минимальное расстояние до БС 
+$\xi_d(1)\hm=d_0$, ограничив тем самым максимальную скорость передачи 
+данных $r_s^{\max}\hm= r\left( d_0, p_s^{\max}\right)$. Таким образом, если 
+$\eta\hm=1$, то достижимая скорость передачи данных $r\left( \xi_{d(\eta)}; 
+p_s^{\max}\right)$, если $\eta\hm=2,\ldots ,L$, то она вычисляется по 
+формуле~(\ref{e1-gud}). Максимальное число устройств в~соте:
+$$
+K_s= \left \lfloor  
+\fr{r( d_0, p_s^{\max})}{r_0}\right\rfloor\,,\enskip s=0,1
+\,.
+$$
+
+  Сводный перечень основных обозначений приведен в~табл.~1.
+
+\end{multicols}
+
+  \begin{table*}\small
+  \begin{center}
+  \Caption{Основные обозначения}
+  \vspace*{2ex}
+  
+  \begin{tabular}{|l|p{340pt}|}
+  \hline
+  \multicolumn{1}{|c|}{Обозначение}&\multicolumn{1}{c|}{Описание}\\
+  \hline
+  $R$&Радиус соты, м\\
+  $\omega$&Ширина полосы радиочастот, МГц\\
+  $L$&Число уровней качества канала CQI \\
+  $c$&Уровень CQI (СВ)\\
+  $\eta=16-c$&Величина, обратная уровню CQI~$c$  (СВ)\\
+  $q_l=\fr{2L-2l-1}{L^2}$&Вероятность того, что уровень CQI равен~$l$\\
+  $\alpha^{-1}$&Среднее время доступности полосы, с\\
+  $\beta^{-1}$&Среднее время недоступности полосы, с\\
+  $k$&Число активных устройств\\
+  $s$&Состояние полосы: $s=1$, если полоса доступна; $s=0$, если недоступна\\
+  $p_0^{\max}$&Максимальное значение мощности сигнала устройства, если полоса 
+недоступна, Вт\\
+  $p_1^{\max}$&Максимальное значение мощности сигнала устройства, если полоса 
+доступна, Вт\\
+  $d_0$&Минимальное расстояние от устройства до БС, м\\
+  $r\left( \xi_{d(\eta)}, p_s^{\max}\right)$ &Достижимая скорость передачи 
+  для устройства с~уровнем CQI $c\hm=16\hm-\eta$, если полоса находится в~состоянии~$s$ (СВ), бит/с\\
+  $r_0^{\max}$&Максимально возможная скорость, если полоса недоступна, бит/с\\
+  $r_0$&Гарантированная скорость передачи данных от устройств, бит/с\\
+  $r_1^{\max}$&Максимально возможная скорость, если полоса доступна, бит/с\\
+  $K_0$&Максимальное число устройств, если полоса недоступна\\
+  $K_1$&Максимальное число устройств, если полоса доступна\\
+  $\xi_d(\eta)$ &Максимальное расстояние от устройства с~уровнем CQI $c\hm=16\hm-\eta$ 
+до БС (СВ), м\\
+  $\lambda$&Интенсивность суммарного потока данных от всех устройств в~соте, 1/с\\
+  $\mu^{-1}$&Среднее время передачи данных от одного устройства, с\\
+  $\rho=\fr{\lambda}{\mu}$&Суммарная предложенная нагрузка от всех устройств в~соте, Эрл\\[-9pt]
+&\\
+  \hline
+  \end{tabular}
+  \end{center}
+  \end{table*}
+  
+  \begin{multicols}{2}
+  
+
+  
+\section{Вероятностная модель и~стационарное распределение 
+вероятностей состояний беспроводной сети}
+
+  Перейдем к~построению математической модели. Пусть $\xi(t)$~--- число 
+активных M2M-устройств; $\eta_i(t)$~--- значение параметра~$\eta$ для 
+устройства~$i$; $\zeta(t)$~--- состояние полосы в~момент времени $t\hm\geq 0$. 
+Тогда функционирование соты опишем СП $\left\{ \xi(t),\eta_1(t),\ldots 
+,\eta_{\xi(t)},\zeta(t), t\geq0\right\}$ над пространством состояний
+  \begin{multline*}
+  \mathbf{L}\hm= 
+  \left\{ 
+    \vphantom{\sum\limits_{i=1}^k}
+    (0,s), \left(k,l_1,\ldots ,l_k, s\right), \right.\\ 
+  s=0,1,\ l_i=1,\ldots 
+,L,\ i=1,\ldots , k,\ k=1,2,\ldots: \\
+\left.  \sum\limits_{i=1}^k \fr{r_0}{\omega \ln \left( 1+Gp_s^{\max}/((RL^{-
+1}l_i)^\kappa N_0)\right)}\leq 1\right\}\,.
+  %\label{e2-gud}
+  \end{multline*}
+
+Фрагмент пространства состояний показан на рис.~2.
+    
+
+  Перейдем к~СП $\{\xi(t),\zeta(t), t\geq0\}$ с~укрупненными состояниями~--- 
+суммарным числом устройств и~состоянием полосы. Пространство состояний 
+такого процесса будет иметь вид:
+  \begin{equation*}
+  \mathbf{L}_1 =\left\{ (k,s):\ k=0,1,\ldots ,K_s,\ s=0,1\right\}\,.
+  %\label{e3-gud}
+  \end{equation*}
+Отметим, что при переходе полосы в~недоступное состояние происходит 
+снижение мощности передачи данных с~$p_1^{\max}$ до~$p_0^{\max}$ 
+и~прерывание обслуживания $k\hm-K_0$ устройств при условии, что число 
+устройств $k\hm>K_0$. При переходе из недоступного в~доступное состояние 
+мощность снова повышается. На рис.~3 представлена диаграмма 
+интенсивностей переходов данного СП.
+    
+    
+
+  Обозначим через $P_s(k)$, $s\hm=0,1$, условную ве\-ро\-ят\-ность того, что 
+$(k+1)$-е M2M-устройство может быть обслужено при условии, что 
+активно~$k$~устройств. Можно показать, что ве\-ро\-ят\-но\-сти~$P_s(k)$ 
+вы\-чис\-ля\-ют\-ся по формулам:
+
+\noindent
+  \begin{align*}
+  P_s(0) &={}\\
+  &\hspace*{-8mm}{}=F_{\xi_d(\eta)} \left( \min 
+  \left\{ R, \left( \fr{Gp_s^{\max}}{\left( 
+e^{r_0/\omega} -1\right) N_0}\right)^{1/\kappa}\right\}\right)\,,\\
+&\hspace*{50mm}s=0,1\,;
+\end{align*}
+
+\end{multicols}
+
+\begin{figure*} %fig2
+ \vspace*{1pt}
+\begin{center}
+\mbox{%
+\epsfxsize=107.234mm
+\epsfbox{gud-2.eps}
+}
+\end{center}
+\vspace*{-11pt}
+\Caption{Фрагмент диаграммы интенсивностей переходов СП с~детальными состояниями}
+%\vspace*{-20pt}
+\end{figure*}
+
+
+\begin{multicols}{2}
+
+\noindent
+\begin{align*}
+  P_s(k) &= \fr{\Phi\left( (1-m_{k+1,s})/\tau_{k+1,s}\right)}{\Phi\left((1-
+m_{ks})/\tau_{ks}\right)}\,,\\
+& \hspace*{20mm}k=1,\ldots, K_s,\enskip s=0,1\,,
+  \end{align*}
+где
+\begin{gather*}
+\Phi(x) =\fr{1}{\sqrt{2\pi}}\int\limits^x_{-\infty} e^{-t^2/2}\,dt\,;\\
+m_{ks} =  kr_0E \left[ \fr{1}{r\left(d,p_s^{\max}\right)}\right]\,;
+\end{gather*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+\tau^2_{ks}=kr_0^2\left( E\left[ \left( 
+\fr{1}{r\left( d,p_s^{\max}\right)}\right)^2\right]- {}\right.\\
+\left.{}-
+\left( E\left[ \fr{1}{r\left(d, p_s^{\max}\right)}\right]\right)^2\right)\,;
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+E\left[ \fr{1}{r\left( d,p_s^{\max}\right)}\right] = \fr{1}{r_s^{\max}}\, 
+F_{\xi_d(\eta)} (d_0) +{}\\
+{}+
+\int\limits_{d_0}^R \fr{1}{\omega \ln (1+Gp_s^{\max}/ 
+(x^\kappa N_0))}\, f_{\xi_d(\eta)} (x)\,dx\,;
+\end{multline*}
+
+\vspace*{-14pt}
+
+\noindent
+\begin{multline*}
+E\left[ \left(\fr{1}{r\left( d,p_s^{\max}\right)}\right)^2\right] = \left( \fr{1} 
+{r_s^{\max}}\right)^2 F_{\xi_d(\eta)}(d_0) + {}\\
+{}+\int\limits^R_{d_0} \fr{1} {\omega^2 
+\ln^2 (1+Gp_s^{\max}/(x^\kappa N_0))}\,f_{\xi_d(\eta)} (x)\,dx\,.
+\end{multline*}
+
+\begin{figure*} %fig3
+     \vspace*{1pt}
+\begin{center}
+\mbox{%
+\epsfxsize=146.037mm
+\epsfbox{gud-3.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Диаграмма интенсивностей переходов СП с~укрупненными состояниями}
+\end{figure*}
+  
+  Случайный процесс $\{ \xi(t),\zeta(t), t\geq0\}$ является марковским, и~для расчета его 
+стационарного рас-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+пределения вероятностей~$p(k,s)$, $(k,s)\hm\in 
+\mathbf{L}_1$ предлагается следующий рекуррентный алгоритм.
+  \begin{enumerate}[1.]
+  \item Значения ненормированных вероятностей $q(k,s)$ вычисляются по 
+формулам:
+  \begin{align*}
+  q(0,0)&=1\,;\\
+  q(0,1) &=x\,;\\
+  q(k,s) & =\delta_{ks}+\gamma_{ks} x\,,\ (k,s)\in \mathbf{L}_1:\ k>0\,,
+  \end{align*}
+где
+$$
+x=\fr{(K_1\mu +\alpha)\delta_{K_11}-\lambda P_1(K_1-1)\delta_{K_1-1{,}1}} 
+{\lambda P_1(K_1-1)\gamma_{K_1-1,1}-(K_1\mu +\alpha)\gamma_{K_11}}\,.
+$$
+\item Коэффициенты $\delta_{ks}$ и~$\gamma_{ks}$ вычисляются по 
+рекуррентным формулам:
+\begin{gather*}
+\delta_{00}=1\,,\ \gamma_{00}=0\,;\\
+\delta_{01}=0\,,\ \gamma_{01}=1\,;\\
+\delta_{10}=\fr{\lambda P_0(0)+\beta}{\mu}\,,\ \gamma_{10}=-
+\fr{\alpha}{\mu}\,;\\
+\delta_{11}=-\fr{\beta}{\mu}\,,\ \gamma_{11}=\fr{\lambda 
+P_1(0)+\alpha}{\mu}\,;
+\end{gather*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+\delta_{k0}=\fr{\lambda P_0(k-1)+(k-1)\mu+\beta}{k\mu}\,\delta_{k-1,0} - {}\\
+{}-
+\fr{\lambda P_0(k-2)}{k\mu}\,\delta_{k-2,0}-\fr{\alpha}{k\mu}\,\delta_{k-1,1}\,,\ 
+k=2,\ldots ,K_0,\hspace*{-0.26485pt}
+\end{multline*}
+
+\vspace*{-12pt}
+
+\begin{multline*}
+\gamma_{k0} = \fr{\lambda P_0(k-1)+(k-1)\mu+\beta}{k\mu}\,\gamma_{k-1,0}-{}\\
+{}-
+\fr{\lambda P_0(k-2)}{k\mu}\,\gamma_{k-2,0} -\fr{\alpha}{k\mu}\,\gamma_{k-
+1,1}\,,\ k=2,\ldots,K_0;\hspace*{-1.73058pt}
+\end{multline*}
+
+%\vspace*{-12pt}
+
+\noindent
+\begin{gather*}
+\delta_{k1} = \fr{\lambda P_1(k-1)+(k-1)\mu+\alpha}{k\mu}\,\delta_{k-1,1} - {}\\
+{}-
+\fr{\lambda P_1(k-2)}{k\mu}\,\delta_{k-2,1} -\fr{\beta}{k\mu}\,\delta_{k-1,0}\,,\\ 
+k=2,\ldots ,K_0+1\,;\\
+\hspace*{-3mm}\gamma_{k1} =\fr{\lambda P_1(k-1)+(k-1)\mu+\alpha}{k\mu}\,\gamma_{k-1,1} - {}\\
+{}-
+\fr{\lambda P_1(k-2)}{k\mu}\,\gamma_{k-2,1}- \fr{\beta}{k\mu}\,\gamma_{k-
+1,0}\,,\\ 
+k=2,\ldots ,K_0+1\,;\\
+\delta_{k1} = \fr{\lambda P_1(k-1)+(k-1)\mu+\alpha}{k\mu}\,\delta_{k-1,1}- {}\\
+{}-
+\fr{\lambda P_1(k-2)}{k\mu}\,\delta_{k-2,1}\,,\   k=K_0+2,\ldots , K_1\,,\\
+\gamma_{k1} =\fr{\lambda P_1(k-1)+(k-1)\mu+\alpha}{k\mu}\,\gamma_{k-1,1} - {}\\
+{}-
+\fr{\lambda P_1(k-2)}{k\mu}\,\gamma_{k-2,1}\,,\ k=K_0+2,\ldots ,K_1\,.
+\end{gather*}
+
+\item Значения вероятностей $p(k,s)$ вычисляются по формулам:
+
+\noindent
+$$
+p(k,s)=\fr{q(k,s)}{\sum\nolimits_{(i,j)\in \mathbf{L}} q(i,j)}\,,\ (k,s)\in 
+\mathbf{L}_1\,.
+$$
+\end{enumerate}
+
+\begin{table*}\small
+  \begin{center}
+  \Caption{Исходные данные для численного анализа}
+  \vspace*{2ex}
+  
+  \begin{tabular}{|l|c|c|c|}
+  \hline
+\multicolumn{1}{|c|}{Обозначение}&Случай 1  
+(рис.~4)&Случай 2  
+(рис.~5)&Случай 3  
+(рис.~6)\\
+\hline
+$R$, м&200--400&200; 400&200; 400\\
+$\omega$, МГц&10&10&10\\
+$L$&15&15&15\\
+$\alpha^{-1}$, мин&20; 30&20; 30&30\\
+$\beta^{-1}$, с&20&20&20\\
+$p_1^{\max}$, дБ$\cdot$м&23; 42&23--42&23; 42\\
+$p_0^{\max}$, дБ$\cdot$м&$p_{\max}/2$&$p_{\max}/2$&$p_{\max}/2$\\
+$d_0$, м&$R/15$&$R/15$&$R/15$\\
+$r_0$, Мбит/с&1&1&1\\
+$\lambda$, 1/с&10&10&2--10\\
+$\mu^{-1}$, с&0,1&0,1&0,1\\
+$N_0$, дБ$\cdot$м&$-60$&$-60$&$-60$\\
+$G$&197,43&197,43&197,43\\
+$\kappa$&5&5&5\\
+\hline
+\end{tabular}
+\end{center}
+%\vspace*{-6pt}
+\end{table*}
+\begin{figure*}[b] %fig4
+% \vspace*{-6pt}
+\begin{center}
+\mbox{%
+\epsfxsize=162.099mm
+\epsfbox{gud-4.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Показатели эффективности в~зависимости от мощности устройств: 
+(\textit{а})~вероятность прерывания обслуживания при 
+$R=400$ (\textit{1}~--- $\alpha\hm=1200$; 
+\textit{2}~--- $\alpha\hm=1800$); 
+(\textit{б})~среднее число активных устройств 
+при $\alpha\hm=1800$ (\textit{3}~--- $R\hm=200$; 
+\textit{4}~---  $R\hm=400$)}
+\end{figure*}
+
+\vspace*{-9pt}
+
+\section{Пример численного анализа и~заключение}
+
+\vspace*{-3pt}
+
+  Зная стационарное распределение вероятностей  $p(k,s)$, 
+  $(k,s)\hm\in \mathbf{L}_1$, найдем 
+основные показатели эффективности модели~--- вероятность~$B$ блокировки, 
+вероятность~$\Pi$ прерывания обслуживания и~среднее число~$\overline{K}$ 
+устройств по формулам:
+
+\noindent
+  \begin{align*}
+  B &= \sum\limits_{k=0}^{K_0-1} \left( 1-P_0(k)\right) p(k,0) 
++{}\notag\\
+&\hspace*{30mm}{}+\sum\limits_{k=0}^{K_1-1}\left( 1-P_1(k)\right) p(k,1)\,;
+  %\label{e4-gud}
+  \\
+  \Pi &=  \hspace*{-2mm}\hspace*{-0.72604pt}\sum\limits_{k=K_0+1}^{K_1-1}
+  \hspace*{-1mm}
+   \fr{\alpha}{\alpha+k\mu+\lambda 
+P_1(k)}\, \fr{\begin{pmatrix} k-1\\ k-K_0-1\end{pmatrix}}{ \begin{pmatrix} k\\ k-
+K_0\end{pmatrix}}\,p(k,1)+{}\notag\\
+&\hspace*{10mm}{}+\fr{\alpha}{\alpha+K_1\mu}\,\fr{\begin{pmatrix} K_1-
+1\\ K_1-K_0-1\end{pmatrix}} {\begin{pmatrix} K_1\\ K_1-K_0\end{pmatrix}} 
+\,p(K_1,1)\,;
+  %\label{e5-gud}
+  \\
+  \overline{K} &= \sum\limits_{k=0}^{K_0} kp (k,0) +\sum\limits_{k=0}^{K_1} 
+kp(k,1)\,.
+  %\label{e6-gud}
+  \end{align*}
+  
+  Для проведения численного анализа проанализируем передачу данных  
+M2M-устройствами небольшими сессиями, составляющими в~среднем~10~с, 
+в~высоком качестве на ско\-рости~1~Мбит/с. 
+Рассмотрим небольшой аэропорт, 
+в~котором самолеты взлетают раз в~20~(30)~мин, среднее время пролета 
+самолета над сотой составляет~20~с. 
+Исходные данные представлены в~табл.~2.
+  
+  
+  
+  На рис.~4 показана зависимость вероятности прерывания обслуживания 
+и~среднего числа активных устройств от их мощности. Вероятность\linebreak 
+прерывания обслуживания уменьшается пропорционально увеличению 
+мощности, так как при более высокой мощности для устройств достижима 
+более высокая скорость. При этом вероятность прерывания ниже для более 
+низкой интен\-сив\-ности отключения полосы.
+Среднее число устройств 
+увеличивается пропорционально радиусу соты
+ (см.\linebreak
+
+\end{multicols}
+
+\begin{figure*} %fig5
+ \vspace*{1pt}
+\begin{center}
+\mbox{%
+\epsfxsize=161.797mm
+\epsfbox{gud-5.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Показатели эффективности в~зависимости от радиуса соты: 
+(\textit{а})~вероятность 
+прерывания обслуживания при $W\hm=0{,}2$
+(\textit{1}~--- $\alpha\hm=1200$;
+\textit{2}~--- $\alpha\hm=1800$); (\textit{б})~среднее число активных 
+устройств при $\alpha\hm=1200$ (\textit{3}~--- $W\hm=0{,}2$;
+\textit{4}~--- $W=15{,}85$)}
+%\end{figure*}
+%\begin{figure*} %fig6
+ \vspace*{6pt}
+\begin{center}
+\mbox{%
+\epsfxsize=159.48mm
+\epsfbox{gud-6.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Показатели эффективности в~зависимости от интенсивности потока пакетов 
+данных от устройств: (\textit{а})~вероятность прерывания обслуживания при 
+$R=400$ (\textit{1}~--- $\alpha\hm=1200$; 
+\textit{2}~---  $\alpha\hm=1800$); (\textit{б})~среднее 
+число активных устройств (\textit{3}~---  $R\hm=400$, $\alpha\hm=1200$;
+\textit{4}~--- $R\hm=200$, $\alpha\hm=1800$)}
+\vspace*{-30pt}
+\end{figure*}
+
+\begin{multicols}{2}
+
+\noindent
+ рис.~5). Вероятность 
+прерывания оказывается ниже при меньшей интенсивности изъятия полосы 
+(см.\ рис.~6). 
+
+
+
+
+
+  В заключение отметим, что в~статье разработана вероятностная модель 
+совместного использования радиочастот, при помощи которой проведен анализ 
+показателей эффективности применения политики управления мощ\-ностью 
+с~учетом разноудаленных от БС M2M-устройств. 
+
+В~дальнейшем 
+предполагается учесть случайную высоту, на которой могут находиться 
+устройства.
+
+\vspace*{-12pt}
+
+{\small\frenchspacing
+ { %\baselineskip=10pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-gud}
+Cisco Visual Networking Index: Global Mobile Data Traffic Forecast Update, 2016--2021 White 
+Paper. March~28, 2017. {\sf  
+http://www.cisco.com/c/en/us/ solutions/collateral/service-provider/visual-networking-index-vni/mobile-white-paper-c11-520862.html}.
+\bibitem{2-gud}
+\Au{Andrews J., Buzzi~S., Choi~W., Hanly~S.\,V., Lozano~A., Soong~C.\,K., Zhang~J.\,C.} What 
+will 5G be?~// IEEE J.~Sel. Area. Comm., 2014. Vol.~32. P.~1065--1082. 
+
+\bibitem{5-gud} %3
+ETSI TR 103 113. Electromagnetic compatibility and Radio spectrum Matters 
+(ERM); System Reference document (SRdoc); Mobile broadband services in the  
+2\,300~MHz\,--\,2\,400~MHz frequency band under Licensed Shared Access regime. 
+v1.1.1. July 2013. 
+{\sf 
+http:// www.etsi.org/deliver/etsi\_tr/103100\_103199/103113/ 01.01.01\_60/tr\_103113v010101p.pdf}.
+
+\bibitem{3-gud} %4
+ETSI TR 103 154. Reconfigurable Radio Systems (RRS); System requirements 
+for operation of Mobile Broadband Systems in the 2\,300~MHz\,--\,2\,400~MHz band under Licensed 
+Shared Access (LSA). v1.1.1. October 2014.
+{\sf 
+http://www.etsi.org/deliver/etsi\_TS/103100\_103199/ 103154/01.01.01\_60/ts\_103154v010101p.pdf}.
+
+\bibitem{4-gud} %5
+ETSI TR 103 235. Reconfigurable Radio Systems (RRS); System architecture 
+and high level procedures for operation of Licensed Shared Access (LSA) in  
+the 2\,300~MHz\,--\,2\,400~MHz band. v1.1.1. October 2015. {\sf 
+http://www.\linebreak
+ etsi.org/deliver/etsi\_ts\%5C103200\_103299\%5C103235
+ \%5C01.01.01\_60\%5Cts\_103235v010101p.pdf}.
+
+\bibitem{6-gud} %6
+\Au{Buckwitz K., Engelberg J., Rausch~G.} Licensed Shared Access (LSA)~--- regulatory 
+background and view of Administrations~// 9th Conference (International) on Cognitive Radio 
+Oriented Wireless Networks.~--- IEEE, 2014. P.~413--416.
+\bibitem{7-gud}
+\Au{Ahokangas P., Matinmikko~M., Yrj$\ddot{\mbox{o}}$l$\ddot{\mbox{a}}$~S., 
+Mustonen~M., 
+Posti~H., Luttinen~E., Kivim$\ddot{\mbox{a}}$ki~A.} Business models for mobile network 
+operators in Licensed Shared Access (LSA)~// IEEE Symposium (International) on Dynamic 
+Spectrum Access Networks.~--- IEEE, 2014. P.~263--270.
+
+
+\bibitem{9-gud} %8
+\Au{Borodakiy~V.\,Y., Samouylov~K.\,E., Gudkova~I.\,A., Ostrikova~D.\,Y., Ponomarenko~A.\,A., 
+Turlikov~A.\,M., Andreev~S.\,D.} Modeling unreliable LSA operation in 3GPP LTE cellular 
+networks~// 6th Congress (International) on Ultra Modern Telecommunications and Control 
+Systems and Workshops Proceedings.~--- Piscataway, NJ, USA: IEEE, 2015. 
+P.~490--496.
+
+\bibitem{8-gud} %9
+\Au{Ponomarenko-Timofeev A., Pyattaev~A., Andreev~S., Kou\-che\-rya\-vy~Ye., Mueck~M., Karls~I}. 
+Highly dynamic spectrum management within licensed shared access regulatory framework~// 
+IEEE Commun. Mag., 2015. Vol.~54. No.\,3. P.~100--109.
+
+\bibitem{10-gud}
+\Au{Gudkova I.\,A., Samouylov~K.\,E., Ostrikova~D.\,Y., Mokrov~E.\,V.,  
+Ponomarenko-Timofeev~A.\,A., Andreev~S.\,D., Koucheryavy~Y.\,A.} Service failure and 
+interruption probability analysis for Licensed Shared Access regulatory framework~// 7th Congress 
+(International) on Ultra Modern Telecommunications and Control Systems and Workshops
+ Proceedings.~--- Piscataway, NJ, USA: IEEE Computer Society, 2015. P.~123--131.
+
+\bibitem{11-gud}
+\Au{Samouylov K., Gudkova~I., Markova~E., Yarkina~N.} Queuing model with unreliable servers 
+for limit power policy within Licensed Shared Access framework~// Internet of things, smart
+spaces, and next generation networks and systems~/
+Eds. O.~Galinina, S.~Balankin, Y.~Koucheryavy.~---
+Lecture notes in computer 
+science ser.~--- Springer, 2016. Vol.~9870. P.~404--413.
+\bibitem{12-gud}
+\Au{Galinina O., Andreev~S.\,D., Gerasimenko~M., Kou\-che\-rya\-vy~Y.\,A., Himayat~N., Yeh S.-P., 
+Talwar~S.} Capturing spatial randomness of heterogeneous cellular/WLAN deployments with 
+dynamic traffic~// IEEE J.~Sel. Area. Comm., 2014. Vol.~32.  
+No.\,6. P.~1083--1099.
+\bibitem{13-gud}
+\Au{Ahmadian A., Galinina~O., Gudkova~I., Andreev~S., Shorgin~S., Samouylov~K.} On capturing 
+spatial diversity of joint M2M/H2H dynamic uplink transmissions in 
+3GPP LTE cellular system~// Internet of things, smart
+spaces, and next generation networks and systems~/
+Eds.\ S.~Balandin, S.~Andreev, Y.~Koucheryavy.~---
+Lecture notes in computer science ser.~--- Springer, 2014. Vol.~9247. P.~407--421.
+\bibitem{14-gud}
+\Au{Samouylov K., Gudkova~I., Markova~E., Dzantiev~I.} On analyzing the blocking probability 
+of M2M transmissions for a CQI-based RRM scheme model in 3GPP LTE~// Comm. 
+Com. Inf. Sci., 2016. Vol.~638. P.~327--340.
+\bibitem{15-gud}
+\Au{Gudkova I., Markova~E., Masek~P., Andreev~S., Hosek~J., Yarkina~N., Samouylov~K., 
+Koucheryavy~Y.} Modeling the utilization of a multi-tenant band in 3GPP LTE system with 
+Licensed Shared Access~// 8th Congress (International) on Ultra Modern Telecommunications and 
+Control Systems and Workshops Proceedings.~--- Piscataway, NJ, USA: IEEE, 
+2016. P.~179--183.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 20.04.17}}
+
+\vspace*{6pt}
+
+%\newpage
+
+%\vspace*{-24pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+\vspace*{-4pt}
+
+
+\def\tit{PROBABILITY MODEL FOR ANALYZING LICENSED SHARED~ACCESS WITH~ADAPTIVE 
+POWER CONTROL IN~A~WIRELESS~NETWORK}
+
+\def\titkol{Probability model for analyzing licensed shared access with adaptive 
+power control in a wireless network}
+
+\def\aut{I.\,A.~Gudkova$^{1,2}$ and~S.\,Ya.~Shorgin$^2$}
+
+\def\autkol{I.\,A.~Gudkova and  S.\,Ya.~Shorgin}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+$^1$Peoples' Friendship University of Russia, 6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation
+
+\noindent
+$^2$Institute of Informatics Problems, Federal Research Center ``Computer Science and Control'' of the 
+Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+\Abste{Emerging next generation wireless networks involve new applications and services for 
+human-to-human and machine-to-machine (M2M) devices. The problem of increasing 
+requirements for network capacity and lack of radio spectrum arises. The solution could be found in 
+the licensed shared access framework, e.\,g., in the case of smart cities. The authors 
+propose a mathematical model of shared access to spectrum with adaptive power control. The 
+algorithm makes it possible to avoid the interference between M2M devices and the spectrum 
+owner due, in part, to the fact that it takes into account the spatial distribution and session activity of 
+devices.}
+
+%\pagebreak
+
+\KWE{wireless network; smart city; machine-to-machine (M2M); licensed shared 
+access (LSA); 
+adaptive power control; stochastic process; recursive algorithm; 
+blocking probability; interruption 
+probability; average number of M2M devices}
+
+
+
+
+\DOI{10.14357/19922264170310} 
+
+%\vspace*{-18pt}
+
+%\pagebreak
+
+\Ack
+\noindent
+This work was financially supported by the Russian Science 
+Foundation (grant No.\,16-11-10227).
+
+
+
+%\vspace*{3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {\baselineskip=10.282pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-gud-1}
+Cisco Visual Networking Index: Global Mobile Data Traffic Forecast Update, 2016--2021 White 
+Paper. March~28, 2017. Available at: {\sf 
+http://www.cisco.com/c/en/us/ solutions/collateral/service-provider/visual-networking-index-vni/mobile-white-paper-c11-520862.html} (accessed June~26, 2017).
+\bibitem{2-gud-1}
+\Aue{Andrews, J., S.~Buzzi, W.~Choi, S.\,V.~Hanly, A.~Lozano, C.\,K.~Soong, and 
+J.\,C.~Zhang.} 2014. What will 5G be? \textit{IEEE J.~Sel. Area. Comm.}  
+32:1065--1082. 
+
+\bibitem{5-gud-1} %3
+ETSI TR 103 113. July 2013. Electromagnetic compatibility and Radio spectrum 
+Matters (ERM); System 
+Reference document (SRdoc); Mobile broadband services in the 2300~MHz\,--\,2400~MHz frequency 
+band under Licensed Shared Access regime. Available at: {\sf 
+http://www.etsi.org/deliver/etsi\_tr/103100\_103199/ 103113/01.01.01\_60/tr\_103113v010101p.pdf}  
+(accessed June 26, 2017).
+
+\bibitem{3-gud-1} %4
+ETSI TR 103 154. October 2014. Reconfigurable Radio Systems (RRS); System requirements for operation of 
+Mobile Broadband Systems in the 2300~MHz\,--\,2400~MHz band under Licensed Shared Access 
+(LSA). v1.1.1.  Available at: {\sf 
+http://www.etsi.org/deliver/etsi\_TS/103100\_\linebreak  
+103199/103154/01.01.01\_60/ts\_103154v010101p.pdf} (accessed June~26, 2017).
+\bibitem{4-gud-1} %5
+ETSI TR 103 235. October 2015. Reconfigurable Radio Systems (RRS); System architecture and high level 
+procedures for operation of Licensed Shared Access (LSA) in the 
+2300~MHz\,--\,2400~MHz band.
+v1.1.1. Available at: {\sf 
+http://www.etsi.org/deliver/etsi\_ts\%5C103200\_103299
+\%5C103235\%5C01.01.01\_60\%5Cts\_103235v010101p. pdf} (accessed June~26, 2017).
+
+\bibitem{6-gud-1}
+\Aue{Buckwitz, K., J.~Engelberg, and G.~Rausch.} 2014. Licensed Shared Access (LSA)~--- 
+regulatory background and view of Administrations. \textit{9th Conference (International) on 
+Cognitive Radio Oriented Wireless Networks}. IEEE. 413--416.
+\bibitem{7-gud-1}
+\Aue{Ahokangas, P., M. Matinmikko, S.~Yrj$\ddot{\mbox{o}}$l$\ddot{\mbox{a}}$, 
+M.~Mustonen, H.~Posti, E.~Luttinen, and A.~Kivim$\ddot{\mbox{a}}$ki.} 2014. Business 
+models for mobile network operators in Licensed Shared Access (LSA). \textit{IEEE Symposium 
+(International) on Dynamic Spectrum Access Networks}. IEEE. 263--270.
+
+\bibitem{9-gud-1} %8
+\Aue{Borodakiy, V.\,Y., K.\,E.~Samouylov, I.\,A.~Gudkova, D.\,Y.~Ostrikova, 
+A.\,A.~Ponomarenko, A.\,M.~Turlikov, and S.\,D.~Andreev.} 2014. Modeling unreliable LSA 
+operation in 3GPP LTE cellular networks. \textit{6th Congress (International) on Ultra Modern 
+Telecommunications and Control Systems and Workshops Proceedings}. Piscataway, NJ: IEEE.  
+490--496.
+
+\bibitem{8-gud-1} %9
+\Aue{Ponomarenko-Timofeev, A., A.~Pyattaev, S.~Andreev, Ye.~Koucheryavy, M.~Mueck, and 
+I.~Karls.} 2015. Highly dynamic spectrum management within licensed shared access regulatory 
+framework. \textit{IEEE Commun. Mag.} 54(3):100--109.
+
+\bibitem{10-gud-1}
+\Aue{Gudkova, I.\,A., K.\,E.~Samouylov, D.\,Y.~Ostrikova, E.\,V.~Mokrov,  
+A.\,A.~Ponomarenko-Timofeev, S.\,D.~Andreev, and Y.\,A.~Koucheryavy}. 2015. Service failure 
+and interruption probability analysis for Licensed Shared Access regulatory framework. \textit{7th 
+Congress (International) on Ultra Modern Telecommunications and Control Systems and Workshops
+Proceedings}. Piscataway,  NJ: IEEE. 123--131.
+\bibitem{11-gud-1}
+\Aue{Samouylov, K., I.~Gudkova, E.~Markova, and N.~Yarkina}. 2016. Queuing model with 
+unreliable servers for limit power policy within Licensed Shared Access framework. 
+\textit{Internet of things, smart
+spaces, and next generation networks and systems}.
+Eds. O.~Galinina, S.~Balankin, Y.~Koucheryavy.
+{Lecture 
+notes in computer science ser.} Springer. 9870:404--413.
+\bibitem{12-gid-1}
+\Aue{Galinina, O., S.\,D.~Andreev, M.~Gerasimenko, Y.\,A.~Koucheryavy, N.~Himayat,  
+S.-P.~Yeh, and S.~Talwar.} 2014. Capturing spatial randomness of heterogeneous cellular/WLAN 
+deployments with dynamic traffic. \textit{IEEE J.~Sel. Area. Comm.}  
+32(6):1083--1099.
+\bibitem{13-gud-1}
+\Aue{Ahmadian, A., O.~Galinina, I.~Gudkova, S.~Andreev, S.~Shorgin, and K.~Samouylov.} 
+2014. On capturing spatial diversity of joint M2M/H2H dynamic uplink transmissions in 3GPP 
+LTE cellular system. 
+\textit{Internet of things, smart
+spaces, and next generation networks and systems}.
+Eds.\ S.~Balandin, S.~Andreev, Y.~Koucheryavy.
+{Lecture notes in computer science ser.} Springer. 9247:407--421.
+\bibitem{14-gud-1}
+\Aue{Samouylov, K., I.~Gudkova, E.~Markova, and I.~Dzantiev.} 2016. On analyzing the 
+blocking probability of M2M transmissions for a CQI-based RRM scheme model in 3GPP LTE. 
+\textit{Comm. Com. Inf. Sci.} 638:327--340.
+\bibitem{15-gud-1}
+\Aue{Gudkova, I., E.~Markova, P.~Masek, S.~Andreev, J.~Hosek, N.~Yarkina, K.~Samouylov, 
+and Y.~Koucheryavy.} 2016. Modeling the utilization of a multi-tenant band in 3GPP LTE system 
+with Licensed Shared Access. \textit{8th Congress (International) on Ultra Modern 
+Telecommunications and Control Systems and Workshops Proceedings}.  Piscataway, NJ: IEEE.  
+179--183.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+
+
+\hfill{\small\textit{Received April 20, 2017}}
+
+\vspace*{-24pt}
+
+\Contr
+
+\noindent
+\textbf{Gudkova Irina A.}\ (b.\ 1985)~--- Candidate of Sciences (PhD) in physics and 
+mathematics; associate professor, Peoples' Friendship University of Russia,  
+6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation; senior scientist, Institute 
+of Informatics Problems, Federal Research Center ``Computer Science and Control'' of the 
+Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{ gudkova\_ia@rudn.university }
+
+%\vspace*{1pt}
+
+\noindent
+\textbf{Shorgin Sergey Ya.} (b.\ 1952)~--- Doctor of Science in physics and mathematics, professor; Deputy Director, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences (FRC CSC RAS); principal scientist, Institute of Informatics Problems, FRC 
+CSC RAS; 44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{sshorgin@ipiran.ru}
+
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература} 

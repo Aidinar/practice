@@ -1,0 +1,465 @@
+%\newcommand{\e}{{\sf E}}
+
+\def\stat{kudr}
+
+\def\tit{БАЙЕСОВСКИЕ МОДЕЛИ ТЕСТИРОВАНИЯ БОЛЬШИХ ГРУПП ОБСЛУЖИВАЮЩИХ ПРИБОРОВ$^*$}
+
+\def\titkol{Байесовские модели тестирования больших групп обслуживающих приборов}
+
+\def\aut{А.\,А.~Кудрявцев$^1$, О.\,В.~Шестаков$^2$}
+
+\def\autkol{А.\,А.~Кудрявцев, О.\,В.~Шестаков}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Кудрявцев А.\,А.}
+\index{Шестаков О.\,В.}
+\index{Kudryavtsev A.\,A.}
+\index{Shestakov O.\,V.}
+
+
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при частичной финансовой поддержке РФФИ (проект 17--07--00577).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет им.~М.\,В.~Ломоносова, 
+факультет вычислительной математики и~кибернетики, \mbox{nubigena@mail.ru}}
+
+\footnotetext[2]{Московский государственный университет им.~М.\,В.~Ломоносова, факультет вычислительной
+ математики и~кибернетики; Институт проблем информатики Федерального 
+ исследовательского центра <<Информатика и~управление>> Российской академии наук, 
+ \mbox{oshestakov@cs.msu.su}}
+
+%\vspace*{-6pt}
+
+
+
+\Abst{Рассматривается новый подход к~задачам верификации заявленных показателей 
+функционирования больших групп сложных обслуживающих приборов в~условиях 
+невозможности (или высокой стоимости) тотальной проверки. Применяемый метод 
+основан на изучении асимптотики статистик в~рамках байесовского подхода к~задачам 
+теории массового обслуживания. На примере коэффициента готовности в~модели $M/M/1$ 
+приводится утверждение, относящееся к~классу теорем переноса, дающее возможность 
+сравнивать реальные данные при стендовых испытаниях сложных агрегатов с~теоретическими 
+предсказаниями. Рассматривается специфика применения метода с~точки зрения 
+производителя приборов и~заказчика большой партии однотипных приборов. 
+Описываемый метод и~результаты могут найти применение не только в~области 
+байесовских задач массового обслуживания, но и~в~других областях, использующих 
+рандомизацию базовых параметров модели.}
+
+\KW{байесовский подход; системы массового обслуживания; смешанные
+распределения; теорема переноса; статистические методы}
+
+\DOI{10.14357/19922264180113} 
+  
+\vspace*{-6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+\section{Введение}
+
+В~настоящее время все более остро встает проб\-ле\-ма анализа 
+адекватности функционирования сис\-тем и~сетей массового обслуживания.
+ Это связано прежде всего с~высокой слож\-ностью со\-временных 
+ сис\-тем и~агрегатов, которая не дает воз\-мож\-ности проверить функ\-цио\-наль\-ность 
+ на всех допустимых входных па\-ра\-мет\-рах. Кроме того, при не\-об\-хо\-ди\-мости 
+ верификации больших партий об\-слу\-жи\-ва\-ющих приборов возникают естественные 
+ труд\-ности, связанные с~временн$\acute{\mbox{ы}}$ми и~финансовыми 
+ затратами на проверку 
+ воз\-мож\-ности допуска всех элементов партии к~эксплуатации. По этим\linebreak
+  причинам 
+ единственным реальным средством анали\-за пригодности больших групп слож\-ных 
+ приборов, по всей видимости, является ве\-ро\-ят\-ност\-но-ста\-ти\-сти\-че\-ский. 
+ Если дополнительно учесть различные вариации, вызванные технологическими 
+ особенностями при производстве приборов и~изменчивостью среды, в~которой 
+ происходит функционирование, также разумно дополнить статистическую
+  со\-став\-ля\-ющую тестирования байесовским подходом~\cite{CSMIJ}, пред\-по\-ла\-га\-ющим 
+  рандомизацию базовых па\-ра\-мет\-ров~\cite{KuSh2015}.
+
+Рассмотрим следующую модель. Заказчику требуется большая партия обслуживающих 
+приборов, соответствующая некоторому техническому заданию. Заказ поступает 
+производителю. Требуется произвести две проверки адекватности приборов техническому 
+заданию: одну на стороне производителя перед отправкой опытного образца в~серию, 
+другую на стороне заказчика при получении изготовленной партии. Поскольку 
+партия мыслится большой, а~приборы сложными, проводится выборочное 
+тестирование на стенде, имитирующем условия реального функционирования. 
+При этом у~производителя и~заказчика, естественно, существуют особенности и~отличия 
+методики проверки.
+
+В данной работе рассматриваются теоретические статистические результаты 
+на примере парамет\-ра загрузки~$\rho$ системы $M/M/1$, равного отношению 
+интенсивности входящего потока~$\lambda$ к~интенсивности обслуживания~$\mu$, 
+в~предположении, что параметры модели независимы и~имеют известные априорные 
+распределения.
+
+\section{Стендовые испытания производителя}
+
+Рассматривается задача верификации удовлетворения тестового образца обслуживающего 
+прибора требованиям технического задания заказчика для последующего запуска 
+образца в~серию. Для этого на испытательном стенде формируется набор 
+интенсивностей входящего потока требований, являющийся конкретной 
+реализацией выборки $X_1,\ldots,X_n$ параметра потока требований~$\lambda$ из
+априорного распределения, предварительно изучен\-но\-го заказчиком и~описанного в~тексте 
+технического задания. Конкретный параметр обслуживания исследуемого прибора является 
+реализацией случайной величины~$\mu$, априорное распределение которой обусловлено 
+техническим регламен\-том на производстве. Результаты стендовых испытаний прибора 
+сравниваются с~теоретическими статистическими прогнозами, что дает возможность 
+сделать вывод о~целесообразности запуска тестового образца в~серию.
+
+В данном случае теоретические статистические результаты, касающиеся параметра 
+загрузки~$\rho$, основываются на выборке $X_1/\mu,\ldots,X_n/\mu$.
+
+\section{Стендовые испытания заказчика}
+
+Рассматривается задача стендовых испытаний большой партии обслуживающих приборов, 
+поступивших для верификации удовлетворения требованиям заказчика. Поскольку партия 
+представляется достаточно объемной, производить тотальную проверку приборов 
+нецелесообразно ввиду высокой стоимости и~больших временн$\acute{\mbox{ы}}$х затрат. В~связи 
+с~этим на стенде фиксируется некоторая интенсивность входящего потока 
+требований~$\lambda$ и~формируется конкретная реализация выборки приборов из партии, 
+которая подлежит исследованию. Каждый прибор обладает своим параметром 
+обслуживания $Y_1,\ldots,Y_n$, являющимся реализацией параметра~$\mu$ 
+с~известным распределением. 
+
+Предполагается, что заказчик предварительно 
+исследовал условия, в~которых должны функционировать приборы, и,~таким образом, 
+знает априорное распределение интенсивности входящего\linebreak потока требований~$\lambda$. 
+Априорное распределение параметров обслуживания приборов задается техническим 
+регламентом на производстве. Результаты работы каждого прибора при заданной 
+интенсивности требований проходят статистический анализ, результатом 
+которого является вывод о~допустимости принятия всей партии в~экс\-плу\-а\-та\-цию.
+{\looseness=1
+
+}
+
+В данном случае теоретические статистические результаты, касающиеся 
+параметра загрузки~$\rho$, основываются на выборке
+ $\lambda/Y_1,\ldots,\lambda/Y_n$.
+
+\section{Основные результаты}
+
+
+Из постановки задачи следует, что параметр входящего потока~$\lambda$ и~параметр 
+обслуживания~$\mu$~--- не\-от\-ри\-ца\-тель\-ные собственные случайные величины, не имеющие 
+атома в~нуле. Требование ${\sf P}(\lambda=0)\hm={\sf P}(\mu=0)\hm=0$ 
+означает, что прибор не может с~положительной вероятностью предназначаться 
+для вечного хранения на складе и~не должен игнорировать поступающие требования.
+
+Предположим, что параметр входящего потока~$\lambda$ и~одинаково распределенные 
+параметры обслуживания $Y_1,\ldots,Y_n$ независимы. Обозначим 
+$$
+A(u)={\sf P}(\lambda<u)\,;
+\enskip 
+Z_n=\fr{1}{n}\sum\limits_{i=1}^{n}Y_i^{-1}\,.
+$$
+
+\noindent
+\textbf{Теорема.} \textit{Пусть $a\hm={\sf E} Y_i^{-1}$, $0\hm<\sigma^2\hm={\sf D} 
+Y_i^{-1}\hm<\infty$. Тогда при $n\hm\to\infty$}
+\begin{equation}
+\label{lim_1}
+\sup\limits_{x\in \mathsf{R}}\abs{{\sf P}\left(\sqrt{n}\frac{\lambda(Z_n- a)}{\sigma}<x\right)-F(x)}\to 0,
+\end{equation}
+
+\noindent
+\textit{где $F(x)$~--- функция распределения, со\-от\-вет\-ст\-ву\-ющая 
+характеристической функции}
+$$
+f(t)=\int\limits_{0}^{\infty}e^{-u^2t^2/2}\,dA(u)\,.
+$$
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ 
+Обозначим через~$h_n(t)$ характеристическую функцию случайной величины 
+$\sqrt{n}{(Z_n- a)}/{\sigma}$, а~через~$f_n(t)$~--- характеристическую функцию 
+случайной величины $\sqrt{n}{\lambda(Z_n- a)}/{\sigma}$. Для
+ произвольного $t\hm\in\mathsf{R}$ и~$M\hm>0$
+\begin{multline*}
+\abs{f_n(t)-f(t)}={}\\
+{}=\abs{\int\limits_{0}^{\infty}h_n(ut)\,dA(u)-
+\int\limits_{0}^{\infty}e^{-u^2t^2/2}\,dA(u)}\leq{}\\
+{}\leq\int\limits_{0}^{\infty} \abs{h_n(ut)-e^{-u^2t^2/2}}\,dA(u)={}\\
+{}=\int\limits_{0}^{M} \abs{h_n(ut)-e^{-u^2t^2/2}}\,dA(u)+{}\\
+{}+
+\int\limits_{M}^{\infty} \abs{h_n(ut)-e^{-u^2t^2/2}}\,dA(u)\equiv I_1+I_2\,.
+\end{multline*}
+Далее
+$$
+I_2\leq2\int\limits_{M}^{\infty}\,dA(u)\,,
+$$
+и для произвольного $\varepsilon\hm>0$ можно выбрать такое $M\hm=M(\varepsilon)$, 
+что $I_2\hm<\varepsilon/2$. Поскольку в~силу цент\-раль\-ной предельной 
+теоремы $h_n(v)\hm\to e^{-v^2/2}$ равномерно на любом конечном отрезке, найдется 
+$N\hm=N(\varepsilon)$ такое, что $\abs{h_n(ut)-e^{-u^2t^2/2}}\hm<\varepsilon/2$ 
+для всех $n\hm>N$ и~всех $u\hm\in[0,M]$. Следовательно, $I_1\hm<\varepsilon/2$ при 
+$n\hm>N$ и,~таким образом, $\abs{f_n(t)-f(t)}\hm<\varepsilon$. Так как функция 
+распределения $F(x)$ непрерывна, выполнено~(\ref{lim_1}).
+
+Теорема доказана.
+
+\smallskip
+
+\noindent
+\textbf{Замечание~1.}\ В~теореме $\lambda\sqrt{n} Z_n$ центрируется 
+случайной величиной $a\lambda\sqrt{n}$. 
+Для построения доверительных интервалов было бы желательно центрировать 
+$\sqrt{n}\lambda Z_n$ некоторой неслучайной возрастающей последовательностью
+ чисел~$a_n$. Однако сделать этого нельзя.
+
+\smallskip
+
+Действительно, предположим, что такая последовательность существует. Тогда
+$$
+\sqrt{n}\,\lambda Z_n-a_n=\sqrt{n}\,\lambda\left(Z_n- a\right)+
+\left(\sqrt{n}\,\lambda a-a_n\right)\,.
+$$
+По доказанной теореме первое слагаемое имеет некоторое 
+предельное распределение. Рассмотрим второе слагаемое. 
+Если $a_n\hm=o(\sqrt{n})$ или наоборот $\sqrt{n}\hm=o(a_n)$, то 
+очевидно, что ${\sf P}(\abs{\lambda a\sqrt{n}- a_n}\hm>A)\hm\to1$ при 
+$n\hm\to\infty$ для любого $A\hm>0$. Если же $a_n\hm=O(\sqrt{n})$, т.\,е.\
+ существуют такие положительные числа~$c$ и~$C$, что $c\sqrt{n}\hm<a_n\hm<C\sqrt{n}$ 
+ для всех $n\hm>1$, то $\sqrt{n}\left(\lambda a-C\right)\hm<\sqrt{n}\,\lambda a
+ \hm-a_n\hm<\sqrt{n}\left(\lambda a\hm-c\right)$ п.в.\ 
+ и~${\sf P}(\abs{\sqrt{n}(\lambda a-C)}\hm>A)\hm\to1$, 
+ ${\sf P}(\abs{\sqrt{n}(\lambda a-c)}\hm>A)\hm\to1$ при $n\hm\to\infty$, т.\,е.\
+ снова 
+${\sf P}(\abs{\lambda a\sqrt{n}- a_n}\hm>A)\hm\to1$. Таким образом, 
+предельного распределения у~последовательности $\sqrt{n}\,\lambda Z_n\hm-a_n$ 
+не существует.
+
+\smallskip
+
+\noindent
+\textbf{Замечание 2.} Теорема дает возможность исследовать асимптотическое 
+поведение статистики, основанной на выборке $\lambda/Y_1,\ldots,\lambda/Y_n$, 
+в~стендовых испытаниях заказчика. Очевидно, что теорема останется верна при 
+замене случайной величины~$\lambda$ на~$\mu^{-1}$, а~случайных величин~$Y_i^{-1}$ 
+на~$X_i$, что соответствует стендовым испытаниям производителя.
+
+\smallskip
+
+\noindent
+\textbf{Замечание 3.} Как видно, предельное распределение для испытаний 
+заказчика однозначно определяется априорным распределением параметра 
+входящего потока~$\lambda$ ($\mu^{-1}$ для испытаний производителя), 
+что дает возможность применять результаты теоремы для широкого класса 
+распределений с~конечными первыми моментами случайных величин~$Y_i^{-1}$ 
+($X_i$~соответственно).
+
+\smallskip
+
+Для получения теоретических прогнозов можно использовать исследованные 
+ранее вероятностные характеристики для некоторых априорных распределений~$Y_i$, 
+например вейбулловского~\cite{KuTi16}. Однако
+математическое ожидание~$Y_i^{-1}$ может не существовать~\cite{KuSh07}, например 
+для показательного распределения параметра обслуживания.
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+
+
+\bibitem{CSMIJ}
+\Au{Sutton Ch., Jordan M.\,I.}
+Bayesian inference for queueing networks and modeling of internet services~// 
+Ann. Appl. Stat., 2011. Vol.~5. No.\,1. P.~254--282.
+
+\bibitem{KuSh2015}
+\Au{Кудрявцев А.\,А., Шоргин~С.\,Я.\/}
+Байесовские модели в~тео\-рии массового обслуживания и~надежности.~--- 
+М.: ФИЦ ИУ РАН, 2015. 76~с.
+
+\bibitem{KuTi16}
+\Au{Кудрявцев А.\,А., Титова~А.\,И.}
+Байесовские модели массового обслуживания и~надежности: 
+вы\-рож\-ден\-но-вей\-бул\-лов\-ский случай~// 
+Информатика и~её применения, 2016. Т.~10. Вып.~4. С.~68--71.
+
+\bibitem{KuSh07}
+\Au{Кудрявцев А.\,А., Шоргин~С.\,Я.}
+Байесовский подход к~анализу сис\-тем массового обслуживания и~показателей надежности~// 
+Информатика и~её применения, 2007. Т.~1. Вып.~2. С.~76--82.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 12.06.17}}
+
+\vspace*{8pt}
+
+%\newpage
+
+%\vspace*{-24pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{8pt}
+
+
+\def\tit{BAYESIAN MODELS FOR TESTING LARGE GROUPS OF~SERVICE~DEVICES}
+
+\def\titkol{Bayesian models for~testing large groups of~service devices}
+
+\def\aut{A.\,A.~Kudryavtsev$^1$ and O.\,V.~Shestakov$^{1,2}$}
+
+\def\autkol{A.\,A.~Kudryavtsev and O.\,V.~Shestakov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+\noindent
+$^1$Department of Mathematical Statistics, Faculty of Computational 
+Mathematics and Cybernetics,\linebreak
+$\hphantom{^1}$M.\,V.~Lomonosov Moscow State University, 
+1-52~Leninskiye Gory, GSP-1, Moscow 119991, Russian\linebreak
+$\hphantom{^1}$Federation
+
+\noindent
+$^2$Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+\Abste{The paper considers a new approach to the verification tasks for 
+the declared performance indicators of large groups of complex servicing 
+devices when the total verification is impossible or expensive. 
+The method used is\linebreak\vspace*{-12pt}}
+
+\Abstend{based on the study of the asymptotics of 
+statistics in the framework of the Bayesian approach to the problems 
+of the queuing theory. By the example of the readiness coefficient 
+in the $M|M|1$ model, the authors prove the proposition relating to the class 
+of transfer theorems which makes it possible to compare real data in bench 
+tests of complex aggregates with theoretical predictions. The specifics 
+of the application of the method from the point of view of a~device 
+manufacturer and a~customer of a large batch of similar devices are considered. 
+The described method and results can find application not only in the field of 
+Bayesian queuing problems but also in other areas that use randomization 
+of the basic parameters of the model.}
+
+\KWE{Bayesian approach; mass service systems; mixed distributions; 
+transfer theorem; statistical methods}
+
+
+
+\DOI{10.14357/19922264180113} 
+
+%\vspace*{-12pt}
+
+\Ack
+\noindent
+The work was partly supported by the Russian Foundation for Basic 
+Research (project 17-07-00577).
+
+
+
+%\vspace*{3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+
+\bibitem{1-kud-1}
+\Aue{Sutton, Ch., and M.\,I.~Jordan.} 
+2011. Bayesian inference for queueing networks and modeling of internet services. 
+\textit{Ann. Appl. Stat.} 5(1):254--282.
+
+\bibitem{2-kud-1}
+\Aue{Kudryavtsev, A.\,A., and S.\,Ya.~Shorgin.} 2015. \textit{Bayesovskie modeli 
+v~teorii massovogo obsluzhivaniya i~nadezhnosti} 
+[Bayesian models in mass service and reliability theories]. Moscow: FIC IU RAN. 76~p.
+
+\bibitem{3-kud-1}
+\Aue{Kudryavtsev, A.\,A., and A.\,I.~Titova.} 2016. Bayesovskie modeli massovogo 
+obsluzhivaniya i~nadezhnosti: vyrozhdenno-veybullovskiy sluchay  
+[Bayesian queuing and reliability models: Degenerate-Weibull case]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 10(4):68--71.
+
+\bibitem{4-kud-1}
+\Aue{Kudryavtsev, A.\,A., and S.\,Ya.~Shorgin.} 2007. Bayesovskiy podkhod 
+k~analizu sistem massovogo obsluzhivaniya i~pokazateley nadezhnosti 
+[Bayesian approach to queueing systems and reliability characteristics]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 1(2):76--82.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received June 12, 2017}}
+
+%\vspace*{-10pt}
+
+
+\Contr
+
+\noindent
+\textbf{Kudryavtsev Alexey A.} (b.\ 1978)~--- 
+Candidate of Science (PhD) in physics and mathematics, associate professor, 
+Department of Mathematical Statistics, Faculty of Computational Mathematics 
+and Cybernetics, M.\,V.~Lomonosov Moscow State University, 1-52~Leninskiye Gory, 
+GSP-1, Moscow 119991, Russian Federation; \mbox{nubigena@mail.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Shestakov Oleg V.} (b.\ 1976)~--- 
+Doctor of Science in physics and mathematics, associate professor, 
+Department of Mathematical Statistics, Faculty of Computational Mathematics 
+and Cybernetics, M.\,V.~Lomonosov Moscow State University, 1-52~Leninskiye Gory, 
+GSP-1, Moscow 119991, Russian Federation; senior scientist, 
+Institute of Informatics Problems, Federal Research Center ``Computer Science 
+and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, 
+Russian Federation; \mbox{oshestakov@cs.msu.su}
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература} 

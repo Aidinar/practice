@@ -1,0 +1,720 @@
+\def\stat{grusho}
+
+\def\tit{О~КАУЗАЛЬНОЙ РЕПРЕЗЕНТАТИВНОСТИ\\ ОБУЧАЮЩИХ ВЫБОРОК ПРЕЦЕДЕНТОВ\\ В~ЗАДАЧАХ 
+ДИАГНОСТИЧЕСКОГО ТИПА$^*$}
+
+\def\titkol{О~каузальной репрезентативности обучающих выборок прецедентов в~задачах 
+диагностического типа}
+
+\def\aut{А.\,А.~Грушо$^1$, М.\,И.~Забежайло$^2$, Е.\,Е.~Тимонина$^3$}
+
+\def\autkol{А.\,А.~Грушо, М.\,И.~Забежайло, Е.\,Е.~Тимонина}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Грушо А.\,А.}
+\index{Забежайло М.\,И.}
+\index{Тимонина Е.\,Е.}
+\index{Grusho A.\,A.}
+\index{Zabezhailo M.\,I.}
+\index{Timonina E.\,E.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа частично поддержана РФФИ (проект 18-29-03081).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управление>> 
+Российской академии наук, \mbox{grusho@yandex.ru}}
+\footnotetext[2]{Вычислительный центр им.\ А.\,А.~Дородницына Федерального исследовательского центра <<Информатика 
+и~управ\-ле\-ние>> Российской академии наук, \mbox{m.zabezhailo@yandex.ru}}
+\footnotetext[3]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управ\-ле\-ние>> 
+Российской академии наук, \mbox{eltimon@yandex.ru}}
+
+\vspace*{-12pt}
+
+
+
+  
+  
+  \Abst{Работа посвящена некоторым особенностям анализа причинности в~задачах 
+интеллектуального анализа данных. Обсуждаются возможности использования так называемых 
+открытых логических теорий в~задачах диагностики (классификации) для описания 
+пополняемых наборов эмпирических данных. В~задачах этого типа необходимо установить 
+(спрогнозировать, диагностировать и~др.)\ наличие или отсутствие целевого свойства у нового 
+прецедента, заданного описанием на том же языке представления гетерогенных данных, 
+которым описаны примеры, обладающие целевым свойством, и~контрпримеры, не обладающие 
+целевым свойством. Представлен вариант построения открытых теорий, опи\-сы\-ва\-ющих 
+коллекции прецедентов средствами специальных логических выражений~--- 
+характеристических функций (ХФ). Характеристические функции позволяют избавиться от 
+гетерогенности в~описаниях прецедентов. Предложена процедурная конструкция формирования 
+ХФ обучающей выборки прецедентов. Исследованы свойства 
+ХФ и~некоторые условия их существования.}
+   
+  \KW{диагностика; каузальный анализ; интеллектуальный анализ данных; открытые 
+логические теории} 
+
+\DOI{10.14357/19922264200111} 
+  
+\vspace*{-3pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение }
+
+  Работа посвящена некоторым особенностям анализа причинности в~задачах 
+диагностического типа. К~этому классу традиционно относят такие задачи, 
+в~которых исходные данные пред\-став\-ле\-ны описаниями двух типов  
+прецедентов~--- тех, которые обладают заданным целевым свойством (будем 
+называть их \textit{примерами} наличия анализируемого эффекта), и~тех, которые, 
+будучи <<похожими>> на примеры, тем не менее таковым свойством не обладают 
+(будем называть их \textit{контрпримерами}). В~задачах этого типа необходимо 
+установить (спрогнозировать, диагностировать и~др.)\ наличие или отсутствие 
+целевого свойства у нового (предлагаемого для формирования <<диагноза>>) 
+прецедента, заданного описанием на том же языке представления  
+дан\-ных/зна\-ний, которым описаны примеры и~контрпримеры.
+  
+  По-видимому, исторически первые примеры подобных проблем сформировала 
+медицина, однако сегодня предлагаемый перечень содержит и~такие не менее 
+востребованные предметные области, как:
+  \begin{itemize}
+\item техническая диагностика~[1] (рассматриваемая в~широком диапазоне от 
+диагностики отказов и~поддержания работоспособности сложного 
+оборудования~--- транспортного, энергетического, нефтегазового и~т.\,п.~--- до 
+обеспечения устойчивой работы крупных центров обработки данных, 
+компьютерных сетей, телекоммуникационной инфраструктуры и~др.);
+\item финансовый мониторинг и~противодействие мошенничеству 
+в~финансовой сфере~[2];
+\item информационная безопасность (идентификация компьютерных атак 
+и~организация противодействия целенаправленным вредоносным 
+воздействиям в~сфере ин\-фор\-ма\-ци\-он\-но-ком\-му\-ни\-ка\-ци\-он\-ных 
+технологий)~[3, 4];
+\item экологический мониторинг (в~частности, выявление потенциально 
+опасных химических соединений в~окружающей человека среде)~[5, 6];
+\item социологический анализ (типология социума и~анализ рациональных 
+оснований принятия решений различными социальными группами)~[7] и~др. 
+\end{itemize}
+
+  Соответствующие подходы, математические модели, методы и~алгоритмы 
+формируют в~этих областях своего рода сквозную технологию компьютерного 
+анализа данных и~поддержки принятия управленческих решений.
+  
+  Наиболее распространенными в~рас\-смат\-ри\-ва\-емой области анализа данных 
+и~поддержки принятия решений оказались так называемые  
+\textit{ин\-тер\-по\-ля\-ци\-он\-но-экстра\-по\-ля\-ци\-он\-ные} математические 
+\mbox{техники} решения задач диагностического типа: име\-юща\-яся <<обучающая>> 
+выборка описаний прецедентов (примеров и~контрпримеров) интерполируется той 
+или иной сис\-те\-мой эмпирических зависимостей (ЭЗ) (регрессионных, логических 
+и~т.\,п.)\ так, чтобы <<диагностика>> нового прецедента могла быть сведена 
+к~проверке корректной экстраполяции ка\-ких-ли\-бо из уже найденных ЭЗ на 
+описание этого нового прецедента. 
+  
+  Критически значимым аспектом, характерным для задач этого типа, 
+оказывается проблема анализа причинности (идентификации каузальных 
+оснований) формируемых диагностических заключений. С~управленческой точки 
+зрения существенно иметь возможности выделять именно причинные факторы 
+влияния, <<вынуждающие>> появление исследуемого целевого эффекта. Это 
+позволяет, оказывая влияние именно на причины, целенаправленно 
+воздействовать на ситуацию и~объект управления, чтобы не допустить 
+возникновения негативных последствий.
+  
+  При изучении эффектов причинности (каузальных <<влияний>>) путем анализа 
+эмпирического материала важно принять во внимание ряд фундаментальных 
+обстоятельств, к~наиболее критически значимым из которых следует отнести:
+  \begin{itemize}
+\item отсутствие ясных, корректных и~точных представлений о~<<структуре>> 
+искомых причинных <<влияний>>, в~частности об исчерпывающем перечне 
+факторов <<влияния>> и~полном комплексе взаимосвязей между ними; 
+\item  отсутствие достаточно надежных оснований считать используемый язык 
+представления анализируемых эмпирических данных \textit{каузально 
+полным}, т.\,е.\ адекватно представляющим как все факторы причинного 
+влияния, так и~все взаимосвязи между ними~[8].
+\end{itemize}
+
+  В подобной ситуации говорить об анализе собственно причин в~задачах 
+рассматриваемого типа не совсем корректно. Более естественным представляется 
+ограничиться лишь эмпирическими <<причинами>>~--- описаниями каузальных 
+влияний, которые могут быть выделены (найдены, восстановлены из данных 
+и~т.\,п.)\ в~име\-ющей\-ся <<обучающей>> выборке прецедентов 
+и~задействованном для описания накапливаемого эмпирического материала языке 
+представления данных.
+  
+  Далее в~этой работе, упоминая о причинности и~каузальных влияниях, будем 
+иметь в~виду именно такое, учитывающее специфику анализа эмпирических 
+данных, уточнение представлений о причинности.
+  
+  Принимая во внимание особую значимость каузальных факторов <<влияния>>, 
+характеризующих в~каждом конкретном случае наличие изучаемого целевого 
+эффекта, и~дополнительно отмечая критически важную роль идентификации таких 
+факторов для организации целенаправленного противодействия негативным 
+последствиям их влияния, более подробно рассмотрим возможности их выявления с~помощью подходящих средств компьютерного анализа данных. Результативной 
+здесь оказывается следующая очевидная эвристика: так как необходимые факторы 
+влияния должны отражать <<каузальность>> во всех описаниях прецедентов 
+наличия анализируемого целевого эффекта (примеров), то, как следствие, 
+значимые для возникновения исследуемого целевого эффекта комбинации таких 
+факторов должны отображаться сходствами описаний примеров~[9, 10]. При этом 
+естественно потребовать, чтобы выделяемые таким образом значимые 
+комбинации факторов влияния не <<встречались>> ни в~одном из описаний 
+контрпримеров. Случаи, когда <<причина>> имеется, а эффекта~--- нет, должны 
+быть использованы для удаления артефактов из формируемого на примерах 
+множества значимых комбинаций факторов целенаправленного каузального 
+влияния.
+  
+  Располагая <<непротиворечивыми>>, харак\-тер\-ными только для примеров 
+значимыми комбинациями факторов влияния, можно строить соответствующие 
+логические условия. Будем называть их\linebreak характеристическими функциями  
+текущей базы фактов (БФ). Характеристические функции охватывают имеющееся на текущий момент 
+множество прецедентов (примеров и~контрпримеров), каждое из которых истинно 
+на всех примерах и~ложно на всех контрпримерах из текущей БФ. Непустота 
+множества ХФ, порождаемых на текущей выборке прецедентов БФ, может 
+рассматриваться как характеристика ее каузальной репрезентативности, т.\,е.\ 
+корректной <<разделимости>> примеров и~контрпримеров логическими 
+условиями каузального характера.
+  
+  Учитывая, что <<природа>> диагностических задач\linebreak требует возможностей 
+оперировать расширя\-ющимися за счет новых описаний прецедентов коллекциями 
+эмпирических данных, естественно\linebreak рас\-смат\-ри\-вать соответствующую 
+<<динамику>> накапливания и~изменений анализируемого эмпирического 
+материала, т.\,е.\ динамику изменений каж\-до\-го конкретного множества 
+соответствующих ХФ. Особый интерес вызывают такие подсемейства ХФ, 
+которые <<наследуются>>, т.\,е.\ сохраняют корректность описания конкретной 
+БФ при ее конкретном расширении. С~математической точки зрения интерес 
+представляет проб\-ле\-ма эффективного выделения именно таких подсемейств ХФ. 
+В~данном случае речь идет о~проб\-ле\-ме эффективного поиска ЭЗ, 
+описывающих природу диагностируемого целевого эффекта.
+  
+  \section{Математическая модель формирования факторов каузального 
+влияния}
+   
+  Пусть заданы два множества:
+  \begin{align*}
+  \boldsymbol{U}&= \left\{a_1, a_2,\ldots ,a_n\right\};\\ 
+\boldsymbol{\Omega}&= \left\{O_1, O_2,\ldots , O_m\right\}\subseteq 
+2^U\backslash\phi\,,
+\end{align*}
+ первое из которых будем называть исходным алфавитом, или 
+множеством образующих элементов для описания анализируемых прецедентов 
+из~$\Omega$, а~второе~--- множеством собственно описаний прецедентов, 
+построенных над универсумом~$U$. 
+  
+  \textit{Примерами} будем называть такие прецеденты $O_1^+, O_2^+,\ldots , 
+O^+_{m^+}$ из множества~$\boldsymbol{\Omega}$, которые обладают 
+исследуемым целевым свойством~$P$. Обозначим это подмножество 
+множества~$\boldsymbol{\Omega}$ через~$\boldsymbol{\Omega}^+$. 
+\textit{Контрпримерами} будем называть такие прецеденты $O_1^-, O_2^-, \ldots , 
+O^-_{m^-}$ из множества~$\boldsymbol{\Omega}$, которые не обладают этим 
+целевым свойством~$P$. Обозначим это подмножество 
+множества~$\boldsymbol{\Omega}$ через~$\boldsymbol{\Omega}^-$. Таким 
+образом, множество~$\boldsymbol{\Omega}$ будет представлять описание 
+текущего состояния~БФ. 
+  
+  Для операции $\otimes$ сходства описаний прецедентов из БФ используем 
+операцию~$\cap$ пересечения множеств образующих, формирующих описание 
+каждого прецедента из~$\boldsymbol{\Omega}$, т.\,е.\ результатом ее применения 
+будет множество попарно совпадающих значений признаков из множества 
+образующих~$\boldsymbol{U}$. Несложно убедиться, что такое определение 
+операции сходства корректно, т.\,е.\ по непустой операции это отношение 
+рефлексивно, симметрично и~ассоциативно. 
+  
+  Пусть $\boldsymbol{\Omega}\hm = \{O_1, O_2, \ldots , O_m\}$. Построим 
+по~$\boldsymbol{\Omega}$ и~$\otimes$ множество $\mathrm{Dom}\,(\boldsymbol{\Omega})$ 
+следующим образом: 
+  \begin{itemize}
+\item[(а)] $\boldsymbol{\Omega} \hm= \left\{ O_1, O_2, \ldots , 
+O_m\right\}\hm\subset \mathrm{Dom}\,(\boldsymbol{\Omega})$;
+\item[(б)] $\{ [A\in \mathrm{Dom}\,(\boldsymbol{\Omega})] \& [B\hm\in 
+\mathrm{Dom}\,(\boldsymbol{\Omega})] \& [(A \otimes B) \hm\not=$\linebreak $\not= \phi]\}\to [ (A\otimes  
+B)\hm\in \mathrm{Dom}\,(\boldsymbol{\Omega})]$;
+\item[(в)] других элементов в~множестве $\mathrm{Dom}\,(\boldsymbol{\Omega})$нет.
+\end{itemize}
+  
+  Аналогичным образом определяются множества 
+$\mathrm{Dom}\,(\boldsymbol{\Omega}^+)$ и~$\mathrm{Dom}\,(\boldsymbol{\Omega}^-)$. 
+  
+  Фиксируя каждый конкретный, непустой результат $V\hm=V_0$ вычисления 
+операции~$\otimes$ сходства на элементах множества 
+$\mathrm{Dom}\,(\boldsymbol{\Omega})$, где $A\otimes B\hm= V_0$, можно выделять 
+соответствующие классы сходства~$\mathbf{E}^{\otimes}_{V_0}$: 
+  $$
+  \mathbf{E}^{\otimes}_{V_0}=\left\{ \langle O_{i_1}, O_{i_2} \rangle \vert 
+O_{i_1} \otimes O_{i_2}\otimes V_0=V_0\right\}\,.
+  $$
+  
+   
+  
+  Таким образом, фиксируя конкретное значение параметра сходства~$V_0$, 
+можно определить множество всех прецедентов~$\mathbf{E}_{V_0}$, которые 
+содержат\linebreak множество признаков~$V_0$. Тогда можно разбить исходное множество 
+прецедентов~$\boldsymbol{\Omega}$ на два непересекающихся подмножества 
+$\mathbf{E}_{V_0}$ и~$\boldsymbol{\Omega}\backslash \mathbf{E}_{V_0}$: 
+$\mathbf{E}_{V_0}\cap \boldsymbol{\Omega}\backslash 
+\mathbf{E}_{V_0}\hm=\phi$.
+  %
+  При этом надо рассматривать каж\-дый раз при таком разделении 
+множества~$\boldsymbol{\Omega}$ на два не\-пе\-ре\-се\-ка\-ющих\-ся подмножества 
+с~по\-мощью соответствующего~$V_0$ все содержащие общую часть~$V_0$ 
+прецеденты. 
+  
+  Для каждого сформированного таким образом класса сходства примеров 
+должно дополнительно\linebreak выполняться логическое условие, называемое 
+\textit{запретом на контрпримеры} (ЗКП)~\cite{9-gr}. В~случае использования 
+ЗКП запрещается вложимость\linebreak {примеров} одного <<знака>> в~ка\-кой-ли\-бо из 
+сформированных классов сходства противоположного <<знака>>.
+  
+  Условие ЗКП для примеров можно представить в~следующем виде:
+    \begin{multline*}
+  \forall\ V \left\{ \left[ \left(V\in \mathrm{Dom}\,
+  \left(\boldsymbol{\Omega}^+\right)\right)\& (V\not= \phi) \right]
+\&\right.\\
+\&
+\left[ \exists\,O_r^+, \exists\,O_s^+  \left( O_r^+\otimes O_s^+\otimes 
+V=V\right)\right]\to\\
+  \left. {}\to \neg \left( \exists\,O_p^- \left[
+  \left(O_p^-\in (\boldsymbol{\Omega}^-)\right)\& 
+  \left(O_p^-
+\otimes V=V\right)\right]\right)\right\}\,.
+  \end{multline*}
+% 
+
+
+
+\noindent 
+  При этом условие ЗКП для контрпримеров может быть формализовано 
+симметричным образом заменой~$\boldsymbol{\Omega}^+$ 
+на~$\boldsymbol{\Omega}^-$, примеров~$O_r^+$ и~$O_s^+$~--- на контрпримеры 
+$O_r^-$ и~$O_s^-$, а~вместе с~ними контрпримера~$O_p^-$ на пример~$O_p^+$. 
+  
+  Исходя из того принципа, что для появления свойства~$P$ должна быть 
+причина, при выполнении условия ЗКП можно ожидать, что причина содержится 
+в~примерах~$\boldsymbol{\Omega}^+$. Однако неизвестны характеристики 
+причины, а~именно: является ли причина единственной и~какова структура 
+причины. Из упомянутого выше принципа сходства можно искать причины 
+свойства~$P$ в~по\-рож\-да\-ющих элементах~$V$ классов сходства. Но в~силу 
+указанной неопределенности о~всех порождающих классы сходства элементах 
+необходимо говорить как о~возможных факторах влияния на прогноз появления 
+свойства~$P$, или факторах эмпирической причинности свойства~$P$. При этом 
+сами порождающие элементы классов сходства можно называть ЭЗ. Аналогично 
+можно определять ЭЗ на множестве~$\boldsymbol{\Omega}^-$. 
+  
+  Итак, чтобы ожидать, что новый предложенный для прогноза свойств 
+прецедент~$O_0$ также имеет свойство~$P$, в~обсуждаемой схеме рассуждений 
+следует убедиться, что данный~$O_0$ <<попадает>> хотя бы в~один из классов 
+сходства, сформированных на исходном множестве 
+примеров~$\boldsymbol{\Omega}^+$.
+  
+  Легко видеть, что покрытие всего исходного\linebreak множества 
+прецедентов~$\boldsymbol{\Omega}^+$ классами сходства  
+пре\-це\-ден\-тов-при\-ме\-ров, порождаемыми на его примерах с~непременным 
+выполнением условия ЗКП,\linebreak позволяет разделить с~по\-мощью выделяемых 
+комбинаций значений факторов <<причинности>> примеры и~контрпримеры 
+в~текущем множестве~$\boldsymbol{\Omega}$ (текущей БФ). 
+  
+  Ясно, что один класс сходства $\mathbf{E}_V$ может не покрывать 
+множество~$\boldsymbol{\Omega}^+$. Однако несколько классов сходства 
+$\mathbf{E}_{V_1},\ldots , \mathbf{E}_{V_k}$ могут покрыть все 
+множество~$\boldsymbol{\Omega}^+$. Такое покрытие, если оно существует, 
+может не быть единственным. Из условия ЗКП для любого покрытия 
+множества~$\boldsymbol{\Omega}^+$ классами сходства 
+$\mathbf{E}_{V_1},\ldots , \mathbf{E}_{V_k}$ порождающие элементы 
+$V_1,\ldots , V_k$ не могут встречаться в~прецедентах из 
+множества~$\boldsymbol{\Omega}^-$. 
+  
+  Для покрытия $\mathbf{E}_{V_1},\ldots , \mathbf{E}_{V_k}$ определим 
+бинарные переменные следующим образом:
+  $$
+  x_{ij}=\begin{cases}
+  1\,, & \mbox{если\ характеристика } a_i\in V_j\,;\\
+  0 & \mbox{в~противном случае}.
+  \end{cases}
+  $$
+  Тогда с~множеством~$V_j$ взаимно однозначно связана конъюнкция 
+$\mathop{\wedge}\limits_{a_i\in V_j} x_{ij}$.
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Определение.} Характеристической функцией 
+покрытия~$\boldsymbol{\Omega}^+$ классами сходства $\mathbf{E}_{V_1},\ldots 
+, \mathbf{E}_{V_k}$ называется двоичная функция  
+$\mathop{\vee}\limits^k_{j=1}\mathop{\wedge}\limits_{a_i\in V_j} x_{ij}$.
+  
+  Если возможно построить~$s$~покрытий классами сходства 
+множества~$\boldsymbol{\Omega}^+$, то существует~$s$~ХФ. 
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Утверждение.} Каждая построенная в~соответствии с~определением 
+функция~$\mathrm{ХФ}$ принимает на факте~$\varphi$ из текущей БФ значение~1 (истина) 
+тогда и~только тогда, когда данный факт характеризуется наличием 
+анализируемого целевого свойства~$P$, и~0 (ложь) тогда и~только тогда, когда 
+данный факт характеризуется отсутствием анализируемого целевого 
+свойства~$P$.
+  
+  \smallskip
+  
+  \noindent
+  Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ \textit{Необходимость}. Если~$\varphi$ не 
+обладает свойством~$P$, то $\varphi\not\in \boldsymbol{\Omega}^+$. Тогда при 
+любом покрытии~$\boldsymbol{\Omega}^+$ в~силу ЗКП ни один из порождающих 
+элементов из покрытия не может входить в~$\varphi$. Следовательно, ни одна 
+конъюнкция ХФ не может равняться~1, а~тогда значение 
+ХФ на~$\varphi$ равно~0. 
+  
+  Если $\varphi$ обладает свойством~$P$, то 
+$\varphi\hm\in\boldsymbol{\Omega}^+$ и,~следовательно, входит в~один из 
+классов сходства покрытия~$\boldsymbol{\Omega}^+$. Тогда порождающий 
+элемент этого класса сходства принадлежит~$\varphi$ и~соответствующая 
+конъюнкция равняется~1. 
+  
+  \noindent
+  \textit{Достаточность.} Если ХФ\,$(\varphi)\hm=1$, то в~определяющем ХФ 
+покрытии существует конъюнкция, принимающая значение~1. Тогда~$\varphi$ 
+принадлежит соответствующему классу сходства в~$\boldsymbol{\Omega}^+$. 
+Если ХФ\,$(\varphi)\hm=0$, то в~определяющем ХФ покрытии не существует ни 
+одной конъюнкции, принимающей значение~1. Тогда~$\varphi$ не принадлежит 
+ни одному классу сходства в~$\boldsymbol{\Omega}^+$. Тогда из покрытия 
+следует, что $\varphi \hm \in \boldsymbol{\Omega}^-$.
+  
+  \section{Примеры}
+  
+  Несложно убедиться, что в~общем случае ХФ, формируемая на текущей БФ, не 
+является единственной. 
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Пример~1.}\ Пусть $\boldsymbol{U}\hm = \{a_1, a_2, a_3, a_4\}$ 
+и~$\boldsymbol{\Omega}\hm= \{O_1, O_2, \ldots , O_7\}$, где 
+  \begin{align*}
+O_1&=\left\{ a_1, a_4\right\}\,;\\
+  O_2&=\left\{ a_1, a_2\right\}\,;\\
+  O_3&=\left\{ a_2, a_4\right\}\,;,\\
+  O_4&=\left\{ a_1, a_3\right\}\,;\\
+  O_5 &= \left\{ a_1, a_2, a_3, a_4\right\}\,;\\
+  O_6 &= \left\{ a_2, a_3\right\}\,;\\
+  O_7 &= \left\{ a_3, a_4\right\}\,,
+  \end{align*}
+при этом множество примеров $\boldsymbol{\Omega}^+\hm =\{O_1^+, O_2^+, 
+\ldots , O_7^+\}$, а~множество контрпримеров~--- $\boldsymbol{\Omega}^-\hm= \phi$. 
+
+  Несложно убедиться, что дизъюнкции 
+  \begin{gather*}
+   \hspace*{-7mm}\mathrm{ХФ}_1(\boldsymbol{\Omega})= a_1\vee a_2 \vee a_3
+   \left( \left\{ O_1, O_2, O_4, O_5\right\}\cup \right.\\
+   \hspace*{7mm} \left.\cup\left\{ O_2, O_3, O_5, O_6\right\} \cup 
+\left\{ O_4, O_5, O_6, O_7\right\}\right)\,;\\
+   \hspace*{-7mm}\mathrm{ХФ}_2(\boldsymbol{\Omega})=a_1\vee a_3\vee a_4
+  \left( \left\{ O_1, O_2, O_4, O_5\right\}\cup\right.\\
+ \hspace*{7mm}\left.  \cup \left\{ O_4, O_5, O_6, O_7\right\} \cup 
+\left\{ O_1, O_3, O_5, O_7\right\}\right)\,;\\
+   \hspace*{-7mm}\mathrm{ХФ}_3(\boldsymbol{\Omega})=a_2\vee a_3\vee a_4
+  \left( \left\{ O_2, O_3, O_5, O_6\right\}\cup\right.\\
+ \hspace*{7mm}\left.  \cup \left\{ O_4, O_5, O_6, O_7\right\} \cup 
+\left\{ O_1, O_3, O_5, O_7\right\}\right)
+  \end{gather*}
+  соответствуют трем различным покрытиям исходного множества 
+примеров~$\boldsymbol{\Omega}^+$ классами сходства примеров 
+из~$\boldsymbol{\Omega}$.
+
+  Множество всех ХФ, построенных на заданной БФ, может оказаться пустым.
+  \smallskip
+  
+  \noindent
+  \textbf{Пример~2.} Пусть $\boldsymbol{U}\hm= \{a_1, a_2,\ldots , a_n, x,y,z\}$ 
+и~$\boldsymbol{\Omega}\hm =\{ O_1, O_2, O_3\}$, где
+  \begin{align*}
+   O_1&= \left\{a_1, a_2, \ldots , a_n, x\right\}\,;\\
+  O_2&= \left\{a_1, a_2, \ldots , a_n, y\right\}\,;\\
+  O_3&= \left\{a_1, a_2, \ldots , a_n, z\right\}\,,
+  \end{align*}
+  при этом множество примеров $\boldsymbol{\Omega}^+\hm= \{O_1^+, O_2^+\}$, 
+а~множество контрпримеров $\boldsymbol{\Omega}^-\hm= \{O_3^-\}$. 
+
+  Тогда единственная ЭЗ, формируемая на примерах $\{O_1^+, O_2^+\}$, 
+порождается множеством признаков $\{a_1, a_2,\ldots , a_n\}$, и~при этом условие 
+ЗКП на контрпримере~$O_3^-$ не выполняется. Таким образом, множество ХФ, 
+формируемых на БФ, оказывается пустым.
+  
+  \section{Заключение }
+  
+  \noindent
+  \begin{enumerate}[1.]
+\item В работе исследован подход к~построению методов описания причинности 
+появления свойства~$P$ в~БФ. Открытость множества БФ не позволяет 
+однозначно определять причину\linebreak свойства~$P$, если не определена структура 
+этой причины и~единственность причины. Поэтому в~исследовании речь идет 
+о~выявлении фактов влияния на появление ЭП. Пополнение БФ позволяет лишь 
+делать предположения о~появлении свойства~$P$ в~новых фактах. 
+\item Для удобства анализа факторов влияния на появление ЭП определены ХФ, 
+которые позволяют формализовать рассматриваемый подход в~условиях 
+выполнения ЗКП. 
+\item В терминах ХФ можно автоматизировать поиск свойства~$P$ в~новых 
+прецедентах. 
+\item Развитие предложенного метода предполагает его практическое 
+использование в~областях, перечисленных во введении, а также дальнейшее 
+исследование при\-чин\-но-след\-ст\-вен\-ных связей в~условиях сложных 
+причин и~сложной структуры свойства~$P$. 
+\end{enumerate}
+  
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-gr}
+\Au{Грушо А.\,А., Забежайло~М.\,И., Грушо~Н.\,А., Тимонина~Е.\,Е.} Поиск эмпирических 
+причин сбоев и~ошибок в~компьютерных системах и~сетях с~использованием метаданных~// 
+Системы и~средства информатики, 2019. Т.~29. №\,4. С.~28--38. doi: 10.14357/08696527190403.
+\bibitem{2-gr}
+\Au{Грушо А.\,А., Забежайло~М.\,И., Грушо~Н.\,А., Тимонина~Е.\,Е.} Архитектурные решения 
+в~задаче выявления мошенничества при анализе информационных потоков в~цифровой 
+экономике~// Информатика и~её применения, 2019. Т.~13. Вып.~2. С.~21--27. doi: 
+10.14357/19922264190204.
+
+\bibitem{4-gr}
+\Au{Грушо А.\,А., Забежайло~М.\,И., Грушо~Н.\,А., Тимонина~Е.\,Е.} Интеллектуальный анализ 
+данных в~обеспечении информационной безопасности~// Проб\-ле\-мы информационной 
+безопасности. Компьютерные сис\-те\-мы, 2016. №\,3. С.~55--60.
+
+\bibitem{3-gr}
+\Au{Grusho A.\,A.} Data mining and information security~// Computing network security~/
+Eds. J.~Rak, J.~Bay, I.~Kotenko, \textit{et al.}~--- Lecture notes in computer science ser.~--- Springer, 
+2017. Vol.~10446. P.~28--33.
+
+\bibitem{5-gr}
+\Au{Забежайло М.\,И.} Комбинаторные средства формализации эмпирической индукции: Дис.\ 
+\ldots\  докт. физ.-мат. наук.~--- М., 2015. 440~с.
+\bibitem{6-gr}
+\Au{Забежайло М.\,И., Трунин~Ю.\,Ю.} К~проб\-ле\-ме доказательности медицинского 
+диагноза: интеллектуальный анализ данных о пациентах в~выборках ограниченного размера~// 
+На\-уч\-но-тех\-ни\-че\-ская \mbox{информация}. Сер.~2, 2019. №\,12. C.~12--18.
+\bibitem{7-gr}
+\Au{Михеенкова М.\,А. и~др.} ДСМ-метод в~социологии: анализ данных и~прогнозирование~// 
+Автоматическое порождение гипотез в~интеллектуальных системах~/ Под общ. ред. 
+В.\,К.~Финна.~--- М.: ЛИБРОКОМ, 2009. С.~409--492.
+\bibitem{8-gr}
+\Au{Грушо А.\,А., Грушо~Н.\,А., Забежайло~М.\,И., Смирнов~Д.\,В., Тимонина~Е.\,Е.} 
+Параметризация в~прикладных задачах поиска эмпирических причин~// Информатика и~её 
+применения, 2018. Т.~12. Вып.~3. С.~62--66.
+\bibitem{9-gr}
+\Au{Финн В.\,К.} Индуктивные методы Д.\,С.~Милля в~сис\-те\-мах искусственного интеллекта. 
+Часть~I~// Искусственный интеллект и~принятие решений, 2010. №\,3. С.~3--21.
+\bibitem{10-gr}
+\Au{Финн В.\,К.} Индуктивные методы Д.\,С.~Милля в~сис\-те\-мах искусственного интеллекта. 
+Часть~II~// Искусственный интеллект и~принятие решений, 2010. №\,4. С.~14--40.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 12.01.20}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{ON CAUSAL REPRESENTATIVENESS OF~TRAINING SAMPLES OF~PRECEDENTS 
+IN~DIAGNOSTIC TYPE TASKS}
+
+
+\def\titkol{On causal representativeness of~training samples of~precedents 
+in~diagnostic type tasks}
+
+\def\aut{A.\,A.~Grusho$^1$, M.\,I.~Zabezhailo$^2$, and~E.\,E.~Timonina$^1$}
+
+\def\autkol{A.\,A.~Grusho, M.\,I.~Zabezhailo, and~E.\,E.~Timonina}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+\noindent
+   $^1$Institute of Informatics Problems, Federal Research Center ``Computer 
+Science and Control'' of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences; 44-2~Vavilov Str., Moscow 
+119133, Russian Federation
+   
+   \noindent
+   $^2$Dorodnicyn Computing Center, Federal Research Center ``Computer Science 
+and Control'' of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 40~Vavilov Str., Moscow 119333, 
+Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+
+   
+   
+   \Abste{The work focuses on some features of causality analysis in data mining tasks. The 
+possibilities of using so-called open logic theories in diagnostic (classification) tasks to describe 
+replenished sets of empirical data are discussed. In tasks of this type, it is necessary to establish 
+(predict, diagnose, etc.)\ the presence or absence of a~target property in a~new precedent given by 
+a~description in the same presentation language of heterogeneous data, which describes examples 
+having a target property and counter-examples not having a target property. The variant of construction 
+of open theories describing collections of precedents by means of special logical expressions~--- 
+characteristic functions~--- is presented. Characteristic functions allow to get rid of heterogeneity in 
+descriptions of precedents. The procedural design of formation of characteristic functions of a~training 
+sample of precedents is proposed. The properties of characteristic functions and some conditions of 
+their existence are studied.}
+   
+   \KWE{diagnostics; causal analysis; intelligent data analysis; open logic theories}
+   
+   
+
+\DOI{10.14357/19922264200111} 
+
+%\vspace*{-14pt}
+
+\Ack
+   \noindent
+   The paper was partially supported by the Russian Foundation for Basic Research (project  
+18-29-03081).
+
+
+%\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99} 
+\bibitem{1-gr-1}
+\Aue{Grusho, A.\,A., N.\,A.~Grusho, M.\,I.~Zabezhailo, and E.\,E.~Timonina.} 2019. Poisk 
+empiricheskikh prichin sboev i~oshibok v~komp'yuternykh sistemakh i~setyakh s~ispol'zovaniem 
+metadannykh [Search of empirical causes of failures and errors in computer systems and networks 
+using metadata]. \textit{Sistemy i~Sredstva Informatiki~--- Systems and Means of Informatics}  
+29(4):28--38. 
+\bibitem{2-gr-1}
+\Aue{Grusho, A.\,A., N.\,A.~Grusho, M.\,I.~Zabezhailo, and E.\,E.~Timonina.} 2019. Arkhitekturnye 
+resheniya v~zadache vyyavleniya moshennichestva pri analize informatsionnykh potokov v~tsifrovoy 
+ekonomike [Architectural decisions in the problem of identification of fraud in the analysis of 
+information flows in digital economy]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 
+13(2):21--27. 
+
+\bibitem{4-gr-1}
+\Aue{Grusho, A.\,A., N.\,A.~Grusho, M.\,I.~Zabezhailo, and E.\,E.~Timonina.} 2016. Intelligent data 
+analysis in information security. \textit{Autom. Control Comp.~S.} 50(8):722--725.
+
+\bibitem{3-gr-1}
+\Aue{Grusho, A.} 2017. Data mining and information security. 
+\textit{Computer network security}. Eds. 
+J.~Rak, J.~Bay, I.~Kotenko, \textit{et al.} Lecture notes in computer science ser. Springer.  
+10446:28--33.
+
+\bibitem{5-gr-1}
+\Aue{Zabezhailo, M.\,I.} 2015. Kombinatornye sredstva for\-ma\-li\-za\-tsii empiricheskoy induktsii 
+[Combinatorial means of formalizing empirical induction]. 
+ Moscow. D.Sc.\ Diss. 440~p.
+\bibitem{6-gr-1}
+\Aue{Zabezhailo, M.\,I., and Y.\,Y.~Trunin.} 2019. 
+%K~probleme dokazatel'nosti meditsinskogo 
+%diagnoza: intellektual'nyy analiz dannykh o~patsientakh v~vyborkakh ogranichennogo razmera [To 
+%the problem of evidence of medical diagnosis: Intelligent analysis of patient data in samples of limited 
+%size]. \textit{Nauchno-tekhnicheskaya informatsiya} [Scientific and Technical Information Processing] 
+%Ser.~2. 12:12--18.
+%
+On the problem of medical diagnostic evidence: 
+Intelligent analysis of empirical data on patients in samples of limited size. 
+\textit{Autom. Doc. Math. Linguist.} 53:322--328. 
+doi: 10.3103/ S0005105519060086.
+\bibitem{7-gr-1}
+\Aue{Mikheenkova, M.\,A., \textit{et al.}} 2009. DSM-metod v~sotsiologii: analiz dannykh 
+i~prognozirovanie [DSM method in sociology: Data analysis and forecasting]. 
+\textit{Av\-to\-ma\-ti\-che\-skoe porozhdenie gipotez v~intellektual'nykh sistemakh} [Automatic hypotheses 
+generation in intelligent systems]. Ed. V.\,K.~Finn. Moscow: KD LIBROKOM. 409--492.
+\bibitem{8-gr-1}
+\Aue{Grusho, A.\,A., N.\,A.~Grusho, M.\,I.~Zabezhailo, D.\,V.~Smirnov, and E.\,E.~Timonina.} 2018. 
+Parametrizatsiya v~prikladnykh zadachakh poiska empiricheskikh prichin [Parametrization in applied 
+problems of search of the empirical reasons]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 
+12(3):62--66.
+\bibitem{9-gr-1}
+\Aue{Finn, V.\,K.} 2011. J.\,S.~Mill's 
+inductive methods in artificial intelligence systems. Part~I. 
+\textit{Scientific Technical Information Processing} 38(6):385--302. 
+\bibitem{10-gr-1}
+\Aue{Finn, V.\,K.} 2012. J.\,S.~Mill's 
+inductive methods in artificial intelligence systems. Part~II. 
+\textit{Scientific Technical Information Processing} 39(5):241--260.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+%\vspace*{-7pt}
+
+\hfill{\small\textit{Received January 12, 2020}}
+
+%\pagebreak
+
+%\vspace*{-22pt}
+
+
+\Contr
+
+\noindent
+\textbf{Grusho Alexander A.} (b.\ 1946)~--- 
+Doctor of Science in physics and mathematics, professor, principal scientist, Institute of Informatics 
+Problems, Federal Research Center ``Computer Science and Control'' of the Russian Academy of 
+Sciences; 44-2~Vavilov Str., Moscow 119133, Russian Federation;  \mbox{grusho@yandex.ru}
+
+\vspace*{6pt}
+
+\noindent
+\textbf{Zabezhailo Michael I.} (b.\ 1956)~--- Doctor of Science in physics and mathematics, principal 
+scientist, Dorodnicyn Computing Center, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 40~Vavilov Str., Moscow 119333, 
+Russian Federation; \mbox{m.zabezhailo@yandex.ru}
+
+\vspace*{6pt}
+
+\noindent
+\textbf{Timonina Elena E.} (b.\ 1952)~--- 
+Doctor of Science in technology, professor, leading scientist, Institute of Informatics 
+Problems, Federal Research Center ``Computer Science and Control'' 
+of the Russian Academy of Sciences; 44-2~Vavilov Str., Moscow 119133, Russian Federation; 
+\mbox{eltimon@yandex.ru}
+
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

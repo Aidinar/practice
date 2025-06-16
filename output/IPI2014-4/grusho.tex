@@ -1,0 +1,614 @@
+\def\stat{grusho}
+
+
+
+\def\tit{АНАЛИЗ МЕТОК В~СКРЫТЫХ КАНАЛАХ$^*$}
+
+
+
+\def\titkol{Анализ меток в~скрытых каналах}
+
+\def\aut{А.\,А. Грушо$^1$, Н.\,А. Грушо$^2$, Е.\,Е. Тимонина$^3$}
+
+\def\autkol{А.\,А. Грушо, Н.\,А. Грушо, Е.\,Е. Тимонина}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа частично поддержана РФФИ (проект 13-01-00215).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Российской академии наук;
+факультет вычислительной математики
+и~кибернетики Московского государственного университета им.\ М.\,В. Ломоносова,
+grusho@yandex.ru}
+\footnotetext[2]{Институт проблем информатики Российской академии наук, info@itake.ru}
+\footnotetext[3]{Институт проблем информатики Российской академии наук, eltimon@yandex.ru}
+
+
+  \Abst{Рассматривается класс скрытых каналов, построенных на
+основе меток. Предполагается, что выявление скрытого канала ведется
+контролером исключительно статистическими методами. Это значит, что редко
+встречающиеся и~часто встречающиеся лингвистические конструкции для
+контролера неразличимы. Для него важно, чтобы передаваемая по каналу
+последовательность символов не содержала запретов, не соответствующих
+вероятностной модели легальных сообщений. Основная проблема при
+обеспечении невидимости таких каналов состоит в~том, что при встраивании
+меток могут возникать запреты вероятностной меры, описывающей легальную
+передачу. В~работе предложен метод построения меток, которые не могут
+выявляться контролером. Благодаря такому построению меток скрытый канал
+невидим.}
+
+\KW{скрытые каналы; информационная безопасность; метки,
+порождающие скрытый канал; невидимость меток; математические модели
+скрытых каналов}
+
+\DOI{10.14357/19922264140405}
+
+
+\vskip 12pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+   В~работе рассматривается класс скрытых каналов, порожденных метками~[1,~2].
+   В~дальнейшем этот класс скрытых каналов будем называть классом~$A$.
+
+  Скрытые каналы класса~$A$ устроены сле\-ду\-ющим образом. На приемном
+и~передающем концах скрытого канала существуют синхронно ра\-бо\-та\-ющие
+счетчики, которые фиксируют условное время. Чаще всего это время
+вычисляется в~длинах сообщений между метками. Каждое сообщение
+определяется двумя метками~--- началом и~концом сообщения, а~длина
+сообщения между метками, или условное время, является кодом передаваемого
+сообщения. Метки должны однозначно идентифицироваться на приемном конце
+скрытого канала, в~противном случае может возникнуть шум, т.\,е.\ сбой при
+приеме сообщения. С~другой стороны, хорошо заметные метки являются
+признаком работы скрытого канала. Поэтому метки должны быть сделаны
+максимально невидимыми для контролирующего передачу субъекта.
+
+  Таким образом, каналы класса~$A$ предъявляют противоречивые требования
+к~своему формированию: метки должны быть однозначно опре\-де\-ля\-емы\-ми
+и~невидимыми. В~работах~[1, 2] рассмотрены примеры разрешения
+указанного противоречия. Так, в~работе [1] предлагается метод передачи меток
+по ненаблюдаемому, синхронно работающему каналу. Если само сообщение
+представляет собой последовательность битов, то метки являются изменением
+формы передаваемого сигнала, которое в~реально работающих технических
+устройствах не наблюдается. Однако при обработке сигналов в~процессоре, где
+находится агент (про\-грам\-мно-ап\-па\-рат\-ная сущность, присутствующая
+в~микропроцессоре и~являющаяся отправителем или получателем в~работе
+скрытого канала) получателя сообщения, изменение формы сигнала легко
+обнаруживается на физическом уровне.
+
+  В работе~\cite{2-gr} приведены примеры других способов построения
+скрытых каналов класса~$A$ в~глобальной сети, основанных на скрытой
+синхронизации легальных каналов передачи сообщений. \mbox{Кроме}~того, для
+сообщений, которые хорошо моделируются случайной равновероятной
+последовательностью, в~этой работе описан метод построения невидимых
+скрытых меток.
+
+  В данной работе проводится исследование возможности построения меток
+для скрытых каналов, использующих модели сообщений, которые описываются
+случайными процессами, не являющимися случайными равновероятными
+последовательностями.
+
+  Поясним постановку задачи. В~работе~[3] показано, что даже при
+моделировании метки случайным процессом, полностью соответствующим
+модели передаваемого легального сообщения, возникают запреты~\cite{4-gr, 5-gr},
+однозначно выявляющие скрытый канал. При этом метки, определяющие
+сообщение из скрытого канала класса~$A$, являются вставками в~легальное
+сообщение. Запреты возникают в~силу наличия зависимостей между
+элементами случайной последовательности, моделирующей легальное
+сообщение. Метка в~форме вставки в~случайную последовательность может
+нарушить эти зависимости, порождая запрет в~случайной последовательности,
+который не может присутствовать в~реальной реализации легального
+сообщения.
+
+  Основной результат работы заключается в~демонстрации того, как
+согласовать статистические характеристики случайного процесса,
+мо\-де\-ли\-ру\-юще\-го легальное сообщение, и~свойства метки, которая является
+ключом, известным на приемном и~передающем концах канала. Показано, что
+контролер, который реализует поиск запретов в~случайной последовательности,
+находится в~худшем положении, чем организатор скрытого канала, по
+двум причинам. Первая причина состоит в~том, что организатор скрытого
+канала традиционно предполагается знающим алгоритмы контролера. Вторая
+причина кроется в~том, что контролер для выявления скрытого канала
+вынужден использовать более глубокие зависимости легальных сообщений, чем
+использует организатор скрытого канала.
+
+%\vspace*{-6pt}
+
+\section{Математическая модель скрытого канала}
+
+  Пусть $X=\{x_1, \ldots ,x_r\}$~--- конечное множество, $X^n$~--- декартово
+произведение~$X$,  $X^\infty$~--- множество всех последовательностей
+с~элементами из~$X$. Пусть $\mathcal{A}$~--- это $\sigma$-ал\-геб\-ра
+на~$X^\infty$, порожденная цилиндрическими множествами; $\mathcal{A}$
+также является борелевской $\sigma$-ал\-геб\-рой в~тихоновском
+произведении~$X^\infty$, где $X$ имеет дискретную топологию~\cite{6-gr, 7-gr}.
+
+  На $(X^\infty, \mathcal{A})$ определена вероятностная мера~$P$.
+Предположим, что $P_n$ является проекцией меры~$P$ на первые $n$
+координат последовательностей из~$X^\infty$.
+
+  \textit{Запретом}~\cite{4-gr, 5-gr} в~мере~$P_n$ называется вектор
+$\overline{x}_l\hm\in X^l$, $l\hm\leq n$, такой что
+  $$
+  P_n\left( \overline{x}_l\times X^{n-l}\right)=0\,.
+  $$
+
+  Пусть $\overline{x}_l\in X^l$~--- запрет, а $\tilde{x}_{l-1}$ получена
+из~$\overline{x}_l$ отбрасыванием последней координаты. Если $P_{l-
+1}\left(\tilde{x}_{l-1}\right)\hm>0$, то~$\overline{x}_l$ называется
+\textit{наименьшим запретом}~\cite{4-gr, 5-gr}.
+
+  Если~$\overline{x}_l$ является запретом в~мере~$P_n$, то для любых
+$l\hm\leq s\hm\leq n$ и~для любых векторов~$\overline{x}_s$, начинающихся
+с~$\overline{x}_l$, имеем
+  $$
+  P_s\left( \overline{x}_s\right)=0\,.
+  $$
+
+  Пусть $\overline{x}_s\hm\in X^s$ и~для любого $n\hm\geq s$ и~любого
+$\overline{x}_n\hm\in X^n$, если $\overline{x}_s$ является
+частью~$\overline{x}_n$, $P_n(\overline{x}_n)\hm=0$.
+
+   Вектор $\overline{x}_s$ называется \textit{минимальным запретом}~[8], если
+любой вектор~$\overline{x}_n$, $P_n(\overline{x}_n)\hm>0$, после
+приписывания в~конце недостающих знаков из вектора~$\overline{x}_s$
+становится наименьшим запретом.
+
+  Меру~$P$ будем называть моделью легального сообщения. Далее будем
+предполагать, что все запреты меры~$P$ определяются минимальными
+запретами и~количество минимальных запретов конечно.
+
+%\begin{figure*} %fig1
+\vspace*{6pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=74.148mm
+ \epsfbox{gr1-1.eps}
+ }
+
+\vspace*{3pt}
+
+ {\small{Модель скрытого канала}}
+  \end{center}
+
+  \vspace*{9pt}
+
+%\end{figure*}
+
+  Рассмотрим следующую модель скрытого канала (см.\ рисунок).
+Компьютеры~A и~B связаны однонаправленным каналом от~A к~B. Выходная
+последовательность компьютера~А проходит через \mbox{агента}~A$^\prime$
+  (про\-грам\-мно-ап\-па\-рат\-ную сущность, функционирующую
+в~компьютерной среде незаметно для пользователей и~средств защиты),
+который строит скрытый канал и~передает по нему вместе с~легальной
+информацией имеющуюся у~него скрываемую информацию. На приемном
+конце информация из канала прежде всего попадает агенту~B$^\prime$,
+который распознает скрытый канал, считывает скрытую информацию,
+уничтожает следы скрытого канала и~передает компьютеру~B легальную
+информацию. U~--- контролер передачи в~канале.
+
+
+
+  Будем считать, что как противник, так и~контролер, ищущий скрытые каналы,
+могут изучать свойства~$P$ статистическими методами.
+Противник\,--\,от\-пра\-ви\-тель сообщения и~про\-тив\-ник\,--\,по\-лу\-ча\-тель сообщения имеют общие
+ключи в~виде множества меток и~некоторых ограничений на места их
+появления. Метки представляют собой набор векторов в~алфавите~$X$,
+имеющих для простоты одну длину~$k$. Сообщения передаются кодом,
+который представляется длинами легального сообщения между двумя метками.
+Метка начала скрытого сообщения вставляется в~легальное сообщение на одно
+из допустимых мест, определяемых ключом. Метка окончания скрытого
+сообщения ставится в~фиксированном месте легального сообщения на
+расстоянии от последнего символа входной метки так, чтобы расстояние между
+метками соответствовало коду.
+
+  Допускается, что векторы, соответствующие меткам, могут появляться
+в~легальном сообщении случайно. Это может привести к сбою скрытой
+передачи. В~связи с этим на метки накладываются следующие ограничения:
+  \begin{itemize}
+\item вероятность случайного появления метки должна быть как можно
+меньше;\\[-14pt]
+\item метки должны выбираться таким образом, чтобы не допустить
+появления запретов вероятностной меры~$P$.
+\end{itemize}
+
+\vspace*{-10pt}
+
+\section{Построение меток для~невидимого скрытого канала}
+
+  Предположим, что все скрываемые сообщения имеют конечную длину не
+более~$N$. Это значит, что начиная с~некоторой длины $N_0\hm>N$ (с~\mbox{учетом}
+ограничений на начало скрываемого сообщения) \mbox{случайная} последовательность,
+соответствующая легальному сообщению, будет строиться в~соответствии
+с~вероятностным распределением, аналогичным исходному процессу~$P$.
+
+  Однако это не означает, что скрытый канал невозможно выявить. Если
+вставки порождают запреты вероятностной меры~$P$~[4, 5], то скрытый канал
+выявляется однозначно. Значит, вероятность выявления скрытого канала равна
+вероятности появления запрета меры~$P_{N_0}$. Вероятность случайного
+появления метки длины~$k$ не меньше вероятности появления данного вектора
+в~мере~$P_N$. За исключением вырожденных случаев, можно считать, что
+с~помощью выбора~$k$ эта вероятность может быть сделана как угодно малой
+и~отвечает требованиям помехозащищенности скрытого канала.
+
+  Для простоты рассмотрим возможность скрытия одной метки. Обозначим ее
+через вектор $\overline{b}\hm= (b_1, \ldots , b_k)$, а~место ее вставки~--- $t$.
+Пусть минимальные запреты меры~$P$ представимы следующими векторами:
+  \begin{equation}
+  \left.
+  \begin{array}{l}
+  \overline{a}^{(1)} = \left( a^{(1)}_{i_1},\ldots a^{(1)}_{i_{m_1}}\right)\,;\\
+  \cdots\cdots\cdots\cdots\cdots\cdots\cdots\\
+  \overline{a}^{(s)} = \left( a^{(s)}_{i_1},\ldots a^{(s)}_{i_{m_s}}\right)\,,
+  \end{array}
+  \right\}
+  \label{e1-gr}
+  \end{equation}
+где все $a_{i_j}\in X$. Для простоты далее положим $m_i\hm=m$, $i\hm=
+1,\ldots , s$.
+
+  Определим возможности контролера~U. Контролер~U знает
+распределение~$P$, знает все запреты меры~$P$ и~может их отслеживать
+в~реальном вре\-мени. Контролер не знает вставку~$\overline{b}$ и~место ее\linebreak
+расположения~$t$. Контролер~U не анализирует\linebreak семантику, поэтому для него
+маловероятные и~высоковероятные последовательности одинаково являются
+допустимыми. Исходя из этих предположений, контролер~U выявляет скрытый
+канал с~по\-мощью нахождения минимальных запретов в~передаваемой
+последовательности.
+
+  Пусть $\overline{x}=x(1),x(2),\ldots, x(t-1),x(t),\ldots)$~--- легальная
+последовательность, а~$\overline{x}^\prime\hm= (x(1),x(2),\ldots$\linebreak
+$\ldots, x(t- 1),b_1,\ldots , b_k, x(t),\ldots)$~--- последовательность со вставкой. Возможность
+по\-яв\-ле\-ния запрета в~последовательности~$\overline{x}^\prime$ определяется
+тем, что хотя бы один из векторов
+  \begin{equation}
+  \left.
+  \begin{array}{l}
+  x(t-k+1), x(t-k+2),\ldots , x(t-1),b_1\,;\\[-1pt]
+  x(t-k+2), x(t-k+3),\ldots , x(t-1),b_1, b_2\,;\\[-1pt]
+\cdots\cdots\cdots\cdots\cdots\cdots\cdots\cdots\cdots\cdots\cdots\cdots\cdots\cdots\\[-1pt]
+  b_1,b_2,\ldots , b_k\,;\\[-1pt]
+\cdots\cdots\cdots\cdots\cdots\cdots\cdots\cdots\cdots\cdots\cdots\cdots\cdots\cdots\\[-1pt]
+  b_k,x(t),x(t+1),\ldots , x(t+k-1)
+  \end{array}
+  \right\}\!
+  \label{e2-gr}
+  \end{equation}
+
+  \vspace*{-2pt}
+
+  \noindent
+принадлежит~(1). В~других местах последовательности~$\overline{x}^\prime$
+появление запретов невозможно по определению меры~$P$. Если
+в~последовательности~$\overline{x}^\prime$ не появилось запретов, то любой
+начальный учас\-ток этой последовательности является допустимым вектором
+и~его вероятность больше~0 в~мере~$P_N$. Поэтому контролер~U не может
+выявить скрытый канал. Отсюда следует следующее
+
+  \smallskip
+
+  \noindent
+  \textbf{Утверждение~1.} Контролер~U не выявляет скрытый канал тогда
+и~только тогда, когда ни один из векторов~(2) не содержится в~множестве
+векторов~(1).
+
+  \smallskip
+
+  Таким образом, для организации невидимого скрытого канала
+метка~$\overline{b}$ должна быть выбрана так, чтобы выполнялось
+достаточное условие утверждения~1 при любом допустимом~$\overline{x}$.
+При этом организатор скрытого канала может определить минимальные
+запреты только статистически, наблюдая за передаваемыми
+последовательностями. Для этого мера~$P$ должна удовлетворять
+дополнительным ограничениям. Например, случайная
+последовательность~$\overline{x}$ должна быть эргодической.
+
+  Но даже если организатор скрытого канала знает минимальные запреты,
+построение метки, удовле\-тво\-ря\-ющей утверждению~1 для всех~$\overline{x}$,
+является сложной задачей.
+
+  Однако можно предложить упрощенный метод решения поставленной задачи
+построения метки для невидимого скрытого канала. Пусть организатор
+скрытого канала нашел минимальные запреты. Рассмотрим множество~$C$
+биграмм вида
+  \begin{multline*}
+  C=\left\{ \left( a^{(i)}_{i_{m-1}}, a^{(j)}_{i_m}\right),\
+  j=\overline{1,s}\right\}\bigcup{}\\
+  {}\bigcup \left\{ \left( a^{(j)}_{i_1}, a^{(j)}_{i_2}\right),\
+  j=\overline{1,s}\right\}\,.
+%  \label{e3-gr}
+  \end{multline*}
+
+  Тогда справедливо следующее
+
+  \smallskip
+
+  \noindent
+  \textbf{Утверждение~2.} Если для любой
+последовательности~$\overline{x}$ в~векторе $(x(t-1),b_1,b_2,\ldots ,b_k,x(t))$
+нет биграмм из множества~$C$, то скрытый канал не выявляем.
+
+  \smallskip
+
+  \noindent
+  Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ Если в~векторе $(x(t\hm-
+1),b_1,b_2,\ldots ,b_k,x(t))$ не встречаются биграммы из множества~$C$, то
+в~последовательности~$\overline{x}^\prime$ не встречаются запреты из
+множества~(1). В~самом деле, появление запрета влечет появление биграмм из
+множества~$C$. Если вставка не порождает запретов, то согласно
+утверждению~1 контролер не выявляет скрытого канала. Утверждение~2
+доказано.
+
+  \smallskip
+
+  Однако создание метки, исключающей появление биграмм из множества~$C$
+для всех последовательностей~$\overline{x}$, может оказаться невозможным.
+В~этом случае метку можно сделать сложной, а~именно: метка~$\overline{b}$
+не должна содержать запрещенных биграмм из множества~$C$. Для
+недопущения появления запрещенной биграммы на концах вставки можно
+ввести дополнительные символы до и~после метки, которые не несут
+содержательной информации, но исключают возможность появления
+запрещенных биграмм на концах вставки. Эти незначащие символы
+выбираются для каждой конкретной последовательности~$\overline{x}$.
+
+  Предположим, что организатор скрытого канала заранее скрытно выбрал
+момент~$t$. Затем он статистически нашел все наименьшие запреты
+в~окрестности этого момента времени, используя различные реализации
+передаваемых сообщений. Тогда, используя описанный метод перехода
+к~биграммам, можно построить метку, которая не порождает наименьших
+запретов, связанных со вставкой метки в~момент~$t$. Такой канал будет
+невидим для~U.
+
+\vspace*{-6pt}
+
+\section{Заключение}
+
+  Интенсивное использование многоагентных систем для скрытого контроля
+компьютерной среды требует разработки невидимых скрытых каналов для
+организации коллективной деятельности агентов. Уязвимость простых
+протоколов общения агентов может привести к полной нейтрализации систем
+контроля. Поэтому необходимо строить простые, доказано невидимые скрытые
+каналы. Рассмотренные в~статье скрытые каналы просты, но могут легко
+выявляться при неправильной организации меток. Предложенный в~работе
+метод позволяет делать метки невидимыми, когда их поиск ведется
+статистическими методами.
+
+\vspace*{-6pt}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+    \bibitem{1-gr}
+    \Au{Грушо Н.} Скрытые каналы, основанные на метках~// Системы
+и~средства информатики, 2013. Т.~23. №\,1. С.~7--13.
+    \bibitem{2-gr}
+    \Au{Грушо А., Грушо Н., Тимонина~Е.} Скрытые каналы, порожденные
+метками, в~дейтаграммах~// Системы и~средства информатики, 2013. Т.~23.
+№\,2. С.~3--18.
+    \bibitem{3-gr}
+    \Au{Grusho A., Grusho N., Timonina~E.} Problems of modeling in the analysis
+of covert channels~// Computer network security~/
+Eds.\ I.~Kotenko, V.~Skormin. Lecture notes in computer
+science ser.~--- Berlin--Heidelberg: Springer-Verlag, 2010. Vol.~6258. P.~118--124. doi: 10.1007/978-3-642-14706-7\_9.
+    \bibitem{4-gr}
+    \Au{Грушо А., Тимонина Е.} Запреты в~дискретных ве\-ро\-ят\-но\-ст\-но-ста\-ти\-сти\-че\-ских задачах~// Дискретная математика, 2011. Т.~23. Вып.~2.
+    С.~53--58.
+    \bibitem{5-gr}
+    \Au{Grusho A., Grusho N., Timonina~E.} Consistent sequences of tests defined
+by bans~// Springer proceedings in mathematics \& statistics, optimization theory,
+decision making, and operation research applications.~---
+New York\,--\,Heidelberg\,--\,Dordrecht\,--\,London: Springer, 2013. \mbox{P.~281--291}.
+    \bibitem{6-gr}
+    \Au{Бурбаки Н.} Общая топология. Основные структуры~/ Пер.
+    с~франц.~--- М.: Наука, 1968. 272~с. (\Au{Bourbaki N.} Topologie
+G$\acute{\mbox{e}}$n$\acute{\mbox{e}}$rale. Chapitre~1: Structures
+topologiques. Chapitre~2: Structures uniformes.~--- Paris: Hermann, 1940. 129~p.)
+    \bibitem{7-gr}
+    \Au{Прохоров Ю.\,В., Розанов Ю.\,А.} Теория вероятностей.~--- 2-е изд.~---
+    М.: Наука, 1973. 494~с.
+    \bibitem{8-gr}
+    \Au{Грушо А., Грушо Н., Тимонина~Е.} Статистические методы
+определения запретов вероятностных мер на дискретных пространствах~//
+Информатика и~её применения, 2013. Т.~7. Вып.~1. С.~54--57.
+
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-12pt}
+
+\hfill{\small\textit{Поступила в редакцию 28.09.14}}
+
+%\newpage
+
+\vspace*{10pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{12pt}
+
+\def\tit{THE ANALYSIS OF~TAGS IN~COVERT CHANNELS}
+
+\def\titkol{The analysis of~tags in~covert channels}
+
+\def\aut{A.\,A.~Grusho$^{1,2}$, N.\,A.~Grusho$^1$, and E.\,E.~Timonina$^1$}
+
+\def\autkol{A.\,A.~Grusho, N.\,A.~Grusho, and E.\,E.~Timonina}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+$^1$Institute of Informatics Problems, Russian Academy of Sciences,
+44-2~Vavilov Str., Moscow 119333, Russian\linebreak
+$\hphantom{^1}$Federation
+
+\noindent
+$^2$Faculty of Computational Mathematics and Cybernetics,
+M.\,V.~Lomonosov Moscow State University,\linebreak
+$\hphantom{^1}$1-52 Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2014\ \ \ volume~8\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2014\ \ \ volume~8\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+\Abste{The class of covert channels constructed
+on the basis of tags is considered.  It is supposed that
+a~covert channel is detected by the control subject using exclusively statistical
+techniques. It means that linguistic constructions\linebreak\vspace*{-12pt}}
+
+\Abstend{seldom or often met
+are indiscernible for the control subject.  For control subject, it is important
+that the sequence transmitted through the channel does not contain the bans which
+do not correspond to the~probability model of legal messages.  The main problem
+for supporting invisibility of such channels consists in the fact that
+there can be bans of the probability measure describing a~legal transmission
+when embedding
+tags.
+ In the paper, the method for creating tags which cannot be detected by the
+ control subject becomes suggested.
+Thanks to such creation of tags, the covert channel becomes invisible.}
+
+\KWE{covert channels; information security; covert channel generated by tags;
+``invisibility''  of tags; mathematical models of covert channels}
+
+\DOI{10.14357/19922264140405}
+
+\Ack
+\noindent
+The paper was partly supported by the Russian Foundation
+for Basic Research  (project 13-01-00215).
+
+%\vspace*{3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{1-gr-1}
+\Aue{Grusho, N.} 2013. Skrytye kanaly, osnovannye na metkakh
+[Covert channels generated by tags].  \textit{Sistemy i~Sredstva Informatiki}~---
+\textit{Systems and Means of Informatics} 23(1):7--13.
+\bibitem{2-gr-1}
+\Aue{Grusho, A., N.~Grusho, and E.~Timonina}.  2013.
+Skrytye kanaly, porozhdennye metkami, v~deytagrammakh [Covert channels
+generated by tags in datagrams]. \textit{Sistemy i~Sredstva Informatiki}~---
+\textit{Systems and Means of Informatics} 23(2):3--18.
+\bibitem{3-gr-1}
+\Aue{Grusho,~A., N.~Grusho, and E.~Timonina}. 2010. Problems of modeling
+in the analysis of covert channels.
+\textit{Computer network security}. Eds. I.~Kotenko and V.~Skormin.
+Lecture notes in computer science ser.
+Berlin--Heidelberg: Springer-Verlag. 6258:118--124.
+doi: 10.1007/978-3-642-14706-7\_9.
+\bibitem{4-gr-1}
+\Aue{Grusho, A., and E.~Timonina}. 2011. Prohibitions in discrete
+probabilistic statistical problems.
+\textit{Discrete Mathematics Application} 21(3):275--281.
+\bibitem{5-gr-1}
+\Aue{Grusho, A., N.~Grusho, and E.~Timonina}. 2013. Consistent sequences
+of tests defined by bans.
+\textit{Springer proceedings in mathematics \& statistics, optimization theory,
+decision making, and operation research applications}.
+New York\,--\,Heidelberg\,--\,Dordrecht\,--\,London: Springer. 281--291.
+
+\smallskip
+
+\bibitem{6-gr-1}
+\Aue{Bourbaki, N.}
+1940. \textit{Topologie G$\acute{\mbox{e}}$n$\acute{\mbox{e}}$rale}.
+Chapitre~1: Structures topologiques. Chapitre~2: Structures uniformes.
+Paris: Hermann. 129~p.
+
+\smallskip
+
+\bibitem{7-gr-1}
+\Aue{Prokhorov, U.\,V., and U.\,A.~Rozanov}. 1973. Teoriya veroyatnostey
+[Theory of probabilities]. 2nd ed. Moscow: Nauka. 494~p.
+
+\smallskip
+
+\bibitem{8-gr-1}
+\Aue{Grusho, A., N.~Grusho, and E.~Timonina}.  2013. Sta\-ti\-sti\-che\-skie
+metody opredeleniya zapretov veroyatnostnykh mer na diskretnykh
+prostranstvakh [Statistical techniques of bans determination
+of probability measures in discrete spaces].
+\textit{Informatika i ee Primeneniya}~--- \textit{Inform. Appl.} 7(1):\linebreak 54--57.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received September 28, 2014}}
+
+\vspace*{-18pt}
+
+    \Contr
+
+\noindent
+\textbf{Grusho Alexander A.} (b.\ 1946)~---
+Doctor of Science in physics and mathematics, Corresponding member of the Russian Academy
+of Cryptography; leading scientist, Institute of Informatics Problems, Russian Academy of
+Sciences, 44-2 Vavilov Str., Moscow 119333, Russian Federation; professor, Faculty of
+Computational Mathematics and Cybernetics, M.\,V.~Lomonosov Moscow State University,
+1-52~Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation; grusho@yandex.ru
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Grusho Nikolai A.}\ (b.\ 1982)~---
+Candidate of Science (PhD) in physics and mathematics, senior scientist, Institute of Informatics
+Problems, Russian Academy of Sciences, 44-2 Vavilov Str., Moscow 119333, Russian
+Federation; info@itake.ru
+
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Timonina Elena E.}\ (b.\ 1952)~---
+Doctor of Science in technology, professor, leading scientist, Institute of Informatics Problems,
+Russian Academy of Sciences, 44-2 Vavilov Str., Moscow 119333, Russian Federation;
+eltimon@yandex.ru
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}

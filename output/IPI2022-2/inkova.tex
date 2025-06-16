@@ -1,0 +1,881 @@
+\def\stat{inkova}
+
+\def\tit{ПРИНЦИПЫ ОПИСАНИЯ ПОКАЗАТЕЛЕЙ ЛОГИКО-СЕМАНТИЧЕСКИХ ОТНОШЕНИЙ 
+И~ИХ ИЕРАРХИИ$^*$}
+
+\def\titkol{Принципы описания показателей логико-семантических отношений 
+и~их иерархии}
+
+\def\aut{А.\,А.~Дурново$^1$, О.\,Ю.~Инькова$^2$, Н.\,А.~Попкова$^3$}
+
+\def\autkol{А.\,А.~Дурново, О.\,Ю.~Инькова, Н.\,А.~Попкова}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Дурново А.\,А.}
+\index{Инькова О.\,Ю.}
+\index{Попкова Н.\,А.}
+\index{Durnovo A.\,A.}
+\index{Inkova O.\,Yu.}
+\index{Popkova N.\,A.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнялась с~использованием инфраструктуры Центра коллективного пользования 
+<<Высокопроизводительные вычисления и~большие данные>> (ЦКП <<Информатика>>) ФИЦ ИУ РАН 
+(г.~Москва) в~рамках швей\-цар\-ско-рос\-сий\-ско\-го проекта <<Методология аннотирования в~надкорпусной базе 
+данных коннекторов>> по гранту Швейцарского государственного секретариата по образованию, исследованиям 
+и~инновациям.}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{duralex49@mail.ru}}
+\footnotetext[2]{Федеральный исследовательский центр <<Информатика и~управление>> 
+Российской академии наук; Женевский университет, \mbox{olyainkova@yandex.ru}}
+\footnotetext[3]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{natasha\_\_popkova@mail.ru}}
+
+\vspace*{-12pt}
+
+    
+  
+  \Abst{Рассматриваются возможности аннотирования в~корпусах с~дискурсивной разметкой. 
+Показано, что корпуса, созданные на основе теории риторической структуры (ТРС), содержат 
+только аннотации отношений связности текста, или риторических отношений (РО). Корпус 
+Пенсильванского университета PDTB аннотирует, напротив, показатели отношений, как 
+и~Надкорпусная база данных коннекторов (НБДК). Показано, что корпус RST Signaling Corpus (RST-SC), 
+также созданный на основе ТРС, хотя и~аннотирует показатели РО, но не может совместить 
+разметку РО и~их показателей в~форме единой аннотации. Эту задачу решают корпус GUM 
+и~Надкорпусная база данных иерархии (НБДИ) ло\-ги\-ко-се\-ман\-ти\-че\-ских отношений (ЛСО). Последняя 
+имеет ряд преимуществ: возможность поиска, получения статистики, а~также формирования 
+двуязычных аннотаций. Это позволяет выявить как универсальные явления в~дискурсивной 
+организации текста, так и~явления, специфичные для того или иного исследуемого языка.}
+  
+  \KW{надкорпусная база данных; аннотирование корпусов текстов; дискурсивные 
+отношения; коннектор}
+
+\DOI{10.14357/19922264220207}
+  
+\vspace*{-2pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+  
+\section{Введение}
+
+\vspace*{-1pt}
+
+    Языковые единицы, сигнализирующие, что между высказываниями, 
+составляющими текст, есть некоторое дискурсивное отношение, играют важную 
+роль в~обеспечении связности текс\-та при решении широкого спектра задач 
+компьютерной лингвистики. Круг этих единиц широк: он включает коннекторы 
+(например, сочинительные и~подчинительные союзы \textit{а}, \textit{хотя}, 
+\textit{потому что}), а~также целый ряд других языковых единиц и~явлений 
+(лексические средства, синтаксические конструкции, временн$\acute{\mbox{ы}}$е формы глаголов и~т.\,д.), 
+которые сигнализируют о~наличии дискурсивных отношений между 
+фрагментами текста (подробнее см.~[1]). Так, в~примере~(1) отношение цели 
+выражено инфинитивной конструкцией~[2, с.~7]:
+
+
+\noindent
+(1)~[\textit{To encourage} more competition among exporting countries,] [the U.\ S.\ is 
+proposing that export subsidies, including tax incentives for exporters, be phased out in 
+five years.] 
+
+\smallskip
+    
+Такие показатели, или сигналы, дискурсивных отношений помогают пишущему 
+выразить эти отношения, а~чи\-та\-юще\-му~--- их распознать, тем самым об\-лег\-чая 
+интерпретацию текста, а~так\-же его компьютерную обработку, например при 
+решении задач машинного перевода. 
+
+    В существующих до недавнего времени корпусах с~дискурсивной разметкой, 
+как правило, аннотировались либо сами показатели (см., например,\linebreak 
+Пенсильванский дискурсивно аннотированный корпус~--- PDTB~[3]), либо, 
+напротив, дискурсивные отношения, свя\-зы\-ва\-ющие высказывания (корпуса, 
+основанные на ТРС~[4--6]). Цель данного 
+исследования~--- сравнить на концептуальном уров\-не два новых ресурса, 
+поз\-во\-ля\-ющих совмещать оба вида разметки: корпус GUM, в~основе 
+аннотирования которого лежит ТРС, и~НБДИ ЛСО, разработанную 
+в~ИПИ РАН. Начнем с~краткого обзора существующих решений, затем опишем 
+принципы аннотирования в~НБДИ ЛСО и~сравним ее возможности 
+с~возможностями, пред\-остав\-ля\-емы\-ми корпусом GUM.
+
+\begin{figure*} %fig1
+\vspace*{1pt}
+  \begin{center}  
+    \mbox{%
+\epsfxsize=161.735mm
+\epsfbox{ink-1.eps}
+}
+
+\end{center}
+\vspace*{-6pt}
+\Caption{Фрагмент графа из Ru-RSTreebank~[4].
+Номера соответствуют 
+ЭДЕ, горизонтальные линии~--- ЭДЕ, вертикальная чер\-та~--- группировки ЭДЕ, 
+а~так\-же отношения между ними, указывающие либо на отношение равноправия 
+(наклонная черта), либо зависимости (направленная дуга от зависимой ЭДЕ, 
+сателлита, к~главной, яд\-ру)}
+\vspace*{3pt}
+\end{figure*}
+
+\section{Корпуса, основанные на~теории риторической структуры}
+
+    Наиболее распространенной теорией, лежащей в~основе анализа 
+    и~аннотирования текс\-тов, является ТРС~[7]. Созданные 
+на ее основе корпуса не располагали до последнего времени программным 
+обеспечением, позволяющим размечать одновременно <<риторические>> 
+(в~данной терминологии) отношения, или отношения связности текста, и~их 
+показатели. Это обусловлено прежде всего тем, что, согласно ТРС, текст 
+с~дискурсивной точки зрения пред\-став\-ля\-ет собой иерархическую древовидную 
+структуру (граф) элементарных дискурсивных единиц (ЭДЕ), которыми являются 
+клаузы, и~аннотации должны учитывать слож\-ность этих древовидных структур. 
+
+В~идеале единый граф должен охватывать текст в~целом, но на практике это 
+возможно лишь для небольших по объему текс\-тов, в~большинстве случаев 
+новостных газетных статей или блогов. Наиболее распространенный материал для 
+английского языка~--- выборка статей из The Wall Street Journal, использующийся, 
+как будет показано ниже, в~различных аннотированных корпусах. Графы для 
+текстов большей величины строятся в~пределах абзацев, что 
+может даже специально оговариваться в~инструкциях по аннотированию, 
+например в~[8]. 
+{\looseness=1
+
+}
+
+На рис.~1 приведен фраг\-мент графа из русского корпуса  
+Ru-RSTreebank, соз\-дан\-но\-го на основе ТРС и~который отражает наиболее широкое 
+представление о~РО и~их показателях. 
+
+
+
+
+Первое, что следует отметить,~--- это отсутствие между ЭДЕ~1, 2 и~3  
+ка\-ко\-го-ли\-бо РО, несмотря на постулат ТРС о том, что все ЭДЕ обязательно должны быть связаны между собой 
+некоторым РО~[7, с.~248]. Заметим, что и~сле\-ду\-ющие блоки ЭДЕ (9--15, 16--25, 26--37, $\ldots$), а~также 
+заключительная ЭДЕ 94\footnote{В силу большого объема графа для всего текста нет возможности привести его 
+полностью. Он доступен по адресу {\sf https:// rstreebank.ru/text/blogs\_1}.} находятся на одном иерархическом 
+уровне и~не связаны друг с~другом никаким РО. Это подтверждает необоснованность утверждения ТРС, что любой 
+текст пред\-став\-ля\-ет собой единое дерево <<риторической>> за\-ви\-си\-мости. 
+    
+Выделяются в~самостоятельную ЭДЕ фотографии (ЭДЕ~8 IMG на рис.~1), 
+которые, по мнению разработчиков Ru-RSTreebank, всегда связаны с~предыдущим 
+текстом отношением Elaboration (детализация\footnote{Русские соответствия 
+английских названий РО приводятся по~[9, с.~438--440].}), наименее чет\-ко 
+определенным РО в~ТРС~[10]. 
+
+
+
+
+    Граф отражает иерархические РО между блоками ЭДЕ~3--5 и~6--7. Эти блоки 
+связаны между собой РО Joint (конъюнкция). Каждый из них содержит ЭДЕ, 
+связанные причинными РО (Cause на рис.~1), расположенными соответственно 
+уровнем ниже. Однако отношения, свя\-зы\-ва\-ющие ЭДЕ~6 и~7, вряд ли могут 
+считаться риторическими, так как связывают ска\-зу\-емое и~синтаксически 
+зависимое от него прямое дополнение. Иначе говоря, речь идет не 
+о~семантической, а~о~чис\-то синтаксической за\-ви\-си\-мости.
+
+\vspace*{-6pt}
+
+\section{Корпуса, аннотирующие показатели дискурсивных отношений: 
+PDTB и~НБДК}
+
+    Корпус PDTB был соз\-дан для разметки именно показателей отношений~[11, 
+12], по\-ни\-ма\-емых, однако, $\acute{\mbox{у}}$же, чем в~ТРС: это только 
+отношения, потенциально вы\-ра\-жа\-емые коннекторами или схожими с~ними по 
+функциям языковыми единицами, так называемыми альтернативными 
+лексикализациями дискурсивных отношений (Alternative Lexicalization,~[13]), 
+которые грамматики соответствующих языков не относят к~чис\-лу сочинительных 
+или подчинительных союзов и~их аналогов; ср., например \textit{after then} 
+в~примере~(2)~[14, с.~22]:
+
+\noindent
+(2)~And she further stunned her listeners by revealing her secret garden design method: 
+Commissioning a~friend to spend <<five or six thousand dollars$\ldots$ on books that 
+I~ultimately cut up>>. AltLex [\textit{After that}], the layout had been easy.
+
+
+%\smallskip
+
+    Понимание дискурсивного отношения в~PDTB близ\-ко к~тому, что принято 
+называть ЛСО~[10, 15].\linebreak Для разметки ЛСО, 
+которые могут как иметь эксплицитный показатель, так и~не иметь его (так 
+на\-зы\-ва\-емые имплицитные ЛСО), используются текс\-ты уже упоминавшегося The 
+Wall Street Journal\linebreak
+ общим объемом чуть больше 1~млн сло\-во\-упо\-треб\-ле\-ний. 
+Аннотация не имеет форму графа и~не обязательно должна охватывать весь текст. 
+В~ресурсе PDTB границы фрагментов текс\-та, непосредственно связанные 
+коннектором, выделяются жел\-тым (первый фрагмент) и~синим (второй, т.\,е.\ 
+вводимый коннектором) цветом, а~коннектор~--- красным. Фрагменты текста, не 
+задействованные в~установлении ЛСО, выделяются розовым (относятся к~первому 
+фрагменту) и~фиолетовым (относятся ко второму). На рис.~2 им соответствуют 
+различные оттенки серого.
+
+    
+
+
+На верхнем уровне иерархии (см.\ рис.~2,\,\textit{б}) находится ЛСО причины, 
+выражаемое \textit{with}. Первый фрагмент текс\-та включает в~себя ЛСО 
+(одновременности), оформляемое \textit{once} (см.\ рис.~2,\,\textit{а}). В~графе оно 
+будет находиться уров\-нем ниже. Каждое из ЛСО визуализируется отдельно. При 
+разметке имплицитных ЛСО используется операция под\-ста\-нов\-ки коннектора, 
+который уместен по смыс\-лу (рис.~3). В~окне, по\-ка\-зы\-ва\-ющем ЛСО 
+(см.\ рис.~3,\,\textit{б}) в~аннотируемом текс\-те, имплицитные ЛСО конъюнкции 
+предлагается эксплицировать при помощи \textit{in addition}.
+
+
+
+
+  Как и~в PDTB, разметка текста в~НБДК, разработанной в~ИПИ РАН, исходит из показателя ЛСО, а~разметка всего 
+текста не обязательна. Это особенно важ\-но, поскольку НБДК использует текс\-ты, 
+преимущественно художественные, из параллельных французского 
+и~итальянского подкорпусов Национального корпуса русского языка 
+(НКРЯ)~[17], которые имеют большие размеры. B~отличие от PDTВ, аннотация 
+в~НБДК является двуязычной, т.\,е.\ аннотируется фрагмент текс\-та оригинала 
+и~его перевод. Аннотация не фиксирует границ свя\-зы\-ва\-емых коннектором 
+фрагментов текс\-та и~непосредственно не отражает иерархию ЛСО. Ей 
+соответствуют в~аннотации признаки $\langle$SubCNT$\rangle$ (встроенный 
+коннектор) и~$\langle$SuperCNT$\rangle$ (встраивающий) 
+коннектор\footnote{Подробнее об архитектуре НБДК, ее функциональных 
+возможностях и~ис\-поль\-зу\-емых в~ней мет\-ках см.~[18, 19].}. 
+  
+\begin{table*}\small %tabl1
+\begin{center}
+\Caption{Аннотация из НБДК для коннектора \textit{то есть}}
+\vspace*{2ex}
+
+\begin{tabular}{|p{40mm}|p{34mm}|p{40mm}|p{34mm}|}
+\hline
+\multicolumn{1}{|c|}{\tabcolsep=0pt\begin{tabular}{c}Контекст коннектора\\ в~оригинале\end{tabular}}&
+\multicolumn{1}{c|}{\tabcolsep=0pt\begin{tabular}{c}Коннектор в~оригинале\\ и~его признаки\end{tabular}}&
+\multicolumn{1}{c|}{\tabcolsep=0pt\begin{tabular}{c}Контекст коннектора\\ 
+в~переводе\end{tabular}}&\multicolumn{1}{c|}{\tabcolsep=0pt\begin{tabular}{c}Коннектор в~переводе\\ и~его признаки\end{tabular}}\\
+\hline
+\textit{Если} он хотел жить  
+по-сво\-ему, \textbf{то есть} лежать молча, дремать \textit{или} ходить по комнате, Алексеева 
+как будто не было тут&
+\textbf{то есть}\newline
+<переформулирование$\rangle$\newline
+$\langle$без предикации$\rangle$\newline
+$\langle$начальная$\rangle$\newline
+$\langle$p CNT q$\rangle$\newline
+$\langle$CNT$\rangle$\newline
+$\langle$SubCNT$\rangle$\newline
+$\langle$SuperCNT$\rangle$&
+S'il voulait continuer de vivre $\grave{\mbox{a}}$ sa mani$\grave{\mbox{e}}$re, 
+ \textbf{c'est-$\grave{\mbox{a}}$-dire} rester couch$\acute{\mbox{e}}$ en silence, somnoler 
+\textit{ou} marcher de long en large dans la chambre, c'$\acute{\mbox{e}}$tait comme si 
+Alex$\acute{\mbox{e}}$ev n'$\acute{\mbox{e}}$tait pas l$\grave{\mbox{a}}$&
+\textbf{c'est-$\grave{\mbox{a}}$-dire}\newline
+$\langle$переформулирование$\rangle$\newline
+$\langle$без предикации$\rangle$\newline
+$\langle$начальная$\rangle$\newline
+$\langle$p CNT q$\rangle$\newline
+$\langle$CNT$\rangle$\newline
+$\langle$SuperCNT$\rangle$\newline
+$\langle$SubCNT$\rangle$\\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{-3pt}
+\end{table*}
+    
+Аннотация сформирована для коннектора \textit{то есть} (табл.~1), для которого 
+проставлены (2-я колонка) обе метки. По отношению к~коннектору \textit{если} он 
+является встроенным ($\langle$SubCNT$\rangle$), так как находится в~первом из 
+связанных им фраг\-мен\-тах текс\-та. Но во фрагменте текс\-та, вводимом \textit{то 
+есть}, находится коннектор \textit{или}, по отношению к~которому\linebreak он является 
+встраивающим ($\langle$SuperCNT$\rangle$). В~графе на\, верх\-нем\, уровне будет 
+находиться \textit{если},\,  уровнем %\linebreak\vspace*{-12pt}
+
+%\pagebreak
+
+
+\end{multicols}
+
+\begin{figure*}[h] %fig2
+\vspace*{-6pt}
+  \begin{center}  
+    \mbox{%
+\epsfxsize=163mm
+\epsfbox{ink-2.eps}
+}
+
+\end{center}
+\vspace*{-13pt}
+\Caption{Пример аннотации с~несколькими ЛСО из PDTB~[16]}
+%\end{figure*}
+%\begin{figure*} %fig3
+\vspace*{4pt}
+  \begin{center}  
+    \mbox{%
+\epsfxsize=163mm
+\epsfbox{ink-3.eps}
+}
+
+\end{center}
+\vspace*{-13pt}
+\Caption{Пример аннотации с~имплицитными ЛСО~[16]}
+\vspace*{-12pt}
+\end{figure*}
+
+\begin{multicols}{2}
+
+
+\noindent
+  ниже~--- \textit{то есть}, а~на еще более 
+низ\-ком уровне~--- \textit{или}.
+ 
+%\vspace*{-4pt}
+
+
+\section{Корпуса, совмещающие разметку дискурсивных отношений 
+и~их показателей: RST-SC, GUM и~НБДИ ЛСО}
+
+\vspace*{-2pt}
+
+    Изначально, как было показано, корпуса, созданные на основе ТРС, не 
+предусматривали аннотирование показателей РО. Эту задачу решает корпус RST-SC. В~качестве исходного материала \mbox{берутся} 
+существующие в~корпусе RST Discourse Treebank (RST-DT) графы, к~которым 
+добавляются аннотации для показателей, благодаря которым каждое РО может 
+быть идентифицировано. В~чис\-ло показателей помимо коннекторов включаются 
+показатели разнообразной природы: лексические, морфологические (временн$\acute{\mbox{ы}}$е 
+формы), семантические (синонимия, антонимия и~др.), синтаксические 
+(различные виды придаточных и~др.), графические (знаки препинания и~др.)\ 
+и~т.\,д.~[20]. 
+
+    Аннотации связаны не непосредственно с~фрагментом текста, а с~отношением, 
+прикрепленным к~узлу дерева. Для одного и~того же РО возможно аннотирование 
+нескольких показателей, соответствующих разным словам, а~некоторые сигналы 
+не соответствуют словам в~текс\-те (например, раз\-биение на абзацы, знаки 
+пунктуации и~др.). Так, в~<<John is tall. Mary is short>> РО контраста выражено 
+двумя видами показателей: лексическими (антонимичными прилагательными 
+\textit{tall} и~\textit{schort}) и~синтаксическим (синтаксический параллелизм 
+фрагментов текста)~[20, с.~153--154]. 
+
+Результат аннотирования показателей РО 
+представлен в~виде таб\-ли\-цы (которая может занимать\linebreak\vspace*{-12pt}
+
+
+
+
+{ \begin{center}  %fig4
+ \vspace*{-3pt}
+   \mbox{%
+\epsfxsize=64.133mm
+\epsfbox{ink-4.eps}
+}
+
+\end{center}
+
+\noindent
+{{\figurename~4}\ \ \small{
+Аннотация РО и~их показателей в~rstWeb~[22, с.~57] 
+}}}
+
+\vspace*{6pt}
+
+\noindent
+ несколько страниц), 
+отражающей наличие одного или нескольких показателей, при\-над\-леж\-ность 
+показателя к~классу (лексический, морфологический
+ и~т.\,д.), сам показатель и~его 
+функцию в~обеспечении связ\-ности текста.
+
+
+
+    Основной вклад другого ресурса rstWeb~[21] заключается в~предостав\-ле\-нии 
+нового типа аннотации в~рамках RST. Несмотря на то что новый инструмент 
+аннотирования разработан на основе существующего интерфейса RST, он 
+устраняет существенный пробел в~аннотировании, который не смог устранить 
+RST-SC: он позволяет связать разметку РО и~их показателей в~едином формате 
+аннотации (рис.~4). 
+
+
+    В отличие от аннотации на рис.~1, где размечены только РО, в~аннотации на 
+рис.~4 размечаются и~показатели (выделены серым на рис.~4, желтым~--- 
+в~ресурсе). Для этого используется кноп\-ка~S, расположенная рядом с~РО 
+и~поз\-во\-ля\-ющая выбрать соответствующий показатель из списка\footnote[1]{Кнопка 
+<<X>> служит для очистки родительского узла, <<Т>>~--- для добавления 
+фрагмента текста, <<$\wedge$>>~--- для создания РО. Риторические отношения редактируются при 
+помощи операции drag-and-drop.}. Аннотации до\-ступ\-ны в~находящемся 
+в~свободном доступе корпусе GUM, соз\-дан\-ном в~Джорджтаунском университете 
+(Вашингтон)~[23].
+
+    Надкорпусная база данных иерархии ЛСО была создана в~Институте проблем информатики РАН для 
+решения двух задач аннотирования, которые\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\end{multicols}
+
+\setcounter{figure}{4}
+\begin{figure*} %fig5
+\vspace*{1pt}
+  \begin{center}  
+    \mbox{%
+\epsfxsize=149.61mm
+\epsfbox{ink-5.eps}
+}
+
+\end{center}
+\vspace*{-9pt}
+\Caption{Аннотация из НБДИ ЛСО}
+\end{figure*}
+
+\begin{table*}\small %tabl2
+\begin{center}
+\Caption{Возможности GUM и~НБДИ ЛСО}   %\multicolumn{1}{|c|}{\raisebox{-6pt}[0pt][0pt]{
+\vspace*{2ex}
+
+\tabcolsep=3pt
+\begin{tabular}{|l|p{14mm}|p{14mm}|p{33mm}|c|p{15mm}|p{35mm}|p{14mm}|}
+\hline 
+\multicolumn{1}{|c|}{\raisebox{-18pt}[0pt][0pt]{\tabcolsep=0pt\begin{tabular}{c}База\\ 
+данных\end{tabular}}}& \multicolumn{3}{c|}{Аннотирование} & 
+\multicolumn{1}{c|}{\raisebox{-18pt}[0pt][0pt]{\tabcolsep=0pt\begin{tabular}{c}Число\\ языков\end{tabular}}} &
+\multicolumn{1}{c|}{\raisebox{-18pt}[0pt][0pt]{Поиск}} & \multicolumn{1}{c|}{\raisebox{-18pt}[0pt][0pt]{\tabcolsep=0pt\begin{tabular}{c}Хранение\\ информации\end{tabular}}} & 
+\multicolumn{1}{c|}{\raisebox{-18pt}[0pt][0pt]{\tabcolsep=0pt\begin{tabular}{c}Стати-\\стика\end{tabular}}}\\
+\cline{2-4} 
+& \multicolumn{1}{c|}{\tabcolsep=0pt\begin{tabular}{c}Отно-\\ шения\end{tabular}} & \multicolumn{1}{c|}{\tabcolsep=0pt\begin{tabular}{c}Показа-\\тели\end{tabular}} & 
+\multicolumn{1}{c|}{\tabcolsep=0pt\begin{tabular}{c}Видоизменение\\ исходного\\ текста\end{tabular}} &&&&\\
+\hline
+{\raisebox{-6pt}[0pt][0pt]{\tabcolsep=0pt\begin{tabular}{l}Корпус\\ GUM\end{tabular}}}&Весь спектр отношений связ\-ности 
+(РО) & Весь спектр языковых и~неязыковых единиц &\multicolumn{1}{c|}{Нет} & \multicolumn{1}{c|}{Один} & \multicolumn{1}{c|}{Нет} & Хранение аннотаций и~истории ее 
+состояния (изменения, удаление, восстановление) на сервере, до\-ступ\-ном 
+зарегистрированным пользователям, а~так\-же воз\-мож\-ность установки программного 
+обеспечения на персональный компьютер& \multicolumn{1}{c|}{Нет}\\
+\hline
+{\raisebox{-6pt}[0pt][0pt]{\tabcolsep=0pt\begin{tabular}{l}НБДИ\\ ЛСО\end{tabular}}}&ЛСО, потенциально выражаемые коннекторами& Кон\-нек\-то\-ры&Видоизменять 
+ан\-но\-ти\-ру\-емые кон\-текс\-ты (в~част\-ности, соз\-да\-вать кон\-текс\-ты с~пропущенными 
+фрагментами), а~так\-же работать с~пус\-ты\-ми кон\-текс\-та\-ми (содержащими только 
+коннектор) &  \multicolumn{1}{c|}{Два} & Поиск по ЛСО, показателю, приз\-на\-кам кон\-текс\-та  
+упо\-треб\-ле\-ния по\-ка\-за\-теля &Хранение аннотаций и~истории ее со\-сто\-яния 
+(изменения, удаление, восстановление) на сервере, до\-ступ\-ном 
+зарегистрированным пользователям& Ста\-ти\-сти\-ка по любому из параметров поиска, а~также SQL-за\-просы\\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{-3pt}
+\end{table*}
+
+
+\begin{multicols}{2}
+
+\noindent
+ недоступны в~ранее создан\-ной 
+НБДК: отражение иерархии ЛСО, обес\-пе\-чи\-ва\-ющих связ\-ность текс\-та, 
+и~визуализация границ фраг\-мен\-тов текс\-та, связанных ЛСО\footnote[1]{Подробнее 
+об архитектуре НБДИ ЛСО см.~[24].} (рис.~5). Верхний уровень содержит 
+контекст употребления коннектора в~том виде, в~каком он зафиксирован в~НБДК. 
+Однако лишь часть его непосредственно участвует в~ЛСО условия 
+\textit{если}$\|$\textit{то}, что отражено в~узлах, содержащих компоненты данного 
+коннектора. Во фрагменте текс\-та, вводимого первой частью коннектора, находится 
+ЛСО сопоставления, вводимое~\textit{а}, а~его левый контекст содержит два  
+ЛСО~--- со\-по\-став\-ле\-ния и~времени, оформ\-ля\-емых неоднословным коннектором 
+\textit{а~потом}. Таким образом, ЛСО, выражаемое \textit{а~потом}, 
+<<встраивается>> в~ЛСО, вы\-ра\-жа\-емое~\textit{а}, которое, в~свою очередь, 
+<<встраивается>> в~ЛСО, вы\-ра\-жа\-емое \textit{если}$\|$\textit{то}. Эту иерархию 
+ЛСО и~отражает приведенный на рис.~5 граф.
+
+
+
+    Хотя аннотирование в~корпусе GUM и~в НБДИ ЛСО ставят перед собой схожие 
+задачи: аннотирование как самого отношения, так и~его показателя, эти два 
+ресурса имеют существенные различия в~предостав\-ля\-емых пользователю 
+воз\-мож\-но\-стях (табл.~2).
+
+\vspace*{-6pt}
+
+
+\section{Заключение}
+
+\vspace*{-2pt}
+
+  Лингвистический ресурс НБДИ ЛСО не имеет отечественных и~зарубежных 
+аналогов по своим функциональным возможностям. Помимо поиска и~получения 
+статистических данных он поз\-во\-ля\-ет исследователям проводить контрастивные 
+исследования, со\-по\-став\-ляя текс\-ты на двух языках. Это дает воз\-мож\-ность, с~одной 
+стороны, вы\-яв\-лять универсальные закономерности в~дискурсивной организации 
+текста, а~с~другой~--- лингвоспецифичные черты, ха\-рак\-те\-ри\-зу\-ющие тот или 
+иной язык, особенно в~зоне функционирования показателей отношений связ\-ности.
+
+\vspace*{-6pt}
+  
+{\small\frenchspacing
+ { %\baselineskip=10.6pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+\vspace*{-2pt}
+ 
+\bibitem{1-in}
+\Au{Гончаров А.\,А., Инькова~О.\,Ю.} Извлечение знаний о~средствах выражения 
+ло\-ги\-ко-се\-ман\-ти\-че\-ских отношений при помощи Надкорпусной базы данных~// Информатика и~её 
+применения, 2021. Т.~15. Вып.~2. С.~96--103.
+\bibitem{2-in}
+\Au{Das D., Taboada~M.} RST Signalling Corpus Annotation Manual. 2014. {\sf 
+https://www.sfu.ca/$\sim$mtaboada/ docs/publications/RST\_Signalling\_Corpus\_Annotation\_\linebreak Manual.pdf}.
+\bibitem{3-in}
+Penn Discourse Treebank Project (PDTB). {\sf https://www. seas.upenn.edu/$\sim$pdtb}.
+\bibitem{4-in}
+Ru-RSTreebank: Русскоязычный дискурсивный корпус. {\sf https://rstreebank.ru}.
+\bibitem{5-in}
+\Au{Carlson L., Marcu~D.} Discourse Tagging Reference Manual: Technical Report ISI-TR-545.~--- 
+Marina del Rey, CA, USA: The University of Southern California, 2001. 87~p.
+\bibitem{6-in}
+\Au{Carlson L., Marcu~D., Okurowski~M.\,E.} Building a~discourse-tagged corpus in the framework 
+of rhetorical structure theory~// Current directions in discourse and dialogue~/ Eds. J.~van Kuppevelt, 
+R.~Smith.~--- Dordrecht: Kluwer Academic Publs., 2003. P.~85--109.
+\bibitem{7-in}
+\Au{Mann W., Thompson~S.} Rhetorical structure theory: Towards a functional theory of text 
+organization~// Text, 1988. Vol.~8. Iss.~3. P.~243--281. doi: 10.1515/ text.1.1988.8.3.243.
+\bibitem{8-in}
+Руководство по разметке текстов (на основе тео\-рии риторических структур).~--- Ru-RSTreebank, 
+2019.   
+{\sf https://docs.google.com/document/d/1wd-sgGyIo5AQ q2IPj6jWa\_QmU0fUohXj48qsfVDgcBs/edit\#heading= h.gjdgxs}. 
+\bibitem{9-in}
+Рассказы о сновидениях: Корпусное исследование устного русского дискурса~/ Под ред. 
+А.\,А.~Кибрика, В.\,И.~Подлесской.~--- М.: Языки славянских культур, 2009. 736~с.
+\bibitem{10-in}
+\Au{Инькова О.\,Ю.} Логико-се\-ман\-ти\-че\-ские отношения: проб\-ле\-мы клас\-си\-фи\-ка\-ции~// 
+%\Au{Инькова~О., Манзотти~Э.} 
+Связность текста: Мереологические  
+ло\-ги\-ко-се\-ман\-ти\-че\-ские отношения.~--- М.: Языки славянских культур, 2019. С.~11--98.
+\bibitem{11-in}
+\Au{Prasad R., Miltsakaki~E., Dinesh~N., Lee~A., Joshi~A., Webber~B.\,L.} The Penn Discourse 
+Treebank~1.0 Annotation Manual.~--- Philadelphia, PA, USA: 
+Institute for Research in Cognitive Science, University of Pennsylvania, 2006. Technical Report No.\,IRCS-06-01.
+\bibitem{12-in}
+\Au{Prasad R., Webber~B., Lee~A., Joshi~A.} The Penn Discourse Treebank~3.0 Annotation 
+Manual.~--- Philadelphia, PA, USA: Linguistic Data Consortium, University of Pennsylvania, 2019. 
+81~p. %doi: 10.35111/qebf-gk47.
+{\sf 
+https://catalog.ldc.upenn.edu/ docs/LDC2019T05/PDTB3-Annotation-Manual.pdf}.
+
+\bibitem{13-in}
+\Au{Prasad R., Joshi~A., Webber~B.} Realization of discourse relations by other means: Alternative 
+lexicalizations~// 23rd Conference (International) on Computational Linguistics: Posters Volume.~--- 
+Beijing, 2010. P.~1023--1031.
+{\sf 
+https://www.aclweb.org/anthology/C10- 2118.pdf}.
+\bibitem{14-in}
+\Au{Prasad R., Miltsakaki~E., Dinesh~N., Lee~A., Joshi~A.} The Penn Discourse Treebank~2.0 
+Annotation Manual.~--- Philadelphia, PA, USA: Institute for 
+Research in Cognitive Science, University of Pennsylvania, 2008. Technical Report No.\,IRCS-08-01.
+{\sf https://repository.upenn.edu/ cgi/viewcontent.cgi?article=1203\&context=ircs\_\linebreak reports}.
+
+\bibitem{15-in}
+\Au{Инькова-Манзотти О.\,Ю.} Коннекторы противопоставления во французском и~русском 
+языках: сопоставительное исследование.~--- М.: МГУ-Информэлектро, 2001. 432~с.
+\bibitem{16-in}
+PennDiscourse Treebank Project (PDTB). {\sf https://www. seas.upenn.edu/$\sim$pdtb}.
+\bibitem{17-in}
+Национальный корпус русского языка (НКРЯ). {\sf https://ruscorpora.ru/new}.
+\bibitem{18-in}
+\Au{Inkova O., Popkova~N.} Statistical data as information source for linguistic analysis of Russian 
+connectors~// Информатика и~её применения, 2017. Т.~11. Вып.~3. С.~123--131.
+\bibitem{19-in}
+\Au{Инькова О.\,Ю.} Лингвоспецифичность коннекторов: методы и~параметры описания~// 
+Семантика коннекторов: контрастивное исследование~/ Под ред. О.\,Ю.~Иньковой.~--- М.: 
+ТОРУС ПРЕСС, 2018. С.~5--23.
+
+\pagebreak
+
+\bibitem{20-in}
+\Au{Das D., Taboada M.} RST Signalling Corpus: A~corpus of signals of coherence relations~// Lang. 
+Resour.  Eval., 2018. Vol.~52. P.~149--184.
+\bibitem{21-in}
+\Au{Zeldes A.} rstWeb~--- a~browser-based annotation interface for rhetorical structure theory and 
+discourse relations~//  NAACL--HLT Proceedings.~--- San Diego, CA, USA: Association for 
+Computational Linguistics, 2016. P.~1--5.
+\bibitem{22-in}
+\Au{Gessler~L., Liu~J., Zeldes~A.} A~Discourse Signal Annotation System for RST Trees~//  
+Discourse Relation Parsing and Treebanking Proceedings.~--- Minneapolis, MN, USA: Association for Computational 
+Linguistics, 2019. P.~56--61. doi: 10.18653/v1/W19-2708. 
+\bibitem{23-in}
+GUM: The Georgetown University Multilayer Corpus. {\sf 
+https://corpling.uis.georgetown.edu/gum/annotations.\linebreak html}.
+\bibitem{24-in}
+\Au{Дурново А.\,А., Инькова~О.\,Ю., Попкова~Н.\,А.} Архитектура базы данных иерархии 
+ло\-ги\-ко-се\-ман\-ти\-че\-ских отношений~// Сис\-те\-мы и~средства информатики, 2022. Т.~32. №\,1. 
+С.~114--125.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-10pt}
+
+\hfill{\small\textit{Поступила в~редакцию 07.04.21}}
+
+\vspace*{6pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{PRINCIPLES OF DESCRIBING MARKERS\\
+OF~LOGICAL-SEMANTIC 
+RELATIONS AND~THEIR HIERARCHY}
+
+
+\def\titkol{Principles of describing markers of~logical-semantic 
+relations and~their hierarchy}
+
+
+\def\aut{A.\,A.~Durnovo$^1$, O.\,Yu.~Inkova$^{1,2}$, and~N.\,A.~Popkova$^1$}
+
+\def\autkol{A.\,A.~Durnovo, O.\,Yu.~Inkova, and~N.\,A.~Popkova}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-8pt}
+
+
+
+\noindent
+$^1$Federal Research Center ``Computer Science and Control'' of the Russian Academy 
+of Sciences, 44-2~Vavilov\linebreak
+$\hphantom{^1}$Str., Moscow 119333, Russian Federation
+
+\noindent
+$^2$University of Geneva, 22 Bd des Philosophes, CH-1205 Geneva~4, Switzerland
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+
+
+\Abste{The article deals with annotation strategies in corpora with 
+discourse markup. It is shown that Rhetorical Structure Theory (RST)-based corpora 
+only contain annotations of coherence relations, or rhetorical relations (RR). 
+In contrast, the Penn Discourse Treebank (PDTB) of the University of Pennsylvania 
+annotates relations markers, as does the Supracorpora Database of Connectives. 
+The RST Signaling Corpus (RST-SC), also based on RST, has been shown to annotate 
+RR markers, but cannot combine the markup of RRs and their markers in 
+a~single annotation. This problem is solved by the GUM corpus and the Supracorpora Database 
+of Hierarchy of Logical-Semantic Relations. The latter has a few advantages: the ability to 
+search, to obtain statistics, and to form bilingual annotations. This makes it possible 
+to identify both universal 
+phenomena in the discursive organization of the text and language-specific phenomena.}
+
+\KWE{supracorpora database; corpus of texts' annotation; discourse relations; connective}
+
+
+
+\DOI{10.14357/19922264220207}
+
+\vspace*{-21pt}
+
+\Ack
+
+\vspace*{-4pt}
+
+\noindent
+The research was carried out using the infrastructure of the Shared Research Facilities 
+``High Performance Computing and Big Data'' (CKP ``Informatics'') of FRC CSC RAS 
+(Moscow) and supported by the Switzerland--Russia Research Preparation Grant 
+``Annotation methodology in a~supracoprora database of connectives'' of the State 
+Secretariat for Education, Research, and Innovation.
+
+
+
+\vspace*{-2pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {\baselineskip=10.6pt
+ \addcontentsline{toc}{section}{References}
+ 
+
+ \begin{thebibliography}{99}
+ 
+  \vspace*{-2pt}
+  
+\bibitem{1-in-1}
+\Aue{Goncharov, A.\,A., and O.\,Yu.~Inkova.} 2021. Izvlechenie znaniy o~sredstvakh 
+vyrazheniya logiko-semanticheskikh otnosheniy pri pomoshchi Nadkorpusnoy bazy 
+dannykh [Extracting knowledge about means of expression of logical-semantic relations 
+from the Supracorpora database]. \textit{Informatika i~ee Primeneniya~--- Inform. 
+Appl.} (15)2:96--103.
+\bibitem{2-in-1}
+\Aue{Das, D., and M.~Taboada.} 2014. RST Signalling Corpus annotation manual. 
+Available at: {\sf https://www.sfu.ca/ $\sim$mtaboada/docs/publications/RST\_Signalling\_\linebreak Corpus\_Annotation\_Manual.pdf} 
+(accessed April~22, 2022).
+\bibitem{3-in-1}
+Penn Discourse Treebank Project (PDTB). Available at: {\sf  
+https://www.seas.upenn.edu/$\sim$pdtb/} (accessed April~22, 2022).
+\bibitem{4-in-1}
+Ru-RSTreebank: Russkoyazychnyy diskursivnyy korpus [Ru-RSTreebank: Russian 
+discourse corpus]. Available at: {\sf https://rstreebank.ru/} (accessed April~22, 2022).
+\bibitem{5-in-1}
+\Aue{Carlson, L., and D.~Marcu.} 2001. \textit{Discourse tagging reference manual}. 
+87~p. Available at: {\sf ftp://128.9.176.20/ isipubs/tr-545.pdf} (accessed April~22, 
+2022).
+\bibitem{6-in-1}
+\Aue{Carlson, L., D.~Marcu, and M.\,E.~Okurowski.} 2003. Building a discourse-tagged 
+corpus in the framework of rhetorical structure theory. \textit{Current directions in 
+discourse and dialogue}. Eds J.~van Kuppevelt and R.~Smith. Dordrecht: Kluwer 
+Academic Publs. 85--109.
+\bibitem{7-in-1}
+\Aue{Mann, W.\,C., and S.\,A.~Thompson.} 1988. Rhetorical structure theory: Towards 
+a functional theory of text organization. \textit{Text} 8(3):243--281. doi: 10.1515/text.1.1988.8.3.243.
+\bibitem{8-in-1}
+Ru-RSTreebank. 2019.
+Rukovodstvo po razmetke tekstov (na osnove teorii ritoricheskikh struktur) [Text 
+Markup Guide (based on the theory of rhetorical structures)]. Available at: {\sf 
+https://docs.google.com/\linebreak document/d/1wd-sgGyIo5AQq2IPj6jWa\_QmU0fUohXj\linebreak 48qsfVDgcBs/edit\#heading=h.gjdgxs} (accessed April~22, 2022).
+\bibitem{9-in-1}
+Kibrik, A.\,A., and V.\,M.~Podlesskaya, eds. 2009. \textit{Rasskazy o~snovideniyakh: 
+Korpusnoe issledovanie ustnogo russkogo diskursa} [Night dream stories. A~corpus 
+study of spoken Russian discourse]. Moscow: LRC Publishing House. 736~p.
+\bibitem{10-in-1}
+\Aue{Inkova, O.\,Yu.} 2019. Logiko-semanticheskie otnosheniya: Problemy 
+klassifikatsii [Logical-semantic relations: Classification problems]. \textit{Svyaznost' 
+teksta: mereologicheskie logiko-semanticheskie otnosheniya} [Text coherence: 
+Mereological logical semantic relations]. Moscow: LRC Publishing House. 11--98.
+\bibitem{11-in-1}
+\Aue{Prasad, R., E.~Miltsakaki, N.~Dinesh, A.~Lee, A.~Joshi, and B.\,L.~Webber.} 
+2006. The Penn Discourse Treebank~1.0 Annotation Manual. 
+Philadelphia, PA: Institute for Research in Cognitive Science, University of Pennsylvania. Technical Report No.\,IRCS-06-01. 
+Available at: {\sf 
+https://repository.upenn.edu/ircs\_reports/3/} (accessed April~22, 2022).
+\bibitem{12-in-1}
+\Aue{Prasad, R., B.~Webber, A.~Lee, and A.~Joshi.} 2019. The Penn Discourse 
+Treebank~3.0 Annotation Manual. Philadelphia, PA: Linguistic Data Consortium, University of Pennsylvania. 
+81~p.  Available at: {\sf 
+https://catalog.\linebreak ldc.upenn.edu/docs/LDC2019T05/PDTB3-Annotation-Manual.pdf} 
+(accessed April~22, 2022).
+\bibitem{13-in-1}
+\Aue{Prasad, R., A.~Joshi, and B.~Webber.} 2010. Realization of discourse relations by 
+other means: Alternative lexicalizations. \textit{23rd Conference (International) on 
+Computational Linguistics Proceedings: Posters Volume}. Beijing. 1023--1031. Available at: {\sf 
+https://www.aclweb. org/anthology/C10-2118.pdf} (accessed April~22, 2022).
+\bibitem{14-in-1}
+\Aue{Prasad, R., E.~Miltsakaki, N.~Dinesh, A.~Lee, and A.~Joshi.}
+ 2008. The Penn Discourse Treebank~2.0 Annotation Manual. 
+Philadelphia, PA: Institute for Research in Cognitive Science, University of 
+Pennsylvania. Technical Report IRCS-08-01. Available at: 
+{\sf https://repository.upenn. edu/cgi/viewcontent.cgi?article=1203\&context=ircs\_\linebreak reports}. 
+(accessed June~9, 2022). 
+\bibitem{15-in-1}
+\Aue{Inkova-Manzotti, O.\,Yu.} 2001. \textit{Konnektory protivopostavleniya vo 
+frantsuzskom i~russkom yazykakh. Sopostavitel'noe issledovanie} [Connectives of 
+opposition in French and Russian. A~comparative study]. Moscow: Informelektro. 
+432~p.
+\bibitem{16-in-1}
+Penn Discourse Treebank Project (PDTB). Available at: {\sf  
+https:// www.seas.upenn.edu/$\sim$pdtb/} (accessed April~22, 2022).
+\bibitem{17-in-1}
+Natsional'nyy korpus russkogo yazyka (NKRYa) [Russian National Corpus (RNC)]. Available at: {\sf 
+http://www.ruscorpora.ru} (accessed April~22, 2022).
+\bibitem{18-in-1}
+\Aue{Inkova, O., and N.~Popkova.} 2017. Statistical data as information source for 
+linguistic analysis of Russian connectors. \textit{Informatika i~ee Primeneniya~--- 
+Inform. Appl.} 11(3):123--131.
+\bibitem{19-in-1}
+\Aue{Inkova, O.\,Yu.} 2018. Lingvospetsifichnost' konnektorov: metody i~parametry 
+opisaniya [Language specificity of connectives methods and parameters of description]. 
+\textit{Semantika konnektorov: kontrastivnoe issledovanie} [Semantics of connectives: 
+A~contrastive study]. Ed.\ O.\,Yu.~Inkova. Moscow: TORUS PRESS. 5--23.
+\bibitem{20-in-1}
+\Aue{Das, D., and M.~Taboada.} 2018. RST signalling corpus: A~corpus of signals of 
+coherence relations. \textit{Lang. Resour.  Eval.} 52:149--184.
+\bibitem{21-in-1}
+\Aue{Zeldes, A.} 2016. rstWeb~--- a~browser-based annotation interface for rhetorical 
+structure theory and discourse relations. \textit{NAACL-HLT Proceedings}. San Diego, CA: 
+Association for Computational Linguistics. 1--5.
+\bibitem{22-in-1}
+\Aue{Gessler, L., J.~Liu, and A.~Zeldes.} 2019. A discourse signal annotation system 
+for RST trees. \textit{Discourse Relation Parsing and Treebanking Proceedings}. 
+Minneapolis, MN: Association for Computational Linguistics. 56--61.
+doi: 10.18653/v1/W19-2708. 
+\bibitem{23-in-1}
+GUM: The Georgetown University Multilayer Corpus. Available at: {\sf 
+https://corpling.uis.georgetown. edu/gum/annotations.html} (accessed April~22, 2022).
+\bibitem{24-in-1}
+\Aue{Durnovo, A.\,A., O.\,Yu.~Inkova, and N.\,A.~Popkova.} 2022. Arkhitektura bazy 
+dannykh iyerarkhii logiko-semanticheskikh otnosheniy [Database of hierarchies of 
+logical-semantic relations: Architecture]. \textit{Sis\-te\-my i~Sred\-st\-va Informatiki~--- 
+Systems and Means of Informatics} (32)1:114--125.
+
+\end{thebibliography}
+
+ }
+ }
+ 
+
+\end{multicols}
+
+\vspace*{-8pt}
+
+\hfill{\small\textit{Received April 7, 2021}}
+
+\vspace*{-20pt}
+
+\Contr
+
+\vspace*{-6pt}
+
+
+\noindent
+\textbf{Durnovo Aleksandr A.} (b.\ 1949)~--- leading programmer, Institute of 
+Informatics Problems, Federal Research Center ``Computer Science and Control'' of the 
+Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian 
+Federation; \mbox{duralex49@mail.ru}
+
+\vspace*{1pt}
+
+\noindent
+\textbf{Inkova Olga Yu.} (b.\ 1965)~--- Doctor of Science in philology, senior scientist, 
+Institute of Informatics Problems, Federal Research Center ``Computer Science and 
+Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, 
+Russian Federation; faculty member, University of Geneva, 22 Bd des Philosophes, 
+CH-1205 Geneva~4, Switzerland; \mbox{olyainkova@yandex.ru}
+
+\vspace*{1pt}
+
+\noindent
+\textbf{Popkova Nataliia A.} (b.\ 1992)~--- junior scientist, Institute of Informatics 
+Problems, Federal Research Center ``Computer Science and Control'' of the Russian 
+Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{natasha\_\_popkova@mail.ru}
+
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}    

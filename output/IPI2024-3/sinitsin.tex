@@ -1,0 +1,1066 @@
+\def\da{(\Delta,A)}
+
+
+
+\def\stat{sinitsin}
+
+\def\tit{СТАТИСТИЧЕСКОЕ МОДЕЛИРОВАНИЕ ДИФФЕРЕНЦИАЛЬНЫХ~СТОХАСТИЧЕСКИХ СИСТЕМ,  НЕ~РАЗРЕШЕННЫХ~ОТНОСИТЕЛЬНО ПРОИЗВОДНЫХ}
+
+\def\titkol{Статистическое моделирование дифференциальных СтС, %стохастических систем,  
+не~разрешенных относительно производных}
+
+\def\aut{И.\,Н.~Синицын$^1$}
+
+\def\autkol{И.\,Н.~Синицын}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Синицын И.\,Н.}
+\index{Sinitsyn I.\,N.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа 
+%выполнена при поддержке Программы развития МГУ, проект №\,23-Ш03-03. При анализе 
+%данных использовалась инфраструктура Центра коллективного пользования 
+%<<Высокопроизводительные вычисления и~большие данные>> 
+%(ЦКП <<Информатика>>) ФИЦ ИУ РАН (г.~Москва)}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук; Московский авиационный 
+институт, \mbox{sinitsin@dol.ru}}
+
+
+\vspace*{-12pt}
+
+
+
+%Работа 
+%выполнена при финансовой поддержке РАН (ГЗ 2024--2028~гг.).
+
+
+
+
+
+
+\Abst{Статья посвящена методическому обеспечению статистического моделирования 
+дифференциальных стохастических сис\-тем (СтС), не разрешенных относительно 
+производных (НРОП). Дан обзор работ в~области аналитического моделирования 
+стохастических процессов (СтП) в~СтС НРОП. Получены две теоремы приведения 
+стохастических функ\-ци\-о\-наль\-но-диф\-фе\-рен\-ци\-аль\-ных уравнений к~дифференциальным. 
+Изложен эйлеров метод аппроксимации для дифференциальных уравнений Ито 
+с~гауссовскими и~пуассоновскими шумами. Представлены три теоремы, уточ\-ня\-ющие 
+алгоритмы Эйлера численного интегрирования в~рамках сильной и~слабой 
+аппроксимации распределений. В их основу положена обобщенная формула Ито для 
+дифференцирования нелинейных функций, гауссовских и~пуассоновских шумов, а~также 
+формулы для плотностей распределений соответствующих случайных величин при 
+аппроксимации соответствующих интегралов. Особое внимание уделено подходам к~аппроксимации стохастических интегралов в~случае негладких функций в~СтС НРОП. 
+Проведен методологический анализ уточняющих алгоритмов различной степени 
+точности для детерминированных и~случайных со\-став\-ля\-ющих. Представлены выводы и~предложены направления дальнейших исследований.}
+
+\KW{аналитическое моделирование; методическое обеспечение; %сильная и~слабая аппроксимации;
+сис\-те\-ма, стохастически не разрешенная относительно производных; статистическое моделирование;
+стохастическая сис\-те\-ма, не разрешенная относительно производной (СтС НРОП)} %; стохастический процесс (СтП)}
+
+\DOI{10.14357/19922264240302}{WWMEOT}
+  
+%\vspace*{-6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+В~[1--4] рассмотрены вопросы аналитического моделирования процессов в~СтС НРОП. 
+Особое внимание в~них уделено нормальным (гауссовским) СтП. В~[5] предложены методы нормализации сис\-тем, сто\-ха\-сти\-че\-ски НРОП. 
+Тео\-рия распределений с~инвариантной мерой в~СтС НРОП 
+развита в~[6].
+В~[7] дано обоб\-ще\-ние~[1--4] на случай СтС НРОП со случайными параметрами. Для 
+СтС НРОП, до\-пус\-ка\-ющих приведение к~сис\-те\-ме дифференциальных и~конечных 
+сто\-ха\-сти\-че\-ских уравнений, могут быть использованы известные методы чис\-лен\-но\-го 
+интегрирования~[8--10]. В~[11, 12] предложен ряд чис\-лен\-ных методов 
+интегрирования сто\-ха\-сти\-че\-ских дифференциальных уравнений, основанных на 
+использовании обобщенной формулы Ито, а~так\-же канонических разложениях СтП.
+
+Рассмотрим методическое обеспечение чис\-ленного интегрирования уравнений 
+диф\-фе\-рен\-ци\-альных СтС НРОП, приводимых к~диф\-фе\-рен\-ци\-альным СтС. В~разд.~2 даны 
+сведения из теории\linebreak \mbox{приведения} функ\-ци\-о\-наль\-но-диф\-фе\-рен\-ци\-аль\-ных уравнений 
+к~дифференциальным. Разделы~3 и~4 содержат основные результаты для
+приведенных СтС НРОП. В~разд.~5 приведены основные выводы, а~также обобщения 
+на случай общих неявных детерминированных и~стохастических непрерывных, 
+дискретных и~не\-пре\-рыв\-но-дис\-крет\-ных сис\-тем.
+
+
+\section{Дифференциальные стохастические системы, не~разрешенные относительно~производных }
+
+Рассмотрим сначала дифференциальную СтС с~нелинейностями, описываемыми гладкими 
+детерминированными скалярными функциями:
+   \begin{multline}
+   \Phi =\Phi(t, Y_t, \dot Y_t \tr Y_t^{(k)}, U_t) =0, \enskip Y(t_0) = Y_0, 
+\\
+ \dot Y(t_0) = \dot Y_0 \tr Y^{(k)} (t_0) = Y_0^{(k)}.
+\label{e2.1-s}
+\end{multline}
+При этом уравнение  нелинейного формирующего фильтра (ФФ) для стохастических 
+возмущений~$U_t$ возьмем в~виде, разрешенном относительно возмущений
+\begin{equation}
+\dot U_t = a^U (t, U_t)  + b^U (t, U_t) V_t^U, \enskip U(t_0) = U_0.
+\label{e2.2-s}
+\end{equation}
+Здесь $a^U \hm= a^U(t, U_t)$ и~$b^U(t, U_t)$~--- $(n^Y\times 1)$- и~$(n^Y\times n^V)$-мер\-ные функции; $V_t^U$~--- белый шум в~строгом смысле~\cite{11-s}, допускающий 
+представление вида
+\begin{equation*}
+V_t^U = \dot W_t^U, \enskip W_t^U = W_0^U (t) + \iii_{R_0^q} c^U (\rho) 
+P^0 ( t, d\rho),
+%\label{e2.3-s}
+\end{equation*}
+где $\nu_t$--- его интенсивность:
+    \begin{equation*}
+    \nu_t=\nu_t^W =\nu_t^{W_0} +  \iii_{R_0^q} c^U (\rho) \left[c^U (\rho)\right]^{\mathrm{T}} \nu_P 
+(t,\rho) \,d\rho\,;
+%\label{e2.4-s}
+\end{equation*}
+ $c^U \hm= c^U(\rho)$~--- известная векторная функция той же 
+размерности, что и~$W_0^U$; интеграл при любом $t\hm\ge t_0$ представляет собой 
+стохастический интеграл по центрированной пуассоновской мере~$P^0(t,{\cal A})$, 
+независимой от~$W_0^U$ и~име\-ющей независимые значения на попарно 
+непересекающихся множествах; ${\cal A}$~--- борелевское множество пространства 
+$R_0^q$ с~выколотым началом; $\nu_t^W$, $\nu_t^{W_0}$ и~$\nu_P$~--- интенсивности СтП 
+$W_t^U$, $W_{0}^U$ и~$P^0$. Уравнение~(\ref{e2.2-s}) понимается в~смысле Ито и~имеет 
+единственное решение в~среднем квадратичном~\cite{11-s}.
+
+
+Для гладких функций в~(\ref{e2.1-s}), допускающих стохастические производные Ито до $h$-го порядка, выполним  следующие преобразования.
+Будем дифференцировать сполна по~$t$ левые части уравнений~(\ref{e2.1-s}) по обобщенной 
+формуле Ито~\cite{11-s, 12-s} до тех пор, пока не появятся производные белого шума. 
+В~результате получим следующую сис\-те\-му нелинейных дифференциальных уравнений:
+    \begin{equation}
+    \Phi=0,\enskip \dot \Phi =0\tr \Phi^{(h)}=0\,.
+    \label{e2.5-s}
+    \end{equation}
+Далее введем вектор  $Z_t \hm= \lk Y_t^{\mathrm{T}}\, X_t^{\mathrm{T}}\rk^{\mathrm{T}}$, составленный из $Y_t\hm= \lk 
+Y_t^{\mathrm{T}}\, \dot Y_t^{\mathrm{T}}\cdots Y_t^{(k-1)\mathrm{T}}\rk^{\mathrm{T}}$ и~вспомогательного вектора~$X_t$, 
+определяемого уравнениями~(\ref{e2.5-s}).
+В~результате придем к~уравнениям, разрешенным относительно дифференциалов, 
+следующего вида:
+\begin{equation}
+dZ_t = a^Z  dt + b^Z d W_0 + \iii_{R_0^q} c^Z P^0(t,du),\label{e2.6-s}
+\end{equation}
+где $a^Z \hm= a^Z(t,Z_t)$; $b^Z\hm=b^Z(t,Z_t)$; $ c^Z\hm=c^Z(t,Z_t, u)$.
+
+Таким образом, имеем следующее утверждение.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~2.1.}\ \textit{Пусть нелинейная негауссовская СтС}~(\ref{e2.1-s}), (\ref{e2.2-s}), 
+\textit{НРОП $k$-го порядка, удовлетворяет условиям}:
+\begin{itemize}
+\item[\,] $1^0$~\textit{функции}~(\ref{e2.1-s}) \textit{допускают обобщенные стохастические дифференциалы Ито вплоть 
+до $h$-го порядка включительно};
+
+\item[\,] $2^0$~\textit{уравнение ФФ}~(\ref{e2.2-s}) \textit{разрешено относительно возмущений~$U_t$, имеет 
+единственное среднеквадратичное решение}.
+\end{itemize}
+\textit{Тогда система}~(\ref{e2.1-s}), (\ref{e2.2-s}) \textit{приводима к~сис\-те\-ме, разрешенной относительно 
+производных}~(\ref{e2.6-s}).
+
+\smallskip
+
+
+Положим, что в~(\ref{e2.1-s}) стохастическое возмущение~$U_t$ представляет собой 
+автокоррелированный СтП и~описывается стохастическим дифференциальным уравнением 
+следующего ФФ:
+\begin{multline}
+U_t^{(n)} + \sss_{k=n-m}^{n-1}\alpha_k^U \left(t,U_t, \dot U_t \tr U_t^{(n-m-1)}\right) U_t^{(k)} + {}\\
+{}+
+\alpha_0^U \left(t,  U_t, \dot U_t \tr U_t^{(n-1)}\right) ={}\\
+{}= \sss_{h=1}^m \beta_h^U \left(t,  U_t, \dot U_t \tr U_t^{(n-m-1)}\right)V_t^{(h)}.\label{e2.7-s}
+\end{multline}
+Здесь $n=n^U$~--- порядок дифференциального уравнения, причем $0\hm<m\hm<n$; 
+$\alp_0^U$, $\alp_k^U$ и~$\beta_k^U$~--- известные функции отмеченных переменных.
+
+Пусть компоненты СтП $Y_t, \dot Y_t\tr Y_t^{(k)}$ более гладкие, чем~$U_t$. 
+В~этом случае для приведения~(\ref{e2.1-s}), (\ref{e2.7-s}) к~(\ref{e2.6-s}) можно применить способ, 
+основанный на дифференцировании~(\ref{e2.1-s}) и~исключении~$U_t$ и~ее производных, не 
+содержащих белого шума из уравнений~(\ref{e2.1-s}) и~уравнений, полученных из него 
+дифференцированием~(\ref{e2.7-s}) по обобщенной формуле Ито~\cite{11-s, 12-s}. В~результате придем к~следующему уравнению вида~(\ref{e2.6-s}):
+    \begin{equation}
+    d\bar Z_t = \bar a^Z dt + \bar b^Z dW_0 + \iii_{R_0^q} \bar c^Z P^0 (t, du),\label{e2.8-s}
+    \end{equation}
+где $\bar a^Z = \bar a^Z(t,\bar Z_t)$; $\bar b^Z \hm= \bar b^Z(t, \bar Z_t)$; $\bar c^Z \hm= \bar c^Z(t, \bar Z_t, u)$.
+
+Аналогично~[1--6] рассматривается случай векторных дифференциальных СтС НРОП.
+
+Таким образом, получаем следующий результат.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~2.2.}\ \textit{Пусть нелинейная негауссовская СтС}~(\ref{e2.1-s}), (\ref{e2.7-s}) \textit{удовлетворяет условиям}:
+\begin{itemize}
+\item[\,]
+ $1^0$~\textit{функции}~(\ref{e2.1-s}) \textit{допускают обобщенные стохастические дифференциалы Ито 
+вплоть до $h$-го порядка включительно};
+\item[\,]
+ $2^0$~\textit{уравнение ФФ}~(\ref{e2.7-s}) \textit{имеет единственное среднеквадратичное решение};
+\item[\,]
+ $3^0$~\textit{СтП $Y_t, \dot Y_t\tr Y_t^{(k)}$ более гладки, чем возмущение}~$U_t$.
+\end{itemize}
+\textit{Тогда система}~(\ref{e2.1-s}), (\ref{e2.7-s}) \textit{приводима к~системе}~(\ref{e2.8-s}).
+
+
+Для гладких  век\-тор-функ\-ций~(\ref{e2.5-s}) конечные уравнения в~(\ref{e2.1-s}) допускают гладкую 
+замену переменных\linebreak и~приведение исходных дифференциальных уравнений СтС НРОП 
+к~сис\-те\-ме, со\-сто\-ящей из дифференциального векторного дифференциального 
+\mbox{стохастического} уравнения Ито и~конечного векторного уравнения вида
+    \begin{multline}
+    dY_t = a^Y (t,Y_t)\, dt + b^Y (t,Y_t)\, d W_0 + {}\\
+    {}+\iii_{R_0^q} c^Y (t,Y_t, u) 
+P^0 (t,du)
+\label{e2.9-s}
+\end{multline}
+и конечным уравнениям вида
+  \begin{equation}
+  \Psi(Y_t, X_t, t) =0\,.
+  \label{e2.10-s}
+  \end{equation}
+
+\section{Метод Эйлера}
+
+Следуя~\cite{11-s, 12-s}, заменим интеграл по переменной~$u$ в~(\ref{e2.9-s})
+соответствующей интегральной суммой. В~результате~(\ref{e2.9-s})
+заменится уравнением
+\begin{equation}
+dY=a(Y,t)\,dt+b(Y,t)\,dW_0+\!\sum\limits_{i=1}^N c_i(Y,t)\,dP^0_i,\label{e3.1-s}
+\end{equation}
+где $c_i(y,t)$~--- $p$-мер\-ные векторные функции, представляющие собой
+значения функции $c(y,t,v)$ в~некоторых средних точках~$u_i$
+соответствующих элементов~$A_i$ разбиения $r$-мер\-но\-го шара достаточно
+большого радиуса; $u_i\hm\in A_i$ ($i\hm=\overline{1,N}$); $P^0_i(t)$~---
+центрированные простые пуассоновские СтП:
+    \begin{equation*}
+    P^0_i(t)=P^0([0,t),A_i)-\mu([0,t),A_i),\quad i=\overline{1,N}\,.
+  %  \label{e(3.2-s}
+    \end{equation*}
+Интенсивности этих СтП определяются через математическое
+ожидание~$\mu\da$  пуассоновской меры~$P\da$ по формуле
+\begin{equation*}
+\nu_i(t)=\fr{d\mu([\,0,t),A_i)}{dt}\,.
+%\label{e3.3-s}
+\end{equation*}
+Простейший способ замены уравнения~(\ref{e3.1-s}) разностным уравнением состоит в~замене всех дифференциалов
+элементами интегральных сумм:
+\begin{multline*}
+Y((n+1)h)-Y(nh)=a(Y(nh),nh)h+{}\\
+{}+
+b(Y(nh,nh)) \left[W_0((n+1)h)- W_0(nh)\right]+{}\\
+{}+\sum\limits_{i=1}^N c_i(Y(nh),nh)\left[ P_i^0((n+1)h)-P_i^0(nh) \right].
+    \end{multline*}
+Положив
+\begin{align*}
+    \bar Y_n&=Y(nh);\\
+     \varphi_n(\bar Y_n)&=Y(nh)+a(Y(nh),nh)h; \\
+  \psi_{1n}(\bar Y_n)&=b(Y(nh),nh);\\
+    \psi_{in}(\bar    Y_n)&=c_{i-1}(Y(nh),nh);\\
+     V_{1n}&=W_0((n+1)h)-W_0(nh);\\
+    V_{in}&=P_{i-1}^0((n+1)h)-P_{i-1}^0(nh),\  i=\overline{2,N+1}, \\[-20pt]
+    %    \label{e3.4-s}
+    \end{align*}
+получим стохастическое разностное уравнение
+    $$
+    \bar Y_{n+1}=\varphi_n(\bar Y_n)+\sum\limits_{i=1}^{N+1}\psi_{{in}}(\bar Y_n)V_{in}.
+$$
+
+\vspace*{-2pt}
+
+\noindent
+Вводя блочную матрицу $p\times(m+N)$
+    \begin{equation*}
+    \psi_n(\bar Y_n)=\left[\psi_{1n}(\bar Y_n) \cdots \psi_{N+1,n}(\bar
+    Y_n)\right] %\label{e3.5-s}
+    \end{equation*}
+    
+    \vspace*{-2pt}
+
+\noindent
+и $(m+N)$-мерный случайный вектор
+    \begin{equation*}
+    V_n=\left[ V_{1n}^{\mathrm{T}}\,\, V_{2n}\,\,\cdots \,\, V_{N+1,n}\right]^{\mathrm{T}},
+    %\label{e3.6-s}
+    \end{equation*}
+    
+    \vspace*{-2pt}
+
+\noindent
+можем записать полученное разностное уравнение коротко в~виде
+    \begin{equation}
+    \bar Y_{n+1}=\varphi_n(\bar Y_n)+\psi_n(\bar Y_n)V_n. \label{e3.7-s}
+    \end{equation}
+
+\vspace*{-2pt}
+
+
+Случайные векторы~$V_n$ образуют
+последовательность независимых случайных векторов~$\{V_n\}$, причем
+блоки~$V_{1n}$ векторов~$V_n$ имеют нормальное (гауссовское) распределение 
+$\aleph(0,\bar G_n)$, где
+    \begin{equation*}
+    \bar G_n =\inh \nu_0(\tau)\,d\tau \cong \nu_0(nh)h; %\label{e3.8-s}
+    \end{equation*}
+    
+    \vspace*{-2pt}
+
+\noindent
+$\nu_0(t)$~--- интенсивность винеровского СтП $W_0(t)$;
+скалярные блоки $V_{{in}}$ ($i\hm=\overline{2,N+1}$) имеют пуассоновские
+распределения с~параметрами
+\begin{equation*}
+\mu_{{in}}=\inh \nu_i(\tau)\,d\tau \cong \nu_i(nh)h\,. %\label{e3.9-s}
+\end{equation*}
+
+\vspace*{-2pt}
+
+
+Ковариационная матрица~$G_n$ вектора~$V_n$
+представляет собой блоч\-но-диа\-го\-наль\-ную мат\-рицу:
+\begin{equation*}
+G_n=
+\begin{bmatrix}
+    \bar G_n &0 &0 &\cdots &0\\
+    0 &\mu_{2n} &0 &\cdots &0\\
+    0&0&\mu_{3n} &0&0\\
+    \vdots &\vdots &\ddots &\ddots &\vdots\\
+    0 &0 &0 &\cdots &\mu_{N+1,n}\\
+\end{bmatrix}.
+%\label{e3.10-s}
+\end{equation*}
+
+\vspace*{-2pt}
+
+
+Уравнение~(\ref{e3.7-s}) определяет~$\bar Y_{n+1}$ при данном~$\bar Y_n$ с~точ\-ностью до~$h$ в~детерминированном слагаемом $\varphi_n(\bar Y_n)$ и~с~точ\-ностью до~$\sqrt{h}$ в~случайном слагаемом $\psi_n(\bar Y_n)V_n$ (\textbf{тео\-ре\-ма~3.1}).
+
+\vspace*{-6pt}
+
+\section{Более точные методы}
+
+\vspace*{-3pt}
+
+\textbf{4.1.}\ Методы $h^2$ и~$h^{3/2}$ для приведенных уравнений~(\ref{e2.9-s}) и~(\ref{e2.10-s}) 
+с~точ\-ностью до~$h^2$ в~детерминиро-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+ванном слагаемом и~$h^{3/2}$ в~случайном 
+слагаемом, следуя~\cite{11-s, 12-s}, дают следующую \textbf{тео\-ре\-му~4.1}:
+\begin{equation}
+\bar Y_{n+1}=\varphi_n(\bar Y_n)+\psi_n(\bar     Y_n,V_n^{(1)})V_n.
+\label{e4.1-s}
+\end{equation}
+Входящие в~уравнения~(\ref{e4.1-s}) величины определяются формулами:
+
+\vspace*{-6pt}
+
+\noindent
+ \begin{multline*}
+ \!\varphi_n(\bar Y_n)=\bar Y_n+\left[a(\bar Y_n,nh)-\!\sum_{j=1}^N
+    c_j(\bar Y_n,nh)\nu_{jn}\, \right]h+{}\\
+{}+\fr{1}{2}\left\{a_t(\bar Y_n,nh)-\sum\limits_{j=1}^N c_{jt}(\bar 
+Y_n,nh)\nu_{jn}+   {}\right.\\
+{}+ \Biggl[ a_y(\bar Y_n,nh)^{\mathrm{T}}-\sum\limits_{j=1}^N c_{jy}(\bar Y_n,hn)^{\mathrm{T}} \nu_{jn} \Biggr]
+    \Biggl[ a(\bar Y_n,nh)-{}\\
+    {}- \sum\limits_{j=1}^N c_j(\bar Y_n,hn) \nu_{jn}t\,\Biggr]+
+    \fr{1}{3}\Biggl[ a_{yy}(\bar Y_n,nh)-{}\\
+   \left. {}-\sum\limits_{j=1}^N
+    c_{jyy}(\bar Y_n,nh)\nu_{jn} \Biggr]: \sigma(\bar Y_n,nh)\right\}h^2;
+%\label{e4.2-s}
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+        \psi_{1n}\left(\bar Y_n\right)=b\left(\bar Y_n,nh\right)+\fr{1}{2}\Biggl[ a_y(\bar 
+Y_{nh},nh)^{\mathrm{T}}-  {}\\
+{}-  \sum\limits_{j=1}^N c_j \left(\bar Y_n,hn\right)^{\mathrm{T}} \nu_{jn}\Biggr] b\left(\bar     Y_n,nh\right);
+%\label{e4.3-s}
+    \end{multline*}
+    
+    \vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+\psi_{{in}}(\bar Y_n)={}\\
+{}=c_{i-1}(\bar Y_n,nh)+\Biggl[ \Delta_{i-1}a_n-\sum\limits_{j=1}^N
+    \Delta_{i-1}c_{jn}\nu_{jn} \Biggr]h; %\label{e4.4-s}
+    \end{multline*}
+    
+    \vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+\psi_{1n}'(Y_n,V_n^{(1)})=\Bigg\{b(\bar Y_n,nh)+
+    \Biggl[ a(\bar Y_n,nh)^{\mathrm{T}}-{}\\
+{}-\sum\limits_{j=1}^N c_j(\bar Y_n,hn)^{\mathrm{T}} \nu_{jn}\,\Biggr]\fr{\partial}{\partial 
+y}\, b(\bar Y_n,nh)+{}\\
+{}+V_{1n}^{\mathrm{T}} b(\bar Y_n,nh)^{\mathrm{T}} \fr{\partial}{\partial y}\,b(\bar Y_n,nh)
+    \Bigg\}h+\sum\limits_{j=1}^N \Delta_j b_{n}V_{j+1,n}; %\label{e4.5-s}
+    \end{multline*}
+    
+    \vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+\psi_{in}'\left(\bar Y_n,V_n^{(1)}\right)=\Biggl\{ c_{i-1,t}(\bar
+    Y_n,nh)+{}\\
+    {}+ c_{i-1,y}(\bar Y_n,nh)^{\mathrm{T}}\!
+    \Biggl[a(\bar Y_n,nh)-\!\sum_{j=1}^N \!c_j(\bar 
+Y_n,hn)\nu_{jn}  \Biggr]\!\Biggr\}h+{}\\
+{}+c_{i-1,y}(\bar Y_n,nh)^{\mathrm{T}} b(\bar Y_n,nh)V_{1,n}+\!
+\sum\limits_{j=1}^N
+    \Delta_j c_{j-1,n}V_{j+1,n};\hspace*{-1pt} %\label{e4.6-s}
+    \end{multline*}
+    
+    \noindent
+    \begin{equation*}
+\psi_{1n}''(\bar Y_n)=\fr{1}{2}\left[b_{yy}(\bar Y_n,nh):
+    \sigma(\bar Y_n,nh)\right]; %\label{e4.7-s}
+    \end{equation*}
+    
+  
+\noindent
+\begin{equation*}
+    \psi_{{in}}''(\bar Y_n)=\fr{1}{2}\left[c_{i-1,yy}(\bar Y_n,nh):
+    \sigma(\bar Y_n,nh)\right];
+%    \label{e4.8-s}
+    \end{equation*}
+    
+   %  \columnbreak
+
+
+\noindent
+ \begin{equation*}
+ V_{1n}=\Delta W_n=W_0((n+1)h)-W_0(nh); %\label{e4.9-s}
+ \end{equation*}
+% \vspace*{-12pt}
+\begin{equation*}
+V_{{in}}=\Delta P_{i-1,n}=P_{i-1}((n+1)h)-P_{i-1}(nh),
+    \ \  i=\overline{2,N}; %\label{e4.10-s}
+    \end{equation*}
+    \begin{equation*}
+V_{1n}'=\inh \ovth \,dW_0(\tau);
+\end{equation*}
+\begin{equation*}
+V_{1n}''=
+    \inh \left(\ovth\right)^2 dW_0(\tau); % \label{e4.11-s}
+    \end{equation*}
+    \begin{equation}
+    \left.
+    \begin{array}{rl}
+V_{{in}}'&= \displaystyle \inh \ovth\, dP_{i-1}^0(\tau); 
+\\[6pt]
+  V_{in}''&=\displaystyle\inh \left(\ovth\right)^2 dP_{i-1}^0(\tau),
+    \\[12pt]
+    &\hspace*{30mm} i=\overline{2,N+1}\,. %\label{e4.13-s}
+    \end{array}
+    \right\}
+    \label{e4.12-s}
+    \end{equation}
+Здесь введены следующие обозначения для векторных функций:
+   \begin{equation*}
+   [\varphi_{yy}:\sigma]_k=\mathrm{tr}
+\left [\varphi_{kyy}\sigma\right],\enskip \sigma=b\nu_0(t)b^{\mathrm{T}}.
+%\label{e4.14-s}
+\end{equation*}
+Величина
+$\varphi_{yy}:\sigma$ в~случае матричной функции $\varphi$
+представляет собой матрицу, элементами которой служат следы
+произведений на матрицу~$\sigma$
+матриц вторых производных соответствующих элементов
+матрицы~$\varphi$ по компонентам вектора~$y$ на матрицу~$\sigma$:
+    \begin{equation*}
+    \left[\varphi_{yy} : \sigma\right]_{kl}=
+    \mathrm{tr}\left[\varphi_{klyy}\sigma\right].
+    %\label{e4.15-s}
+    \end{equation*}
+
+Далее обозначим
+$$
+V_n^{(1)}=\left[ V_{1n}^{\mathrm{T}}\,\, V_{2n}\,\,\cdots\,\, V_{n+1}\right]^{\mathrm{T}}
+$$
+и введем блочную матрицу
+
+\vspace*{-6pt}
+
+\noindent
+   \begin{multline*}
+   \psi_n\left(\bar Y_n,V_n^{(1)}\right)={}\\
+   {}=\left[\psi_{1n}(\bar Y_n)\,\,
+    \psi_{1n}'\left(\bar Y_n,V_n^{(1)}\right)\,\, \psi_{1n}''(\bar Y_n) \cdots\right.\\
+\left.\cdots     \psi_{N+1,n}\left(\bar Y_n\right)\,\, \psi_{N+1,n}'\left(\bar Y_n,V_n^{(1)}\right)\,\,
+    \psi_{N+1,n}''\left(\bar Y_n\right) \right]
+    %\label{e4.16-s}
+    \end{multline*}
+и блочный случайный вектор
+
+\vspace*{-6pt}
+
+\noindent
+\begin{multline*}
+V_n=\left [ V_{1n}^{\mathrm{T}}\,\, V_{1n}^{\prime\mathrm{T}}\,\, V_{1n}^{\prime\prime\mathrm{T}}\,\,
+    V_{2n}^{\mathrm{T}}\,\, V_{2n}^{\prime\mathrm{T}}\,\, V_{2n}^{\prime\prime\mathrm{T}}\,
+    \cdots\right.\\
+\left.    \cdots\, V_{N+1,n}\,\, V_{N+1,n}'\,\, V_{N+1,n}'' \right]^{\mathrm{T}}. %\label{e4.17-s}
+    \end{multline*}
+
+\noindent
+\textbf{Замечание~4.1.}\
+Для полного определения распределения случайного вектора~$V_n$ в~(\ref{e4.1-s}) достаточно найти ковариационную матрицу нормально
+распределенного случайного вектора $[V_{{in}}^{\mathrm{T}}\,\,{V_{{in}}}^{\prime\mathrm{T}}\,\,{V_{{in}}}^{\prime\prime\mathrm{T}}\,]^{\mathrm{T}}$. 
+Пользуясь известными
+формулами ковариационных и~взаимных ковариационных матриц
+стохастических интегралов, находим блоки ковариационной
+матрицы~$K_{1n}$ случайного вектора $[V_{{in}}^{\mathrm{T}}\,\,{V_{{in}}'}^{\mathrm{T}}\,\,{V_{{in}}''}^{\mathrm{T}}\,]^{\mathrm{T}}$:
+    $$
+    K_{1n,11}\!=\mathrm{M} V_{1n}V_{1n}^{\mathrm{T}}\!=\!\!\inh \!\!\nu_0(\tau)\,d\tau\cong \nu_0\left(nh+\fr{h}{2}\right)h;
+    $$
+    
+\noindent
+\begin{multline*}
+    K_{1n,12}=\mathrm{M} V_{1n} V^{\prime\mathrm{T}}_{1n}=\inh \ovth \nu_0(\tau)\,d\tau
+    \cong{}\\
+    {}\cong \fr{1}{2}\nu_0\left(nh+\fr{h}{2}\right)h;
+ \end{multline*}
+ 
+ \vspace*{-12pt}
+ 
+ \noindent
+ \begin{multline*}
+K_{1n,13}=\mathrm{M} V_{1n}V^{\prime\prime\mathrm{T}}_{1n}=\!\!\!\!\!\!\!\inh\! \left(\ovth\right)^2 
+\nu_0(\tau)\,d\tau
+    \cong{}\\
+    {}\cong \fr{1}{3}\nu_0\left(nh+\fr{h}{2}\right)h;
+    \end{multline*}
+    $$ 
+    K_{1n,21}= K_{1n,12};\quad K_{1n,31}= K_{1n,13};
+    $$
+    
+   \vspace*{-12pt}
+ 
+ \noindent
+ \begin{multline*}
+    K_{1n,23}=\mathrm{M} V_{1n}V^{\prime\prime\mathrm{T}}_{1n}=\!\!\!\!\!\inh \!\left(\ovth\right)^{\!3}\! 
+\nu_0(\tau)\,d\tau     \cong{}\\
+{}\cong \fr{1}{4}\,\nu_0\left(nh+\fr{h}{2}\right)h;
+\end{multline*}
+    $$
+     K_{1n,31}= K_{1n,13};\quad K_{1n,32}= K_{1n,23};
+     $$
+     
+   \vspace*{-12pt}
+ 
+ \noindent
+ \begin{multline*}
+    K_{1n,33}\!=\mathrm{M} V_{1n}^{\prime\prime} V^{\prime\prime\mathrm{T}}_{1n}\!=\!\!\!\inh\! \left(\ovth\right)^{\!4}\!
+    \nu_0(\tau)\,d\tau\cong{}\\
+    {}\cong \fr{1}{5}\,\nu_0\left(nh+\fr{h}{2}\right)h.
+    \end{multline*}
+
+
+\noindent
+\textbf{Замечание~4.2.}
+Практически целесообразно аппроксимировать
+стохастические интегралы от неслучайных
+функций в~(\ref{e4.12-s}), определяющие величины $V_{in}^\prime$ и~$V_{in}^{\prime\prime}$
+($i\hm=\overline{2,N+1}$), с~помощью аналога интегральной теоремы о~ среднем
+для стохастических интегралов:
+ \begin{multline*}
+ V_{{in}}'=\inh \ovth \,dP_{i-1}^0(\tau)\cong{}\\
+ {}\cong \fr{\inhnolim \left(
+    (\tau- nh)/h\right) \nu_{i-1}(\tau)\,d\tau}{\inhnolim \nu_{i-1}(\tau)\,d\tau}
+    \Delta P_{i-1,n}\cong{}\\
+    {}\cong \fr{1}{2}\,\Delta P_{i-1,n}=
+    \fr{1}{2}\,V_{{in}};\\[-20pt]
+    \end{multline*}
+    
+
+
+\noindent
+\begin{multline*}
+   V_{{in}}''=\inh \left( \ovth\right)^2 dP_{i-1}^0(\tau)
+    \cong{}\\
+    {}\cong \fr{\inhnolim \left( (\tau-nh)/h\right)^2 \nu_{i-1}(\tau)\,d\tau}{\inhnolim 
+\nu_{i-1}(\tau)\,d\tau}\Delta P_{i-1,n}\cong{}\\
+{}\cong \fr{1}{3}\,\Delta P_{i-1,n}=
+    \fr{1}{3}\,V_{{in}},\enskip i=\overline{2,N+1}\,.
+    \end{multline*}
+
+
+\textbf{4.2.}\ В уточнении метода $h^2$ и~$h^{3/2}$ при выводе уравнения~(\ref{e4.1-s}) были 
+допущены две небольшие неточности.
+Во-пер\-вых, при замене~$\bar Y_{\tau}$ величиной $\bar Y_n\hm+(\tau\hm-nh)\Delta
+Y_n/h$ случайные функции $b(Y_{\tau},\tau)$ и~$c_i(Y_{\tau},\tau )$,
+независимые от~$dW_0(\tau)$ и~$dP_i^0(\tau)$ в~силу конструкции
+интеграла Ито, были заменены неслучайными функциями, зависящими от
+случайного параметра~$\Delta Y_n$, который зависит от значений
+$dW_0(\tau)$ и~$dP_i^0(\tau)$ в~интервале $(nh,(n\hm+1)h)$. Во-вто\-рых,
+если
+$c_i(y,t)\hm\ne 0$ хотя бы при одном~$i$, реализации СтП~$Y(t)$ имеют разрывы первого рода в~случайных точках, несмотря на его
+среднеквадратичную непрерывность. Поэтому линейную интерполяцию
+данного СтП, строго говоря, проводить нельзя. В~условиях \textbf{теоремы~4.2} 
+первую из этих
+неточностей можно устранить двумя способами~\cite{11-s, 12-s}. Первый состоит в~замене
+интерполяции СтП~$Y(t)$ экстраполяцией, что равноценно замене~$\Delta Y_n$ в~получаемом выражении для~$Y_{\tau}$ величиной $\Delta
+Y_{n-1}$. Однако это приведет к~появлению в~правой части разностного
+уравнения величин $\bar Y_{n-1}$ и~$V_{n-1}^{(1)}$, т.\,е.\ к~замене
+уравнения первого порядка разностным уравнением второго порядка.
+Второй способ состоит в~отказе от интерполяции процесса~$Y(t)$ на
+интервале $(nh,(n+1)h)$ и~непосредственном выражении приращений
+функций $a(Y_{\tau},\tau)$, $b(Y_{\tau},\tau)$ и~$c_i(Y_{\tau},\tau)$
+на малом интервале $(nh,(n+1)h)$ по обобщенной формуле Ито с~заменой в~ней дифференциалов приращениями. При этом способе устраняется и~вторая
+допущенная неточность. Но полученное таким путем разностное уравнение
+будет более сложным. В~него войдут случайные величины, представляющие
+собой двойные интегралы по компонентам винеровского СтП $W(t)\hm=W_0(t)$ и~по пуассоновским СтП:
+\begin{equation}
+\left.
+\begin{array}{l}
+\hspace*{-3.8mm}\displaystyle \inh \!\int\limits_{nh}^{\tau}\!dW_j(\sigma)dW_j(\tau); \!
+\displaystyle  \inh \!\int\limits_{nh}^{\tau}\!dP_i(\sigma)dP_j^0(\tau);\\[6pt]
+\hspace*{-3.8mm}\displaystyle    \inh\! \int\limits_{nh}^{\tau}\!dP_i^0(\sigma)dW_j(\tau);\!
+\displaystyle  \inh\! \int\limits_{nh}^{\tau}\!dP_j^0(\sigma)dW_i(\tau). 
+\end{array}\!\!
+\right\}\!\!
+\label{e4.18-s}
+    \end{equation}
+
+\noindent
+\textbf{Замечание~4.3.}
+Распределения этих случайных величин найти чрезвычайно сложно, и~только первые две из них легко вычисляются при $j\hm=i$:
+   \begin{align*}
+    \inh \!\int\limits_{nh}^{\tau}\!dW_i(\sigma)dW_i(\tau)&=
+    \fr{[\Delta W_{{in}}]^2-\nu_{ii}(nh+h/2)h}{2};
+   \\
+    \inh \!\int\limits_{nh}^{\tau}\!dP_i^0(\sigma)dP_i^0(\tau)&=
+    \fr{[\Delta P_{{in}}]^2-\Delta P_{{in}}}{2}. 
+   \end{align*}
+
+
+Что касается второй неточности, то она не может существенно повлиять
+на результат, так как вероятность появления скачка пуассоновского
+процесса на достаточно малом интервале $(nh,(n+1)h)$ ничтожно мала.
+
+\textbf{4.3.}\ В~условиях \textbf{теоремы~4.3} точность аппроксимации стохастического 
+дифференциального уравнения разностным можно  повышать и~дальше. В~частности, в~одном из способов
+достаточно выразить~$a(Y_{\tau},\tau)$,
+$b(Y_{\tau},\tau)$ и~$c_i(Y_{\tau},\tau)$ на интервале $(nh,(n+1)h)$
+интегральной формулой Ито, соответствующей дифференциальной формуле:
+   \begin{multline}
+   a\left(Y_{\tau},\tau\right)=a\left(\bar Y_n,nh\right)+\int\limits_{nh}^{\tau} a_t(Y_s,s)+{}\\
+   {}+
+    a_y(Y_s,s)^{\mathrm{T}}\Biggl[ a(Y_s,s)-\sum\limits_{i=1}^N c_i(Y_s,\nu_i(s))+{}\\
+    {}+\fr{1}{2}\,a_{yy}(Y_s,s):
+    \sigma(Y_s,s)\Biggr]ds+{}\\
+    {}+\int\limits_{nh}^{\tau}a_y(Y_s,s)^{\mathrm{T}}  b\left(Y_s,s\right)\,dW_0(s)+{}\\
+{}+\sum\limits_{i=1}^N \int\limits_{nh}^{\tau}
+    \left[a(Y_s+c_i(Y_s,s),s)-a(Y_s,s)\right]dP_i^0(s) \label{e4.19-s}
+    \end{multline}
+(формулы для $b(Y_{\tau},\tau)$ и~$c_i(Y_{\tau},\tau)$ аналогичны). В~результате 
+получим правую
+часть разностного уравнения с~точностью до~$h^3$ в~детерминированном
+(при данном~$\bar Y_n$) сла\-га\-емом и~$h^{5/2}$ в~случайном сла\-га\-емом.
+Процесс уточнения разностного уравнения, соответствующего данному
+стохастическому дифференциальному уравнению, можно продолжать
+неограниченно. Каждое новое уточнение потребует существования
+производных функций~$a$, $b$ и~$c_i$ все более высоких порядков.
+
+\smallskip
+
+\noindent
+\textbf{Замечание~4.4.}
+Для уточнения разностного уравнения~(\ref{e4.1-s}) можно применить и~другой способ, 
+а~именно: можно выразить подынтегральные функции в~(\ref{e4.18-s}) и~аналогичных формулах для $b(Y_{\tau},\tau)$ и~$c_i(Y_{\tau},\tau)$ их
+выражениями по обобщенной формуле Ито, заменив в~ней дифференциалы
+приращениями. При этом в~разностное уравнение войдут тройные интегралы
+по компонентам винеровского СтП~$W_0(t)$ и~пуассоновским СтП~$P_i(t)$. Для дальнейшего уточнения аппроксимации стохастического
+дифференциального уравнения разностным в~этом случае следует
+подынтегральные функции в~(\ref{e4.19-s}) и~в~со\-от\-вет\-ст\-ву\-ющих формулах для
+$b(Y_{\tau},\tau)$ и~$c_i(Y_{\tau},\tau)$, в~свою очередь,
+представить интегральной формулой Ито, а~затем уже применять
+дифференциальную формулу Ито с~заменой дифференциалов приращениями.
+Данный СтП можно продолжать неограниченно, и~в итоге он приведет к~представлению СтП $Y(t)$ на интервале $(nh,\linebreak (n\hm+1)h)$
+стохастическими аналогами формулы Тейлора. При этом в~разностное
+уравнение войдут кратные стохастические интегралы по компонентам
+винеровского СтП~$W_0(t)$ и~по пуассоновским СтП~$P_i(t)$.
+Нахождение распределения этих интегралов представляет практически
+непреодолимые трудности. И лишь интегралы любой кратности по одной и~той же компоненте винеровского процесса $W_0(t)$ или по одному и~тому же
+пуассоновскому процессу~$P_i(t)$ вычисляются очень просто.
+
+
+\smallskip
+
+\noindent
+\textbf{Замечание~4.5.}
+Чтобы избежать вычисления производных
+функций $a(Y_{\tau},\tau)$, $b(Y_{\tau},\tau)$ и~$c_i(Y_{\tau},\tau)$ при
+применении двух изложенных способов аппроксимации стохастического
+дифференциального уравнения разностным, можно рекомендовать заменить
+их отношениями конечных приращений, например на интервале
+$(nh,(n+1)h)$ по $t$ и~на интервалах $(\bar Y_{nk}, \bar
+Y_{nk}+a_k(\bar Y_n,nh)h)$ по компонентам вектора~$y$.
+
+
+
+\smallskip
+
+\noindent
+\textbf{Замечание~4.6.}
+Полученные разностные уравнения можно использовать как при
+теоретических исследованиях, так и~для численного интегрирования
+стохастических дифференциальных уравнений СтС НРОП. При этом нужно знать
+распределение всех случайных величин, входящих в~разностные уравнения.
+В данном случае разностные уравнения будут представлять собой так называемую
+сильную аппроксимацию стохастических дифференциальных уравнений.
+При численном интегрировании такая аппроксимация нужна, когда требуется
+получать реализации СтП~$Y(t)$. Однако часто нет
+нужды в~получении реализаций СтП, а достаточно иметь лишь
+оценки моментов или математических ожиданий ка\-ких-ли\-бо функций от значения
+СтП~$Y(t)$ в~определенный момент. В~таких случаях можно
+отказаться от использования точных распределений входящих в~разностные
+уравнения случайных величин, а~заменить их ка\-ки\-ми-ни\-будь более
+простыми распределениями с~теми же моментными характеристиками.
+Например, нормально распределенную скалярную величину с~нулевым
+математическим ожиданием и~дисперсией~${\mathsf D}$ можно заменить дискретной
+случайной величиной, принимающей два значения $\pm\sqrt{\mathsf{D}}$ с~вероятностями~$1/2$. При замене случайных величин на величины с~более простыми распределениями разностное уравнение будет представлять
+собой слабую аппроксимацию стохастического
+дифференциального уравнения.
+
+\vspace*{-6pt}
+
+\section{Выводы и~обобщения}
+
+\vspace*{-3pt}
+
+Методическое обеспечение статистического моделирования для различных уровней 
+точности аппроксимации, основанное на численном интегрировании уравнений 
+дифференциальных СтС НРОП, приводимых к~дифференциальным системам, применимо 
+только к~приведенным системам~(\ref{e2.9-s}) и~(\ref{e2.10-s}) с~гладкими нелинейными функциями.
+
+Для негладких нелинейных функций в~исходных уравнениях~(\ref{e2.1-s}) в~рамках 
+корреляционной тео\-рии, как показано в~\cite{3-s, 4-s, 5-s, 6-s}, целесообразно сразу применить 
+регрессионную линеаризацию или полиномиальную аппроксимацию. В результате придем к~уравнениям~(\ref{e2.9-s}) и~(\ref{e2.10-s}), линеаризованным или полиномиальным стохастическим 
+уравнениям, параметрически зависящим от первых двух вероятностных методов 
+переменных~$X$ и~$Y$. Эти вероятностные моменты определяются или непосредственно 
+статистическим, или аналитическим моделированием путем численного интегрирования 
+обыкновенных дифференциальных уравнений для вероятностных моментов первого 
+и~второго порядка~\cite{2-s, 11-s, 12-s}. Для полиномиальных моделей аппроксимации приходится 
+решать обыкновенные дифференциальные уравнения для параметризованных одно- и~многомерных плотностей. Такие методы моделирования называют комбинированными 
+ве\-ро\-ят\-ност\-но-ста\-ти\-сти\-че\-ски\-ми. К~последним также относят методы моделирования СтС 
+НРОП со случайными па\-ра\-мет\-ра\-ми~\cite{7-s} как на основе канонических представлений 
+случайных функций, так и~прямого статистического моделирования уравнений для 
+параметров одно- и~многомерных распределений. Со\-от\-вет\-ст\-ву\-ющие примеры приведены 
+в~\cite{7-s}.
+
+Представляет интерес развитие ве\-ро\-ят\-ност\-но-ста\-ти\-сти\-че\-ских методов моделирования 
+для сис\-тем, стохастически НРОП~\cite{5-s}, а~также 
+не\-пре\-рыв\-но-дис\-крет\-ных сис\-тем, не разрешенных относительно производных 
+(разностей), в~том числе на основе канонических разложений и~интегральных 
+канонических представлений~\cite{12-s}. Особый интерес представляют системы с~неявной 
+переменной детерминированной и~неявной стохастической структурой.
+
+{\small\frenchspacing
+ {\baselineskip=10.8pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}    
+%1
+\bibitem{1-s}
+\Au{Синицын И.\,Н.}
+Аналитическое моделирование широкополосных процессов в~стохастических системах, 
+не разрешенных относительно производных~// Информатика и~её применения, 2017. 
+Т.~11. Вып.~1. С.~3--10. doi: 10.14357/19922264170101. EDN: YOCMVL.
+
+%2
+\bibitem{2-s}
+\Au{Синицын И.\,Н.}
+Параметрическое аналитическое моделирование процессов в~стохастических  
+системах, не разрешенных относительно производных~// Системы и~средства 
+информатики, 2017. Т.~27. №\,1. С.~21--45. doi: 10.14357/08696527170102. EDN: YODCZL.
+
+%3
+\bibitem{3-s}
+\Au{Sinitsyn I.\,N.}
+Analytical modeling and estimation of normal processes defined by stochastic 
+differential equations with unsolved derivatives~// J.~Mathematics  
+Statistical Research, 2021. Vol.~3. Iss.~1. Art.~139. 7~p. doi: 
+10.36266/\linebreak JMSR/139.
+
+%4
+\bibitem{4-s}
+\Au{Синицын И.\,Н.}
+Аналитическое моделирование и~оценивание нестационарных нормальных процессов 
+в~стохастических сис\-те\-мах, не разрешенных относительно производных~// Системы и~средства 
+информатики, 2022. Т.~32. №\,2. С.~58--71. doi: 10.14357/08696527220206. EDN: YMGERJ.
+
+
+%5
+\bibitem{5-s}
+\Au{Синицын И.\,Н.}
+Нормализация систем, стохастически не разрешенных относительно производных~// 
+Информатика и~её применения, 2022. Т.~16. Вып.~1. С.~32--38. doi: 10.14357/19922264220105. EDN: \mbox{LDFJJB}.
+
+%6
+\bibitem{6-s}
+\Au{Синицын И.\,Н.}
+Аналитическое моделирование распределений с~инвариантной мерой в~стохастических 
+системах, не разрешенных относительно производных~// Информатика и~её 
+применения, 2023. Т.~17. Вып.~1. С.~2--10. doi: 10.14357/19922264230101. EDN: QWXVXC.
+
+%7
+\bibitem{7-s}
+\Au{Синицын И. Н. }
+Аналитическое моделирование стохастических систем, не разрешенных относительно 
+производных, со случайными параметрами~// Системы и~средства информатики, 2024. 
+Т.~34. №\,1. С.~4--22. doi: 10.14357/08696527240101. EDN: ZPTXJI.
+
+%8
+\bibitem{8-s}
+\Au{Kloeden P., Platen~E.}
+Numerical solution of stochastic differential equations.~--- Berlin: Springer-Verlag, 1992. 636~p.
+doi: 10.1007/978-3-662-12616-5.
+
+%9
+\bibitem{9-s}
+\Au{Артемьев А.\,А., Михайличенко~А.\,М., Синицын~И.\,Н.}
+Статистическое моделирование срочных финансовых операций.~--- Новосибирск: ВЦ СО 
+РАН, 1996. Кн.~1, 2. 280~с.
+
+%10
+\bibitem{10-s}
+\Au{Кузнецов Д.\,Ф.}
+Численное интегрирование стохастических дифференциальных уравнений.~--- СПб: 
+\mbox{СПбГУ}, 2001. 712~с.
+
+%11
+\bibitem{11-s}
+\Au{Пугачёв В.\,С., Синицын~И.\,Н.}
+Теория стохастических систем.~--- М.: Логос, 2000; 2004. 1000~с.
+
+
+%12
+\bibitem{12-s}
+\Au{Синицын И.\,Н.}
+Канонические представления случайных функций. Теория и~применения.~--- 2-е изд.~--- М.: ТОРУС ПРЕСС, 2023. 816~с.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Поступила в~редакцию 18.01.24}}
+
+%\vspace*{10pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+
+
+\def\tit{STATISTICAL MODELING OF~DIFFERENTIAL STOCHASTIC SYSTEMS WITH~UNSOLVED DERIVATIVES}
+
+
+\def\titkol{Statistical modeling of~differential stochastic systems with~unsolved derivatives}
+
+
+\def\aut{I.\,N.~Sinitsyn$^{1,2}$}
+
+\def\autkol{I.\,N.~Sinitsyn}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-8pt}
+
+
+\noindent
+$^{1}$Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov\linebreak
+$\hphantom{^1}$Str., Moscow 119333, Russian Federation
+
+\noindent
+$^{2}$Moscow State Aviation Institute (National Research University), 4~Volokolamskoe Shosse, Moscow 125933,\linebreak
+$\hphantom{^1}$Russian Federation
+
+
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{4pt}
+
+
+\Abste{The paper is dedicated to statistical modeling methodological support for differential stochastic systems with unsolved derivatives (StS USD).
+ The basic results are: ($i$)~two theorems concerning reduction of stochastic functional-differential equations to stochastic Ito equations; 
+ ($ii$)~Euler approximation method for stochastic differential equations with Gaussian and Poisson noises; 
+ ($iii$)~three theorems concerning numerical algorithms of 
+ various accuracy for StS USD with smooth nonlinearities; and ($i\nu$)~two algorithms for StS USD with nonsmooth nonlinearities. Special attention is paid 
+ to methodological aspects of numerical statistical analysis of deterministic and random components in the cases of weak and strong approximation. 
+ Directions for further research are given.}
+
+
+\KWE{analytical (probabilistic) modeling; methodological support; statistical modeling; stochastic systems (StS); StS with unsolved derivatives (StS USD)}
+
+\DOI{10.14357/19922264240302}{WWMEOT}
+
+\vspace*{-12pt}
+
+
+    
+     % \Ack
+
+%\vspace*{-3pt}
+
+%\noindent
+
+
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99} 
+%1
+\bibitem{1-s-1} 
+\Aue{Sinitsyn, I.\,N.} 2017. 
+Analiticheskoe modelirovanie shirokopolosnykh protsessov v~stokhasticheskikh sistemakh, ne razreshennykh otnositel'no proizvodnykh  
+[Analytical modeling of wide band processes in stochastic systems with unsolved derivatives]. \textit{Informatika i ee Primeneniya --- Inform. Appl.} 11(1):3--10.
+doi: 10.14357/19922264170101. EDN: YOCMVL.
+
+%2
+\bibitem{2-s-1} 
+\Aue{Sinitsyn, I.\,N.}  2017.
+Parametricheskoe analiticheskoe modelirovanie protsessov v~stokhasticheskikh sistemakh, ne razreshennykh otnositel'no proizvodnykh 
+[Parametric analytical modeling of wide band processes in stochastic systems with unsolved derivatives]. \textit{Sistemy i Sredstva
+Informatiki --- Systems and Means of Informatics} 27(1):21--45. doi: 10.14357/08696527170102. EDN: YODCZL.
+
+%3
+\bibitem{3-s-1} 
+\Aue{Sinitsyn, I.\,N.} 2021. 
+Analytical modeling and estimation of normal processes defined by stochastic differential equations with unsolved derivatives. 
+\textit{J. Mathematics Statistics Research} 3(1):139. 7~p. doi: 10.36266/JMSR/139.
+
+%4
+\bibitem{4-s-1} 
+\Aue{Sinitsyn, I.\,N.} 2022. 
+Analiticheskoe modelirovanie i~otse\-ni\-va\-nie nestatsionarnykh normal'nykh protsessov v~sto\-kha\-sti\-che\-skikh sistemakh, ne razreshennykh
+\mbox{otno\-si\-tel'\-no} proizvodnykh 
+[Analytical modeling and estimation of nonstationary normal processors with unsolved derivatives]. 
+\textit{Sistemy i~Sredstva Informatiki~--- Systems and Means of Informatics} 32(2):58--71. doi: 10.14357/ 08696527220206. EDN: YMGERJ.
+
+%5
+\bibitem{5-s-1} 
+\Aue{Sinitsyn, I.\,N.} 2022.
+Normalizatsiya sistem, sto\-kha\-sti\-che\-ski ne razreshennykh otnositel'no proizvodnykh [Normalization of systems with stochastically unsolved derivatives]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 16(1):32--38.
+doi: 10.14357/19922264220105. EDN: LDFJJB.
+
+%6
+\bibitem{6-s-1} 
+\Aue{Sinitsyn, I.\,N.} 2023. 
+Analiticheskoe modelirovanie raspredeleniy s invariantnoy meroy v~stokhasticheskikh sistemakh, ne razreshennykh otnositel'no proizvodnykh 
+[Analytical modeling of distributions with invariant measure in stochastic systems with unsolved derivatives]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.}  17(1):2--10. doi: 10.14357/19922264230101. EDN: QWXVXC.
+
+%7
+\bibitem{7-s-1} 
+\Aue{Sinitsyn, I.\,N.} 2024. 
+Analiticheskoe modelirovanie sto\-kha\-sti\-che\-skikh  sistem, ne razreshennykh otnositel'no pro\-iz\-vod\-nykh, so sluchaynymi parametrami 
+[Analytical modeling of stochastic systems with random parameters and unsolved derivatives]. 
+\textit{Sistemy i~Sredstva Informatiki~--- Systems and Means of Informatics} 34(1):4--22. 
+doi: 10.14357/ 08696527240101. EDN: ZPTXJI.
+
+%8
+\bibitem{8-s-1} 
+\Aue{Kloeden, P.\,E., and E.~Platen.} 1992. 
+\textit{Numerical solution of stochastic differential equations}. Berlin--Heidelberg: Springer-Verlag. 636~p.
+doi: 10.1007/978-3-662-12616-5.
+
+%9
+\bibitem{9-s-1} 
+\Aue{Artemyev, A.\,A., A.\,M.~Mikhaylichenko, and I.\,N.~Si\-ni\-tsyn.} 1996. 
+\textit{Statisticheskoe modelirovanie srochnykh finansovykh operatsiy} [Statistical modeling of urgent financial transactions]. 
+Novosibirsk: CC SB RAS. 280~p.
+
+%10
+\bibitem{10-s-1} 
+\Aue{Kuznetsov, D.\,F.} 2001.
+\textit{Chislennoe integrirovanie sto\-kha\-sti\-che\-skikh differentsial'nykh uravneniy} [Numerical integration of stochastic differential equations]. 
+Saint Petersburg: SPbGU. 712~p.
+
+%11
+\bibitem{11-s-1} 
+\Aue{Pugachev, V.\,S., and I.\,N.~Sinitsyn.} 2001.
+\textit{Stochastic systems: Theory and applications}. Singapore: World Scientific. 908~p.
+
+%12
+\bibitem{12-s-1} 
+\Aue{Sinitsyn, I.\,N.} 2023.
+\textit{Kanonicheskie predstavleniya sluchaynykh funktsiy. Teoriya i~primeneniya} [Canonical expansions of random functions. Theory and application]. 
+Moscow: TORUS PRESS. 816~p.
+
+
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received January 18, 2024}} 
+
+%\vspace*{-18pt}
+
+\Contrl
+
+\vspace*{-3pt}
+
+\noindent
+\textbf{Sinitsyn Igor N.} (b.\ 1940)~--- Doctor of Science in technology, professor, Honored scientist of RF, principal scientist, 
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, 
+Russian Federation; professor, Moscow State Aviation Institute (National Research University), 4~Volokolamskoe Shosse, Moscow 125933, Russian Federation; 
+\mbox{sinitsin@dol.ru}
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

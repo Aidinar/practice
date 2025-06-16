@@ -1,0 +1,916 @@
+\newcommand{\mujk}{\mu_{j,k}}
+\newcommand{\psijk}{\psi_{j,k}}
+\newcommand{\sumk}{\sum\limits_{k=0}^{2^j-1}}
+\newcommand{\betajk}{\beta_{j,k}}
+
+
+
+\def\stat{kudr+shest}
+
+\def\tit{МИНИМИЗАЦИЯ ОШИБОК ВЫЧИСЛЕНИЯ ВЕЙВЛЕТ-КОЭФФИЦИЕНТОВ\\
+ПРИ~РЕШЕНИИ ОБРАТНЫХ ЗАДАЧ$^*$}
+
+\def\titkol{Минимизация ошибок вычисления вейвлет-коэффициентов
+при~решении обратных задач}
+
+\def\aut{А.\,А.~Кудрявцев$^1$, О.\,В.~Шестаков$^2$}
+
+\def\autkol{А.\,А.~Кудрявцев, О.\,В.~Шестаков}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Кудрявцев А.\,А.}
+\index{Шестаков О.\,В.}
+\index{Kudryavtsev A.\,A.}
+\index{Shestakov O.\,V.}
+
+
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при частичной финансовой поддержке РФФИ (проект 18-07-00252).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет им.~М.\,В.~Ломоносова, 
+факультет вычислительной математики и~кибернетики, \mbox{nubigena@mail.ru}}
+\footnotetext[2]{Московский государственный университет им.~М.\,В.~Ломоносова, факультет 
+ вычислительной математики и~кибернетики; Институт проб\-лем информатики 
+ Федерального исследовательского центра <<Информатика и~управ\-ле\-ние>> 
+ Российской академии наук, \mbox{oshestakov@cs.msu.su}}
+
+%\vspace*{-6pt}
+
+
+\Abst{Статистические обратные задачи возникают во многих прикладных областях, 
+вклю\-чая медицину, астрономию, био\-ло\-гию, физику плазмы, химию и~т.\,п. 
+При этом в~наблюдаемых данных всегда присутствуют по\-греш\-ности, 
+связанные с~несовершенством оборудования, фоновыми шумами, дискретизацией 
+данных и~др. Для уменьшения этих погрешностей необходимо 
+применять специальные методы регуляризации, поз\-во\-ля\-ющие строить при\-бли\-жен\-ные 
+устойчивые решения обратных задач. Классические методы регуляризации базируются 
+на использовании оконного сингулярного разложения. Однако при таком подходе 
+учитывается лишь вид оператора, участвующего в~формировании наблюдаемых 
+данных, и~никак не учитываются свойства самого объекта наблюдения. Для линейных 
+однородных операторов эта проб\-ле\-ма решается с~по\-мощью специальных методов 
+вейв\-лет-ана\-ли\-за, поз\-во\-ля\-ющих адаптироваться одновременно к~виду 
+оператора и~локальным особенностям функции, описывающей объект. 
+В~данной работе рас\-смат\-ри\-ва\-ет\-ся задача обращения линейного однородного оператора 
+при наличии шума в~наблюдаемых данных с~по\-мощью пороговой обработки коэффициентов 
+вейв\-лет-раз\-ло\-же\-ния наблюдаемой функции. Вычисляются асимптотически 
+оптимальные пороги и~порядки функции потерь при минимизации усред\-нен\-ной 
+ве\-ро\-ят\-ности ошибки вычисления вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов.}
+
+\KW{вейвлеты; пороговая обработка; линейный однородный оператор; функция потерь}
+
+\DOI{10.14357/19922264180203}
+  
+\vspace*{6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+Математические модели, лежащие в~основе многих прикладных задач анализа и~обработки 
+сигналов, предполагают решение задачи обращения некоторого линейного оператора. 
+Например, в~медицинских исследованиях бывает необходимо с~по\-мощью неинвазивных 
+методов получить изоб\-ра\-же\-ние структуры ка\-ко\-го-ли\-бо внут\-рен\-не\-го органа. 
+В~этом случае возникает задача реконструкции изоб\-ра\-же\-ния путем обращения 
+проекционного оператора. Как правило, эта задача является некорректно 
+поставленной, и~для ее решения требуется использовать методы регуляризации, 
+поскольку в~реальных наблюдениях всегда присутствует шум. Классические методы, 
+основанные на сингулярном разложении в~сочетании с~линейной регуляризацией, 
+адаптируются к~виду оператора, но не принимают в~расчет свойства функции сигнала, 
+которую необходимо оценить. При рассмотрении моделей с~линейными однородными 
+операторами с~этими недостатками позволяют справиться методы вейв\-лет-раз\-ло\-же\-ния, 
+предложенные в~работах~\cite{Abr98, Don95}. 
+
+В~данной работе рас\-смат\-ри\-ва\-ет\-ся 
+метод нелинейной регуляризации при обращении линейных однородных операторов, 
+основанный на пороговой обработке, и~вы\-чис\-ля\-ют\-ся па\-ра\-мет\-ры этого метода, 
+асимптотически оптимальные в~смыс\-ле функции потерь, основанной на вероятностях 
+ошибок вы\-чис\-ле\-ния коэффициентов вейв\-лет-раз\-ло\-же\-ния.
+
+\section{Метод обращения линейных однородных операторов}
+
+Линейный оператор~$K$ называется однородным с~показателем $\alpha\hm>0$, если
+$$
+K\left[f\left(a\left(x-x_0\right)\right)\right]=a^{-\alpha}(Kf)\left[a\left(x-x_0\right)\right]
+$$
+для любого $x_0\hm\in\r$ и~любого $a\hm>0$.
+
+Для построения оценки функции сигнала~$f$ в~данной работе рас\-смат\-ри\-ва\-ет\-ся метод 
+вейг\-лет-вейв\-лет-раз\-ло\-же\-ния (vaguelette-wavelet decomposition). Функция~$Kf$ 
+пред\-став\-ля\-ет\-ся в~виде ряда
+\begin{equation*}
+%\label{Kf_decomp}
+Kf=\sum\limits_{j,k\in {\mathbb {Z}}}\langle Kf,\psi_{j,k}\rangle\psi_{j,k} 
+\end{equation*}
+по некоторому вейвлет-ба\-зи\-су~$\{\psi_{j,k}\}$. 
+Здесь $\psi_{j,k}(x)\hm=2^{j/2}\psi(2^jx-k)$; $\psi(x)$~--- 
+заданная материнская вейв\-лет-функ\-ция. Обозначим $\beta_{j,k}\hm=
+\norm{K^{-1}\psijk}$. Тогда
+в~силу од\-но\-род\-ности оператора $\beta_{j,k}\hm=\beta_{0,0}2^{\alpha j}$~\cite{Abr98}. 
+Функция~$f$ пред\-став\-ля\-ет\-ся в~виде ряда:
+\begin{equation}
+\label{f_decomp}
+f=\sum\limits_{j,k\in {\mathbb {Z}}}\beta_{j,k}\langle Kf,\psi_{j,k}\rangle u_{j,k}\,,
+\end{equation}
+где $u_{j,k}=K^{-1}\psi_{j,k}/\beta_{j,k}$. Функции~$u_{j,k}$ называются 
+<<вейглетами>>. По\-сле\-до\-ва\-тель\-ность~$\{u_{j,k}\}$ не является ортонормированной,
+однако если выполнены некоторые условия глад\-кости на~$K^*\psi$ и~$K^{-1}\psi$, 
+то по\-сле\-до\-ва\-тель\-ность~$\{u_{j,k}\}$ образует
+устойчивый базис в~$L^2(\r)$~\cite{Lee97}. Формула~\eqref{f_decomp} 
+и~пред\-став\-ля\-ет собой метод обращения, называемый вейг\-лет-вейв\-лет-раз\-ло\-же\-нием.
+
+\section{Модель данных}
+
+Рассмотрим следующую модель данных:
+$$
+X_i=(Kf)_i+z_i\,,\enskip i=1,\ldots,2^J\,,
+$$
+где $X_i$~--- наблюдаемые данные; $K$~--- некоторый линейный однородный оператор; 
+$f$~--- истинная  функция сигнала; $z_i$~--- случайные по\-греш\-ности
+измерения, которые предполагаются независимыми и~име\-ющи\-ми одинаковое гауссово
+распределение с~нулевым средним и~дисперсией~$\sigma^2$.
+
+Дискретное вейвлет-пре\-об\-ра\-зо\-ва\-ние пред\-став\-ля\-ет 
+собой умножение вектора значений функции~$Kf$ на ортогональную матрицу~$W$, 
+опре\-де\-ля\-емую вейв\-лет-функ\-ци\-ей~$\psi$~\cite{Mal99}. 
+При этом дискретные вейв\-лет-ко\-эф\-фи\-ци\-ен\-ты 
+приближенно рав\-ны~$2^{J/2}\langle Kf,\psi_{jk}\rangle$. Это приближение 
+тем точнее, чем больше~$J$. Таким образом, для дискретных вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов 
+разложения~$Kf$ принимается сле\-ду\-ющая модель:
+$$
+Y_{j,k}=\mujk+\zeta_{j,k}\,, \enskip j=0,\ldots,J-1\,,\ k=0,\ldots,2^j-1\,,
+$$
+где  $\mujk=2^{J/2}\langle Kf,\psi_{j,k}\rangle$, а~случайные величины~$\zeta_{j,k}$ 
+в~силу ор\-то\-го\-наль\-ности~$W$ также независимы и~име\-ют 
+нормальное распределение с~нулевым средним и~дисперсией~$\sigma^2$.
+
+\section{Функция потерь для~метода пороговой обработки}
+
+Одним из самых популярных методов подавления шума является пороговая обработка, 
+смысл которой заключается в~обнулении коэффициентов, чьи абсолютные значения 
+не превышают заданного порога.
+
+Через $\hat{Y}_{j,k}$ обозначим оценку вейв\-лет-ко\-эф\-фи\-ци\-ен\-та, которая 
+получается 
+с~по\-мощью пороговой функции~$\rho_T(x)$ с~порогом~$T$: 
+$\hat{Y}_{j,k}\hm=\rho_T(Y_{j,k})$. В~данной работе рас\-смат\-ри\-ва\-ют\-ся функции 
+жесткой пороговой обработки $\rho_T^{(h)}(x)\hm=x \mathbf{1} (|x|\hm>T)$ 
+и~мягкой пороговой обработки $\rho_T^{(s)}(x)\hm=\mathrm{sign}\,(x)(|x|\hm-T)_+$.
+
+Рассмотрим функцию потерь, основанную на вероятностях ошибок 
+вы\-чис\-ле\-ния вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов. Пусть $(\xi,\eta)$~--- 
+двумерная случайная величина, не зависящая от всех~$\zeta_{j,k}$ и~име\-ющая 
+дискретное равномерное распределение на множестве индексов 
+$j\hm=0,\ldots,J-1$, $k\hm=0,\ldots,2^j-1$. Для заданного критического
+ уровня  $\varepsilon\hm>0$ определим функцию потерь:
+ 
+ \noindent
+\begin{multline*}
+r_J(f)={\sf E}{\sf P}\left(\left|\beta_{\xi,\eta}\hat{Y}_{\xi,\eta}-
+\beta_{\xi,\eta}\mu_{\xi,\eta}\right|>\varepsilon\ \big|\ \xi,\eta\right)={}\\[-1pt]
+{}=\fr{\sum\nolimits_{j=0}^{J-1}\sum\nolimits_{k=0}^{2^j-1} 
+{\sf P}\left(\abs{\betajk\hat{Y}_{j,k}-\betajk\mujk}>\varepsilon\right)}{2^J}\,,
+\end{multline*}
+т.\,е.~$r_J(f)$ представляет собой усредненную вероятность того, что ошибка 
+вычисления вейв\-лет-ко\-эф\-фи\-ци\-ен\-та превысит критический уровень~$\varepsilon$. 
+Такое определение функции потерь является обобщением определения, 
+предложенного в~работе~\cite{SMS14}. В~той же работе показано, что оценки, 
+целью которых является минимизация функции потерь, основанной на вероятностях 
+ошибок вычисления вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов, дают срав\-ни\-мые, а~иногда и~лучшие 
+результаты, чем оценки, минимизирующие сред\-не\-квад\-ра\-тич\-ный риск.
+
+Целью данной работы является поиск асимптотически оптимального 
+порога и~оценивание максимального порядка функции потерь~$r_J$ пороговой 
+обработки наблюдаемого сигнала~$Kf$ в~классе регулярных по Липшицу 
+функций $\mathrm{Lip}(\gamma,L)$, где $\gamma\hm>0$~--- показатель; 
+$L\hm>0$~--- константа Липшица~\cite{Mal99}:
+\noindent
+\begin{equation}
+\label{Risk_Definition}
+R_J=\sup\limits_{Kf\in\mathrm{Lip}(\gamma,L)}{r_J(f)}\,,
+\end{equation}
+т.\,е.\ поиск порога, асимптотически оптимального в~минимаксном смысле. 
+Подробное исследование поведения асимптотически оптимального порога 
+для среднеквадратичного рис\-ка можно найти в~работах~\cite{DJ98, Jan01}. 
+Также в~\cite{DJ95} был предложен метод поиска адаптивного оптимального порога,
+ с~по\-мощью ко-\linebreak\vspace*{-12pt}
+ 
+ \pagebreak
+ 
+ \noindent
+ торого можно оценить среднеквадратичный риск пороговой
+  обработки конкретной функции. Этот метод основан на построении несмещенной 
+  оценки риска, статистические свойства которой подробно исследованы 
+  в~работах~\cite{MSH10, SH12}. Для задачи оценивания функции сигнала по 
+  прямым зашумленным наблюдениям асимптотически оптимальные значения порогов, 
+  минимизирующие функцию потерь, основанную на вероятностях ошибок, в~том 
+  числе для моделей с~негауссовым распределением шума, найдены 
+  в~работах~\cite{KS16-1, KS16-2}.
+
+Заметим, что <<разумный>> порог должен воз\-рас\-тать по~$J$ со ско\-ростью, 
+не выше чем $C_T\sqrt{\ln2^J}$, где~$C_T$~--- 
+положительная константа, зависящая от оператора~$K$ 
+(подробнее см.~\cite{Abr98, Jan01}).
+
+Далее символом $\asymp$ обозначается порядок рассматриваемой величины по~$J$, 
+т.\,е.\ $a_J\asymp b_J$, если начиная с~некоторого~$J$ выполнено 
+$C_1  b_J\hm\leq a_J\hm\leq  C_2 b_J$ для некоторых положительных констант~$C_1$ 
+и~$C_2$.
+
+Везде далее дополнительно будем предполагать, что вейв\-лет-функ\-ция имеет~$M$~нулевых 
+моментов ($M\hm\geq\gamma$), $M$~раз непрерывно дифференцируема и~достаточно быст\-ро 
+убывает на бес\-ко\-неч\-ности вместе со своими производными~\cite{Mal99}.
+
+\vspace*{-6pt}
+
+\section{Жесткая пороговая обработка}
+
+Пусть $\hat{Y}_{j,k}=\rho_T^{(h)}(Y_{j,k})$. Пусть функция $g(J)\hm>0$ сколь 
+угодно медленно убывает по~$J$ к~нулю.
+
+\vspace{2pt}
+
+\noindent
+\textbf{Теорема~1.}\ \textit{Пусть $\gamma>\alpha$. При выборе асимптотически 
+оптимального порога для жесткой пороговой обработки функция 
+потерь}~(\ref{Risk_Definition}) \textit{начиная с~некоторого~$J$ 
+удовле\-тво\-ря\-ет неравенствам}:
+
+\vspace*{-2pt}
+
+\noindent
+\begin{multline*}
+C_1^{(h)}\cdot2^{-({2\gamma-2\alpha})J/({2\gamma-2\alpha+1})}
+g(J)\leq R_J\leq{}\\[-1pt]
+{}\leq
+ C_2^{(h)}\cdot2^{-(({2\gamma-2\alpha})/({2\gamma-2\alpha+1}))J}
+ J^{1/(2\gamma-2\alpha+1)}\,,
+ \end{multline*}
+ 
+ \vspace*{-4pt}
+ 
+ \noindent
+\textit{где $C_1^{(h)}$ и~$C_2^{(h)}$~--- некоторые положительные константы.
+Для асимптотически оптимального зна\-чения порога, ми\-ни\-ми\-зи\-ру\-юще\-го 
+порядок функции\linebreak потерь}~(\ref{Risk_Definition}) \textit{при жест\-кой пороговой обработке, 
+справедливо неравенство}:
+$$
+T_*^{(h)}-T_2^{(h)}\leq T\leq T_*^{(h)}-T_1^{(h)},
+$$ 
+\textit{где}
+%\begin{equation}\label{T_Main_Hard}
+
+\noindent
+\begin{align*}
+T_*^{(h)}&=\sigma\sqrt{\fr{4\gamma-4\alpha}{2\gamma-2\alpha+1}\,\ln2^J};
+\\[-2pt]
+T_1^{(h)}&=\sigma\sqrt{\fr{2\gamma-2\alpha+1}{4\gamma-4\alpha}}
+\, \fr{\ln\left((\ln 2^J)^{1/2}g(J)\right)}{\sqrt{\ln 2^J}}\,;
+\\[-2pt]
+T_2^{(h)}&=\sigma\sqrt{\fr{2\gamma-2\alpha+1}{4\gamma-4\alpha}}\,
+\fr{\ln\left((\ln 2^J)^{1/2}J^{1/(2\gamma-2\alpha+1)}\right)}{\sqrt{\ln 2^J}}\,.
+\end{align*}
+
+\noindent
+{Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.}\ \ 
+При выполнении приведенных выше ограничений на вейв\-лет-функ\-цию 
+справедливо неравенство~\cite{Mal99}:
+
+\noindent
+\begin{multline}
+\label{Wavelet_CoeffDecacy}
+\abs{\mujk}\leq\fr{A2^{J/2}}{2^{j\left(\gamma+1/2\right)}}\,, \\
+j=0,\ldots,J-1\,,\ k=0,\ldots,2^j-1\,,
+\end{multline}
+где $A$~--- некоторая константа, зависящая от~$\gamma$ и~$L$ и~не зависящая от~$J$.
+
+
+Поскольку $\gamma\hm>\alpha$, неравенство~(\ref{Wavelet_CoeffDecacy}) 
+поз\-во\-ля\-ет разбить все множество индексов $\{0,\ldots,J-1\}$ 
+на три класса в~за\-ви\-си\-мости от величины~$|\mujk|$. Пусть индексы~$j_1$ и~$j_2$ 
+($j_1\hm< j_2$) таковы, что
+\begin{equation*}
+\left\vert \mujk\right\vert \leq 
+\begin{cases}
+2^{-\alpha j}(g(J))^{-(\gamma-\alpha+1/2)}\,,&\enskip
+j_1\leq j\leq j_2-1\,;\\
+ 2^{-\alpha j}J^{-1/2}\,, &\enskip
+ j_2\leq j \leq J-1\,.
+ \end{cases}
+ \end{equation*}
+При этом в~силу~(\ref{Wavelet_CoeffDecacy})
+
+\noindent
+\begin{equation} %\label{Indices_Soft_j1}
+\left.
+\begin{array}{rl}
+\hspace*{-2mm}j_1&=\fr{J}{2\gamma-2\alpha+1}+\log_2 g(J)+ \fr{\log_2 A}{\gamma-\alpha+1/2}\,;
+\\[6pt]
+\hspace*{-2mm}j_2&=\fr{J}{2\gamma-2\alpha+1}+\fr{\log_2 J}{2\gamma-2\alpha+1}+{}\\[6pt]
+&\hspace*{41mm}{}+ \fr{\log_2 A}{\gamma-\alpha+1/2}\,.
+\end{array}
+\right\}
+\label{Indices_Soft_j2}
+\end{equation}
+
+Разобьем сумму в~чис\-ли\-те\-ле~(\ref{Risk_Definition}) на три со\-став\-ля\-ющие:
+
+\noindent
+\begin{multline}
+\sum\limits_{j=0}^{J-1}\sumk{\sf P}
+\left(\left|\betajk\hat{Y}_{j,k}-\betajk\mujk\right|>\varepsilon\right)={}\\
+{}=
+\sum\limits_{j=0}^{j_1-1}\sumk{\sf P}
+\left(\left|\betajk\hat{Y}_{j,k}-\betajk\mujk\right|>\varepsilon\right)+{}\\
+{}+\sum\limits_{j=j_1}^{j_2-1}\sumk{\sf P}
+\left(\left|\betajk\hat{Y}_{j,k}-\betajk\mujk\right|>\varepsilon\right)+{}\\
+{}\sum\limits_{j=j_2}^{J-1}\sumk{\sf P}
+\left(\left|\betajk\hat{Y}_{j,k}-\betajk\mujk\right|>\varepsilon\right)\equiv{}\\ 
+{}\equiv S_1+S_2+S_3\,.
+\label{Risk_Decomposition}
+\end{multline}
+
+Рассмотрим $S_3$. Заметим, что для любого $\varepsilon\hm>0$ найдется такое 
+$J_0\hm=J_0(\varepsilon)$, что 
+$2^{-\alpha j}J^{-1/2}\hm\leq\varepsilon/\betajk$ и~$\varepsilon/\betajk\hm\leq cT$, 
+$0\hm<c\hm<1$, для всех $J\hm>J_0$, и~найдется такое $J_1\hm=J_1(\varepsilon,c)
+\hm\geq J_0$, что для всех $J\hm>J_1$ имеют место соотношения:
+
+\noindent
+\begin{alignat*}{2}
+\mujk+\fr{\varepsilon}{\betajk}&\geq0\,;&\quad \mujk-\fr{\varepsilon}{\betajk}&\leq0\,;\\
+\mujk+\fr{\varepsilon}{\betajk}&\leq T\,;&\quad \mujk-\fr{\varepsilon}{\betajk}&\geq -T
+\end{alignat*}
+для $j_2\leq j\leq J-1$. Следовательно, для одного сла\-га\-емо\-го из~$S_3$ имеем при 
+$J\hm>J_1$:
+
+\pagebreak
+
+\noindent
+\begin{multline}
+{\sf P}\left(\left|\betajk\hat{Y}_{j,k}-\betajk\mujk\right|>\varepsilon\right)={}\\
+{}=
+{\sf P}\left(\left|\rho_{T}^{(h)}(Y_{j,k})-\mujk\right|>
+\fr{\varepsilon}{\betajk}\right)={}\\
+{}={\sf P}\left(\mathbf{1}\left(|Y_{j,k}|>T\right)Y_{j,k}>\mujk+
+\fr{\varepsilon}{\betajk}\right)+{}\\
+{}+
+{\sf P}\left(\mathbf{1}\left(|Y_{j,k}|>T\right)Y_{j,k}<
+\mujk-\fr{\varepsilon}{\betajk}\right)={}\\
+{}={\sf P}\left(Y_{j,k}>T,Y_{j,k}>\mujk+\fr{\varepsilon}{\betajk}\right)+{}\\
+{}+
+{\sf P}\left(Y_{j,k}<-T,Y_{j,k}<\mujk-\fr{\varepsilon}{\betajk}\right)={}\\
+{}=
+{\sf P}\left(\left|Y_{j,k}\right|>T\right)\asymp{}\\
+{}\asymp \fr{\exp\{-{(T+\mujk)^2}/({2\sigma^2})\}}{T}+{}\\
+{}+
+\fr{\exp\{-{(T-\mujk)^2}/({2\sigma^2})\}}{T}\,,
+\label{S3_Term}
+\end{multline}
+поскольку $Y_{j,k}$ имеют нормальное распределение со средним~$\mujk$ 
+и~дисперсией~$\sigma^2$, а~для стандартной нормальной функ\-ции распределения 
+при до\-ста\-точ\-но больших~$x$ справедливо соотношение:
+$$
+1-\Phi(x)\asymp\fr{\Phi'(x)}{x}\,.
+$$
+
+Заметим, что при $j_2\leq j\hm\leq J-1$ величины~$|\mujk|$ не влияют на 
+порядок правой час\-ти~(\ref{S3_Term}). Учитывая, что чис\-ло слагаемых в~$S_3$ 
+имеет порядок~$2^J$, получаем:
+\begin{multline}
+S_3=\sum\limits_{j=j_2}^{J-1}\sumk{\sf P}\left(\left|
+\betajk\hat{Y}_{j,k}-\betajk\mujk\right|>\varepsilon\right)\asymp{}\\
+{}\asymp
+\fr{2^J\exp\{-T^2/(2\sigma^2)\}}{T}\,.
+\label{S3_Order}
+\end{multline}
+
+Найдем верхнюю оценку для функции потерь~(\ref{Risk_Definition}) при жест\-кой 
+пороговой обработке. Для этого предположим, что все сла\-га\-емые в~суммах~$S_1$ и~$S_2$ 
+из~(\ref{Risk_Decomposition}) отделены от нуля некоторой константой. Поэтому 
+из~(\ref{Indices_Soft_j2}) получаем, что
+\begin{multline}
+S_1+S_2=\sum\limits_{j=0}^{j_2-1}\sumk{\sf P}\left(\left|
+\betajk\hat{Y}_{j,k}-\betajk\mujk\right|>\varepsilon\right)\asymp{}\\
+{}\asymp 2^{j_2}\asymp 2^{{J}/({2\gamma-2\alpha+1})}J^{1/(2\gamma-2\alpha+1)}\,.
+\label{S1S2_Order}
+\end{multline}
+
+Порог $T_*^{(h)}-T_2^{(h)}$
+обеспечивает равенство порядков правых час\-тей~(\ref{S3_Order}) и~(\ref{S1S2_Order}) 
+и,~таким образом, является нижней границей (с~точ\-ностью до величины 
+порядка~$O(1/\sqrt{\ln 2^J})$) для асимптотически оптимального в~смыс\-ле
+ функции потерь~$R_J$ порога.
+
+Теперь найдем нижнюю границу для функции потерь~(\ref{Risk_Definition}). 
+Заметим, что найдется такая функция $Kf\hm\in\mathrm{Lip}(\gamma,L)$, 
+что в~неравенстве~(\ref{Wavelet_CoeffDecacy}) будет достигаться равенство 
+для $0\hm\leq j\hm\leq j_1-1$~\cite{Mal99}. Следовательно, существует такое $J_2\hm>0$, 
+что для всех $\varepsilon\hm>0$ и~$J\hm>J_2$ выполняется $|\mujk|
+\hm>\varepsilon/\betajk$ при $0\hm\leq j\hm\leq j_1-1$. Тогда
+\begin{multline*}
+{\sf P}\left(\left|\betajk\hat{Y}_{j,k}-\betajk\mujk\right|>\varepsilon\right)\geq{}\\
+{}+\geq
+{\sf P}\left(\left|Y_{j,k}-\mujk\right|>\fr{\varepsilon}{\betajk}\right)\geq
+2-2\Phi\left(\fr{\varepsilon}{\sigma\beta_{0,0}}\right)\,.
+\end{multline*}
+
+В этом случае порядок суммы~$S_1$ в~(\ref{Risk_Decomposition}) равен чис\-лу 
+сла\-га\-емых, т.\,е.
+\begin{multline}
+\hspace*{-3.23184pt}S_1=\sum\limits_{j=0}^{j_1-1}\sumk{\sf P}
+\left(\left|\betajk\hat{Y}_{j,k}-\betajk\mujk\right|>\varepsilon\right)\asymp
+ 2^{j_1}\asymp{}\\
+ {}\asymp 2^{{J}/({2\gamma-2\alpha+1})}g(J)\,.
+\label{S1_Order}
+\end{multline}
+Приравняем порядки $S_1$ и~$S_3$ из~(\ref{S1_Order}) и~(\ref{S3_Order}). 
+В~этом случае порог равен $T_*^{(h)}\hm-T_1^{(h)}.$
+
+Заметим, что сумма~$S_2$ в~данных рассуждениях не присутствует. Это означает, 
+что истинное значение~$R_J$ имеет порядок не ниже данного, т.\,е.\
+ рас\-смат\-ри\-ва\-емый порядок является нижней оценкой для истинного порядка 
+ функции потерь, а~$T_*^{(h)}\hm-T_1^{(h)}$~--- 
+ верхней границей для асимптотически оптимального порога~$T$, 
+ поскольку, чтобы не удалить важ\-ные компоненты функции сигнала, следует 
+ выбирать наименьший порог, не ухудшающий порядок функции потерь.
+
+Теорема доказана.
+
+\smallskip
+
+\noindent
+\textbf{Замечание~1.}\ Пороги $T_*^{(h)}\hm-T_2^{(h)}$ и~$T_*^{(h)}\hm-T_1^{(h)}$ 
+имеют одинаковую воз\-рас\-та\-ющую по~$J$ компоненту~$T_*^{(h)}$, причем 
+$|T_1^{(h)}\hm-T_2^{(h)}|$ стремится к~нулю. Это означает, что истинное значение 
+порога, ми\-ни\-ми\-зи\-ру\-юще\-го порядок функции потерь при жест\-кой пороговой обработке, 
+так\-же будет иметь главную часть~$T_*^{(h)}$.
+
+
+\section{Мягкая пороговая обработка}
+
+Пусть $\hat{Y}_{j,k}=\rho_T^{(s)}(Y_{j,k})$.
+Пусть функция $g_1(J)\hm>0$ сколь угодно медленно убывает по~$J$ к~нулю,
+ а~$g_2(J)\hm>0$ неограниченно возрастает по~$J$, причем
+\begin{equation}
+\ln  g_2(J)=o\left(\sqrt{\ln 2^J}\right)\,, \enskip  J\to\infty\,.
+\label{g_2_Grow}
+\end{equation}
+
+\noindent
+\textbf{Теорема~2.}\
+\textit{Пусть $\gamma\hm>\alpha\hm-1/2$. При выборе асимптотически оптимального 
+порога для мяг\-кой пороговой обработки функция потерь}~(\ref{Risk_Definition}), 
+\textit{начиная с~некоторого~$J$, удовле\-тво\-ря\-ет неравенствам}:
+\begin{multline*}
+C_1^{(s)}\cdot2^{-({2\gamma-2\alpha})J/({2\gamma-2\alpha+1})}g_1(J)\leq 
+R_J\leq{}\\
+{}\leq C_2^{(s)}\cdot2^{-({2\gamma-2\alpha})J/({2\gamma-2\alpha+1})}g_2(J)\,,
+\end{multline*}
+\textit{где $C_1^{(s)}$ и~$C_2^{(s)}$~--- некоторые положительные константы.
+Для асимптотически оптимального значения порога, ми\-ни\-ми\-зи\-ру\-юще\-го 
+порядок функции потерь}~(\ref{Risk_Definition}) \textit{при мягкой пороговой 
+обработке, справедливо неравенство}:
+$$
+T_*^{(s)}-T_2^{(s)}\leq T\leq  T_*^{(s)}-T_1^{(s)}\,, 
+$$
+\textit{где}
+\begin{align*}
+T_*^{(s)}&=\sigma\sqrt{\fr{4\gamma-4\alpha}{2\gamma-2\alpha+1}\ln2^J}\,;
+\\
+T_i^{(s)}&=\sigma\sqrt{\fr{2\gamma-2\alpha+1}{4\gamma-4\alpha}}\,
+\fr{\ln\left((\ln 2^J)^{1/2}g_i(J)\right)}{\sqrt{\ln 2^J}}\,, \\
+&\hspace*{60mm}  i=1,2\,.
+\end{align*}
+
+
+\noindent
+{Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.}\ \
+ Разобьем, как в~разд.~5, все множество индексов $\{0,\ldots,J-1\}$ 
+ на три класса в~за\-ви\-си\-мости от величины~$|\mujk|$. Пусть индексы~$j_1$ 
+ и~$j_2$ ($j_1\hm< j_2$) таковы, что
+\begin{equation*}
+|\mujk|\leq
+\begin{cases}
+ 2^{-\alpha j}(g_1(J))^{-(\gamma-\alpha+1/2)}\,, &\ j_1\leq j\leq j_2-1\,;\\
+2^{-\alpha j}(g_2(J))^{-(\gamma-\alpha+1/2)}\,, &\ j_2\leq j \leq J-1\,.
+\end{cases}
+\end{equation*}
+При этом в~силу~(\ref{Wavelet_CoeffDecacy}) для $i\hm=1,2$
+
+\vspace*{2pt}
+
+\noindent
+$$
+j_i=\fr{J}{2\gamma-2\alpha+1}+\log_2 g_i(J)+ \fr{\log_2 A}{\gamma-\alpha+1/2}\,.
+$$
+Разобьем сумму в~чис\-ли\-те\-ле~(\ref{Risk_Definition}) на три суммы~(\ref{Risk_Decomposition}).
+
+Рассмотрим $S_3$. Зафиксируем некоторое положительное чис\-ло~$\varepsilon$.
+ Заметим, что для любого $\varepsilon\hm>0$ найдется такое $J_0\hm=J_0(\varepsilon)$, 
+ что $ 2^{-\alpha j}(g_2(J))^{-(\gamma-\alpha+1/2)}\hm\leq\varepsilon/\betajk$ 
+ для всех $J\hm>J_0$. Следовательно, имеет мес\-то соотношение
+$|\mujk|\hm\leq\varepsilon/\betajk$ для $j_2\h\leq j\hm\leq J-1$. 
+Для одного сла\-га\-емо\-го из~$S_3$ имеем при $J\hm>J_0$:
+\begin{multline*}
+{\sf P}\left(\left|\betajk\hat{Y}_{j,k}-\betajk\mujk\right|>\varepsilon\right)={}\\
+{}=
+{\sf P}\left(\left|\rho_{T}^{(s)}(Y_{j,k})-\mujk\right|>\fr{\varepsilon}{\betajk}\right)={}\\
+{}={\sf P}\left(
+\vphantom{\fr{\varepsilon}{\betajk}}
+|\mathbf{1}\left(Y_{j,k}>T\right)(Y_{j,k}-T)+{}\right.\\
+\left.{}+
+\mathbf{1}(Y_{j,k}<-T)(Y_{j,k}+T)-\mujk|>\fr{\varepsilon}{\betajk}\right)={}\\
+{}={\sf P}\left(Y_{j,k}>T,Y_{j,k}>T+\mujk+\fr{\varepsilon}{\betajk}\right)+{}
+\end{multline*}
+
+\noindent
+\begin{multline}
+{}+
+{\sf P}\left(Y_{j,k}<-T,Y_{j,k}<-T+\mujk-\fr{\varepsilon}{\betajk}\right)={}\\
+{}={\sf P}\left(|Y_{j,k}-\mujk|>T+\fr{\varepsilon}{\betajk}\right).
+\label{S3_Term_Soft}
+\end{multline}
+
+Поскольку $\betajk$ воз\-рас\-та\-ет как~$2^{cJ}$ и~$Y_{j,k}$ 
+имеют нормальное распределение со сред\-ним~$\mujk$ и~дис\-пер\-си\-ей~$\sigma^2$, 
+из~(\ref{S3_Term_Soft}) имеем:
+\begin{equation}
+S_3\asymp \fr{2^J\exp\{-T^2/(2\sigma^2)\}}{T}\,.
+\label{S3_Order_Soft}
+\end{equation}
+
+Найдем верх\-нюю оценку для функции потерь~(\ref{Risk_Definition}) при мягкой 
+пороговой обработке. Для этого предположим, что все сла\-га\-емые в~суммах~$S_1$ и~$S_2$ 
+из~(\ref{Risk_Decomposition}) отделены от нуля некоторой константой. 
+В~этом случае получаем:
+\begin{equation}
+S_1+S_2\asymp2^{{J}/({2\gamma-2\alpha+1})}g_2(J)\,.
+\label{S1S2_Order_Soft}
+\end{equation}
+
+Порог $T_*^{(s)}-T_2^{(s)}$
+обеспечивает равенство порядков правых час\-тей~(\ref{S3_Order_Soft}) 
+и~(\ref{S1S2_Order_Soft}) и,~таким образом, является ниж\-ней границей 
+(с~точ\-ностью до величины порядка~$O(1/\sqrt{\ln 2^J})$) для асимптотически 
+оптимального в~смысле функции потерь~$R_J$ порога.
+
+Теперь найдем нижнюю границу для функции потерь~(\ref{Risk_Definition}). 
+Пользуясь рас\-суж\-де\-ни\-ями, приведенными в~разд.~5, вви\-ду убывания к~нулю~$g_1(J)$, 
+для любого $\varepsilon\hm>0$ и~до\-ста\-точ\-но больших~$J$ найдется такая 
+функция $Kf\hm\in\mathrm{Lip}\,(\gamma,L)$, что в~неравенстве~(\ref{Wavelet_CoeffDecacy}) 
+будет достигаться равенство и~выполняться $|\mujk|\hm>\varepsilon/\betajk$ при 
+$0\hm\leq j\hm\leq j_1\hm-1$. Тогда поскольку
+
+\vspace*{-6pt}
+
+\noindent
+\begin{multline*}
+{\sf P}\left(\left|\betajk\hat{Y}_{j,k}-\betajk\mujk\right|>\varepsilon\right)={}\\
+{}=
+{\sf P}\left(|\mujk|>\fr{\varepsilon}{\betajk},\left\vert Y_{j,k}\right\vert\leq T\right)+{}\\
+{}+{\sf P}\left(\left\vert Y_{j,k}-T-\mujk\right\vert >\fr{\varepsilon}{\betajk},
+Y_{j,k}>T\right)+{}\\
+{}+
+{\sf P}\left(\left\vert Y_{j,k}+T-\mujk\right\vert >\fr{\varepsilon}{\betajk},
+Y_{j,k}<-T\right)\,,
+\end{multline*}
+учитывая, что~$Y_{j,k}$ имеют нормальное распределение с~максимумом плот\-ности, 
+до\-сти\-га\-емым в~точке~$\mujk$, получаем:
+$$
+{\sf P}\left(\left|\betajk\hat{Y}_{j,k}-\betajk\mujk\right|>\varepsilon\right)\geq
+2-2\Phi\left(\fr{\varepsilon}{\sigma\beta_{0,0}}\right).
+$$
+Отсюда следует оценка, аналогичная~(\ref{S1_Order}):
+\begin{equation}
+S_1\asymp2^{{J}/({2\gamma-2\alpha+1})}g_1(J)\,.
+\label{S1_Order_Soft}
+\end{equation}
+
+Приравняем порядки~(\ref{S3_Order_Soft}) и~(\ref{S1_Order_Soft}). 
+В~этом случае порог равен $T_*^{(s)}\hm-T_1^{(s)}$.
+Воспользовавшись рас\-суж\-де\-ни\-ями, приведенными в~разд.~5, 
+получаем, что порог $T_*^{(s)}\hm-T_1^{(s)}$ является верх\-ней оценкой для 
+истинного значения асимптотически оптимального порога~$T$.
+
+Теорема доказана.
+
+\smallskip
+
+\noindent
+\textbf{Замечание~2.}\ Пороги $T_*^{(s)}\hm-T_1^{(s)}$ и~$T_*^{(s)}\hm-T_2^{(s)}$ 
+имеют одинаковую воз\-рас\-та\-ющую по~$J$ компоненту~$T_*^{(s)}$, причем, поскольку 
+выполнено~(\ref{g_2_Grow}), $|T_1^{(s)}\hm-T_2^{(s)}|$ стремится к~нулю. 
+Это означает, что истинное значение порога, минимизирующего порядок функции 
+потерь при мягкой пороговой обработке, также будет иметь глав\-ную часть~$T_*^{(s)}$.
+
+\smallskip
+
+\noindent
+\textbf{Замечание~3.}\ В~случае мягкой пороговой обработки функции~$g_i(J)$, $i\hm=1,2$, 
+фигурирующие в~верх\-ней и~ниж\-ней оценках, имеют сколь угодно малую ско\-рость 
+сходимости по~$J$ (в~отличие от логарифмической функции в~одной из оценок при
+ жест\-кой пороговой обработке). Это позволяет сделать вывод о~том, что верх\-няя 
+ оценка функции потерь и~ниж\-няя оценка асимптотически оптимального порога 
+ при мягкой пороговой обработке точ\-нее, чем при жест\-кой.
+
+\smallskip
+
+\noindent
+\textbf{Замечание~4.}\ Если дополнительно предположить, что вейв\-лет-функ\-ция~$\psi$ 
+имеет компактный носитель, то требование равномерной ре\-гу\-ляр\-ности по Липшицу 
+можно заменить на требование кусочной ре\-гу\-ляр\-ности (подробнее см.~\cite{Jan01}).
+
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+
+
+
+\bibitem{Don95} %1
+\Au{Donoho~D.} Nonlinear solution of linear inverse problems by wavelet-vaguelette 
+decomposition~// Appl. Comput. Harmon.~A., 1995. Vol.~2. P.~101--126.
+
+\bibitem{Abr98}  %2
+\Au{Abramovich F., Silverman~B.\,W.} Wavelet decomposition approaches 
+to statistical inverse problems~// Biometrika, 1998. Vol.~85. No.\,1. P.~115--129.
+
+\bibitem{Lee97} 
+\Au{Lee N.} Wavelet-vaguelette decompositions and homogenous equations.~---
+ West Lafayette, IN, USA: Purdue University, 1997.   PhD Thesis. 103~p.
+
+
+\bibitem{Mal99} 
+\Au{Mallat S.} A~wavelet tour of signal processing.~--- New York, NY, USA:
+Academic Press, 1999. 857~p.
+
+
+\bibitem{SMS14}  %5
+\Au{Sadasivan J., Mukherjee~S., Seelamantula~C.\,S.} 
+An optimum shrinkage estimator based on minimum-probability-of-error criterion 
+and application to signal denoising~// 
+    %Proceedings of 39th International Conference on Acoustics, Speech and Signal Processing (ICASSP). 2014. Italy, Florence.
+    39th IEEE  Conference (International) on Acoustics, 
+    Speech and Signal Processing Proceedings.~--- Piscataway, NJ, USA: IEEE, 2014. 
+    P.~4249--4253.
+
+\bibitem{DJ98} 
+\Au{Donoho D., Johnstone~I.\,M.} Minimax estimation via wavelet shrinkage~// 
+Ann. Stat., 1998. Vol.~26. No.\,3. P.~879--921.
+
+
+
+\bibitem{Jan01} 
+\Au{Jansen M.} Noise reduction by wavelet thresholding.~--- 
+Lecture notes in statistics ser.~---  New York, NY, USA: Springer Verlag, 2001. Vol.~161. 217~p.
+
+\bibitem{DJ95} 
+\Au{Donoho D., Johnstone~I.} Adapting to unknown smoothness via wavelet shrinkage~// 
+J.~Am. Stat. Assoc., 1995. Vol.~90. P.~1200--1224.
+
+\bibitem{MSH10} 
+\Au{Маркин А.\,В., Шестаков~О.\,В.} О~состоятельности оценки риска при 
+пороговой обработке вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов~// Вестн. Моск. ун-та. Сер.~15: 
+Вычисл. матем. и~киберн., 2010. №\,1. C.~26--34.
+
+\bibitem{SH12} 
+\Au{Шестаков О.\,В.} Асимптотическая нор\-маль\-ность оцен\-ки риска пороговой 
+обработки вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов при выборе адаптивного порога~// 
+Докл. РАН, 2012. Т.~445. №\,5. С.~513--515.
+
+\bibitem{KS16-1} 
+\Au{Кудрявцев А.\,А., Шестаков~О.\,В.} Асимптотическое поведение порога, 
+минимизирующего усред\-нен\-ную ве\-ро\-ят\-ность ошиб\-ки вы\-чис\-ле\-ния 
+вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов~// 
+Докл. РАН, 2016. Т.~468. №\,5. С.~487--491.
+
+\bibitem{KS16-2} 
+\Au{Кудрявцев~А.\,А., Шестаков~О.\,В.} Асимптотически оптимальная пороговая 
+обработка вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов в~моделях с~негауссовым 
+рас\-пре\-де\-ле\-ни\-ем шума~// Докл. РАН, 2016. Т.~471. №\,1. С.~11--15.
+
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 25.02.18}}
+
+\vspace*{8pt}
+
+%\newpage
+
+%\vspace*{-24pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{8pt}
+
+
+\def\tit{MINIMIZATION OF~ERRORS OF~CALCULATING WAVELET COEFFICIENTS 
+WHILE~SOLVING INVERSE PROBLEMS}
+
+\def\titkol{Minimization of~errors of~calculating wavelet coefficients 
+while~solving inverse problems}
+
+\def\aut{A.\,A.~Kudryavtsev$^1$ and O.\,V.~Shestakov$^{1,2}$}
+
+\def\autkol{A.\,A.~Kudryavtsev and O.\,V.~Shestakov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+$^1$Department of Mathematical Statistics, Faculty of Computational 
+Mathematics and Cybernetics,\linebreak
+$\hphantom{^1}$M.\,V.~Lomonosov Moscow State University, 
+1-52~Leninskiye Gory, GSP-1, Moscow 119991, Russian Fed-\linebreak
+$\hphantom{^1}$eration
+
+\noindent
+$^2$Institute of Informatics Problems, Federal Research Center ``Computer 
+Science and Control'' of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 44-2~Vavilov Str., 
+Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+\Abste{Statistical inverse problems arise in many applied fields, including 
+medicine, astronomy, biology, plasma physics, chemistry, etc. At the same time, 
+there are always errors in the observed data due to imperfect equipment, 
+background noise, data discretization, and other reasons. To reduce these errors, 
+it is necessary to apply special regularization methods that allow constructing 
+approximate stable solutions of inverse problems. The classical\linebreak\vspace*{-12pt}}
+
+\Abstend{regularization 
+methods are based on the use of windowed singular value decomposition. However, 
+this approach takes into account only the type of operator involved in the 
+formation of observable data and does not take into account the properties 
+of the object of observation. For linear homogeneous operators, this problem 
+is solved with the help of special methods of wavelet analysis, which allow 
+adapting simultaneously to the form of the operator and local features of 
+the function describing the object. In this paper, the authors consider the 
+problem of inverting a linear homogeneous operator in the presence of noise 
+in the observational data by thresholding the wavelet expansion coefficients 
+of the observed function. The asymptotically optimal thresholds and orders 
+of the loss function are calculated when minimizing the averaged probability 
+of error of wavelet coefficient calculation.}
+
+\KWE{wavelets; thresholding; linear homogeneous operator; loss function}
+
+
+
+\DOI{10.14357/19922264180203}
+
+\vspace*{-14pt}
+
+\Ack
+\noindent
+The work was partly supported by the Russian Foundation for Basic Research 
+(project 18-07-00252).
+
+
+
+%\vspace*{-3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+
+
+\bibitem{2-ks}
+\Aue{Donoho, D.} 1995. Nonlinear solution of linear inverse problems by 
+wavelet-vaguelette decomposition. \textit{Appl. Comput. Harmon.~A.} 2:101--126.
+
+\bibitem{1-ks}
+\Aue{Abramovich, F., and B.\,W.~Silverman.} 1998. 
+Wavelet decomposition approaches to statistical inverse problems. 
+\textit{Biometrika} 85(1):115--129.
+
+\bibitem{3-ks}
+\Aue{Lee, N.} 1997. Wavelet-vaguelette decompositions and homogenous equations.
+ West Lafayette, IN: Purdue University. PhD Thesis. 103~p.
+
+\bibitem{4-ks}
+\Aue{Mallat, S.} 1999. \textit{A~wavelet tour of signal processing}. 
+New York, NY: Academic Press. 857~p.
+
+\bibitem{5-ks}
+\Aue{Sadasivan, J., S.~Mukherjee, and C.\,S.~Seelamantula}. 2014. 
+An optimum shrinkage estimator based on minimum-probability-of-error 
+criterion and application to signal denoising. 
+\textit{39th IEEE  Conference (International) on Acoustics, 
+    Speech and Signal Processing Proceedings}. Piscataway, NJ: IEEE. 4249--4253.
+
+\bibitem{6-ks}
+\Aue{Donoho, D., and I.\,M.~Johnstone}. 1998. Minimax estimation via wavelet shrinkage. 
+\textit{Ann. Stat.} 26(3):879--921.
+
+\bibitem{7-ks}
+\Aue{Jansen, M.} 2001. \textit{Noise reduction by wavelet thresholding}. 
+Lecture notes in statistics ser. New York, NY: Springer Verlag. Vol.~161. 217~p.
+
+\bibitem{8-ks}
+\Aue{Donoho, D., and I.~Johnstone.} 1995. Adapting to unknown smoothness via wavelet 
+shrinkage.  \textit{J.~Am. Stat. Assoc.} 90:1200--1224.
+
+\bibitem{9-ks}
+\Aue{Markin, A.\,V.,  and O.\,V.~Shestakov.} 2010. Consistency of risk 
+estimation with thresholding of wavelet coefficients. 
+\textit{Mosc. Univ. Comput. Math. Cybern.} 34(1):22--30.
+
+\bibitem{10-ks}
+\Aue{Shestakov, O.\,V.} 2012. Asymptotic normality of adaptive wavelet
+ thresholding risk estimation. \textit{Dokl. Math.} 86(1):556--558.
+
+\bibitem{11-ks}
+\Aue{Kudryavtsev, A.\,A., and O.\,V.~Shestakov.} 2016. 
+Asymptotic behavior of the threshold minimizing the average 
+probability of error in calculation of wavelet coefficients. 
+\textit{Dokl. Math.} 93(3):295--299.
+
+\bibitem{12-ks}
+\Aue{Kudryavtsev, A.\,A., and O.\,V.~Shestakov.} 2016. 
+Asymptotically optimal wavelet thresholding in the models with 
+non-Gaussian noise distributions. \textit{Dokl. Math.} 94(3):615--619.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Received February 25, 2018}}
+
+%\vspace*{-24pt}
+
+
+
+\Contr
+
+\noindent
+\textbf{Kudryavtsev Alexey A.} (b.\ 1978)~--- 
+Candidate of Science (PhD) in physics and mathematics, associate professor, 
+Department of Mathematical Statistics, Faculty of Computational 
+Mathematics and Cybernetics, M.\,V.~Lomonosov Moscow State University, 
+1-52~Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation; \mbox{nubigena@mail.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Shestakov Oleg V.} (b.\ 1976)~--- 
+Doctor of Science in physics and mathematics, associate professor, 
+Department of Mathematical Statistics, Faculty of Computational Mathematics 
+and Cybernetics, M.\,V.~Lomonosov Moscow State University, 1-52~Leninskiye Gory, 
+GSP-1, Moscow 119991, Russian Federation; senior scientist, 
+Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{oshestakov@cs.msu.su}
+
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература} 

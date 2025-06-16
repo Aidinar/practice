@@ -1,0 +1,1558 @@
+\def\raa{{\mathrm{ЭА}}}
+\def\hXt{{\hat X_t}}
+\def\ss2{\mathop {\sum\limits^{n^\Theta}\sum\limits^{n^\Theta}}}
+
+
+
+\def\stat{sinitsin}
+
+\def\tit{МОДИФИЦИРОВАННЫЕ ЭЛЛИПСОИДАЛЬНЫЕ 
+УСЛОВНО-ОПТИМАЛЬНЫЕ ФИЛЬТРЫ ДЛЯ~НЕЛИНЕЙНЫХ СТОХАСТИЧЕСКИХ 
+   СИСТЕМ НА~МНОГООБРАЗИЯХ$^*$}
+
+\def\titkol{Модифицированные эллипсоидальные 
+условно-оптимальные фильтры для~нелинейных МСтС} %стохастических     систем на~многообразиях}
+
+\def\aut{И.\,Н.~Синицын$^1$, В.\,И.~Синицын$^2$, Э.\,Р.~Корепанов$^3$}
+
+\def\autkol{И.\,Н.~Синицын, В.\,И.~Синицын, Э.\,Р.~Корепанов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Синицын И.\,Н.}
+\index{Синицын В.\,И.}
+\index{Корепанов Э.\,Р.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при поддержке РФФИ (проект 15-07-02244).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управление>> Российской академии наук,
+\mbox{sinitsin@dol.ru}}
+\footnotetext[2]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управление>> Российской академии наук,
+\mbox{vsinitsin@ipiran.ru}}
+\footnotetext[3]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управление>> Российской академии наук,
+\mbox{ekorepanov@ipiran.ru}}
+ 
+\vspace*{-10pt} 
+
+\Abst{Представлена теория аналитического синтеза по критерию минимума средней 
+квадратической ошибки (с.к.)\ модифицированных эллипсоидальных услов\-но-оп\-ти\-маль\-ных
+ фильт\-ров 
+(МЭУОФ) для нелинейных дифференциальных стохастических систем на  
+гладких многообразиях (МСтС) 
+на основе эллипсоидальной аппроксимации ненормированных апостериорных распределений. 
+Рассмотрены случаи гауссовских и~негауссовских МСтС. Алгоритмы МЭУОФ по сравнению 
+с~алгоритмами ЭУОФ обладают достаточной простотой. Алгоритмы МЭУОФ положены в~основу 
+модуля инструментального программного обеспечения StS-Filter (version 2017).}
+
+\KW{винеровский шум;
+метод эллипсоидальной аппроксимации (МЭА);
+метод эллипсоидальной линеаризации (МЭЛ);
+ модифицированный эллипсоидальный СОФ (МЭСОФ);
+ненормированная одномерная апостериорная характеристическая функция;
+пуассоновский шум;
+субоптимальный фильтр (СОФ);
+условно-оптимальный фильтр (УОФ);
+уравнения точности и~чувствительности;
+эллипсоидальный УОФ (ЭУОФ)}
+
+\vspace*{-6pt}
+
+\DOI{10.14357/19922264170211} 
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+В~[1, 2] представлена теория УОФ на базе 
+методов нормальной аппроксимации (МНА),
+статистической линеаризации (МСЛ) и~ортогональных разложений (МОР) для 
+МСтС с~винеровскими шумами 
+в~уравнениях наблюдения и~винеровскими и~пуассоновскими шумами в~уравнениях со\-сто\-яния.
+В~основу теории УОФ были положены точные нелинейные уравнения для апостериорного 
+одномерного распределения.
+
+В~[3] рассмотрено развитие~[1, 2] на случай, ко-\linebreak гда апостериорное одномерное 
+распределение ошибки фильтрации допускает эллипсоидальную аппроксимацию~[4]. 
+Получены точные фильтрационные уравнения, а~также уравнения точности\linebreak 
+и~чувствительности на основе МОР, даны элементы эл\-лип\-соидального анализа 
+распределений, выведены уравнения ЭУОФ по методам 
+эллипсоидальной аппроксимации (МЭА) и~эллипсоидальной\linebreak линеаризации (МЭЛ).
+В~\cite{6-s, 5-s} разработана теория аналитического синтеза МЭУОФ 
+на основе приближенного решения по МЭА (МЭЛ) фильтрационного уравнения для 
+ненормированной апостериорной характеристической функции.
+
+\columnbreak
+
+Рассмотрим обобщение~\cite{4-s, 5-s} на случай  ЭУОФ.  В~основу 
+рассмотрения положим соответствующие  уравнения для ненормированных апостериорных 
+распределений.
+
+
+\section{Точные фильтрационные уравнения для~апостериорного распределения}
+
+Следуя~[5--7], будем рассматривать задачу фильт\-ра\-ции состояния систем, 
+моделями которых могут служить
+стохастические дифференциальные  уравнения, понимаемые в~смысле Ито. При 
+этом стохастические дифференциальные урав\-не\-ния модели изучаемой системы могут
+иметь неизвестные па\-ра\-мет\-ры и,~как правило, всегда содержат
+параметры, известные с~ограниченной точ\-ностью. Поэтому возникает
+задача непрерывного оценивания неизвестных па\-ра\-мет\-ров сис\-те\-мы
+(точнее, ее модели) по результатам непрерывных наблюдений.
+Предположим, что правые части урав\-не\-ний зависят от конечного множества 
+неизвестных па\-ра\-мет\-ров, которые
+будем рассматривать как компоненты вектора параметров~$\theta$.
+Одним из возможных подходов в~таких случаях является следующий
+прием: неизвестный векторный параметр~$\theta$ считают стохастическим
+процессом  $\Theta \hm=\Theta_t$, который определяется
+дифференциальным уравнением $\dot\Theta_t \hm=0$, и~включают
+компоненты этого векторного процесса в~вектор со\-сто\-яния системы
+(<<расширяют>> вектор состояния путем включения в~него неизвестных
+параметров в~качестве дополнительных компонент).
+Таким образом, задача непрерывного оценивания неизвестных
+параметров модели системы сводится к~задаче непрерывного
+оценивания состояния системы с~расширенным вектором состояния.
+От неизвестных параметров могут зависеть и~уравнения наблюдения. 
+Эти параметры следует включить в~вектор ~$\Theta$ и,~следовательно, 
+в~расширенный вектор состояния.
+
+Итак, пусть векторный стохастический процесс (СтП) 
+$\lk X_t^{\mathrm{T}} Y_t^{\mathrm{T}} \rk^{\mathrm{T}}$
+определяется системой векторных стохастических дифференциальных
+уравнений Ито~[1--3]:
+    \begin{multline}
+    dX_t =\varphi \left(X_t,Y_t,\Theta, t\right) dt + 
+    \psi' \left(X_t,Y_t,\Theta, t\right) dW_0 +{}\\
+{}+\iii_{R_0^q} \psi''
+    \left(X_t,Y_t,\Theta, t,v\right) P^0 (dt, dv)\,,\\
+     X(t_0) = X_0\,;
+    \label{e2.1-s}
+    \end{multline}
+    
+    \vspace*{-12pt}
+    
+    \noindent
+    \begin{multline}
+        dY_t =\varphi_1 \left(X_t,Y_t,\Theta, t\right) dt +
+    \psi_1' \left(X_t,Y_t,\Theta, t\right) dW_0 + {}\\
+{}+\int\limits_{R_0^q} \psi_1'' (X_t,Y_t,\Theta, t,v) P^0
+    (dt,dv)\,,\\
+     Y(t_0) = Y_0\,.
+    \label{e2.2-s}
+    \end{multline}
+Здесь $Y_t=Y(t)$~--- $n_y$-мер\-ный наблюдаемый
+СтП, $Y_t \hm\in \Delta^y$ ($\Delta^y$~--- гладкое многообразие наблюдений);
+ $X_t \hm=X(t)$~--- $n_x$-мер\-ный ненаблюдаемый
+СтП (вектор состояния), $X_t \hm\in \Delta^x$ ($\Delta^x$~--- 
+гладкое многообразие состояний); $W_0\hm =W_0(t)$~--- $n_w$-мер\-ный
+винеровский СтП $(n_w\hm\ge n_y)$ интенсивности  $\nu_0 \hm=\nu_0 (\Theta, t)$; 
+$P^0(\Delta,A)\hm=P(\Delta,A)\hm-\mu_P (\Delta,A)$, $P(\Delta,A)$  представляет 
+собой для любого множества~$A$ прос\-той пуассоновский СтП, а~$\mu_P (\Delta,A)$~--- 
+его математическое ожидание, причем
+    $$
+    \mu_P (\Delta,A)=\mm P (\Delta,A)=\iii_\Delta \nu_P(\tau, A)\, d\tau\,;
+    $$
+$\nu_P (\Delta, A)$~--- интенсивность соответствующего пуассоновского потока событий, 
+$\Delta \hm=(t_1,t_2]$; интегрирование по~$v$ распространяется на все 
+пространство~$R^q$ с~выколотым началом координат; $\Theta$~--- 
+вектор случайных параметров размерности~$n_\Theta$;
+$\varphi\hm=\varphi(X_t,Y_t,\Theta, t)$, $\varphi_1\hm=\varphi_1(X_t,Y_t,\Theta, t)$,
+ $\psi'\hm=\psi'(X_t,Y_t,\Theta, t)$ и~$\psi_1'\hm=\psi_1'(X_t,Y_t,\Theta, t)$~--- 
+ известные функции, отображающие
+$R^{n_x}\times R^{n_y}\times  R$ соответст\-венно в~$R^{n_x}$,
+$R^{n_y}$, $R^{n_xn_w}$ и~$R^{n_yn_w}$; $\psi''\hm=\psi''(X_t,Y_t,\Theta, t,v)$ 
+и~$\psi_1''(X_t,Y_t,\Theta, t,v)$~--- известные
+функции, отображающие $R^{n_x}\times R^{n_y}\times R^q$ 
+в~$R^{n_x}$ и~$R^{n_y}$. Требуется найти оценку~$\hat X_t$ СтП~$X_t$ 
+в~каж\-дый момент времени~$t$ по результатам наблюдения
+СтП~$Y(\tau)$ до момента~$t$, $Y_{t_0}^t \hm=  \{ Y(\tau) \,: t_0 \hm\le \tau\hm< t\}$.
+
+Предположим, что выполнены условия~[1--3]:
+\begin{itemize}
+\item  уравнение состояния имеет вид~(\ref{e2.1-s});
+
+\item уравнение наблюдения~(\ref{e2.2-s}), во-пер\-вых, не содержит
+пуассоновского шума $(\psi_1'' \hm\equiv 0)$, а~во-вто\-рых, 
+коэффициент при винеровском шуме~$\psi_1'$  в~уравнениях наблюдения не зависит 
+от со\-сто\-яния $(\psi_1' (X_t, Y_t,\Theta, t)\hm =\psi_1'(Y_t,\Theta, t))$.
+\end{itemize}
+
+В этом случае уравнения задачи нелинейной фильтрации имеют следующий вид:
+\begin{multline}
+    dX_t =\varphi \left(X_t, Y_t,\Theta, t\right)\,dt+\psi'\left(X_t, Y_t,\Theta, t\right)\,dW_0+{}\\
+{}+\int\limits_{R_0^q} \psi''\left(X_t, Y_t,\Theta, t,v\right) P^0 (dt, dv)\,,\\  
+X\left(t_0\right) = X_0\,;
+\label{e2.3-s}
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+    dY_t =\varphi_1 \left(X_t, Y_t,\Theta, t\right)\,dt +
+    \psi_1 \left(Y_t,\Theta, t\right) dW_0\,,\\ 
+    Y\left(t_0\right) = Y_0\,.
+    \label{e2.4-s}
+    \end{multline}
+    
+
+Предположим, что выполнены условия существования и~единственности СтП, 
+определяемого~(\ref{e2.3-s}) и~(\ref{e2.4-s}) при соответствующих начальных 
+условиях~[7--9].
+
+Как известно~\cite{6-s, 9-s}, для любых СтП~$X_t$ и~$Y_t$ оптимальная оценка~$\hat X^t$, 
+минимизирующая средний квадрат ошибки в~каждый момент времени~$t$, 
+представляет собой апостериорное математиче-\linebreak ское ожидание СтП~$X_t$: 
+$\hat X_t\hm = \mm \lk X_t \mid Y_{t_0}^t\rk$. Чтобы\linebreak найти
+ это условное 
+математическое ожидание, необходи\-мо знать $p_t \hm= p_t (x)$ и~$g_t\hm=g_t(\lambda)$~--- 
+апостериорную одномерную плот\-ность и~характеристи\-ческую функ\-цию распределения 
+СтП~$X_t$. Со\-от\-вет\-ст\-ву\-ющие точные уравнения линейной фильтрации приведены в~\cite{3-s}.
+
+Введем ненормированные одномерные апостериорные плотность $\tilde p_t (x,\Theta)$  
+и~характеристическую функцию $\tilde g_t (\lambda,\Theta)$ согласно формулам:
+    \begin{align*}
+    \tilde{p}_t (x,\Theta) &= \mu_t p_t (x,\Theta)\,; \\
+    \tilde{g}_t (\lambda,\Theta) &= 
+    \mm_{\Delta^x}^{p_t} \left[ e^{i\lambda^{\mathrm{T}} X_t} \mu_t\right] =
+    \mu_t g_t (\lambda,\Theta)\,.
+    %    \label{e2.5-s}
+    \end{align*}
+Тогда, обобщая~\cite{6-s} на случай уравнений~(\ref{e2.3-s}) и~(\ref{e2.4-s}), 
+получим следующее точное уравнение с.к.\ 
+оптимальной нелинейной фильт\-рации:
+
+\noindent
+    \begin{multline}
+    d\tilde{g}_t (\lambda,\Theta) =
+    \mm_{\Delta^x}^{\tilde{p}_t} \Big\{
+     \Big[ 
+i \lambda^{\mathrm{T}} \varphi 
+    \left( X,Y_t,\Theta, t\right) -{}\\
+    {}- \fr{1}{2} \left(\psi'\nu_0{\psi'}^{\mathrm{T}}\right) 
+    \left( X,Y_t,\Theta, t\right)+{}\\
+{}+ \int\limits_{R_0^q} \left[ e^{i\lambda^{\mathrm{T}} \psi'' 
+\left( X,Y_t,\Theta, t,v\right)} -1- {}\right.\\
+\left.{}-i\lambda^{\mathrm{T}} \psi'' 
+\left( X,Y_t,\Theta, t,v\right)
+\vphantom{e^{i\lambda^{\mathrm{T}} \psi'' 
+\left( X,Y_t,\Theta, t,v\right)}}
+\right] \nu_P (\Theta, t, dv)\Big] 
+e^{i\lambda^{\mathrm{T}} X} \Big\}\,dt +{}\\
+  {}+ \mm_{\Delta^x}^{\tilde{p}_t} \Big\{ \Big[ 
+  \varphi_1 \left( X,Y_t,\Theta, t\right)^{\mathrm{T}} + {}\\
+  {}+
+  i\lambda^{\mathrm{T}} \left(\psi'\nu_0 {\psi'}^{\mathrm{T}}\right) 
+  \left( X,Y_t,\Theta, t\right)\Big] 
+  e^{i\lambda^{\mathrm{T}} X}\Big\} \times{}\\
+  {}\times
+  \left(\psi'\nu_0{\psi'}^{\mathrm{T}}\right)^{-1}
+  \left( Y_t,\Theta, t\right)\, dY_t\,.
+  \label{e2.6-s}
+  \end{multline}
+
+Если, следуя~\cite{8-s}, функция $\psi''$ в~(\ref{e2.3-s}) допускает представление
+\begin{equation*}
+\psi'' = \psi' \omega (\Theta, v)\,,
+%\label{e2.7-s}
+\end{equation*}
+где  $P^0 (\Delta, A) \hm= P^0 ((0,t], dv)$, то уравнения~(\ref{e2.3-s}) 
+и~(\ref{e2.4-s}) примут следующий вид:
+\begin{multline}
+\dot X_t =\varphi \left(X_t, Y_t, \Theta, t\right)+\psi' 
+\left(X_t, Y_t, \Theta, t\right)V(\Theta, t)\,,\\ X\left(t_0\right)=X_0\,;
+\label{e2.8-s}
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\dot Y_t = \varphi\left(X_t, Y_t, \Theta, t\right)+\psi_1 
+\left(Y_t, \Theta, t\right) V_0 (\Theta, t)\,,\\ 
+Y\left(t_0\right) = Y_0\,.
+\label{e2.9-s}
+\end{multline}
+Здесь
+$V_0 (\Theta, t) \hm=\dot W_0 (\Theta, t)$; $V (\Theta, t)\hm=\dot{\bar W}  (\Theta, t)$,
+\begin{equation*}
+\bar W (\Theta, t) = W_0  (\Theta, t)+ \iii_{R_0^q} \omega 
+(\Theta, v) P^0 ((0,t],dv)\,,
+%\label{e2.10-s}
+\end{equation*}
+где $\nu_P  (\Theta, t,v) dv\hm= \lk \prt \mu  (\Theta, t,v)/\prt t\rk dv$~--- 
+интенсивность пуассоновского потока скачков, равных $\omega (\Theta, t)$.
+При этом логарифмические производные от одномерных характеристических
+ функций определяются известными формулами:
+\begin{align*}
+\chi^{W_0} (\rho; \Theta, t)& = -\fr{1}{2}\, \rho^{\mathrm{T}} 
+    \nu_0  (\Theta, t) \rho\,,
+\\
+    \chi^{\bar W} (\rho;\Theta,t) &= - \fr{1}{2}\, \rho^{\mathrm{T}}  
+    (\Theta, t) \rho^{\mathrm{T}}+ {}\\
+    &\hspace*{-35pt}{}+\iii_{R_0^q} \left[ e^{i\rho^{\mathrm{T}} \omega 
+    (\Theta, v)} -1- i\rho^{\mathrm{T}} \omega 
+    (\Theta, v)\right] \nu_P  (\Theta, t,v)\,dv\,.
+    %\label{e2.11-s}
+    \end{align*}
+В таком случае интегральный член в~(\ref{e2.6-s}) допускает следующую запись:
+\begin{multline}
+    \gamma = \iii_{R_0^q} \Big[ e^{ i\lambda^{\mathrm{T}} \psi'' 
+    \left(X_t, Y_t, \Theta, t\right)\omega(\Theta, v)} - 1- {}\\
+    {}-i\lambda^{\mathrm{T}} 
+    \psi'' \left(X_t, Y_t, \Theta, t\right)\omega 
+    (\Theta, v)\Big]\nu_P  (\Theta, t,v)\,dv\,.
+    \label{e2.12-s}
+    \end{multline}
+
+Очевидно, что для гауссовской МСтС $\gamma \hm\equiv 0$. Тогда приходим к~известным 
+утверждениям~\cite{6-s, 8-s, 10-s}.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~1.}\ \textit{Пусть для негауссовской МСтС}~(\ref{e2.3-s}), 
+(\ref{e2.4-s}) \textit{выполнены условия существования и~един\-ст\-вен\-ности.  Тогда 
+уравнение с.к.\ оптимальной нелинейной фильт\-ра\-ции для ненормированной 
+характеристической функции $\tilde{g}_t (\lambda, \Theta)$ имеет вид}~(\ref{e2.6-s}).
+
+
+\smallskip
+
+\noindent
+\textbf{Теорема~2.}\ \textit{Пусть для гауссовской МСтС}~(\ref{e2.8-s}), 
+(\ref{e2.9-s}) \textit{выполнены условия существования и~един\-ст\-вен\-ности.
+ Тогда уравнение с.к.\ оптимальной нелинейной фильт\-ра\-ции для ненормированной 
+ характеристической функции имеет вид}~(\ref{e2.6-s}) \textit{при условии}~(\ref{e2.12-s}).
+ 
+ \smallskip
+
+
+Как известно~\cite{6-s}, необходимость обработки результатов наблюдений в~реальном
+ масштабе времени непосредственно в~процессе эксперимента\linebreak
+  привела
+ к~появлению ряда приближенных методов оптимальной нелинейной  фильтрации,
+ на\-зы\-ва\-емых обычно методами  услов\-но-оп\-ти\-маль\-ной фильт\-ра\-ции. В~этом случае 
+ для приближенного ре-\linebreak шения уравнения  для апостериорной
+одномерной характеристической функции  $g_1(\lambda, \Theta)$ вектора~$X_t$ можно
+использовать методы аналитического моделирования, основанные на параметризации
+ одномерных  распределений СтП, опре\-де\-ля\-емо\-го стохастическим
+ дифференциальным уравнением.  Эти\linebreak методы
+ позволяют изучить  стохастические дифференциальные урав\-не\-ния для па\-ра\-мет\-ров
+ апостериорного распределения. Простейшим таким\linebreak методом является
+ МНА апостериорного распределения.
+Исключительно важное практическое значение имеют квазилинейные
+фильтры, получаемые с~помощью методов эквивалентной линеаризации~\cite{6-s}.
+Эллипсоидальные УОФ, основанные на приближенном 
+решении уравнений для нормированных апостериорных распределений, рассмотрены в~\cite{3-s}, 
+а~для ненормированных~--- в~\cite{5-s}.
+
+Наряду с~методами субоптимальной фильтрации  широкое применение нашли методы, 
+средства и~информационные технологии, основанные на принципах УОФ  В.\,С.~Пугачёва~\cite{6-s}.
+
+\vspace*{-3pt}
+
+\section{Уравнения субоптимальной фильтрации}
+
+\vspace*{-2pt}
+
+
+Следуя~\cite{5-s}, аппроксимируем ненормированную
+апостериорную плотность вероятности формулой
+\begin{equation}
+\tilde p_t (x) \approx p_t^* (u) =w(u) \left[ \mu+ \sss_{\nu=1}^N
+    c_\nu p_\nu (u)\right]\,.
+    \label{e3.1-s}
+    \end{equation}
+Имеем
+\begin{equation}
+c_\nu =\mu_t {\sf M}^\raa \left[ q_\nu (U_t)\right] =\left[ q_\nu (U_\lambda) \tilde
+    g_t^\raa (\la) \right]_{\lambda=0}\,,
+    \label{e3.2-s}
+    \end{equation}
+причем
+
+\pagebreak
+
+\noindent
+    \begin{align*}
+    u &= \left(x^{\mathrm{T}} -\hat X_t^{\mathrm{T}}\right) 
+    C_t\left( x-\hat X_t\right)\,;\\
+    U_t  &= \left(X_t^{\mathrm{T}} -\hat X_t^{\mathrm{T}}\right)
+    C_t\left(X_t-\hat X_t\right)\,;\\
+    U_\lambda &= \left(\fr{\partial^{\mathrm{T}}}{i\partial\lambda} -\hat X_t\right)
+    C_t\left(\fr{\partial}{i\partial \lambda} - \hat X_t\right)\,.
+    %    \label{e3.3-s}
+    \end{align*}
+
+
+Как известно~\cite{3-s, 5-s}, для того чтобы составить стохастические 
+дифференциальные уравнения
+для коэффициентов~$c_\nu$, надо найти
+стохастический дифференциал Ито произведения $q_\chi (u) \tilde
+g_t (\lambda)$, имея в~виду, что $u$ зависит от $\hat X_t\hm = m_t/\mu_t$
+и~что~$m_t$ и~$\mu_t$ определяются стохастическими
+дифференциальными уравнениями. Потом следует заменить переменные~$x$ 
+и~$u$ операторами $\partial/(i\partial\lambda)$ и~$U_\lambda$,
+выполнить дифференцирование и~после этого положить $\lambda\hm=0$.
+
+Повторяя~\cite{5-s}, сначала получим уравнения для~$m_t$ и~$\mu_t$ 
+с~функцией~$\hat \varphi_1$, определяемой формулой
+\begin{equation*}
+\hat \varphi_1 =\mm_{\Delta^x}^{p_t} \lk \varphi_1\rk\,;
+%\label{e3.4-s}
+\end{equation*}
+c учетом обозначений
+  \begin{equation*}
+    \sigma_0 = \psi\nu_0 \psi^{\mathrm{T}}\,; \enskip
+    \sigma_1 = \psi\nu_0 \psi_1^{\mathrm{T}}\,; \enskip 
+    \sigma_2 = \psi_1\nu_0 \psi_1^{\mathrm{T}}
+%    \label{e3.5-s}
+    \end{equation*}
+их можно представить в~виде:
+\begin{multline}
+    dm_t = \left[
+    \vphantom{    \sss_{\nu=1}^N}
+    \mu_t f_0 \left(Y_t,\hat X_t,\Theta, t\right) +{}\right.\\
+\left.    {}+
+    \sss_{\nu=1}^N \hspace*{-1.4261pt}c_\nu f_\nu \left(Y_t,\hat     X_t,\Theta, t\right)\right] dt+
+\left[ \vphantom{    \sss_{\nu=1}^N}
+    \mu_t h_0 \left(Y_t,\hat X_t,\Theta, t\right) +{}\right.\\
+\left.    {}+\sss_{\nu=1}^N c_\nu
+    h_\nu \left(Y_t,\hat X_t,\Theta, t\right) 
+          \right] dY_t\,;
+    \label{e3.6-s}
+    \end{multline}
+    
+    \vspace*{-12pt}
+    
+    \noindent
+    \begin{multline}
+    d\mu_t =\left[
+    \vphantom{\sum\limits^N_{\nu=1}}
+    \mu_t b_0 \left(Y_t,\hat
+    X_t,t\right)+{}\right.\\
+\left.    {}+\sss_{\nu=1}^N c_\nu b_\nu \left(Y_t,\hat X_t,\Theta, t\right) \right]
+\, dY_t\,,
+\label{e3.7-s}
+\end{multline}
+где
+   \begin{equation}
+   \left.
+   \begin{array}{rl}
+   f_0&=f_0 \left(Y_t,\hat X_t,,\Theta, t\right) =
+   \mm_{\Delta^x}^{w} \left[ \varphi\right]\,;\\[6pt]
+    f_\nu&=f_\nu \left(Y_t,\hat X_t,,\Theta, t\right) =
+    \mm_{\Delta^x}^{w p_\nu} \left[ \varphi\right]\,;
+    \end{array}
+    \right\}
+    \label{e3.8-s}
+    \end{equation}
+      \begin{equation}
+\left.
+\begin{array}{rl}
+    h_0&=h_0 \left(Y_t,\hat X_t,\Theta, t\right) ={}\\[6pt]
+    &\hspace*{-6mm}{}=
+    \mm_{\Delta^U}^{w} \!\lk \sigma_1 \left(Y_t,\Theta, t\right)+
+    X\varphi_1 \left(X,Y_t,\Theta, t\right)^{\mathrm{T}}\rk\times{}\\[6pt]
+    &\hspace*{35mm}{}\times \sigma_2 \left(Y_t,\Theta,t\right)^{-1}\,;\\[6pt]
+    h_\nu&= h_\nu \left(Y_t,\hat X_t,\Theta, t\right)={}\\[6pt]
+    &\hspace*{-9mm}{}=\mm_{\Delta^U}^{w p_\nu}  \!\lk \sigma_1 \left(X,Y_t,\Theta, t\right)+ X\varphi_1
+   \left( X,Y_t,\Theta, t\right)^{\mathrm{T}}\rk\!\times\!{}\\[6pt]
+   &\hspace*{35mm}{}\times  \sigma_2 \left(Y_t,\Theta,t\right)^{-1};
+   \end{array}\!\!
+   \right\}\!\!
+   \label{e3.9-s}
+   \end{equation}
+   \begin{equation}
+   \left.
+   \begin{array}{rl}
+    b_0&= b_0 \left(Y_t,\hat X_t,\Theta, t\right)
+    ={}\\[6pt]
+    &\hspace*{-5mm}{}=\mm_{\Delta^U}^{w} \lk \varphi_1 \left(X,Y_t,\Theta, t\right)^{\mathrm{T}} \rk 
+    \sigma_2\left(Y_t,\Theta,t\right)^{-1}\,;\\[6pt]
+    b_\nu&=b_\nu \left(Y_t,\hat X_t,\Theta, t\right)
+={}\\[6pt]
+&\hspace*{-5mm}{}=\mm_{\Delta^U}^{w p_\nu} \lk \varphi_1\left(X,Y_t,\Theta, t\right) \rk \sigma_2
+\left(Y_t,\Theta,t\right)^{-1}\,.
+\end{array}
+\right\}
+\label{e3.10-s}
+\end{equation}
+
+Далее запишем уравнения~(\ref{e3.6-s}) и~уравнение для одномерной ненормированной
+характеристической функции в~виде:
+
+\noindent
+  \begin{gather*}
+    dm_t = f dt + h\, dY_t\,;\quad d\mu_t = b\, dY_t\,; %\label{e3.11-s}
+    \\
+d\tilde g_t = A\, dt + B\,dY_t\,. %\label{e3.12-s}
+\end{gather*}
+Здесь обозначено:
+
+\noindent
+   \begin{gather*}
+    f=\mu_t f_0
+    +\sss_{\nu=1}^N c_\nu f_\nu\,;\quad h= \mu_t h_0 +\sss_{\nu=1}^N
+    c_\nu h_\nu\,; \\
+    b= \mu_t b_0 +\sss_{\nu=1}^N c_\nu b_\nu\,;
+    \end{gather*}
+    
+    \vspace*{-14pt}
+    
+    \noindent
+    \begin{multline*}
+    A=\mm_{\Delta^x}^{\tilde{p}_t}  \biggl\{
+    i\lambda^{\mathrm{T}} \varphi \left(X,Y_t,\Theta,t\right) -{}\\
+    {}-\fr{1}{2}\,
+    \lambda^{\mathrm{T}} \left(\psi' \nu_0 {\psi'}^{\mathrm{T}}\right) 
+    \left(X,Y_t,\Theta,t\right) \lambda\times{}\\
+{}\times \iii_{R_0^q} \bigg[ e^{i\lambda^{\mathrm{T}} \psi'' 
+\left(X,Y_t,\Theta,t,v\right)} -1- {}\\
+{}-i\lambda^{\mathrm{T}}
+    \psi'' \left(X,Y_t,\Theta,t,v\right)\bigg] \nu_P (t,dv) 
+    e^{i\lambda^{\mathrm{T}} X}\biggr\}\,;
+    \end{multline*}
+    
+ \vspace*{-14pt}
+    
+    \noindent
+    \begin{multline*}
+    B=\mm_{\Delta^x}^{\tilde{p}_t}  \bigg[ 
+    \varphi_1 \left(X,Y_t,\Theta,t\right)^{\mathrm{T}} + {}\\
+    {}+
+    i\lambda^{\mathrm{T}} \left(\psi'\nu_0 {\psi'}_1^{\mathrm{T}}\right) 
+    \left(X,Y_t,\Theta,t\right)\bigg]\times{}\\
+{}\times e^{i\lambda^{\mathrm{T}} X} \left(\psi_1^\prime \nu_0 {\psi'}_1^{\mathrm{T}}\right)^{-1} 
+\left(X,Y_t,\Theta,t\right)\,.
+%    \label{e3.13-s}
+    \end{multline*}
+
+Дифференциальные уравнения для коэффициентов МОР в~(\ref{e3.1-s}) и~(\ref{e3.2-s}) 
+в~силу~\cite{5-s} имеют следующий вид:
+
+\noindent
+    \begin{multline*}
+    \hspace*{-3.42464pt}\!\!dc_\chi =\mm_{\Delta^x}^{p^*} \!\left\{ 
+    \vphantom{\fr{\mathrm{tr}\!
+ \left[ \!\left(h+ \hat X_t b\right) \!
+\sigma_1^{\mathrm{T}} C_t\!\left(\!X-\hat X_t\right)\!
+    \left(\!X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right)\! C_t\right]}{\mu_t}}\!
+    q_\chi^\prime(u) \left(2\varphi^{\mathrm{T}} C_t\!\left(
+    X-\hat X_t\right) + \mathrm{tr} \left[ C_t\sigma_0\right]\right) +{}\right.\\
+{}+2q_\chi^{\prime\prime} (u) \left(X^{\mathrm{T}} -\hat X_t^{\mathrm{T}}\right) 
+C_t\sigma_0 C_t\left(X-\hat X_t\right)+{}\\
+\hspace*{1mm}{}+\iii_{R_0^q}\! \left[ q_\chi\left(\bar u\right) -q_\chi (u) - 2 q_\chi' (u) 
+\left(X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right) C_t\psi''\right] \times{}\\
+\hspace*{1.5mm}{}\times \nu_P (t, dv) - 
+q_\chi' (u) \left(X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right) 
+C_t\left(h+\hat X_t b\right) \fr{\varphi_1}{\mu_t} +{}\\
+{}+q_\chi^\prime(u) \fr{\mathrm{tr}\, \left[ \left(h+
+    \hat X_t b\right) \sigma_1^{\mathrm{T}} C_t\right]}{\mu_t} +
+    2q_\chi^{\prime\prime}(u) \times{}
+\end{multline*}
+
+\noindent
+\begin{multline}
+\hspace*{-3pt}\left.\!\!\!\hspace*{-8.33337pt}{}\times \fr{\mathrm{tr}\!
+ \left[ \!\left(h+ \hat X_t b\right) \!
+\sigma_1^{\mathrm{T}} C_t\!\left(\!X-\hat X_t\right)\!
+    \left(\!X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right)\! C_t\right]}{\mu_t} \!\!\right\}dt +{}\\
+{} + \biggl\{ \fr{1}{2n} \left(c_{\chi-1} + 2\chi
+    c_\chi\right) \mathrm{tr} \left[ \dot C_t K_t\right]+
+     \fr{c_{\chi-1}}{2n} \times{}\\
+     {}\times\fr{\mathrm{tr} \left[ C_t h\sigma_2 h^{\!\mathrm{T}}\right]\! -\! 2
+    \hat X_t^{\mathrm{T}} C_t h \sigma_2 b^{\mathrm{T}} 
++
+    \hat X_t^{\mathrm{T}} C_t\hat X_t b \sigma_2
+    b^{\mathrm{T}}}{\mu_t^2}\!\biggr\} dt+ {}\\
+    {}+
+    \mm_{\Delta^x}^{p^*}\left\{\left[
+    \vphantom{    \left(X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right)}
+     q_\chi (u)
+    \varphi_1^{\mathrm{T}} +{}\right.\right.\\
+\left.\left.    {}+ q_\chi^\prime(u) 
+    \left(X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right) C_t\sigma_1 \right]  
+    \sigma_2^{-1}\right\} dY_t\,.
+    \label{e3.14-s}
+    \end{multline}
+
+Примем в~дополнение к~обозначениям~(\ref{e3.8-s})--(\ref{e3.10-s}) следующие:
+\begin{multline*}
+    \gamma_{\chi 0}=
+    \gamma_{\chi 0} \left(Y_t,\hat X_t,\Theta, t\right) ={}\\
+    {}=
+    \mm_{\Delta^x}^{w} \biggl\{ q_\chi^\prime(u) \left(2\varphi 
+    \left(X,Y_t,\Theta,t\right)^{\mathrm{T}} C_t\left(X-\hat X_t\right)+{}\right.\\
+    \left.{}+\mathrm{tr} 
+    \left[ C_t\sigma_0
+    \left(X,Y_t,\Theta,t\right)\right] 
+    \vphantom{\left(X,Y_t,\Theta,t\right)^{\mathrm{T}}}\!\right)+{}\\
+{}+ 2q_\chi^{\prime\prime}(u)\!\left(\!X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right)\! 
+C_t\sigma_0 \left(X,Y_t,\Theta,t\right)  C_t\!\left(\!X-\hat X_t\right)+{}\\
+{}+\iii_{R_0^q} \left[ q_\chi \left(\bar u\right) -q_\chi (u) - 2
+    q_\chi^\prime(u) \left(X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right) \times{}\right.\\
+    \left.{}\times
+    C_t\psi'' \left(X,Y_t,\Theta,t,v\right)
+    \vphantom{\left(X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right)}
+    \right] \nu_P (t,dv)\biggr\} \,;
+    \end{multline*}
+    
+\vspace*{-12pt}
+
+    \noindent
+    \begin{multline*}
+        \gamma_{\chi \nu}=
+    \gamma_{\chi \nu} \left(Y_t,\hat X_t,\Theta,t\right) ={}\\
+    {}=\mm_{\Delta^x}^{w p_\nu} \biggl\{
+    q_\chi'(u) \left(2\varphi \left(X,Y_t,\Theta,t\right)^{\mathrm{T}} 
+    C_t\left(X-\hat X_t\right)+ {}\right.\\
+\left.    {}+\mathrm{tr} \left[
+    C_t\sigma_0 \left(X,Y_t,\Theta,t\right)\right] 
+    \vphantom{\left(X-\hat X_t\right)}
+    \!\right)+{}\\
+{}+ 2q_\chi'' (u)\!\left(\!X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right)\! C_t\sigma_0
+\!    \left(\!X,Y_t,\Theta,t\right) C_t\!\left(\!X-\hat X_t\right)+{}\\
+{}+\iii_{R_0^q} \left[ q_\chi \left(\bar u\right) -q_\chi(u) - 
+2 q_\chi ' (u) \left(X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right) \times{}\right.\\
+\left.{}\times
+C_t \psi'' \left(X,Y_t,\Theta,t,v\right)
+    \vphantom{\left(X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right)}
+    \right] \nu_P (t,dv)\biggr\} \,;
+%\label{e3.15-s}
+\end{multline*}
+
+\vspace*{-12pt}
+
+    \noindent
+    \begin{multline*}
+    \varepsilon_{\chi 0}= \varepsilon_{\chi 0} \left(Y_t,\hat X_t,\Theta,t\right)
+    ={}\\
+    {}=\mm_{\Delta^x}^{w}\biggl\{ q_\chi '(u) \left[ \sigma_1 
+    \left(X,Y_t,\Theta,t\right)^{\mathrm{T}}-{}\right.\\
+\left.    {}
+    -\varphi_1 \left(X,Y_t,\Theta,t\right) 
+    \left(X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right)\right]+{}\\
+{}+ 2q_\chi'' (u)\sigma_1 \left(X,Y_t,\Theta,t\right)^{\mathrm{T}} 
+C_t\!\left(\!X-\hat X_t\right)\!\left(X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right)\!\biggr\}\,;
+\hspace*{-4.18732pt}
+\end{multline*}
+
+\vspace*{-12pt}
+
+    \noindent
+    \begin{multline*}
+    \varepsilon_{\chi \nu}= \varepsilon_{\chi \nu} \left(Y_t,\hat X_t,\Theta,t\right)
+    ={}\\
+    {}=\mm_{\Delta^x}^{w p_\nu} \biggl\{ q_\chi'(u) 
+    \left[ \sigma_1 \left(X,Y_t,\Theta,t\right)^{\mathrm{T}}
+    -{}\right.
+    \end{multline*}
+    
+\noindent
+    \begin{multline*}
+\left.    {}-\varphi_1\left(X,Y_t,\Theta,t\right)\left(X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}
+    \right)\right]+{}\\
+{}+ 2q_\chi'' (u)\sigma_1 \!\left(X,Y_t,\Theta,t\right)^{\mathrm{T}} C_t\!
+\left(X-\hat X_t\right)\!\left(X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right)\biggr\};\hspace*{-4.18732pt}
+%\label{e3.16-s}
+\end{multline*}
+
+
+    \noindent
+    \begin{multline*}
+    \eta_{\chi 0} = \eta_{\chi 0} \left(Y_t,\hat X_t,\Theta,t\right)
+    ={}\\[-2pt]
+    {}=\mm_{\Delta^x}^{w}\biggl\{ q_\chi (u) \varphi_1 \left(X,Y_t,\Theta,t\right)^{\mathrm{T}} 
+    + q_\chi' (u)\left(X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right)\times{}\\[-2pt]
+    {}\times C_t \sigma_1 \left(X,Y_t,\Theta,t\right)\biggr\}  
+    \sigma_2 \left(Y_t,\Theta,t\right)^{-1}\,;
+    \end{multline*}
+    
+    \vspace*{-12pt}
+   
+   \noindent
+    \begin{multline*}
+    \eta_{\chi \nu} =
+    \eta_{\chi \nu} \left(Y_t,\hat X_t,\Theta,t\right) ={}\\[-2pt]
+    {}=
+    \mm_{\Delta^x}^{w p_\nu} \biggl\{ q_\chi(u) \varphi_1 
+    \left(X,Y_t,\Theta,t\right)^{\mathrm{T}} + 
+    q_\chi' (u)\left(X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right)\times{}\hspace*{-1.52713pt}\\
+{}\times C_t \sigma_1 \left(X,Y_t,\Theta,t\right)\biggr\} 
+\sigma_2 \left(Y_t,\Theta,t\right)^{-1}\,.
+%\label{e3.17-s}
+\end{multline*}
+Тогда можем переписать уравнения~(\ref{e3.14-s}) в~виде:
+\begin{multline*}
+d c_\chi =\left\{
+\vphantom{\left(\fr{b_nu\left(Y_t, \hat{X}_t\right)^T}{\mu_t}\right)}
+    \mu_t\gamma_{\chi 0} \left(Y_t,\hat X_t,\Theta,t\right) + {}\right.\\[-2pt]
+    {}+
+    \sss_{\nu=1}^N c_\nu \gamma_{\chi\nu} \left(Y_t,\hat X_t,\Theta,t\right)+{}\\[-2pt]
+{}+ \mathrm{tr}\,\left[ 
+\vphantom{\fr{ c_\nu \varepsilon_{\chi\nu}
+    \left(Y_t,\hat X_t,\Theta,t\right)}{\mu_t}} 
+\mu_t\left(h_0 \left(Y_t,\hat X_t,\Theta,t\right)+\hat X_t b_0 \left(Y_t,\hat
+    X_t,\Theta,t\right)\right)+{}\right.\\[-2pt]
+{}+\sss_{\nu=1}^N c_\nu \left(h_\nu \left(Y_t,\hat X_t,\Theta,t\right) +\hat X_t
+    b_\nu \left(Y_t,\hat X_t,\Theta,t\right)\right)\times{}\\[-2pt]
+{}\times \left\{ 
+\vphantom{\fr{ c_\nu \varepsilon_{\chi\nu}
+    \left(Y_t,\hat X_t,\Theta,t\right)}{\mu_t}}
+    \varepsilon_{\chi 0}
+    \left(Y_t,\hat X_t,\Theta,t\right) +{}\right.\\[-2pt]
+\left.\left.    {}+
+    \sss_{\nu=1}^N \fr{ c_\nu \varepsilon_{\chi\nu}
+    \left(Y_t,\hat X_t,\Theta,t\right)}{\mu_t}\right\} C_t\right]+{}\\[-2pt]
+    {}+ \fr{1}{2n} \left(c_{\chi-1} +2\chi c_\chi\right)\mathrm{tr} \left[ \dot C_t
+    K_t\right]+{}\\[-2pt]
+    {}+ \fr{c_{\chi-1}}{2n}\,\mathrm{tr} \left[ 
+\vphantom{\fr{c_\nu h_\nu \left(Y_t,\hat
+    X_t,\Theta,t\right)^{\mathrm{T}}}{\mu_t}}
+C_t\left(
+\vphantom{\fr{c_\nu h_\nu \left(Y_t,\hat
+    X_t,t\right)}{\mu_t}}
+h_0
+    \left(Y_t,\hat X_t,\Theta,t\right)+{}\right.\right.\\[-2pt]
+    \left. {}+\sss_{\nu=1}^N \fr{c_\nu h_\nu \left(Y_t,\hat
+    X_t,t\right)}{\mu_t}\right) \times{}\\[-2pt]
+    {}\times
+     \sigma_2 \left(Y_t,\Theta,t\right)\left( h_0 \left(Y_t,\hat
+    X_t,\Theta,t\right)^{\mathrm{T}}+{}\right.\\[-2pt]
+    \left.\left.    {}+\sss_{\nu=1}^N \fr{c_\nu h_\nu \left(Y_t,\hat
+    X_t,\Theta,t\right)^{\mathrm{T}}}{\mu_t}\right)\right]-{}
+        \end{multline*}
+
+\noindent
+\begin{multline}
+       {}-2 \hat X_t^{\mathrm{T}} C_t \left(
+\vphantom{\fr{c_\nu h_\nu \left(Y_t,\hat X_t,\Theta,t\right)}{\mu_t}}
+h_0 \left(Y_t,\hat X_t,\Theta,t\right)
+    +{}\right.\\
+\left.    {}+ \sss_{\nu=1}^N
+    \fr{c_\nu h_\nu \left(Y_t,\hat X_t,\Theta,t\right)}{\mu_t}\right)
+    \sigma_2 \left(Y_t,\Theta,t\right)\times{}\\
+{}\times  \left( b_0 
+\left(Y_t,\hat X_t,\Theta,t\right)^{\mathrm{T}} +\sss_{\nu=1}^N
+   \fr{c_\nu b_\nu \left(Y_t,\hat X_t,\Theta,t\right)^{\mathrm{T}}}{\mu_t}\right)+{}\\
+{}+\hat X_t^{\mathrm{T}} C_t \hat X_t \left( 
+\vphantom{\fr{c_\nu h_\nu \left(Y_t,\hat X_t,\Theta,t\right)}{\mu_t}}
+b_0 
+\left(Y_t,\hat X_t,\Theta,t\right)+{}\right.\\
+\left.{}+\sss_{\nu=1}^N c_\nu
+   \fr{b_\nu \left(Y_t,\hat X_t,\Theta,t\right)}{\mu_t}\right)\sigma_2 \left(Y_t,\Theta,t\right)\times{}\\
+\left.{}\times  \left( \!
+b_0 \left(Y_t,\hat X_t,\Theta,t\right) +\!\sss_{\nu=1}^N \!\!c_\nu
+\fr{b_\nu \left(Y_t,\hat X_t,\Theta,t\right)^{\!\mathrm{T}}}{\mu_t}\!\right)\!\! \right\} dt+{}\hspace*{-.57072pt}\\
+{}+\left\{ \mu_t\eta_{\chi 0} \left(Y_t,\hat X_t,\Theta,t\right) +
+ \sss_{\nu=1}^N \!c_\nu
+    \eta_{\chi\nu} \left(Y_t,\hat X_t,\Theta,t\right)\!\right\}  dY_t\hspace*{-1.78561pt}\\
+     (\chi =1\tr     N)\,.
+    \label{e3.18-s}
+    \end{multline}
+
+Уравнения~(\ref{e3.6-s}), (\ref{e3.7-s}), (\ref{e3.18-s}) и~соотношение $\hat X_t
+\hm= m_t/\mu_t$ при начальных условиях
+\begin{equation}
+\left.
+\begin{array}{c}
+m\left(t_0\right) =\mathrm{M}\left[ X_0\mid Y_0\right]\,;\enskip 
+\mu\left(t_0\right) = 1\,;\\[6pt] 
+c_\chi \left(t_0\right) =c_{\chi 0}\enskip (\chi =1\tr  N),
+\end{array}
+\right\}
+\label{e3.19-s}
+\end{equation}
+где $c_{\chi 0}$ $(\chi\hm=1\tr N)$~--- коэффициенты разложения~(\ref{e3.1-s}) 
+условной плотности вероятности $\tilde p_{t_0} (x) \hm= p_0 (x\mid Y_0)$ 
+вектора~$X_0$ относительно~$Y_0$, определяют
+МЭСОФ.
+
+После решения уравнений~(\ref{e3.7-s}) и~(\ref{e3.18-s})  с.к.\ оптимальная оценка
+вектора состояния и~ковариационная матрица ошибки фильтрации 
+в~МЭСОФ определяют\-ся по следующим приближенным формулам:
+    \begin{align}
+    \hat X_t &= \fr{m_t}{\mu_t}\,;\label{e3.20-s}\\
+    R_t &= \mm_{\Delta^x}^{w} \left[\left( X-\fr{m_t}{\mu_t}\right) 
+    \left( X^{\mathrm{T}}-\fr{m_t^{\mathrm{T}}}{\mu_t}\right)\right] +{}\notag\\
+   &\hspace*{-5mm}{}+ \sss_{\nu=1}^N \fr{c_\nu}{\mu_t} \mm_{\Delta^x}^{w p_\nu}\left[
+    \left( X-\fr{m_t}{\mu_t}\right) \left( X^{\mathrm{T}}-
+    \fr{m_t^{\mathrm{T}}}{\mu_t}\right) \right]\,.
+    \label{e3.21-s}
+    \end{align}
+
+Порядок МЭСОФ особенно при большой размерности~$n$~вектора состояния
+системы значительно ниже порядка других УОФ. 
+Так, при учете в~разложении~(\ref{e3.7-s}) моментов до десятого
+порядка, уже при $n\hm>3$,
+ $N\hm=5$ имеем $n\hm+ N\hm+1 \hm\le n(n\hm+3)/2$.
+При $n\hm>3$, $N\hm=5$ МЭУОФ имеет более низкий порядок, чем фильтры 
+МНА, обобщенный фильтр Кал\-ма\-на--Бью\-си, фильтры
+второго порядка и~гауссовский фильтр.
+
+Таким образом, в~основе алгоритма модифицированной эллипсоидальной 
+услов\-но-оп\-ти\-маль\-ной нелинейной фильтрации лежат следующие утверждения.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~3.}\
+\textit{В~условиях теоремы~$1$, если МЭУОФ существует, то он 
+определяется уравнениями}~(\ref{e3.6-s}), (\ref{e3.7-s}) и~(\ref{e3.18-s}) 
+\textit{при условиях}~(\ref{e3.19-s})--(\ref{e3.21-s}).
+
+\smallskip
+
+\noindent
+\textbf{Теорема~4.}\
+\textit{В~условиях теоремы~$2$, если МЭУОФ существует, то он определяется 
+уравнениями теоремы~$3$ при условиях}~(\ref{e2.12-s}).
+
+\smallskip
+
+Следуя~\cite{5-s} для приближенного анализа фильт\-ра\-ционных уравнений и~учитывая 
+случайность параметров~$\Theta$, придем к~следующим уравнениям для функций 
+чувствительности первого порядка~\cite{3-s}:
+\begin{equation}
+\left.
+\begin{array}{rl}
+\hspace*{-15mm}d\nabla^\Theta \hat X_s &= \nabla^\Theta A^{\hat X_s}\, dt + 
+\nabla^\Theta B^{\hat X_s}\,dY_t\,,\\[6pt] 
+&\hspace*{25mm}\nabla^\Theta B^{\hat X_s}(t_0) =0\,; \\[6pt]
+\hspace*{-15mm}d\nabla^\Theta R_{sq} &= \nabla^\Theta A^{R_{sq}} \,dt + 
+\nabla^\Theta B^{R_{sq}}\,dY_t\,, \\[6pt] 
+&\hspace*{25mm}\nabla^\Theta R_{sq}(t_0) =0\,;\\[6pt]
+\hspace*{-15mm}d\nabla^\Theta c_{\kappa} &= \nabla^\Theta A^{c_\kappa}\, dt + 
+\nabla^\Theta B^{c_\kappa}\,dY_t\,,\\[6pt]
+& \hspace*{25mm}\nabla^\Theta c_\kappa(t_0) =0\,.
+    \end{array}
+    \right\}\hspace*{-3mm}
+    \label{e3.22-s}
+    \end{equation}
+Здесь процедура взятия производных осуществляется по всем входящим 
+переменным, а~коэффициенты чувствительности вычисляются при\linebreak  $\Theta\hm=m^\Theta$. 
+При этом предполагается малость дис\-пер\-сий по сравнению с~их математическими 
+ожиданиями. Очевидно, что при дифференцировании по~$\Theta$ 
+$(\nabla^\Theta \hm= \prt /\prt\Theta)$
+порядок уравнений возрастает пропорционально числу производных. Аналогично 
+составляются уравнения для элементов матриц вторых функций чувствительности.
+
+Для оценки качества МЭСОФ, следуя~\cite{5-s}, при гауссовских~$\Theta$ 
+с~математическим ожиданием~$m^\Theta$ и~ковариационной матрицей~$K^\Theta$ 
+введем условную функцию потерь, допускающую квадратичную аппроксимацию:
+\begin{multline}
+\rho^{\hat X_s}=\rho^{\hat X_s}(\Theta) =
+\rho \left(m^\Theta\right) +\sss_{ii=1}^{n^\Theta} \rho_i' 
+\left(m^\Theta\right)\Theta_s^0+ {}\\
+{}+\ss2\limits_{i,j=1} \rho_{ij}'' 
+\left(m^\Theta\right)\Theta_i^0 \Theta_j^0\,,
+\label{e3.23-s}
+\end{multline}
+а также показатель~$\varepsilon$
+    \begin{equation}
+    \varepsilon =\varepsilon_2^{1/4}\,,\label{e3.24-s}
+    \end{equation}
+где введено обозначение:
+
+\noindent
+  \begin{equation}
+    \eps_2 = \mm^{\mathrm{ЭА}} \lk \rho (\Theta)^2\rk -\rho \left(m^\Theta\right)^2.
+    \label{e3.25-s}
+    \end{equation}
+    Здесь
+    \begin{multline*}
+   \mm^{\mathrm{ЭА}} \lk \rho(\Theta)^2\rk = 
+   \rho \left(m^\Theta\right)^2 +\rho' \left(m^\Theta\right)^{\mathrm{T}} K^\Theta 
+   \rho'\left(m^\Theta\right)+ {}\\
+   {}+2\rho\left(m^\Theta\right) 
+   \mathrm{tr} \left[ \rho''\left(m^\Theta\right)K^\Theta\right]
++\left\{ \mathrm{tr} \left[ \rho'' \left(m^\Theta\right) 
+K^\Theta\right] \right\}^2+{}\\
+{}+2\mathrm{tr} 
+\left[ \rho''\left(m^\Theta\right) K^\Theta\right]^2\,,
+\end{multline*}
+при этом функции $\rho'$ и~$\rho''$ по известным формулам определяются на
+ основе первых и~вторых функций чувствительности.
+Таким образом, в~основе оценки качества МЭСОФ, в~условиях теорем~3 и~4, 
+лежат уравнения~(\ref{e3.22-s})--(\ref{e3.25-s}) при 
+существовании соответствующих производных в~правых частях уравнений~(\ref{e3.22-s}) 
+(\textbf{теорема~5}).
+
+Изложенные выше методы синтеза МЭСОФ дают
+принципиальную возможность получить фильтр, близкий к~оптимальному по
+оценке с~любой степенью точности.
+Чем выше максимальный порядок учитываемых моментов,
+коэффициент ЭА, тем выше будет точность
+приближения к~оптимальной оценке. Однако число уравнений,
+опре\-де\-ля\-ющих параметры апостериорного одномерного эл\-лип\-со\-и\-даль\-но\-го 
+распределения, быстро растет с~увеличением числа учитываемых па\-ра\-метров.
+
+
+\vspace*{-4pt}
+
+\section{Основные классы модифицированных эллипсоидальных условно-оптимальных
+фильтров}
+
+\vspace*{-2pt}
+
+
+\textbf{4.1.}\ Рассмотрим задачу услов\-но-оп\-ти\-маль\-ной фильтрации, когда 
+требуется найти оптимальную оценку~$\hat X_t$  процесса~$X_t$ в~момент  $t\hm>t_0$ 
+по результатам наблюдения этого процесса до момента~$t$ (т.\,е.\ на интервале
+$[t_0,t)$) в~классе допустимых оценок, определяемых формулой $\hat X_t \hm= A U_t$ 
+и~стохастическим дифференциальным уравнением вида
+  \begin{multline}
+  dU_t ={}\\
+  {}+\left[ \alpha_t\xi (Y_t,\hXt,t)+\gamma_t \right] dt +\beta_t\eta \left(Y_t,\hXt,t\right)
+    dY_t\label{e4.1-s}
+    \end{multline}
+при заданных векторной и~матричной структурных функциях~$\xi$
+и~$\eta$ и~при всех возможных функциях времени~$\alpha_t$, $\beta_t$
+и~$\gamma_t$ ($\alpha_t$ и~$\beta_t$~--- матрицы; $\gamma_t$~---
+вектор). В~качестве критерия
+оптимальности примем критерий минимума с.к.\ ошибки
+оценки~$\hXt$.
+Как известно~\cite{6-s}, самым сложным вопросом в~практических
+применениях теории услов\-но-оп\-ти\-маль\-ной фильт\-ра\-ции является вопрос
+о~выборе класса до\-пус\-ти\-мых фильтров, опре\-де\-ля\-емо\-го заданием
+структурных функций~$\xi$ и~$\eta$ в~уравнении~(\ref{e4.1-s}). 
+В~принципе, их можно задать произвольно. При желании можно выбрать~$\xi$ 
+и~$\eta$ так, чтобы класс допустимых фильтров содержал
+произвольно заданный УОФ. В~этом случае
+такой фильтр будет практически всегда точнее заданного
+услов\-но-оп\-ти\-маль\-но\-го. В~то же время, выбрав в~качестве компонент
+векторной функции~$\xi$ и~элементов матричной функции~$\eta$
+конечный отрезок некоторого базиса в~соответствующем гильбертовом
+пространстве~$L_2$, можно получить приближение с~любой степенью
+точ\-ности к~неизвестным оптимальным функциям~$\xi$ и~$\eta$.
+По-ви\-ди\-мо\-му, это наиболее рациональный способ выбора функций~$\xi$, $\eta$, 
+основанный на уравнениях теории услов\-но-оп\-ти\-маль\-ной
+фильтрации (см.\ разд.~3). При этом новые возможности
+открывают уравнения УОФ, полученные из
+уравнения для ненормированной апостериорной характеристической функции.
+
+\textbf{4.2.} Для применения уравнений МЭСОФ, полученных из ненормированных
+уравнений для апостериорного распределения, необходимо изменить
+постановку задач услов\-но-оп\-ти\-маль\-ной фильтрации~\cite{6-s} так,
+чтобы использовать уравнение для множителя~$\mu_t $.
+
+С~этой целью воспользуемся для определения класса допустимых
+МЭУОФ~(\ref{e4.1-s}) уравнениями:
+
+\noindent
+\begin{align}
+d\mu_t &=\rho_t \chi \left(Y_t,\hXt,t\right) d Y_t\,;\label{e4.2-s}\\
+    \hat X_t &= \fr{A \hXt }{\mu_t}\,,\notag %\label{e4.3-s}
+    \end{align}
+где $\chi (Y_t,\hXt,t)$~--- некоторая заданная матричная функция;
+$\rho_t$~--- мат\-ри\-ца-стро\-ка коэффициентов, зависящих  
+от~$t$ и~подлежащих оптимизации наряду с~коэффициентами~$\alpha_t$,
+$\beta_t$ и~$\gamma_t$ в~уравнении фильт\-ра~(\ref{e4.1-s}).
+
+Основываясь на результатах разд.~3, можно выделить два класса
+допустимых МЭУОФ.
+
+\textbf{4.3.\ Первый класс}. Этот важный класс допустимых МЭУОФ можно
+получить, положив $U_t \hm=m_t$, $ A\hm=I_n$ и~определив функции~$\xi$,
+$\eta$ и~$\chi$ в~(\ref{e4.1-s}) и~(\ref{e4.2-s}), руководствуясь уравнениями~(\ref{e3.6-s}) 
+и~(\ref{e3.7-s}). Это дает следующие выражения для структурных
+функций:
+
+
+\noindent
+ \begin{multline*}
+ \xi=\xi \left(Y_t,\hXt,t\right) ={}\\[-2pt]
+ {}=
+  \left[ 
+ \mu_t f_0 \left(Y_t,\fr{\hXt}{\mu_t},t\right)^{\mathrm{T}} f_1 
+ \left(Y_t,\fr{\hXt}{\mu_t},t\right)^{\mathrm{T}}\cdots\right.\\[-6pt]
+\left. \cdots   f_N \left(Y_t,\fr{\hXt}{\mu_t},t\right)^{\mathrm{T}}
+\right]^{\mathrm{T}}\,; %\label{e4.4-s}
+\end{multline*}
+
+
+\noindent
+\begin{multline*}
+    \eta=\eta \left(Y_t,\hXt,t\right) ={}\\
+    {}= \left[ 
+    \mu_t h_0 \left(Y_t,\fr{\hXt}{\mu_t},t\right)^{\mathrm{T}} h_1 
+    \left(Y_t,\fr{\hXt}{\mu_t},t\right)^{\mathrm{T}}\cdots\right.\\
+\left.\cdots    h_N\left(Y_t,\fr{\hXt}{\mu_t},t\right)^{\mathrm{T}}\right]^{\mathrm{T}}
+\,;
+%\label{e4.5-s}
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+\chi=\chi \left(Y_t,\hXt,t\right) = {}\\
+{}=\left[ \mu_t b_0 
+\left(Y_t,\fr{\hXt}{\mu_t},t\right)^{\mathrm{T}} b_1 
+\left(Y_t,\fr{\hXt}{\mu_t},t\right)^{\mathrm{T}}\cdots\right.
+\\
+\left.\cdots    b_N \left(Y_t,\fr{\hXt}{\mu_t},t\right)^{\mathrm{T}}
+\right]^{\mathrm{T}}\,,
+%\label{e4.6)-s}
+\end{multline*}
+при этом порядок МЭУОФ, определяемого уравнениями~(\ref{e4.1-s}) и~(\ref{e4.2-s}),
+ будет равен~$n\hm+1$.
+
+\textbf{4.4.\ Второй класс}. Для получения более широкого класса
+допустимых МЭУОФ перепишем уравнение~(\ref{e3.18-s}) в~виде:
+    \begin{multline}
+    dc_\chi = \left\{ F_{\chi 0}\left(Y_t,\hat X_t,t\right) + \sss_{\nu=1}^N
+    c_\nu F_{\chi\nu} \left(Y_t,\hat X_t,t\right)+{}\right.\\
+{}+\sss_{\lambda,\nu=1}^N c_\lambda  c_\nu F_{\chi\lambda\nu} 
+\left(Y_t,\hat X_t,t\right) +{}\\
+\left.{}+ c_{\chi-1} \sss_{\lambda,\nu=1}^N
+    c_\lambda c_\nu F_{\chi\lambda\nu}' \left(Y_t,\hat X_t,t\right)\right\} dt+{}\\
+{}+\left\{ \vphantom{\sss_{\nu=1}^N}
+\mu_t
+    \eta_{\chi 0} \left(Y_t,\hat X_t,t\right) +{}\right.\\
+\left.    {}+ \sss_{\nu=1}^N c_\nu \eta_{\chi \nu}
+    \left(Y_t,\hat X_t,t\right)\right\} dY_t\,.\label{e4.7-s}
+    \end{multline}
+Здесь введены следующие обозначения:
+\begin{multline*}
+    F_{\chi 0} \left(Y_t,\hat X_t,t\right) = 
+    \mu_t\gamma_{\chi 0} \left(Y_t,\hat X_t,t\right)+{}\\
+    {}+
+    \mu_t \mathrm{tr} \left[ \left(h_0 \left(Y_t,\hat X_t,t\right)+{}\right.\right.\\
+\left.\left.{}+ \hat X_t b_0 \left(Y_t,\hat X_t,t\right)\right) \varepsilon_{\chi 0} 
+\left(Y_t,\hat X_t,t\right)\right]\,;
+%\label{e4.8-s}
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+F_{\chi \nu} \left(Y_t,\hat X_t,t\right) =
+    \gamma_{\chi 0} \left(Y_t,\hat X_t,t\right)+ {}\\
+    {}+\mathrm{tr} 
+    \left[ \left(h_\nu \left(Y_t,\hat X_t,t\right)+{}\right.\right.\\
+    \left.    {}+
+    \hat X_t b_\nu \left(Y_t,\hat X_t,t\right)\right) 
+\varepsilon_{\chi 0} \left(Y_t,\hat X_t,t\right)
++{}\\
+\left.{}+ \left(h_0 \!\left(\!Y_t,\hat X_t,t\right)+ 
+\hat X_t b_0 \!\left(\!Y_t,\hat X_t,t\right)\!\right)
+    \varepsilon_{\chi \nu}\! \left(\!Y_t,\hat X_t,t\right)\!\right]+{}\hspace*{-6.10587pt}
+    \end{multline*}
+    
+    \noindent
+    \begin{multline*}
+{}+\fr{1}{2n}\,
+    \delta_{\chi-1,\nu} \left\{
+    \mathrm{tr} \left[ 
+        \vphantom{b_0 \left(Y_t,\hat X_t,t\right)^{\!\mathrm{T}}}
+        b_\nu K_t+{}\right.\right.\\
+\left.  {}+ C_th_0 \left(Y_t,\hat
+    X_t,t\right)\sigma_2 \left(Y_t,t\right) h_0
+    \left(Y_t,\hat X_t,t\right)^{\!\mathrm{T}}\right]-{}\\
+{}-2\hat X_t^{\mathrm{T}} C_t h_0 \left(Y_t,\hat X_t,t\right)\sigma_2 
+\left(Y_t,t\right) 
+b_0\left(Y_t,\hat X_t,t\right)^{\!\mathrm{T}}+{}\\
+\left.{}+\hat X_t^{\mathrm{T}} C_t\hat X_t b_0\left(Y_t,\hat X_t,t\right)
+\sigma_2\left(Y_t,t\right) b_0 \left(Y_t,\hat X_t,t\right)^{\!\mathrm{T}}\right\}+{}\\
+{}+
+\fr{1}{n} \, \chi\delta_{\chi\nu} \mathrm{tr} \left[ \dot C_t K_t\right]\,;
+%\label{e4.9-s}
+\end{multline*}
+
+\vspace*{-14pt}
+
+\noindent
+\begin{multline*}
+F_{\chi \lambda \nu} = \fr{1}{\mu_t}\,\mathrm{tr} \left[ 
+\vphantom{\hat X_t  b_\lambda \!\left(\!Y_t,\hat X_t,t\right)}
+C_t\left(
+h_\lambda \left(Y_t,\hat X_t,t\right) +{}\right.\right.\\
+\left.\left.\!{}+
+\hat X_t  b_\lambda \!\left(\!Y_t,\hat X_t,t\right)\!\right)\! \varepsilon_{\chi \nu}
+    \left(Y_t,\hat X_t,t\right) \right]+\fr{1}{n}\,\delta_{\chi-1,\lambda} \fr{1}{\mu_t}\times{}\\
+{}\times\left\{
+    \mathrm{tr}\left[ C_t h_0 \left(Y_t,\hat X_t,t\right) 
+    \sigma_2 \left(Y_t,t\right) h_\nu \left(Y_t,\hat X_t,t\right)^{\mathrm{T}}\right] -\right.{}\\
+{}-\hat X_t^{\mathrm{T}} C_t
+h_0 \left(Y_t,\hat X_t,t\right)\sigma_2 
+\left(Y_t,t\right) b_\nu  \left(Y_t,\hat X_t,t\right)^{\mathrm{T}}+{}\\
+    {}+ h_\nu \left(Y_t,\hat X_t,t\right)\sigma_2 \left(Y_t,t\right) b_0 \left(Y_t,\hat
+    X_t,t\right)^{\mathrm{T}} +{}\\
+\left.{}+\hat X_t^{\mathrm{T}} C_t\hat X_t b_0 \left(Y_t,\hat X_t,t\right) 
+\sigma_2 \left(Y_t,t\right) 
+b_\nu \left(Y_t,\hat X_t,t\right)^{\mathrm{T}}\right\};\hspace*{-2.70535pt}
+%\label{e4.10-s}
+\end{multline*}
+
+\vspace*{-14pt}
+
+\noindent
+\begin{multline*}
+ F_{\chi \la \nu}' =\fr{1}{2n}\,\fr{1}{\mu_t^2}\left\{ \mathrm{tr} 
+ \left[ 
+ \vphantom{\left(Y_t,\hat  X_t,t\right)^{\mathrm{T}}}
+ C_t  h_\lambda \left(Y_t,\hat X_t,t\right) +{}\right.\right.\\
+\left. {}+\sigma_2 \left(Y_t,t\right)
+    h_\nu \left(Y_t,\hat X_t,t\right)^{\mathrm{T}}\right] -{}\\
+{}-2\hat X_t^{\mathrm{T}} C_th_\lambda \left(Y_t,\hat X_t,t\right)\sigma_2
+    \left(Y_t,t\right) b_\nu \left(Y_t,\hat X_t,t\right)^{\mathrm{T}}+{}\\
+\left.{}+\hat X_t^{\mathrm{T}} C_t\hat X_t b_\lambda \left( Y_t,\hat X_t,t\right) 
+\sigma_2 \left(Y_t,t\right) b_\nu \left(Y_t,\hat  X_t,t\right)^{\!\mathrm{T}}\right\}.\hspace*{-2.09656pt}
+%\label{e4.11-s}
+\end{multline*}
+
+Взяв за основу для построения класса допустимых МЭУОФ уравнения~(\ref{e3.6-s}), 
+(\ref{e3.7-s}) и~(\ref{e4.7-s}), следует принять за
+компоненты вектора~$\hXt$ все компоненты вектора~$m_t$ и~коэффициенты $c_1\tr c_N$, 
+так что $ \hXt\hm=\lk m_t^{\mathrm{T}} c_1\cdots
+c_N\rk^{\mathrm{T}}$. Порядок всех допустимых фильтров при этом равен
+$n\hm+N\hm+1$.
+
+\textbf{4.5.}\ Для нахождения коэффициентов~$\alpha_t$, $\beta_t$ и~$\gamma_t$
+уравнения МЭУОФ~(\ref{e4.1-s}) необходимо знать совместное одномерное
+распределение случайных процессов~$X_t$ и~$\hat X_t$. Это
+распределение находится  путем решения задачи анализа системы,
+описываемой стохастическими дифференциальными уравнениями~(\ref{e4.1-s})
+и~(\ref{e4.2-s}). Как всегда в~тео\-рии услов\-но-оп\-ти\-маль\-ной фильтрации,
+все сложные вычисления, необходимые для нахождения оптимальных
+коэффициентов уравнения МЭУОФ~(\ref{e4.1-s}) или~(\ref{e4.2-s}), основаны
+только на априорных данных и~поэтому могут быть выполнены заранее
+в~процессе проектирования МЭУОФ. При этом может быть определена
+ и~точ\-ность фильтрации для каждого допустимо-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+го МЭУОФ. Сам же процесс
+фильтрации сводится к~решению дифференциального уравнения, что
+дает возможность производить фильтрацию в~реальном времени.
+
+Таким образом, приходим к~следующему результату.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~6.}\ \textit{В~условиях теоремы~$1$ 
+уравнения \mbox{МЭУОФ} вида}~(\ref{e4.1-s}), (\ref{e4.2-s}) 
+\textit{будут совпадать с~уравнениями \mbox{МЭСОФ} $($см.\ разд.~$3)$, если структурные функции УОФ 
+выбрать из описанных выше классов. При этом качество МЭУОФ оценивается согласно 
+тео\-ре\-ме~$5$}.
+
+\section{Квазилинейные модифицированные эллипсоидальные условно-оптимальные фильтры}
+
+Построим квазилинейный МЭУОФ на основе МЭЛ для МСтС~(\ref{e2.1-s}), 
+(\ref{e2.2-s}) при $\psi'\hm=\psi'(\Theta,t)$, $\psi''\hm=\psi''(\Theta,t,v)$, 
+$\psi_1'\hm=\psi_1'(\Theta,t)$ и~$\psi_1''\hm=\psi_1''(\Theta,t,v)$ (т.\,е.\
+ с~аддитивными винеровскими и~пуассоновскими шумами). Уравнения ЭСОФ 
+ проще получаются, если нелинейные функции~$\varphi$ и~$\varphi_1$ 
+ на основе эл\-лип\-со\-и\-даль\-но\-го распределения с~известным~$c_\nu$ заменить 
+ на статистически линеаризованные:
+\begin{multline}
+\varphi =\varphi \left( X_t, Y_t, \Theta, t\right) \approx {}\\
+{}\approx
+\varphi_0^{\mathrm{э}} + k_x^{\mathrm{э}\varphi} \left(X_t - m_t^x\right) +
+k_y^{\mathrm{э}\varphi} \left(Y_t - m_t^y\right)\,;\label{e5.1-s}
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\varphi_1 = \varphi_1\left( X_t, Y_t, \Theta, t\right) \approx{}\\
+{}\approx 
+\varphi_{10}^{\mathrm{э}}  + k_x^{\mathrm{э}\varphi_1}  \left(X_t - m_t^x\right) + 
+k_y^{\mathrm{э}\varphi_1} \left(Y_t - m_t^y\right)\,,\label{e5.2-s}
+\end{multline}
+а затем использовать уравнения линейной фильт\-ра\-ции~\cite{6-s}. 
+Входящие в~(\ref{e5.1-s}), (\ref{e5.2-s}) 
+коэффициенты с~МЭЛ зависят от математических ожиданий, дисперсий и~ковариаций:
+    $$
+    Z_t =\begin{bmatrix}
+     X_t\\ Y_t
+     \end{bmatrix}\,; \enskip 
+     m_t^z =\begin{bmatrix}
+     m_t^x\\ m_t^y\end{bmatrix}\,;\enskip 
+     K_t^z=\begin{bmatrix}
+      K_t^x&K_t^{xy}\\
+      K_t^{xy}&K_t^y\end{bmatrix}\,.
+      $$
+Они определяются из уравнений:
+    \begin{align*}
+    \dot Z_t &= A^z Z_t + A_0^z + B_0^z V \,,\enskip V= \dot W\,; %\label{e5.3-s}
+    \\
+    \dot m_t^z &= A^z m_t^z + A_0^z \,,\enskip m_{t_0}^Z = m_0^z\,;\\ %\label{e5.4-s}\\
+    \dot K_t^z &= B^z K_t^z + K_t^z (B^z)^{\mathrm{T}} + B_0^z \nu^m 
+    \left(B_0^z\right)^{\!\mathrm{T}}\!,\ K_{t_0}^z &= K_0^z.\hspace*{-0.111pt} %\label{e5.5-s}
+    \end{align*}
+Здесь введены следующие обозначения:
+    $$
+    A_0^z = \begin{bmatrix} 
+    a_0\\ b_0\end{bmatrix}\,;\enskip 
+    A^z =\begin{bmatrix} 
+    a_1&a\\ 
+    b_1&b\end{bmatrix}\,;\enskip 
+    B_0^z =\begin{bmatrix} 
+    \bar \psi\\ \bar\psi_1\end{bmatrix}\,;
+    $$
+   \begin{alignat*}{3}
+    a&= k_y^{\mathrm{э}\varphi} \,;&\enskip 
+    a_1 &= k_x^{\mathrm{э}\varphi} \,;&\enskip 
+    a_0 &=\varphi_0^{\mathrm{э}}  - k_x^{\mathrm{э}\varphi}  m_t^x - 
+    k_y^{\mathrm{э}\varphi}  m_t^y\,;
+    \\
+    b&= k_y^{\mathrm{э}\varphi_1} \,; &\enskip 
+    b_1&=k_x^{\mathrm{э}\varphi_1}\,;&\enskip 
+    b_0&=\varphi_0^{\mathrm{э}}  -k_x^{\mathrm{э}\varphi_1}  m_t^x -
+    k_y^{\mathrm{э}\varphi_1} m_t^y\,; %\label{e5.6-s}
+    \end{alignat*}
+\begin{equation}
+\left.
+\begin{array}{rl}
+\psi \,dW_0 + \iii_{R_0^q} \psi'' P^0 (dt, dv) &=\bar \psi \, dW\,;\\[6pt] 
+\psi_1' \,dW_0 + \iii_{R_0^q} \psi_1'' P^0 (dt, dv)&= \bar \psi_1\, dW\,,
+\end{array}
+\right\}
+\label{e5.7-s}
+\end{equation}
+где $\nu^W$~--- интенсивность СтП с~независимыми приращениями, состоящего
+ из винеровской и~пуассоновской частей~(\ref{e5.7-s}). 
+ Тогда уравнения квазилинейного ЭУОФ будут иметь вид:
+   \begin{multline}
+   \hat X_t = a Y_t + a_1\hat X_t + a_0 + {}\\
+   {}+\beta_t \left[ 
+    Z_t - \left(bY_t + b_1 \hat X_t + b_0\right)\right]\,.
+    \label{e5.8-s}
+ \end{multline}
+ Здесь
+ 
+ \noindent
+\begin{equation}
+    \beta_t = \left(R_t b_1^{\mathrm{T}} + \bar\psi \nu^W \bar\psi_1^{\mathrm{T}}\right) 
+    \left(\bar\psi_1\nu^W\bar\psi_1^{\mathrm{T}}\right)^{-1}\,,
+\label{e5.9-s}
+ \end{equation}
+ где
+ 
+ \noindent
+\begin{multline}
+    \dot R_t = a_1 R_t + R_t a_1^{\mathrm{T}} + \bar\psi \nu^W \bar\psi^{\mathrm{T}} - {}\\
+    {}-
+    \left(R_t b_1^{\mathrm{T}} +\bar\psi \nu^W\bar\psi_1^{\mathrm{T}}\right)
+    \left(\bar\psi_1 \nu^W\bar\psi_1^{\mathrm{T}}\right)^{-1} \times{}\\
+    {}\times
+    \left(b_1 R_t + \bar\psi_1 \nu^W\bar\psi^{\mathrm{T}}\right)\,.
+\label{e5.10-s}
+ \end{multline}
+ 
+ \vspace*{-3pt}
+
+
+\noindent
+\textbf{Теорема~7.}\ \textit{Пусть МСтС}~(\ref{e2.1-s}), (\ref{e2.2-s}) 
+\textit{содержит только аддитивные винеровские и~пуассоновские шумы и~допускает 
+замену статистически линеаризованной, а~мат\-ри\-ца  $\sigma_1 \hm=
+\bar\psi_1 \nu^W \bar\psi_1^{\mathrm{T}}$ не вырождена. Тогда 
+в~основе алгоритма квазилинейного МЭУОФ лежат уравнения}~(\ref{e5.8-s})--(\ref{e5.10-s}) 
+\textit{при соответствующих начальных условиях}.
+
+\vspace*{-12pt}
+
+\section{Заключение}
+
+\vspace*{-2pt}
+
+Разработана теория аналитического синтеза 
+МЭУОФ для нелинейных дифференциальных гауссовских и~негауссовских МСтС~(\ref{e2.3-s}), 
+(\ref{e2.4-s}) и~(\ref{e2.8-s}), (\ref{e2.9-s}) 
+на основе МЭА и~МЭЛ.  Алгоритмы ЭУОФ положены в~основу разрабатываемого модуля 
+экспериментального программного обеспечения  StS-Filter (version 2017).
+
+Результаты допускают обобщение на случай дискретных  и~не\-пре\-рыв\-но-дис\-крет\-ных МСтС, 
+а~также автокоррелированных МСтС.
+
+Теоретический и~практический интерес представляет теория  МЭСОФ и~МЭУОФ для МСтС~(\ref{e2.1-s}) 
+и~(\ref{e2.2-s}).
+
+\vspace*{-12pt}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+ \vspace*{-2pt}
+ 
+\bibitem{1-s}
+\Au{Синицын И.\,Н.}
+Ортогональные субоптимальные фильтры для нелинейных стохастических систем 
+на многообразиях~// Информатика и~её применения, 2016. Т.~10. Вып.~1. С.~34--44.
+
+\bibitem{2-s}
+\Au{Синицын И.\,Н.}
+Нормальные и~ортогональные субоптимальные фильтры для нелинейных стохастических 
+сис\-тем на многообразиях~// Системы и~средства информатики, 2016. Т.~26. №\,1. С.~199--226.
+
+\bibitem{3-s}
+\Au{Синицын И.\,Н., Синицын~В.\,И., Корепанов~Э.\,Р.}
+Эллипсоидальные субоптимальные фильтры для нелинейных 
+стохастических систем на многообразиях~// Информатика и~её применения, 2016. Т.~10. Вып.~2. С.~24--35.
+
+\bibitem{4-s}
+\Au{Синицын И.\,Н., Синицын~В.\,И.}
+Лекции по теории нормальной и~эллипсоидальной аппроксимации распределений 
+в~стохастических системах.~--- М.: ТОРУС ПРЕСС, 2013. 488~с.
+
+
+
+\bibitem{6-s}
+\Au{Синицын И.\,Н.}
+Фильтры Калмана и~Пугачева.~--- 2-е изд.~--- М.: Логос, 2007. 776~с.
+
+\bibitem{5-s}
+\Au{Синицын И.\,Н., Синицын~В.\,И., Корепанов~Э.\,Р.}
+Модифицированные эллипсоидальные субоптимальные фильтры 
+для нелинейных стохастических систем на многообразиях~// 
+Системы и~средства информатики, 2016. Т.~26. №\,2. С.~79--97.
+
+\bibitem{7-s}
+\Au{Пугачёв В.\,С., Синицын И.\,Н.}
+Теория стохастических систем.~--- М.: Логос, 2000; 2004. 1000~с.
+%[Англ. пер. Stochastic Systems. Theory and  Applications. --
+%Singapore: World Scientific, 2001. 908~p.].
+
+\bibitem{8-s}
+\Au{Wonham W.\,M.}
+Some applications of stochastic differential equations to optimal
+nonlinear filtering~// J.~Soc. Ind. Appl. Math. A, 1964.
+Vol.~2. No.\,3. P.~347--369.
+ 
+\bibitem{9-s}
+Справочник по теории вероятностей и~математической статистике~/ Под
+ред.\ В.\,С.~Королюка, Н.\,И.~Портенко, А.\,В.~Скорохода, А.\,Ф.~Турбина.~--- 
+М.: Наука, 1985. 640~с.
+
+\bibitem{10-s} 
+\Au{Zakai M.}
+On the optimal filtering of diffusion processes~// 
+Ztschr. Wahrschein lichkeitstheor. Verm. Geb., 1969. Bd.~11. S.~230--243.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 08.02.17}}
+
+\vspace*{12pt}
+
+%\newpage
+
+%\vspace*{-24pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{8pt}
+
+
+\def\tit{MODIFICATED ELLIPSOIDAL CONDITIONALLY OPTIMAL
+FILTERS FOR NONLINEAR STOCHASTIC SYSTEMS ON~MANIFOLDS}
+
+\def\titkol{Modificated ellipsoidal conditionally optimal
+filters for nonlinear stochastic systems on~manifolds}
+
+\def\aut{I.\,N.~Sinitsyn, V.\,I.~Sinitsyn, and~E.\,R.~Korepanov}
+
+\def\autkol{I.\,N.~Sinitsyn, V.\,I.~Sinitsyn, and~E.\,R.~Korepanov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian
+Academy of Sciences,  44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+\Abste{The analytical synthesis theory for modificated ellipsoidal conditionally 
+optimal filters (MECOF) for nonlinear stochastic systems on manifolds (MStS) 
+based on the nonnormed a posteriori characteristic function is developed. Gaussian 
+and non-Gaussian MStS are considered.  The MECOF algorithms are more simple than the ECOF 
+algorithms. The MECOF algorithms are the basis of the software tool 
+``StS-Filter''  (version 2017).}
+
+\KWE{accuracy and sensitivity equations;
+ellipsoidal approximation  and linearization methods (EAM \& ELM);
+ellipsoidal conditionally optimal filter (ECOF);
+modificated ellipsoidal conditionally optimal filter (MECOF);
+nonnormed characteristic function;
+Poisson noise;
+conditionally optimal filter (COF);
+Wiener noise}
+
+
+\DOI{10.14357/19922264170211} 
+
+\vspace*{-18pt}
+
+\Ack
+\noindent
+The research was supported by the Russian Foundation for 
+Basic Research (project 15-07-002244).
+
+
+
+\vspace*{9pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-s-1}
+\Aue{Sinitsyn, I.\,N.} 2016.
+Ortogonal'nye suboptimal'nye fil'try dlya nelineynykh stokhasticheskikh sistem 
+na mno\-go\-ob\-ra\-zi\-yakh [Orthogonal suboptimal filters for nonlinear stochastic 
+systems on manifolds]. \textit{Informatika i~ee Primeneniya~---
+Inform. Appl.} 10(1):34--44.
+
+\bibitem{2-s-1} 
+\Aue{Sinitsyn, I.\,N.} 2016.
+Normal'nye i~ortogonal'nye suboptimal'nye fil'try dlya nelineynykh stokhasticheskikh 
+sistem na mnogoobraziyakh  [Normal and orthogonal conditionally optimal filters 
+for nonlinear stochastic systems on manifolds].
+\textit{Informatika i~ee Primeneniya~---
+Inform. Appl.} 10(1):199--226.
+
+\bibitem{3-s-1}
+\Aue{Sinitsyn, I.\,N., V.\,I.~Sinitsyn, and E.\,R.~Korepanov.} 2016.
+Ellipsoidal'nye suboptimal'nye fil'try dlya nelineynykh stokhasticheskikh 
+sistem na mnogoobraziyakh [Ellipsoidal conditionally optimal filters for nonlinear 
+stochastic systems on manifolds].
+\textit{Informatika i~ee Primeneniya~---
+Inform. Appl.} 10(1):24--35.
+
+
+\bibitem{4-s-1}
+\Aue{Sinitsyn, I.\,N., and V.\,I.~Sinitsyn.} 2013. 
+Lektsii po teorii normal'noy i ellipsoidal'noy 
+approkskimatsii raspredeleniy v~stokhasticheskikh sistemakh [Lectures on normal 
+and ellipsoidal approximation of distributions in stochastic
+systems].  Moscow: TORUS PRESS. 
+488~p.
+
+\bibitem{6-s-1}
+\Aue{Sinitsyn, I.\,N.} 2007.
+\textit{Fil'try Kalmana i~Pugacheva} [Kalman and Pugachev filters]. 
+2nd ed. Moscow: Logos. 776~p.
+
+\bibitem{5-s-1}
+\Aue{Sinitsyn, I.\,N., V.\,I.~Sinitsyn, and E.\,R.~Korepanov}. 2016.
+Modifitsirovannye ellipsoidal'nye suboptimal'nye fil'try dlya 
+nelineynykh stokhasticheskikh sistem na mno\-go\-ob\-ra\-zi\-yakh [Modificated ellipsoidal 
+conditionally optimal filters for nonlinear stochastic systems on manifolds].
+\textit{Sistemy i~Sredstva Informatiki~--- Systems and Means of Informatics}
+26(2):79--97.
+
+%\columnbreak
+
+\bibitem{7-s-1}
+\Aue{Pugachev, V.\,S., and I.\,N.~Sinitsyn.} 2000, 2004.
+Teoriya stokhasticheskikh sistem [Stochastic systems. Theory and  applications]. 
+Moscow: Logos. 1000~p.  %[Angl. per. . -- Singapore: World Scientific, 2001].
+
+\bibitem{8-s-1}
+\Aue{Wonham, M.} 1965.
+Some applications of stochastic differential equations to optimal nonlinear filtering.
+\textit{J.~Soc. Ind. Appl. Math.~A} 2(3):347--369.
+
+\bibitem{9-s-1}
+Korolyuk, V.\,S., N.\,I.~Portenko, A.\,V.~Skorokhod, and A.\,F.~Turbin, eds. 1985.
+\textit{Spravochnik po teorii veroyatnosti i~matematicheskoy statistike}
+[Handbook: Probability theory and mathematical statistics]. Moscow: Nauka.  640~p.
+
+\bibitem{10-s-1}
+\Aue{Zakai, M.} 1969.
+On the optimal filtering of diffusion processes. \textit{Ztschr. Wahrschein lichkeitstheor. 
+Verm. Geb.} 11:230--243.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Received February 8, 2017}}
+
+
+\Contr
+
+\noindent
+\textbf{Sinitsyn Igor N.} (b.\ 1940)~--- 
+Doctor of Science in technology, professor, Honored scientist of RF, 
+principal scientist, Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{sinitsin@dol.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Sinitsyn Vladimir I.} (b.\ 1968)~--- 
+Doctor of Science in physics and mathematics, associate professor, 
+Head of Department, Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{VSinitsyn@ipiran.ru} 
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Korepanov Eduard R.} (b.\ 1966)~--- 
+Candidate of Science (PhD) in technology, Head of Department, Institute of 
+Informatics Problems, Federal Research Center ``Computer Science and Control'' 
+of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, 
+Russian Federation; \mbox{Ekorepanov@ipiran.ru}
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература} 

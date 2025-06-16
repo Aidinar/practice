@@ -1,0 +1,840 @@
+\def\stat{nuriev}
+
+\def\tit{РЕДУЦИРОВАНИЕ СПЕКТРА МОДЕЛЕЙ ПЕРЕВОДА 
+В~НАДКОРПУСНЫХ БАЗАХ ДАННЫХ}
+
+\def\titkol{Редуцирование спектра моделей перевода в~надкорпусных 
+базах данных}
+
+\def\aut{В.\,А.~Нуриев$^1$, И.\,М.~Зацман$^2$}
+
+\def\autkol{В.\,А.~Нуриев, И.\,М.~Зацман}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Нуриев В.\,А.}
+\index{Зацман И.\,М.}
+\index{Nuriev V.\,A.}
+\index{Zatsman I.\,M.}
+ 
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнена при частичной поддержке РФФИ (проект 19-07-00187-A).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского 
+центра <<Информатика 
+и~управление>> Российской академии наук, \mbox{nurieff.v@gmail.com}}
+\footnotetext[2]{Институт проблем информатики Федерального исследовательского 
+центра <<Информатика 
+и~управление>> Российской академии наук, \mbox{izatsman@yandex.ru}}
+
+\vspace*{-12pt}
+  
+    \Abst{Описывается подход к~редуцированию спектра моделей перевода, которые 
+регистрируются и~хранятся в~надкорпусных базах данных (НБД). Этот подход ориентирован 
+на применение в~профессиональном (<<человеческом>>) и~машинном переводе. В~настоящее 
+время информационные ресурсы НБД обеспечивают решение широкого круга задач, 
+представляющих интерес для информатики, компьютерной лингвистики и~языкознания. 
+В~данной статье акцент ставится на возможностях использования НБД в~интересах переводной 
+деятельности~--- для редуцирования спектра моделей перевода. Как правило, в~каждом 
+конкретном случае переводчик оказывается в~ситуации многовариантного выбора: ввиду 
+синонимического потенциала, которым обладают естественные языки, вместо единственно 
+возможного решения при переводе имеется некоторое множество относительно 
+взаимозаменяемых по смыслу эквивалентов, т.\,е.\ <<веер альтернатив>>. Выбирая один 
+вариант из целого ряда потенциально возможных, переводчик, чтобы максимально сузить 
+диапазон поиска, руководствуется некоторыми релевантными характеристиками переводимого 
+текста. Цель статьи~--- описать подход к~применению НБД, позволяющий сузить диапазон 
+поиска релевантной модели перевода.}
+  \KW{параллельные тексты; перевод; модели перевода; надкорпусная база данных; 
+многовариантный выбор}
+  
+\DOI{10.14357/19922264200217} 
+ 
+\vspace*{4pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+  
+  \section{Введение}
+  
+  \vspace*{-3pt}
+  
+  В последние несколько десятилетий существенно возрос научный 
+и~практический интерес к~таким информационным ресурсам, как электронные 
+текстовые корпусы и~лингвистические базы данных. Эти ресурсы обеспечивают 
+получение нового фундаментального знания, позволяют верифицировать, 
+корректировать и~дополнять научные знания, полученные в~докорпусную 
+эпоху~[1--3]. Они открывают широкие возможности для 
+ис\-сле\-до\-ва\-те\-лей-лин\-г\-вис\-тов, 
+работа которых связана с~большими массивами текстов на 
+естественном языке (см., например,~[4]). Также представители некоторых 
+профессий~--- переводчики, писатели, преподаватели (русского языка 
+и~литературы, иностранных языков, культуры речи и~т.\,д.)~--- получают новые 
+инструменты, с~помощью которых рабочий процесс можно значительно 
+компьютеризировать и~оптимизировать (см., например,~[5--7]).
+  
+  Разновидностью таких информационных ресурсов являются НБД (о~НДБ 
+см.~[8]), функционирующие на основе текстов параллельных корпусов, входящих 
+в~состав Национального корпуса русского языка (НКРЯ). Надкорпусные
+ базы данных разрабатываются 
+с~2012~г.\ в~Институте проб\-лем информатики Федерального исследовательского 
+центра <<Информатика и~управ\-ле\-ние>> Российской академии наук 
+и~пред\-став\-ля\-ют собой уникальный инструмент, который имеет ярко выраженную 
+на\-уч\-но-ис\-сле\-до\-ва\-тель\-скую на\-прав\-лен\-ность, поскольку используется для 
+извлечения нового лингвистического знания из параллельных текстов. Также он 
+может широко применяться как в~профессиональной переводческой практике, 
+так и~для формирования лингвистических онтологий, ориентированных на 
+повышение качества машинного перевода, в~том числе при отсутствии или 
+недостаточном объеме доступных параллельных текстов~[9].
+
+\addtocounter{footnote}{2}
+  
+  В данной статье рассматриваются возможности применения НБД в~интересах 
+переводной деятельности, и~основная цель статьи, таким образом,~--- 
+представление подхода к~редуцированию спектра моделей перевода, которые 
+регистрируются и~хранятся в~НБД. Демонстрация 
+этих возможностей проводится на примере НБД коннекторов\footnote{Об НБД 
+коннекторов см.\ [10--13].} (см.\ разд.~3). Однако прежде, чем перейти к~описанию 
+указанного подхода, следует дать общее представление о~том, как происходит 
+процесс перевода и~как НБД регистрирует модели перевода.
+
+%\vspace*{-6pt}
+  
+  \section{Модели перевода}
+  
+%\vspace*{-3pt}
+  
+  Результат переводной деятельности~--- это реализация в~конечном тексте 
+конкретной переводной модели (устойчивого межъязыкового соответствия) или 
+окказионального варианта. Изучая перевод, исследователь стремится 
+реконструировать переводческое действие, т.\,е.\ зафиксировать изменения, 
+которые претерпевает исходный текст (ИТ), оформляясь на переводящем языке 
+(ПЯ).
+  
+  В некоторых работах по теории и~практике перевода отмечается: <<Основная 
+особенность$\ldots$ перевода состоит в~жестко детерминированных от\-ношениях 
+между системами языка-источника\linebreak и~принимающего языка, которые 
+в~большинстве случаев предписывают вполне однозначное решение той или иной 
+конкретной переводческой задачи>>~\cite[с.~47]{14-nur}. В~отдельных случаях, 
+возможно, это так, однако обычно при переводе однозначность переводческого 
+решения (в~выборе конкретного варианта или модели) не настолько очевидна. 
+Вряд ли было бы корректно <<говорить о~возможности лишь одного единственно 
+правильного варианта перевода (как некорректно$\ldots$ говорить об одной 
+единственно возможной интерпретации$\ldots$ в~обычных условиях 
+общения)>>~\cite[с.~22]{15-nur}. В~силу синонимического потенциала, которым 
+обладают естественные языки, вместо единственно возможного решения при 
+переводе, как правило, имеется некоторое множество относительно 
+взаимозаменяемых по смыслу эквивалентов, т.\,е.\ <<веер альтернатив>>.
+{ %\looseness=1
+
+}
+  
+  Переводчик интерпретирует ИТ и, руководствуясь своей интерпретацией, 
+занимается отбором в~ПЯ соответствующих средств выражения. Если ИТ~--- это 
+определенным образом упорядоченная информационно нагруженная 
+последовательность знаков, то <<интерпретационная сторона знака~--- это вся 
+совокупность ситуационных факторов понимания (предметных, 
+коммуникативных, социокультурных), которые обусловливают необходимость 
+употребления знака в~момент речи>>~\cite[с.~25]{15-nur}. Другими словами, ИТ 
+представляет собой кодированное средствами естественного языка смысловое 
+содержание, объем которого может изменяться в~процессе перевода.
+{%\looseness=-1
+%
+}
+ % 
+  %\columnbreak
+  %
+  С точки зрения информатики процессы профессионального (выполняемого 
+че\-ло\-ве\-ком-спе\-циа\-ли\-стом) перевода суть информационные трансформации 
+объектов ментальной и~{социоинформационной} сред, а~процессы машинного 
+перевода~--- информационные трансформации объектов социоинформационной 
+и~цифровой сред\footnote{Понятие информационной трансформации во многом совпадает 
+с~трактовкой, предложенной П.~Розенблумом (см.~\cite{16-nur, 17-nur}).}. 
+Рисунок 
+иллюстрирует средовую принадлежность информационных трансформаций 
+в~профессиональном и~машинном переводе на примере перевода книги.
+
+
+
+
+  С точки зрения теории перевода переводящий субъект обрабатывает 
+конкретный языковой знак, перебирая возможные его смысловые значения, 
+актуализированные в~заданном языковом окружении~--- контексте, а~затем 
+выбирает соответствующие средства, доступные на ПЯ.
+{\looseness=-1
+
+}
+  
+  Выбор происходит из объектов, пред\-став\-ля\-ющих собой переводные 
+соответствия~--- \textit{модели перевода}, которые уже систематизированы 
+и~генерализованы по разным основаниям, а~также зафиксированы 
+в~контрастивных грамматиках, двуязычных словарях, учебниках по переводу 
+и~т.\,д. Для использования в~машинном переводе этим моделям присваиваются 
+формальные признаки, характеризующие сферу применения, что обеспечивает 
+НБД, регистрирующая модели перевода. Регистрация/интеграция информации 
+о~моделях перевода и~их признаках в~НБД осуществляется на основе анализа 
+параллельных текстов (ИТ и~его перевода, выполненного человеком-специалистом). 
+Эта информация, в~свою очередь, может быть использована для 
+повышения качества машинного перевода путем редуцирования всего спектра 
+моделей на этапе спецификации, т.\,е.\ выбора одного конкретного 
+межъязыкового соответствия из этого спектра.
+  
+  В наборе зафиксированных моделей перевода может не оказаться нужного 
+варианта, и~тогда перед переводчиком встает задача выявления смысловых 
+компонентов (=\;концептов), необходимых для интерпретации обрабатываемой 
+языковой единицы, чтобы впоследствии путем обобщения отнести ее к~той или 
+иной семантической общности и~обнаружить ее возможные переводные 
+соответствия\footnote{Таким образом, в~процессе перевода используются 
+две категории моделей 
+перевода: (1)~<<внешние>>, которые описаны в~словарях,
+ справочниках, грамматиках и~т.\,д.; 
+(2)~<<индивидуализированные>>, которые созданы переводящим субъектом и~не являются частью 
+существующего множества <<внешних>> моделей перевода.}.
+
+  
+
+
+
+  
+     Спектр моделей перевода для разных языковых единиц наряду 
+с~двуязычными словарями и~контрастивными грамматиками может 
+регистрироваться и~аннотироваться (т.\,е.\ описываться в~соответствии 
+с~определенным набором рубрик) также в~электронных базах данных, в~том 
+числе в~НБД. Одной из таких баз данных служит НБД 
+коннекторов\footnote{Коннектор~--- языковая единица, функция которой состоит в~выражении 
+логико-семантических отношений между двумя соединенными с~ее помощью текстовыми фрагментами 
+(см.\ подробнее~\cite{18-nur, 19-nur, 20-nur}).}, которая упоминалась выше. Она 
+предоставляет ряд возможностей в~отношении динамической (on-the-fly) 
+генерализации примеров и~моделей перевода
+по разным основаниям 
+(ло\-ги\-ко-се\-ман\-ти\-че\-ские от-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\end{multicols}
+
+\begin{figure*}
+\vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=146.085mm 
+\epsfbox{nur-1.eps}
+ }
+ \end{center}
+\vspace*{3pt}
+
+{\small Информационные трансформации в~профессиональном и~машинном переводе:
+префикс~И (И-кон\-цепт, И-сло\-во, И-знак) относится к~системе 
+исходного языка; префикс~П (П-кон\-цепт, П-сло\-во, П-знак)~--- к~системе 
+ПЯ; фигурные скобки указывают направление процессов 
+профессионального и~машинного перевода}
+\vspace*{-2pt}
+\end{figure*}
+
+\begin{multicols}{2}
+
+\noindent
+ ношения, уста\-нав\-ли\-ва\-емые коннектором; 
+структура коннектора; 
+его позиция, статус и~т.\,д.)~\cite{21-nur}. В~НБД предусмот\-ре\-но формирование 
+и~визуализация спект\-ра моделей перевода каждого коннектора (см.\ пример 
+в~~[22, табл.~2]).
+     
+     Для параллельных текстов пользователь НБД имеет возможность 
+интерактивно осуществить обратный переход от генерализованных моделей 
+перевода к~примерам их использования в~текстах, т.\,е.\ полностью обратить 
+процесс генерализации. Чтобы обеспечить обратимость, в~НБД каждый пример 
+перевода связан с~соответствующей динамически сформированной моделью 
+перевода, которая имеет гипертекстовую ссылку на список всех примеров ее 
+реализации. Иными словами, наряду с~динамической генерализацией моделей 
+перевода НБД обеспечивает и~их спецификацию с~помощью гипертекстовых 
+ссылок\cite{21-nur}.
+
+\vspace*{-10pt}
+  
+  \section{Спектр моделей перевода}
+  
+  \vspace*{-3pt}
+  
+  Подход к~редуцированию спектра переводов, представляемый здесь, носит 
+пошаговый характер и~включает в~себя несколько основных этапов. 
+Реализуемость подхода демонстрируется на примере аннотаций НБД коннекторов 
+и~текс\-тов фран\-цуз\-ско-рус\-ско\-го 
+параллельного подкорпуса\footnote{Аннотации 
+коннекторов в~НБД формируются по\-сред\-ст\-вом обработки параллельных текстов, включающих ИТ и~их 
+переводы. Для эксперимента, описываемого в~данной статье,
+ привлекались профессиональные 
+переводы.}, входящего в~состав НКРЯ. По со\-сто\-янию на 31.03.2020 объем этих 
+текстов в~НБД\linebreak составлял 649\,245 французских словоупотреблений и~509\,033 
+русских, а~всего 1\,158\,278 словоупотреблений (=\;токенов). 
+{ %\looseness=1
+
+}
+
+На первом этапе 
+был отобран один из наиболее частотных однокомпонентных французских 
+коннекторов~--- \textit{c'est-$\grave{\mbox{a}}$-dire} (204~аннотации). На основе 
+аннотаций НБД для него был сформирован экспериментальный массив моделей 
+перевода в~виде кортежей  
+$\langle$\textit{c'est-$\grave{\mbox{a}}$-dire}; вариант перевода$\rangle$. 
+
+
+Например, для наиболее продуктивной модели перевода кортеж принимает 
+следующий вид: $\langle$\textit{c'est-$\grave{\mbox{a}}$-dire}; то есть$\rangle$ 
+(см.\ варианты перевода в~табл.~1). Для этого массива генерализованная 
+модель перевода имеет вид $\langle$\textit{c'est-$\grave{\mbox{a}}$-dire}; 
+\{вариант перевода\}$\rangle$, где {вариант перевода} обозначает весь спектр 
+таких вариантов во втором столбце табл.~1.
+{\looseness=1
+
+}
+
+
+\pagebreak
+
+{ %\begin{table*}\small %tabl1
+%\vspace*{0.5pt}
+
+%\noindent
+\begin{center}
+\vspace*{0.5pt}
+\parbox{70mm}{{{\tablename~1}\ \ \small{Варианты перевода французского коннектора \textit{c'est-$\grave{\mbox{a}}$-dire}
+}}
+}
+
+\vspace*{6pt}
+
+
+{\small
+\begin{tabular}{|c|l|c|}
+\hline
+№&\multicolumn{1}{c|}{Вариант перевода}&\tabcolsep=0pt\begin{tabular}{c} Число \\ 
+аннотаций\end{tabular}\\ 
+\hline 
+1&то есть&157\hphantom{9}\\ 
+2&zero (нулевой эквивалент)&29\\ 
+3&иными словами&\hphantom{9}8\\ 
+4&иначе говоря&\hphantom{9}2\\ 
+5&--- (тире)&\hphantom{9}5\\ 
+6&а&\hphantom{9}1\\ 
+7&итого&\hphantom{9}1\\ 
+8&: (двоеточие)&\hphantom{9}1\\ 
+\hline
+\multicolumn{2}{|r|}{Всего аннотаций:}&204\hphantom{9}\\ 
+\hline 
+\end{tabular} }
+\end{center}
+%\end{table*}
+}
+
+\vspace*{8pt}
+\smallskip
+  
+  
+    
+
+  Затем было определено число аннотаций с~различными сочетаниями рубрик, 
+использованных для аннотирования текстовых фрагментов, где\linebreak употреблен 
+коннектор \textit{c'est-$\grave{\mbox{a}}$-dire} (табл.~2)\footnote{Исследуемые сочетания 
+рубрик встретились в~46 из~204 аннотаций с~коннектором  
+\textit{c'est-$\grave{\mbox{a}}$-dire.}}. Эта таб\-ли\-ца показывает, какие рубрики 
+характеризуют модель перевода в~НБД, а~также насколько продуктивна эта 
+модель при том или ином их сочетании.
+  
+  Экспериментальные данные включают следующие рубрики: порядок 
+следования связываемых коннектором текстовых фрагментов (p~CNT~q); 
+встраи\-ва\-ющий/встро\-ен\-ный коннектор (SubCNT/SuperCNT); маркирует часть 
+предложения без пре\-ди\-ка\-ции\,/\,с~пре\-ди\-ка\-ци\-ей; 
+ди\-стант\-ное/кон\-такт\-ное расположение составляющих\linebreak в~неоднословных 
+коннекторах  (кон\-такт/дис\-тант); позиция  
+(на\-чаль\-ная/не\-на\-чаль\-ная/ко\-неч\-ная); ло\-ги\-ко-се\-ман\-ти\-че\-ские 
+отношения, устанавливаемые\linebreak
+
+\columnbreak
+
+\noindent
+ коннектором (переформулирование и~т.\,д.); 
+маркирует сверхфразовое единство, самостоятельное повествовательное 
+предложение, сложное предложение и~т.\,д. Релевантность приведенных рубрик 
+определялась в~ходе предыдущих кор\-пус\-но-ори\-ен\-ти\-ро\-ван\-ных 
+контрастивных исследований, инструментом в~которых служила НБД 
+коннекторов. Результаты некоторых исследований см.\ в~\cite{19-nur, 20-nur, 
+21-nur, 22-nur, 23-nur, 24-nur, 25-nur}.
+  
+  Приведенные в~табл.~2 рубрики, характери\-зу\-ющие коннектор и~его контекст, 
+были проанализированы на предмет их релевантности для выбора переводного 
+варианта\footnote{Анализ проводился одним из соавторов данной статьи В.\,А.~Нуриевым~--- 
+профессиональным переводчиком, имеющим опубликованные переводы с~французского и~английского 
+языков.}. Следовало определить, позволяет ли имеющийся в~НБД (исходно 
+заданный  
+ис\-сле\-до\-ва\-те\-ля\-ми-линг\-ви\-ста\-ми\footnote{Набор рубрик исходно формировался лингвистами, 
+исходя из определенных задач, напрямую не связанных с~переводческой деятельностью.}) набор 
+рубрик \mbox{сузить} об\-ласть переводческого поиска, т.\,е.\ редуцировать спектр моделей 
+перевода.
+  
+  Планировалось ответить экспериментально на следующий вопрос: 
+<<Насколько исходно заданная в~НБД система классификационных рубрик дает 
+возможность редуцировать спектр конкретных моделей перевода?>> Для 
+получения ответа на этот вопрос был проведен семантический анализ 
+распределения аннотаций как по рубрикам, так и~по их сочетаниям.
+  
+  В табл.~1 показано, что французский коннектор имеет более чем одно 
+переводное соответствие на русском языке: 
+для \textit{c'est-$\grave{\mbox{a}}$-dire} в~НБД на 31.03.2020 
+зарегистрировано 8~вариантов перевода, включая~2 
+с~пунктуационными знаками. Чтобы переводчик мог существенно редуцировать 
+этот спектр переводных вариантов, указанных в~табл.~2 рубрик недостаточно. 
+По-ви\-ди\-мо\-му, в~интересах переводной\linebreak
+%\vspace*{-11pt}
+\end{multicols}
+
+\setcounter{table}{1}
+\begin{table*}[h]\small  %tabl2
+
+\vspace*{-24pt}
+\begin{center}
+\parbox{150mm}{\Caption{Число аннотаций с~моделями перевода для \textit{c'est-$\grave{\mbox{a}}$-dire} 
+(первые два столбца) при сочетании рубрик (третий столбец)}
+}
+\vspace*{2ex}
+
+\begin{tabular}{|c|l|l|c|}
+\hline
+Оригинал&\multicolumn{1}{c|}{\tabcolsep=0pt\begin{tabular}{c} Вариант\\ 
+перевода\end{tabular}}&\multicolumn{1}{c|}{ Сочетание 
+рубрик}&\tabcolsep=0pt\begin{tabular}{c} Число\\ аннотаций\end{tabular}\\
+\hline
+\textit{c'est-$\grave{\mbox{a}}$-dire}&то 
+есть&\tabcolsep=0pt\begin{tabular}{l}p~CNT~q\;+\;SubCNT\;+\;SuperCNT\;+\;без предикации\;+\\
+ +\;контакт\;+\;начальная\;+\;переформулирование\end{tabular}&10\\
+ \cline{2-4}
+&zero&\tabcolsep=0pt\begin{tabular}{l} p~CNT~q\;+\;SubCNT\;+\;SuperCNT\;+\;без предикации\;+\\
+ +\;контакт\;+\;начальная\;+\;переформулирование\end{tabular}&\hphantom{9}1\\
+\cline{2-4}
+&то есть&\tabcolsep=0pt\begin{tabular}{l}p~CNT~q\;+\;SubCNT\;+\;SuperCNT\;+\;контакт\; +\;начальная\;+\\
+ +\;переформулирование\;+\;сложное предложение\end{tabular}&\hphantom{9}1\\
+\cline{2-4}
+&то есть&\tabcolsep=0pt\begin{tabular}{l}p~CNT~q\;+\;SubCNT\;+\;без 
+предикации\;+\;контакт\;+\;начальная\;+\\
+ +\;переформулирование\end{tabular}&33\\
+\cline{2-4}
+&zero&\tabcolsep=0pt\begin{tabular}{l}p~CNT~q\;+\;SubCNT\;+\;вставка\;+\;контакт\;+\;начальная\;+\\ 
++\;переформулирование\end{tabular}&\hphantom{9}1\\
+\cline{2-4}
+&---&Другие сочетания рубрик&158\hphantom{9}\\
+\hline
+\multicolumn{3}{|r|}{Итого:}&204\hphantom{9}\\
+  \hline
+  \end{tabular}
+  \end{center}
+  \end{table*}
+  
+  \begin{multicols}{2}
+  
+  \noindent
+    деятельности число рубрик 
+необходимо увеличить. Этот промежуточный вывод позволили сделать несколько 
+следующих наблюдений:
+  \begin{itemize}
+  \item 83\% случаев употребления \textit{c'est-$\grave{\mbox{a}}$-dire} (170 
+аннотаций из 204) в~НБД приходится на сборник научных статей Ж.~Женетта 
+<<Фигуры>>;
+  \item 86\% случаев перевода \textit{c'est-$\grave{\mbox{a}}$-dire} нулевым 
+эквивалентом (25 аннотаций из~29) также приходится на эту работу, что, 
+по-ви\-ди\-мо\-му, мотивировано необходимостью синонимического \mbox{варьирования} 
+в~подборе эквивалентов; 
+  \item этой же необходимостью мотивировано употребление при переводе 
+\textit{c'est-$\grave{\mbox{a}}$-dire} в~<<Фигурах>> Ж.~Женетта других 
+переводных соответствий типа \textit{иными словами} (5~вхождений); 
+\textit{иначе говоря} (2~вхождения), тире (1~вхож\-де\-ние);
+  \item нулевой эквивалент часто требует значительной синтаксической 
+переработки высказывания и~влечет за собой изменение его общего смысла;
+  \item реализация модели перевода $\langle$\textit{c'est-$\grave{\mbox{a}}$-dire}; 
+\textit{то есть}$\rangle$ больше характерна для научного стиля~--- 87\% случаев 
+употребления \textit{то есть} зафиксировано в~переводе <<Фигур>> 
+Ж.~Женетта;
+  \item при переводе текстов художественных жанров наблюдается тенденция 
+к~большему синонимическому варьированию, здесь реализуются такие модели 
+перевода \textit{c'est-$\grave{\mbox{a}}$-dire}, как тире (4~вхождения), 
+\textit{иными словами} (3~вхождения), \textit{а} (1~вхождение), \textit{итого} 
+(1~вхождение), двоеточие (1~вхождение);
+  \item нулевой эквивалент для текстов художественных жанров менее 
+характерен (14\%~всех случаев, причем в~разных переводах).
+  \end{itemize}
+  На основе этих наблюдений можно предположить, что в~НБД необходимо 
+ввести дополнительную руб\-ри\-ку 
+<<ху\-до\-жест\-вен\-ный/не\-ху\-до\-жест\-вен\-ный текст>>, которая 
+позволит редуцировать спектр моделей перевода.
+  
+  \section{Заключение}
+  
+  В статье предложен подход к~применению НБД для редуцирования спектра 
+моделей перевода, на основе которого планируется вычислить их условные 
+частотности с~разными сочетаниями рубрик, проставленными в~процессе 
+аннотирования. Предлагаемый подход иллюстрируется на примере анализа 
+моделей перевода французского коннектора \textit{c'est-$\grave{\mbox{a}}$-dire}. 
+Планируется выполнить проверку реализуемости этого подхода на примере 
+нескольких французских коннекторов, включая \textit{comme}, чье 
+употребление\footnote{По данным НБД коннекторов на 31.03.2020.} характеризуется 
+большей равномерностью~--- случаи его употребления 
+относительно равномерно распределяются по целому ряду разножанровых 
+текстов, принадлежащих разным авторам (О.~де~Бальзак, Ф.~Бегбедер, Ж.~Верн, 
+Р.~Госинни, Ж.~Женетт, Ж.~Кокто, П.~Модиано и~др.). Кроме того, для \textit{comme} 
+зафиксировано большее многообразие вариантов перевода 
+(31~вариант на~206~аннотаций в~НБД по состоянию на 31.03.2020) и~этот 
+коннектор, в~отличие от \textit{c'est-$\grave{\mbox{a}}$-dire}, уста\-нав\-ли\-ва\-ющего 
+только один тип ло\-ги\-ко-се\-ман\-ти\-че\-ских отношений (переформулирования),
+ может 
+сигнализировать о~четырех разных типах отношений (пропозициональной 
+причины; аддитивные пропозициональные отношения; отношение аналогии; 
+сравнительные отношения).
+
+  
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+  
+\bibitem{1-nur}
+\Au{Zatsman I., Buntman~N., Kruzhkov~M., Nuriev~V., Zalizniak Anna~A.} Conceptual framework 
+for development of computer technology supporting cross-linguistic knowledge discovery~// 15th 
+European Conference on Knowledge Management Proceedings.~--- Reading: Academic Publishing 
+International Ltd., 2014. Vol.3. P.~1063--1071.
+\bibitem{2-nur}
+\Au{Zatsman I., Buntman N.} Outlining goals for discovering new knowledge and computerised 
+tracing of emerging meanings~// 16th European Conference on Knowledge Management 
+Proceedings.~--- Reading: Academic Publishing International Ltd., 2015. P.~851--860.
+\bibitem{3-nur}
+\Au{Zatsman I., Buntman N., Coldefy-Faucard~A., Nuriev~V.} WEB knowledge base for 
+asynchronous brainstorming~// 17th European Conference on Knowledge Management 
+Proceedings.--- Reading: Academic Publishing International Ltd., 2016. Vol.~1. P.~976--983.
+\bibitem{4-nur}
+\Au{Ляшевская О.\,Н.} Корпусные инструменты в~грамматических исследованиях русского 
+языка.~--- М.: ЯСК: Рукописные памятники Древней Руси, 2016. 520~с.
+
+\bibitem{6-nur} %5
+Corpus use and translating: Corpus use for learning to translate and learning corpus use to 
+translate~/ Eds. A.~Beeby, P.~\mbox{Rodr{\!\ptb{\'{\i}}}guez} In$\acute{\mbox{e}}$s, 
+P.~S$\acute{\mbox{a}}$nchez-Gij$\acute{\mbox{o}}$n.~--- Amsterdam--Philadelphia: John 
+Benjamins Publishing, 2009. 149~p.
+\bibitem{7-nur} %6
+\Au{Flowerdew L.} Corpora and language education.~--- New York\,--\,Basingstoke: Palgrave Macmillan, 
+2012. 358~p.
+\bibitem{5-nur} %7
+Corpora in translator education~/ Eds. F.~Zanettin, S.~Bernardini, D.~Stewart.~--- New York, NY, 
+USA: Routledge, 2014. 156~p.
+\bibitem{8-nur}
+\Au{Егорова А.\,Ю., Зацман~И.\,М., Мамонова~О.\,С.} Надкорпусные базы данных 
+в~лингвистических проектах~// Системы и~средства информатики, 2019. 
+Т.~29. №\,3. С.~77--91.
+\bibitem{9-nur}
+\Au{Anthes G.} Dead languages come to life~// Commun. ACM, 2020. Vol.~63. 
+No.\,4. P.~13--15.
+\bibitem{10-nur}
+\Au{Зализняк А.\,А., Зацман~И.\,М., Инькова~О.\,Ю.} Надкорпусная база данных 
+коннекторов: построение системы терминов~// Информатика и~её применения, 2017. Т.~11. 
+Вып.~1. С.~100--108.
+
+\bibitem{13-nur} %11
+\Au{Inkova O., Popkova~N.} Statistical data as information source for linguistic analysis of Russian 
+connectors~// Информатика и~её применения, 2017. Т.~11. Вып.~3. С.~123--131.
+
+\bibitem{11-nur} %12
+\Au{Зацман И.\,М., Кружков~М.\,Г.} Надкорпусная база данных коннекторов: развитие 
+системы терминов проектирования~// Системы и~средства информатики, 2018. Т.~28. №\,4. 
+С.~156--167.
+\bibitem{12-nur} %13
+\Au{Инькова О.\,Ю.} Надкорпусная база данных как инструмент формальной вариативности 
+коннекторов~// Компьютерная лингвистика и~интеллектуальные технологии: по мат-лам 
+ежегодной Международ. конф. <<Диалог>>.--- М.: РГГУ, 2018. Вып.~17(24). С.~240--253.
+
+\bibitem{14-nur}
+\Au{Щетинкин В.\,Е.} Пособие по переводу с~французского языка на русский.~--- М.: 
+Просвещение, 1987. 160~с.
+\bibitem{15-nur}
+\Au{Иванов Н.\,В.} Интерпретация в~знаковой онтологии языка и~в~переводе.~--- М.: 
+Международные отношения, 2018. 152~с.
+\bibitem{16-nur}
+\Au{Rosenbloom P.} On computing: The fourth great scientific domain.~--- 
+Cambridge, MA, USA: MIT Press, 
+2013. 308~p.
+\bibitem{17-nur}
+\Au{Зацман И.\,М.} Интерфейсы третьего порядка в~информатике~// Информатика и~её 
+применения, 2019. Т.~13. Вып.~3. С.~82--89.
+\bibitem{18-nur}
+\Au{Инькова-Манзотти~О.\,Ю.} Коннекторы противопоставления во французском 
+и~русском языках. Сопоставительное исследование.~--- М.: Информэлектро, 2001. 429~с.
+\bibitem{19-nur}
+Семантика коннекторов: контрастивное исследование~/ Под ред. О.\,Ю.~Иньковой.~--- М.: 
+ТОРУС ПРЕСС, 2018. 396~с.
+\bibitem{20-nur}
+Структура коннекторов и~методы ее описания~/ Под. ред. О.\,Ю. Иньковой.~--- М.: ТОРУС 
+ПРЕСС, 2019. 316~с.
+\bibitem{21-nur}
+\Au{Зацман И.\,М., Мамонова~О. С., Щурова~А.\,Ю. }Обратимость и~альтернативность 
+генерализации моделей перевода коннекторов в~параллельных текстах~// Сис\-темы 
+и~средства информатики, 2017. Т.~27. №\,2.\linebreak С.~125--142.
+\bibitem{22-nur}
+\Au{Зацман И.\,М.} Методология обратимой генерализации в~контексте классификации 
+информационных трансформаций~// Сис\-те\-мы и~средства информатики, 2018. Т.~28. №\,2. 
+С.~128--144.
+
+\bibitem{24-nur} %23
+\Au{Амеличева В.} Формальное и~семантическое варьирование русского коннектора 
+\textit{не только$\ldots$\ но~и} и~его французские эквиваленты~// Съпоставително 
+езикознание (Сопоставительное языкознание~/ Contrastive Linguistics), 2017. Т.~42. №\,4. 
+С.~9--20.
+
+\bibitem{23-nur} %24
+\Au{Инькова О., Манзотти Э.} Tra l'altro, между прочим, entre autres: сходства 
+и~различия~// Съпоставително езикознание (Сопоставительное языкознание~/ Contrastive 
+Linguistics), 2017. Т.~42. №\,4. С.~35--47.
+\bibitem{25-nur}
+\Au{Нуриев В.} Коннектор \textit{раз$\ldots$ то} и~модели его перевода на французский 
+язык: между условием, причиной и~следствием~// Съпоставително езикознание 
+(Сопоставительное языкознание~/ Contrastive Linguistics), 2017. Т.~42. №\,4. С.~63--76.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 13.04.20}}
+
+\vspace*{6pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{REDUCING THE SPECTRUM OF~TRANSLATION MODELS IN~SUPRACORPORA 
+DATABASES}
+
+
+\def\titkol{Reducing the spectrum of translation models in supracorpora 
+databases}
+
+\def\aut{V.\,A.~Nuriev and I.\,M.~Zatsman}
+
+\def\autkol{V.\,A.~Nuriev and I.\,M.~Zatsman}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+Institute of Informatics Problems, Federal Research Center ``Computer Science 
+and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 
+119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+
+\Abste{The paper describes an approach aimed at reducing the spectrum of translation models that are 
+registered in supracorpora databases (SDB). This approach may be applied to both professional (made by the 
+human) and machine translation. As of today, one can use the information resources of the SDB to 
+research the  
+problems of interest to computing, computer linguistics and linguistic theory. Here, the focus is on 
+examining if and how the SDB can be used in translation practice~--- for reducing the spectrum of translation 
+models. Very often while translating, a~translator finds himself/herself in a~multiple-choice situation: due to the 
+synonymic potential, characteristic of natural languages, in translation instead of the only possible solution, there 
+is a~set of relatively interchangeable equivalents, i.\,e., ``fan of alternatives.'' Choosing from a~(sometimes 
+wide) range of variants, a~translator, in order to narrow the choice, relies on some specific characteristics of the 
+source text. Hence, the goal of the paper is to describe the approach that would allow one to use the SDB for 
+narrowing the choice set of relevant translation models.}
+
+\KWE{parallel texts; translation; translation models; supracorpora database; multiple choice}
+
+
+
+\DOI{10.14357/19922264200217} 
+
+%\vspace*{-20pt}
+
+%\Ack
+%\noindent
+
+
+%\vspace*{6pt}
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {\baselineskip=10.75pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+\bibitem{1-nur-1}
+\Aue{Zatsman, I., N. Buntman, M.~Kruzhkov, V.~Nuriev, and A.~Zalizniak.} 2014. Conceptual framework for 
+development of computer technology supporting cross-linguistic knowledge discovery. \textit{15th European 
+Conference on Knowledge Management Proceedings.} Reading:
+Academic Publishing International Ltd. 3:1063--1071.
+\bibitem{2-nur-1}
+\Aue{Zatsman, I., and N. Buntman.} 2015. Outlining goals for discovering new knowledge and computerised 
+tracing of emerging meanings. \textit{16th European Conference on Knowledge Management Proceedings}. 
+Reading: Academic Publishing International Ltd. 851--860.
+\bibitem{3-nur-1}
+\Aue{Zatsman I., N. Buntman, A.~Coldefy-Faucard, and V.~Nuriev.} 2016. WEB knowledge base for 
+asynchronous brainstorming. \textit{17th European Conference on Knowledge Management Proceedings.}  
+Reading: Academic Publishing International Ltd. 1:976--983.
+\bibitem{4-nur-1}
+\Aue{Lyashevskaya, O.\,N.} 2016. Korpusnye instrumenty v grammaticheskikh issledovaniyakh russkogo 
+yazyka [Corpus instruments in grammatical studies of Russian]. Moscow: YASK: Rukopisnye Pamyatniki 
+Drevney Rusi. 520~p.
+
+\bibitem{6-nur-1} %5
+Beeby, A., P.~\mbox{Rodr{\!\ptb{\'{\i}}}guez} In$\acute{\mbox{e}}$s, and 
+P.~S$\acute{\mbox{a}}$nchez-Gij$\acute{\mbox{o}}$n, eds. 2009. 
+\textit{Corpus use and translating: Corpus use for learning to translate 
+and learning corpus use to translate}. Amsterdam--Philadelphia: John Benjamins Publishing. 149~p.
+\bibitem{7-nur-1} %6
+\Aue{Flowerdew, L.} 2012. \textit{Corpora and language education.} New York\,--\,Basingstoke: Palgrave Macmillan. 
+358~p.
+\bibitem{5-nur-1} %7
+Zanettin, F., S. Bernardini, and D. Stewart, eds. 2014. \textit{Corpora in translator education}. New York, NY: 
+Routledge. 156~p.
+\bibitem{8-nur-1}
+\Aue{Egorova, A.\,Yu., I.\,M.~Zatsman, and O.\,S.~Mamonova.} 2019. Nadkorpusnye basy dannykh 
+v~lingvisticheskikh proektakh [Supracorpora databases in linguistic projects]. \textit{Sistemy i Sredstva 
+Informatiki~--- Systems and Means of Informatics} 29(3):77--91.
+\bibitem{9-nur-1}
+\Aue{Anthes, G.} 2020. Dead languages come to life. \textit{Commun. ACM} 63(4):13--15.
+\bibitem{10-nur-1}
+\Aue{Zaliznyak, A.\,A., I. M. Zatsman, and O. Yu. In'kova.} 2017. Nadkorpusnaya basa dannykh konnektorov: 
+postroenie sistemy terminov [Supracorpora database of connectives: Term system development]. 
+\textit{Informatika i ee Primeneniya~--- Inform. Appl.} 11(1):100--108.
+
+\bibitem{13-nur-1} %11
+\Aue{Inkova, O., and N.~Popkova.} 2017. Statistical data as information source for linguistic analysis of 
+Russian connectors. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 11(3):123--131.
+\bibitem{11-nur-1} %12
+\Aue{Zatsman, I.\,M., and M.\,G.~Kruzhkov.} 2018. Nadkorpusnaya baza dannykh konnektorov: razvitie 
+sistemy terminov proektirovaniya [Supracorpora database of connectives: Design-oriented evolution of the term 
+system]. Sistemy i~Sredstva Informatiki~--- Systems and Means of Informatics 28(4):156--167.
+\bibitem{12-nur-1} %13
+\Aue{Inkova, O.\,Yu.} 2018. Nadkorpusnaya baza dannykh kak instrument formal'noy variativnosti 
+konnektorov [Supracorpora database as an instrument of the study of the formal variability of connectives]. 
+\textit{Komp'yuternaya lingvistika 
+i~intellektual'nye tekhnologii: po mat-lam ezhegodnoy Mezhdunar. konf. 
+``Dialog''} [Computer Linguistic and Intellectual Technologies: Conference (International) ``Dialog'' 
+Proceedings]. Moscow. 17(24):240--253.
+
+\bibitem{14-nur-1}
+\Aue{Schetinkin, V.\,E.} 1987. \textit{Posobie po perevodu s~frantsuzskogo yazyka na russkiy} [Manual of 
+translation from French into Russian]. Moscow: Prosveschenie. 160~p.
+\bibitem{15-nur-1}
+\Aue{Ivanov, N.\,V.} 2018. \textit{Interpretatsiya v~znakovoy ontologii yazyka i~v~perevode} [Interpretation 
+in the semiotic ontology of the language and in translation]. Moscow: Mezhdunarodnye otnosheniya. 152~p.
+\bibitem{16-nur-1}
+\Aue{Rosenbloom, P.} 2013. \textit{On computing: 
+The fourth great scientific domain.} Cambridge, MA: MIT Press. 
+308~p.
+\bibitem{17-nur-1}
+\Aue{Zatsman, I.\,M.} 2019. Interfeysy tret'ego poryadka v informatike [Third-order interfaces in informatics]. 
+\textit{Informatika i ee Primeneniya~--- Inform. Appl.} 13(3):82--89.
+\bibitem{18-nur-1}
+\Aue{In'kova-Manzotti, O.\,Yu.} 2001. \textit{Konnektory protivopostavleniya vo frantsuzskom i russkom 
+yazykakh. Sopostavitel'noe issledovanie} [Connectors of opposition in French and Russian: A~comparative 
+study]. Moscow: Informelektro. 429~p.
+\bibitem{19-nur-1}
+In'kova, O.\,Yu., ed. 2018. \textit{Semantika konnektorov: kontrastivnoe issledovanie} [Semantics of 
+connectives: Contrastive study]. Moscow: TORUS PRESS. 396~p.
+\bibitem{20-nur-1}
+In'kova, O. Yu., ed. 2019. \textit{Struktura konnektorov i~metody ee opisaniya} [Structure of connectives and 
+methods of its description]. Moscow: TORUS PRESS. 316~p.
+\bibitem{21-nur-1}
+\Aue{Zatsman, I.\,M., O.\,S.~Mamonova, and A.\,Yu.~Shchurova.} 2017. Obratimost' i~al'ternativnost' 
+generalizatsii modeley perevoda konnektorov v~parallel'nykh tekstakh [Reversibility and alternativeness of 
+generalization of connectives translations models in parallel texts]. \textit{Sistemy i~Sredstva Informatiki~--- 
+Systems and Means of Informatics} 27(2):125--142.
+\bibitem{22-nur-1}
+\Aue{Zatsman, I.\,M.} 2018. Metodologiya obratimoy ge\-ne\-ra\-li\-za\-tsii 
+v~kontekste klassifikatsii informatsionnykh 
+transformatsiy [Methodology of reversible generalization in context of classification of information 
+transformations]. \textit{Sistemy i~Sredstva Informatiki~--- Systems and 
+Means of Informatics} 28(2):128--144.
+
+\bibitem{24-nur-1} %23
+\Aue{Amelicheva, V.} 2017. Formal'noe i~semanticheskoe var'irovanie russkogo konnektora \textit{ne 
+tol'ko$\ldots$ no i} i~ego frantsuzskie ekvivalenty [Formal and semantic variations of the Russian connector 
+\textit{ne tol'ko$\ldots$ no~i} and its French equivalents]. 
+\textit{Sopostavitelnoye yazykoznaniye} 
+[Contrastive Linguistics] 42(4):9--20.
+
+\bibitem{23-nur-1} %24
+\Aue{Inkova, O., and E.~Manzoti.} 2017. Tra l'altro, mezhdu prochim, entre autres: skhodstva i~razlichiya [Tra 
+l'altro, mezhdu prochim, entre autres: Similarities and differences]. \textit{Sopostavitelnoye yazykoznaniye} 
+[Contrastive Linguistics] 42(4):35--47.
+
+\bibitem{25-nur-1}
+\Aue{Nuriev, V.} 2017. Konnektor \textit{raz$\ldots$ to} i~modeli ego perevoda na frantsuzskiy yazyk: 
+mezhdu usloviem, prichinoy i~sledstviem [The connector \textit{raz}$\ldots$ \textit{to} and variants of 
+rendering it into French: Between condition, cause, and effect]. \textit{Sopostavitelnoye yazykoznaniye} 
+[Contrastive Linguistics] 42(4):63--76.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-14pt}
+
+\hfill{\small\textit{Received April 13, 2020}}
+
+\pagebreak
+
+
+
+\Contr
+
+\noindent
+\textbf{Nuriev Vitaly A.} (b.\ 1980)~--- Candidate of Science (PhD) in philology, leading scientist, Institute of
+Informatics Problems, Federal Research Center ``Computer Science and Control'' of the Russian Academy
+of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{nurieff.v@gmail.com}
+
+\vspace*{6pt}
+
+\noindent
+\textbf{Zatsman Igor M.} (b.\ 1952)~--- Doctor of Science in technology, Head of Department, Institute of 
+Informatics
+Problems, Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences,
+44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{izatsman@yandex.ru}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

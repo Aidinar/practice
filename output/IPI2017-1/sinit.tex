@@ -1,0 +1,1235 @@
+\def\byy{{\bar Y'}}
+\def\aa{{\cal A}}
+\def\mm{{\sf M}}
+
+ \def\stat{sinits}
+
+\def\tit{АНАЛИТИЧЕСКОЕ МОДЕЛИРОВАНИЕ 
+ШИРОКОПОЛОСНЫХ ПРОЦЕССОВ В~СТОХАСТИЧЕСКИХ СИСТЕМАХ, НЕ~РАЗРЕШЕННЫХ
+ОТНОСИТЕЛЬНО ПРОИЗВОДНЫХ$^*$}
+
+\def\titkol{Аналитическое моделирование 
+широкополосных процессов в~СтС, %стохастических системах, 
+не~разрешенных
+относительно производных}
+
+\def\aut{И.\,Н.~Синицын$^1$}
+
+\def\autkol{И.\,Н.~Синицын}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Синицын И.\,Н.}
+\index{Sinitsyn I.\,N.}
+
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при финансовой поддержке  РФФИ (проект 15-07-02244).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем
+информатики Федерального исследовательского центра
+<<Информатика и~управ\-ле\-ние>> Российской академии наук, \mbox{sinitsin@dol.ru}}
+
+\vspace*{12pt}
+
+
+\Abst{Рассматриваются конечномерные нелинейные стационарные и~нестационарные 
+стохастические системы (СтС), не разрешенные относительно производных в~условиях 
+широкополосных гауссовских и~негауссовских возмущений. Такие СтС описывают поведение 
+многих технических систем информатики и~управления. Для аналитического 
+моделирования и~оценки чувствительности к~параметрам нормальных (гауссовских) 
+нестационарных и~стационарных стохастических процессов (СтП) в~таких  СтС разработаны два 
+метода аналитического моделирования (МАМ) на основе метода статистической линеаризации (МСЛ) 
+и~метода нормальной аппроксимации (МНА). Приведены типовые нелинейности, 
+не разрешенные относительно производных, а~также 
+два тестовых примера. Алгоритмы положены в~основу разрабатываемого инструментального 
+программного обеспечения для решения задач надежности и~безопасности 
+технических систем.}
+
+\KW{аналитическое моделирование;
+метод нормальной аппроксимации (МНА);
+метод статистической линеаризации (МСЛ);
+нормальный (гауссовский) стохастических процесс (СтП);
+стохастическая система, не разрешенная относительно производных;
+чувствительность к~параметрам}
+
+\DOI{10.14357/19922264170101}  
+
+\vspace*{12pt}
+
+
+\vskip 12pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+Методы аналитического моделирования  СтП в~нелинейных 
+СтС, разрешенных относительно производных, на основе 
+МСЛ и~МНА подробно описаны  в~[1--7].
+
+Рассмотрим обобщение~\cite{4-sin, 5-sin} 
+на случай нелинейных дифференциальных СтС, не разрешенных относительно производных. 
+Такими уравнениями описываются элементы многих технических средств информатики 
+и~управления.
+
+В разд.~2 и~приложении~П1 приведены типовые нелинейности, зависящие от производных, и~их 
+статистическая линеаризация. 
+
+Раздел~3 содержит изложение МАМ на основе МСЛ для 
+негладких нелинейностей. Особое внимание уделено уравнениям чувствительности МАМ 
+на основе МСЛ. 
+
+В~разд.~4  сформулированы некоторые замечания и~МАМ на основе МНА 
+для гладких нелинейностей. 
+
+В~приложениях~П2  и~П3 приведены тестовые примеры, 
+иллюстрирующие применение МСЛ и~МНА.
+
+%\vspace*{-pt}
+
+\section{Типовые нелинейности, зависящие от~производных, и~их статистическая 
+линеаризация}
+
+Рассмотрим сначала скалярную действительную нелинейность следующего вида:
+    \begin{equation}
+    Z_t = \varphi \left(t, \Theta, Y_t, \dot Y_t \tr Y_t^{(k)}, U_t \tr U_t^{(r)}\right)\,.
+    \label{e2.1-sin}
+    \end{equation}
+Здесь $\Theta$~--- определяющие параметры нелиней\-ности; $Y_t \hm= Y(t)$ 
+и~$Y_t^{(k)}$~--- скалярный СтП и~его $k$-я производная 
+$(k\hm=1,2,\ldots)$; $U_t\hm = U(t)$ и~$U_t^{(r)}$~--- 
+скалярное стохастическое возмущение и~ее $r$-я
+ производная $(r\hm=1,2,\ldots)$.
+
+ Важный класс нелинейностей~(\ref{e2.1-sin}) составляют нелинейности, в~которые 
+ возмущение~$U_t$ и~его производные входят аддитивно:
+   \begin{multline}
+    Z_t = \varphi^+ \left(t, \Theta, Y_t, \dot Y_t\tr Y_t^{(k)}\right) + {}\\
+    {}+
+    \varphi^- \left(t, \Theta, U_t, \dot U_t \tr U_t^{(r)}\right).
+    \label{e2.2-sin}
+    \end{multline}
+Обозначим через 
+$$
+X_t = \lk Y_t, \dot Y_t \tr Y_t^{(k)}, U_t, \dot 
+U_t\tr U_t^{(r)}\rk^{\mathrm{T}}
+$$ 
+составной вектор.
+Тогда при условии конечности ковариационных моментов СтП~$X_t$ согласно 
+МСЛ нелинейность~(\ref{e2.1-sin}) допускает следующее приближенное представление:
+    \begin{equation}
+    Z_t= \varphi = \varphi\left(t, \Theta, X_t\right) 
+    \approx \varphi_0 + k_{1x}^\varphi X_t^0\,.
+    \label{e2.3-sin}
+    \end{equation}
+Здесь $\varphi_0 = \varphi_0 (t, \Theta, m_t^x, K_t^x)$ 
+и~$k_{1x}^\varphi\hm = k_{1x}^\varphi (t, \Theta, m_t^x, K_t^x)$~--- 
+векторные и~матричные коэффициенты статистической линеаризации, определяемые 
+уравнениями:
+\begin{align}
+\varphi_0 &= \mm_N [\varphi]\,;\label{e2.4-sin}\\
+    k_{1x}^\varphi &= \lk \left(\fr{\prt}{\prt m_t^x}\right)
+    \varphi_0\rk^{\mathrm{T}}\,,\label{e2.5-sin}
+    \end{align}
+где $X_t^0 = X_t \hm- m_t^x$, $m_t^x \hm= \mm_N \lk X_t\rk = \lk m_{1t} 
+\cdots m_{nt}\rk^{\mathrm{T}}$, $K_t^x \hm= \lk k_{pq}\rk \hm= \mm_N \lk X_t^0 X_t^{0\mathrm{T}}
+\rk^{\mathrm{T}}$ $(p,q \hm= 1\tr n)$; $\mm_N$~--- символ математического 
+ожидания для \mbox{$n$-мер}\-но\-го нормального распределения, $n\hm= k+1$.
+
+Для векторных нелинейностей векторного аргумента~(\ref{e2.1-sin}) 
+аналогичные представления имеют место для компонент~$\varphi_l$.  
+В~этом случае составной вектор~$\bar X_t$ будет иметь вид:  
+$$
+\bar X_t \hm= \lk Y_t^{\mathrm{T}} \dot Y_t^{\mathrm{T}} \cdots Y_t^{(k)\mathrm{T}}\, 
+U_t^{\mathrm{T}} \cdots U_t^{\mathrm{T}} \cdots U_t^{(r)\mathrm{T}}\rk^{\mathrm{T}}\,,
+$$ 
+где $ \mathrm{dim}\, 
+\bar X_t \hm= n_Y (k+1) \hm+ n^U (r+1)$.
+
+\section{Основные результаты}
+
+Пусть задана векторная нестационарная дифференциальная СтС, не разрешенная 
+относительно производной СтП~$Y_t$, вида
+    \begin{multline}
+\varphi =\varphi \left( t, \Theta, Y_t, \cdots Y_t \tr Y_k^{(k)}, U_t\right) =
+     0 \\
+     (k=0,1,2,\ldots)\,; \label{e3.1-sin}\end{multline}
+     
+     \vspace*{-3pt}
+     
+     \noindent
+\begin{equation}
+    \dot U_t = a_0^U + a_1^U U_t + b_0^U V_t\,.\label{e3.2-sin}
+    \end{equation}
+Здесь $\varphi$~---  в~общем случае негладкая функция относительно  $Y_t^{(k)}$; 
+$a_0$ и~$a_1^U$~--- век\-тор\-но-мат\-рич\-ные коэффициенты формирующего фильтра (ФФ); 
+$V_t$~--- белый (в~общем случае негауссовский СтП) шум с~нулевым математическим 
+ожиданием и~матрицей интенсивностей $\nu_t \hm= \nu^V(t)$. Выделим переменные
+    \begin{multline*}
+    \bar Y_t' =\lk Y_t^{\mathrm{T}}\dot{Y}_t^{\mathrm{T}}\cdots 
+    Y_t^{(k-1)T}\rk^{\mathrm{T}}= 
+    \lk Y_t^{\mathrm{T}} \bar Y_{1t}^{\mathrm{T}} \cdots 
+    \bar Y_{k-1,t}^{\mathrm{T}} \rk^{\mathrm{T}},\\ 
+    Y_t^{(k)} = \bar Y_{kt}\,,
+   \end{multline*}
+и применим к~уравнению~(\ref{e3.1-sin}) МСЛ. В~результате получим векторное уравнение:
+    \begin{equation}
+    \varphi_0 + k_{1\bar Y_k}^\varphi \bar Y_{kt}^0 + 
+    k_{1U}^\varphi U_t^0=0\,.\label{e3.3-sin}
+    \end{equation}
+Коэффициенты статистической линеаризации в~(\ref{e3.3-sin}) 
+будут параметрически зависеть от переменных $t$ и~$\Theta$, математических 
+ожиданий $m_t^{\bar Y'}$, $m_t^{\bar Y_k}$ и~$m_t^U$, ковариационных и~взаимно 
+ковариационных матриц $K_t^{\bar Y'}$, $K_t^{\bar Y_k}$, $K_t^U$, $K_t^{\bar Y'\bar Y_k}$, 
+$K_t^{\bar Y'U}$ и~$K_t^{\bar Y_kU}$.
+Разделяя в~(\ref{e3.3-sin}) детерминированные и~центрированные части, придем 
+с~учетом~(\ref{e3.2-sin}) к~векторным уравнениям для математических ожиданий
+    \begin{align}
+    \varphi_0 &=0\,;\label{e3.4-sin}\\
+    \dot m_t^U &= a_0^U+ a_1^U m_t^U\label{e3.5-sin}
+    \end{align}
+и центрированных переменных
+    \begin{gather}
+    k_{1\bar Y'}^\varphi \bar Y_t^{'0} + k_{1\bar Y_k}^\varphi 
+    \bar Y_{kt}^0 + k_{1U}^\varphi U_t^0 =0\,;\label{e3.6-sin}\\
+\dot U_t^0 = a_1^U U_t + b_0^U V_t\,.\notag %\label{e3.7-sin}
+\end{gather}
+Полагая
+    \begin{equation}
+    \mathrm{det}\, \lk k_{1\bar Y_k}^\varphi\rk\ne 0\,,\label{e3.8-sin}
+    \end{equation}
+разрешим~(\ref{e3.6-sin}) относительно старшей производной:
+  \begin{equation}
+    \hspace*{-2mm}\bar Y_{kt}^0 = Y_t^{(k)0} =- \left( k_{1\bar Y_k}^\varphi \right)^{-1}\! 
+    \lk k_{1\byy}^\varphi {\bar Y}_t^{'0} + k_{1U}^\varphi U_t^0\rk.\!\!
+    \label{e3.9-sin}
+    \end{equation}
+Введем центрированный составной вектор
+$ X_t^0 \hm= \lk {X'}_t^{0\mathrm{T}} U_t^{0\mathrm{T}}\rk^{\mathrm{T}}$.
+Здесь ${X'}_t^{0}\hm = I_k {Y'}_t^{0}$, где $I_k$~--- единичная мат\-ри\-ца. 
+Тогда совокупная система уравнений для центрированных переменных примет следу\-ющий вид:
+    \begin{equation}
+    \dot X_t^0 = a^X X_t^0 + b^X V_t\,.\label{e3.10-sin}
+    \end{equation}
+Здесь введены обозначения для блочных матриц:
+    $$
+    a^X =\begin{bmatrix}
+    a^{\bar X'}& a^{\bar X' U}\\
+    a^{U\bar X'}& a^U \end{bmatrix}\,; \qquad
+    b^X=\begin{bmatrix}
+    0\\ b_0^U\end{bmatrix}\,; 
+    $$
+    $$
+    a^{\bar X'} =\begin{bmatrix}
+    I_k& 0\\
+    -(k_{1\bar Y_k}^\varphi )^{-1} k_{1\bar X'}^\varphi & 0\end{bmatrix}\,;
+$$
+$$
+      a^{\byy U} = \begin{bmatrix}
+    0& 0\\
+    0 &-(k_{1 \bar Y_k}^\varphi )^{-1} k_{1U}^\varphi\end{bmatrix}\,;
+    $$
+    $$
+    a^{U\bar X'} = \begin{bmatrix}
+    0&0\\
+    0&0\end{bmatrix}\,;\qquad 
+        a^U =\begin{bmatrix}
+    0&0\\
+    0&a_1^U\end{bmatrix}\,.
+    $$
+
+Применяя к~линейным уравнениям~(\ref{e3.10-sin}) 
+корреляционную теорию линейных СтС~\cite{1-sin, 2-sin}, 
+придем к~следующим обыкновенным дифференциальным уравнениям для ковариационной 
+матрицы $K_t^X \hm= \mm_N \lk X_t^0 X_t^{0\mathrm{T}}\rk $ и~матрицы ковариационных 
+функций $K^X  (t_1, t_2) \hm= \mm_N \lk X_{t_1}^0 X_{t_2}^{0\mathrm{T}}\rk$:
+   \begin{multline}
+   \dot K_t^X = a^X K_t^X + K_t^X \left(a^X\right)^{\mathrm{T}} + 
+   b^X \nu \left(b^X\right)^{\mathrm{T}}\,,\\
+ K_{t_0}^X = K_0^X\,;\label{e3.11-sin}\end{multline}
+ 
+ \vspace*{-8pt}
+ 
+ \noindent
+ \begin{equation}
+\fr{\prt K^X (t_1, t_2)}{\prt t_2} = K^X \left(t_1,t_2\right) 
+\left(a_{t_2}^X\right)^{\mathrm{T}}\label{e3.12-sin}
+ \end{equation}
+при начальном условии $K^X (t_1, t_1) \hm= K_{t_1}^X$.
+
+Коэффициенты статистической линеаризации~$\varphi_0$ и~$k_{1\bar Y_k}^\varphi$  
+в~(\ref{e3.3-sin}) зависят от математического ожидания и~ковариационной 
+матрицы вектора~$\bar Y_k$. Для этого используется уравнение~(\ref{e3.4-sin}) 
+и~соотношение
+    \begin{equation}
+    \dot m_t^{\bar Y_{k-1}} = m_t^{\bar Y_k}\,.\label{e3.13-sin}
+    \end{equation}
+Для определения $K_t^{\bar Y_k}$ применяется уравнение~(\ref{e3.9-sin}). 
+В~результате получим для него искомое соотношение:
+    \begin{multline}
+    K_t^{\bar Y_k}  = \lk \left(k_{1\bar Y_k}^\varphi \right)^{-1} 
+    k_{1\byy}^\varphi \rk 
+    K_t^\byy \lk \left(k_{1\bar Y_k}^\varphi \right)^{-1} k_{1\byy}^\varphi 
+    \rk^{\mathrm{T}} +{}\\
+{}+ \lk (k_{1\bar Y_k}^\varphi )^{-1} k_{1U}^\varphi\rk K_t^U \lk 
+\left(k_{1\bar Y_k}^\varphi \right)^{-1} k_{1U}^\varphi\rk^{\mathrm{T}} +{}\\
+{}+\lk \left(k_{1\bar Y_k}^\varphi \right)^{-1} k_{1\byy}^\varphi\rk 
+K_t^{\byy U} \lk \left(k_{1\bar Y_k}^\varphi \right)^{-1}k_{1U}^\varphi 
+\rk^{\mathrm{T}} +{}\\
+{}+\lk \left(k_{1\bar Y_k}^\varphi \right)^{-1}k_{1U}^\varphi\rk K_t^{U\bar Y'} 
+\lk \left(k_{1\bar Y_k}^\varphi \right)^{-1} k_{1\byy}^\varphi\rk^{\mathrm{T}}\,.
+\label{e3.14-sin}
+\end{multline}
+
+Таким образом, имеем следующий результат.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~1.}\ \textit{Пусть в~нестационарной нелинейной СтС, не разрешенной 
+относительно производных,}~(\ref{e3.1-sin}), (\ref{e3.2-sin})
+\textit{выполнены следующие условия}:
+\begin{itemize}
+\item[$1^0$] \textit{дисперсии и~ковариационные моменты СтП $Y_t$ и~их производных 
+до $k$-го порядка и~СтП~$U_t$ ко-\linebreak нечны};
+
+\item[$2^0$] \textit{векторная функция $\varphi$ в}~(\ref{e3.1-sin}) 
+\textit{действительна и~допускает статистическую линеаризацию по 
+Казакову}~(\ref{e3.3-sin});
+
+\item[$3^0$] \textit{имеет место условие}~(\ref{e3.8-sin}).
+\end{itemize}
+
+\textit{Тогда в~основе МАМ согласно МСЛ лежат уравнения}~(\ref{e3.4-sin}), 
+(\ref{e3.5-sin}), (\ref{e3.11-sin}) \textit{и}~(\ref{e3.12-sin}) 
+\textit{при условиях}~(\ref{e3.13-sin}) \textit{и}~(\ref{e3.14-sin}).
+
+\smallskip
+
+В стационарном случае, когда $\nu \hm= \nu_*$, $m_t^X\hm= m_*^X$, $K_t^X\hm=K_*^X$ 
+и~$K^X(t_1, t_2) \hm= k^X (\tau)$ $(\tau \hm= t_1\hm- t_2)$, уравнения МАМ 
+на основе МСЛ имеют следующий вид:
+  \begin{align}
+  \varphi_{0*} &=0\,;\label{e3.15-sin}\\
+    a_*^X K_*^X + K_*^X \left(a_*^X\right)^{\mathrm{T}} + b_*^X \nu_* 
+    \left(b_*^X\right)^{\mathrm{T}} &=0\,;
+    \label{e3.16-sin}
+    \end{align}
+    \begin{equation}
+    \left.
+    \begin{array}{rl}
+    \dot k^X_\tau (\tau) &= a_*^X k^X(\tau)\,;\\[6pt] 
+    k^X_\tau (0) &= K^X_* \enskip(\forall\ \tau >0)\,;\\[6pt] 
+    k_\tau^X(\tau) &= k_\tau^X (-\tau)^{\mathrm{T}} \enskip 
+    (\forall \tau <0)\,.
+    \end{array}
+    \right\}
+    \label{e3.17-sin}
+\end{equation}
+Таким образом, получена следующая теорема.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~2.} \textit{Пусть в~условиях теоремы~$1$ 
+уравнения}~(\ref{e3.1-sin}), (\ref{e3.2-sin}) 
+\textit{стационарны и~существует ковариационно стационарный СтП, а матрица~$a_*^X$ 
+асимптотически устойчива. Тогда в~основе МАМ согласно МСЛ лежат 
+уравнения}~(\ref{e3.15-sin})--(\ref{e3.17-sin}).
+
+
+\smallskip
+
+Если для оценки чувствительности МАМ к~параметрам~$\Theta$, явно входящим в~(\ref{e3.1-sin}), 
+применить метод функций чувствительности первого порядка для $\nabla^\Theta m_t^X$, 
+$\nabla^\Theta K_t^X$ и~$\nabla^\Theta K^X (t_1, t_2)$, то в~условиях теоремы~1 
+будем иметь следующие уравнения~\cite{8-sin}:
+   \begin{gather}
+   \dot \nabla^\Theta m_t^X = A_t^m (t,\Theta)\,,\enskip 
+    \nabla^\Theta m_{t_0}^X =0\,;\label{e3.18-sin}\\[2pt]
+    \dot \nabla^\Theta K_t^X = A_t^X (t,\Theta)\,,\enskip 
+    \nabla^\Theta K_{t_0}^X =0\,;\label{e3.19-sin}
+    \end{gather}
+    
+    \vspace*{-14pt}
+    
+    \noindent
+    \begin{multline}
+     \fr{\prt \nabla^\Theta K^X (t_1,t_2)}{\prt t_2} = 
+    A_{t_1t_2}^K \left(t_1, t_2,\Theta\right)\,,\\
+    \nabla^\Theta K^X \left(t_0, t_0\right)=0\,.
+        \label{e3.20-sin}
+    \end{multline}
+Здесь функции $A$ получаются путем дифференцирования правых частей уравнений теоремы~1 
+по параметру~$\Theta$.
+
+Таким образом, получен следующий результат.
+
+\medskip
+
+\noindent
+\textbf{Теорема~3.}\ \textit{Пусть выполнены все условия теоремы~$1$. 
+Тогда уравнения для первых функций чувствитель\-ности будут иметь вид}~(\ref{e3.18-sin})--(\ref{e3.20-sin}) 
+\textit{при условии ко\-неч\-ности правых частей}.
+
+\smallskip
+
+Аналогичная теорема имеет место в~стационарном случае, 
+когда выполнены условия теоремы~2.
+
+Для алгоритмизации МАМ~(\ref{e2.1-sin})--(\ref{e2.3-sin}) на основе теорем~1--3 
+необходимо уметь вычислять интегралы~(\ref{e2.4-sin}), (\ref{e2.5-sin}). 
+Численные методы описаны в~\cite{8-sin, 9-sin}. 
+При этом численное интегрирование уравнений для математических ожиданий 
+и~ковариационных моментов должно быть согласовано с~вычислением коэффициентов 
+статистической линеаризации.
+
+
+\section{Замечания и~обобщения}
+
+
+\noindent
+\textbf{4.1.}\ Примеры некоторых типовых нелинейностей~(\ref{e2.1-sin}), 
+а~также выражения для их 
+коэффициентов статистической линеаризации даны в~приложении~П1.
+
+\noindent
+\textbf{4.2.}\ Путем расширения вектора~$X_t$ аналогичные тео\-ре\-мы устанавливаются для 
+нелинейностей в~(\ref{e3.1-sin}), в~которые входят производные $U_t^{(r)}$ 
+$(r\hm=1,2,\ldots)$.
+
+\noindent
+\textbf{4.3.}\  Для достаточно гладких нелинейностей в~(\ref{e3.1-sin}) 
+можно применить аналог известного метода <<интегрирования посредством 
+дифференцирования>>, если воспользоваться формулами Ито~\cite{1-sin, 2-sin} 
+для стохастического дифференцирования сложных функций.
+
+В самом деле, результаты разд.~3 допускают обобщение на случай гладких функций
+\begin{equation}
+\varphi =\varphi\left(t, \Theta, Y_t, \dot Y_t \tr Y_t^{(k)}, U_t\right) =0
+    \label{e4.1-sin}
+\end{equation}
+и нелинейного ФФ вида
+\begin{equation}
+\dot U_t = a^U \left(t, \Theta,U_t\right) dt + b^U \left(t, \Theta,U_t\right) V_t^U\,.
+\label{e4.2-sin}
+\end{equation}
+Здесь $a^U \hm= a^U(t, \Theta,U_t)$ и~$b^U(t, \Theta,U_t)$~--- 
+$(n^Y\times 1)$- и~$(n^Y\times n_U^V)$-мер\-ные функции; $V_t^U$~--- 
+белый шум в~строгом смысле~\cite{1-sin, 2-sin}, допускающий представление
+    \begin{align*}
+       V_t^U &= \dot W_t^U\,; \\
+   W_t^U &= W_0^U (t,\Theta) + 
+    \iii_{R_0^q} c^U (\Theta,\rho) P^0 (t,\Theta, d\rho)\,,
+    %    \label{e4.3-sin}
+    \end{align*}
+где $\nu_t$~--- его интенсивность:
+   \begin{equation*}
+   \nu_t =\nu_t^{W_0} +  \iii_{R_0^q} c^U (\Theta,\rho) 
+    \left[c^U (\Theta,\rho)\right]^{\mathrm{T}} \nu_P (t,\Theta,\rho)\,d\rho\,;
+    %\label{e4.4-sin}
+    \end{equation*}
+$c^U\hm = c^U(\Theta,\rho)$~--- 
+известная векторная функция той же размерности, что и~$W_t^0$, 
+а~интеграл при любом $t\hm\ge t_0$ представляет собой стохастический интеграл 
+по центрированной пуассоновской мере $P^0(t,\Theta,\aa)$, независимой от~$W_0$ 
+и~имеющей независимые значения на попарно непересекающихся множествах; $\aa$~--- 
+борелевское множество пространства~$R_0^q$ с~выколотым началом; $\nu^W$, 
+$\nu^{W_0}$ и~$\nu^P$~--- интенсивности $W_t^U$, $W_{0t}$ и~$P^0$. 
+Уравнение~(\ref{e4.2-sin}) понимается в~смысле Ито и~имеет единственное решение 
+в~среднем квадратическом~\cite{1-sin, 2-sin}.
+
+
+Для гладких функций в~(\ref{e4.1-sin}) выполним с~уравнениями~(\ref{e4.1-sin}) 
+и~(\ref{e4.2-sin}) следующие преобразования:
+\begin{enumerate}[(1)]
+\item будем дифференцировать сполна по~$t$ левые части уравнений~(\ref{e4.1-sin}) 
+по обобщенной формуле Ито~\cite{1-sin, 2-sin} 
+до тех пор, пока не появятся производные белого шума. 
+В~результате получим следующую систему уравнений:
+  \begin{equation}
+  \varphi=0\,,\enskip \dot \varphi =0\tr \varphi^{(h)}=0\,;\label{e4.5-sin}
+  \end{equation}
+
+\item введем вектор  $Z_t = \lk Z_{T}^{'\mathrm{T}} Z_t^{''\mathrm{T}}\rk^{\mathrm{T}}$, 
+составленный из $Z_t' = \lk Y_t^{\mathrm{T}} \dot{Y}_t^{\mathrm{T}}\cdots 
+Y_t^{(k-1)\mathrm{T}}\rk^{\mathrm{T}}$ и~вспомогательного вектора $Z_t''$, 
+определяемого уравнениями~(\ref{e4.5-sin});
+
+\item в~результате придем к~уравнениям, разрешенным относительно дифференциалов 
+следу\-юще\-го вида:
+\begin{equation*}
+dZ_t = a^Z  dt + b^Z  d W_0 + \iii_{R_0^q} c^Z P^0(\Theta,t,du)\,,
+%\label{e4.6-sin}
+\end{equation*}
+для которых уравнения МНА имеют известный вид~\cite{1-sin, 2-sin}:
+  \begin{gather}
+  \dot m_t^Z = \Phi_t^m \left(t,\Theta,m_t^Z, K_t^z\right)\,; \enskip 
+  m_0^Z = m_{t_0}^Z\,,\label{e4.7-sin}\\
+  \dot K_t^Z = \Phi_t^K \left(t,\Theta,m_t^Z, K_t^z\right)\,; \enskip 
+  K_0^Z = K_{t_0}^Z\,,\label{e4.8-sin}
+  \end{gather}
+  
+  \vspace*{-14pt}
+  
+  \noindent
+  \begin{multline}
+   \fr{\prt K^Z (t_1, t_2)}{\prt t_2} = \Phi_{t_1, t_2}^K 
+    \left(t_1, t_2,\Theta,m_{t_2}^Z, K_{t_2}^z\right)\,, \\
+        K^Z\left(t_1, t_2\right) = K_{t_1}^Z\,.
+               \label{e4.9-sin}
+    \end{multline}
+Здесь введены следующие обозначения:
+    \begin{equation}
+    \Phi_t^m\left(t,\Theta,m_t^Z, K_t^z\right)= \mm_N\lk a^Z\rk\,;\label{e4.10-sin}
+    \end{equation}
+    
+            \vspace*{-15pt}
+        
+        \noindent
+        \begin{multline}
+    \Phi_t^K \left(t,\Theta,m_t^Z, K_t^z\right) =
+        \Phi_{1t} \left(t,\Theta,m_t^Z, K_t^z\right)+{}\\
+\hspace*{-5mm}{}+
+    \Phi_{1t}^{\mathrm{T}} \left(t,\Theta,m_t^Z, K_t^z\right)+
+    \Phi_{2t}\left(t,\Theta,m_t^Z, K_t^z\right)\,;\label{e4.11-sin}
+    \end{multline}
+    
+    \vspace*{-3pt}
+    
+    \noindent
+        \begin{equation}
+\hspace*{-8mm}\Phi_{1t} \left(t,\Theta,m_t^Z, K_t^z\right)=
+   \mm_N \lk a^Z \left(Z_t - m_t^Z\right)^{\mathrm{T}}\rk\,;\label{e4.12-sin}
+   \end{equation}
+   \begin{equation}
+   \Phi_{2t} \left(t,\Theta,m_t^Z, K_t^z\right)=
+   \mm_N \lk \si\left(t,\Theta,Z_t\right)\rk\,;\label{e4.13-sin}
+\end{equation}
+   
+           \vspace*{-12pt}
+        
+        \noindent
+   \begin{multline}
+\si\left(t,\Theta,Z_t\right)= 
+      \si_0\left(t,\Theta,Z_t\right) +{}\\
+  \hspace*{-8pt}{}+\iii_{R_0^q}  
+     c^Z\left(t,\Theta,Z_t,u\right) c^Z \left(t,\Theta,Z_t,u\right)^{\mathrm{T}} 
+     \nu_P (t,\Theta,du)\,,\\
+\si_0\left(t,\Theta,Z_t\right) ={}\\
+{}=  b^Z \left(t,\Theta,Z_t\right) 
+    \nu_0 (t,\Theta) b^Z\left(t,\Theta,Z_t\right)^{\mathrm{T}}\,;\label{e4.14-sin}
+        \end{multline}
+        
+        \vspace*{-12pt}
+        
+        \noindent
+        \begin{multline}
+\Phi^K_{t_1,t_2} \left(t_1, t_2,\Theta,m_{t_2}^Z, K_{t_2}^z\right)={}\\
+{}=
+    K^Z \left(t_1, t_2\right) \left(K_{t_2}^Z\right)^{-1}\! \Phi_{1t}^{\mathrm{T}}\,.
+    \label{e4.15-sin}
+\end{multline}
+    \end{enumerate}
+
+Таким образом, имеем следующие результаты.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~4.} 
+\textit{Пусть для СтС}~(\ref{e4.1-sin}), (\ref{e4.2-sin}) \textit{выполнены условия}:
+\begin{itemize}
+\item[$1^0$] \textit{правые части уравнений}~(\ref{e4.1-sin}) 
+\textit{имеют производные по явно входящим переменным $Y_t\tr Y_t^{(k)}$ до 
+порядка}~$n_Y^\varphi$;
+
+\item[$2^0$] \textit{уравнения}~(\ref{e4.1-sin}) \textit{совместно с}~(\ref{e4.5-sin}) 
+\textit{допускают приведение к~виду}~(\ref{e4.15-sin}) 
+\textit{и~имеют единственное решение, понимаемое в~среднем квадратическом (с.к.)}.
+\end{itemize}
+\textit{Тогда уравнения МАМ на основе МНА имеют вид}~(\ref{e4.7-sin})--(\ref{e4.9-sin}) 
+\textit{при условии конечности интегралов}~(\ref{e4.10-sin})--(\ref{e4.14-sin}).
+
+
+Аналогичная теорема устанавливается в~стационарном случае.
+
+\begin{table*}[b]\small
+\begin{center}
+%\vspace*{2ex}
+
+\begin{tabular}{|c|c|c|}
+\multicolumn{3}{c}{Коэффициенты МСЛ для типовых нелинейностей}\\
+\multicolumn{2}{c}{\ }\\[-6pt]
+\hline
+№ &$\varphi$ & $\varphi_0$\\
+\hline
+&\\[-9pt]
+1.&$\dot Y^2$&$D_{\dot Y} (1+m_{\dot Y}^2 D_{\dot Y}^{-1})$\\[3pt]
+\hline
+&\\[-9pt]
+2.&$\dot Y^3$ &$D_{\dot Y} (3+m_{\dot Y}^2 D_{\dot Y}^{-1})$\\[3pt]
+\hline
+&\\[-9pt]
+3.&$\dot Y^{2n+1}$&$\displaystyle 
+\sss_{l=0}^{2n+1} C_{2n+1}^l m_{\dot Y}^l \mu_{2n+1 -l}$\\[10pt]
+\hline
+&\\[-9pt]
+4.&$\mathrm{sgn}\, \dot Y$&
+$\displaystyle
+2\Phi \left(\fr{m_{\dot Y}}{\sqrt{D_{\dot Y}}}\right)$\\[10pt]
+\hline
+&\\[-9pt]
+5. &$\dot Y^2  \,\mathrm{sgn}\, \dot Y$&
+$\displaystyle
+2D_{\dot Y}\lk (1+m_{\dot Y}^2 D_{\dot Y}^{-1}) \Phi\left(
+\fr{m_{\dot Y}}{\sqrt{D_{\dot Y}} }\right) + 
+\fr{1}{\sqrt{2\pi D_{\dot Y}}} \exp \left(-
+\fr{m_{\dot Y}^2 }{2D_{\dot Y}} \right)\rk$\\[10pt]
+\hline
+&\\[-9pt]
+6. &$1( \dot Y)$ &
+$\displaystyle\fr{1}{2}+\Phi \left(\fr{m_{\dot Y}}{\sqrt{D_{\dot Y}}}\right)$\\[10pt]
+\hline
+&\\[-9pt]
+7. &\tabcolsep=0pt\begin{tabular}{c}
+$Y_1^{h_1} \ldots Y_n^{h_n}$\ $(h_1 \tr h_n$ ---\\
+целые неотрицательные числа: \\ $h=h_1+\cdots +h_n)$\end{tabular}
+&
+\tabcolsep=0pt\begin{tabular}{c}
+$\displaystyle \alp_h = m_p \alp_{h-e_p} + \sss_{r=1}^n h_r k_{pr} 
+\alp_{h-e_p-e_r}-k_{pp} \alp_{h-2e_p}$,\\ 
+$\alp_0 =1\,,\enskip $  $\alp_{e_p} =m_p$\end{tabular}\\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{9pt}
+\end{table*}
+
+
+%\pagebreak
+
+\noindent
+\textbf{4.4.}\ Для повышения точности МАМ можно воспользоваться известными методами 
+параметризации распределений (моментов, семиинвариантов, ортогональных разложений 
+плотностей, эллипсоидальной аппроксимации и~линеаризации и~др.), изложенными 
+в~[1--3].
+
+\noindent
+\textbf{4.5.}\ В~том случае когда вектор возмущений~$U_t$ или нелинейность~$\varphi$ 
+заданы каноническими разложениями, полученные результаты допускают обобщение, 
+если воспользоваться результатами~\cite{2-sin, 3-sin}.
+
+\noindent
+\textbf{4.6.}\ Особый интерес представляет развитие МАМ для узкополосных СтП на 
+основе метода гармонического баланса или метода медленно меняющихся амплитуд.
+
+\noindent
+\textbf{4.7.}\ Полученные результаты допускают непосредственное развитие и~для 
+разностных СтС.
+
+\section{Заключение}
+
+На основе приближенного метода статистической линеаризации разработаны 
+алгоритмы аналитического моделирования векторных широкополосных нормальных 
+процессов в~динамических СтС, не разрешенных относительно 
+производных. Получены уравнения МНА для гладких функций~(\ref{e3.1-sin}), 
+нелинейных ФФ и~ви\-не\-ров\-ско-пуас\-со\-нов\-ских шумов. Особое внимание 
+уделено уравнениям чувствительности к~па\-ра\-метрам.
+
+В приложении~П1 приведены выражения для типовых нелинейностей и~коэффициентов 
+статистической линеаризации, а~в~приложениях~П2 и~П3~--- тестовые примеры.
+
+Алгоритмы положены в~основу разрабатываемого инструментального программного 
+обеспечения StS-ANALYSIS'2017 для решения задач надежности и~безопасности 
+технических систем.
+
+
+
+%\setcounter{equation}{0}
+{\small \section*{\raggedleft Приложения}
+
+%\renewcommand{\theequation}{П.\arabic{equation}}
+
+
+
+\noindent
+\textbf{П.1.}\ Приведенные в~\cite{4-sin} типовые одно- и~многомерные нелинейности, если 
+в~качестве  одной из переменных выбрать~$\dot Y_t$, могут служить моделями 
+нелинейностей, не разрешенных относительно производных.
+
+В таблице на основе~\cite{4-sin} составлены аналитические выражения для некоторых 
+типовых одно- и~многомерных нелинейностей. Здесь введены следующие обозначения:
+ $$
+ h = \lk h_1 \cdots h_n\rk^{\mathrm{T}};\enskip  | h| = h_1 +\cdots + h_n;$$
+ $$
+e_p = \lk 0\cdots \fr{1}{p}\cdots 0\rk;
+$$ 
+ $$
+ k_p = \lk k_{p_1} \cdots k_{p_n}\rk\enskip (p\hm= 1\tr n)^p;\enskip 
+K=\lk k_{pq}\rk\,,
+$$ 
+а~через~$\alp_h$ и~$\mu_h$ обозначены вероятностные 
+ начальные и~центральные моменты порядка~$h$, $\alp_0 \hm=1$, $\alp_{e_p}\hm= m_p$. 
+ Функцию Лапласа и~интеграл от нее возьмем в~виде~\cite{1-sin, 2-sin, 4-sin}:
+    $$\Phi(z) = \fr{1}{\sqrt{2\pi}} \iii_0^z e^{-t^2/2}\, dt\,;\enskip 
+    \Phi'(z) = \fr{1}{\sqrt{2\pi}} \iii_0^z e^{-z^2/2}\, dt\,.
+    $$
+
+
+
+\smallskip
+
+\noindent
+\textbf{П.2.}\ Рассмотрим МАМ для одномерной СтС вида:
+    \begin{equation}
+    \left.
+    \begin{array}{rl}
+    \psi \left(\dot Y_t\right) &= a_0^Y + a_1^Y Y_t + a_1^U U_t\,;\\[6pt] 
+    \dot U_t &= a_0^U + a_1^U U_t + b_0^U V_t\,,
+    \end{array}
+    \right\}
+    \label{p1}
+    \end{equation}
+где $\psi (\dot Y_t)$~--- нелинейная недифференцируемая функ-\linebreak ция.
+
+Уравнения МАМ на основе МСЛ согласно теореме~1 имеют следующий вид:
+    \begin{equation*}
+    0^Y + a_1^Y m_t^Y + a_1^U m_t^U\,,\enskip 
+    \dot m_t^Y = m_t^{\dot Y}\,; %\label{p2}
+    \end{equation*}
+    \begin{equation*}
+    k_{1\dot Y}^\psi (m^{\dot Y}, D^{\dot Y}) \dot Y_t^0 \approx  
+    a_1^Y Y_t^0 + a_1^U U_t^0\,,\enskip 
+    \dot U_t^0 = a_1^U U_t^0 + b_0^U V_t\,; %\label{p3}
+    \end{equation*}
+    
+    \vspace*{-12pt}
+    
+    \noindent
+    \begin{multline*}
+     \dot D_t^U = 2a_1^U D_t^U + \left(b_0^U\right)^2\nu\,, \\ 
+     \dot D_t^Y=2\lk   a_1^Y\left(k_{1\dot Y}^\psi\right)^{-1} D_t^Y + 
+     a_1^U \left(k_{1\dot Y}^\psi\right)^{-1} K_t^{UY}\rk\,;
+     \end{multline*}
+     
+     \vspace*{-6pt}
+     
+     \noindent
+    \begin{equation*}
+    \dot K_t^{UY} = \lk a_1^U + a_1^Y \left(k_{1\dot Y}^\psi\right)^{-1}\rk K_t^{UY}+
+    a_1^U \left(k_{1\dot Y}^\psi\right)^{-1}D_t^U\,; %\label{p4}
+    \end{equation*}
+    
+    \vspace*{-12pt}
+
+\noindent
+    \begin{multline*}
+          D_t^{\dot Y} = \lk a_1^Y \left(k_{1\dot Y}^\psi\right)^{-1}\rk^2 D_t^Y + 
+          \lk a_1^U\left(k_{1\dot Y}^\psi\right)^{-1}\rk^2 D_t^U + {}\\
+          {}+
+          2a_1^Y a_1^U \left(k_{1\dot Y}^\psi\right)^{-2} K_t^{UY}\,.
+          %\label{p5}
+          \end{multline*}
+Здесь через  $\psi_0 \hm=\psi_0 (m^{\dot Y}, D^{\dot Y})$ 
+и~$k_{1\dot Y}^\psi (m^{\dot Y}, D^{\dot Y})$ обозначены коэффициенты 
+статистической линеаризации нелинейности $\psi(\dot Y_t)$.
+
+Согласно теореме~2 для стационарного случая, когда  $a_0^U \hm=0$, $\nu\hm=\nu_*$ 
+при условии асимптотической устойчи\-вости матрицы
+    \begin{equation*}
+    a=\begin{bmatrix}
+    a_1^U\left(k_{1\dot Y}^\psi\right)^{-1}_*& a_1^Y\left(k_{1\dot Y}^\psi\right)^{-1}_*
+    \end{bmatrix}\,,
+     %\label{p6}
+     \end{equation*}
+уравнения МАМ имеют вид:
+    \begin{equation}
+    \psi_0 =0\,; \label{p7}
+    \end{equation}
+    \begin{equation}
+    D_*^U =\left(b_0^U\right)^2 \fr{\nu^*}{2 a_1^U}\,;
+    \label{p8}
+    \end{equation}
+    \begin{equation}
+    \left(a_1^Y D_*^Y + a_1^U K_*^{UY}\right)=0\,; 
+    \label{p9}
+    \end{equation}
+    \begin{equation}
+    \lk a_1^U+ a_1^Y \left(k_{1\dot Y}^\psi\right)^{-1}_*\rk K_*^{UY} +  
+    a_1^U\left(k_{1\dot Y}^\psi\right)^{-1}_* D_*^U =0\,; 
+    \label{p10}
+    \end{equation}
+    \begin{equation*}
+    \left(k_{1\dot Y}^\psi\right)^{2}_* D_*^{\dot Y} -\left(a_1^Y\right)^2 D_*^Y - 
+    \left(a_1^U\right)^2 D_*^U - 2 a_1^Y a_1^U K_*^{UY}=0\,. 
+    %\label{p11}
+    \end{equation*}
+Отсюда, в~частности, при  $\dot \psi \hm= \mathrm{sgn}\, \dot Y$ и~п.~4 таблицы 
+имеем:
+        \begin{equation}
+        \left.
+        \begin{array}{rl}
+          \hspace*{-2mm} \psi_0 \left(m^{\dot Y}, D^{\dot Y}\right)& =2 \Phi \left(\fr{m_{\dot Y}}{\sqrt{D_{\dot Y}}}
+    \right)\,; \\[6pt]
+             \hspace*{-2mm} k_{1\dot Y}^\psi \left(m^{\dot Y}, D^{\dot Y}\right) &= 
+    \fr{1}{\sqrt{D_*^{\dot Y}  }}\,\fr{2}{\sqrt{2\pi}} \exp\! \lk - 
+    \fr{1}{2} \! \left(\!\fr{m^{\dot Y 2}}{D^{\dot Y}}\right)\! \rk.
+    \end{array}\!\!
+    \right\}\!\!
+    \label{p12}
+        \end{equation}
+
+Следовательно, в~силу~(\ref{p7}) и~(\ref{p12}) находим:
+    $$
+    m^{\dot Y}_* =0\,;\enskip 
+    k_{1\dot Y}^\psi =k_{1\dot Y}^\psi \left(0, D^{\dot Y}_*\right) = 
+    \fr{2}{\sqrt{\pi D_*^{\dot Y}  }}\,;
+    $$
+    \begin{equation}
+    a=\begin{bmatrix}
+     a_{11}&a_{12}\\
+    a_{21}&a_{22}\end{bmatrix}\,,
+    \label{p13}
+    \end{equation}
+    где
+    \begin{alignat*}{2}
+    a_{11} &= a_1^U\,; &\enskip 
+    a_{12}&= 0\,; \\[6pt] 
+    a_{21}&= \sqrt{\fr{\pi D_*^{\dot Y}}{2}}\,; &\enskip 
+    a_{22}&= a_1^Y \sqrt{\fr{\pi D_*^{\dot Y}}{2}}\,.
+   \end{alignat*}
+
+Условие асимптотической устойчивости матрицы~(\ref{p13}) требует соблюдения 
+условий $a_1^U \hm<0$ и~$a_1^Y\hm<0$. Стационарные значения 
+$D_*^{\dot U}$, $D_*^Y$, $K^{UY}_*$ находятся из~(\ref{p8})--(\ref{p10}).
+
+\smallskip
+
+\noindent
+\textbf{П.3.}\
+Рассмотрим СтС вида
+    \begin{equation*}
+    \dot Y_t^2 =- \alp^2 \left(Y_t^2 - U_t^2\right)\,, \enskip 
+    \dot U_t = a_0^U + a_1^U U_t + b_0^U V_t\,.
+    %\label{p14}
+    \end{equation*}
+
+Найдем сначала уравнения МАМ согласно МСМ. Учитывая соотношения
+    \begin{equation*}
+    X_t^2 \approx \lk \left(m_t^X\right)^2 + D_t^X \rk + 2 m_t^X X_t^0
+    %\label{p15}
+    \end{equation*}
+для  $X_t = \lf Y_t,\dot Y_t, U_t\rf$,  придем после применения МСЛ 
+к~следующим уравнениям для математических ожиданий и~центрированных составляющих:
+    \begin{equation*}
+    \left( m^{\dot Y}_t\right)^2 + D^{\dot Y}_t= -\alp^2 
+    \lk \left(m^{Y}_t\right)^2 - \left(m_t^U\right)^2 + 
+    D_t^Y - D_t^U\rk\,; %\label{p16}
+    \end{equation*}
+    \begin{equation*}
+\dot m^{U}_t= a_0^U + a_1^U m_t^U\,; 
+%\label{p17}
+\end{equation*}
+    \begin{equation*}
+    m^{\dot Y}_t\dot Y_t^0 =-2\alp^2 \left(m_t^Y Y_t^0 - m_t^U U_t^0\right)\,;
+    %\label{p18}
+    \end{equation*}
+    \begin{equation*}
+    \dot U_t^0 =a_1^U U_t^0 + b_0 V_t\,.
+    %\label{p19}
+    \end{equation*}
+
+Применяя уравнения теоремы~1, положив $X_t\hm = \lk U_t^0\, Y_t^0\rk^{\mathrm{T}}$ 
+и~обозначив
+    $$
+    \bar a=\begin{bmatrix}
+    -a_1^U&0\\
+    \alp^2 m_t^U \left(m_t^{\dot Y}\right)^{-1}&- \alp^2 m_t^Y 
+    \left(m_t^{\dot Y}\right)^{-1}\end{bmatrix}\,;\enskip
+    b=\begin{bmatrix}
+    b_0\\ 0\end{bmatrix}\,, 
+    $$
+придем к~следующей взаимосвязанной системе уравнений для~$m_t^Y$, $m_t^{\dot Y}$, 
+$D_t^Y$, $D_t^U$, $K_t^{UY}$ и~$D_t^{\dot Y}$:
+    \begin{equation*}
+    m_t^{\dot Y}= \left(m_t^{Y}\right)^\bullet\,;
+    %\label{p20}
+    \end{equation*}
+    
+    \vspace*{-12pt}
+    
+    \noindent
+    \begin{multline}
+D_t^{\dot Y}= D\lk -\alp^2 m_t^Y \left(m_t^{\dot Y}\right)^{-1} Y_t^0 + 
+\alp^2 m_t^U U_t^0\rk ={}\\[2pt]
+{}= \alp^4 \left\{ \lk m_t^Y \left(m_t^{\dot Y}\right)^{-1}\rk^2 
+D_t^Y+ \lk m_t^U \left(m_t^{\dot Y}\right)^{-1}\rk^2 D_t^U - {}\right.\\[2pt]
+\left.{}-2 m_t^Y m_t^U \left(m_t^{\dot Y}\right)^{-2} K^{UY}
+\vphantom{\lk m_t^Y \left(m_t^{\dot Y}\right)^{-1}\rk^2 }
+\right\}\,;
+\label{p21}
+\end{multline}
+    \begin{equation}
+D_t^{U}=-2a_1^U D_t^U + b_0^2 \nu\,,\enskip 
+D_{t_0}^U = D_0^U\,;
+\label{p22}
+\end{equation}
+
+\vspace*{-10pt}
+
+\noindent
+    \begin{multline}
+\dot D_t^{Y}=  -2\alp^2\lk m_t^Y \left(m_t^{Y}\right)^{-1} 
+ D_t^Y -  m_t^U \left(m_t^{\dot Y}\right)^{-1}K_t^{UY}\rk\,,\\[3pt]  
+ D_{t_0}^Y=D_0^Y\,;
+ \label{p23}
+ \end{multline}
+ 
+   \vspace*{-12pt}
+
+\noindent
+    \begin{multline}
+    \dot K_t^{UY}=  \alp^2\ m_t^U \left(m_t^{\dot Y}\right)^{-1} D_t - {}\\
+    {}-
+    \lk a_1^U + \alp^2 m_t^Y \left(m_t^{\dot Y}\right)^{-1}\rk K_t^{UY}\,,\enskip  
+    K_{t_0}^{UY}=K_0^{0Y}\,.
+    \label{p24}
+    \end{multline}
+
+В стационарном случае, используя теорему~2 при $a_0^U\hm=0$ и~постоянных 
+параметрах~$\alp$, $a_1^U\hm<0$, $ b_0^U$ и~$\nu^*$, находим
+    \begin{equation*}
+    m_*^U =0 \,,\enskip 
+    D_*^U = \fr{b_0^2 \nu^*}{2 a_1^U}\,. 
+    %\label{p25}
+    \end{equation*}
+При этом моменты $m_t^Y$, $D_t^Y$, $K_t^{UY}$ и~$D_t^{\dot Y}$ 
+нестационарны и~определяются из~(\ref{p21})--(\ref{p24}). 
+Последние допускают следующую запись:
+     \begin{equation*}
+     m_t^{\dot Y} = \left(m_t^Y\right)^\bullet\,;
+     %\label{p26}
+     \end{equation*}
+    \begin{equation}
+    \dot D_t^{Y} =\gamma_1 D_t^Y\,,\enskip 
+     \gamma_1 = 2 \alp^2 m_t^Y \left(m_t^{\dot Y}\right)^{-1}\,;
+     \label{p27}
+     \end{equation}
+    \begin{equation}
+    \dot K_t^{UY} =\gamma_2 K_t^{UY}\,,\  
+     \gamma_2 =-\lk a_1^U+\alp^2 m_t^Y \left(m_t^{\dot Y}\right)^{-1}\rk;\!
+     \label{p28}
+     \end{equation}
+    \begin{equation*}
+    \left(m_t^{\dot Y}\right)^{2}+D_t^{\dot Y} =
+     -\alp^2 \lk \left(m_t^{Y}\right)^{2}+D_t^Y - D_t^U\rk\,;
+    % \label{p29}
+     \end{equation*}
+    \begin{equation*}
+    D_t^{\dot Y}=  \alp^4  \left( m_t^{Y} \right)^{2}\left( m_t^{\dot Y}\right)^{-2}
+     D_t^Y\,.
+     %\label{p30}
+     \end{equation*}
+
+В зависимости от знаков  $\gamma_1$ и~$\gamma_2$ в~(\ref{p27}) и~(\ref{p28}) 
+наблюдается эффект убывания или возрастания~$D_t^Y$ и~$K_t^{UY}$. При этом 
+дифференциальное уравнения для~$m_t^Y$ в~силу~(\ref{p22}) и~(\ref{p24}) 
+имеет следующий вид:
+    \begin{equation*}
+    \left(\dot m_t^{Y}\right)^2 =-\alp^2 \!\left(m_t^{Y}\right)^{2}\! + 
+    \alp^2 D_*^U - \alp^2\! \left[ 1+ 
+    \fr{\alp^2 \left(m_t^{Y}\right)^{2}}{\left(\dot m_t^{Y}\right)^{2}}\right]\!\! D_t^Y.
+%    \label{p31}
+    \end{equation*}
+
+Таким образом, уравнения для математического ожидания~$m_t^Y$ и~дисперсии~$D_t^Y$ 
+взаимосвязаны и~требуют совместного интегрирования. За счет стохастичности 
+параметра~$U$ уравнение для~$m_t^Y$ будет дифференциальным уравнением 4-го порядка, 
+не разрешенным относительно производной. При отсутствии стохастичности па\-ра\-мет\-ра~$U_t$ 
+решение для~$m_t^Y$ будет гармонической функцией периода~$2\pi/\alp$.
+
+Теперь применим МНА, учитывая, что левая часть первого уравнения~(\ref{p1}) является 
+гладкой функцией. Во-пер\-вых, продифференцируем сполна по времени левую и~правую 
+части первого уравнения~(\ref{p1}). 
+Во-вто\-рых, применим формулу Ито для квадратической 
+функции
+    \begin{multline*}
+    dU_t^2 = \lk 2 U_t \left( a_0^U + a_1^U U_t \right) + 
+    \left(b_0^U\right)^2 \nu \rk dt + 2 U_t b_0^U dW_t\,,\\
+    \dot W_t = V_t\,. %\label{p32}
+    \end{multline*}
+В результате для переменных $Y_t \hm= \bar Y_1$, 
+$\dot Y_t\hm =\dot{\bar Y}_1 \hm= \bar Y_2$ и~$ \bar Y_3 \hm= U_t$ получим 
+следующую точную нелинейную систему стохастических уравнений с~параметрическим шумом:
+
+\noindent
+    \begin{align*}
+    \dot{\bar Y}_1&=\bar Y_2\,;\\ 
+    \dot{\bar Y}_2& =-\alp^2 \bar Y_1 + 
+    \alp^2 \lk \fr{\nu}{2} \left(b_0^U\right)^2 + a_0^U \bar Y_3 + 
+    a_1^U \bar Y_3^2\rk Y_2^{-1}+ {}\\
+    &\hspace*{50mm}{}+\alp^2 b_0^U \bar Y_3 Y_2^{-1} V_t\,;
+   \\
+    \dot{\bar Y}_3 &= a_0^U + a_1 \bar Y_3 + b_0^U V_t\,. 
+%    \label{p33}
+    \end{align*}
+Это точная система, она разрешена относительно производных 
+и~решается стандартным МНА на основе теоремы~4. 
+В~отличие от МАМ по МСЛ, МАМ на основе МНА позволяет рассматривать случай, 
+когда $m_t^Y\hm=0$.
+
+}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+\bibitem{1-sin}
+ \Au{Пугачёв В.\,С., Синицын~И.\,Н.}
+Стохастические дифференциальные системы. Анализ и~фильтрация.~--- М.:
+Наука,  1990.  632~с. 
+ (\Au{Pugachev~V.\,S., Sinitsyn~I.\,N.} Stochastic differential systems.
+Analysis and filtering.~--- Chichester\,--\,New York, NY, USA: Jonh Wiley, 1987.
+549~p.)
+
+\bibitem{2-sin} 
+\Au{Пугачёв В.\,С., Синицын И.\,Н.}
+Теория стохастических систем.~--- М.: Логос, 2000; 2004. 1000~с.
+%[Англ. пер. Stochastic Systems. Theory and  Applications. --
+%Singapore: World Scientific, 2001. 908~p.].
+
+\bibitem{3-sin}
+\Au{Синицын И.\,Н.}
+Канонические представления случайных функций и~их применение 
+в~задачах компьютерной поддержки научных исследований.~--- М.: ТОРУС
+ПРЕСС, 2009. 768~с.
+
+
+\bibitem{4-sin}
+\Au{Синицын~И.\,Н.,  Синицын~В.\,И. }
+Лекции по нормальной и~эллипсоидальной аппроксимации распределений 
+в~стохастических системах.~--- М.: ТОРУС ПРЕСС, 2013. 488~с.
+
+\bibitem{5-sin}
+\Au{Синицын И.\,Н. }
+Параметрическое статистическое и~аналитическое моделирование распределений в~нелинейных 
+стохастических системах на многообразиях~// Информатика и~её применения, 2013. 
+Т.~7. Вып.~2. С.~4--16.
+
+\bibitem{6-sin}
+\Au{Синицын И.\,Н., Синицын~В.\,И.}
+Аналитическое моделирование нормальных процессов в~стохастических системах со 
+сложными нелинейностями~// Информатика и~её применения, 2014. Т.~8. Вып.~3. С.~2--4.
+
+\bibitem{7-sin}
+\Au{Синицын И.\,Н., Синицын~В.\,И., Сергеев~И.\,В., Корепанов~Э.\,Р.,  
+Белоусов~В.\,В., Шоргин~В.\,С.}
+Математическое обеспечение аналитического моделирования стохастических систем со 
+сложными нелинейностями~// Системы и~средства информатики, 2014. Т.~24. №\,3. С.~4--29.
+
+
+\bibitem{8-sin}
+Справочник по специальным функциям~/ Под ред. М.~Абрамовича, И.~Стигана.~--- 
+М.: Наука, 1979. 832~с.
+
+\bibitem{9-sin}
+\Au{Попов Б.\,А., Теслер~Г.\,С. }
+Вычисление функций на ЭВМ: Справочник.~--- Киев: Наукова думка, 1984. 599~с.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 25.10.16}}
+
+%\vspace*{8pt}
+
+\newpage
+
+\vspace*{-24pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{8pt}
+
+
+\def\tit{ANALYTICAL MODELING OF~WIDE BAND~PROCESSES 
+IN~STOCHASTIC~SYSTEMS WITH~UNSOLVED DERIVATIVES}
+
+\def\titkol{Analytical modeling of~processes in~stochastic
+systems with~unsolved derivatives}
+
+\def\aut{I.\,N. Sinitsyn}
+
+\def\autkol{I.\,N. Sinitsyn}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+ \noindent
+Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences,
+44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+\Abste{Finite dimensional nonlinear nonstationary and stationary stochastic 
+systems with unsolved derivatives with broadband Gaussian and non-Gaussian 
+noises are considered. Such equations describe technical devices in informatics 
+and control. Two methods of analytical modeling and sensitivity analysis 
+of nonstationary and stationary processes based on the methods of statistical 
+linearization (MSL) and normal approximation (MNA)  are developed. 
+Typical nonlinearities with unsolved derivatives and MSL coefficients 
+and test examples are given. The developed analytical modeling 
+algorithms based on MSL are the basis of software tools for modeling reliability 
+and security of technical devices.}
+
+\KWE{analytical modeling;
+method of normal approximation (MNA);
+method of statistical linearization (MSL);
+normal (Gaussian) stochastic process;
+sensitivity to parameters;
+stochastic system with unsolved derivatives}
+
+
+
+\DOI{10.14357/19922264170101}  
+
+%\vspace*{-9pt}
+
+\Ack
+The work was supported  by the Russian Foundation for Basic
+Research (project 15-07-02244).
+
+
+
+%\vspace*{3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+
+\bibitem{1-sin-1}
+ \Aue{Pugachev, V.\,S., and I.\,N.~Sinitsyn.} 
+1987. \textit{Stochastic differential systems.
+Analysis and filtering}. Chichester\,--\,New York, NY: Jonh Wiley.
+549~p.
+
+
+\bibitem{2-sin-1}
+\Aue{Pugachev, V.\,S., and I.\,N.~Sinitsyn.} 2000, 2004.
+Teoriya stokhasticheskikh sistem [Stochastic systems. Theory and  applications]. 
+Moscow: Logos. 1000~p.  %[Angl. per. . -- Singapore: World Scientific, 2001].
+
+\bibitem{3-sin-1}
+\Aue{Sinitsyn,    I.\,N.}   2009.    
+Kanonicheskie   predstavleniya sluchaynykh  funktsiy i~ikh primenenie 
+v~zadachakh komp'yutcrnoy podderzhki nauchnykh issledovaniy 
+[Canonical expansions of random functions and their application to scientific 
+computer-aided support]. Moscow: TORUS PRESS. 768~p.
+
+\bibitem{4-sin-1}
+\Aue{Sinitsyn, I.\,N., and V.\,I.~Sinitsyn}. 2013. 
+Lektsii po normal'noy i~ellipsoidal'noy approksimatsii raspredeleniy 
+v~stokhasticheskikh sistemakh [Lectures on normal and ellipsoidal approximation 
+of distributions in stochastic systems). Moscow: TORUS PRESS. 488~p.
+
+\bibitem{5-sin-1}
+\Aue{Sinitsyn,   I.\,N.}  2013.  Parametricheskoe statisticheskoe
+i~analiticheskoe   modelirovanie   raspredeleniy   
+v~nelineynykh stokhasticheskikh sistemakh na mnogoobraziyakh 
+[Parametric statistical and analytical modeling of
+distributions in stochastic systems on manifolds]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 7(2):4--16.
+
+\bibitem{6-sin-1}
+\Aue{Sinitsyn, I.\,N., and V.\,I.~Sinitsyn}. 2014. Analiticheskoe
+modelirovanie normal'nykh protsessov v~stokhasticheskikh 
+sistemakh so slozhnymi nelineynostyami [Analytical
+modeling of normal processes in stochastic systems with
+complex nonlinearities]. \textit{Informatika i~ee Primeneniya~--- 
+Inform. Appl.} 8(3):2--4.
+
+\bibitem{7-sin-1}
+\Aue{Sinitsyn, I.\,N., V.\,I.~Sinitsyn, I.\,V.~Sergeev, E.\,R.~Korepanov, 
+V.\,V.~Belousov, and V.\,S.~Shorgin}. 2014. Matematicheskoe obespechenie
+analiticheskogo modelirovaniya sto\-kha\-sti\-che\-skikh 
+sistem so slozhnymi nelineynostyami 
+[Mathematical software for analytical modeling of stochastic systems with complex 
+nonlinearities]. 
+\textit{Sistemy i~Sredstva Informatiki~--- Systems and Means of Informatics} 24(3):4--29.
+
+
+\bibitem{8-sin-1}
+Abramovich, M., and I.~Stigan, eds. 1979. \textit{Spravochnik po
+spetsial'nym funktsiyam} [Handbook on special functions].
+Moscow: Nauka. 832~p.
+
+\bibitem{9-sin-1}
+\Aue{Popov, B.\,A., and G.\,S.~Tesler}. 1984. \textit{Vychislenie funk\-tsiy
+na EVM: Spravochnik} [Computing of functions: Handbook]. Kiev:
+Naukova dumka. 599~p. 
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Received October 25, 2016}}
+
+\Contrl
+
+\noindent
+\textbf{Sinitsyn Igor N.} (b.\ 1940)~---
+Doctor of Science in technology, professor, Honored scientist of RF, 
+principal scientist, Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov 
+Str., Moscow 119333, Russian Federation; \mbox{sinitsin@dol.ru}
+
+
+
+
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература} 

@@ -1,0 +1,1063 @@
+\renewcommand{\figurename}{\protect\bf Figure}
+\renewcommand{\tablename}{\protect\bf Table}
+
+\def\stat{lange}
+
+
+\def\tit{ON COMPARATIVE EFFICIENCY OF~CLASSIFICATION SCHEMES IN~AN~ENSEMBLE 
+OF~DATA SOURCES USING AVERAGE MUTUAL INFORMATION}
+
+\def\titkol{On comparative efficiency of~classification schemes in~an~ensemble 
+of~data sources using average mutual information}
+
+\def\autkol{M.\,M.~Lange}
+
+\def\aut{M.\,M.~Lange$^1$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+%\footnotetext[1] {The study was carried out under state order to the Karelian Research 
+%Centre of the Russian Academy of Sciences (Institute of Applied Mathematical 
+%Research KarRC RAS) and supported by the Russian Foundation for Basic Research, 
+%projects 18-07-00187, 18-07-00147, 18-07-00156, 19-07-00303.}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{lange\_mm@ccas.ru}}
+
+
+\index{Lange M.\,M.}
+\index{Ланге M.\,M.}
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+%\vspace*{-2pt}
+
+
+
+
+
+%The research is partially supported by the Russian Foundation for Basic Research 
+%(grants Nos.\,18-07-01231 and 18-07-01385).
+
+
+
+
+\Abste{Given ensemble of data sources and different fusion schemes, an accuracy of multiclass 
+classification of the collections of the source objects is investigated. Using the average mutual 
+information between the datasets of the sources and a~set of the classes, a~new approach to 
+comparing lower bounds to an error probability in two fusion schemes is developed. The authors 
+consider the WMV (Weighted Majority Vote) scheme which uses a~composition of the class 
+decisions on the objects of the individual sources and the GDM (General Dissimilarity Measure) 
+scheme based on a~composition of metrics in datasets of the sources.  For the above fusion 
+schemes, the mean values of the average mutual information per one source are estimated. It is 
+proved that the mean in the WMV scheme is less than the similar mean in the GDM scheme. As a~corollary, the lower bound to the error probability in the WMV scheme exceeds the similar 
+bound to the error probability in the GDM scheme. This theoretical result is confirmed by 
+experimental error rates in face recognition of HSI color images that yield the 
+ensemble of H, S, and~I sources.} 
+
+\KWE{multiclass classification; ensemble of sources; fusion scheme; composition of decisions; 
+composition of metrics; average mutual information; error probability
+}
+
+
+\DOI{10.14357/19922264190403} 
+
+
+%\vspace*{8pt}
+
+
+\vskip 12pt plus 9pt minus 6pt
+
+ \thispagestyle{myheadings}
+
+ \begin{multicols}{2}
+
+ \label{st\stat}
+
+\section{Introduction }
+
+\noindent
+There are plenty of multiclass classification schemes that use input data from an 
+ensemble of different modality sources. Such ensemble of data  sources produces 
+the composite objects as the collections of the same class objects taken by one per 
+each source. An example is the ensemble of biometric images such as faces, finger-
+prints, signatures, palms, irises, and the like for a~given set of persons or classes. In 
+this case, the composite objects are the collections of the same person images taken 
+by one per each modality. In any correct classification scheme that makes the 
+decisions on the submitted composite objects, an error probability decreases with 
+increasing a~number of the sources~[1]. The decisions can be obtained using the 
+different fusion schemes and the principal question is: What scheme is better? 
+
+      The classification problem in the ensemble of sources is similar to the source 
+coding problem based on quantization~[2].  There are known scalar and vector 
+quantization for the continuous values.  The scalar quantization is used for the
+individual values while the vector quantization is used for blocks of the values. In 
+both cases, the above quantization schemes yield the code vectors for the 
+appropriate blocks of the continuous values. 
+   
+    It should be noted that the optimal vector quantization is constructed with 
+covering a~multidimensional space of the values by general spheres whose shape is 
+adjusted to a~given dissimilarity measure between any pair of blocks of the 
+values~[3]. In scalar quantization, the same multidimensional space is covered by 
+cubes whose edge size is an optimal quantization step for any dimension. Thus, the 
+code vectors are represented by the centers of the above spheres or cubes. Since
+ for the same volume the spheres are more compact than the cubes, the vector 
+quantization yields a~smaller error with respect to the scalar quantization. 
+
+Also, for classification in a~given ensemble of the sources, an error probability is 
+waited to be smaller in a~scheme of joint classifying each composite object as 
+compared to an error probability in the scheme of combining the decisions on the 
+objects of the individual sources. The proposed paper is focused on both developing a~theoretical validity of this idea and supporting it by a~computing experiment.  
+    
+Two fusion schemes that use the different data compositions for 
+making the class decisions on the composite objects in the ensemble of the sources
+have been investigated. 
+They are the traditional WMV scheme by weighted majority voting the decisions 
+on the objects of the individual sources~[4] and the original GDM scheme by 
+combining the sources with a~general dissimilarity measure between any pair of the 
+composite objects~[5]. Notice that WMV scheme is based on a~composition of 
+decisions on the objects of individual sources while GDM scheme uses 
+a~composition of metrics in datasets of the sources. Thus, ideologically, WMV 
+and GDM fusion schemes are similar to the above scalar and vector quantization.
+
+The specified similarity allows one to expect a~smaller error probability in GDM 
+scheme as against WMV scheme. Some limits on the majority vote accuracy have 
+been obtained in~[6]. Intuitively, it is clear that the minimal error probability of 
+any classifier should depend on the average mutual information~[7] between a~set 
+of the source objects and a~set of the classes. Moreover, the more average mutual 
+information, the less error probability can be attained. So, our goal is to introduce 
+the mutual information-based characteristics for WMV and GDM fusion schemes 
+and, using these characteristics, to show an advantage of GDM scheme as against 
+WMV scheme in the error probability. 
+
+\section{Formalization of~the~Problem}
+
+
+\subsection{Basic definitions and classification schemes}
+
+\noindent
+Let $\Omega=\{\omega_1, \ldots ,\omega_c\}$, $c\hm\geq 2$, be a~set of classes 
+of the prior probabilities ${\sf P}(\omega_i)> 0$: $\sum\nolimits^c_{i=1} 
+{\sf P}(\omega_i)=1$, and $\mathbf{X}^M= \mathbf{X}_1\cdots \mathbf{X}_M$ be 
+an ensemble of sources, where the set $\mathbf{X}_m =\{\mathbf{x}_m= 
+(x_{m1}, \ldots , x_{mN_m})\}$, $m=1,\ldots, M$, of $N_m$-dimensional 
+vectors gives the $m$th source objects. In the ensemble , the components of 
+any vector $\mathbf{x}_m\in \mathbf{X}_m$ take real values in $(-\infty, \infty)$, 
+and any composite object $\mathbf{x}^M=(\mathbf{x}_1, \ldots ,
+\mathbf{x}_M)\in \mathbf{X}^M$ is produced by a~collection of the vectors by 
+one per source belonging to the same class in~$\Omega$.
+
+In each set~$\mathbf{X}_m$, $m=1,\ldots , M$, a~dissimilarity measure between 
+any pair of the objects $\mathbf{x}_m\in \mathbf{X}_m$ and 
+$\hat{\mathbf{x}}_m\in \mathbf{X}_m$ is defined by
+\begin{equation}
+d\left( \mathbf{x}_m, \hat{\mathbf{x}}_m\right) =\sum\limits_{n=1}^{N_m} 
+\fr{(x_{mn}-\hat{x}_{mn})^2}{\sigma^2_{mn}}
+\label{e1-l}
+\end{equation}
+where $0<\sigma^2_{mn} <\infty$, $n=1,\ldots , N_m$, are unknown parameters. 
+Also, for any pair of the composite objects $\mathbf{x}^M\in \mathbf{X}^M$ and 
+$\hat{\mathbf{x}}^M\in \mathbf{X}^M$, let us define a~general dissimilarity 
+measure as a~weighted composition of the metrics of the form~(1) taken with the 
+weights $W=\{w_m>0,\ m=1,\ldots , M\}$ as follows:
+\begin{equation}
+D\left( \mathbf{x}^M, \hat{\mathbf{x}}^M\right) =\sum\limits^M_{m=1} w_m
+d\left( 
+\mathbf{x}_m, \hat{\mathbf{x}}_m\right)\,.
+\label{e2-l}
+\end{equation}
+
+Let
+\begin{equation}
+\left\{\mathbf{x}_{im},\ i=1,\ldots ,c \right\} \subset \mathbf{X}_m,\enskip 
+m=1,\ldots ,M\,,
+\label{e3-l}
+\end{equation}
+be the subsets of the source template objects that represent the classes by one 
+object from~$\mathbf{X}_m$ per each class. The subsets~(3) produce the subset 
+of the template composite objects 
+\begin{equation}
+\left\{ \mathbf{x}_i^M=\left( \mathbf{x}_{i1},\ldots , \mathbf{x}_{iM}\right),\ 
+i=1,\ldots ,c\right\} \subset \mathbf{X}^M\,.
+\label{e4-l}
+\end{equation}
+Using the dissimilarity measure~(1) and assuming a~compactness of the objects 
+in~$\mathbf{X}_m$, $m=1,\ldots , M$, relative to the corresponding template 
+objects in~(3), let us define class-conditional densities of the~$m$th source objects 
+as follows:
+\begin{equation}
+p\left(\mathbf{x}_m\vert \omega_i\right) =\fr{e^{-d(\mathbf{x}_m, 
+\mathbf{x}_{im})}} {\int\nolimits_{\mathbf{X}_m}\!\!\! e^{-d(\mathbf{x}_m, 
+\mathbf{x}_{im})}d\mathbf{x}_m}\,,\enskip i=1, \ldots , c\,.\!\!
+\label{e5-l}
+\end{equation}
+Also, assuming a~compactness of the composite objects in~$\mathbf{X}^M$ 
+relative to the corresponding templates in~(\ref{e4-l}) and using the general 
+dissimilarity measure~(2), let us define class-conditional densities of the composite 
+objects by
+\begin{multline}
+p_W\left(\mathbf{x}^M\vert \omega_i\right) \fr{e^{-D\left(\mathbf{x}^M, 
+\mathbf{x}_i^M\right)}} {\int\nolimits_{\mathbf{X}^M} e^{-D\left(\mathbf{x}^M, 
+\mathbf{x}_i^M\right)} d\mathbf{x}^M}\\
+{} = \prod\limits^M_{m=1} \fr{e^{-w_m 
+d(\mathbf{x}_m, \mathbf{x}_{im})}} {e^{-w_m d(\mathbf{x}_m, 
+\mathbf{x}_{im})} d\mathbf{x}_m}\,,\enskip i=1,\ldots , c\,.
+\label{e6-l}
+\end{multline}
+Under the product in~(\ref{e6-l}), there are the weighted class-conditional 
+densities 
+\begin{multline}
+p_{w_m}\left(\mathbf{x}_m\vert \omega_i\right) =\fr{e^{-w_m d(\mathbf{x}_m, 
+\mathbf{x}_{im})}} {\int\nolimits_{\mathbf{X}_m} e^{-w_m d(\mathbf{x}_m, 
+\mathbf{x}_{im})} d\mathbf{x}_m}\,,\\
+ i=1,\ldots ,c\,,
+\label{e7-l}
+\end{multline}
+that give the densities of the form~(\ref{e5-l}) when $w_m=1$. In terms of 
+information theory,  the densities~(\ref{e7-l}) define the $m$th source observation 
+channel between input set~$\Omega$ and the output set~$\mathbf{X}_m$ as well 
+as the  densities~(\ref{e6-l}) yield the observation multichannel 
+between~$\Omega$ and~$\mathbf{X}^M$.
+
+\begin{figure*} %fig1
+  \vspace*{1pt}
+    \begin{center}  
+  \mbox{%
+ \epsfxsize=107.799mm 
+ \epsfbox{lan-1.eps}
+ }
+\end{center}
+\vspace*{-9pt}
+\Caption{Schemes of WMV-based~(\textit{a}) and GDM-based~(\textit{b}) classifiers}
+\end{figure*}
+
+Let $g_i^d(\mathbf{x}_m)$, $i=1,\ldots , c$, be the discriminant functions that are 
+defined in the sets~$\mathbf{X}_m$, $m=1,\ldots , M$, using the dissimilarity 
+measure of the form~(1). Then, WMV-based  class label decision on a~composite 
+object $\mathbf{x}^M\in \mathbf{X}^M$ is defined by  
+\begin{equation}
+j^{\mathrm{WMV}}\left(\mathbf{x}^M\right) =\mathrm{arg}\,\max\limits^c_{i=1} 
+\sum\limits^M_{m=1} w_m g_i^d\left(\mathbf{x}_m\right)
+\label{e8-l}
+\end{equation}
+where the discriminant functions are independent on the source weights. Similarly, 
+using in the ensemble~$\mathbf{X}^M$ the discriminant 
+functions~$g_i^D(\mathbf{x}^M)$, $i=1,\ldots , c$, that depend on the 
+weights~$W$ of all sources, GDM-based class label decision on the same 
+composite object $\mathbf{x}^M\in \mathbf{X}^M$ is the following:
+\begin{equation}
+j^{\mathrm{GDM}}\left(\mathbf{x}^M\right) =\mathrm{arg}\,\max^c_{i=1} 
+g_i^D\left(\mathbf{x}^M\right)\,.
+\label{e9-l}
+\end{equation}
+
+        The classification schemes by the decision rules~(\ref{e8-l}) and~(\ref{e9-l}) 
+are shown in Fig.~1. Here, $\hat{\Omega}=\Omega$ provided that the decisions 
+in~$\hat{\Omega}$ can be differed from the real classes in~$\Omega$. The 
+appropriate class-conditional densities yield the observation multichannels in 
+WMV and GDM fusion schemes, respectively.
+
+
+
+
+\subsection{Information criterion of efficiency for~the~fusion schemes}
+
+\noindent  
+Given the prior distribution $\{ P(\omega_i),\ i=1,\ldots\linebreak \ldots ,c\}$ and the weighted 
+class-conditional densities $\{ p_{w_m}(\mathbf{x}_m\vert\omega_i), i=1,\ldots 
+,c\}$ of the form~(\ref{e7-l}),the average mutual information 
+between~$\mathbf{X}_m$ and~$\Omega$ is defined according to~\cite{7-l} by 
+\begin{equation}
+I_{w_m}\left(\mathbf{X}_m;\Omega\right) =H_{w_m}\left(\mathbf{X}_m\right) 
+-H_{w_m} \left(\mathbf{X}_m\vert\Omega\right)\,.
+\label{e10-l}
+\end{equation}
+Here,
+\begin{align*}
+H_{w_m}\left(\mathbf{X}_m\right) &=-\int\limits_{\mathbf{X}_m} p_{w_m} 
+\left(\mathbf{x}_m\right) \ln p_{w_m} 
+\left(\mathbf{x}_m\right)\,d\mathbf{x}_m\,;\\
+H_{w_m}\left(\mathbf{X}_m\vert \Omega\right) &\\
+&\hspace*{-11mm}{}=-\sum\limits^c_{i=1} 
+P\left(\omega_i\right) \int\limits_{ \mathbf{X}_m} 
+p_{w_m}\left(\mathbf{x}_m\vert \omega_i\right) \ln 
+\left(\mathbf{x}_m\vert\omega_i\right)\,d\mathbf{x}_m
+\end{align*}
+are the differential entropies, and 
+$p_{w_m}(\mathbf{x}_m)\linebreak =\sum\nolimits^c_{i=1} P(\omega_i) 
+p_{w_m}(\mathbf{x}_m\vert \omega_i)$ is the marginal density 
+in~$\mathbf{X}_m$, $m=1,\ldots ,M$. Notice that the average mutual information 
+in~(\ref{e10-l}) does not exceed the entropy $H(\Omega)=-\sum\nolimits^c_{i=1} 
+P(\omega_i)\ln P(\omega_i)$ of the set of the classes. For $w_m=1$, there is valid 
+$p_{w_m}(\mathbf{x}_m\vert \omega_i)=p(\mathbf{x}_m\vert \omega_i)$  that 
+yields $I_{w_m}(\mathbf{X}_m;\Omega)=I(\mathbf{X}_m;\Omega)$. 
+
+Taking the means of the values 
+$I\left(\mathbf{X}_m; \Omega\right)$  and $I_{w_m}(\mathbf{X}_m;\Omega)$ 
+over all $m=1,\ldots , 
+M$, one obtains the efficiency characteristics for WMV-based decision~(\ref{e8-l}) 
+and GDM-based decision~(\ref{e9-l}), respectively. These means are defined as 
+follows: 
+\begin{align}
+\hspace*{-2mm}I^{\mathrm{WMV}}_{W\_\mathrm{mean}}\left(\mathbf{X}^M;\Omega\right) &= 
+\sum\limits^M_{m=1} I\left(\mathbf{X}_m;\Omega\right) 
+\fr{w_m}{\sum\nolimits^M_{m=1} w_m}\,;\!\!\label{e11-l}\\
+\hspace*{-2mm}I^{\mathrm{GDM}}_{W\_\mathrm{mean}} \left(\mathbf{X}^M;\Omega\right) &= \fr{1}{M} 
+\sum\limits^M_{m=1} I_{w_m} \left(\mathbf{X}_m;\Omega\right)\,.
+\label{e12-l}
+\end{align}
+Our goal is to prove the inequality 
+\begin{equation}
+\max\limits_W I^{\mathrm{WMV}}_{W\_\mathrm{mean}} \left(\mathbf{X}^M;\Omega\right) \leq 
+I^{\mathrm{GDM}}_{W^*\_\mathrm{mean}} \left(\mathbf{X}^M;\Omega\right)
+\label{e13-l}
+\end{equation}
+where~$W^*$ is the set of the source weights providing the maximum in the left 
+part. 
+
+\begin{figure*} %fig2
+ \vspace*{1pt}
+    \begin{center}  
+  \mbox{%
+ \epsfxsize=154.826mm 
+ \epsfbox{lan-2.eps}
+ }
+\end{center}
+\vspace*{-9pt}
+\Caption{Sketches of the lower bounds to the average mutual information as the function 
+of the error probability in WMV and GDM fusion schemes}
+\end{figure*}  
+
+
+\subsection{Average mutual information and~classification error probability}
+
+\noindent
+The criterion of the form~(\ref{e13-l}) assumes a~dependence of the average mutual 
+information~$I(\mathbf{X}^M;\hat{\Omega})$ between the 
+ensemble~$\mathbf{X}^M$ and the set of the class decisions~$\hat{\Omega}$ on 
+a~lower bound to the error probability~$\varepsilon$ in the schemes shown in 
+Fig.~1. Given observation multichannel, such function has been defined 
+in~\cite{8-l} as a~generalization of the rate-distortion function for the source 
+coding model with a~noisy observation channel~\cite{9-l}.  According  
+to~\cite{8-l}, this function is lower bounded by 
+\begin{multline}
+R_L(\varepsilon) =I\left(\mathbf{X}^M;\Omega\right) -h\left(\varepsilon-
+\varepsilon_{\min} \right)\\
+{} -\left( \varepsilon -\varepsilon_{\min} \right) \ln (c-
+1)\,,\enskip \varepsilon_{\min}\leq \varepsilon \leq \varepsilon_{\max}\,.
+\label{e14-l}
+\end{multline}
+Here, $h(z) = -z\ln z -(1-z) \ln (1-z)$; 
+$R_L(\varepsilon_{\min})\linebreak =I(\mathbf{X}^M;\Omega)$; 
+$R_L(\varepsilon_{\max})= 0$; and $I(\mathbf{X}^M;\Omega) 
+=H(\mathbf{X}^M)\linebreak - H(\mathbf{X}^M\vert\Omega)$ is the average mutual 
+information between the input and the output of the observation multichannel in 
+Fig.~1. Function~(\ref{e14-l}) has the largest value 
+$I(\mathbf{X}^M;\Omega)$ at the point $\varepsilon=\varepsilon_{\min}$ and 
+decreases as $\varepsilon$~increases. It is not difficult to show that the minimal error 
+probability~$\varepsilon_{\min}$ is lower estimated by the conditional entropy 
+$H(\Omega\vert \mathbf{X}^M)$ and~$\varepsilon_{\min}$ tends to zero 
+when $H(\Omega\vert \mathbf{X}^M)$  decreases by increasing the size~$M$ of 
+the ensemble. Taking into account the symmetry of the average mutual information 
+\begin{multline*}
+I(\mathbf{X}^M;\Omega)=H(\mathbf{X}^M)-H(\mathbf{X}^M\vert\Omega)\\
+{}= 
+H(\Omega)-H(\Omega\vert \mathbf{X}^M),
+\end{multline*}
+ in case of $\varepsilon_{\min}\to0$,  
+function~(\ref{e14-l}) yields the Shannon bound of the form  
+$H(\Omega)-h(\varepsilon) -\varepsilon\ln (c-1)$~\cite{7-l}. 
+
+In the bound~(\ref{e14-l}), the average mutual information 
+$I(\mathbf{X}^M;\Omega)$ is calculated in the product 
+$\Omega*\mathbf{X}^M$ using the prior probabilities of the classes and the 
+class-conditional densities of the form~(\ref{e6-l}). According to Fig.~1,  
+the class-conditional densities in GDM scheme depend on the source weights and, 
+therefore, $I(\mathbf{X}^M;\Omega)=I_W^{\mathrm{GDM}}(\mathbf{X}^M;\Omega)$ is 
+the function of~$W$. In WMV scheme, the corresponding average mutual 
+information $I(\mathbf{X}^M;\Omega)=I^{\mathrm{WMV}}(\mathbf{X}^M;\Omega)$ is 
+equal to $I_W^{\mathrm{GDM}}(\mathbf{X}^M;\Omega)$ taken with the weights 
+$w_m=1$, $m=1,\ldots , M$. The values $I^{\mathrm{WMV}}(\mathbf{X}^M;\Omega)$ 
+and $I_W^{\mathrm{GDM}}(\mathbf{X}^M;\Omega)$ correspond to the minimal error 
+probabilities~$\varepsilon_{\min}^{\mathrm{WMV}}$ and~$\varepsilon_{\min}^{\mathrm{GDM}}$ 
+in WMV and GDM fusion schemes, respectively.  These error probabilities are 
+achieved by the Bayes decisions of the form~(\ref{e9-l}) when the discriminant 
+functions are given by the posterior probabilities of the classes~\cite{10-l}.
+
+
+In general, the source sets $\mathbf{X}_1,\ldots, \mathbf{X}_M$ are statistically 
+dependent on each other and there are valid the relations 
+\begin{gather*}
+I^{\mathrm{WMV}}_{W\_\mathrm{mean}} 
+(\mathbf{X}^M;\Omega) < I^{\mathrm{WMV}}(\mathbf{X}^M;\Omega);\\[6pt]
+I_{W\_\mathrm{mean}}^{\mathrm{GDM}} (\mathbf{X}^M;\Omega) 
+< I^{\mathrm{GDM}}_{W} 
+(\mathbf{X}^M;\Omega).
+\end{gather*}
+
+ Thus, for the weights~$W^*$ giving the maximum 
+in~(\ref{e13-l}), the means $I^{\mathrm{WMV}}_{W^*\_\mathrm{mean}} 
+(\mathbf{X}^M;\Omega)$ 
+and $I^{\mathrm{GDM}}_{W^*\_\mathrm{mean}}(\mathbf{X}^M;\Omega)$ yield the error 
+probabilities $\varepsilon^{\mathrm{WMV}}\linebreak
+>\varepsilon^{\mathrm{WMV}}_{\min}$ and 
+$\varepsilon^{\mathrm{GDM}}>\varepsilon^{\mathrm{GDM}}_{\min}$ that belong to the 
+corresponding lower bounds of the form~(\ref{e14-l}). Also, taking into account 
+that $I^{\mathrm{WMV}}(\mathbf{X}^M;\Omega)\leq 
+I^{\mathrm{GDM}}_{W^*}(\mathbf{X}^M;\Omega)$, the inequality~(\ref{e13-l}) 
+provides the following relation: $\varepsilon^{\mathrm{WMV}}
+\geq \varepsilon^{\mathrm{GDM}}$. 
+This fact is illustrated  in Fig.~2. 
+
+\section{Calculation of~the~Average Mutual Information}
+
+\noindent
+In this section, an upper estimate of the functional 
+$I_{w_m}(\mathbf{X}_m;\Omega)$ given in~(\ref{e10-l}) is obtained as 
+a~function of the variable~$w_m^{1/2}$.  At the value $w q_m^{1/2}=1$, this 
+function yields the upper estimate for~$I(\mathbf{X}_m;\Omega)$. Using the 
+marginal density $p_{w_m}(\mathbf{x}_m)$  and taking into account that $-\ln z$ 
+is the convex downwards function of~$z$, it is valid the Jensen 
+inequality~\cite{11-l} as follows:
+\begin{multline*}
+-\ln p_{w_m} \left(\mathbf{x}_m\right) = -\ln \sum\limits^c_{i=1} P(\omega_i) 
+p_{w_m} \left(\mathbf{x}_m\vert   \omega_i\right)\\
+{} \leq -\sum\limits^c_{i=1} 
+P(\omega_i) \ln p_{w_m}\left(\mathbf{x}_m\vert \omega_i\right)\,.
+\end{multline*}
+Applying this inequality in~(\ref{e10-l}), one obtains the upper estimated 
+differential entropy:
+\begin{multline}
+H_{w_m}\left(\mathbf{X}_m\right) \leq -\sum\limits^c_{i=1} P(\omega_i) 
+\sum\limits^c_{j=1} P(\omega_j)\\
+{}\times \int\limits_{\mathbf{X}_m} 
+p_{w_m}\left(\mathbf{x}_m\vert\omega_i\right) \ln p_{w_m} 
+\left(\mathbf{x}_m\vert \omega_j\right)\,d\mathbf{x}_m\,.
+\label{e15-l}
+\end{multline}
+
+Given the dissimilarity measures~(\ref{e1-l}) and~(\ref{e2-l}), the conditional 
+density $p_{w_m}(\mathbf{x}_m\vert\omega_i)$ of the form~(\ref{e7-l}) is the 
+Gaussian density of~$N_m$ independent variables that have the 
+means~$x_{imn}$ and the variances $\sigma^2_{imn}/(2w_m)$, $n=1,\ldots , 
+N_m$, subject to $w_m>0$. It allows us to express the integral in~(\ref{e15-l}) 
+over the interval $(-\infty, +\infty)$  as the Euler integral~\cite{12-l}. The 
+calculation yields the upper estimated differential entropy:
+\begin{multline}
+H_{w_m}(\mathbf{X}_m)\leq \fr{1}{2}\ln 
+\fr{\pi}{w_m}+\fr{1}{2}\sum\limits^c_{j=1} P(\omega_j)  
+\sum\limits_{n=1}^{N_m} \ln \sigma^2_{jmn}\\
+{}+w_m \sum\limits^c_{i=1} P(\omega_i) \sum\limits^c_{j=1} P(\omega_j) 
+\sum\limits_{n=1}^{N_m} \fr{(x_{imn}-x_{jmn})^2}{\sigma^2_{jmn}}\\
++2\fr{w_m^{1/2}}{\sqrt{\pi}}\sum\limits^c_{i=1} 
+P(\omega_i)\sum\limits^c_{j=1} P(\omega_j) \sum\limits_{n=1}^{N_m} 
+\fr{\vert x_{imn}-x_{jmn}\vert \sigma_{imn}}{\sigma^2_{jmn}}\\
++\fr{1}{2}\sum\limits^c_{i=1} P(\omega_i) \sum\limits^c_{j=1} P(\omega_j) 
+\sum\limits_{n=1}^{N_m} \fr{\sigma^2_{imn}}{\sigma^2_{jmn}}
+\label{e16-l}
+\end{multline}
+and the following conditional differential entropy:
+\begin{multline}
+H_{w_m}\left(\mathbf{X}_m\vert\Omega\right) \\
+{}=\fr{1}{2}\ln \fr{\pi e}{w_m} 
++\fr{1}{2} \sum\limits^c_{i=1} P(\omega_i) \sum\limits_{n=1}^{N_m} \ln 
+\sigma^2_{imn}\,.
+\label{e17-l}
+\end{multline}
+The substitutions of the differential entropy and the conditional differential entropy 
+in~(\ref{e10-l}) by~(\ref{e16-l}) and~(\ref{e17-l}) yield the upper 
+estimated average mutual information:
+
+\noindent
+\begin{multline}
+I_{w_m}\left(\mathbf{X}_m;\Omega\right) \\
+{}\leq w_m \sum\limits^c_{i=1} 
+P(\omega_i) \sum\limits^c_{j=1} P(\omega_j) \sum\limits_{n=1}^{N_m} 
+\fr{(x_{imn}-x_{jmn})^2}{\sigma^2_{jmn}}\\
++2\fr{w_m^{1/2}}{\sqrt{\pi}} \sum\limits^c_{i=1} P(\omega_i) 
+\sum\limits^c_{j=1} P(\omega_j) \sum\limits_{n=1}^{N_m} \fr{\vert x_{imn} -
+x_{jmn})^2}{\sigma^2_{jmn}}\\
++\fr{1}{2}\sum\limits^c_{i=1}P(\omega_i) \sum\limits_{j=1}^c P(\omega_j) 
+\sum\limits^{N_m}_{n=1} \left( \fr{\sigma^2_{imn}} {\sigma^2_{jmn}}-
+1\right)\,.
+\label{e18-l}
+\end{multline}
+The right part in~(\ref{e18-l}) is a~parabolic function 
+$a_mw_m\linebreak +b_mw_m^{1/2}+c_m$ of the variable $w_m^{1/2}>0$ for 
+$m\linebreak =1,\ldots , M$. Since $a_m>0$, $b_m>0$, and $c_m\geq0$, the parabola 
+exceeds the value~$c_m$ and grows when~$w_m^{1/2}$ increases.  For 
+$w_m^{1/2}=1$, this function gives the upper estimate $a_m+b_m+c_m$ for 
+$I(\mathbf{X}_m;\Omega)$. The weights of interest are defined by the values 
+$w_m^{1/2}\geq 1$ that satisfy the condition 
+$a_mw_m+b_mw_m^{1/2}+c_m\leq H(\Omega)$, $m=1, \ldots , M$. Setting 
+$\delta_m=(a_m+b_m+c_m)/H(\Omega)\leq 1$, we assign the parametric source 
+weights 
+\begin{equation}
+w_m(s)=e^{s\delta_m}\,,\enskip m=1,\ldots , M,
+\label{e19-l}
+\end{equation}
+where $s\geq 0$ is a~free parameter that yields $w_m(s)\geq 1$. In what follows, 
+we denote the upper estimates~(\ref{e18-l}) taken with the weights~(\ref{e19-l}) 
+by $I_s(\mathbf{X}_m;\Omega)$, $m=1,\ldots , M$.
+
+\section{Main Results}
+
+\noindent
+   Using in the right part of the form~(\ref{e11-l}) the estimates 
+$I(\mathbf{X}_m;\Omega)\leq a_m+b_m+c_m$, $m=1,\ldots , M$, taken with the 
+weights~(\ref{e19-l}), one obtains the upper estimated mean value 
+$I^{\mathrm{WMV}}_{s\_\mathrm{mean}} (\mathbf{X}^M;\Omega)$.  Also, the estimates 
+$I_{w_m}(\mathbf{X}_m;\Omega)\linebreak \leq a_mw_m+b_m w_m^{1/2}+c_m$, 
+$m=1,\ldots , M$, taken with the similar weights in the right part of~(\ref{e12-l}) 
+yield the upper estimated mean value $I^{\mathrm{GDM}}_{s\_\mathrm{mean}} 
+(\mathbf{X}^M;\Omega)$. Then, for $s\to 0$, we calculate an asymptotic 
+maximum $I^{\mathrm{WMV}}_{s^*\_\mathrm{mean}}(\mathbf{X}^M;\Omega)$ at the point~$s^*$ 
+and show that this maximum satisfies the inequality 
+$I^{\mathrm{WMV}}_{s^*\_\mathrm{mean}}(\mathbf{X}^M;\Omega) \leq 
+I^{\mathrm{GDM}}_{s^*\_\mathrm{mean}}(\mathbf{X}^M;\Omega)$.
+
+In subsequent statements, we use the following notations:  
+\begin{gather*}
+\mu=\fr{1}{M}\sum\limits_{m=1}^M \delta_m\,;\quad 
+\Delta_1=\fr{1}{M}\sum\limits^M_{m=1} \delta^2_m-\mu^2\,;\\
+\Delta_2=\fr{1}{M}\sum\limits^M_{m=1} \delta_m^3-
+\mu\fr{1}{M}\sum\limits^M_{m=1} \delta^2_m\,.
+\end{gather*}
+
+\noindent
+\textbf{Theorem~1.}\ \textit{For $(2\mu\Delta_1-\Delta_2)>\Delta_1 >0$ and 
+$s\to 0$, the value $s^*=\Delta_1/(2\mu \Delta_1-\Delta_2)$ yields}
+$$
+\max\limits_s I^{\mathrm{WMV}}_{s\_\mathrm{mean}} \left(\mathbf{X}^M;\Omega\right) =
+\left( 
+\mu+\fr{1}{2}\,\Delta_1 s^*\right) H(\Omega)\,.
+$$
+\textit{For $\Delta_1=0$, there is valid $I^{\mathrm{WMV}}_{s\_\mathrm{mean}} 
+(\mathbf{X}^M;\Omega) =\mu H(\Omega)$ for all $s\geq 0$}.
+
+\smallskip
+
+\noindent
+P\,r\,o\,o\,f\,.\ \  Using $q_s(\delta_m) =e^{s\delta_m}/\sum\nolimits^M_{m=1} 
+e^{s\delta_m}$,  the upper estimated mean value defined in~(\ref{e11-l}) takes the 
+form: 
+\begin{equation}
+I^{\mathrm{WMV}}_{s\_\mathrm{mean}} (\mathbf{X}^M;\Omega) =H(\Omega) 
+\sum\limits^M_{m=1} \delta_m q_s(\delta_m)\,.
+\label{e20-l}
+\end{equation}
+For $s\to 0$, there is valid the asymptotic equation: 
+\begin{equation}
+\sum\limits^M_{m=1} \delta_m q_s(\delta_m) \approx \mu+ \Delta_1 s-
+\fr{1}{2}\left( 2\mu \Delta_1-\Delta_2\right) s^2\,.
+\label{e21-l}
+\end{equation}
+Using the assumption of the theorem, the parabola in the right part of~(\ref{e21-l}) 
+takes the maximal value $\mu+\Delta_1 s^*/2$ at the point $s^*=\Delta_1/(2\mu 
+\Delta_1-\Delta_2)$. Notice that the same values $\delta_m=\delta$, $m=1,\ldots , 
+M$, provide $\Delta_1=0$ and $\Delta_2=0$. In this case, $q_s(\delta_m)=1/M$ 
+and the sum in~(\ref{e21-l}) is equal to $\mu=\delta$ for all $s\geq0$. Thus, the 
+substitution of the sum in~(\ref{e20-l}) by $\mu+\Delta_1 s^*/2$ in case of 
+$\Delta_1>0$ or by~$\mu$ in case of $\Delta_1=0$ completes the proof.
+
+
+\smallskip
+
+\noindent
+\textbf{Theorem~2.}\ \textit{For $\Delta_1>0$ and on condition that $a_m\geq 
+c_m$, $m=1,\ldots , M$, there is valid the inequality $I^{\mathrm{WMV}}_{s^*\_\mathrm{mean}} 
+(\mathbf{X}^M;\Omega)<I^{\mathrm{GDM}}_{s^*\_\mathrm{mean}} (\mathbf{X}^M;\Omega)$ at 
+the optimal point $s^*>0$.  For $\Delta_1=0$ and a~given $s\geq 0$, there is valid 
+the inequality $I^{\mathrm{WMV}}_{s\_\mathrm{mean}} (\mathbf{X}^M;\Omega) \leq 
+I^{\mathrm{GDM}}_{s\_\mathrm{mean}} (\mathbf{X}^M;\Omega)$ which passes into the equality at 
+the point $s=0$.}
+
+\smallskip\
+
+\noindent
+P\,r\,o\,o\,f\,.\ The estimates~(\ref{e18-l}) taken with the weights~(\ref{e19-l}) 
+give the upper estimated mean value~(\ref{e12-l}) as follows:
+\begin{multline}
+I^{\mathrm{GDM}}_{s\_\mathrm{mean}} \left(\mathbf{X}^M;\Omega\right)\\ 
+{}=\fr{1}{M}\sum\limits^M_{m=1} \left( a_m e^{s\delta_m} +b_m 
+s^{s\delta_m/2} +c_m\right)\,.
+\label{e22-l}
+\end{multline}
+Taking the square approximations of the exponential terms in~(\ref{e22-l}), one 
+obtains the following inequality: 
+\begin{multline}
+I^{\mathrm{GDM}}_{s\_\mathrm{mean}} \left(\mathbf{X}^M;\Omega\right) \geq \mu H(\Omega) \\
+{}+\left( \fr{1}{M} \sum\limits^M_{m=1} 
+a_m\delta_m+\fr{1}{2M}\sum\limits^M_{m=1} b_m\delta_m\right) s\\
+{}+ \left( \fr{1}{2M}\sum\limits^M_{m=1} 
+a_m\delta_m^2+\fr{1}{4M}\sum\limits^M_{m=1} b_m\delta_m^2\right) s^2\,.
+\label{e23-l}
+\end{multline}
+In case of $\Delta_1>0$, the inequality~(\ref{e23-l}) together with the 
+estimates~(\ref{e20-l}) and~(\ref{e21-l}) yield: 
+\begin{multline}
+I^{\mathrm{GDM}}_{s\_\mathrm{mean}}\left(\mathbf{X}^M;\Omega\right)-
+I^{\mathrm{WMV}}_{s\_\mathrm{mean}} 
+\left(\mathbf{X}^M;\Omega\right)\\
+\geq \left( \fr{1}{M} \sum\limits^M_{m=1}a_m\delta_m 
++\fr{1}{2M}\sum\limits^M_{m=1} b_m\delta_m-\Delta_1H(\Omega)\right)s\\
+{}+\left( \fr{1}{2M}\sum\limits^M_{m=1} 
+a_m\delta_m^2+\fr{1}{4M}\sum\limits^M_{m=1} 
+b_m\delta_m^2\right.\\
+\left.{}+\fr{1}{2}\left( 2\mu \Delta_1-\Delta_2\right) 
+H(\Omega)
+\vphantom{\sum\limits^M_{m=1}}
+\right)s^2\,.
+\label{e24-l}
+\end{multline}
+Assuming 
+\begin{equation}
+\fr{1}{M}\sum\limits^M_{m=1} a_m\delta_m+\fr{1}{2M} 
+\sum\limits^M_{m=1} b_m\delta_m\geq \fr{1}{2}\Delta_1 H(\Omega),
+\label{e25-l}
+\end{equation}
+the right part in~(\ref{e24-l}) is lower estimated by the parabola
+\begin{multline*}
+-\fr{1}{2}\,\Delta_1H(\Omega) s+\left( \fr{1}{2M}\sum\limits^M_{m=1} 
+a_m\delta_m^2+\fr{1}{4M} \sum\limits^M_{m=1} b_m 
+\delta_m^2\right.\\
+\left.{}+\fr{1}{2}\left( 2\mu \Delta_1-\Delta_2\right) H(\Omega) 
+\vphantom{\sum\limits^M_{m=1}}
+\right) s^2
+\end{multline*}
+that has a~positive root
+\begin{multline*}
+s_0=
+\Delta_1H(\Omega)\Bigg/
+\left(
+\vphantom{\sum\limits^M_{m=1}}
+(2\mu\Delta_1-\Delta_2)H(\Omega)\right.\\
+\left.{} +\fr{1}{M} 
+\sum\limits^M_{m=1} a_m\delta_m^2+\fr{1}{2M} \sum\limits^M_{m=1} 
+b_m\delta_m^2\right)\\
+{}<\fr{\Delta_1}{2\mu\Delta_1-\Delta_2}=s^*\,.
+\end{multline*}
+Since this parabola is positive for $s>s_0$,  the lower estimate of the right part 
+in~(\ref{e24-l}) is positive at the point $s^*>0$ of the maximal value 
+$I^{\mathrm{WMV}}_{s^*\_\mathrm{mean}} (\mathbf{X}^M;\Omega)$ that provides the inequality 
+$I^{\mathrm{GDM}}_{s^*\_\mathrm{mean}} (\mathbf{X}^M;\Omega)- I^{\mathrm{WMV}}_{s^*\_\mathrm{mean}} 
+(\mathbf{X}^M;\Omega) >0$. 
+
+Notice that the assumption of the form~(\ref{e25-l}) is equivalent to the inequality 
+$$
+\fr{1}{M}\sum\limits^M_{m=1} \left( c_m-a_m\right) \delta_m \leq \mu^2 
+H(\Omega)
+$$
+that is valid under the conditions $a_m\geq c_m$, $m\linebreak =1,\ldots , M$. These 
+conditions are held if the templates in different classes are sufficiently distinct 
+from each other. Formally, the parameters in~(\ref{e18-l}) should satisfy the 
+following relation:
+\begin{multline*}
+\left( x_{imn}-x_{jmn}\right)^2\geq \fr{1}{2}\left\vert \sigma^2_{imn} -
+\sigma^2_{jmn}\right\vert \,,\\
+ m=1,\ldots , M\,,\enskip n=1,\ldots , N_m\,.
+\end{multline*}
+In case of $\Delta_1=0$, one has $I^{\mathrm{WMV}}_{s\_\mathrm{mean}} 
+(\mathbf{X}^M;\Omega) =\mu H(\Omega)$ and 
+$I^{\mathrm{GDM}}_{s\_\mathrm{mean}}(\mathbf{X}^M;\Omega)\geq \mu H(\Omega)$ for a~given 
+$s\geq 0$. So, there is valid the inequality $I^{\mathrm{WMV}}_{s\_\mathrm{mean}} 
+(\mathbf{X}^M;\Omega)\linebreak \leq I^{\mathrm{GDM}}_{s\_\mathrm{mean}} (\mathbf{X}^M;\Omega)$ 
+which passes into the equality at the point $s=0$. The theorem is proved.
+
+\smallskip
+
+
+Sketches of the graphics in Fig.~3 interpret the theorems~1 and~2.
+
+
+\begin{figure*} %fig3
+ \vspace*{1pt}
+    \begin{center}  
+  \mbox{%
+ \epsfxsize=162.134mm 
+ \epsfbox{lan-3.eps}
+ }
+\end{center}
+\vspace*{-9pt}
+\Caption{Graphical interpretation of the results for cases of $\Delta_1>0$~(\textit{a}) and 
+$\Delta_1=0$~(\textit{b})}
+\end{figure*}
+
+\begin{figure*}[b] %fig4
+ \vspace*{1pt}
+    \begin{center}  
+  \mbox{%
+ \epsfxsize=163mm 
+ \epsfbox{lan-4.eps}
+ }
+\end{center}
+\vspace*{-9pt}
+\Caption{Examples of the 8th level representations for the face HSI images}
+\end{figure*}
+  
+
+
+
+\noindent
+\textbf{Corollary.}\ For the optimal value~$s^*$ in the case of $\Delta_1>0$ and any 
+$s>0$ in the case of $\Delta_1=0$, the mean values of the average mutual information 
+per one source in WMV and GDM fusion schemes provide the lower bounds to the 
+error probabilities satisfying the inequality 
+$\varepsilon^{\mathrm{WMV}}>\varepsilon^{\mathrm{GDM}}$.
+
+\section{Experimental Results}
+
+\noindent
+The efficiency of WMV and GDM fusion schemes is shown by comparative error 
+rates for face recognition of HSI color images.The components H, S, and~I produce the 
+objects of the individual sources and the ensemble HSI produces the composite 
+objects. The color images are taken from~25~persons (classes) per 40~images in 
+each class~\cite{13-l}.  The prior probability distribution of the classes is uniform. 
+Face recognition has been performed in a~space of multilevel tree-structured 
+pattern representations with elliptic primitives~\cite{5-l}. The error rates have 
+been obtained for multiclass NN (nearest neighbor) and SVM (support vector 
+machine) classifiers that are the collections of elementary ``class-vs-all'' classifiers. 
+The experiments have been performed using 100~times, 2~fold cross validation. 
+
+The examples of the tree-structured representations for the face components H, S, and I 
+are shown in Fig.~4. The image components correspond to the source numbers 
+$m=1, 2, 3$.
+
+
+Using the above representations, the dissimilarity measure 
+$d(\mathbf{x}_m, \hat{\mathbf{x}}_m)\geq 0$  for any pair 
+of the objects~$\mathbf{x}_m$ and~$\hat{\mathbf{x}}_m$ has been introduced 
+in~\cite{14-l}.
+The weighted sum of the above measures taken over the components 
+H, S, and I yields the general dissimilarity measure $D(\mathbf{x}^3, 
+\hat{\mathbf{x}}^3)$  of the form~(\ref{e2-l}) between the corresponding 
+composite objects~$\mathbf{x}^3$ and~$\hat{\mathbf{x}}^3$. 
+
+The dissimilarity 
+measures $d(\mathbf{x}_m, \hat{\mathbf{x}}_m)$, $m=1,2,3$, and 
+$D(\mathbf{x}^3, \hat{\mathbf{x}}^3)$ have allowed us to construct the 
+discriminant functions~$g_i^d(\mathbf{x}_m)$ and~$g_i^D(\mathbf{x}^3)$, 
+$i=1, \ldots$\linebreak $\ldots , c$, for making the decisions of the form~(\ref{e8-l}) and~(\ref{e9-l}) 
+by the appropriate NN and SVM classifiers.
+{\looseness=1
+
+}
+
+\begin{table*}\small
+\begin{center}
+\tabcolsep=8pt
+\begin{tabular}{cccccc}
+\multicolumn{6}{c}{Error rates for HSI face recognition by NN and SVM classifiers}\\
+\multicolumn{6}{c}{\ }\\[-6pt]
+\hline
+\multicolumn{1}{c}{\raisebox{-6pt}[0pt][0pt]{Classifier}}&
+\multicolumn{3}{c}{Sources} &\multicolumn{2}{c}{Fusion schemes}\\ 
+\cline{2-6} 
+&H&S&I&\hspace*{2mm}WMV&GDM\\ 
+\hline 
+NN&0.022&0.017&0.015&\hspace*{2mm}0.009&0.006\\ 
+SVM&0.019&0.012&0.011&\hspace*{2mm}0.007&0.003\\ 
+\hline 
+\end{tabular} 
+\end{center} 
+\vspace*{-12pt}
+\end{table*}
+The table summarizes the cross-validation error rates for both the individual sources 
+and their ensemble using GDM and WMV fusion schemes. The experimental 
+results demonstrate a~decrease of the error rates in the ensemble HSI as against the 
+error rates for the sources H, S, and~I. Also, the obtained error rates confirm 
+some advantage of GDM scheme as compared with the WMV scheme.
+ 
+\vspace*{-9pt}
+
+\section{Concluding Remarks}
+
+\noindent
+To compare the potentially achievable  classification error probabilities for two 
+fusion schemes in the ensemble of data sources, the information-based criterion 
+has been suggested. The proposed  criterion is based on comparing the mean 
+values of the average mutual information between the set of the classes and the 
+datasets of the sources. These means  are independent on a~decision algorithm 
+and  they are defined in the WMV scheme of fusion of the decisions on the source 
+objects and in the GDM scheme of fusion of the metrics in datasets of the sources. 
+Taking the above mean values as the points of the appropriate rate distortion 
+functions, it has been shown that the  lower bound to GDM-based error probability is 
+smaller as compared with the similar WMV-based error probability. The advantage 
+in accuracy of the GDM scheme relative to the WMV scheme is confirmed by the error 
+rates for NN and SVM decision algorithms in experiments on recognition of HSI 
+face images given by the ensemble of the sources Н, S, and I.
+In future, we plan to 
+extend the ensemble of biometric sources and the set of the decision algorithms.  
+For the above fusion schemes and the different decision algorithms, we plan 
+to estimate a~redundancy of the error rates relative to the appropriate lower 
+bounds. 
+
+\vspace*{-9pt}
+
+\Ack
+\noindent
+The research is partially supported by the Russian Foundation for Basic Research 
+(grants Nos.\,18-07-01231 and 18-07-01385).
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+
+
+\vspace*{-9pt}
+
+{\small\frenchspacing
+{\baselineskip=10.45pt
+\begin{thebibliography}{99}
+\bibitem{1-l}
+\Aue{Kuncheva, L.} 2014. \textit{Combining pattern classifiers, methods and algorithms}. 2nd ed. 
+New York, NY: John Wiley and Sons. 384~p.
+\bibitem{2-l}
+\Aue{Gray, R., and D.~Neuhoff.} 1998. Quantization. 
+\textit{IEEE T.~Inform. Theory} 44(6):2325--2383.
+\bibitem{3-l}
+\Aue{Kolmogorov, A.\,N., and V.\,M.~Tikhomirov.} 1961. 
+\mbox{$\varepsilon$-entropy} and  $\varepsilon$-capacity of sets in 
+functional spaces. \textit{AMS Transl.} 17(2):277--364.
+\bibitem{4-l}
+\Aue{Lam, L., and C.~Suen.} 1997. 
+Application of majority voting to pattern recognition: An 
+analysis of its behavior and performance. \textit{IEEE T.~Syst. Man. Cyb.}
+27(5):553--568.
+\bibitem{5-l}
+\Aue{Lange, M.\,M., and D.\,Y.~Stepanov.} 
+2014. Recognition of objects given by collections of 
+multichannel images. \textit{Pattern Recogn. Image Anal.} 24(3):431--442.
+\bibitem{6-l}
+\Aue{Kuncheva, L., C.~Whitaker, C.~Shipp, and R.~Duin.} 2003. Limits on the majority
+vote accuracy in classifier fusion. \textit{Pattern Anal. Appl.} 6(1):22--31.
+\bibitem{7-l}
+\Aue{Gallager, R.} 1968. 
+\textit{Information theory and reliable communication}. New York, NY: John Wiley and 
+Sons. 608~p.
+\bibitem{8-l}
+\Aue{Lange, M.\,M., and A.\,M.~Lange.} 2018. 
+O~teoretiko-informatsionnoy modeli klassifikatsii
+dannykh [On information theoretical model for data classification]. 
+\textit{Mashinnoe obuchenie i~analiz dannykh}  [J.~Machine Learning Data Analysis] 
+4(3):165--179.
+\bibitem{9-l}
+\Aue{Dobrushin, R.\,L., and B.\,S.~Tsybakov.} 1962. 
+Information transmission with additional noise. 
+\textit{IRE T.~Inform. Theor.} 8(5):293--304.
+\bibitem{10-l}
+\Aue{Duda, R., P. Hart, and D.~Stork.}
+ 2001. \textit{Pattern classification}. 2nd ed. New York, NY: John Wiley and Sons. 
+688~p.
+\bibitem{11-l}
+\Aue{Beckenbach, E., and R.~Bellman.} 1961. 
+\textit{Inequalities}. New York, NY: Springer-Verlag. 55~p.
+\bibitem{12-l}
+\Aue{Gradshteyn, I.\,S., and I.\,M.~Ryzhik.}
+ 2007. \textit{Table of integrals, series, and products}. 7th ed. 
+Academic Press. 1221~p.
+\bibitem{13-l}
+Database of face images. Available at:
+{\sf http://\linebreak sourceforge.net/projects/colorfaces} (accessed 
+October~9, 2019).
+\bibitem{14-l}
+\Aue{Lange, M.\,M., and S.\,N.~Ganebnykh.} 
+2018. On fusion schemes for multiclass object 
+classification with reject in a~given ensemble of sources. 
+\textit{J.~Phys. Conf. Ser.} 1096:012048. 12~p. Available at: 
+{\sf https://\linebreak iopscience.iop.org/article/10.1088/1742-6596/1096/1/ 012048}
+ (accessed October~7,  2019).
+ \end{thebibliography} } }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Received July 01, 2019}}
+
+\vspace*{-16pt}
+
+\Contrl
+
+\vspace*{-3pt}
+
+\noindent
+\textbf{Lange Mikhail M.} (b.\ 1945)~--- Candidate of Science (PhD) in technology, leading 
+scientist, Federal Research Center ``Computer Sciences and Control'' of the Russian Academy of 
+Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{lange\_mm@ccas.ru}
+
+ 
+
+\newpage
+
+%\vspace*{8pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-7pt}
+
+%\newpage
+
+\vspace*{-28pt}
+
+\def\tit{О СРАВНИТЕЛЬНОЙ ЭФФЕКТИВНОСТИ СХЕМ КЛАССИФИКАЦИИ ДАННЫХ НА~АНСАМБЛЕ 
+ИСТОЧНИКОВ С~ИСПОЛЬЗОВАНИЕМ СРЕДНЕЙ ВЗАИМНОЙ ИНФОРМАЦИИ$^*$}
+
+\def\titkol{О сравнительной эффективности схем классификации данных на~ансамбле 
+источников} % с~использованием средней взаимной информации}
+
+\def\aut{M.\,M.~Ланге}
+
+\def\autkol{M.\,M.~Ланге}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа частично поддержана РФФИ (проекты 18-07-01231 и 18-07-01385).}}
+
+
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+\noindent
+Федеральный исследовательский центр <<Информатика и управление>> Российской академии наук, 
+\mbox{lange\_mm@ccas.ru}
+
+\vspace*{1pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 13\ \ \ выпуск\ 4\ \ \ 2019}
+}%
+ \def\rightfootline{\small{ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 13\ \ \ выпуск\ 4\ \ \ 2019
+\hfill \textbf{\thepage}}}
+
+\vspace*{-1pt}
+
+
+
+
+\Abst{Исследуется точность многоклассовой классификации наборов объектов от 
+ансамбля источников при различных схемах комплексирования данных. Предлагается 
+новый подход к~сравнению нижних границ вероятности ошибки для двух схем 
+классификации с~использованием средней взаимной информации между данными 
+источников и множеством классов. Рассмотрена схема WMV (Weighted Majority Vote) на 
+основе композиции решений по объектам источников и~схема GDM (General Dissimilarity 
+Measure) на основе композиции метрик на множествах объектов источников. Для 
+исследуемых схем получены оценки усредненных значений средней взаимной 
+информации на один источник. Доказано, что указанная характеристика схемы WMV не 
+превосходит аналогичной характеристики схемы GDM, при этом нижняя граница 
+вероятности ошибки в~схеме WMV превосходит нижнюю границу вероятности ошибки 
+в~схеме GDM. Полученный теоретический результат подтвержден экспериментальными 
+оценками вероятности ошибки распознавания цветных HSI изображений лиц для двух 
+схем комплексирования данных от источников H, S и~I.} 
+
+\KW{многоклассовая классификация; ансамбль источников; схема комплексирования; 
+композиция решений; композиция метрик; средняя взаимная информация; вероятность 
+ошибки}
+
+\DOI{10.14357/19922264190403} 
+
+
+
+%\vspace*{-3pt}
+
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily Литература}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+{\baselineskip=10.5pt
+\begin{thebibliography}{99}
+%\vspace*{-3pt}
+\bibitem{1-l-1}
+\Au{Kuncheva L.} Combining pattern classifiers, methods and algorithms.~--- 2nd ed.~---
+  New York, NY, USA: John Wiley and Sons, 2014. 384~p.
+\bibitem{2-l-1}
+\Au{Gray R., Neuhoff~D.} Quantization~// IEEE T. Inform. Theory, 1998. 
+Vol.~44. Iss.~6. P.~2325--2383.
+\bibitem{3-l-1}
+\Au{Колмогоров А.\,Н.,  Тихомиров~В.\,М.} 
+$\varepsilon$-энтропия и~$\varepsilon$-ем\-кость 
+множеств в функциональных пространствах~// УМН, 1959. Т.~14. №\,2(86). С.~3--86.
+
+\bibitem{4-l-1}
+\Au{Lam L., Suen~C.} Application of majority voting to pattern recognition: An analysis of its behavior and 
+performance~// IEEE T. Syst. Man Cyb., 1997. Vol.~27. Iss.~5. P.~553--568.
+\bibitem{5-l-1}
+\Au{Lange M.\,M., Stepanov~D.\,Y.}
+ Recognition of objects given by collections of multichannel images~// 
+Pattern Recogn. Image Anal., 2014. Vol.~24. Iss.~3. P.~431--442.
+\bibitem{6-l-1}
+\Au{Kuncheva L., Whitaker~C., Shipp~C., Duin~R.}
+ Limits on the majority vote accuracy in classifier fusion~// 
+Pattern Anal. Appl., 2003. Vol.~6. Iss.~1. P.~22--31.
+\bibitem{7-l-1}
+\Au{Gallager R.} Information theory and reliable communication.~---
+  New York, NY, USA: John Wiley and Sons, 1968. 
+608~p.
+\bibitem{8-l-1}
+\Au{Ланге М.\,М., Ланге~А.\,М.} О~тео\-ре\-ти\-ко-ин\-фор\-ма\-ци\-он\-ной 
+модели классификации данных~// 
+Машинное обучение и анализ данных, 2018. Т.~4. Вып.~3. С.~165--179.
+\bibitem{9-l-1}
+\Au{Dobrushin R.\,L., Tsybakov~B.\,S.}
+ Information transmission with additional noise~// IRE T. 
+Inform. Theor., 1962. Vol.~8. Iss.~5. P.~293--304.
+\bibitem{10-l-1}
+\Au{Duda R., Hart~P., Stork~D.}
+ Pattern classification.~--- 2nd ed.~--- New York, NY, USA: John Wiley and Sons, 2001. 688~p.
+\bibitem{11-l-1}
+\Au{Beckenbach E., Bellman~R.} Inequalities.~--- New York, NY, USA: Springer-Verlag, 1961. 55~p.
+\bibitem{12-l-1}
+\Au{Gradshteyn I.\,S., Ryzhik~I.\,M.} Table of integrals, series, and products.~---
+7th ed.~--- Academic Press, 
+2007. 1221~p.
+\bibitem{13-l-1}
+Database of face images. {\sf http://sourceforge.net/\linebreak projects/colorfaces}.
+\bibitem{14-l-1}
+\Au{Lange M.\,M., Ganebnykh~S.\,N.} 
+On fusion schemes for multiclass object classification with reject in 
+a~given ensemble of sources~// J.~Phys. Conf. Ser., 2018. Vol.~1096.
+ Art. ID: 012048.  P.~1--12. 
+\end{thebibliography}
+} }
+
+\end{multicols}
+
+ \label{end\stat}
+
+ \vspace*{-9pt}
+
+\hfill{\small\textit{Поступила в~редакцию 01.07.2019}}
+
+
+%\renewcommand{\bibname}{\protect\rm Литература}
+\renewcommand{\figurename}{\protect\bf Рис.}
+\renewcommand{\tablename}{\protect\bf Таблица}
+
+
+
+ 
+ 
+%Ланге Михаил Михайлович (р.\ 1945)~--- кандидат технических наук, ведущий научный 
+%сотрудник Федерального исследовательского центра <<Информатика и управление>> 
+%Российской академии наук
+
+ 
+ 
+ 
+ 

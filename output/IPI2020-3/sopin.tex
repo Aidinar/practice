@@ -1,0 +1,720 @@
+
+\def\stat{sopin}
+
+\def\tit{АНАЛИЗ МЕХАНИЗМОВ НАРЕЗКИ СЕТИ С УЧЕТОМ ГАРАНТИЙ ДЛЯ РАЗЛИЧНЫХ 
+ТИПОВ ТРАФИКА$^*$}
+
+\def\titkol{Анализ механизмов нарезки сети с~учетом гарантий для различных 
+типов трафика}
+
+\def\aut{К.\,А.~Агеев$^1$, Э.\,С.~Сопин$^2$, Н.\,В.~Яркина$^3$, 
+К.\,Е.~Самуйлов$^4$, С.\,Я.~Шоргин$^5$}
+
+\def\autkol{К.\,А.~Агеев, Э.\,С.~Сопин, Н.\,В.~Яркина и др.} 
+%К.\,Е.~Самуйлов$^4$, С.\,Я.~Шоргин$^5$ и~др.}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Агеев К.\,А.}
+\index{Сопин Э.\,С.}
+\index{Яркина Н.\,В.} 
+\index{Самуйлов К.\,Е.}
+\index{Шоргин С.\,Я.}
+\index{Ageev K.\,A.}
+\index{Sopin E.\,S.}
+\index{Yarkina N.\,V.}
+\index{Samouylov K.\,Е.}
+\index{Shorgin S.\,Ya.}
+ 
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Исследование выполнено при поддержке Программы РУДН <<5-100>> и~при частичной финансовой 
+поддержке РФФИ в~рамках научных проектов №\,19-07-00933 и~№\,19-37-90147.}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Российский университет дружбы народов, ageev-ka@rudn.ru}
+\footnotetext[2]{Российский университет дружбы народов; Институт проблем информатики Федерального исследовательского 
+центра <<Информатика и~управ\-ле\-ние>> Российской академии наук, \mbox{sopin-es@rudn.ru}}
+\footnotetext[3]{Российский университет дружбы народов, yarkina-nv@rudn.ru}
+\footnotetext[4]{Российский университет дружбы народов; Институт проб\-лем информатики Федерального 
+исследовательского центра <<Информатика и~управ\-ле\-ние>> 
+Российской академии наук,  
+\mbox{samouylov-ke@rudn.university}}
+\footnotetext[5]{Институт проблем информатики Федерального исследовательского центра <<Информатика  
+и~управ\-ле\-ние>> Российской академии наук, \mbox{sshorgin@ipiran.ru}}
+
+\vspace*{-5pt}
+
+ 
+  
+  \Abst{Нарезка радиоресурсов сети (network slicing)~--- это одна из ключевых 
+возможностей современных сетей, позволяющая нескольким виртуальным мобильным 
+операторам использовать ресурсы одной базовой станции. Это дает возможность 
+операторам, владельцам ресурсов, предоставлять в~аренду и~управлять несколькими 
+выделенными логическими сетями с~определенной функциональностью, реализуемой поверх 
+общей инфраструктуры. Каждая из этих логических сетей называется слайсом сети и~может 
+быть адаптирована для обеспечения определенного поведения системы, чтобы наилучшим 
+образом поддерживать определенные показатели качества услуг. В~работе построена модель 
+механизма нарезки радиоресурсов, распределяющего ресурс по слайсам, и~проведен анализ 
+этой модели методом имитационного моделирования.}
+  
+  
+  \KW{имитационное моделирование; система массового обслуживания; ограниченные 
+ресурсы; нарезка сети}
+
+\DOI{10.14357/19922264200314} 
+ 
+%\vspace*{-6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+  
+\section{Введение}
+
+\vspace*{-2pt}
+
+  Нарезка радиоресурсов сети (англ.\ \textit{network slicing}) дает возможность 
+оператору мобильной связи предоставлять выделенные логические сети 
+в~аренду виртуальным сетевым операторам в~виде сетевых слайсов 
+с~функциями, специфичными для клиента. Слайс сети, который охватывает все 
+сегменты сетевой инфраструктуры, может быть выделен для конкретных видов 
+услуг нескольким виртуальным операторам, предоставляющим схожие услуги, 
+либо отдельно для каждого виртуального оператора~[1,~2].
+  
+  Для каждого слайса сети выделяются ресурсы (например, 
+виртуализированные сетевые функции, пропускная способность сети и~др.), 
+и~ошибки или неисправность, возникающие в~одном слайсе, не влияют на 
+обеспечение показателей качества обслуживания QoS (Quality of Service) 
+в~других слайсах; иными словами, гарантируется изоляция слайса для 
+обеспечения гарантированного качества обслуживания. При этом алгоритм 
+нарезки радиоресурсов должен обеспечивать эффективное использование 
+ресурсов соты с~учетом гарантированного объема ресурсов, выделенного для 
+каждого слайса~[3].
+  
+  Данная тематика в~последнее время привлекает повышенное внимание 
+исследователей. В~\cite{4-sop} представлена гибкая модель нарезки сети 
+радиодоступа (Radio Access Network, RAN). Основные цели заключаются 
+в~определении уровня изоляции производительности между операторами 
+виртуальных сетей (Virtual Network Operator, VNO), которые выступают 
+в~качестве арендаторов сети, с~тем чтобы гарантировать, что их соглашения об 
+уровне обслуживания (Service Level Agreement, SLA) не будут затронуты 
+изменением различных параметров сети, и~в~то же время оптимизировать 
+использование инфраструктуры RAN путем динамического распределения 
+радиоресурсов между различными сегментами справедливым образом. 
+  
+  В~\cite{5-sop} также рассматривается система управления виртуальными 
+радиоресурсами (Virtual radio resource management, VRRM), которая 
+обеспечивает оптимальное использование виртуализированных ресурсов 
+поставщика инфраструктуры между несколькими операторами виртуальной 
+сети. В~статье представлена архитектура инструмента моделирования VRRM 
+в~терминах систем массового обслуживания (СМО). С~по\-мощью разработанного 
+инструмента проводится анализ практического сценария с~тремя поставщиками 
+и~различными типами SLA и~исследуются показатели производительности при 
+изменении нагрузки на трафик и~SLA.
+  
+  В~работах~\cite{6-sop, 7-sop} рассматривается теоретическая основа для 
+многооператорного планирования (Multi-Operator Scheduling, MOS). Благодаря 
+динамической адаптации к~каналу и~нагрузке централизованный подход 
+максимизирует спектральную эффективность для нескольких операторов 
+с~полным контролем над гарантиями совместного использования. 
+  
+  В данной работе рассматривается сценарий функционирования одной соты 
+беспроводной сети связи, в~которой активировано~$S$~слайсов, модуль 
+нарезки делит между ними~$C$~единиц радиоресурсов. Каждый слайс 
+предоставляет пользователям услугу связи, предполагающую непрерывную 
+передачу данных с~определенным выделенным ресурсом, скоростью передачи, 
+не менее $a_s\hm\geq 0$ и~не более $b_s\hm\geq a_s$, $s\hm\in S$. 
+При этом скорость передачи является переменной: в~каждый момент времени 
+она пересчитывается и~зависит от числа активных сессий в~каждом слайсе. 
+Предполагается, что ресурс в~рамках одного слайса распределяется поровну 
+между пользователями. В~работе описана модель в~виде 
+СМО, предложен алгоритм разделения радиоресурсов, описана 
+работа средства имитационного моделирования, проведен численный 
+эксперимент и~анализ полученных результатов.
+
+\section{Математическая модель}
+
+  Пусть в~многолинейную СМО
+поступает~$S$~потоков заявок, соответствующих запросам на передачу 
+данных от пользователей~$S$~различных слайсов. Потоки являются 
+пуассоновскими с~интенсивностями~$\lambda_s$, $s\hm\in S$. Объемы  
+заявок~--- независимые случайные величины, распределенные по 
+экспоненциальному закону с~параметрами~$1/\mu_s$, $s\hm\in S$, а~скорость 
+обслуживания заявки определяется объемом выделенного ей ресурса. 
+  
+  Пусть общий объем ресурсов СМО для обслуживания заявок равен~$C$. 
+Количество ресурсов, выделяемых заявке, принятой на обслуживание, зависит 
+от состояния системы и~может варьироваться в~диапазоне $[a_s, b_s]$, $s\hm\in 
+S$. При этом после каж\-до\-го поступления либо ухода заявки происходит 
+перераспределение ресурсов между слайсами.
+  
+  Определим случайный процесс $X(t)\hm= \{ m_1(t), m_2(t), \ldots , m_S(t)\}$, 
+где~$m_s$, $s\hm\in S$,~--- число заявок в~слайсе в~момент времени~$t$, 
+причем 
+  $$
+  m_s\in \left\{ 0,1,\ldots , \left\lceil \fr{C}{a_s}\right\rceil \right\}\,,\enskip s\in S\,.
+  $$
+  %
+  Тогда пространство возможных состояний процесса имеет вид:
+  $$
+  \mathrm{X}=\left\{ \left( m_1, m_2, \ldots , m_s\right)\,,\ \sum\limits^S_{s=1} 
+m_s a_s\leq C\right\}\,.
+  $$
+  
+  Обозначим через~$r_s$, $s\hm\in S$, количество выделенного ресурса одной 
+заявке в~слайсе~$s$, $s\hm\in S$. Тогда интенсивности обслуживания заявок 
+соответствующих слайсов определятся как~$r_s\mu_s$, $s\hm\in S$.
+  
+  Для обеспечения изоляции слайсов обозначим через~$\overline{R}_s$ объем 
+ресурсов, который гарантированно выделен слайсу~$s$, $s\hm\in S$, а~через 
+$\overline{M}_s\hm= \overline{R}_s/a_s$~--- число заявок, которое 
+гарантированно может быть принято в~слайсе~$s$, $s\hm\in S$. Слайсы, число 
+заявок в~которых превышает гарантированное значение, будем называть 
+нарушителями. В~случае нехватки ресурсов и~наличия  
+слай\-сов-на\-ру\-ши\-те\-лей поступившая заявка другого слайса может 
+вытеснить одну или несколько заявок слай\-сов-на\-ру\-ши\-те\-лей. В~случае 
+нехватки ресурсов и~отсутствия нарушителей, а~также в~случае когда все 
+слайсы нарушают, поступающая заявка будет сброшена.
+  
+  Рассмотрим подробнее возможные события при поступлении сессий 
+в~состоянии $(m_1, m_2, \ldots , m_s)\hm\in \mathrm{X}$. Пусть в~систему 
+поступает заявка слайса~$s$, $s\hm\in S$. Тогда возможны следующие случаи:
+  \begin{itemize}
+  \item $(m_1, m_2, \ldots , m_s+1, \ldots , m_S)\hm\in \mathrm{X}$, т.\,е.\ 
+предо\-став\-ле\-ние минимального количества ресурса для поступающей заявки 
+возможно; в~этом случае заявка встает на обслуживание, а~случайный процесс 
+переходит в~состояние  $(m_1, m_2, \ldots , m_s+1,\ldots , m_S)$;
+  \item  $(m_1, m_2, \ldots , m_s+1, \ldots , m_S)\not= \mathrm{X}$, т.\,е.\ не 
+гарантируется предоставление минимально тре\-бу\-емо\-го количества ресурса, 
+тогда:
+\begin{itemize}
+  \item  если $m_s\hm< \overline{M}_s$ и~$m_k\hm> \overline{M}_k$, $k\hm\in S$, $k\not= 
+s$, то выполняется освобождение ресурсов слай\-са-на\-ру\-ши\-те\-ля. 
+Алгоритм сброса заявок приведен в~разд.~3;
+  \item  в~остальных случаях поступающая заявка будет сброшена.
+  \end{itemize}
+  \end{itemize}
+  
+  Таким образом, множество состояний сброса заявок при поступлении:
+  \begin{multline*}
+  D_s=\left\{\vphantom{\left(\overline{M}_k\right)}\left (m_1, m_2, \ldots , m_S\right): {}\right.\\
+{}:  \left( \left(m_1, m_2, \ldots , m_s+1, \ldots , m_S\right)\not= 
+\mathrm{X}\right)\cap{}\\ 
+\left.{}\cap\left( \left( m_s\geq \overline{M}_s\right) \cup \left( m_k\leq 
+\overline{M}_k,\ k\in S,\ k\not=s\right)\right)
+  \right\}\,.
+\end{multline*}
+  
+  Множество состояний прерывания обслуживания:
+\begin{multline*}
+  B_k=\left\{ \vphantom{\left(\overline{M}_k\right)}
+  \left( m_1, m_2, \ldots , m_S\right) :{}\right.\\
+  {}: \left( \left( m_1, m_2, \ldots , m_s+1, \ldots , 
+m_S\right) \not=\mathrm{X}\right) \cap {}\\
+\left.{}\cap\left( \left( m_s<\overline{M}_s\right) \cup 
+\left( m_k>\overline{M}_k,\ k\in S\,,\ k\not= s\right)\right)\right\}\,.
+\end{multline*}
+
+\section{Алгоритм выбора сбрасываемой заявки}
+
+  Для выбора сбрасываемой заявки при наличии нескольких  
+слай\-сов-на\-ру\-ши\-те\-лей введем понятие веса слайса, показывающего, 
+насколько сильно слайс нарушает границы других слайсов. Ниже приведены 
+три возможные формулы для вычисления весов: 
+\begin{align*}
+ w_s^{(1)}&=\begin{cases}
+  1\,, & m_s\leq \overline{M}_s\,;\\
+  \fr{1}{m_s-\overline{M}_s+1}\,, & m_s>\overline{M}_s\,;
+  \end{cases}\\
+  w_s^{(2)}&=\begin{cases}
+  1\,, & m_s\leq \overline{M}_s\,;\\
+  \fr{\overline{M}_s}{m_s}\,, & m_s>\overline{M}_s\,;
+  \end{cases}\\
+  w_s^{(3)}&=\begin{cases}
+  1\,, & m_s\leq \overline{M}_s\,;\\
+  w=const<1, & m_s>\overline{M}_s\,.
+  \end{cases} %\label{e3-sop}
+\end{align*}
+ 
+  Освобождение ресурсов требуется в~случае, если заявка поступает в~слайс, 
+который не является нарушителем, при этом она не может быть принята 
+в~сис\-те\-му из-за нехватки свободного ресурса: 
+\begin{multline*}
+\left\{ \left( \left( m_1, m_2, \ldots , m_s+1, \ldots , m_S\right) \notin 
+\mathrm{X}\right) :{}\right.\\
+\left.{}: \left( m_s+1\right)a_s\leq R_s\right\}\,.
+\end{multline*}
+
+ \textbf{Шаг 1:} ищем слайс с~наименьшим весом, т.\,е.\ $s^*\hm\in S$: $w_{s^*}\hm= 
+\min \{ w_r, r\hm\in S\}$.
+  
+  \textbf{Шаг 2:} сбрасываем заявку найденного слайса $(m_1, m_2, \ldots , m_{s^*}-1, 
+\ldots , m_S)$.
+  
+  Шаги 1 и~2 выполняются, пока не будет удовле\-тво\-ре\-но условие $C\hm- 
+\sum\nolimits^S_{i=1} m_i a_i\hm\geq a_s$. Отметим, что в~случае, когда 
+у~нескольких слайсов вес минимален, выбор слайса для сброса заявки 
+происходит случайным образом.
+  
+  
+  \section{Распределение ресурсов}
+  
+  В состоянии избытка ресурсов 
+  $$
+  \mathrm{X}_0= \left(\! \left(m_1, m_2, \ldots , 
+m_s+1, \ldots, m_S\right): \ \!\sum\limits^S_{s=1}\! m_s b_s \hm\leq C\!\right)
+\hspace*{-0.94673pt}
+$$ 
+всем  заявкам во всех слайсах будет выделен максимальный объем ресурса~$b_s$.
+  
+  В состоянии ограниченных ресурсов $\mathrm{X}_1\hm= 
+\mathrm{X}\backslash \mathrm{X}_0$ для справедливого и~эффективного 
+распределения ресурсов решается задача оптимизации. Пусть скорости 
+передачи данных в~слайсах имеют функцию полезности $U_s(r_s)\hm= \ln \left( 
+r_s\right)$. Тогда задача выглядит следующим образом:
+  \begin{gather}
+  \sum\limits_{s\in S} w_s(m_s) m_s U_s(r_s)\to \max\,,\enskip s\in S\,;\notag\\
+  \sum\limits_{s\in S} m_s r_s=C\,;\label{e5-sop}\\
+  P=\left\{ \mathbf{r}\in \mathbf{R}^S:\ a_s\leq r_s\leq b_s\,,\ s\in S\right\}\,,
+  \label{e6-sop}
+  \end{gather}
+где вектор~$\mathbf{r}$ имеет вид $\mathbf{r}\hm= (r_1, r_2, \ldots , r_S)$. 
+Решение задачи выполняется с~по\-мощью при\-бли\-жен\-но\-го метода 
+проецирования градиента, в~котором итеративная процедура поиска максимума 
+описывается соотношениями:
+\begin{gather*}
+\mathbf{d}_k=\mathbf{P}\nabla f(\mathbf{x}_k)\,;\\
+\mathbf{x}_{k+1} =\mathbf{x}_k+\tau_k \mathbf{d}_k\,;\\
+\tau_k>0:\ \mathbf{x}_{k+1}\in P\,,
+\end{gather*}
+где вектор~$\mathbf{x}$ является решением, а~$\mathbf{P}$~--- матрица 
+проецирования на гиперплоскость~(\ref{e5-sop}):
+$$
+\mathbf{P}=\mathbf{I}-\mathbf{m}\left(\mathbf{m}
+\mathbf{m}^{\mathrm{T}}\right)^{-1}\mathbf{m} = \mathbf{I} -\fr{1}{\sum\nolimits_{s\in S} 
+m_s^2}\,\mathbf{m}^{\mathrm{T}}\mathbf{m}\,.
+$$
+    Здесь вектор $\mathbf{m}\hm= (m_1, m_2, \ldots , m_S)$~--- текущее 
+состояние системы. Градиент функции полезности представляет собой  
+век\-тор-стол\-бец:
+  $$
+  \nabla f(\mathbf{x}_k)=\left( \fr{w_s m_s}{r_s}\right)_{s\in S}\,.
+  $$
+  
+  Длину шага~$\tau_k$ выбираем таким образом, чтобы не выйти за пределы 
+области~$P$, задаваемой прямыми ограничениями задачи~(\ref{e6-sop}). 
+В~качестве начального приближения~$\mathbf{x}_0$ удобно взять точку 
+пересечения диагонали координатного параллелограмма~$P$, соединяющей 
+точки $(a_1, a_2, \ldots , a_S)$ и~$(b_1, b_2, \ldots , b_S)$ 
+с~гиперплоскостью~(\ref{e5-sop}). Данная точка находится при решении 
+системы линейных уравнений:
+  \begin{equation*}
+  \left.
+  \begin{array}{c}
+  (b_S-a_S)x_1-(b_1-a_1)x_S=a_1b_S-a_Sb_1\,;\\[6pt]
+  (b_S-a_S)x_2-(b_2-a_2)x_S=a_2b_S-a_Sb_2\,;\\[6pt]
+  \cdots\\[6pt]
+  \hspace*{-8mm}(b_S-a_S)x_{S-1}-(b_{S-1}-a_{S-1})x_S={}\\[6pt]
+  \hspace*{32mm}{}=a_{S-1}b_S - a_Sb_{S-1}\,;\\[6pt]
+  \hspace*{-5mm}m_1x_1+\cdots + m_S x_S=C\,.
+  \end{array}
+  \right.
+  \end{equation*}
+  
+  \begin{figure*}[b] %fig1
+\vspace*{-4pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=159.488mm 
+ \epsfbox{sop-1.eps}
+ }
+ \end{center}
+   \vspace*{-9pt}
+\Caption{Схема работы инструмента имитационного моделирования}
+\end{figure*}
+  
+  Итеративная процедура обеспечивает движение по  
+гиперплоскости~(\ref{e5-sop}) в~направлении возрастания функции полезности 
+до границы области~$P$, где и~будет найдено решение.
+
+\vspace*{-6pt}
+  
+  \section{Описание работы средства имитационного моделирования}
+  
+  \vspace*{-3pt}
+  
+  Общая схема работы имитатора изображена на рис.~1. На шаге 
+инициализации входных па\-ра\-мет\-ров задаются начальные параметры: 
+$\lambda_s$, $\mu_s$, $\overline{M}_s$, $a_s$, $b_s$, $s\hm\in S$, $C$, $\max$~--- 
+максимальное число принятых заявок в~системе. Затем выполняется запуск 
+имитационного моделирования. Далее определяется ближайшее событие: 
+
+\begin{enumerate}[(1)]
+\item если это поступление, то выполняется проверка на достаточность ресурсов:
+\begin{enumerate}[({1}.1)] 
+\item если ресурсов хватает, то добавляется заявка, пересчитываются ресурсы, 
+и~определяется продолжение моделирования; 
+\item если ресурсов не хватает, то 
+проверяется, является ли слайс нарушителем: 
+\begin{enumerate}[({1.2.}1)]
+\item если является, то входящая 
+заявка считается заблокированной; 
+\item если не является, то запускается 
+процесс поиска нарушителя и~освобождение ресурсов, после чего происходит 
+добавление заявки, пересчитываются ресурсы и~определяется продолжение 
+моделирования;
+\end{enumerate}
+\end{enumerate}
+\item если ближайшее событие~--- это обслуживание, то 
+выполняется освобождение и~перерасчет ресурсов.
+\end{enumerate}
+
+\vspace*{-8pt}
+
+  
+  \section{Численный эксперимент}
+  
+  \vspace*{-2pt}
+  
+  Для численного эксперимента рассматривается диапазон 10~МГц в~сети LTE
+  (long-term evolution). 
+Минимально допустимая скорость в~таком диапазон составляет 0,75~Мбит/с 
+$(a_s\hm=0{,}75$, $s\hm\in S)$,\linebreak максимальная~--- 79,9~Мбит/с ($b_s\hm= 
+79{,}9$, $s\hm\in S$). Максимальный объем ресурса, который может 
+единовременно предоставлять базовая станция в~диапазоне 10~МГц,~--- 
+450~Мбит/с, для расчетов используются несколько значений объема ресурсов: 
+$$
+C= [325,350,375,400,425,450]\,.
+$$
+ Данный ресурс будет разделен на трех 
+($S\hm=3$) виртуальных операторов с~гарантированным выделенным ресурсом 
+$\overline{R}_1\hm=225$, $\overline{R}_2\hm= 150$ и~$\overline{R}_3\hm= 75$. 
+Интенсивности поступлений $\lambda_1\hm= \lambda_2\hm= \lambda_3\hm=30$, 
+интенсивности обслуживания $\mu_1\hm= \mu_2\hm= \mu_3\hm= 30$ оставим 
+равными для всех операторов.
+  
+  На рис.~2,\,\textit{а} видно, что когда ресурсов не хватает для обеспечения 
+гарантированной скорости для всех операторов, то и~вероятность блокировки 
+выше. Далее при увеличении ресурса видно, что для оператора, которому 
+предоставлено больше гарантированных ресурсов, уменьшение вероятности 
+блокировки происходит быстрее.
+  
+
+  На рис.~2,\,\textit{б} видно, что для оператора, которому предоставляется больший 
+гарантированный ресурс, увеличивается средний размер слайса, в~то время как 
+для оператора, которому гарантируется меньший ресурс, этот параметр 
+меняется незначительно. Это связано со способом решения оптимального 
+распределения ресурса, описанного в~данной работе.
+  
+  На рис.~2,\,\textit{в} отображен график, показывающий изменение доли времени, когда 
+оператор является нарушителем. В~связи с~тем что общий размер \mbox{ресурса} 
+растет, гарантированный объем остается неизменным, а~интенсивности 
+поступления~--- фиксированные для каждого оператора, можно наблюдать 
+резкое увеличение значений этого параметра для оператора~3.
+  
+   
+\vspace*{-8pt}
+
+  
+  \section{Заключение}
+  
+  \vspace*{-2pt}
+  
+  В работе описана СМО с~ограниченными 
+ресурсами с~распределением ресурсов в~зависимости от
+веса слайса сети. 
+Предложен и~реализован алгоритм освобождения ресурсов  
+слай\-са\-ми-на\-ру\-ши\-те\-ля\-ми. Предложен и~реализован алгоритм 
+распределения\linebreak\vspace*{-12pt}
+
+{ \begin{center}  %fig2
+ \vspace*{-3pt}
+   \mbox{%
+ \epsfxsize=79.374mm 
+ \epsfbox{sop-2.eps}
+ }
+
+\end{center}
+
+\noindent
+{{\figurename~2}\ \ \small{
+Вероятность блокировки~(\textit{а}),  
+средний размер слайса~(\textit{б}) 
+и~доля времени, когда слайс находится в~состоянии нарушителя~(\textit{в})
+в~зависимости от объема ресурсов: \textit{1}~--- VNO~1; 
+\textit{2}~--- VNO~2; \textit{3}~--- VNO~3
+}}}
+
+\vspace*{12pt}
+
+
+
+
+
+\noindent
+ ресурсов на основе весов слайсов. Разработано средство 
+имитационного моделирования механизма распределения ресурсов. Проведен 
+численный эксперимент для трех слайсов. В~дальнейшем планируется 
+разработать модель, в~которой перераспределение слайсов происходит не при 
+каждом изменении состояния процесса, а~при выполнении некоторого 
+критерия.
+
+\vspace*{-8pt}
+  
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+ 
+ \vspace*{-1pt}
+ 
+ 
+\bibitem{1-sop}
+3GPP TS 23.501 V15.4.0. System architecture for the 5G System, 2018. {\sf 
+http://www.3gpp.org/ftp//Specs/ archive/23\_series/23.501/23501-f40.zip}.
+\bibitem{2-sop}
+ITU-T Rec. Y.3101. Requirements of the IMT-2020 network, 2018. {\sf 
+https://www.itu.int/rec/dologin\_pub.asp?\linebreak lang=e\&id=T-REC-Y.3101-201801-I!!PDF-E\&type= items}.
+\bibitem{3-sop}
+\Au{P$\acute{\mbox{e}}$rez-Romero~J., 
+Sallent~O., Ferr$\acute{\mbox{u}}$s~R., 
+\mbox{Agust{\!\!\ptb{$\acute{\mbox{\i}}$}}}~R.} On 
+the configuration of radio resource management in a~sliced RAN~// IEEE/IFIP 
+Network Operations and Management Symposium.~--- IEEE, 2018. P.~1--6. doi: 
+10.1109/ NOMS.2018.8406280.
+\bibitem{4-sop} 
+\Au{Rouzbehani B., Correia~L.\,M., Caeiro~L.} An SLA-based method for radio resource slicing 
+and allocation in virtual %\linebreak\vspace*{-12pt}
+%\columnbreak 
+%\noindent
+ RANs~// IRACON 7th MC and Technical Meeting.~--- 
+Cartagena, Spain, 2018. Cost Action 15104 TD(18)07034. P.~1--7.
+\bibitem{5-sop} 
+\Au{Ageev K., Garibyan~A., Golskaya~A., Gaidamaka~Yu., Sopin~E., Samouylov~K., Correia~L.} 
+Modelling of virtual radio resources slicing in 5G networks~// 
+Information technologies and 
+mathematical modelling. Queueing theory and applications~/
+Eds. A.~Dudin, A.~Nazarov, A.~Moiseev.~--- Communications in 
+computer and information science ser.~--- Cham: Springer, 2019.  
+Vol.~1109. P.~150--161. doi: 10.1007/978-3-030-33388-1\_13.
+\bibitem{6-sop} 
+\Au{Malanchini I., Valentin~S., Aydin~O.} An analysis of\linebreak gen\-er\-al\-ized 
+resource sharing for multiple 
+operators in cel\-lu\-lar networks~// 25th Annual Symposium
+ (In\-ter\-na\-tion\-al) on Personal, Indoor, 
+and Mobile Radio Com\-mu\-ni\-ca\-tion.~--- IEEE, 2014. P.~1157--1162. doi: 
+10.1109/\linebreak \mbox{PIMRC}.2014.7136342.
+\bibitem{7-sop}
+\Au{Malanchini I., Valentin~S., Aydin~O.} Wireless resource sharing for multiple operators: 
+Generalization, fairness, and the value of prediction~// Comput. Netw., 2016. Vol.~100. 
+P.~110--123. doi: 10.1016/j.comnet.2016.02.014.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 15.07.20}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{ANALYSIS OF~THE~NETWORK SLICING MECHANISMS WITH~GUARANTEED ALLOCATED 
+RESOURCES\\ FOR~VARIOUS TRAFFIC TYPES}
+
+
+\def\titkol{Analysis of~the~network slicing mechanisms with~guaranteed allocated 
+resources for~various traffic types}
+
+\def\aut{K.\,A.~Ageev$^1$, E.\,S.~Sopin$^{1,2}$, N.\,V.~Yarkina$^1$, K.\,E.~Samouylov$^{1,2}$, 
+and~S.\,Ya.~Shorgin$^2$}
+
+\def\autkol{K.\,A.~Ageev, E.\,S.~Sopin, N.\,V.~Yarkina, 
+%K.\,E.~Samouylov$^{1,2}$, and~S.\,Ya.~Shorgin$^2$ 
+et al.}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+$^1$Peoples' Friendship University of Russia (RUDN University), 6~Miklukho-Maklaya Str., Moscow 
+117198, Russian\linebreak
+$\hphantom{^1}$Federation
+
+\noindent
+$^2$Institute of Informatics Problems, Federal Research Center ``Computer Sciences and Control'' of the 
+Russian\linebreak
+$\hphantom{^1}$Academy of Sciences; 44-2~Vavilov Str., Moscow 119133, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+
+
+
+\Abste{Network slicing is one of the key capabilities of
+ modern networks, allowing several virtual mobile operators 
+ to use the physical resources of one base station. 
+ This allows operators and resource owners (tenants) to 
+ lease and manage several dedicated logical networks with 
+ specific functionality working on top of a~common infrastructure. 
+ Each of these logical networks is called a~network slice and can 
+ be adapted to provide certain system behavior to maintain 
+ a~specified level of quality of service indicators. The paper
+  describes the developed mathematical framework of the network
+   slicing mechanisms 
+and analyzes it by means of extensive simulations.}
+
+\KWE{simulation modeling; queuing system; limited resources; network slicing}
+
+\DOI{10.14357/19922264200314} 
+
+\vspace*{-20pt}
+
+\Ack
+\noindent
+The reported study was funded by the ``RUDN University Program 5-100'' and in
+part by RFBR, projects  
+Nos.\,19-07-00933 and 19-37-90147.
+
+\vspace*{4pt}
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+ 
+ \vspace*{-2pt}
+ 
+\bibitem{1-sop-1}
+3GPP TS 23.501 V15.4.0. 2018. System architecture for the 5G System. 
+Available at: {\sf 
+http://www.3gpp.org/ftp// Specs/archive/23\_series/23.501/23501-f40.zip} 
+(accessed June~15, 2020).
+\bibitem{2-sop-1}
+ITU-T Rec. Y.3101. 2018. Requirements of the IMT-2020 network. Available at: {\sf 
+https://www.itu.int/rec/ dologin\_pub.asp?lang=e\&id=T-REC-Y.3101-201801-I!!PDF-E\&type=items} 
+(accessed June~15, 2020).
+\bibitem{3-sop-1}
+\Aue{P$\acute{\mbox{e}}$rez-Romero, J., O.~Sallent,
+ R.~Ferr$\acute{\mbox{u}}$s, and 
+R.~\mbox{Agust{\!\!\ptb{$\acute{\mbox{\i}}$}}}}. 2018. On the configuration of radio resource management in a sliced 
+RAN. \textit{IEEE/IFIP Network Operations and Management Symposium}.
+ IEEE. 1--6.  doi: 10.1109/ NOMS.2018.8406280.
+\bibitem{4-sop-1}
+\Aue{Rouzbehani, B., L.\,M.~Correia, and L.~Caeiro.} 2018. An SLA-based method for radio resource 
+slicing and allocation in virtual RANs. \textit{IRACON 7th MC and Technical Meeting}. Cartagena. 
+TD(18)07034. 1--7.
+\bibitem{5-sop-1}
+\Aue{Ageev, K., A.~Garibyan, A.~Golskaya, Yu.~Gaidamaka, E.~Sopin, K.~Samouylov, and L.~Correia.} 
+2019. Modelling of virtual radio resources slicing in 5G networks. 
+\textit{Information technologies and 
+mathematical modelling. Queueing theory and applications}. Eds. 
+A.~Dudin, A.~Nazarov, and A.~Moiseev. 
+Communications in computer and information science ser. Cham:
+Springer. 1109:150--161. 
+\bibitem{6-sop-1}
+\Aue{Malanchini, I., S.~Valentin, and O.~Aydin.} 2014. An analysis of generalized resource sharing for 
+multiple operators in cellular networks. \textit{25th Annual Symposium (International)
+on Personal,  Indoor, and Mobile Radio Communication}. IEEE. 1157--1162. 
+doi:  10.1109/PIMRC.2014.7136342.
+\bibitem{7-sop-1}
+\Aue{Malanchini, I., S.~Valentin, and O.~Aydin.} 2016. Wireless resource sharing for multiple operators: 
+Generalization, fairness, and the value of prediction. \textit{Comput. Netw.} 100:110--123.
+doi: 10.1016/j.comnet.2016.02.014.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received July 15, 2020}}
+
+%\pagebreak
+
+%\vspace*{-24pt}
+
+
+
+\Contr
+
+\noindent
+\textbf{Ageev Kirill A.} (b.\ 1993)~--- PhD student, Peoples' Friendship University of Russia (RUDN 
+University), 6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation; \mbox{ageev-ka@rudn.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Sopin Eduard S.} (b.\ 1987)~--- Candidate of Science in physics and mathematics, associate 
+professor, Peoples' Friendship University of Russia (RUDN University), 6~Miklukho-Maklaya Str., 
+Moscow 117198, Russian Federation; senior scientist, Institute of Informatics Problems, Federal Research 
+Center ``Computer Sciences and Control'' of the Russian Academy of Sciences; 44-2 Vavilov Str., Moscow 
+119133, Russian Federation; \mbox{sopin-es@rudn.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Yarkina Natalia V.} (b.\ 1979)~--- Candidate of Science in physics and mathematics, associate 
+professor, Peoples' Friendship University of Russia (RUDN University), 6~Miklukho-Maklaya Str., 
+Moscow 117198, Russian Federation; \mbox{yarkina-nv@rudn.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Samouylov Konstantin E.} (b.\ 1955)~--- Doctor of Science in technology, professor, Head of 
+Department, Peoples' Friendship University of Russia (RUDN University), 6~Miklukho-Maklaya Str., 
+Moscow 117198, Russian Federation; senior scientist, Institute of Informatics Problems, Federal Research 
+Center ``Computer Sciences and Control'' of the Russian Academy of Sciences; 44-2~Vavilov Str., Moscow 
+119133, Russian Federation; \mbox{samuylov\_ke@rudn.university}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Shorgin Sergey Ya.} (b.\ 1952)~--- Doctor of Science in physics and mathematics, professor, 
+principal scientist, Institute of Informatics Problems, Federal Research Center ``Computer Sciences and 
+Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{sshorgin@ipiran.ru}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

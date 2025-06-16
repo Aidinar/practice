@@ -1,0 +1,825 @@
+
+\def\stat{gorshenin}
+
+\def\tit{ОПТИМИЗАЦИЯ ГИПЕРПАРАМЕТРОВ НЕЙРОННЫХ СЕТЕЙ С~ИСПОЛЬЗОВАНИЕМ ВЫСОКОПРОИЗВОДИТЕЛЬНЫХ 
+ВЫЧИСЛЕНИЙ ДЛЯ ПРЕДСКАЗАНИЯ ОСАДКОВ$^*$}
+
+\def\titkol{Оптимизация гиперпараметров нейронных сетей с~использованием высокопроизводительных 
+вычислений} % для предсказания осадков}
+
+\def\aut{А.\,К.~Горшенин$^1$, В.\,Ю.~Кузьмин$^2$}
+
+\def\autkol{А.\,К.~Горшенин, В.\,Ю.~Кузьмин}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Горшенин А.\,К.}
+\index{Кузьмин В.\,Ю.}
+\index{Gorshenin A.\,K.}
+\index{Kuzmin V.\,Yu.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при частичной поддержке РФФИ (проекты 17-07-00851 и~18-29-03100) 
+и~Стипендии Президента Российской 
+Федерации молодым ученым и~аспирантам (СП-538.2018.5).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского
+центра <<Информатика и~управ\-ле\-ние>> Российской академии наук; факультет
+вычислительной математики и~кибернетики Московского государственного университета 
+им.\ М.\,В.~Ломоносова, \mbox{agorshenin@frccsc.ru}}
+\footnotetext[2]{ООО <<Вай2Гео>>, \mbox{shadesilent@yandex.ru}}
+
+\vspace*{-10pt}
+
+
+
+\Abst{Рассмотрена процедура настройки гиперпараметров нейронной 
+сети для анализа пространственных метеорологических данных с~использованием 
+инструментов гибридного высокопроизводительного вычислительного комплекса (ГВВК). 
+Проведено сравнение точности прогнозирования осадков на основе таких методов, 
+как поиск по решетке и~случайный поиск. Продемонстрировано, что даже при 
+сравнительно небольшом числе случайных выборов  комбинаций гиперпараметров 
+возможно получить точность, сопоставимую с~полным перебором, при умеренных 
+временных затратах. Данные результаты означают возможность автоматического 
+построения архитектуры нейросети на основе базовой модели для решения конкретных 
+прикладных задач.}
+
+
+\KW{нейронные сети; прогнозирование; глубокое обучение; гиперпараметры; 
+высокопроизводительные вычисления; CUDA}
+
+\DOI{10.14357/19922264190111}
+  
+\vspace*{-1pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+\vspace*{-6pt}
+
+Нарастающий объем данных, накапливаемых в~различных предметных областях, 
+ведет к~необходимости оптимизации вычислительных методов и~задействования 
+наиболее современных устройств, значительно превосходящих возможности 
+настольных решений. Высокопроизводительные вычисления позволяют получать 
+новые научные результаты для широкого класса прикладных задач. 
+Так, 
+в~работе~\cite{Xie2010} проводятся расчеты для различных конфигураций оборудования 
+(от~36 до~200~ядер центральных процессоров) для моделирования пыльных бурь. 
+В~статье~\cite{Lee2011} рассмотрены высокопроизводительные\linebreak решения, которые 
+могут применяться для обработки данных дистанционного зондирования (см.\
+ также~\cite{Xue2011}), в~том числе на основе видеокарт. 
+ По-\linebreak доб\-ные гибридные решения, сочетающие эффективность расчетов как на 
+ центральных, так и~на\linebreak графических процессорах, являются наиболее 
+ востребованными. В~частности, в~работе~\cite{Lu2012} рас\-смот-\linebreak рены вопросы 
+ моделирования длинноволнового излучения с~максимально возможным использованием 
+ всех доступных вычислительных ресурсов. Стоит отметить использование 
+ высокопроизводительных решений в~задачах, ориентированных на анализ 
+ изменения климата~\cite{Oubeidillah2014}, построение погодных 
+ моделей~\cite{Thompson2017}, гидродинамическое моделирование внезапных 
+ наводнений в~горных водоразделах~\cite{Hu2018} и~цунами~\cite{Reguly2018}.
+
+Одним из наиболее популярных современных трендов обработки 
+данных (в~том числе и~метеорологических) стало использование искусственных 
+нейронных сетей. При этом на передний план помимо выбора типа архитектуры
+ выходит задача корректного определения гиперпараметров~\cite{Zheng2019}, 
+ т.\,е.\ настроек, которые должны быть заданы до начала процесса обучения 
+ (в~отличие от остальных параметров, которые определяются непосредственно в~его 
+ процессе). Фактически, для каждой достаточно сложной задачи оптимальные 
+ величины должны подбираться индивидуально, что представляет собой нетривиальную 
+ вычислительную проблему.
+
+В статье~\cite{Gorshenin2019} авторами данной работы была осуществлена попытка повышения 
+качества прогнозирования метеорологических данных с~по\-мощью\linebreak
+ паттернов путем 
+оптимизации архитектуры за счет\linebreak тон\-кой ручной на\-строй\-ки гиперпараметров 
+ней\-рон\-ной сети прямого распространения. Выбранный набор (чис\-ло скрытых 
+слоев и~нейронов\linebreak в~каж\-дом; метод оптимизации, используемый для обуче\-ния; 
+доля исключаемых элементов между слоями и~др.)\ тестировался с~по\-мощью 
+непосредственной проверки ряда вручную подобранных значений. 
+
+В~настоящей статье 
+на примере анализа данных~22~европейских метеорологических станций будет 
+проверена адекватность и~эффективность использования двух достаточно 
+популярных методов подбора гиперпараметров~--- случайного выбора~\cite{Bergstra2012} 
+и~так называемого \textit{поиска по решетке}, фактически реализующего 
+полный перебор всех возможных комбинаций. Очевидна необходимость 
+задействования для таких методов высокоскоростных современных вычислителей. 
+
+В~данной статье для проведения расчетов были использованы инструменты 
+ГВВК 
+Федерального исследовательского центра <<Информатика и~управ\-ле\-ние>> 
+Российской академии наук ({\sf http:// hhpcc.frccsc.ru}).
+
+\vspace*{-6pt}
+
+\section{Базовая архитектура нейронной~сети}
+\label{Architecture}
+
+\vspace*{-2pt}
+
+Анализ данных производится с~помощью многослойной сети прямого 
+распространения, состоящей из входного, одного или нескольких скрытых и~выходного 
+слоев  (см.\ рисунок). На вход нейронной сети подаются 
+кван\-тиль-пре\-об\-ра\-зо\-ван\-ные данные: непосредственно наблюдаемые величины 
+объемов осадков заменяются на~$M$ дискретных значений~--- 
+индекс одного из заранее определенных классов, соответствующих 
+диапазонам значений анализируемого ряда. Подробно данная методология 
+описана, например, в~статье~\cite{Gorshenin2018}.
+
+В скрытых слоях (их число служит одним из гиперпараметров и~может изменяться) 
+использу-\linebreak\vspace*{-12pt}
+
+{ \begin{center}  %fig1
+ \vspace*{6pt}
+ \mbox{%
+ \epsfxsize=79mm 
+ \epsfbox{gor-1.eps}
+ }
+
+
+
+
+\vspace*{6pt}
+
+
+\noindent
+{\small{Базовая архитектура нейронной сети}}
+\end{center}
+}
+
+%\vspace*{6pt}
+
+
+\noindent
+ются нейроны \verb"ReLU" (\textit{Rectified Linear Unit})~\cite{Glorot2011}. 
+На выходе сети выводится унитарный код длины~$M$ (набор, состоящий из $M\hm-1$ нулей 
+и~единицы, расположенной в~позиции с~индексом, соответствующим номеру диапазона)~--- 
+предсказание об индексе класса следующего наблюдения после анализируемого окна. 
+Поскольку в~такой постановке построение прогноза сводится к~задаче классификации, 
+для выходного слоя была выбрана функция активации \verb"softmax". 
+Для повышения точности прогноза и~предотвращения возможности переобучения 
+(\textit{overfitting}) использованы следующие методы:
+\begin{itemize}
+\item $L^2$-регуляризация~\cite{Tikhonov1998};\\[-14pt]
+\item исключение (\textit{dropout, дропаут}~\cite{Srivastava2014}) 
+для входного и~скрытых слоев (на рисунке такие нейроны 
+не закрашены и~не имеют связей с~другими элементами);\\[-14pt]
+\item изменение коэффициента скорости обучения нейронной сети при 
+достижении условного <<плато>>  точности (в~ситуации, когда увеличение 
+числа эпох обучения не приводит к~заметному изменению данного показателя~--- 
+величина отличается на сотые доли процента).
+\end{itemize}
+
+\vspace*{-8pt}
+
+ \section{Методы выбора значений гиперпараметров}
+ 
+ \vspace*{-2pt}
+
+При исследовании данных с~применением машинного обучения возникает задача 
+подбора гиперпараметров~--- величин, которые не изменяются в~процессе обучения 
+нейронной сети. Их число может широко варьироваться в~зависимости от 
+сложности и~архитектуры нейронной сети и~включать в~себя, например, 
+такие параметры, как коэффициенты регуляризации, свойства топологии сети, 
+критерии настройки и~продолжительности обучения. Предполагается, что при 
+обучении двух нейросетей с~одинаковыми значениями гиперпараметров должна
+получаться одна и~та же величина 
+точности обучения, т.\,е.\ имеет мес\-то воспроизводимость. Таким образом, 
+возникает задача максимизации точности обучения нейронной сети с~по\-мощью выбора 
+вектора в~пространстве доступных ги\-пер\-па\-ра\-мет\-ров.
+
+Наиболее простой метод подобной оптимизации~--- ручной подбор соответствующих 
+значений\linebreak вектора. На основании собственного 
+опыта и~знаний о~природе анализируемых 
+данных исследо\-ватель подбирает вектор параметров и~последовательно обучает нейросеть.
+ При необходимости значения корректируются и~процесс повторяется. Пример
+  подобного выбора параметров можно \mbox{найти}, например, в~статье~\cite{Gorshenin2019}.
+
+Другой популярный метод определения оптимального вектора параметров~--- 
+поиск по решетке
+ (\textit{grid search}). Для каждого параметра исследователь 
+задает диапазон возможных значений, после чего выбираются узлы (например, равномерно), 
+являющиеся подмножеством прямого произведения допустимых множеств для каждого 
+из параметров. Затем с~помощью полного перебора всех узлов выбирается 
+комбинация с~наибольшей точностью. У~данного метода имеется ряд достоинств, в~частности:
+\begin{itemize}
+\item простота реализации;\\[-14.5pt]
+\item возможность эффективной параллелизации;\\[-14.5pt]
+\item получаемые результаты точнее, чем в~случае ручного перебора.
+\end{itemize}
+
+Однако в~реальных задачах для корректного реше\-ния требуется значительное 
+число ги\-пер\-па\-ра\-мет\-ров, а~значит, размерность решетки быстро воз\-рас\-та\-ет, 
+что приводит к~очень высокой вы\-чис\-ли\-тель\-ной сложности данного метода.
+
+Альтернативой методу поиска по решетке выступает метод случайного поиска. 
+Выбираются~$N$ случайных векторов в~пространстве ги\-пер\-па\-ра\-мет\-ров, для 
+каждой комбинации проводится обучение нейронной сети и~определяется 
+наилучшая с~точки зрения полученной точ\-ности. Как показано 
+в~\mbox{статье}~\cite{Bergstra2012}, данный подход позволяет получить результаты 
+как минимум не хуже, чем в~случае поиска по решетке, при этом временн$\acute{\mbox{ы}}$е затраты 
+снижаются значительным образом. Отметим, что данный метод достаточно популярен 
+при решении различных прикладных задач, например можно упомянуть медицинские 
+приложения~\cite{Rojas-Dominguez2018,Uppu2018}, кредитный скоринг~\cite{Xia2017} 
+или тонкую настройку популярной архитектуры рекуррентных нейронных
+ сетей \verb"LSTM" (\textit{Long Short-Term Memory}) для распознавания
+  речи и~почерка~\cite{Greff2017}.
+
+В следующем разделе на примере ряда европейских метеорологических 
+станций будет проведено сравнение рассмотренных в~этом разделе методов 
+настройки гиперпараметров нейронной сети для прогнозирования осадков.
+
+\vspace*{-10pt}
+
+\section{Обработка метеорологических данных с~использованием 
+высокопроизводительных решений}
+
+\vspace*{-4pt}
+
+Пространственные геоклиматические данные собираются, как правило, с~использованием 
+значительного числа метеостанций, поэтому их обработка может быть весьма успешно 
+оптимизирована с~применением методов высокопроизводительных вычислений. 
+В~качестве тестовых рядов были выбраны суточные данные об объемах осадков за период 
+с~1904 по~1999~гг.\ на~22~европейских станциях, расположенных в~таких странах, 
+как Австрия, Германия, Голландия, Дания, Норвегия, Франция. 
+В~наблюдениях отсутствуют пропуски, поэтому нет необходимости их заполнения 
+для корректного решения задач анализа и~прогнозирования. Обучение нейронных сетей 
+проводилось с~использованием технологии \verb"NVIDIA CUDA" 
+(\textit{Compute Unified Device Architecture}) с~реализацией инструментов 
+на языке программирования \verb"Python" с~помощью библиотек \verb"Keras" 
+и~\verb"Tensorflow". Для выполнения расчетов был использован ГВВК в~конфигурации: 
+2~центральных процессора \verb"IBM Power 9", 1~ТБ оперативной памяти, 
+2~графические карты \verb"NVIDIA Tesla V100" (каждая с~объемом памяти 16~ГБ) 
+с~технологией \verb"NVLink".
+
+Для рассмотренной в~разд.~\ref{Architecture} архитектуры 
+нейронной сети для обработки метеорологических данных были выбраны следующие 
+гиперпараметры: число скрытых слоев и~нейронов в~них, коэффициенты 
+дропаута во входном и~скрытых слоях, коэффициент изменения скорости 
+обучения, методы оптимизации (\verb"Adam"~\cite{Kingma2014}, 
+\verb"AdaDelta"~\cite{Zeiler2012}, \verb"AdaMax"~\cite{Buduma2017}).
+
+Точностью на решетке $\mathrm{Acc_{Grid}}$ будем называть лучшую полученную 
+точность среди всех моделей, обученных на этой решетке $\mathrm{Grid}$:
+
+\vspace*{2pt}
+
+\noindent
+\begin{equation}
+\label{AccGrid}
+\mathrm{Acc_{Grid}}=\max(\mathrm{Acc}(X)|X\in \mathrm{Grid})\,.
+\end{equation}
+
+\vspace*{-2pt}
+
+Для метода случайного поиска будем рас\-смат\-ри\-вать наборы~$\mathrm{Set}_K$ 
+из~$K\hm=\overline{1,25}$  случайно выбранных векторов гиперпараметров. 
+Точностью набора $\mathrm{Acc}_{\mathrm{Set}_K}$ будем называть лучшую точность 
+среди всех моделей, обученных на этом наборе:
+
+\vspace*{2pt}
+
+\noindent
+\begin{equation}
+\label{AccSet}
+\mathrm{Acc}_{\mathrm{Set}_K}=\max(\mathrm{Acc}(X)|X\in \mathrm{Set}_K)\,, 
+\enskip K=\overline{1,25}.\!\!
+\end{equation}
+
+\vspace*{-2pt}
+
+Для $n$ наборов длины~$K$, точность каждого из которых обозначена $\mathrm{Acc}_{\mathrm{Set}_K,i}$, 
+$i\hm=\overline{1,n}$, и~определяется формулой~\eqref{AccSet}, 
+среднюю величину точности естественно определить как
+
+\vspace*{2pt}
+
+\noindent
+\begin{equation}
+\label{AccAvg}
+\mathrm{Acc}_{\mathrm{Avg}_K} = \fr{1}{n}\sum\limits_{i=1}^{n} 
+\mathrm{Acc}_{\mathrm{Set}_K,i}\,.
+\end{equation}
+
+\vspace*{-2pt}
+
+\begin{table*}\small %tabl
+\begin{center}
+\Caption{Точность прогнозирования нейронной сети методами 
+случайного выбора и~поиска по решетке для станций в~различных европейских странах 
+(1~шаг, 10~интервалов)}
+\label{Tab1}
+\vspace*{2ex}
+
+
+\tabcolsep=7.8pt
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|c|}
+\hline
+\multicolumn{1}{|c|}{\raisebox{-6pt}[0pt][0pt]{Станция}}&
+\multicolumn{8}{c|}{Число случайных выборов}&{Поиск по} \\
+\cline{2-9}
+&$1$&$2$&$3$&$5$&$10$&$15$&$20$&$25$&{решетке}\\
+\hline
+Австрия&$83{,}49\%$ &$87{,}04\%$    &$87{,}28\%$    &$87{,}55\%$    &$87{,}62\%$     &$87{,}63\%$   &$87{,}64\%$    &$87{,}64\%$    &$87{,}66\%$\\
+Дания&$76{,}26\%$   &$80{,}11\%$&   $80{,}80\%$ &$80{,}99\%$    &$81{,}01\%$     &$81{,}02\%$   &$81{,}03\%$    &$81{,}03\%$    &$81{,}05\%$\\
+Франция&$79{,}96\%$ &$83{,}49\%$    &$84{,}06\%$    &$84{,}18\%$    &$84{,}22\%$     &$84{,}23\%$   &$84{,}23\%$    &$84{,}23\%$    &$84{,}23\%$\\
+Германия 1&$80{,}31\%$  &$83{,}18\%$    &$83{,}41\%$        &$83{,}52\%$    &$83{,}58\%$     &$83{,}59\%$   &$83{,}59\%$    &$83{,}59\%$    &$83{,}60\%$\\
+Германия 2&$82{,}42\%$  &$85{,}42\%$&   $85{,}59\%$ &$85{,}73\%$    &$85{,}75\%$     &$85{,}75\%$   &$85{,}75\%$    &$85{,}75\%$    &$85{,}74\%$\\
+Голландия&$76{,}49\%$   &$79{,}40\%$    &$80{,}04\%$    &$80{,}16\%$    &$80{,}21\%$     &$80{,}21\%$   &$80{,}22\%$    &$80{,}22\%$    &$80{,}23\%$\\
+Норвегия&$78{,}48\%$    &$81{,}96\%$    &$82{,}27\%$        &$82{,}51\%$    &$82{,}58\%$     &$82{,}59\%$   &$82{,}60\%$    &$82{,}60\%$    &$82{,}60\%$\\
+\hline
+\end{tabular}
+\end{center}
+%\vspace*{3pt}
+%\end{table*}
+%\begin{table*}\small %tabl2
+\begin{center}
+\Caption{Точность прогнозирования нейронной сети методами случайного выбора 
+и~поиска по решетке для станций в~различных европейских странах (3~шага, 
+10~интервалов)}
+\label{Tab2}
+\vspace*{2ex}
+
+\tabcolsep=7.8pt
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|c|}
+\hline
+\multicolumn{1}{|c|}{\raisebox{-6pt}[0pt][0pt]{Станция}}&
+\multicolumn{8}{c|}{Число случайных выборов}&{Поиск по} \\
+\cline{2-9}
+&$1$&$2$&$3$&$5$&$10$&$15$&$20$&$25$&{решетке}\\
+\hline
+Австрия&$70{,}34\%$ &$71{,}01\%$    &$71{,}02\%$    &$71{,}10\%$    &$71{,}12\%$     &$71{,}12\%$   &$71{,}12\%$    &$71{,}12\%$    &$71{,}14\%$\\
+Дания&$57{,}13\%$   &$58{,}76\%$&   $59{,}25\%$ &$59{,}31\%$    &$59{,}36\%$     
+&$59{,}36\%$   &$59{{,}}36\%$  &$59{,}36\%$    &$59{,}37\%$\\
+Франция&$63{,}45\%$ &$63{,}78\%$    &$63{,}79\%$    &$63{,}80\%$    &$63{,}80\%$     &$63{,}80\%$   &$63{,}80\%$    &$63{,}80\%$    &$63{,}80\%$\\
+Германия 1&$63{,}04\%$  &$63{,}36\%$    &$63{,}37\%$        &$63{,}38\%$    &$63{,}39\%$     &$63{,}39\%$   &$63{,}39\%$    &$63{,}39\%$    &$63{,}39\%$\\
+Германия 2&$63{,}90\%$  &$65{,}80\%$&   $65{,}95\%$ &$66{,}14\%$    &$66{,}14\%$     &$66{,}14\%$   &$66{,}14\%$    &$66{,}14\%$    &$66{,}14\%$\\
+Голландия&$56{,}11\%$   &$58{,}14\%$    &$58{,}63\%$    &$58{,}74\%$    &$58{,}84\%$     &$58{,}83\%$   &$58{,}84\%$    &$58{,}84\%$    &$58{,}85\%$\\
+Норвегия&$59{,}74\%$    &$61{,}51\%$    &$61{,}72\%$        &$61{,}74\%$    &$61{,}74\%$     &$61{,}74\%$   &$61{,}74\%$    &$61{,}74\%$    &$61,75\%$\\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{-3pt}
+\end{table*}
+
+
+На вход нейронной сети подается вектор из~180~преобразованных наблюдений, каждое 
+из которых относится к~одному из~10~интервалов. На выходе ожидается прогноз 
+номера класса для следующего за окном наблюдения. Использование 
+высокопроизводительного вычислительного комплекса позволило 
+реализовать метод поиска по решетке из~3904~узлов для каждого из 
+рас\-смат\-ри\-ва\-емых~22~рядов 
+(общее время обучения~--- 4~ч 20~мин). По сравнению с~настольными решениями 
+это позволило ускорить обучение как минимум в~5--8~раз без существенного изменения 
+программного кода: скорость обсчета узла решетки составила около~4~с 
+по сравнению с~30--35~с до этого.
+
+
+Для анализа поведения методов поиска по решетке и~метода случайного поиска 
+определены значения величин $\mathrm{Acc_{Grid}}$~\eqref{AccGrid} 
+и~$\mathrm{Acc}_{\mathrm{Avg}_K}$~\eqref{AccAvg} для $K\hm=1$, 2, 3, 5, 10, 15, 20 и~25. 
+В~табл.~\ref{Tab1} приведены примеры для некоторых метеостанций 
+в~различных европейских странах, расположенных как на уровне моря, 
+так и~на равнине и~в~горах. Исследуется прогноз на~1~шаг (день) вперед. 
+В~столбцах с~указанным числом случайных выборов продемонстрирована средняя 
+точность~\eqref{AccAvg} для $n\hm=50$ построенных наборов соответствующей длины~$K$.
+
+
+В табл.~\ref{Tab2} показана средняя точность при случайном поиске 
+и~точность поиска по решетке для прогнозов на~3~дня вперед.
+
+
+
+
+
+Из приведенных табл.~\ref{Tab1} и~\ref{Tab2} следует, что средняя точность 
+наборов из~10~элементов уже сопоставима с~величиной точности для метода 
+поиска по решетке. При этом скорость поиска оптимальных гиперпараметров 
+может быть на~1--3~порядка выше (в~зависимости от числа узлов решетки), 
+чем полный перебор. Таким образом, для метеорологических данных и~выбранной 
+архитектуры подтверждается эффективность метода случайного поиска~\cite{Bergstra2012}.
+
+Еще один немаловажный результат заключается в~успешной проверке 
+применимости методологии на основе паттернов~\cite{Gorshenin2017a,Gorshenin2018} 
+для наблюдений, полученных на различных европейских станциях, расположенных на 
+уровне моря, на равнинах, а также в~горах~--- в~предшествующих работах 
+эксперименты проводились только для Потсдама и~Элисты.
+
+Рассмотренная архитектура нейронной сети обладает существенным 
+недостатком~--- точность прогнозов уменьшается с~увеличением их длительности и~числа 
+интервалов разбиения исходных наблюдений (см.\ табл.~\ref{Tab2}). 
+При построении многодневных прогнозов резко возрастает вычислительная 
+сложность обучения сети из-за экспоненциального роста числа нейронов 
+в~выходном слое. Задействование высокопроизводительных ресурсов и~тонких методов 
+настройки гиперпараметров позволяет обрабатывать данные и~в~таком режиме, 
+однако представляется разумным рассмотреть альтернативные архитектуры.
+
+%\vspace*{-8pt}
+
+\section{Заключение}
+
+%\vspace*{-2pt}
+
+В работе рассмотрена эффективность использования метода случайного поиска в~сравнении 
+с~классическим алгоритмом перебора всех возможных значений гиперпараметров на 
+некоторой выбранной сетке. Продемонстрировано, что даже сравнительно небольшое 
+число (порядка десяти) случайно выбранных комбинаций позволяет получить 
+сопоставимую точность, при этом затраченное время оказывается весьма умеренным. 
+Полученные результаты означают возможность реализовать предложенную 
+в~статьях~\cite{Gorshenin2017a,Gorshenin2018} методологию паттернов 
+для нейронных сетей в~виде ис\-сле\-до\-ва\-тельского сервиса цифровой платформы. 
+При\linebreak этом от пользователей не требуется значительной ква\-ли\-фикации в~об\-ласти 
+работы с~нейронными се\-тя\-ми~--- гиперпараметры могут подбираться в~автоматическом 
+режиме, а~значит, тонкая настройка архитектуры возможна и~без участия исследователя.
+
+Дальнейшие исследования будут ориентированы на повышение ско\-рости 
+обсчета каждого набора гиперпараметров за счет оптимизации про\-граммного 
+кода для ресурсов ГВВК, а~так\-же на переход к~более сложным архитектурам 
+нейронных сетей (рекуррентным, сверточным) для по\-стро\-ения прогнозов исходных 
+данных с~использованием мет\-рик типа среднеквадратичных ошибок для оценивания 
+качества получаемых результатов.
+
+\smallskip
+Авторы выражают признательность член-кор\-рес\-пон\-ден\-ту РАН С.\,К.~Гулеву 
+и~доктору фи\-зи\-ко-ма\-те\-ма\-ти\-че\-ских 
+наук О.\,Г.~Золиной за предостав\-лен\-ные для экспериментов данные 
+европейских метеорологических станций.
+
+\vspace*{-6pt}
+
+{\small\frenchspacing
+ {\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+ \vspace*{-2pt}
+\bibitem{Xie2010} 
+\Au{Xie~J., Yang~C., Zhou~B., Huang~Q.} 
+High-performance computing for the simulation of dust storms~// 
+Comput. Environ. Urban, 2010. Vol.~34. P.~278--290.
+
+\bibitem{Lee2011} 
+\Au{Lee~C.\,A., Gasster~S.\,D., Plaza~A., Chang~C.-I., Huang~B.} 
+Recent developments in high performance computing for remote sensing:
+A~review~// IEEE J.~Sel. Top. Appl., 2011. Vol.~4. Iss.~3. P.~508--527.
+
+\bibitem{Xue2011} \Au{Xue~Y., Palmer-Brown~D., Guo~H.} 
+The use of high-performance and high-throughput computing for the
+fertilization of Digital Earth and global change studies~// Int. J.~Digit. Earth, 
+2011. Vol.~4. Iss.~3. P.~185--210.
+
+\bibitem{Lu2012} \Au{Lu~F., Song~J., Cao~X., Zhu~X.} 
+CPU/GPU computing for long-wave radiation physics on large GPU clusters~// 
+Comput. Geosci., 2012. Vol.~41. P.~47--55.
+
+\bibitem{Oubeidillah2014} \Au{Oubeidillah A.\,A., Kao~S.-C., Ashfaq~M., Naz~B.\,S., 
+Toot\-le~G.} A~large-scale, high-resolution hydrological model parameter 
+data set for climate change impact assessment for the conterminous US~// 
+Hydrol. Earth Syst. Sc., 2014. Vol.~18. Iss.~1. P.~67--84.
+
+\bibitem{Thompson2017} \Au{Thompson~G., Politovich~M.\,K., Rasmussen~R.\,M.} 
+A~numerical weather model's ability to predict characteristics of aircraft icing 
+environments~// Weather Forecast., 2017. Vol.~32. Iss.~1. P.~207--221.
+
+\bibitem{Hu2018} \Au{Hu~X., Song~L.} Hydrodynamic modeling of flash 
+flood in mountain watersheds based on high-performance GPU computing~// 
+Nat. Hazards, 2018. Vol.~91. Iss.~2. P.~567--586.
+
+\bibitem{Reguly2018} \Au{Reguly~I.\,Z., Giles~D., Gopinathan~D., Quivy~L., 
+Beck~J.\,H., Giles~M.\,B., Guillas~S., Dias~F.} 
+The VOLNA-OP2 tsunami code (version 1.5)~// Geosci. Model Dev., 
+2018. Vol.~11. Iss.~11. P.~4621--4635.
+
+\bibitem{Zheng2019} \Au{Zheng~M., Tang~W., Zhao~X.} 
+Hyperparameter optimization of neural network-driven spatial models
+accelerated using cyber-enabled high-performance computing~// 
+Int. J.~Geogr. Inf. Sci., 2019. Vol.~33. Iss.~2. P.~314--345.
+
+\bibitem{Gorshenin2019}  \Au{Gorshenin~A.\,K., Kuzmin~V.\,Yu.} 
+Improved architecture of feedforward neural networks to increase accuracy 
+of predictions for moments of finite normal mixtures~// 
+Pattern Recognition Image Anal., 2019. Vol.~29. No.\,1. P.~68--77.
+
+\bibitem{Bergstra2012}  \Au{Bergstra~J., Bengio~Y.} 
+Random search for hyper-parameter optimization~// J.~Mach. Learn. 
+Res., 2012. Vol.~13. P.~281--305.
+
+\bibitem{Gorshenin2018}
+\Au{Gorshenin~A.\,K., Kuzmin~V.\,Yu.} Neural
+network forecasting of precipitation volumes using patterns~// 
+Pattern Recognition Image Anal., 2018. Vol.~28. No.\,3. P.~450--461.
+
+\bibitem{Glorot2011} \Au{Glorot~X., Bordes~A., Bengio~Y.} Deep sparse rectifier neural
+networks~// J.~Mach. Learn. Res., 2011. Vol.~15. P.~315--323.
+
+\bibitem{Tikhonov1998}  \Au{Tikhonov~A.\,N., Leonov~A.\,S., Yagola~A.\,G.} 
+Nonlinear ill-posed problems.~--- Heidelberg: Springer, 1998. 386~p.
+
+\bibitem{Srivastava2014}  \Au{Srivastava~N., Hinton~G., Krizhevsky~A., 
+Sutskever~I., Salakhutdinov~R.} Dropout: A~simple way to prevent neural networks from 
+overfitting~// J.~Mach. Learn. Res., 2014. Vol.~15. P.~1929--1958.
+
+\bibitem{Rojas-Dominguez2018} \Au{Rojas-Dominguez~A., Padierna~L.\,C., 
+Valadez~J.\,M.\,C., Puga-Soberanes~H.\,J., Fraire~H.\,J.} 
+Optimal hyper-parameter tuning of SVM classifiers with application 
+to medical diagnosis~// IEEE Access, 2018. Vol.~6. P.~7164--7176.
+
+\bibitem{Uppu2018} \Au{Uppu~S., Krishna~A.}
+ A~deep hybrid model to detect multi-locus interacting SNPs in the presence of noise~// 
+ Int. J.~Med. Inform., 2018. Vol.~119. P.~134--151.
+
+\bibitem{Xia2017} \Au{Xia~Y., Liu~C., Li~Y., Liu~N.} 
+A~boosted decision tree approach using Bayesian hyper-parameter optimization 
+for credit scoring~// Expert Syst. Appl., 2017. Vol.~78. P.~225--241.
+
+\bibitem{Greff2017} \Au{Greff~K., Srivastava~R.\,K., Koutnik~J., 
+Steunebrink~B.\,R., Schmidhuber~J.} LSTM: A~search space Odyssey~// 
+IEEE T.~Neur. Net. Lear., 2017. Vol.~28. Iss.~10. P.~2222--2232.
+
+\bibitem{Kingma2014}  \Au{Kingma~D., Ba~J.}  Adam: A~method for stochastic 
+optimization~// 
+3rd  Conference (International)
+for Learning Representations.~--- San Diego, CA, USA, 2015.  \mbox{arXiv}:1412.6980. 13~p.
+
+\bibitem{Zeiler2012}  \Au{Zeiler~M.\,D.} 
+ADADELTA: An adaptive learning rate method. arXiv:1212.5701, 2012. 6~p.
+
+\bibitem{Buduma2017}  \Au{Buduma~N.} Fundamentals of deep learning: Designing 
+next-generation machine intelligence algorithms.~--- 
+Sebastopol, CA, USA: O'Reilly Media, 2017. 295~p.
+
+\bibitem{Gorshenin2017a} \Au{Горшенин~А.\,К.} Анализ
+вероятностно-статистических характеристик осадков на основе паттернов~//
+Информатика и~её применения, 2017. Т.~11. Вып.~4. C.~38--46.
+
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-12pt}
+
+\hfill{\small\textit{Поступила в~редакцию 15.01.19}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{OPTIMIZATION OF HYPERPARAMETERS 
+OF~NEURAL NETWORKS USING HIGH-PERFORMANCE COMPUTING FOR~PREDICTION OF~PRECIPITATION}
+
+
+\def\titkol{Optimization of hyperparameters 
+of~neural networks using high-performance computing for~prediction of~precipitation}
+
+\def\aut{A.\,K.~Gorshenin$^{1,2}$, and~V.\,Yu.~Kuzmin$^3$}
+
+\def\autkol{A.\,K.~Gorshenin, and~V.\,Yu.~Kuzmin}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+\noindent
+$^1$Institute of Informatics Problems, Federal Research Center ``Computer Science and
+Control'' of the Russian\linebreak
+$\hphantom{^1}$ Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian
+Federation
+
+\noindent
+$^2$Faculty of Computational Mathematics and Cybernetics, M.\,V.~Lomonosov Moscow
+State University,  Leninskie\linebreak
+$\hphantom{^1}$Gory, GSP-1, Moscow 119991, Russian Federation
+
+\noindent
+$^2$``Wi2Geo LLC,'' 3-1~Mira Prosp., Moscow 129090, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{6pt}
+
+
+\Abste{The paper describes the procedure for tuning hyperparameters of 
+the neural network for analyzing spatial meteorological data using the tools 
+of the hybrid high-performance computing system. The comparison of precipitation 
+forecasting accuracy has been carried out on the basis of such methods as grid 
+and random searches. It has been demonstrated that even with a~relatively small 
+number of random choices of combinations of hyperparameters, it is possible 
+to obtain an accuracy comparable to brute force, with moderate time costs. 
+These results show the ability to automatically build a~neural network 
+architecture based on the general model for solving applied problems.}
+
+\KWE{artificial neural network; forecasting; deep learning; hyperparameters; 
+high-performance computing; CUDA}
+
+
+
+\DOI{10.14357/19922264190111}
+
+%\vspace*{-14pt}
+
+\Ack
+\noindent
+The research is partially supported by the Russian Foundation for Basic Research
+(projects~17-07-00851 and 18-29-03100) and the 
+RF Presidential scholarship program (project No.\,538.2018.5). 
+The calculations were performed by Hybrid high-performance computing 
+cluster of FRC CSC RAS ({\sf http://hhpcc.frccsc.ru}).
+
+
+\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-gorsh}
+\Aue{Xie,~J., C.~Yang, B.~Zhou, and Q.~Huang.}
+ 2010. High-performance computing for the simulation of dust storms. 
+ \textit{Comput. Environ. Urban} 34:278--290.
+
+\bibitem{2-gorsh}
+\Aue{Lee,~C.\,A., S.\,D.~Gasster, A.~Plaza, C.-I.~Chang, and B.~Huang.}
+ 2011. Recent developments in high performance computing for remote sensing: A~review. 
+ \textit{IEEE J.~Sel. Top. Appl.} 4(3):508--527.
+
+\bibitem{3-gorsh}
+\Aue{Xue,~Y., D.~Palmer-Brown, and H.~Guo.} 2011. The use of high-performance 
+and high-throughput computing for the fertilization of Digital
+ Earth and global change studies. \textit{Int. J.~Digit. Earth} 4(3):185--210.
+
+\bibitem{4-gorsh}
+\Aue{Lu,~F., J.~Song, X.~Cao, and X.~Zhu.} 2012. 
+CPU/GPU computing for long-wave radiation physics on large GPU clusters. 
+\textit{Comput. Geosci.} 41:47--55.
+
+\bibitem{5-gorsh}
+\Aue{Oubeidillah,~A.\,A., S.-C.~Kao, M.~Ashfaq, B.\,S.~Naz, and G.~Tootle.}
+ 2014. A~large-scale, high-resolution hydrological model parameter data set 
+ for climate change impact assessment for the conterminous US. 
+ \textit{Hydrol. Earth Syst. Sc.} 18(1):67--84.
+
+\bibitem{6-gorsh}
+\Aue{Thompson,~G., M.\,K.~Politovich, and R.\,M.~Rasmussen.}
+ 2017. A~numerical weather model's ability to predict characteristics of 
+ aircraft icing environments. \textit{Weather Forecast.} 32(1):207--221.
+
+\bibitem{7-gorsh}
+\Aue{Hu,~X., and L.~Song.} 2018. Hydrodynamic modeling of flash flood 
+in mountain watersheds based on high-performance GPU computing. 
+\textit{Nat. Hazards} 91(2):567--586.
+
+\bibitem{8-gorsh}
+\Aue{Reguly,~I.\,Z., D.~Giles, D.~Gopinathan, L.~Quivy, J.\,H.~Beck, 
+M.\,B.~Giles, S.~Guillas, and F.~Dias.} 2018. The VOLNA-OP2 tsunami code 
+(version~1.5). \textit{Geosci. Model Dev.} 11(11):4621--4635.
+
+\bibitem{9-gorsh}
+\Aue{Zheng,~M., W.~Tang, and X.~Zhao.} 
+2019. Hyperparameter optimization of neural network-driven spatial 
+models accelerated using cyber-enabled high-performance computing. 
+\textit{Int. J.~Geogr. Inf. Sci.} 33(2):314--345.
+
+\bibitem{10-gorsh}
+\Aue{Gorshenin,~A.\,K., and V.\,Yu.~Kuzmin.} 2019. 
+Improved architecture of feedforward neural networks to increase accuracy 
+of predictions for moments of finite normal mixtures. 
+\textit{Pattern Recognition Image Anal.} 29(1):68--77.
+
+\bibitem{11-gorsh}
+\Aue{Bergstra,~J., and Y.~Bengio.} 2012. Random search for hyper-parameter optimization. 
+\textit{J.~Mach. Learn. Res.} 13:281--305.
+
+\bibitem{12-gorsh}
+\Aue{Gorshenin,~A.\,K., and V.\,Yu.~Kuzmin.} 2018. Neural
+network forecasting of precipitation volumes using patterns. 
+\textit{Pattern Recognition Image Anal.} 28(3):450--461.
+
+\bibitem{13-gorsh}
+\Aue{Glorot,~X., A.~Bordes, and Y.~Bengio.} 2011. Deep sparse rectifier neural networks.
+\textit{J.~Mach. Learn. Res.} 15:315--323.
+
+\bibitem{14-gorsh}
+\Aue{Tikhonov,~A.\,N., A.\,S.~Leonov, and A.\,G.~Yagola.} 1998. \textit{Nonlinear 
+Ill-posed problems}.  Heidelberg: Springer. 386~p.
+
+\bibitem{15-gorsh}
+\Aue{Srivastava,~N., G.~Hinton, A.~Krizhevsky, I.~Sutskever, and R.~Salakhutdinov.}
+ 2014. Dropout: A~simple way to prevent neural networks from overfitting.
+ \textit{J.~Mach. Learn. Res.} 15:1929--1958.
+
+\bibitem{16-gorsh}
+\Aue{Rojas-Dominguez,~A., L.\,C.~Padierna, J.\,M.\,C.~Valadez, H.\,J.~Puga-Soberanes, 
+and H.\,J.~Fraire.} 2018. Optimal hyper-parameter tuning of SVM classifiers 
+with application to medical diagnosis. \textit{IEEE Access} 6:7164--7176.
+
+\bibitem{17-gorsh}
+\Aue{Uppu,~S., and A.~Krishna.} 2018. A~deep hybrid model 
+to detect multi-locus interacting SNPs in the presence of noise. 
+\textit{Int. J.~Med. Inform.} 119:134--151.
+
+\bibitem{18-gorsh}
+\Aue{Xia,~Y., C.~Liu, Y.~Li, and N.~Liu.} 2017. 
+A~boosted decision tree approach using Bayesian hyper-parameter optimization 
+for credit scoring. \textit{Expert Syst. Appl.} 78:225--241.
+{\looseness=1
+
+}
+
+\bibitem{19-gorsh}
+\Aue{Greff,~K., R.\,K.~Srivastava, J.~Koutnik, B.\,R.~Steunebrink, and 
+J.~Schmidhuber.}  2017. LSTM: A~search space Odyssey. 
+\textit{IEEE T.~Neur. Net. Lear.} 28(10):2222--2232.
+
+\bibitem{20-gorsh}
+\Aue{Kingma,~D., and J.\,Ba.} 2015. Adam: A~method for stochastic optimization. 
+\textit{3rd  Conference (International)
+for Learning Representations}. San Diego, CA. arXiv:1412.6980. 13~p.
+
+\bibitem{21-gorsh}
+\Aue{Zeiler,~M.\,D.} 2012. ADADELTA: An adaptive learning rate method. arXiv:1212.5701.
+
+\bibitem{22-gorsh}
+\Aue{Buduma,~N.}
+ 2017. \textit{Fundamentals of deep learning: Designing 
+ next-generation machine intelligence algorithms}. Sebastopol, CA: O'Reilly Media.
+ 295~p.
+
+\bibitem{23-gorsh}
+\Aue{Gorshenin,~A.\,K.}
+ 2017. Analiz veroyatnostno-statisticheskikh kharakteristik osadkov na 
+ osnove patternov [Pattern-based analysis of probabilistic and statistical 
+ characteristics of precipitations]. \textit{Informatika i~ee Primeneniya~---
+  Inform. Appl.} 11(4):38--46.
+  \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received January 15, 2019}}
+
+%\pagebreak
+
+%\vspace*{-18pt}
+
+\Contr
+
+\noindent
+\textbf{Gorshenin Andrey K.} (b.\ 1986)~--- Candidate of Science (PhD) in physics and
+mathematics, associate professor, leading scientist, Institute of Informatics Problems,
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of
+Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation;  leading scientist, 
+Faculty of Computational Mathematics and Cybernetics, 
+M.\,V.~Lomonosov Moscow State University, 
+Leninskie Gory, GSP-1, Moscow 119991, Russian Federation; \mbox{agorshenin@frccsc.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Kuzmin Victor Yu.} (b.\ 1986)~--- Head of Development, 
+``Wi2Geo LLC'', 3-1~Mira Prosp., Moscow 129090, Russian Federation; 
+\mbox{shadesilent@yandex.ru}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}       

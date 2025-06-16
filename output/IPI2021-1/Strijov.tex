@@ -1,0 +1,866 @@
+\def\stat{strijov}
+
+\def\tit{ВАРИАЦИОННАЯ ОПТИМИЗАЦИЯ МОДЕЛИ ГЛУБОКОГО ОБУЧЕНИЯ С КОНТРОЛЕМ 
+СЛОЖНОСТИ$^*$}
+
+\def\titkol{Вариационная оптимизация модели глубокого обучения с~контролем 
+сложности}
+
+\def\aut{О.\,С.~Гребенькова$^1$, О.\,Ю.~Бахтеев$^2$, В.\,В.~Стрижов$^3$}
+
+\def\autkol{О.\,С.~Гребенькова, О.\,Ю.~Бахтеев, В.\,В.~Стрижов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Гребенькова О.\,С.}
+\index{Бахтеев О.\,Ю.}
+\index{Стрижов В.\,В.}
+\index{Grebenkova O.\,S.}
+\index{Bakhteev O.\,Yu.}
+\index{Strijov V.\,V.}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Настоящая статья содержит результаты проекта <<Математические
+методы интеллектуального анализа больших данных>>, выполняемого в~рамках 
+реализации программы Центра компетенций Национальной технологической инициативы 
+<<Центр хранения и~анализа больших данных>>, поддерживаемого Министерством науки 
+и~высшего образования Российской Федерации по договору МГУ 
+имени М.\,В.~Ломоносова с~Фондом поддержки проектов Национальной технологической 
+инициативы от 11.12.2018 №\,13/1251/2018. Работа выполнена при поддержке РФФИ 
+(проекты 19-07-01155 и~19-07-00875).}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский физико-технический институт, 
+grebenkova.os@phystech.edu}
+\footnotetext[2]{Московский физико-технический институт;
+Компания Антиплагиат, \mbox{bakhteev@phystech.edu}}
+\footnotetext[3]{Вычислительный центр имени А.\,А.\,Дородницына 
+Федерального исследовательского центра <<Информатика и~управление>> Российской 
+академии наук; Московский фи\-зи\-ко-тех\-ни\-че\-ский институт, \mbox{strijov@phystech.edu}}
+
+
+%\vspace*{-12pt}
+
+
+
+\Abst{Исследуется задача построения модели глубокого обучения. Предлагается 
+способ контроля ее сложности. Под сложностью модели понимается минимальная длина 
+описания, минимальный объем информации, который требуется для передачи 
+информации о модели и~о выборке. Предлагается метод оптимизации параметров 
+модели, основанный на представлении модели глубокого обучения в~виде гиперсети 
+с~использованием байесовского подхода. Под гиперсетью понимается модель, которая 
+порождает параметры оптимальной модели. Вводятся вероятностные предположения 
+о~распределении параметров модели глубокого обучения. Предлагается алгоритм, 
+максимизирующий нижнюю вариационную оценку байесовской обоснованности модели. 
+Вариационная оценка рассматривается как условная величина, зависящая от 
+требуемой сложности модели. Для анализа качества предлагаемого алгоритма 
+проведены эксперименты на выборке MNIST.}
+
+\KW{вариационная оптимизация модели; гиперсети; глубокое 
+обучение; нейронные сети; байесовский вывод; заданная сложность модели}
+
+\DOI{10.14357/19922264210106}
+
+\vspace*{-2pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+\section{Введение}
+
+В работе рассматривается задача оптимизации модели глубокого обучения. Под 
+моделью глубокого обучения понимается суперпозиция дифференцируемых по 
+параметрам функций. Построение модели заданной сложности~--- одна из 
+фундаментальных проблем глубокого обучения, так как по построению данное 
+семейство моделей имеет избыточное число параметров~\cite{conf/nips/Graves11}. 
+В~работе предполагается, что сложность модели задана заранее. Под сложностью 
+модели понимается ее обоснованность.
+
+Предлагаемый метод заключается в~представлении параметров модели глубокого 
+обучения в~виде гиперсети. Гиперсеть~--- модель, которая задает параметры 
+модели. На вход такой модели подается информация о структуре модели, 
+а~в~результате работы порождается вектор параметров входной модели. Другими словами, 
+гиперсеть~--- это отоб\-ра\-же\-ние из множества переменных, от\-ве\-ча\-ющих за слож\-ность 
+модели, во множество па\-ра\-мет\-ров модели. В~работе~\cite{journals/corr/HaDL16} 
+рассмотрены  статистические и~динамические гиперсети для порождения\linebreak весов 
+сверточных и~рекуррентных моделей со\-от\-вет-\linebreak ственно.
+
+В данной работе используется байесовский подход. Вводятся вероятностные 
+предположения о~па\-ра\-мет\-рах моделей глубокого обучения.
+В~работах~\cite{conf/nips/Graves11, Kuzn} предлагается использовать в~качестве 
+функции ошибки для оптимизации параметров модели глубокого обучения минимальную 
+длину описания. Минимальная длина описания~--- минимальный объем информации, 
+который требуется для передачи информации о модели и~о~выборке. Также 
+в~работах~\cite{conf/nips/Graves11, BakStr18} получены виды аппроксимаций для 
+обоснованности модели для различных классов априорных распределений параметров.
+
+Альтернативным подходом к~построению модели заданной сложности выступает задача 
+по\-рож\-де\-ния и~выбора оптимальной структуры моделей глубокого обуче\-ния.
+В работе~\cite{journals/corr/SaxenaV16} рассматривается \mbox{возможность} порождения 
+широкого класса сверточных моделей как частей обобщенной модели, которая 
+называется <<фабрикой>> (\textit{англ}.\ fabric). Данная структура позволяют обойти процесс 
+оптимизации параметров и~проверки качества одиночных моделей.
+В~работах~\cite{journals/corr/abs-1812-09926, journals/corr/abs-1812-03443} 
+представлены подходы к~решению задачи выбора структуры нейросети 
+с~использованием диф\-фе\-рен\-ци\-ру\-емых алгоритмов~--- стохастического (\textit{англ}.\ Stochastic 
+Neural Architecture Search~--- SNAS) и~диф\-фе\-рен\-ци\-ру\-емо\-го (\textit{англ}.\ Differentiable 
+Neural Architecture Search~--- DNAS) методов поиска нейронных архитектур. 
+Особенность работы~\cite{journals/corr/abs-1812-03443} за\-клю\-ча\-ет\-ся в~решении 
+задачи выбора архитектуры модели, удовле\-тво\-ря\-ющей эксплуатационным требованиям: 
+быстро\-дей\-ст\-вию на различных типах процессоров.
+
+В данной работе исследуется поведение обобщенной функции обоснованности модели. 
+Исследуется влияние априорного распределения на {слож\-ность} модели. Для контроля 
+сложности \mbox{предлагается} рас\-смат\-ри\-вать задачу оптимизации параметров гиперсети. 
+Данная модель порождает модели наперед заданной слож\-ности с~меньшими 
+вы\-чис\-ли\-тель\-ны\-ми затратами, чем в~случае оптимизации модели, получаемой напрямую. 
+Работа схожа с~работой~\cite{journals/corr/abs-1802-09419}, где так\-же 
+исследовалась возможность получения гиперсети для пред\-ска\-за\-ния наилучших 
+ги\-пер\-па\-ра\-мет\-ров оптимизации модели. Вы\-чис\-ли\-тель\-ный эксперимент проводился на 
+выборке рукописных цифр MNIST~\cite{lecun-mnisthandwrittendigit-2010}.
+
+\section{Постановка задачи}
+
+Задана выборка:
+$$
+\mathfrak{D} = \{ \mathbf{x}_i, y_i\}, \quad i = 1,\dots, m\,.
+$$
+Здесь $\mathbf{x}_i \in \mathbb{R}^m$; $\mathbf{y}_i \hm\in \{1,\dots,Y\}$, где~$Y$~--- 
+число классов. Рассмотрим модель
+$$
+\mathbf{f}(\mathbf{x},\mathbf{w}):\mathbb{R}^m \times \mathbb{R}^n 
+\longrightarrow \mathbb{R}^Y,
+$$
+где $\mathbf{w} \in \mathbb{R}^n$~--- пространство параметров модели. Пусть 
+задано априорное распределение вектора параметров в~пространстве  
+$\mathbb{R}^n$:
+$$
+p(\mathbf{w}) \sim \mathcal{N} (\boldsymbol{\mu}, \mathbf{A}_{\mathrm{pr}}^{-
+1}),
+$$
+где $\boldsymbol{\mu}, \mathbf{A}_{\mathrm{pr}}^{-1}$~--- вектор средних и~матрица 
+ковариации априорного распределения. Тогда
+$$
+    p(\mathbf{w}|\mathfrak{D}) = \fr{p(\mathfrak{D} | \mathbf{w}) 
+p(\mathbf{w})}{p(\mathfrak{D})}
+$$
+является апостериорным распределением вектора параметров~$\mathbf{w}$ при 
+заданной выборке~$\mathfrak{D}$.  Пусть также задано вариационное распределение
+$$
+    q(\mathbf{w}) \sim \mathcal{N} (\mathbf{m},\mathbf{A}_{\mathrm{ps}}^{-1}).
+$$
+Здесь $\mathbf{m}$ и~$\mathbf{A}_{\mathrm{ps}}^{-1}$~--- вектор средних и~матрица 
+ковариации, аппроксимирующее неизвестное апостериорное распределение 
+$p(\mathbf{w}| \mathfrak{D})$.
+
+Для модели $\mathbf{f}$ и~соответствующего ей вектора параметров~$\mathbf{w}$ 
+определим логарифмическую функцию правдоподобия выборки:
+\begin{equation*}
+    \mathcal{L}_\mathfrak{D}(\mathfrak{D}|\mathbf{w}) = \log 
+p(\mathfrak{D}|\mathbf{w}).
+\end{equation*}
+Оптимальные значения $\mathbf{w}$ находятся из максимизации 
+$\mathcal{L}(\mathfrak{D})$~--- логарифма обоснованности модели:
+\begin{equation}
+    \mathcal{L}(\mathfrak{D}) = \log p(\mathfrak{D}) = \log 
+\int\limits_{\mathbf{w}\in \mathbb{R}^n} p(\mathfrak{D}|\mathbf{w})p(\mathbf{w})\, 
+d\mathbf{w}.
+\label{eq_2}
+\end{equation}
+
+Так как вычисление интеграла~\eqref{eq_2} относится к~вычислительно сложным 
+задачам, рассмотрим вариационный подход к~решению задачи. Оценим 
+интеграл~\eqref{eq_2}:
+\begin{multline}
+\mathcal{L}(\mathfrak{D}) = \log p(\mathfrak{D}) = {}\\
+{}=\!\!\!\int\limits_{\mathbf{w}\in 
+\mathbb{R}^n}\!\!\!\!\! q(\mathbf{w}) \log \fr{p(\mathfrak{D}, 
+\mathbf{w})}{q(\mathbf{w})}\,d\mathbf{w} - \!\!\!\int\limits_{\mathbf{w}\in 
+\mathbb{R}^n}\!\!\!\!\! q(\mathbf{w}) \log 
+\fr{p(\mathbf{w}|\mathfrak{D})}{q(\mathbf{w})}\,d\mathbf{w} \geq {}\hspace*{-0.4247pt}\\
+{} \geq \!\!\!\int\limits_{\mathbf{w}\in \mathbb{R}^n} \!\!\!\!\!q(\mathbf{w}) \log 
+\fr{p(\mathfrak{D}, \mathbf{w})}{q(\mathbf{w})}\,d\mathbf{w} = 
+\!\!\!\int\limits_{\mathbf{w}\in \mathbb{R}^n} \!\!\!\!\!q(\mathbf{w}) \log 
+\fr{p(\mathbf{w})}{q(\mathbf{w})}\,d\mathbf{w} +{}\\
+{}+\!\!\! \int\limits_{\mathbf{w}\in 
+\mathbb{R}^n} \!\!\!\!\!q(\mathbf{w}) \log p(\mathfrak{D}|\mathbf{w})\,d\mathbf{w} =
+ \mathcal{L}_{\mathbf{w}}(\mathfrak{D}, \mathbf{w}) + \mathcal{L}_E 
+(\mathfrak{D}).
+\label{eq_3}
+\end{multline}
+Первое слагаемое формулы~\eqref{eq_3}~--- это различие между апостериорным 
+и~априорным распределением параметров, задающее сложность распределением 
+параметров относительно априорных предположений.
+Оно определяется расстоянием Куль\-ба\-ка--Лейб\-ле\-ра, т.\,е.\ расстоянием между 
+вариационным распределением $q(\mathbf{w})$ и~априорным распределением 
+$p(\mathbf{w})$:
+$$
+\mathcal{L}_{\mathbf{w}} (\mathfrak{D}, \mathbf{w}) = - D_{\mathrm{KL}} \bigl( 
+q(\mathbf{w})||p(\mathbf{w})\bigr).
+$$
+Второе слагаемое формулы~\eqref{eq_3} представляет собой математическое ожидание 
+правдоподобия выборки $\mathcal{L}_{\mathfrak{D}}(\mathfrak{D}|\mathbf{w})$:
+$$
+\mathcal{L}_{E} = 
+\mathbb{E}_{q(\mathbf{w})}\mathcal{L}_{\mathfrak{D}}(\mathfrak{D}|\mathbf{w}).
+$$
+
+Обобщенная обоснованность модели~--- это один из показателей сложности 
+модели~\cite{conf/nips/Graves11}.
+Рас\-смат\-ри\-ва\-ет\-ся задача оптимизации параметров модели по обобщенной функции 
+обоснованности~$\mathfrak{L}$:
+\begin{equation}
+\label{obosn}
+\mathfrak{L}(\lambda) = \lambda\mathcal{L}_{\mathbf{w}}(\mathfrak{D}, 
+\mathbf{w}) - \mathcal{L}_E (\mathfrak{D}),
+\end{equation}
+где параметр слож\-ности~$\lambda$ контролирует влияние априорного распределения 
+на выбор итоговой модели.
+
+Введем множество допустимых значений параметра сложности~$\lambda \hm\in \varLambda 
+\hm\subset \mathbb{R}^+$.
+Требуется найти такое отображение $\mathfrak{G}:\varLambda \hm\longrightarrow 
+\mathbb{R}^n$, при котором для произвольного значения параметра 
+сложности~$\lambda \hm\in \varLambda$  параметры доставляли бы максимум сле\-ду\-ющей 
+функции:
+\begin{multline}
+\label{nohyper}
+\mathfrak{G}(\lambda) ={}\\
+{}=
+ \argmax\limits_{\mathbf{w} \in \mathbb{R}^n} \left( \log 
+p(\mathfrak{D}| \mathbf{w})  - \lambda 
+D_{KL}\left(q(\mathbf{w})||p(\mathbf{w})\right)\right).
+\end{multline}
+
+\section{Построение гиперсети для~контроля сложности модели}
+
+Решение задачи оптимизации~\eqref{nohyper} для произвольного значения~$\lambda 
+\in \varLambda$ относится к~вычислительно сложным задачам. В данной работе для 
+ее решения предлагается использовать гиперсеть.
+
+Пусть задано множество параметров~$\Lambda$, контролирующих сложность модели. 
+Гиперсеть~--- это параметрическое отображение из множества~$\Lambda$ во 
+множество параметров модели:
+$$
+ \mathbf{G}: \Lambda \times \mathbb{R}^u \to \mathbb{R}^n,
+ $$
+где $\mathbb{R}^u$~--- множество допустимых параметров гиперсети.
+Рассмотрены два вида гиперсетей: (1)~с~отоб\-ра\-же\-ни\-ем во множество мат\-риц низкого 
+ранга и~(2)~с~линейной аппроксимацией.
+Пусть $\mathbf{f}$~--- функция, переводящаяся~$\lambda$ в~скрытый слой;
+$\mathbf{U}_1$ и~$\mathbf{U}_2$~--- матрицы, переводящие из скрытого слоя в~нужную 
+размерность, их конкатенация принадлежит пространству параметров гиперсети: 
+$[\mathbf{U}_1, \mathbf{U}_2] \hm= \mathbf{U} \hm\in \mathbb{R}^u$; $\mathbf{B_1}$~--- 
+матрица, не зависящая от~$\lambda$. Тогда первая реализация гиперсети имеет вид:
+\begin{equation}
+\label{hyper1}
+\mathbf{G}_{\mathrm{lowrank}}(\mathbf{\lambda})=
+(\mathbf{f}(\lambda)\mathbf{U}_1)^\top (\mathbf{f} (\lambda) \mathbf{U}_2) + 
+\mathbf{B}_1,
+\end{equation}
+где параметр~$\lambda$~--- случайное число, реализуемое для каждой подвыборки 
+при оптимизации параметров. Вторая реализация имеет вид:
+\begin{equation}
+\label{hyper2}
+\mathbf{G}_{\mathrm{linear}}(\mathbf{\lambda})= \lambda\mathbf{b}_2 + \mathbf{b}_3,
+\end{equation}
+где $\mathbf{b}_2$ и~$\mathbf{b}_3$~--- константы, не зависящие от~$\lambda$.
+
+Для аппроксимации оптимизационной задачи~\eqref{nohyper} предлагается 
+оптимизировать параметры гиперсети $\mathbf{U} \hm\in \mathbb{R}^u$ по случайно 
+порожденным значениям параметра сложности~$\lambda \hm\in \Lambda$:
+\begin{multline}
+\label{common}
+\mathsf{E}_{\lambda \sim P(\lambda)}
+(\log p(\mathfrak{D}| \mathbf{w})
+- \lambda D_{\mathrm{KL}}\left(q(\mathbf{w})||p(\mathbf{w})\right)
+\to{}\\
+{}\to \max\limits_{\mathbf{U} \in \mathbb{R}^u},
+\end{multline}
+где $P(\lambda)$~--- некоторое распределение на множестве~$\Lambda$. В данной 
+работе в~качестве распределения использовалось следующее: $\log \lambda \sim 
+\mathcal{U}(-1, 2)$, где $\mathcal{U}$~--- равномерное распределение.
+
+\section{Вычислительный эксперимент}
+
+Для анализа свойств обобщенной задачи оптимизации~\eqref{common} и~предложенного 
+метода построения гиперсети был
+проведен вычислительный эксперимент на выборке рукописных цифр
+MNIST~\cite{lecun-mnisthandwrittendigit-2010}.
+Проведено сравнение следующих методов:
+\begin{enumerate}
+    \item[(а)]  построения модели напрямую без использования 
+гиперсети~\eqref{nohyper};
+    \item[(б)]  построения модели напрямую без использования 
+гиперсети~\eqref{nohyper} с~оптимизацией за одну эпоху;
+    \item[(в)]   построение с~использованием гиперсети~\eqref{hyper1};
+    \item[(г)]   построение с~использованием гиперсети~\eqref{hyper1} 
+    с~дообучением итоговой модели за одну \mbox{эпоху};
+    \item[(д)]  построение с~использованием гиперсети~\eqref{hyper2};
+    \item[(е)]  построение с~использованием гиперсети~\eqref{hyper2} 
+    с~дообучением итоговой модели за одну \mbox{эпоху}.
+\end{enumerate}
+
+Второй метод позволяет определить, насколько использование 
+гиперсетей~\eqref{hyper1},~\eqref{hyper2} с~дообучением за одну эпоху эффективно 
+для оптимизации па\-ра\-мет\-ров модели в~сравнении с~оптимизацией модели напрямую. 
+Для каждой из моделей проводились пять запусков, результаты которых усреднялись.
+
+Для каждой модели проводилось прореживание параметров с~применением подхода, 
+описанного в~\cite{conf/nips/Graves11}. Критерием удаления параметров выступала 
+относительная плотность модели:
+$$
+\rho(w_i) \propto \exp\left( - \fr{\mu_i^{2}}{2 \sigma_i^{2}}\right)\,.
+$$
+ 
+ Рассматривались следующие критерии качества модели.
+\begin{enumerate}
+\item Точность классификации
+$$
+\mbox{Accuracy} = 1 - \fr{1}{m} \sum\limits_{i = 1}^{m}\left[f(\mathbf{x}_i, \mathbf{w}) 
+\neq y_i\right],
+$$
+где $m$~--- длина тестовой выборки.
+
+ \item Стабильность модели $S$: отношение точности исходной модели к~точности 
+модели с~прореживанием~90\% параметров. Данная величина показывает, насколько 
+качество модели стабильно относительно удаления значительного числа параметров.
+\item Число обновлений параметров модели. Этот показатель определяется как число 
+всех об\-нов\-ле\-ний значений параметров модели за все эпохи и~характеризует 
+сложность итоговой оптимизации.
+  \item Обобщенная обоснованность модели $\mathfrak{L}$ ~\eqref{obosn}.
+\end{enumerate}
+
+
+\begin{figure*}[b] %fig1
+\vspace*{-4pt}
+\begin{center}
+\mbox{%
+\epsfxsize=160mm %3mm
+\epsfbox{str-1.eps}
+}
+\end{center}
+\vspace*{-15pt}
+\Caption{График зависимости точности классификации от процента удаленных 
+параметров для моделей без использования гиперсети~\eqref{nohyper}~(\textit{a}), 
+без использования гиперсети~\eqref{nohyper} с~оптимизацией за одну 
+эпоху~(\textit{б}), с~использованием гиперсети~\eqref{hyper1}~(\textit{в}),  
+с~использованием гиперсети~\eqref{hyper1} с~дообучением итоговой модели за одну 
+эпоху~(\textit{г}), с~использованием гиперсети~\eqref{hyper2}~(\textit{д})
+и~с~использованием гиперсети~\eqref{hyper2} с~дообучением итоговой модели за одну 
+эпоху~(\textit{е}): \textit{1}~--- $\lambda\hm= 10^{-1}$; \textit{2}~--- 10$^0$; \textit{3}~--- 10$^1$;
+\textit{4}~--- $\lambda\hm=10^2$}
+\label{fig_1}
+%\vspace*{-18pt}
+\end{figure*}
+
+
+\begin{table*}[b]\small %tabl1 %[!hp]
+\vspace*{-6pt}
+\begin{center}
+\Caption{Точность и~число обновлений параметров моделей}
+\label{t1}
+\vspace*{2ex}
+
+\begin{tabular}{|l|l|l|l|l|r|}
+\hline
+\multicolumn{1}{|c|}{\raisebox{-6pt}[0pt][0pt]{Модель} } & \multicolumn{4}{c|}{Точность} & \\
+\cline{2-5}
+&\multicolumn{4}{c|}{\ }& \\[-9pt]
+& \multicolumn{1}{c|}{$\lambda = 10^{-1}$} & 
+ \multicolumn{1}{c|}{$\lambda = 10^0$} & 
+\multicolumn{1}{c|}{$\lambda = 10^1$} & 
+\multicolumn{1}{c|}{$\lambda = 10^2$}& 
+\multicolumn{1}{c|}{\raisebox{6pt}[0pt][0pt]{
+\tabcolsep=0pt\begin{tabular}{c}Число обновлений\\ параметров\end{tabular}}} \\ 
+\hline
+ (а) Без гиперсети                          &  \hspace*{1.2mm}0,87686                                                             
+& 0,901570                                                         & 0,8674                                                            
+& 0,73031                                                            & 7\,458\,976000\hspace*{5mm}\\ %\hline
+ (б) Без гиперсети с~дообучением            & \hspace*{1.2mm}0,81682                                                             
+& 0,81986                                                          & 0,83477                                                           
+& 0,78924                                                            & \bf{298\,359\,040}\hspace*{5mm}                                                           \\ %\hline
+ (в) Гиперсеть~\eqref{hyper1}               & \hspace*{1.2mm}0,87719                                                             
+& 0,87666                                                          & 0,87466                                                           
+& 0,83124                                                            & 4\,165\,376\,600\hspace*{5mm}                                                                  \\ %\hline
+ (г) Гиперсеть~\eqref{hyper1} с~дообучением & \hspace*{1.2mm}\bf{0,90262}                                                    
+& 0,90167                                                          & 0,88876                                                           
+& \bf{0,83902}                                                   & 4\,239\,966\,360\hspace*{5mm}                                                             
+\\ %\hline
+ (д) Гиперсеть~\eqref{hyper2}               & \hspace*{1.2mm}0,900679                                                            
+& 0,90021                                                          & 0,89218                                                           
+& 0,53857                                                            & 3\,729\,488\,000\hspace*{5mm}                                                              \\ %\hline
+ (е) Гиперсеть~\eqref{hyper2} с~дообучением & \hspace*{1.2mm}0,90104                                                             
+& \bf{0,91456}                                                 & \bf{0,89538}                                                  
+& 0,80627                                                            & 3\,804\,077\,760\hspace*{5mm}                                                                 \\ 
+\hline
+\end{tabular}
+\end{center}
+\vspace*{-4pt}
+%\end{table*}
+%
+%\begin{table*}\small %tabl2%[!hp]
+\begin{center}
+\Caption{Стабильность моделей}
+\label{t2}
+\vspace*{2ex}
+
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+\multicolumn{1}{|c|}{\raisebox{-6pt}[0pt][0pt]{Модель} } & \multicolumn{4}{c|}{Стабильность $S$} \\
+\cline{2-5}
+&&&&\\[-9pt]
+& \multicolumn{1}{c|}{$\lambda = 10^{-1}$} & 
+ \multicolumn{1}{c|}{$\lambda = 10^0$} & 
+\multicolumn{1}{c|}{$\lambda = 10^1$} & 
+\multicolumn{1}{c|}{$\lambda = 10^2$}\\ 
+\hline
+(а) Без гиперсети                          & 2,209571                                                            
+& 1,476841                                                               & 
+1,194326                                                                & 
+1,165526                                                                  \\ 
+%\hline
+(б) Без гиперсети с~дообучением            & 1,518516                                                                 
+& 1,537249                                                        & 1,473905                                                          
+& 1,362817                                                            \\ 
+%\hline
+(в) Гиперсеть~\eqref{hyper1}               & 1,208003                                                                 
+& 1,203938                                                               & 
+\bf{1,177115}                                                              & 
+\bf{1,125796}                                                                  
+\\ 
+%\hline
+(г) Гиперсеть~\eqref{hyper1} с~дообучением & \bf{1,20265}                                                                  
+& \bf{1,201760}                                                            & 
+1,186034                                                                & 
+1,156385                                                                  \\ 
+%\hline
+(д) Гиперсеть~\eqref{hyper2}               & 1,206345                                                                 
+& 1,205434                                                               & 
+1,208482                                                                & 
+1,216405                                                                  \\ 
+%\hline
+(е) Гиперсеть~\eqref{hyper2} с~дообучением & 1,281112                                                                 
+& 1,287463                                                               & 
+1,255834                                                                & 
+1,289508                                                                  \\ 
+\hline
+\end{tabular}
+\end{center}
+\vspace*{-6pt}
+\end{table*}
+
+Была рассмотрена нейросеть состоящая из двух слоев:~100 и~10 нейронов 
+соответственно, где второй слой отвечает за функцию softmax:
+
+\vspace*{2pt}
+
+\noindent
+$$
+\mathbf{f}(\mathbf{x}, \mathbf{w})= \textbf{softmax}(\mathbf{w}_2^{\top}  
+\mathbf{ReLU}(\mathbf{w}_1^{\top} \mathbf{x}  + \mathbf{b}_1) + \mathbf{b}_2).
+$$
+
+\vspace*{-2pt}
+
+\noindent
+Здесь $\mathbf{w}_1$ и~$\mathbf{b}_1$~--- параметры первого слоя нейросети;
+ $\mathbf{w_2}$ и~$\mathbf{b}_2$~--- параметры второго слоя нейросети:
+ 
+ \noindent
+ \begin{align}
+\textbf{softmax}(\mathbf{x})_i &= \fr{\exp{(x_i)}}{\sum\nolimits^{k}_{j = 1} 
+\exp{(x_j)}}, \quad  i = 1, \dots, k\,; \notag
+\\[-2pt]
+\textbf{ReLU}(\mathbf{x}) &= \mathbf{max}(0, \mathbf{x}).
+\label{relu}
+\end{align}
+Нейросеть запускалась для разных значений параметра сложности~$\lambda \hm\in 
+\varLambda$.
+
+\pagebreak
+
+На рис.~\ref{fig_1},\,\textit{а} показано, как меняется точность классификации при 
+удалении параметров указанным методом. Из графика видно, что вариационный метод 
+позволяет удалить $ \approx 60\% $ параметров при~$\lambda \hm= 10^{-1}$ и~10$^0$ 
+и~$\approx 80\%$ параметров при~$\lambda \hm= 10^1$ и~10$^2$ без значительной потери 
+точности классификации. При дальнейшем удалении качество для всех значений 
+снижается. При больших значениях~$\lambda\hm > 100$ получается избыточно упрощенная 
+модель, которая содержит малое число параметров.  Таким образом, удаление 
+параметров нейросети при данном значении~$\lambda$ слабо влияет на точность 
+классификации. Однако изначальная точность невысока.
+
+Для обеих моделей с~использованием гиперсетей использовался оптимизатор SGD
+(stochastic gradient descent). 
+Обучение проводилось на протяжении 25~эпох. В~качестве~$\mathbf{A}_{\mathrm{pr}}^{-1}$ 
+используется $\mathbf{diag}({0,1})$. Для 
+первой модели~\eqref{hyper1} был рассмотрен случай с~50 нейронами в~скрытом слое 
+и~с~функций активации ReLU~\eqref{relu}. При обучении второй 
+модели~\eqref{hyper2} каждая подвыборка проходила процесс оптимизации с~пятью 
+разными значениями сэмп\-ли\-ру\-емой~$\lambda$. Прореживание нейросетей запускалось 
+для разных значений па\-ра\-мет\-ра слож\-ности~$\lambda \hm\in \varLambda$.
+
+
+
+
+На рис.~\ref{fig_1},\,\textit{в} показано, как меняется точность классификации при 
+удалении параметров указанным методом для модели с~низкоранговой аппроксимацией. 
+Как видно из графика, средняя \mbox{точность} классификации относительно базового 
+эксперимента для малых значений~$\lambda\hm \in [10^{-1}; 10^1]$ понизилась. Также 
+сильно увеличилось отклонение от среднего.
+При этом для всех значений~$\lambda \hm\in \varLambda$ получили более стабильную 
+модель: точ\-ность классификации меньше зависит от удаления параметров. Однако 
+наблюдаем большую потерю точности при удалении более~80\% .
+
+На рис.~\ref{fig_1},\,\textit{д} показано, как меняется точность классификации при 
+удалении параметров указанным методом для модели с~линейной аппроксимацией.
+Линейная модель показала еще более стабильные результаты относительно предыдущих 
+экспериментов. При этом точность классификации для небольших 
+значений~$\lambda$,~$\lambda \hm\in [10^{-1}; 10^1]$ остается постоянной при 
+удалении до $60\%$ процентов параметров и~равной $\approx 90\%$. Отклонения от 
+среднего незначительные для небольших значений~$\lambda$, $\lambda \hm\in 
+[10^{-1}; 10^1]$.  Далее данные модели были дообучены независимо от гиперсети 
+в~течение одной эпохи и~эксперимент с~прореживанием был запущен еще раз.
+
+
+
+На рис.~\ref{fig_1},\,\textit{г} показано, как меняется точность у~дообученной модели 
+с~низкоранговой аппроксимацией при удалении параметров. Как видно из графика, 
+после обучения точность классификации увеличилась, уменьшилось отклонение от 
+среднего. Стабильность модели осталась прежней, и~для всех значений~$\lambda$ 
+точность значительно падает при удалении  более~$ 80\% $ параметров.
+Для значения~$\lambda \hm= 10^2$ модель показала улучшение в~точ\-ности классификации и~большую стабильность относительно предыдущей версии модели.
+
+\begin{table*}\small %tabl3%[!htbp]
+\begin{center}
+\Caption{Обобщенная обоснованность модели}
+\label{t3}
+\vspace*{2ex}
+
+\begin{tabular}{|l|r|r|r|r|} %\multicolumn{1}{|c|}{\raisebox{-6pt}[0pt][0pt]{
+\hline
+\multicolumn{1}{|c|}{\raisebox{-6pt}[0pt][0pt]{Модель} } & \multicolumn{4}{c|}{$\mathfrak{L}$}\\
+\cline{2-5}
+&&&&\\[-9pt]
+& \multicolumn{1}{c|}{$\lambda = 10^{-1}$} & 
+ \multicolumn{1}{c|}{$\lambda = 10^0$} & 
+\multicolumn{1}{c|}{$\lambda = 10^1$} & 
+\multicolumn{1}{c|}{$\lambda = 10^2$}\\ 
+\hline
+ (а) Без гиперсети                          & \bf{$-$9\,035,229} 
+& \bf{$-$24\,338,234}  & $-$56\,679,427  & \bf{$-$128\,928,671}      \\ 
+%\hline
+ (б) Без гиперсети с~дообучением            & $-$32\,788,838   & $-$51\,832,864   & $-$186\,124,637& $-$696\,240,551  \\ 
+%\hline
+ (в) Гиперсеть~\eqref{hyper1}               & $-$24\,566,315 & $-$30\,949,930 & $-$56\,720,932   & $-$166\,657,021   \\ 
+%\hline
+ (г) Гиперсеть~\eqref{hyper1} с~дообучением & $-$19\,994,677  & $-$27\,220,746 & \bf{$-$55\,508,397}   & $-$132\,758,414   \\ 
+%\hline
+ (д) Гиперсеть~\eqref{hyper2}   & $-$24\,603,767  & $-$28\,189,602    & $-$58\,147,425 & $-$177\,139,477\\ 
+%\hline
+ (е) Гиперсеть~\eqref{hyper2} с~дообучением & $-$20\,776,473  & $-$26\,262,996  & $-$57\,948,826  & $-$134\,340,962 \\
+ \hline
+\end{tabular}
+\end{center}
+\vspace*{-3pt}
+\end{table*}
+
+На рис.~\ref{fig_1},\,\textit{е} показано, как меняется точность у~дообученной модели 
+с~линейной аппроксимацией при удалении параметров. Как видно из графика, после 
+обучения точность классификации увеличилась для всех значений~$\lambda$, 
+значительно увеличилось отклонение от среднего при удалении более чем~$60\%$ 
+параметров. Понизилась стабильность модели, но она по-прежнему выше, чем 
+в~экспериментах с~полноранговой моделью. Для значения~$\lambda \hm= 10^2$ модель 
+показала улучшения в~точности классификации.
+
+На рис.~\ref{fig_1},\,\textit{б} показано, как меняется точность у дообученной в~течение 
+одной эпохи модели без гиперсети при удалении параметров. Из графика видно, что 
+одной эпохи недостаточно для значительного улучшения модели, построенной 
+напрямую.
+
+Общие результаты экспериментов представлены 
+в~табл.~\ref{t1}--\ref{t3}. Несмотря на незначительную потерю 
+в~качестве, гиперсеть позволяет получить схожие результаты в~сравнении с~обычными 
+моделями, но при существенно меньших вычислительных затратах. Более того, по 
+графикам видно, что модель сохраняет схожие свойства при прореживании.
+
+\vspace*{-3pt}
+
+\section{Заключение}
+
+\vspace*{-3pt}
+
+В работе рассматривалась задача оптимизации модели глубокого обучения с~наперед 
+заданной слож\-ностью. Итоговый метод заключался в~представлении модели глубокого 
+обучения в~виде гиперсети. Использовался байесовский подход. Были введены 
+вероятностные предположения о~па\-ра\-мет\-рах моделей глубокого обучения. По 
+результатам вычислительного эксперимента можно сделать вывод о~том, что модели 
+на основе гиперсети имеют меньшую точность классификации, чем обычные модели. 
+Однако при использовании гиперсети снижаются вычислительные затраты 
+и~сохраняются свойства моделей при прореживании.
+
+В дальнейшем планируется исследовать теоретические свойства гиперсетей, а~также 
+улучшить предложенные модели для построения сетей глубокого обучения с~контролем 
+слож\-ности.
+
+\vspace*{-6pt}
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+%\addcontentsline{toc}{section}{References}
+\begin{thebibliography}{9}
+\bibitem{conf/nips/Graves11}
+   \Au{Graves~A.} Practical variational inference for neural 
+networks~// Advances in neural information processing systems~/
+Eds. J.~Shawe-Taylor, R.~Zemel, P.~Barlett, \textit{et al.}~----
+ACM, 2011. Vol.~24. P.~2348--2356.
+    
+\bibitem{journals/corr/HaDL16}
+  \Au{Ha~D., Dai~A.\,M., Le~Q.\,V.} HyperNetworks~// arXiv.org, 
+2016.    arXiv:1609.09106 [cs.LG]. 29~p.
+    
+\bibitem{Kuzn}
+   \Au{Kuznetsov~M.\,P., Tokmakova~A.\,A., Strijov~V.\,V.} Analytic 
+and stochastic methods of structure parameter estimation~// Informatica, 2016.  
+Vol.~27. P.~607--624.
+    
+\bibitem{BakStr18}
+   \Au{Стрижов В.\,В., Бахтеев О.\,Ю.}
+Выбор модели глубокого обучения субоптимальной сложности~//
+Автоматика и~телемеханика, 2018. №\,8. С.~129--147.
+    
+\bibitem{journals/corr/SaxenaV16} %5
+  \Au{Saxena~S., Verbeek~J.} Convolutional neural fabrics~// Advances 
+in neural information processing systems~/ Eds. D.~Lee, M.~Sugiyama, U.~Luxburg, \textit{et al.}~---
+ACM, 2016. Vol.~29. P.~4053--4061.
+    
+    
+\bibitem{journals/corr/abs-1812-09926}
+  \Au{Xie~S., Zheng~H., Liu~C., Lin~L.} SNAS: Stochastic neural 
+architecture search~// arXiv.org, 2019. arXiv:1812.09926 [cs.LG]. 17~p.
+    
+\bibitem{journals/corr/abs-1812-03443}
+   \Au{Wu~B., Dai~X., Zhang~P., Wang~Y., Sun~F., Wu~Y., Tian~Y., 
+Vajda~P., Jia~Y., Keutzer~K.} FBNet: Hardware-aware efficient convnet design 
+via differentiable neural architecture search~// IEEE/CVF Conference on 
+Computer Vision and Pattern Recognition.~--- IEEE, 2019. Vol.~1. P.~10726--10734.
+    
+\bibitem{journals/corr/abs-1802-09419}
+   \Au{Lorraine~J., Duvenaud~D.} Stochastic hyperparameter optimization 
+through hypernetworks~// arXiv.org, 2018. \mbox{arXiv}:1802.09419 [cs.LG]. 9~p.
+
+\bibitem{lecun-mnisthandwrittendigit-2010}
+   \Au{LeCun~Y.,  Cortes~C., Burges~C.} The MNIST dataset of 
+handwritten digits, 1998. {\sf http://yann.lecun.com/exdb/ mnist/index.html}.
+\end{thebibliography}
+
+}
+}
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 14.08.2020}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{VARIATIONAL DEEP LEARNING MODEL OPTIMIZATION WITH~COMPLEXITY CONTROL}
+
+\def\titkol{Variational deep learning model optimization with~complexity control}
+
+\def\aut{O.\,S.~Grebenkova$^1$, O.\,Yu.~Bakhteev$^{1,2}$, and~V.\,V.~Strijov$^{1,3}$}
+
+\def\autkol{O.\,S.~Grebenkova, O.\,Yu.~Bakhteev, and~V.\,V.~Strijov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+\noindent
+$^1$Moscow Institute of Physics and Technology, 9~Institutskiy Per., 
+Dolgoprudny, Moscow Region 141701, Russian\linebreak
+$\hphantom{^1}$Federation
+
+\noindent
+$^2$Antiplagiat Co., 42-1 Bolshoy Blvd., Moscow 121205, 
+Russian Federation
+
+\noindent
+$^3$A.\,A.~Dorodnicyn Computing Center, Federal Research Center ``Computer Science and Control'' 
+of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 40~Vavilov Str., Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2021\ \ \ volume~15\ \ \ issue\ 1}
+}%
+\def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2021\ \ \ volume~15\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+    
+    
+
+
+\Abste{This paper investigates the problem of deep learning model optimization. 
+The authors propose a~method to control model complexity. The minimum description 
+length is interpreted as the complexity of the model. It acts as the minimal 
+amount of information that is required to transfer information about the model 
+and the dataset. The proposed method is based on representation of a~deep learning model. 
+The authors propose a~form of a~hypernet using the Bayesian inference. 
+A~hypernet is a~model that generates parameters of an optimal model. 
+The authors introduce probabilistic assumptions about the distribution of parameters 
+of the deep learning model. The paper suggests maximizing the evidence lower bound 
+of the Bayesian model validity. The authors consider the evidence bound as 
+a~conditional value that depends on the required model complexity. 
+The authors analyze this method in computational experiments on the MNIST dataset.}
+
+\KWE{model variational optimization; hypernets; deep learning; neural networks; 
+Bayesian inference; model complexity control}
+
+
+
+\DOI{10.14357/19922264210106}
+
+\vspace*{-6pt}
+
+\Ack
+\noindent
+This paper contains results of the project ``Statistical methods of machine learning'' 
+which is carried out within the framework of the program ``Center of Big Data Storage and Analysis'' 
+of the National Technology Initiative Competence Center. It is supported by the Ministry 
+of Science and Higher Education of the Russian Federation according to the agreement 
+between the M.\,V.~Lomonosov Moscow State University and the Foundation of Project Support 
+of the National Technology Initiative from 11.12.2018, No.\,13/1251/2018. 
+This research was supported by RFBR (projects 19-07-01155 and 19-07-00875).
+
+\vspace*{9pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+\bibitem{1-str}
+\Aue{Graves,~A.} 2011. Practical variational inference for neural 
+networks. \textit{Advances in neural information processing systems}.
+Eds. J.~Shawe-Taylor, R.~Zemel, P.~Barlett, \textit{et al.}
+ACM. 24:2348--2356.
+    
+\bibitem{2-str}
+\Aue{Ha, D., A.\,M.~Dai, and Q.\,V.~Le.}
+ 2017. HyperNetworks. 29~p. Available at: {\sf https://arxiv.org/pdf/1609.09106.pdf} (accessed January~25, 2021).
+    
+\bibitem{3-str}
+\Aue{Kuznetsov, M.\,P., A.\,A.~Tokmakova, and V.\,V.~Strijov.}
+ 2016. Analytic and stochastic methods of structure parameter estimation. 
+ \textit{Informatica} 27(3):607--624. 
+    
+\bibitem{4-str}
+\Aue{Strijov, V.\,V., and O.\,Yu.~Bakhteev.} 
+2018. Deep learning model selection of suboptimal complexity. 
+\textit{Automat. Rem. Contr.} 79(8):1474--1488.
+    
+\bibitem{5-str}
+\Aue{Saxena, S., and J.~Verbeek.}
+ 2016. Convolutional neural fabrics. \textit{Advances 
+in neural information processing systems}.  Eds. D.~Lee, M.~Sugiyama, U.~Luxburg, \textit{et al.}~---
+ACM. 29:4053--4061.
+
+\bibitem{6-str}
+\Aue{Xie, S., H.~Zheng, C.~Liu, and L.~Lin.}
+ 2019. SNAS: Stochastic neural architecture search. 17~p. 
+ Available at: {\sf https://arxiv.org/abs/1812.09926} (accessed January~25, 2021).
+    
+\bibitem{7-str}
+\Aue{Wu, B., X.~Dai, P.~Zhang, Y.~Wang, F.~Sun, Y.~Wu, Y.~Tian, P.~Vajda, Y.~Jia., and K.~Keutzer.}
+ 2019. FBNet: Hardware-aware efficient convnet design via differentiable neural architecture search. 
+ \textit{IEEE/CVF Conference on Computer Vision and Pattern Recognition Proceedings}.
+  IEEE. 1:10726--10734
+    
+\bibitem{8-str}
+\Aue{Lorraine, J., and D.~Duvenaud.}
+ 2018. Stochastic hyperparameter optimization through hypernetworks. 9~p. 
+ Available at: {\sf https://arxiv.org/pdf/1802.09419.pdf} (accessed January~25, 2021).
+
+\bibitem{9-str}
+\Aue{LeCun, Y., C.~Cortes, and C.~Burges.}
+ 1998. The MNIST dataset of handwritten digits. Available at: 
+ {\sf http://yann. lecun.com/exdb/mnist/} (accessed January~25, 2021).
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+  \hfill{\small\textit{Received August~14, 2020}}
+
+
+%\pagebreak
+
+%\vspace*{-8pt}     
+ 
+\Contr
+
+\noindent
+\textbf{Grebenkova Olga S.} (b.\ 1999)~--- student, Moscow Institute of Physics 
+and Technology, 9 Institutskiy Per., Dolgoprudny, Moscow Region 141701, 
+Russian Federation; \mbox{grebenkova.os@phystech.edu}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Bakhteev Oleg Yu.} (b.\ 1993)~--- assistant professor, Moscow 
+Institute of Physics and Technology, 9~Institutskiy Per., Dolgoprudny, 
+Moscow Region 141701, Russian Federation; Head of Research Department, 
+Antiplagiat Co., 42-1 Bolshoy Blvd., Moscow 121205, Russian Federation;
+\mbox{bakhteev@ap-team.ru}
+
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Strijov Vadim V.} (b.\ 1967)~--- Doctor of Science in physics and mathematics, 
+leading scientist, A.\,A.~Dorodnicyn Computing Center, Federal Research Center
+``Computer Science and Control'' of the Russian Academy of Sciences, 
+ 40~Vavilov Str., Moscow 119333, Russian Federation; professor, 
+ Moscow Institute of Physics and Technology, 9~Institutskiy Per., 
+ Dolgoprudny, Moscow Region 141701, Russian Federation; 
+ \mbox{strijov@phystech.edu}
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}

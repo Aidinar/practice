@@ -1,0 +1,724 @@
+\def\stat{torshin}
+
+\def\tit{О ПОРОЖДЕНИИ СИНТЕТИЧЕСКИХ ПРИЗНАКОВ\\ НА~ОСНОВЕ ОПОРНЫХ ЦЕПЕЙ 
+И~ПРОИЗВОЛЬНЫХ МЕТРИК\\ В~РАМКАХ ТОПОЛОГИЧЕСКОГО ПОДХОДА 
+К~АНАЛИЗУ ДАННЫХ.\\ ЧАСТЬ~1. ВКЛЮЧЕНИЕ В~ФОРМАЛИЗМ\\ ЭМПИРИЧЕСКИХ 
+ФУНКЦИЙ РАССТОЯНИЯ$^*$}
+
+\def\titkol{О порождении синтетических признаков на~основе опорных цепей 
+и~произвольных метрик. % в~рамках топологического подхода к~анализу данных. 
+Часть~1} %. Включение в~формализм эмпирических функций расстояния}
+
+\def\aut{И.\,Ю.~Торшин$^1$}
+
+\def\autkol{И.\,Ю.~Торшин}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Торшин И.\,Ю.}
+\index{Torshin I.\,Yu.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при поддержке гранта РНФ (проект №\,23-21-00154) с~использованием инфраструктуры 
+Центра коллективного пользования <<Высокопроизводительные вычисления и~большие данные>> (ЦКП 
+<<Информатика>>) ФИЦ ИУ РАН (г.~Москва).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{tiy135@yahoo.com}}
+
+%\vspace*{-12pt}
+
+
+
+  
+
+
+
+\Abst{Анализ формализма топологической теории распознавания на основе 
+фундаментальных понятий функционального анализа позволил предложить ранее не 
+исследованные подходы к~определению решеточных оценок. В~частности, использование 
+опорных цепей для анализа булевых решеток, формируемых над регулярными по Журавлёву 
+множествами прецедентов, указало на новое направление исследований, заключающееся 
+в~замене оценок элементов решеток на определенного рода функции и/или векторы. Данное 
+расширение формализма также позволяет проводить систематическое исследование 
+известных в~литературе полуэмпирических функционалов расстояния для решения 
+прикладных задач. Обоснованы перспективные направления дальнейшего развития 
+формализма, включающие введение функционалов, редуцирующих описания множеств 
+булевой решетки к~скалярным оценкам, и~развитие математического аппарата для анализа 
+решеток, в~котором вместо оценок фигурируют операции над соответствующими 
+функциями. Последнее направление интересно тем, что позволяет вводить расстояния на 
+решетке без использования оценок.} 
+
+\KW{топологический анализ данных; теория решеток; алгебраический подход 
+Ю.\,И.~Жу\-рав\-лё\-ва; функциональный анализ}
+
+\DOI{10.14357/19922264240110}{RIVOXR}
+  
+%\vspace*{-6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+    Топологическая теория распознавания стала\linebreak развитием алгебраического 
+подхода к~распознаванию, предложенного научной школой Ю.\,И.~Жу\-равлё\-ва, 
+и~предназначена для решения плохо формализованных задач распознавания, 
+\mbox{классификации} и~прогнозирования~[1]. Одна\linebreak из основных целей данной тео\-рии~--- 
+разработка методов систематического порождения и~отбора \mbox{синтетических} 
+признаковых описаний объектов, которые бы характеризовались большей 
+информативностью, чем исходные признаки~\cite{2-tr}. В~работе~\cite{3-tr} 
+было показано, что веса таких признаков можно эффективно настраивать 
+посредством ранговой оптимизации; разработан формализм для по\-рож\-де\-ния 
+признаковых описаний на основе па\-ра\-мет\-ри\-зи\-ру\-емых решеточных оценок~[4].
+     
+     В рамках развиваемого формализма каждый объект~$x$ из множества 
+исходных описаний $N_0$ объектов $\mathbf{X}\hm= \{x_1, \ldots , 
+x_{N_0}\}$, $\mathbf{X}\hm\subseteq \mathrm{S}$, опи\-сы\-ва\-емый $n$ 
+признаками посредством функций $\Gamma_k: \mathrm{S}\hm\to \mathrm{I}_k$ 
+(где $\mathrm{I}_k\hm= \{ \lambda_{k_1}, \lambda_{k_2}, \ldots\}$~--- 
+множества значений признаковых описаний), представлен множествами 
+     $\{ \Gamma_k^{-1}(\Gamma_k(x))\}$, $k\hm=\overline{1, n+l}$, где $l$~--- 
+число таргетных (прогнозируемых) переменных. Значение $t$-й целевой 
+(таргетной) переменной объекта~$x$, $t\hm = \overline{n+1, n+l}$, 
+вычисляется как~$\Gamma_t(x)$. Множество прецедентов над пространством 
+допустимых признаковых описаний объектов~$J_{\mathrm{ob}}$ 
+опре\-де\-ля\-ет\-ся~как 
+$$
+Q=\varphi(\mathbf{X})\hm=\{ D(\mathrm{x}_\alpha)\vert 
+\mathrm{x}_\alpha \hm\in \mathbf{X}\}
+$$ 
+посредством $D:\mathrm{S}\hm\to 
+J_{\mathrm{ob}}$ и~$\varphi(\mathbf{X})\hm= \{ D(\mathrm{x}_\alpha ) \vert 
+\mathrm{x}_\alpha\hm\in \mathbf{X}\}$, $D(\mathrm{x}_\alpha) \hm= 
+(\Gamma_1(\mathrm{x}_\alpha \times \cdots\times \Gamma_k(\mathrm{x}_\alpha) 
+\times\cdots\times \Gamma_{n+1}(\mathrm{x}_\alpha))_\Delta$. При 
+регулярности множеств $\mathbf{X}/Q$ ($\forall\,x\hm\in \mathbf{X}, 
+x\hm= {D}^{-1}({D}(\mathrm{x})))\mathbf{X}$ изоморфно~$Q$ 
+и~обоим множествам сопоставлены \textit{топология} $T(\mathbf{X})\hm= 
+\{\emptyset, \{\mathbf{X}\}, a\hm\cup b, a\hm\cap b: a,b\hm\in U(\mathbf{X})\hm= 
+\{\Gamma_k^{-1}(\lambda_{k_b})\}\}$ и~\textit{булева решетка} 
+$L(T(\mathbf{X}))\hm= \{a\vee b, a\wedge b: a,b\hm\in  
+T(\mathbf{X})\}$~\cite{5-tr}.
+     
+     Рассмотрим топологический подход к~распознаванию с~точки зрения 
+фундаментальных понятий теории функций~--- рефлексивных и~транзитивных 
+бинарных отношений между множествами. В~математике применяются два 
+таких отношения: симметричное отношение \textit{эквивалентности} множеств 
+и~антисимметричное отношение (частичного) \textit{порядка}~\cite{6-tr}. 
+     
+     Прецедентному соотношению между значениями 
+признака~$\Gamma_k(x)$ и~$t$-й таргетной переменной, заданному 
+множеством~$Q$ на решетке $L(T(\mathbf{X}))$, соответствует множество пар 
+$\{ ( \{ \Gamma_k^{-1}(\Gamma_k(x_i)), k\hm=\overline{1,  n}\},  
+\Gamma_t^{-1}(\Gamma_t(x_i))), i\hm= \overline{1, N_0}\}$. На основании 
+представленных в~регулярном множестве~$Q$ прецедентов любой алгоритм 
+распознавания (<<машинного обучения>>) строит некоторую модель 
+соотношения между множествами $\{ \Gamma_k^{-1}(\Gamma_k(x_i))\}$  
+и~$\Gamma_t^{-1}(\Gamma_t(x_i))$.
+     
+     Сфокусируемся на двух произвольных множествах $a\hm= \Gamma_k^{-
+1}(\Gamma_k(x_i))$ и~$b\hm= \Gamma_t^{-1}(\Gamma_t(x_i))$. Очевидно, что 
+говорить о выполнимости отношения эквивалентности или порядка между 
+множествами~$a$ и~$b$ в~общем случае не приходится: ведь эквивалентность 
+соответствует идентичности значения $k$-го признака значению $t$-й 
+таргетной переменной, а~час\-тич\-ный  
+порядок~--- ядерной эквивалентности (т.\,е.\ эквивалентности~$a$ 
+подмножеству~$b$ или наоборот). Такие случаи тривиальны и~соответствуют 
+<<легко решаемым>> задачам распознавания.
+     
+     В то же время существующие в~решетке $L(T(\mathbf{X}))$ отношения 
+порядка порождают супремум $a\vee b$ и~инфимум $a\wedge b$ множеств~$a$ 
+и~$b$. Поэтому в~топологической теории распознавания вводятся более\linebreak 
+сложные функционалы над $a$, $b$, $a\vee b$ и~$a\wedge b$, расширенно 
+описывающие соотношения между произвольными множествами~$a$ и~$b$ 
+в~терминах \textit{расстояний}. При выполнимости четырех аксиом \mbox{мет\-ри\-ки} такие 
+функционалы $\rho_L: L^2\hm\to R^+$ формируют \textit{метрическое 
+пространство значений признаков} $M_L(L(T(\mathbf{X})), \rho_L)$.
+     
+     Простейшей метрикой служит функционал 
+     $$
+     \rho_0(a,b) \hm= \fr{v[a\vee b] 
+\hm- v[a\wedge b]}{N_0}\,,
+$$
+ где $v: L\hm\to R^+$~--- \textit{изотонная оценка} на 
+$L(T(\mathbf{X}))$. Возможны и~более сложные варианты 
+определения~$\rho_L$ при введении параметрических оценок~\cite{4-tr} или 
+использовании известных в~литературе метрик, так что в~общем случае имеется 
+ряд метрик~$\rho_m$, $m\hm=\overline{1, m_0}$. Как правило, метрики~$\rho_m$ 
+нормируются на интервал значений $[0\ldots 1]$.
+     
+     Возвращаясь к~рассмотрению фундаментальных отношений теории 
+функций, можно сделать вывод о~том, что метрика $\rho_L(a,b)$ служит 
+функционалом, численно оценивающим выполнимость отношения 
+эквивалентности между~$a$ и~$b$ на основе отношений порядка (заданных 
+в~форме $a\vee b$, $a\wedge b$). Действительно, $\rho_L(a,b)\hm=0$ 
+соответствует строгому выполнению отношения эквивалентности~$a$ и~$b$, 
+а~$\rho_L(a,b)\hm=1$~--- максимально возможному расстоянию между~$a$ 
+и~$b$ (например, $\rho_0(a,b)\hm=1$ только для множеств~$\emptyset$ 
+и$\{\mathbf{X}\}$, находящихся на концах максимальных цепей решетки 
+$L(T(\mathbf{X}))$). 
+     
+     Таким образом, в~рамках топологической тео\-рии распознавания 
+соотношение между множествами $\{\Gamma_k^{-1}(\Gamma_k(x_i))\}$  
+и~$\Gamma_t^{-1}(\Gamma_t(x_i))$ моделируется соответствующими 
+массивами расстояний, по\-рож\-да\-емы\-ми той или иной метрикой~$\rho_m$. 
+Рассмотрим способы вычисления таких расстояний.
+
+\section{О различных способах вычисления метрик на~решетке~$L(T(\mathbf{X}))$}
+    
+В литературе известны три принципиально различных способа определения 
+метрических расстояний:
+\begin{enumerate}[(1)]
+\item метрики на основе операций над мно\-же\-ст\-вами; 
+\item метрики над пространством векторов; 
+\item метрики над пространством 
+функций. 
+\end{enumerate}
+Рассмотрим три этих подхода в~применении к~описанным выше 
+конструктам топологической теории распознавания.
+
+    
+\textbf{Метрики на основе операций над множествами}. Во введении были 
+упомянуты метрики оценки расстояния между $a,b \hm\in L(T(\mathbf{X}))$, 
+вводимые как функционалы над $a\vee b$ (соответствует $a\cup b$) и~$a\wedge 
+b$ ($a\cap b$), оценками высот элементов в~$L(T(\mathbf{X}))$ и~другими  
+тео\-ре\-ти\-ко-мно\-жест\-вен\-ны\-ми операциями над множествами~$a$ и~$b$. 
+В~работе~\cite{4-tr} для порождения мет\-рик используются взвешенные 
+решеточные оценки 
+$$
+v_\alpha = \sum\limits_{i=0,\vert\bm{\alpha}\vert} 
+\omega_i v_{\alpha_i}
+$$ 
+на основе изотонных оценок~$v_{\alpha_i}$. 
+Формирование наборов~$\bm{\alpha}$ может проводиться на основе 
+<<информативности>> $\alpha_i\hm\in \bm{\alpha}$ методами метрического 
+анализа данных~\cite{7-tr} или на основе различных подцепей таргетных 
+числовых переменных.
+     
+     В то же время известны многочисленные функционалы, носящие 
+эмпирический характер и~непосредственно оперирующие множествами: 
+расстояния Танимото, Рэнда, Рас\-се\-ла--Рао, Симпсона, Бра\-уна--Блан\-ке,  
+Род\-же\-ра--Та\-ни\-мо\-то, Фэйта, дисперсии, образов, $Q_0$, Пирсона; 
+различные варианты расстояний Тверского, Со\-ка\-ла--Сни\-са, Гоу\-эра--Ле\-жанд\-ра, Юле и~др.~\cite{8-tr}. Метрические свойства этих функционалов 
+могут быть продемонстрированы посредством аналитических выводов или 
+комбинаторного анализа на множествах прецедентов.
+    
+\textbf{Векторные метрики}. Альтернативно методу взвешенных решеточных 
+оценок на основании набора~$\bm{\alpha}$ и~оценок~$v_{\alpha_i}$ для 
+произвольного множества $a\hm\in L(T(\mathbf{X}))$ может быть вычислен 
+вектор 
+$$
+\vec{v}_{\bm{\alpha}} [a]= (v_{\alpha_1}[a], v_{\alpha_2}[a], \ldots , 
+v_{\alpha_i}[a],\ldots),\enskip v_{\alpha_i}[a]\hm\in R^+,
+$$
+ и~введены метрики на 
+пространстве векторов~$\vec{v}_{\bm{\alpha}}$\linebreak   посредством известных подходов: $l_1$-мет\-ри\-ка, 
+$l_p$-мет\-ри\-ки Минковского, расстояния Пенроуза, Манхэттена, Лоренца, 
+Кларка, Хеллинджера, Уайттеккера, симметрическое~$\chi^2$, Махаланобиса 
+(в~том числе с~настраиваемыми весами), расстояния пересечения, Ружечки, 
+Робертса, Элленберга, Глисона, Мотыки, Брея--Кур\-ти\-са, Канберры, 
+Кульчинского и~корреляционные расстояния (ковариационное, 
+корреляционное, косинус, угловое, хордовое, подобности,  
+Мо\-ри\-си\-ты--Хор\-на, Спирмана, Кендалла)~\cite{8-tr}.
+    
+\textbf{Метрики над пространством функций}. Функциональный анализ 
+и~теория вероятностей предо\-став\-ля\-ют широкий инструментарий для 
+определения расстояний между функциями с~одинаковой областью 
+определения: функционалы Колмогорова (в~том числе максимальное 
+уклонение~$D$), фон\linebreak Мизеса, Реньи, метрики (интегральная~$L_1$, 
+инженерная, разделения, подобности среднего гармонического), расстояния 
+Чебышёва, Степанова, варианты расстояний Золотарёва, Круглова,  
+Бур\-би--Рао, Бхаттачарья, Чизара (включая вариации расстояний Куль\-ба\-ка--
+Лейб\-ле\-ра, $\chi^2$, Хеллинджера)~\cite{8-tr}.
+     
+     Очевидно, что некоторые из этих функций расстояний заведомо не 
+относятся к~метрикам. Например, в~расстоянии Куль\-ба\-ка--Лейб\-ле\-ра 
+нарушена аксиома симметричности; оценка \mbox{выполнимости} аксиомы 
+треугольника для каждой из этих функций требует отдельного исследования. 
+Метриза\-ция рассматриваемых функций расстояния может\linebreak осуществляться 
+посредством введения дополнительных конструкций в~определение функции. 
+В~част\-ности, при отсутствии симметричности для функции $d(x,y)$ могут быть 
+введены конструкты $\min(d(x,y), d(y,x))$, $\max(d(x,y), d(y,x))$ и~др. 
+Основной проблемой все же остается <<привязка>> этих подходов 
+к~разрабатываемому решеточному формализму. Для этого напомним ряд 
+важных понятий.
+     
+     \smallskip
+     
+     \noindent
+     \textbf{Определение~1.} Решеточный терм, или \textit{изотонная 
+оценка}, $v: L\hm\to R^+$ над $L(T(\mathbf{X}))$~--- функция, для которой 
+выполнено \textit{условие оценки} (\textbf{уО}:  $\forall_L a,b: 
+v[a]\hm+v[b]\hm=v[a\wedge b]\hm+ v[a\vee b]$) и~\textit{условие изотонности} 
+(\textbf{уИ}: $\forall_L a,b: a \hm\supseteq b \hm\Rightarrow  v[a]\hm\geq v[b]$). Для изотонной 
+$v[\,]$ гарантировано существование метрики $\rho_0(a,b)$.
+     \smallskip
+     
+     \noindent
+     \textbf{Определение~2.} \textit{Однородными функциями} будем 
+называть произвольные функции с~одинаковыми областями определения и~значений. 
+     
+     \smallskip
+     \noindent
+     \textbf{Определение~3.} Пусть задано конечное множество чисел 
+$A\hm= \{a_1,a_2, \ldots , a_i, \ldots, a_n\}$, $a_i\hm\in R$. Определим 
+\textit{оператор $\hat{\phi}(x)$ для формирования эмпирической функции 
+распределения} (э.\,ф.\,р.)\ чисел в~множестве~$A$ как $\hat{\phi}(x) A\hm= 
+\mathrm{sup}\vert \{B\hm\subseteq A\vert \forall\,a\hm\in B: a\hm\leq x\}\vert / 
+\vert A\vert$, $x\hm\in R$, так что $\hat{\phi}(-\infty) A\hm=0$, $\hat{\phi} 
+(+\infty)A\hm=1$. Для краткости $\hat{\phi}(x)A$ будем также записывать 
+как~$\hat{\phi}A$. 
+     
+     \smallskip
+     
+     \noindent
+     \textbf{Определение~4.} $\hat{\mu}$~--- \textit{оператор вычисления 
+математического ожидания} значения $x\hm\in A$ по э.\,ф.\,р.~$\hat{\phi}A$~как 
+$$
+\hat{\mu} \hat{\phi}A= \fr{1}{m} \sum\limits^m_{j=1} x_j \left(\hat{\phi}(x_j)A 
+\hat{\phi}(x_{j\,1})A\right),
+$$
+ где $m\hm= \vert \hat{z}A\vert$; $x_j\hm= 
+\hat{\iota}^+(j)\hat{z}A$, а~произвольное $x_0\hm< \mathrm{inf}\,(A)$, 
+$x_0\hm\in R$;  $\hat{z}$~--- \textit{оператор формирования множества 
+значений} множества~$A$, $\hat{z}A\hm= B\hm\subseteq A\vert \forall\,a\hm\in 
+A: a\hm\in B, \forall\,a,b \hm\in B: a\not= b$; $\hat{\iota}^+$~--- \textit{оператор 
+упорядочения множества по возрастанию};  
+$\hat{\iota}^+(j)A$~--- $j$-й элемент множества~$\hat{\iota}^+A$. 
+
+\section{Анализ решетки~$L(T(\mathbf{X}))$ с~использованием 
+функций~$\hat{\phi}A$ на основе опорных цепей}
+     
+     Рассмотрим подходы к~анализу решетки   посредством э.\,ф.\,р. 
+Определения~2--4 существенно расширяют формализм решеточных оценок, 
+позволяя (1)~проектировать $L(T(\mathbf{X}))$ в~соответствующую решетку 
+э.\,ф.\,р.\ посредством некоторой заранее выбранной (опорной) цепи; 
+(2)~измерять расстояния между этими э.\,ф.\,р.; (3)~вводить новые 
+разновидности оценок множеств (см.\ определение~1). В~качестве опорной цепи 
+может быть выбрана, в~част\-ности, цепь, соответствующая числовой таргетной 
+переменной.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~1.} \textit{Выберем произвольную максимальную цепь~$A_t$ 
+в~качестве <<опорной>> для дальнейших построений. При условии 
+регулярности множеств в~$\mathbf{X}/Q$ каждому 
+элементу~$L(T(\mathbf{X}))$ сопоставлена э.\,ф.\,р.\ из множества 
+однородных э.\,ф.\,р.} 
+
+\smallskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \  При выполнении условия ре\-гу\-ляр\-ности 
+для $\mathbf{X}/Q$ решетка $L(T(\mathbf{X}))$~--- булева (тео\-ре\-ма~3 
+в\cite{9-tr}). Цепи в~$L(T(\mathbf{X}))$ соответствуют тем или иным чис\-ло\-вым 
+признаковым описаниям (тео\-ре\-ма~1 в~\cite{4-tr}), так что произвольная 
+(максимальная) цепь~$A_t$ в~$L(T(\mathbf{X}))$ пред\-ста\-ви\-ма в~виде
+
+\noindent 
+\begin{multline*}
+A_t= 
+\langle u(\lambda_{t_1}), \ldots, u(\lambda_{t_i}), \ldots u(\lambda_{t_m})\rangle,\\ 
+\lambda_{t_i}\in I_t,\enskip u(\lambda_{t_i})= \bigcup\nolimits^i_{\beta=1} 
+\Gamma_t^{-1} (\lambda_{t_\beta}),
+\end{multline*}
+ где $I_t= (\lambda_{t_1},\ldots , 
+\lambda_m)$~--- строго монотонная по\-сле\-до\-ва\-тель\-ность чисел. Значение 
+функции~$\Gamma_t$, вы\-чис\-ли\-мое для любого объекта в~$\mathbf{X}$, рав\-но 
+$\Gamma_t(q)$ для каж\-до\-го решеточного \textit{атома} $\{q\} \hm\in 
+L(T(\mathbf{X}))$, высота атома рав\-на~1 ($h[\{q\}] \hm\equiv \vert \{q\}\vert 
+\hm\equiv 1$). Поскольку решетка булева, то каж\-дый ее элемент пред\-ста\-вим 
+в~виде комбинации атомов, так что любому элементу решетки $u\hm\in 
+L(T(\mathbf{X}))$ со\-по\-став\-ле\-но множество значений $t$-го при\-зна\-ка 
+$\bm{\Gamma}_t(u)\hm= \{ \Gamma_t(q), q\hm\in u\}$ по всем атомам из~$u$. 
+Применяя оператор $\hat{\phi}(x)$ к~множеству $\bm{\Gamma}_t(u)$, получаем 
+э.\,ф.\,р.\ $\hat{\phi}\bm{\Gamma}_t(u)$. При выполнении условия ре\-гу\-ляр\-ности 
+для $\mathbf{X}/Q$ решетка $L(T(\mathbf{X}))$ однозначно со\-по\-став\-ле\-на 
+решетке, образованной чис\-ло\-вы\-ми множествами $\bm{\Gamma}_t(u)$, 
+и~вы\-чис\-ли\-ма $\hat{\phi}\bm{\Gamma}_t(u)$. Все эти э.\,ф.\,р.\ однородны по 
+по\-стро\-ению~--- ведь они сформированы над одним и~тем же множеством~$I_t$ и~принимают значения в~диапазоне $[0\ldots1]$, а~будучи э.\,ф.\,р., 
+характеризуются одинаковой об\-ластью значений.  Тео\-ре\-ма доказана.
+
+\smallskip
+     
+     Итак, при задании опорной цепи $A_t$ любому элементу решетки 
+$u\hm\in L(T(\mathbf{X}))$ со\-по\-став\-ле\-но множество чисел 
+$\bm{\Gamma}_t(u)$, чис\-ло\-вая функция $\hat{\phi}\bm{\Gamma}_t(u)$ и~ряд 
+функционалов вида $\hat{\mu}\hat{\phi}(x) \bm{\Gamma}_t(u)$, которые могут 
+быть использованы для определения оценок в~решетке $L(T(\mathbf{X}))$ 
+и/или вы\-чис\-ле\-ния расстояний.
+
+\section{Оценки в~решетке $L(T(\mathbf{X}))$ на~основе 
+множеств~$\Gamma_t$ с~использованием понятия~меры}
+
+    С использованием теоремы~1 изотонные оценки на основе множеств   
+порождаются функционалами вида $g: 2^{I_t}\hm\to R^+$ так, что при 
+произвольных $u,v \hm\in L(T(\mathbf{X}))$ для $g(\bm{\Gamma}_t(u))$ 
+и~$g(\bm{\Gamma}_t(v))$ выполнено уО, а~при $u\hm\supseteq v$ выполнено уИ, 
+т.\,е.\ $g(\bm{\Gamma}_t(u)) \hm\geq g(\bm{\Gamma}_t(v))$. Одни из наиболее 
+очевидных функционалов $g$~--- различные \textit{меры} множеств, 
+ис\-поль\-зу\-емые как решеточные оценки~\cite{9-tr}.
+     
+     Понятие оценки в~теории решеток и~понятие меры в~функциональном 
+анализе во многом схожи. Как и~$v[\,]$, мера положительно определена, мера 
+пустого множества рав\-на нулю, а~мера пересечения непересекающихся 
+множеств рав\-на сумме мер этих множеств. Однако уО выдвигает 
+дополнительное требование: если множества пересекаются, то оценка их 
+объединения равна сумме оценок множеств минус оценка их пересечения, так 
+что любая $v[\,]$~--- мера. Меры могут вводиться различными 
+способами~\cite{6-tr}.
+
+\smallskip
+
+\noindent
+\textbf{Определение~5.} Пусть точкам действительной оси $I_t\hm= 
+\{\lambda_{t_1}, \lambda_{t_2}, \ldots , \lambda_{t_b},\ldots, \lambda_{k_{\vert 
+I_t\vert -1}},\Delta\}$, $\lambda_{t_b}\hm\in R$, сопоставлены веса $p_1, p_2, 
+\ldots , p_{\vert I_t\vert -1}$. Тогда определена \textit{мера с~дискретным весом} 
+$$
+\mu_{\mathrm{дв}} (\bm{\Gamma}_t(u))\hm= \sum\limits_{\lambda_{t_b} \in 
+\bm{\Gamma}_t(u)} p_b. 
+$$
+     
+     В качестве весов в~определении~5 могут быть выбраны: (1)~длины 
+интервалов значений из $I_t$ $(\lambda_{t_b} \hm- \lambda_{t_{b-1}}, 
+\lambda_{t_{b+1}} -\lambda_{t_b}$ и~др.); (2)~раз\-но\-сти значений э.\,ф.\,р.\ 
+     $(\mathrm{cdf}\,(\lambda_{t_{b+1}}, A_t(\mathbf{X})) \hm- \mathrm{cdf} 
+\,( \lambda_{t_b}, A_t(\mathbf{X}))$ и~др.); (3)~веса, на\-стра\-и\-ва\-емые 
+в~соответствии с~принципом со\-гла\-со\-ва\-ния мет\-рик, и~т.\,д. Очевидна 
+
+\smallskip
+
+\noindent
+\textbf{Теорема~2.} \textit{Мера с~дискретным весом~--- оценка}. 
+\smallskip
+
+Утверждение следует из рас\-смот\-ре\-ния пе\-ре\-кры\-ва\-ющих\-ся 
+и~не\-пе\-ре\-кры\-ва\-ющих\-ся множеств $\bm{\Gamma}_t(u)$ и~$\bm{\Gamma}_t(v)$ 
+и~вы\-пол\-ни\-мости уО из определения~1.
+
+\smallskip
+
+\noindent
+\textbf{Следствие~1.} \textit{Интеграл от сум\-ми\-ру\-емой функции~$f$ 
+с~использованием~$\mu_{\mathrm{дв}}$ вы\-чис\-ля\-ет\-ся как}  
+$$
+\int\limits_{-
+\infty}^{+\infty} f(\lambda)\,d\mu_{\mathrm{дв}} \hm= \sum\limits_{b=1,\vert 
+I_t\vert-1} p_b f(\lambda_{t_b}).
+$$
+
+\smallskip
+
+\noindent
+     \textbf{Следствие~2.} \textit{Скалярное произведение сум\-ми\-ру\-емых 
+функций $f(\lambda)$ и~$g(\lambda)$ на основе~$\mu_{\mathrm{дв}}$ рав\-но} 
+     $$
+     (f,g)= \sum\limits_{b=1,\vert I_t\vert -1} p_b f(\lambda_{t_b}) 
+g(\lambda_{t_b}).
+$$
+    
+\smallskip
+
+\noindent
+\textbf{Следствие~3.} \textit{Колмогоровский функционал <<заряда>> 
+$\Phi(A)$ на множестве чисел~$A$ с~использованием сум\-ми\-ру\-емой 
+функции~$f(\lambda)$, $\Phi(A)\hm= \int\nolimits_A f(\lambda)\,d\mu$, служит 
+мерой}. При использовании меры с~дискретными весами 
+$$
+\Phi(A)= 
+\sum\limits_{\lambda_{t_b} \in A} p_b f(\lambda_{t_b})
+$$ 
+(следствие~1).
+    
+\smallskip
+
+\noindent
+\textbf{Следствие~4.} \textit{Колмогоровский заряд  
+$\Phi(\bm{\Gamma}_t(u))$~--- изотонная оценка на решетке $L(T(\mathbf{X}))$ 
+при положительной опре\-де\-лен\-ности}~$f(\lambda)$. Перекрывание площади 
+под произвольной одномерной~$f$ в~случае множеств $\bm{\Gamma}_t(u)$ 
+и~$\bm{\Gamma}_t(v)$ равно $\Phi (\bm{\Gamma}_t(u)\cap 
+\bm{\Gamma}_t(v))$, что равно $\Phi (\bm{\Gamma}_t (u\cap v)$ и~равно сумме 
+площадей $\Phi(\bm{\Gamma}_t(u))$ и~$\Phi(\bm{\Gamma}_t(v))$ минус площадь 
+объединения множеств (что соответствует вы\-пол\-ни\-мости уО в~определении~1). 
+Оценка~$\Phi$ \textit{изотонна} при $f(\lambda)\hm\geq 0$. 
+     
+     Из теоремы~2 со следствиями очевидно, что введение <<заряда>>~$\Phi$ 
+позволяет более гибко оценивать вклад каж\-до\-го значения таргетной 
+переменной~$\lambda_{t_b}$ в~значение меры: ведь в~$\Phi(A)$ используются 
+не только дискретные веса~$p_b$ значений~$\lambda_{t_b}$, но и~весовая 
+функция $f(\lambda)$, общая для всех значений.
+
+\section{Перспективы анализа решеток без использования понятия 
+оценки}
+
+    Решеточные термы $v: L\hm\to R^+$ дают скалярную оцен\-ку каж\-до\-го 
+элемента со\-от\-вет\-ст\-ву\-ющей решетки~$L$, позволяющее сравнивать 
+элементы~$L$ меж\-ду собой (при вы\-пол\-ни\-мости уО и~уИ). Очевидно, что 
+со\-по\-став\-ле\-ние произвольному элементу $u$ решетки $L(T(\mathbf{X}))$ 
+функции~$\hat{\phi}\bm{\Gamma}_t(u)$ представляется гораздо более сложным 
+<<оценочным>> описанием множества~$u$, чем скалярная $v[u]$. Эта цепь 
+рас\-суж\-де\-ний указывает на два на\-прав\-ле\-ния дальнейшего развития формализма: 
+\begin{enumerate}[(1)]
+\item введение функционалов, поз\-во\-ля\-ющих редуцировать более слож\-ное 
+описание в~виде $\hat{\phi}\bm{\Gamma}_t(u)$ к~скалярным оценкам; 
+\item разработку нового математического аппарата для анализа решеток, 
+в~котором вмес\-то оценок $v: L\hm\to R^+$ фигурируют операции над 
+функциями~$\hat{\phi}\bm{\Gamma}_t(u)$.
+\end{enumerate}
+     
+     Первое направление отчасти покрывается результатами тео\-ре\-мы~2 со 
+следствиями. Второе направление интересно тем, что позволяет вводить 
+мет\-ри\-че\-ские функции рас\-сто\-яния без использования конструкции $v[x\vee 
+y]\hm- v[x\wedge y]$, на основании упо\-ми\-на\-емых выше подходов 
+функционального анализа (как это было сделано в~работе~\cite{4-tr} для 
+колмогоровского <<максимального уклонения>>). 
+
+\section{Заключение }
+
+    В прикладной математике повсеместно используются функционалы, 
+оценивающие расстояния между множествами, векторами или функциями. При 
+установлении метрических свойств этих функционалов инструментарий 
+формализма топологической тео\-рии распознавания может быть существенно 
+обогащен нетривиальными метриками на основе эмпирических  
+и~по\-лу\-эм\-пи\-ри\-че\-ских функционалов расстояния. Во второй части 
+статьи будут пред\-став\-ле\-ны результаты приложения раз\-ра\-ба\-ты\-ва\-емо\-го 
+формализма к~комплексу при\-клад\-ных задач из об\-ласти фармакоинформатики.
+
+{\small\frenchspacing
+ { %\baselineskip=10.6pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{1-tr}
+\Au{Журавлёв Ю.\,И., Рудаков~К.\,В., Торшин~И.\,Ю.} Алгебраические критерии локальной 
+разрешимости и~регулярности как инструмент исследования морфологии аминокислотных последовательностей~// Труды 
+\mbox{МФТИ}, 2011. Т.~3. №\,4. C.~45--54. EDN: OJYMVJ.
+\bibitem{2-tr}
+\Au{Рудаков К.\,В., Торшин~И.\,Ю.} Анализ информативности мотивов на основе критерия 
+разрешимости в~задаче распознавания вторичной структуры белка~// Информатика и~её 
+применения, 2012. Т.~6. Вып.~1. С.~79--90. EDN: OZHDTV.
+\bibitem{3-tr}
+\Au{Торшин И.\,Ю.} О~задачах оптимизации, воз\-ни\-ка\-ющих при применении 
+топологического анализа данных к~поиску алгоритмов прогнозирования с~фиксированными 
+корректорами~// Информатика и~её применения, 2023. Т.~17. Вып.~2. С.~2--10. doi: 
+10.14357/19922264230201. EDN: IGSPEW.
+\bibitem{4-tr}
+\Au{Торшин И.\,Ю.} О~формировании множеств прецедентов на основе таблиц разнородных 
+признаковых описаний методами топологической теории анализа данных~// Информатика 
+и~её применения, 2023. Т.~17. Вып.~3. С.~2--7. doi: 10.14357/19922264230301. EDN: 
+AQEUYO.
+\bibitem{5-tr}
+\Au{Torshin I.\,Y., Rudakov~K.\,V.} On the procedures of generation of numerical features over 
+partitions of sets of objects in the problem of predicting numerical target variables~// Pattern 
+Recognition Image Analysis, 2019. Vol.~29. No.\,3. P.~654--667. doi: 
+10.1134/S1054661819040175.
+\bibitem{6-tr}
+\Au{Колмогоров A.\,H., Фомин~С.\,В.} Элементы теории функций и~функционального 
+анализа.~--- М.: Наука, 1989. 624~с.
+\bibitem{7-tr}
+\Au{Torshin I.\,Y., Rudakov~K.\,V.} Combinatorial analysis of the solvability properties of the 
+problems of recognition and completeness of algorithmic models. Part~2: Metric approach within 
+the framework of the theory of classification of feature values~// Pattern Recognition Image Analysis, 
+2017. Vol.~27. No.\,2. P.~184--199.  doi: 10.1134/ S1054661817020110.
+\bibitem{8-tr}
+\Au{Деза Е.\,И., Деза~М.\,М.} Энциклопедический словарь расстояний~/
+Пер.\ с~англ.~--- М.: Наука, 2008.  444~с. (\Au{Deza~E., Deza~M.\,M.} {Dictionary of distances}.~---  
+North-Holland: Elsevier, 2006. 412~p. doi: 10.1016/B978-0-444-52087-6.X5000-8.)
+
+\bibitem{9-tr}
+\Au{Torshin I.\,Y., Rudakov K.\,V.} On the theoretical basis of metric analysis of poorly 
+formalized problems of recognition and classification~// Pattern Recognition Image Analysis, 2015. 
+Vol.~25. No.\,4. P.~577--587. doi: 10.1134/ S1054661815040252.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-10pt}
+
+\hfill{\small\textit{Поступила в~редакцию 15.01.23}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+
+
+\def\tit{ON THE GENERATION OF~SYNTHETIC FEATURES BASED~ON~SUPPORT 
+CHAINS AND~ARBITRARY METRICS\\ WITHIN~A~TOPOLOGICAL APPROACH TO~DATA ANALYSIS.\\ PART~1. 
+INCLUSION OF~EMPIRICAL DISTANCE FUNCTIONS 
+INTO~THE~FORMALISM}
+
+
+\def\titkol{On the generation of~synthetic features based on~support 
+chains and~arbitrary metrics. Part~1}
+% within the~framework  of~a~topological approach to~data analysis. Part~1.  Inclusion of~empirical distance functions  into~the~formalism}
+
+
+\def\aut{I.\,Yu.~Torshin}
+
+\def\autkol{I.\,Yu.~Torshin}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-10pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of 
+Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+\Abste{The analysis of the formalism of topological recognition theory based on the 
+fundamental concepts of functional analysis made it possible to propose previously 
+unexplored approaches to determining lattice estimates. In particular, the use of 
+support chains for the analysis of Boolean lattices formed over  
+Zhuravlev-regular sets of precedents has pointed to a~new direction of research which 
+consists in replacing estimates of lattice elements with certain types of functions 
+and/or vectors. This extension of the formalism also allows for a~systematic study of 
+semiempirical distance functionals known in the literature to solve applied problems. 
+Promising directions for further development of the formalism are substantiated 
+including the functionals reducing descriptions of sets of a~Boolean lattice to scalars 
+and the development of a~mathematical apparatus for the analysis of lattices where 
+operations on the corresponding functions are involved. The latter direction is 
+interesting as it allows defining lattice metrics without using lattice estimates.}
+
+\KWE{topological data analysis; lattice theory; algebraic approach by 
+Yu.\,I.~Zhuravlev; functional analysis}
+
+
+
+\DOI{10.14357/19922264240110}{RIVOXR}
+
+\vspace*{-12pt}
+
+\Ack
+
+\vspace*{-3pt}
+
+\noindent
+The research was funded by the Russian Science Foundation, project  
+No.\,23-21-00154. The research was carried out using the infrastructure of the Shared 
+Research Facilities ``High Performance Computing and Big Data'' (CKP 
+``Informatics'') of FRC CSC RAS (Moscow).
+
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9} 
+\bibitem{1-tr-1}
+\Aue{Zhuravlеv, Yu.\,I., K.\,V.~Rudakov, and I.\,Yu.~Torshin.} 2011. 
+Algebraicheskie kriterii lokal'noy razreshimosti i~re\-gu\-lyar\-nosti kak instrument 
+issledovaniya morfologii ami\-no\-kis\-lot\-nykh posledovatel'nostey [Algebraic criteria of local solvability and regularity as a~tool
+for studying the morphology of amino acid sequences]. \textit{Trudy MFTI} [Proceedings 
+of Moscow Institute of Physics and Technology] 3(4):45--54. EDN: OJYMVJ.
+\bibitem{2-tr-1}
+\Aue{Rudakov, K.\,V., and I.\,Yu.~Torshin.} 2012. Analiz informativnosti motivov na 
+osnove kriteriya razreshimosti v~zadache raspoznavaniya vtorichnoy struktury belka 
+[Analysis of the informativeness of motives based on the criterion of solvability in 
+the problem of recognizing the secondary structure of a~protein]. \textit{Informatika 
+i~ee Primeneniya~--- Inform Appl.} 6(1):79--90. EDN: OZHDTV.
+\bibitem{3-tr-1}
+\Aue{Torshin, I.\,Yu.} 2023. O~zadachakh optimizatsii, voznikayushchikh pri 
+primenenii topologicheskogo analiza dannykh k~poisku algoritmov prognozirovaniya 
+s~fiksirovannymi korrektorami [On optimization problems arising from the 
+application of topological data analysis to the search for forecasting algorithms with 
+fixed correctors]. \textit{Informatika i~ee Primeneniya~--- Inform Appl.} 
+ 17(2):2--10. doi: 10.14357/19922264230201. EDN: IGSPEW.
+\bibitem{4-tr-1}
+\Aue{Torshin, I.\,Yu.} 2023. O~formirovanii mnozhestv pretsedentov na osnove 
+tablits raznorodnykh priznakovykh opisaniy metodami topologicheskoy teorii analiza 
+dannykh [On the formation of sets of precedents based on tables of heterogeneous 
+feature descriptions by methods of topological theory of data analysis]. 
+\textit{Informatika i~ee Primeneniya~--- Inform Appl.} 17(3):2--7. doi: 
+10.14357/19922264230301. EDN: AQEUYO.
+\bibitem{5-tr-1}
+\Aue{Torshin, I.\,Yu., and K.\,V.~Rudakov.} 2019. On the procedures of generation of 
+numerical features over partitions of sets of objects in the problem of predicting 
+numerical target variables. \textit{Pattern Recognition Image Analysis} 29(4):654--667. 
+doi: 10.1134/S1054661819040175.
+\bibitem{6-tr-1}
+\Aue{Kolmogorov, A.\,N., and S.\,V.~Fomin.} 1989. \textit{Elementy teorii funktsiy 
+i~funktsional'nogo analiza} [Elements of theory of functions and functional 
+analysis]. Moscow: Nauka. 624~p.
+\bibitem{7-tr-1}
+\Aue{Torshin, I.\,Yu., and K.\,V.~Rudakov.} 2017. Combinatorial analysis of the 
+solvability properties of the problems of recognition and completeness of algorithmic 
+models. Part~2: Metric approach within the framework of the theory of classification 
+of feature values. \textit{Pattern Recognition Image Analysis} 27(2):184--199. doi: 
+10.1134/S1054661817020110.
+\bibitem{8-tr-1}
+\Aue{Deza, E., and M.\,M.~Deza.} 2006. \textit{Dictionary of distances}.  
+North-Holland: Elsevier. 412~p. doi: 10.1016/B978-0-444-52087-6.X5000-8.
+\bibitem{9-tr-1}
+\Aue{Torshin, I.\,Y., and K.\,V.~Rudakov.} 2015. On the theoretical basis of metric 
+analysis of poorly formalized problems of recognition and classification. \textit{Pattern 
+Recognition Image Analysis} 25(4):577--587. doi: 10.1134/ S1054661815040252.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received January 15, 2023}} 
+
+%\vspace*{-18pt}
+     
+     \Contrl
+     
+ %    \vspace*{-3pt}
+
+\noindent
+\textbf{Torshin Ivan Yu.} (b.\ 1972)~--- Candidate of Science (PhD) in physics and 
+mathematics, Candidate of Science (PhD) in chemistry, leading scientist, Federal 
+Research Center ``Computer Science and Control'' of the Russian Academy of 
+Sciences, 44-2~Vavilov Str, Moscow 119333, Russian Federation; 
+\mbox{tiy135@yahoo.com}
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

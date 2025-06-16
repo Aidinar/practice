@@ -1,0 +1,1476 @@
+\def\prn{p_{r,\nu}}
+\def\crn{c_{r,\nu}}
+\def\qpn{q_{p,\nu}}
+\def\qrm{q_{p,\mu}}
+\def\ral{{\mathrm{ЭЛ}}}
+\def\mal{{\mathrm{МЭЛ}}}
+\def\srn{S_{r,\nu}}
+
+
+
+\def\stat{sinits}
+
+\def\tit{АНАЛИТИЧЕСКОЕ МОДЕЛИРОВАНИЕ
+ РАСПРЕДЕЛЕНИЙ В~НЕЛИНЕЙНЫХ 
+СТОХАСТИЧЕСКИХ  СИСТЕМАХ НА~МНОГООБРАЗИЯХ МЕТОДОМ  ЭЛЛИПСОИДАЛЬНОЙ АППРОКСИМАЦИИ$^*$}
+
+\def\titkol{Аналитическое моделирование
+ распределений в~нелинейных  %стохастических  системах на~многообразиях
+МСтС методом  ЭА} %эллипсоидальной аппроксимации}
+
+\def\aut{И.\,Н.~Синицын$^1$, В.\,И.~Синицын$^2$}
+
+\def\autkol{И.\,Н.~Синицын, В.\,И.~Синицын}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при финансовой поддержке  РФФИ (проект 15-07-02244).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского
+центра <<Информатика и~управление>> Российской академии наук,
+sinitsin@dol.ru}
+\footnotetext[2]{Институт проблем информатики Федерального исследовательского
+центра <<Информатика и~управление>> Российской академии наук,
+vsinitsin@ipiran.ru}
+
+\vspace*{-6pt}
+
+\Abst{Рассматриваются вопросы оценки точности и~чувствительности алгоритмов 
+структурного аналитического моделирования одно- и~многомерных распределений  
+методами эл\-липсо\-и\-даль\-ной аппроксимации (ЭА) и~эл\-липсо\-и\-даль\-ной
+ линеаризации (ЭЛ). 
+Разработаны общие алгоритмы эл\-липсо\-и\-даль\-но\-го анализа распределений в~нелинейных 
+стохастических системах (СтС) на многообразиях (МСтС) с~винеровскими и~пуассоновскими шумами. 
+Особое внимание уделено алгоритмам для МСтС с~аддитивными негауссовскими шумами.
+Получены уравнения точности и~чувствительности к~параметрам. В~качестве иллюстрации 
+рассмотрена нелинейная двумерная угловая система с~аддитивным угловым белым шумом. 
+Составлены уравнения точности и~чувствительности, позволяющие оценивать моменты до 
+четвертого порядка включительно. Приведены результаты численных расчетов, показывающие 
+эффективность метода ЭА (ЭЛ) по сравнению с~общим методом ортогональных разложений 
+одномерной плотности. Сформулированы некоторые возможные обобщения.}
+
+\KW{метод аналитического моделирования (МАМ);
+метод эллипсоидальной аппроксимации (МЭА);
+метод эллипсоидальной линеаризации (МЭЛ);
+плотность одно- и~многомерного распределения;
+стохастическая система на многообразиях (МСтС);
+уравнения точности МЭА и~МЭЛ;
+уравнения чувствительности МЭА и~МЭЛ}
+
+\DOI{10.14357/19922264160104} 
+
+\vspace*{-2pt}
+
+\vskip 12pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+
+ В~[1, 2] подробно описаны известные методы аналитического моделирования (МАМ) 
+ распределений процессов в~СтС, описываемых дифференциальными 
+ стохастическими уравнениями Ито с~винеровскими и~пуассоновскими шумами, основанные на 
+ параметризации их распределений.
+%
+Обобщение результатов~[1, 2] на случай многоканальных круговых и~сферических 
+СтС выполнено\linebreak в~[3--7].
+Статья~[8] посвящена развитию дискрет-\linebreak ных методов параметрического статистического
+ и~аналитического моделирования в~МСтС. В~ней рас\-смот\-ре\-ны 
+ уравнения МСтС, приближенные методы статистического моделирования (МСМ) различной 
+ точности и~методы аналитического моделирования (МАМ). Подробно развита нелинейная 
+ корреляционная теория МСМ и~ МАМ. 
+ %
+ В~[9, 10] пред\-став\-лены МАМ одно- и~многомерных 
+ распределений в~МСтС, основанные на методе ортогональных разложений (МОР) плотностей. 
+ Рас\-смот\-рим развитие~[9, 10] на случай, когда плотности допускают 
+ЭА~\cite{1-sin, 2-sin, 11-sin}.
+%
+В~[9--12] %\cite{9-sin, 10-sin, 11-sin, 12-sin} 
+развиты методы и~алгоритмы аналитического 
+моделирования гауссовских (нормальных) процессов в~МСтС.
+
+Статья включает в~себя: введение, 5~разделов, заключение и~список литературы. 
+В~разд.~2 представлены уравнения МСтС. Общие уравнения метода ЭА (МЭА) даны в~разд.~3, а для МСтС с~аддитивными шумами разработан 
+метод ЭЛ (МЭЛ) в~разд.~4.  В~разд.~5 получены уравнения 
+точности и~чувствительности МЭА и~МЭЛ. Раздел~6 содержит иллюстративный пример. 
+В~заключении кратко сформулированы основные результаты и~указаны некоторые возможные 
+обобщения.
+
+\vspace*{-15pt}
+
+
+\section{Уравнения нелинейных стохастических систем на~многообразиях}
+
+\vspace*{-6pt}
+
+Рассмотрим сначала дифференциальную  СтС в~конечномерном пространстве следующего вида:
+
+\noindent
+    \begin{multline}
+    dY_t= a (Y_t,\Theta,t)\, dt + b(Y_t,\Theta,t)\, d W_0 + {}\\
+    {}+
+    \int\limits_{R_0^q} c(Y_t,\Theta,t,v) \,dP^0 (\Theta, t,
+    dv)\,,\enskip Y(t_0)=Y_0\,.\label{e2.1-sin}
+    \end{multline}
+Здесь $Y_t$~--- $p$-мер\-ный вектор состояния, $Y_t\hm\in \Delta^y$\linebreak ($\Delta^y$~--- 
+многообразие состояний); $\Theta$~--- вектор  случайных параметров размерности~$p^\Theta$;
+$a\hm=a (y_t,\Theta,t)$ и~$b\hm= b(y_t,\Theta,t)$~--- известные $(p\times 1)$-мер\-ная 
+и~$(p\times r)$-мер\-ная функции вектора~$Y_t$ и~времени~$t$; $W_0\hm= W_0(\Theta, t)$~---
+$r$-мер\-ный винеровский стохастический процесс (СтП) интенсивности $\nu_0\hm=
+\nu_0(\Theta,t)$; $c(y_t,\Theta, t,v)$~--- $(p\times 1)$-мер\-ная функция~$y_t$, 
+$t$ и~вспомогательного
+$(q\times 1)$-мер\-но\-го парамет\-ра~$v$; $\int\limits d P^0 (\Theta, t,A)$~--- 
+центрированная пуассоновская мера:
+    $$
+    \int\limits_{\Delta}\, dP^0 (\Theta, t,A)= 
+    \int\limits_{\Delta} \,dP (\Theta, t,A)-
+    \int\limits_{\Delta} \nu_P (\Theta, t,A)\, dt\,,
+    $$
+где $\int\limits_{\Delta} d P (\Theta, t,A)$~--- число скачков пуассоновского
+СтП в~интервале времени~$\Delta$; $\nu_P (\Theta, t,A)$~--- интенсивность
+пуассоновского СтП $P(t,A)$;
+$A$~--- некоторое борелевское множество пространства~$R^q_0$ 
+с~выколотым началом координат.
+Интеграл~(1) в~общем случае распространяется на все пространство~$R_0^q$ 
+с~выколотым началом координат.
+Начальное значение~$Y_0$ вектора~$Y_t$ представляет
+собой случайную величину (с.в.), не зависящую от приращений винеровского
+СтП $W_0(\Theta, t)$ и~пуассоновского СтП $P(\Theta, t,A)$ на интервалах
+времени $\Delta\hm= (t_1, t_2]$, следующих за~$t_0$, $t_0\hm\le t_1\hm\le t_2$,
+для любого множества~$A$.
+
+Теперь выделим важный частный случай~(\ref{e2.1-sin}):
+    \begin{equation}
+    \dot Y_t = a (Y_t,\Theta, t)+ b_0 (\Theta,t) V(\Theta)
+    \label{e2.2-sin}
+    \end{equation}
+при следующих допущениях
+\begin{gather*}
+    b(Y_t,\Theta, t)= b_0 (\Theta, t)\,;\enskip c(Y_t,\Theta, t,v) = c_0(v,\Theta)\,;
+   % \label{e2.3-sin}
+\\
+V=\dot W\,;\quad W = W_0 + W_P\,;\\
+W_P = \iii\limits_{R_0^q} c_0 (v,\Theta) 
+P^0(\Theta, t, dv)\,;
+%\label{e2.4-sin}
+\end{gather*}
+
+\vspace*{-13pt}
+
+\noindent
+\begin{align*}
+\chi^{W_0} &=\chi^{W_0} (\mu; \Theta, t) =- \fr{1}{2}\, \mu^{\mathrm{T}} 
+\nu_0 (\Theta, t) \mu\,;\\
+\chi^{W_P}&=\chi^{W_P} (\mu; \Theta, t) = \iii_{R_0^q} \left[ 
+e^{i\la^T c_0(v,\Theta)} -1-{}\right.\\
+&\left.\hspace*{15mm}{}-i\mu^T c_0(v,\Theta)\vphantom{e^{i\la^T c_0(v,\Theta)}}
+\right] \nu_P 
+(\Theta, t,v)\,dv\,.
+%\label{e2.5-sin}
+\end{align*}
+Здесь $\nu_0 \hm=\nu_0 (\Theta, t)$ и~$\nu_P\hm=\nu_P(\Theta, t,v)$~--- 
+интенсивности СтП и~потока скачков, равных $c_0(v,\Theta)$; $\chi^{W_0}$ 
+и~$\chi^{W_P}$~--- логарифмические производные одномерных характеристических 
+функций СтП~$W_0$ и~$W_P$.
+
+Для вычисления вероятностей событий,
+связанных с~СтП, в~прикладных задачах достаточно
+знания многомерных распределений. Поэтому центральной
+задачей теории МСтС является задача вероятност\-ного анализа одномерных
+распределений СтП, удовлетворяющих дифференциальному стохастическому
+уравнению Ито~(\ref{e2.1-sin}) при соответствующих начальных условиях.
+В~теории МСтС различают два принципиально разных подхода
+к~вычислению распределений. Первый общий подход основан на
+статистическом моделировании, т.\,е.\ на прямом численном решении~(\ref{e2.1-sin}) 
+с~последу-\linebreak ющей статистической обработкой результатов.\linebreak Второй общий
+подход основан на теории непрерывных марковских СтП 
+и~предполагает аналитическое\linebreak моделирование, т.\,е.\ решение
+детерминированных уравнений в~функциональных пространствах
+(уравнений Фок\-ке\-ра--План\-ка--Кол\-мо\-го\-ро\-ва, Фел\-ле\-ра--Кол\-мо\-го\-ро\-ва,
+Пугачёва и~др.)\ для одномерных\linebreak распределений. 
+В~практических задачах час\-то используют и~комбинированные методы. При
+этом будем предполагать, что существуют  одно- и~многомерные
+плотности СтП в~МСтС~(\ref{e2.1-sin}) и~(\ref{e2.2-sin}). Достаточные условиях их
+существования можно найти, например, в~\cite{1-sin, 2-sin, 12-sin}.
+
+\vspace*{-9pt}
+
+\section{Эллипсоидальная аппроксимация одно- и~многомерных распределений в~стохастической
+системе на~многообразиях~(\ref{e2.1-sin})}
+
+\vspace*{-2pt}
+
+Как известно~\cite{11-sin}, для конечномерных МСтС часто оказывается полезной
+структурная аппроксимация распределений посредством эллипсоидальных
+распределений. Следуя~\cite{11-sin},  для структурной аппроксимации
+плотностей вероятности\linebreak случайных векторов будем использовать
+плотности, имеющие эллипсоидальную структуру, т.\,е.\ плотности, 
+у~которых поверхностями уровней равной вероятности являются подобные
+концентрические\linebreak эллипсоиды (эллипсы для двумерных векторов,
+эллипсоиды для трехмерных векторов, ги\-пер\-эл\-лип\-со\-иды для векторов
+размерности больше трех).\linebreak В~частности, эллипсоидальную структуру
+имеет нормальное распределение в~любом конечномерном пространстве.
+Характерная особенность таких распределений состоит в~том, что их
+плотности вероятности являются функциями  положительно определенной квадратичной
+формы $u\hm=u(y)\hm=(y^T\hm-m^T)C(y\hm-m)$, где $m$~--- математическое ожидание
+случайного вектора~$Y$; $C$~--- некоторая положительно определенная матрица.
+
+Для нахождения ЭА плотности вероятности\linebreak
+$r$-мер\-но\-го случайного вектора будем пользоваться конечным
+отрезком разложения по биортонормальной системе полиномов
+$\{p_{r,\nu}(u(y)),q_{r,\nu}(u(y))\}$, которые зависят только от
+квадратичной формы $u\hm=u(y)$ и~функцией веса для которых служит
+некоторая плотность вероятности эллипсоидальной структуры $w(u(y))$:
+   \begin{equation}
+{\rm M}_{\Delta^y}^w\left[    p_{r,\nu}\left(u(Y)\right)q_{r,\mu}(u(Y))\right]=
+    \delta_{\nu\mu}.\label{e3.1-sin}
+\end{equation}
+
+
+
+Индексы $\nu$ и~$\mu$ у~полиномов означают их степени относительно
+переменной~$u$. Конкретный вид и~свойства полиномов определены
+ниже. Однако без потери общности можно принять, что
+$q_{r,0}(u)\hm=p_{r,0}(u)\hm=1$. Тогда плотность вероятности вектора~$Y$
+может быть приближенно представлена в~виде:
+\begin{equation}
+f(y)\approx   f^*(u)=w(u)\sum\limits_{\nu=0}^N  \crn \prn(u)\,,
+\label{e3.2-sin}
+\end{equation}
+где коэффициенты~$\crn$ определяются по формуле
+    \begin{equation}
+    \crn=\mathrm{M}_{\Delta^y}^{\mathrm{ЭА}}\left[q_{r,\nu}(U)\right]\,,\enskip 
+    (\nu=1,\ldots,N).
+    \label{e3.3-sin}
+    \end{equation}
+Учитывая, что $p_{r,0}(u)$ и~$q_{r,0}(u)$~--- взаимно обратные
+постоянные (полиномы нулевой степени), то всегда $c_{r,0}p_{r,0}\hm=1$.
+Поэтому из формулы~(\ref{e3.2-sin}) следует,~что
+\begin{equation}
+f(y)\approx     f^*(u)=w(u)\left[1+\sum\limits_{\nu=2}^N \crn\prn(u)
+    \right]\,.\label{e3.4-sin}
+    \end{equation}
+
+Для приложений большое значение имеет случай, когда за
+распределение $w(u)$ выбирается нормальное (гауссовское) распределение
+\begin{equation*}
+w(u)=w(y^TCy)=\fr{1}{\sqrt{(2\pi)^r\vert
+    K\vert}}\exp\left(-\fr{y^TK^{-1}y}{2}\right)\,. %\label{e3.5-sin}
+    \end{equation*}
+Учитывая, что $C\hm=K^{-1}$, приведем условие биортонормальности~(\ref{e3.1-sin}) к~виду:
+    \begin{equation*}
+    \fr{1}{2^{r/2}\Gamma(r/2)}\int\limits_0^{\infty}
+    \prn(u)\qrm(u)u^{r/2-1}e^{-u/2}\,du=\delta_{\nu\mu}\,.
+%\label{e3.6-sin}
+\end{equation*}
+
+ Задача выбора системы полиномов $\{\prn(u),\qrm(u)\}$,
+используемой при ЭА плотностей~(\ref{e3.2-sin})
+и~(\ref{e3.3-sin}), сводится к~нахождению биортонормальной системы
+полиномов, для которой весом служит $\chi^2$-рас\-пре\-де\-ле\-ние 
+с~$r$~степенями свободы. При этом используются следующие формулы:
+
+\noindent
+\begin{align*}
+p_{r,\nu}(u)&=S_{r,\nu}(u)\,;\\[6pt] 
+q_{r,\nu}(u)&=\fr{(r-2)!!}
+{(r+2\nu-2)!!(2\nu)!!}\,S_{r,\nu}(u)\,,
+    \enskip r\ge 2\,,
+    %    \label{e3.7-sin}
+    \end{align*}
+    где
+   \begin{multline*}
+S_{r,\nu}(u)=S_{\nu}^{r/2-1}(u)={}\\
+{}=\sum\limits_{\mu=0}^{\nu}(-1)^{\nu+\mu}
+    C_{\nu}^{\mu}\fr{(r+2\nu-2)!!}{(r+2\mu-2)!!}\,u^{\mu}\,.
+    %\label{e3.8-sin}
+    \end{multline*}
+    
+    \vspace*{-8pt}
+
+При разложении по полиномам~$\srn(u)$ плот\-ности вероятности
+случайного вектора~$Y$ и~всех его возможных проекций согласованы.
+
+Пользуясь обобщенной формулой Ито~[1, 2] для дифференциала нелинейной функции  
+$\vrp \hm= \vrp(Y_t,\Theta,t)$
+\begin{multline*}
+    d\vrp (Y_t, \Theta, t) = {}\\[1pt]
+    {}=
+    \left\{ 
+    \vphantom{b\left(Y_t, \Theta, t\right)^{\mathrm{T}}}
+    \vrp_t \left(Y_t, \Theta, t\right)+ \vrp_Y \left(Y_t, \Theta, t\right)^{\mathrm{T}}
+    a \left(Y_t, \Theta, t\right)+{}\right.\\[1pt]
+{}+\fr{1}{2} \,\mathrm{tr} \left[ 
+\vphantom{b\left(Y_t, \Theta, t\right)^{\mathrm{T}}}
+\vrp_{YY} \left(Y_t, \Theta, t\right) 
+b\left(Y_t, \Theta, t\right)\nu_0(\Theta, t)\times{}\right.\\[1pt]
+\left.\left.{}\times b\left(Y_t, \Theta, t\right)^{\mathrm{T}} 
+\right]\right\}  dt+{}\\[1pt]
+{}+ \iii_{R_0^q} \left[ 
+\vphantom{\left(Y_t, \Theta, t\right)^{\mathrm{T}} }
+\vrp  \left( Y_t + c \left(Y_t, \Theta, t,v\right) - \vrp \left(Y_t, \Theta, t\right)-{}\right.\right.\\[1pt]
+\left.{} -\vrp_Y \left(Y_t, \Theta, t\right)^{\mathrm{T}} 
+c(Y_t, \Theta, t,v)\right] \nu_P (\Theta,  dv)\,dt+ {}\\[1pt]
+{}+
+\vrp_Y\left(Y_t, \Theta, t\right)^{\mathrm{T}} b \left(Y_t, \Theta, t\right)\, dW_0 
+(\Theta, t) + {}\\[1pt]
+{}+\iii_{R_0^q} \left[ \vrp\left(Y+c\left(Y_t, \Theta, t,v\right), \Theta, t\right) - \right.{}\\[1pt]
+\left.{}-\vrp \left(Y_t, \Theta, t\right)\right] P^0 (\Theta, dt,dv)\,,
+%\label{e3.9-sin}
+\end{multline*}
+получаем, что уравнения
+для нахождения одномерной плотности
+вероятности $f_1(y;t)$ $p$-мер\-но\-го случайного процесса~$Y_t$,
+определяемого стохастическим дифференциальным уравнением Ито~(\ref{e2.1-sin}), 
+с~по\-мощью МЭА имеют вид:
+
+\vspace*{-8pt}
+
+\noindent
+    \begin{multline}
+    f_1(y;\Theta, t)\cong f_1^{\mathrm{ЭА}}(\Theta,u)={}\\
+{}=w_1(\Theta,u)\left[
+    1+\sum\limits_{\nu=2}^N c_{p,\nu} p_{p,\nu}(\Theta,u)\right]\,,
+        \label{e3.10-sin}
+    \end{multline}
+    где
+    
+    \vspace*{-13pt}
+    
+    \noindent
+\begin{align*}
+    u&= (y-m)^{\mathrm{T}} K^{-1} (y-m)\,;\\
+     c_{p,\nu}&=\mm_{\Delta^y}^{\mathrm{ЭА}}\left[\qpn\left(U_t\right)\right]\quad
+    (\nu=1,\ldots,N)\,.\notag
+ %   \label{e3.11-sin}
+    \end{align*}
+Здесь $m=m_t$, $K\hm=K_t$ удовлетворяют уравнениям
+
+\vspace*{-2pt}
+
+\noindent
+   \begin{multline}
+  \dot m= A^m \left(m_t, K_t, \Theta, t\right) = 
+    \varphi_{10}\left(m_t,K_t,\Theta, t\right)+{}\\
+ {}+\sum\limits_{\nu=2}^N
+    c_{p,\nu}\varphi_{1\nu}\left(m_t,K_t,\Theta, t\right)\,;
+    \label{e3.12-sin}
+\end{multline}
+
+%\vspace*{-14pt}
+
+\noindent
+\begin{multline}
+\dot K_t=A^K \left(m_t, K_t, \Theta, t\right) =
+    \varphi_{20}\left(m_t,K_t,\Theta,t\right)+{}\\
+{}+\sum\limits_{\nu=2}^N
+    c_{p,\nu}\varphi_{2\nu}\left(m_t,K_t,\Theta,t\right),
+      \label{e3.13-sin}
+    \end{multline}
+
+%    \pagebreak
+    
+    \noindent
+где введены следующие обозначения:
+    \begin{equation}
+    \left.
+\begin{array}{rl}
+        \hspace*{-2mm}\varphi_{10}\left(m_t,K_t,t\right)&=\mm_{\Delta^y}^{w_1} 
+    [a(Y,\Theta, t)]\,; %\label{e3.14-sin}
+    \\[4pt]
+    \hspace*{-2mm}\varphi_{1\nu}\left(m_t,K_t,t\right)&=\mm_{\Delta^y}^{p_{p,\nu}w_1}
+[a(Y,\Theta, t)]\,; %\label{e3.15-sin}
+\\[4pt]
+    \hspace*{-3mm}\varphi_{20}\left(m_t,K_t,t\right)&={}\\[4pt]
+&\hspace*{-16mm}{}=\mm_{\Delta^y}^{w_1}
+    \left[a(Y,\Theta,t)\left(Y^{\mathrm{T}}-m_t^{\mathrm{T}}\right)+{}\right.\\[4pt]
+    &\left.\hspace*{-16mm}{}+
+    \left(Y-m_t\right) a(Y,\Theta,t)^{\mathrm{T}}  +{\bar\sigma}(Y,\Theta, t)\right]\,;
+    %\label{e3.16-sin}
+    \\[3pt]
+    \hspace*{-2mm}a_{2\nu}\left(m_t,K_t,\Theta, t\right)&={}\\[4pt]
+&\hspace*{-16mm}{}=\mm_{\Delta^y}^{p_{p,\nu}w_1}
+    \left[a(Y,\Theta,t)\left(y^{\mathrm{T}}-m_t^{\mathrm{T}}\right)+{}\right.\\[4pt]
+&\hspace*{-18mm}\left.{}+    \left(Y-m_t\right) a(Y,\Theta, t)^{\mathrm{T}}+{\bar\sigma}(Y,\Theta,t)\right].
+\end{array}\!\!
+\right\}
+    \label{e3.17-sin}
+    \end{equation}
+Коэффициенты $c_{p,\kappa}= c_{p,\kappa,t}$ определяются уравнением
+
+\vspace*{-2pt}
+
+\noindent
+    \begin{multline}
+    \dot c_{p,\kappa}=A^{c_p,\kappa} \left(m_t, K_t, \Theta, t\right)={}\\
+    {}=
+    -\left(\fr{c_{p,\kappa-1}}{2p} - \fr{\kappa
+    c_{p,\kappa}}{p}\right) \mathrm{tr}\left\{
+    \vphantom{\sum\limits_{\nu=2}^N}
+    K_t^{-1}\varphi_{20}\left(m_t,K_t,\Theta,t\right)+{}\right.\\
+\left.    {}+
+    K_t^{-1}\sum\limits_{\nu=2}^N c_{p,\nu}\varphi_{2\nu}\left(m_t,K_t,\Theta,t\right)\right\}+{}\\
+{}+\psi_{\kappa0}\left(m_t,K_t,\Theta,t\right)+
+\sum\limits_{\nu=2}^N c_{p,\nu}\psi_{\kappa\nu}\left(m_t,K_t,\Theta,t\right)\,,
+    \\
+     \kappa=2,\ldots,N\,,\label{e3.18-sin}
+    \end{multline}
+где введены следующие обозначения:
+
+\vspace*{-2pt}
+
+\noindent
+  \begin{multline}
+  \psi_{\kappa 0}\left(m_t,K_t,\Theta,t\right)={}\\[-1pt]
+  {}=
+  \mm_{\Delta^y}^{w_1}\left[
+  q_{p,\kappa}'(U)\bigg(2\left(Y-m_t\right)^{\mathrm{T}}K_t^{-1} a(Y,\Theta,t)+{}\right.\\[-1pt]
+{}+    \mathrm{tr}\,K_t^{-1}\sigma(Y,\Theta,t)\bigg)+{}\\[-1pt]
+{}+ 2q_{\kappa}''(U)\left(Y-m_t\right)^{\mathrm{T}}K^{-1}\sigma(Y,\Theta,t)
+\left(Y-m_t\right)+{}\\[-1pt]
+{}+\int\limits_{R_0^q} \bigg\{
+q_{p,\kappa}\left[
+\left(Y^{\mathrm{T}}+{c}^{\mathrm{T}}-m_t^{\mathrm{T}}\right)
+K_t^{-1}\left(Y+c-m_t\right)\right]-{}\\[-1pt]
+{}-q_{p,\kappa}(U)-{}\\[-1pt]
+\left.{}-2q_{p,\kappa}'(U)\left(Y-m_t\right)^{\mathrm{T}}
+    K_t^{-1}c \bigg\}\nu_P(\tau, dv)\right]\,;\label{e3.19-sin}
+    \end{multline}
+    
+    \vspace*{-14pt}
+    
+    \noindent
+    \begin{multline*}
+\psi_{\kappa \nu}\left(m_t,K_t,\Theta,t\right)={}\\
+   {}=\mm_{\Delta^y}^{p_{p,\nu}w_1} \left[q_{p,\kappa}'(U)
+   \left(2\left(Y-m_t\right)^{\mathrm{T}}K_t^{-1}a\left(Y,\Theta,t\right)+{}\right.\right.\\
+\left.{}+    \hbox{\rm tr}\,K_t^{-1}\sigma(Y,\Theta,t)
+\vphantom{q_{p,\kappa}'(U) \left(Y-m_t\right)^{\mathrm{T}}}
+\right)+{}\\
+    {}+2q_{\kappa}''(U)\left(Y-m_t\right)^{\mathrm{T}}
+    K_t^{-1}\sigma(Y,\Theta,t)K_t^{-1}\left(Y-m_t\right)+{}\\
+         {}+\int\limits_{R_0^q}
+    \left\{ \vphantom{\left(Y-m_t\right)^{\mathrm{T}}}
+    q_{p,\kappa}\left(\left(Y^{\mathrm{T}}+c^{\mathrm{T}}-m_t^{\mathrm{T}}\right)
+    K_t^{-1}\left(Y+c-m_t\right)\right)-{}\right.
+       \end{multline*}
+       
+    \noindent
+    \begin{multline}
+{}-q_{p,\kappa}(U) -{}\\
+\left.\left.{}-2q_{p,\kappa}'(U)\left(Y-m_t\right)^{\mathrm{T}}K_t^{-1}c\right\}
+    \nu_P(t,dv)\right]. 
+    \label{e3.20-sin}
+    \end{multline}
+    
+    \vspace*{-2pt}
+
+Таким образом, уравнения~(\ref{e3.12-sin}), (\ref{e3.13-sin}) и~(\ref{e3.18-sin}) при
+начальных условиях
+
+\noindent
+  \begin{equation}
+  \left.
+  \begin{array}{c}
+  m\left(\Theta,t_0\right)=m_0\,;\enskip K\left(\Theta,t_0\right)=K_0\,;
+    \\[6pt]
+    c_{p,\kappa}\left(\Theta,t_0\right)=c_{p,\kappa}^0\enskip
+    (\kappa=2,\ldots,N) 
+    \end{array}
+    \right\}
+    \label{e3.21-sin}
+    \end{equation}
+определяют $m_t$, $K_t$, $c_{p,2},\ldots,c_{p,N}$ как функции
+времени. Для нахождения величин~$c_{p,\kappa}^0$ следует
+аппроксимировать плотность начального значения~$Y_0$ вектора
+состояния системы формулой~(\ref{e3.10-sin}).
+
+Количество уравнений
+МЭА лишь на $N/2 \hm-1$ больше числа уравнений метода нормальной аппроксимации (МНА): 
+$Q^{\mathrm{МЭА}} 
+\hm=Q_{\mathrm{МНА}} \hm+ N/2 \hm-1$.
+
+Теперь представим $n$-мер\-ную плотность вероятности
+процесса~$Y_t$ в~форме
+
+    \vspace*{-8pt}
+
+\noindent
+    \begin{multline}
+    f_n\left(y_1,\ldots,y_n;\Theta,t_1,\ldots,t_n\right)
+    \approx f_n^{\mathrm{ЭА}}(\Theta,u)={}\\
+{}=w_n(\Theta,u)\left[1+\sum\limits_{\nu=2}^N c_{np,\nu}p_{np,\nu}(\Theta,u)\right]\,,
+    \label{e3.22-sin}
+    \end{multline}
+    где
+    $$
+    c_{np,\nu}=\mm_{\Delta^y}^{f_n} \left[q_{np,\nu}\left(U_t\right)\right].
+$$
+Здесь использованы следующие обозначения:
+
+    \vspace*{-8pt}
+
+    \noindent
+\begin{gather*}
+U_t=\left(\tilde Y_n-\tilde     m_n\right)^{\mathrm{T}}
+C_n\left(\tilde Y_n-\tilde m_n\right);\enskip C_n=K_n^{-1}\,;\\[2pt]
+\tilde  Y_n=\left[Y_1^{\mathrm{T}}\,\,Y_2^{\mathrm{T}}\,\cdots\,T_n^{\mathrm{T}}\right]^{\mathrm{T}}\,;
+\enskip
+    Y_k=Y\left(t_k\right)\,;\\[2pt]
+\tilde
+    m_n=\left[ m_1^{\mathrm{T}}\,\,m_2^{\mathrm{T}}\,\cdots\,m_n^{\mathrm{T}}\right]^{\mathrm{T}};
+    \enskip m_k=m\left(t_k\right)\,;
+   \\[2pt]
+%\label{e3.23-sin}
+K_n=\begin{bmatrix} 
+K(t_1,t_1) &K(t_1,t_2) &\cdots     &K(t_1,t_n)\\ 
+    K(t_2,t_1) &K(t_2,t_2) &\cdots &K(t_2,t_n)\\
+    \vdots &\vdots &\vdots &\vdots\\
+    K(t_n,t_1) &K(t_n,t_2) &\cdots &K(t_n,t_n)\end{bmatrix}
+\,,
+%\label{e3.24-sin}
+\end{gather*}
+где $K(t_i,t_j)$~--- ковариационная функция процесса~$Y_t$;
+$C_n$~--- матрица, состоящая из блоков $C_{kl}^{(n)}$ размерности
+$p\times p$:
+    \begin{equation*}
+    C_n=\begin{bmatrix}
+     C_{11}^{(n)} &C_{12}^{(n)} &\cdots &C_{1n}^{(n)}\cr C_{21}^{(n)} &C_{22}^{(n)} &\ldots
+    &C_{2n}^{(n)}\\
+    \vdots &\vdots &\vdots &\vdots\\
+    C_{n1}^{(n)} &C_{n2}^{(n)} &\cdots &C_{nn}^{(n)}
+\end{bmatrix}\,;
+%\label{e3.25-sin}
+\end{equation*}
+ $\bar C_k \hm=\left[C_{k1}^{(n)}\,\cdots\,C_{kn}^{(n)}\right]$~--- 
+ее $k$-я блочная строка.
+
+В качестве $w_n(\Theta,u)$ возьмем гауссовскую плотность вероятности
+
+    \vspace*{-2pt}
+    
+\noindent
+\begin{equation*}
+w_n(\Theta,u)=\left[(2\pi)^n\vert
+    K_n\vert\right]^{-1/2}e^{-u/2}\,.
+    %\label{e3.26-sin}
+    \end{equation*}
+    
+    
+    \noindent
+ Полиномы $p_{np,\nu}(u)$ и~$q_{np,\nu}(u)$  определим форму\-лами:
+\begin{align*}
+p_{np,\nu}(u)&=S_{np,\nu}(u)={}\notag\\
+&{}=\sum\limits_{\mu=0}^{\nu} (-1)^{\nu-\mu}C_{\nu}^{\mu}
+    \fr{(np+2\nu-2)!!}{(np+2\mu-2)!!}\,u^{\mu}\,;
+    %\label{e3.27-sin}
+    \\
+q_{np,\nu}(u)&=\fr{(np-2)!!}{(np+2\nu-2)!!(2\nu)!!}\,p_{np,\nu}(u)\,.
+    %\label{e3.28-sin}
+    \end{align*}
+Символ $n$ в~индексе коэффициентов разложения и~полиномов означает
+принадлежность к~$n$-мер\-но\-му распределению.
+
+Уравнение для коэффициентов разложения~$c_{np,\kappa}$ примет вид:
+\begin{multline}
+\fr{\partial c_{np,\kappa}}{\partial t_n}= 
+A^{c_{np,\kappa}} \left(\tilde m_n, C_n, K_n,\Theta,t_n\right)
+    ={}\\
+    {}=-\left(fr{c_{np,\kappa-1}}{2np}+\fr{\kappa c_{np,\kappa}} {np}\right)
+    \mathrm{tr}\left[\fr{\partial K_n}{\partial t_n}\,C_n\,\right]+{}\\
+{}+\mm_{\Delta^y}^{\mathrm{ЭА}_n} \left\{
+    2q_{np,\kappa}'(U)\left(\tilde Y_n-\tilde m_n\right)^{\mathrm{T}} 
+    \bar C_n^{\mathrm{T}} a\left(Y_n,\Theta,t_n\right)+{}\right.\\
+  {}+2q_{np,\kappa}''(U)
+    \left(\tilde Y_n-\tilde m_n\right)^{\mathrm{T}} \bar C_n^{\mathrm{T}}
+    \sigma\left(Y_n,\Theta,t_n\right) \times{}\\
+    {}\times\bar C_n\left(\tilde Y_n-\tilde m_n\right)
++q_{np,\kappa}'(U)\,\mathrm{tr}\left[
+C_{nn}^{(n)}\sigma\left(Y_n,\Theta,t_n\right)\right]+{}\\
+{}+
+    \int\limits_{R_0^q} \left[q_{np,\kappa}(U)-\right.
+2q_{np,\kappa}'(U)\left(\tilde Y_n-\tilde m_n\right)^{\mathrm{T}}
+\times{}\\
+\left.\left.{}\times \bar  C_n^{\mathrm{T}}  c\left(Y_n,\Theta,t_n,v\right)
+    \nu_P(t,dv)\right]
+    \vphantom{\left(\tilde Y_n-\tilde m_n\right)^{\mathrm{T}} }
+    \right\}\\
+     (\kappa=2,3,\ldots,N).\label{e3.29-sin}
+    \end{multline}
+Будем требовать согласованности $n$- и~$(n-1)$-мер\-но\-го
+распределений при $t_n\hm=t_{n-1}\hm+\tau_n$, где $\tau_n$~---
+малая величина, достаточная для обеспечения существования матрицы~$C_n$. 
+Тогда начальные условия для уравнений~(\ref{e3.29-sin}),
+определяющих коэффициенты разложения, можно записать в~виде:
+\begin{multline}
+c_{np,\nu}\left(t_1,t_2,\ldots,t_{n-1},t_{n-1}+\tau_n\right)={}\\
+{}=c_{(n-1)p,\nu}\left(t_1,
+    \ldots,t_{n-1}\right)\,.\label{e3.30-sin}
+    \end{multline}
+
+В случае двумерного распределения $n\hm=2$ к~уравнениям для
+коэффициентов разложения~(\ref{e3.29-sin}) следует добавить уравнение для
+ковариационной функции процесса~$Y(t)$:
+\begin{equation}
+\fr{\partial K(t_1,t_2)}{\partial t_2}=
+   \mm_{\Delta^y}^{\mathrm{ЭА}_2}\lk \left(Y_1-m_1\right)a
+   \left(Y_2,\Theta,t_2\right)^{\mathrm{T}} \rk\,,
+\label{e3.31-sin}
+\end{equation}
+где $\mm_{\Delta^y}^{\mathrm{ЭА}_2}$ вычисляются на основе
+$$
+f_2^{\mathrm{ЭА}}(u)=w_2(\Theta,u)\!\left[1+\sum\limits_{\nu=2}^N
+    c_{2p,\nu}\left(\Theta,t_1,t_2\right)
+    p_{2p,\nu}(u)\right]; %\label{e3.32-sin}
+    $$
+    \begin{align*}
+w_2(\Theta,u)&=\left[(2\pi)^2\vert K_n\vert\right]^{-1/2}\times{}\\
+&\hspace*{3mm}{}\times\exp
+\left\{-\left(\tilde     y_n-\tilde     m_n\right)^{\mathrm{T}}
+K_n^{-1}\left(\tilde y_n-\tilde m_n\right)\right\}\,; %\label{e3.33-sin}
+\\
+p_{2p,\nu}(u)&=S_{2p,\nu}(u)={}\notag\\
+&\hspace*{10mm}{}=\sum\limits_{\mu=0}^{\nu}(-1)^{\nu-\mu}C_{\nu}^{\mu}
+    \fr{(2p+2\nu-2)!!}{(2p+2\mu-2)!!}\,u^{\mu}\,. %\label{e3.34-sin}
+    \end{align*}
+
+К этому уравнению следует добавить начальное условие
+$K(t_1,t_1)\hm=K(t_1)$.
+ Ввиду вырожденности двумерного распределения при $t_2\hm=t_1$ уравнение
+для ковариационной функции до момента $t_1\hm+\tau_2$ интегрируется при
+вырожденном распределении
+
+\noindent
+  \begin{multline*}
+  f_2^{\mathrm{ЭА}}(\Theta,u)\approx{}\\
+  {}\approx
+    w_1(\Theta,u)\!\left[1+\!\sum\limits_{\nu=2}^N
+    c_{1p,\nu}\left(\Theta,t_1\right)p_{1p,\nu}(u)\!\right]\delta
+    \left(y_1-y_2\right),\hspace*{-7.93599pt} %\label{e3.35-sin}
+    \end{multline*}
+а~начиная с~момента $t_1\hm+\tau_2$~--- совместно с~уравнениями~(\ref{e3.31-sin}). 
+Величина~$\tau_2$ определяется в~процессе
+интегрирования, когда матрица~$K_2$ станет невы\-рож\-ден\-ной.
+
+ Для приближенного определения МЭА одномерного распределения
+стационарного в~узком смысле процесса в~стационарной нелинейной
+негауссовской СтС~(\ref{e2.1-sin}) следует положить в~уравнениях~(\ref{e3.12-sin}),
+(\ref{e3.18-sin}) и~(\ref{e3.29-sin})
+    \begin{equation}
+    \dot m=0\,;\  \dot K=0\,;\  \dot c_{p,\kappa}=0\,,\ \kappa=1\,,
+    \ldots,N\,.\label{e3.36-sin}
+    \end{equation}
+Если полученные таким путем уравнения имеют решение, которое может
+служить вектором параметров соответствующей ЭА
+одномерного распределения, то можно предположить,
+что стационарный в~узком смысле процесс в~системе существует. 
+В~данном случае для определения других многомерных распределений
+этого стационарного процесса следует заменить в~уравнениях~(\ref{e3.29-sin}) 
+производные по~$t_n$ производными по
+$\tau_{n-1}\hm=t_n\hm-t_1$, а~начальные условия~(\ref{e3.30-sin}) принять в~виде:
+
+\noindent
+\begin{multline}
+c_{np,\kappa}\left(\Theta,\tau_1,\ldots,\tau_{n-2},\tau_{n-2}+\Delta\right)={}\\
+{}=
+    c_{(n-1)p,\kappa}\left(\Theta,\tau_1,\ldots,\tau_{n-2}\right)\,,
+    \label{e3.37-sin}
+    \end{multline}
+где $\Delta$~--- малая величина, обеспечивающая невы\-рож\-денность
+матрицы~$C$ в~уравнениях для параметров распределения.
+
+Таким образом, в~основе эллипсоидальных МАМ
+одно- и~$n$-мер\-ных распределений лежат следующие утверждения.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~3.1.}\ \textit{Пусть существует одномерное распределение СтП~$Y_t$ 
+в~МСтС}~(\ref{e2.1-sin}). \textit{Тогда при фиксированном векторе параметров~$\Theta$ 
+и~полиномиальных $\{ p_\nu, q_\nu\}$ в~основе алгоритма аналитического моделирования 
+по}\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+\textit{МЭА лежат уравнения}~(\ref{e3.10-sin})--(\ref{e3.13-sin}) 
+\textit{и}~(\ref{e3.18-sin}) \textit{при условии конечности интегралов}~(\ref{e3.17-sin}), 
+(\ref{e3.19-sin}) \textit{и}~(\ref{e3.20-sin}) 
+\textit{и~начальных условиях}~(\ref{e3.21-sin}). \textit{Количество уравнений МЭА 
+на  $N/2\hm -1$ больше числа уравнений МНА
+$Q^{\mathrm{МЭА}}\hm=Q^{\mathrm{МНА}}\hm+ N/2\hm-1$, 
+$Q^{\mathrm{МНА}}\hm= p(p\hm+3)/2$. В~стационарном случае используются конечные 
+уравнения}~(\ref{e3.36-sin}).
+
+\smallskip
+
+\noindent
+\textbf{Теорема~3.2.}\ \textit{Пусть существует $n$-мер\-ное распределение СтП~$Y_t$ 
+в~МСтС}~(\ref{e2.1-sin}). \textit{Тогда при фиксированном векторе параметров~$\Theta$ 
+и~полиномиальных $\{ p_{np,\nu}, q_{np,\nu}\}$ в~основе алгоритма аналитического 
+моделирования по МЭА при $n\hm=1$ лежат уравнения теоремы~$3.1$, а для  $n\hm>1$~--- 
+уравнения}~(\ref{e3.22-sin}) и~(\ref{e3.29-sin}) \textit{при условиях}~(\ref{e3.30-sin}). 
+\textit{В стационарном случае используются конечные уравнения}~(\ref{e3.37-sin}).
+
+
+%\smallskip
+\section{Эллипсоидальная аппроксимация одно- и~многомерных распределений 
+в~стохастической системе на~многообразиях~(\ref{e2.2-sin})}
+
+Пусть в~условиях теорем~3.1 и~3.2 дополнительно выполнены следующие условия:
+
+\textbf{1.} Нелинейная векторная функция $a(Y_t,\Theta,t)$ допускает ЭЛ
+согласно
+\begin{multline*}
+    a\left(Y_t,\Theta,t\right)\approx a_0 \left(m_t,K_t,c_1,\Theta,t\right) + {}\\
+    {}+
+    a_1 \left(m_t,K_t,c_1,\Theta,t\right) \left(Y_t-m_t\right)\,, %\label{e4.1-sin}
+    \end{multline*}
+где $a_{0} \hm=a_0 (m_t,K_t,c_1,\Theta,t)$ и~$a_{1}\hm= a_1
+(m_t,K_t,c_1,\Theta,t)$ называются соответственно вектором смещения нуля 
+и~матричным коэффициентом усиления ЭЛ, а~$c_1 \hm=\lf c_{p,\nu}\rf$~---
+вектором структурных коэффициентов эллипсоидального распределения.
+
+\textbf{2.} Одномерная плотность $f_1 (y;\Theta,t)$ существует и~имеет
+эллипсоидальную структуру вида~(\ref{e3.4-sin}):
+   \begin{equation}
+   f_1^\ral (y;\Theta,t) = w_1 (\Theta,u)\lk 1+\sss\limits_{\nu=2}^N 
+   c_{p,\nu} p_{p,\nu} (u)\rk\,,\label{e4.2-sin}
+   \end{equation}
+   где
+   \begin{align*}
+   w_1(\Theta,u) &=\fr{1}{\sqrt{(2\pi)^p \lv K_t\rv}}\,e^{-u/2}\,; %\label{e4.3-sin}
+\\
+     c_{p,\nu}&= \mm^\ral_{\Delta^y} \left[q_{p,\nu} (U_t)\right]\,;\\
+   U_t&= \left(Y_t-m_t\right)^{\mathrm{T}} K_t^{-1} \left(Y_t-m_t\right)\,,
+ %   \label{e4.4-sin}
+\end{align*}
+причем первые и~вторые моменты $m_t$ и~$K_t$ неизвестны, 
+а~структурные коэффициенты одномерного эллипсоидального
+распределения $c_1 \hm=\lf c_{p,\nu}\rf$ известны или известны
+функции от~$m_t$  и~$K_t$.
+
+
+При этих условиях и~соответствующих начальных условиях нелинейная
+ дифференциальная МСтС~(\ref{e2.2-sin}) будет эквивалентна следующей
+системе уравнений для~$m_t$ и~$Y_t^0\hm = Y_t\hm-m_t$:
+\begin{multline}
+    \dot m_t =A^{m} \left(m_t, K_t, c_1,\Theta,t\right)={}\\
+    {}=
+    a_0 \left(m_t,K_t,c_1,\Theta,t\right)\,,\quad
+    m(t_0) = m_0\,;\label{e4.5-sin}
+    \end{multline}
+    
+    \vspace*{-9pt}
+    
+\noindent
+    \begin{equation}
+    \left.
+    \begin{array}{rl}
+    \dot X_t^0 &= a_1 \left(m_t,K_t,c_1,\Theta,t\right) Y_t^0 +V\,;\\[6pt] 
+    Y^0\!\left (t_0\right)&=
+    Y_0^0\,.
+    \end{array}
+    \right\}
+    \label{e4.6-sin}
+    \end{equation}
+Здесь $V$~--- составной белый шум, равный
+   \begin{equation*}
+   V= b_0' (\Theta,t) V_0 +V_P\,. %\label{e4.7-sin}
+   \end{equation*}
+
+Для вычисления параметров %$a_0$, $a_1$ и~$\overline{\sigma}_{0t}$
+МЭЛ используются фор\-мулы:
+    \begin{multline*}
+    a_{0}=a_0\left(m_t,K_t,c_1,\Theta,t\right)=a_{01} \left(m_t,K_t,\Theta,t\right)
+    +{}\\
+    {}+\sss_{\nu=2}^N c_{p,\nu}a_{1\nu} \left(m_t,K_t,\Theta,t\right),
+    \end{multline*}
+где
+$$
+    a_{01} \left(m_t,K_t,\Theta,t\right) =\mm_{\Delta^y}^{w_1} 
+    \left[ a(Y, \Theta, t)\right];
+$$
+    \begin{multline}
+    a_{1}=a_1 \left(m_t,K_t,c_1,\Theta,t\right) =a_{10}
+    \left(m_t,K_t,\Theta,t\right) +{}\\
+    {}+ \sss_{\nu=2}^N c_{p,\nu} a_{1,p,\nu}
+    \left(m_t,K_t,\Theta,t\right)\,,
+    \label{e4.8-sin}
+    \end{multline}
+    где
+    \begin{multline*}
+    a_{10} \left(m_t,K_t,\Theta,t\right) ={}\\
+    {}=\mm_{\Delta^y}^{w_1} 
+    \left[a(Y,\Theta, t) \left(Y-m_t\right)^{\mathrm{T}} K_t^{-1}\right]\,,
+    \end{multline*}
+    
+    \vspace*{-12pt}
+
+    \noindent
+    \begin{multline*}
+a_{1,p,\nu}(m_t,K_t,\Theta,t)={}\\
+{}= \mm_{\Delta^y}^{p_{p,\nu}w_1} 
+\left[a(Y,\Theta, t) \left(Y-m_t\right)^{\mathrm{T}} K_t^{-1}\right]\,;
+\end{multline*}
+
+ \vspace*{-12pt}
+
+    \noindent
+    \begin{multline*}
+\bar\si_{0t}={}\\
+{}=\si_0 (\Theta,t) +\iii_{R_0^q} c_0(\Theta,v) c_0(\Theta,v)^{\mathrm{T}} \nu_P (\Theta,t)
+   \, dv\,,
+%   \label{e4.10-sin}
+    \end{multline*}
+    где
+    \begin{equation}
+\si_{0}(\Theta,t) = b_0(\Theta,t)\nu_0(\Theta,t) b_0(\Theta,t)^{\mathrm{T}}\,.
+\label{e4.11-sin}
+\end{equation}
+
+В силу линейности~(\ref{e4.6-sin})  уравнение для ковариационной матрицы~$K_t$ 
+при соответствующих начальных условиях имеет вид:
+\begin{multline}
+\dot K_t=A^K \left(m_t, K_t, \Theta, t\right) =
+a_{1,t} K_t + K_t a_{1,t}^{\mathrm{T}} +\bar\si_{0,t} \,,
+    \\ K(t_0)= K_0\,.
+        \label{e4.12-sin}
+    \end{multline}
+Отсюда следует  утверждение.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~4.1.}\ \textit{В основе МЭЛ нахождения одномерной плотности}~(\ref{e4.2-sin}) 
+\textit{с известными структурными коэффициентами $c_1\hm=\lf
+c_{p,\nu}\rf$ для МСтС}~(\ref{e2.2-sin}) \textit{при услови-}\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+\textit{ях~$1$--$2$, 
+лежат уравнения}~(\ref{e4.5-sin}) \textit{и}~(\ref{e4.12-sin})
+\textit{при условиях}~(\ref{e4.8-sin}) \textit{и}~(\ref{e4.11-sin}).
+\textit{Количество уравнений для параметров одномерного распределения
+$Q_1^\mal \hm=Q_1^{\mathrm{МНА}}\hm =p(p\hm+3)/2$.
+В~основе МЭЛ нахождения эллипсоидальной стационарной
+плотности  вида}~(\ref{e4.2-sin}) \textit{с~известными
+структурными коэффициентами $c_1\hm=\lf c_{p,\nu}\rf$ для
+стационарного (в узком смысле) процесса в~стационарной МСтС}~(\ref{e2.2-sin}) 
+\textit{при условиях~$1$--$2$ лежат
+уравнения}~(\ref{e4.5-sin}) \textit{и}~(\ref{e4.12-sin}) \textit{при $\dot
+m_t \hm=0$ и~$\dot K_t\hm=0$}:
+\begin{equation}
+\left.
+\begin{array}{rl}
+A^m \left(m,K,c_1, \Theta\right)& =a_0 \left(m,K,c_1,\Theta\right) =0\,; %\label{e4.13-sin}
+\\[6pt]
+A^K \left(m,K,c_1, \Theta\right) &=a_1 \left(m,K,c_1,\Theta\right) K+{}\\[6pt]
+&\hspace*{-10mm}{}+ 
+K a_1 \left(m,K,c_1,\Theta\right)^{\mathrm{T}} +\bar\si_0=0\,.
+\end{array}
+\right\}
+\label{e4.14-sin}
+\end{equation}
+
+%\smallskip
+
+Теперь получим основные уравнения МЭЛ для $n$-мер\-ных распределений.
+Дополнительно к~условиям~1--2 предположим:
+
+\textbf{3.} 
+ $n$-мерная плот\-ность $f_n \hm= f_n(y_1\tr y_n;$\linebreak $\Theta, t_1\tr t_n)$
+существует и~имеет эллипсоидальную структуру вида
+  \begin{multline*}
+  f_n^\ral ( y_1\tr y_n ;\Theta, t_1\tr t_n) = f_n^\ral (u,c_n)={}\\
+  {}= w_n (\Theta,u) \lk 1+\sss_{\nu=2}^N c_{np,\nu} p_{np,\nu}
+    (u)\rk, %\label{e4.15-sin}
+    \end{multline*}
+    где
+\begin{align*}
+ w_n(\Theta,u)&= \lk (2\pi)^n \lv K_n\rv
+    \rk^{-1/2} e^{-u/2}\,; %\label{e4.16-sin}
+\\
+c_{np,\nu}&= \mm_{\Delta^y}^\ral \left[q_{np,\nu} (U)\right]\,;\\
+U&= \left(\tilde Y_n - \tilde m_n\right) K_n^{-1} \left(\tilde Y_n -
+    \tilde m_n\right).
+    %    \label{e4.17-sin}
+    \end{align*}
+Здесь
+\begin{gather*}
+\tilde Y_n =\lk Y_1^{\mathrm{T}} Y_2^{\mathrm{T}}
+    \cdots Y_n^{\mathrm{T}}\rk^{\mathrm{T}}\,,\enskip Y_l = Y\left(t_l\right)\,; 
+   % \label{e4.18-sin}
+   \\
+\tilde m_n =\lk m_1^{\mathrm{T}} m_2^{\mathrm{T}} \cdots m_n^{\mathrm{T}}\rk^{\mathrm{T}}\,,\enskip m_l = m(t_l)\,;
+%    \label{e4.19-sin}
+\\
+K_n =\begin{bmatrix} 
+K(t_1, t_1)& K(t_1, t_2)& \cdots& K(t_1, t_n)\\
+K(t_2, t_1)& K(t_2, t_2)& \cdots& K(t_2,     t_n)\\
+\vdots& \vdots& \vdots& \vdots\\
+K(t_n, t_1)& K(t_n,     t_2)& \cdots& K(t_n, t_n)
+\end{bmatrix}\,. %\label{e4.20-sin}
+\end{gather*}
+Структурные коэффициенты $c_n\hm =\lf c_{np,\nu}\rf$ предполагаются,
+во-пер\-вых, известными, во-вто\-рых, удовле\-тво\-ря\-ющими условиям согласованности.
+
+В условиях~1--3 для получения уравнений МЭЛ применительно 
+к~$f_n^\ral$ достаточно воспользоваться известными уравнениями
+теории линейных СтС, основываясь на уравнениях~(\ref{e4.5-sin}) и~(\ref{e4.6-sin}).
+
+\smallskip
+
+\noindent
+\textbf{Теорема~4.2.}\ \textit{В основе МЭЛ $n$-мер\-ной плотности при условиях~$1$--$3$ 
+лежат уравнения квазилинейной теории для}~(\ref{e4.5-sin}) \textit{и}~(\ref{e4.6-sin}).
+
+\smallskip
+
+В случае двумерного эллипсоидального распределения $(n\hm=2)$, полагая
+\begin{equation*}
+a\left(Y\left(t_2\right),\Theta,t_2\right)=a_{0,\Theta,t_2} +
+    a_{1,\Theta,t_2} \left(Y_{t_2} - m_{t_2}\right)\,, %\label{e4.21-sin}
+    \end{equation*}
+где
+    \begin{align*}
+    a_{0,\Theta,t_2}&= a_0 \left(m_{t_2}, K_{t_2}, c_{1,t_2}, t_2\right)\,;\\
+    a_{1,\Theta,t_2}&=a_1 \left(m_{t_2}, K_{t_2}, c_{1,t_2}, \Theta,t_2\right)\,,
+    \end{align*}
+для стационарного случая, когда
+    \begin{gather*}
+    K\left(\Theta,t_1, t_2,a_{1,t_2}\right) = k \left(\tau, \alp_1\right)
+    \,,\\
+     \tau=     t_1-t_2\,,\enskip a_1 = a_1\left(m_t,K_t,c_1,\Theta\right)\,,
+     \end{gather*}
+уравнения теоремы~4.2 приобретают вид:
+\begin{equation*}
+\fr{dk(\Theta,\tau,a_1)}{d\tau} =a_1 k\left(\Theta,\tau,a_1\right)\,,
+\end{equation*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{alignat*}{2}
+  k\left(0,a_1\right)&=K_t, t=t_1=t_2 &\  \mbox{при}\  \tau&>0\,,\ \ \\[3pt]
+k\left(\Theta,\tau,a_1\right) &=k\left(\Theta,-\tau,\varphi_1\right)^{\mathrm{T}}&\ 
+\mbox{при}\  \tau&<0\,.
+%\label{e4.22-sin}
+\end{alignat*}
+
+Таким образом,  квазилинейная эллипсоидальная
+спект\-раль\-но-кор\-ре\-ля\-ци\-он\-ная тео\-рия процессов в~стационарной
+МСтС~(\ref{e2.2-sin}) основана на  уравнениях~(\ref{e4.14-sin}) и~следующих
+соотношениях для эквивалент\-ной передаточной функции, спектральной
+плотности и~ковариационной функции:
+\begin{gather*}
+Y^0 =\Phi \left(\Theta, s,a_1\right) V\,,\enskip 
+\Phi \left(\Theta,s,a_1\right) =-\left(a_1-I_p s\right)^{-1}\,; %\label{e4.23-sin}
+\\
+s_x\left(\Theta,\w,a_1\right)=\Phi \left(\Theta,i\w,a_1\right)
+s_{_V}\Phi\left(\Theta,i\w,a_1\right)^*\,;\\
+k_x\left(\Theta,\tau,a_1\right) =
+\int\limits_{-\infty}^\infty s_x \left(\Theta,\w,a_1\right) e^{i\w
+    \tau}\, d\tau
+%    \label{e4.24-sin}
+    \end{gather*}
+при условии асимптотической устойчивости функции
+$\Phi(\Theta,s,\vrp_1)$.
+
+\section{Точность и~чувствительность алгоритмов, основанных 
+на~методах эллипсоидальной аппроксимации и~эллипсоидальной
+линеаризации}
+
+В задачах надежности и~безопасности технических систем~[13--15]
+точность алгоритмов, основанных на теоремах~3.1, 3.2, 4.1 и~4.2,
+оценивается исходя из выбранного критерия качества. Широ\-кое
+распространение получили метод сравнения вероятностей попадания на
+множества (в~данном случае эллипсоида) и~метод оценки вероятностных
+моментов четвертого порядка.
+
+В инженерных приложениях, как правило, в~основе оценок точности и~чувствительности 
+ал-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+горитмов к~параметрам~$\Theta$ лежат методы теории чувствительности~\cite{14-sin, 15-sin}. 
+В~условиях разд.~2--4 соответствующие уравнения для первых функций чувствительности 
+получаются путем дифференцирования по~$\Theta$ правых и~левых частей уравнений МЭА 
+(МЭЛ).
+
+В силу~(\ref{e3.12-sin}), (\ref{e3.13-sin}) и~(\ref{e3.18-sin}) 
+придем к~следующим уравнениям для функций чувствительности 
+первого порядка~$\nabla m_t$, $\nabla K_t$ и~$\nabla c_{p, \kappa,t}$ 
+$(\nabla\hm= \prt/\prt\Theta)$:
+    \begin{equation}
+    \left.
+    \begin{array}{rlrl}
+    \nabla \dot m_t &= \nabla A^m\,, &\  \nabla m_{t_0} &=0\,; %\label{e5.1-sin}
+    \\[6pt]
+\nabla \dot K_t &= \nabla A^K\,, &\  \nabla K_{t_0} &=0\,; %\label{e5.2-sin}
+\\[6pt]
+\nabla \dot c_{p,\kappa, t}& = \nabla A^{c_{p,\kappa}}\,, &\ 
+\nabla c_{p,\kappa,t_0} &=0\,.
+\end{array}
+\right\}
+\label{e5.3-sin}
+\end{equation}
+Заметим, что при дифференцировании по~$\Theta$ порядок уравнений
+возрастает пропорционально числу производных.
+
+Аналогично~\cite{9-sin, 10-sin} выписываются уравнения для функций чувствительности 
+второго порядка $\nabla(\nabla)^{\mathrm{T}} m_t$, 
+$\nabla(\nabla)^{\mathrm{T}} K_t$ и~$\nabla(\nabla)^{\mathrm{T}} c_{p,\kappa,t}$ 
+для одномерных распределений, а~также  $n$-мер\-ных распределений.
+
+Алгоритмы МАМ, основанные на МЭА (МЭЛ), содержат только на $N/2\hm-1$ уравнений 
+больше, чем алгоритмы, основанные на МНА (МСЛ). В~этом их существенное преимущество 
+по сравнению с~алгоритмами МОР и~метода квазимоментов~\cite{9-sin, 10-sin}.
+
+\section{Пример}
+
+Следуя~\cite{1-sin, 2-sin, 11-sin}, рассмотрим двумерную угловую МСтС вида
+\begin{alignat*}{2}
+\dot Y_1 &=-Y_1 Y_2 \,;&\enskip \dot Y_2 &= -a Y_2 + h V(\Theta)\,;\\
+Y_1 (t_0) &= Y_{10}\,;&\enskip Y_2 (t_0) &= Y_{20}\,,
+%\label{e6.1-sin}
+\end{alignat*}
+где $V= V(\Theta)$~--- угловой гауссовский белый шум, зависящий от скалярного 
+параметра~$\Theta$ с~интенсивностью  $\nu\hm=\nu(\Theta)$. В~силу теоремы~3.1, 
+ограничиваясь моментами до четвертого порядка включительно, получим следующие 
+уравнения для $m_1$, $m_2$, $K_{11}$, $K_{12}$, $K_{22}$ и~$c_{2,2}$ параметров 
+ЭА одномерной плот\-ности~(\ref{e3.10-sin}):
+\begin{equation}
+\left.
+\begin{array}{rl}
+\dot m_1 &=-m_1m_2 - K_{12}\,,\enskip \dot m_2 = -a m_2\,;  %\label{e6.2-sin}
+\\[6pt]
+\dot K_{11} &= -2 \left(m_2 K_{11} + m_1 K_{12}\right)\,;\\[6pt]
+ \dot K_{12} &= - \left(m_2 + a\right) K_{12} - m_1 K_{22}\,;\\[6pt]
+ \dot K_{22} &= \nu h^2 - 2 a K_{22}\,;
+ \\[6pt]
+ %\label{e6.3-sin}
+ \dot c_{2,2} &= 4 h^2 \nu  C_{22} + {}\\[6pt]
+ &\hspace*{10mm}{}+c_{2,2} \left[ \left(m_2 +a\right) 
+\left(6+8C_{12} K_{12}\right) +{}\right.\\[6pt]
+&\hspace*{16mm}\left.{}+ 8 m_1 C_{12} K_{12} - 3 h^2 \nu C_{22}\right]\,.
+\end{array}\!\!
+\right\}\!\!
+\label{e6.4-sin}
+\end{equation}
+Здесь $C=\lk C_{ij}\rk$, $C\hm=K^{-1}$, $K\hm= \lk K_{ij}\rk$ $(i,j\hm=1,2)$. 
+Уравнениям~(\ref{e6.4-sin}) в~силу~(\ref{e5.3-sin}) 
+отвечают следующие уравнения для функций чувствительности парамет\-ров ЭА:
+\begin{equation}
+\left.
+\begin{array}{c}
+\nabla \dot m_1 =- m_2 \nabla m_1 - m_1 \nabla m_2 - \nabla K_{12}\,; \\[6pt]
+\nabla m_{10}=0\,; \enskip \nabla \dot m_2 = - a \nabla m_2\,;\enskip 
+\nabla m_{20} =0\,;
+\\[6pt]
+%\label{e6.5-sin}
+\hspace*{-10mm}\nabla \dot K_{11} = -2 K_{12} \nabla m_1 - 2 K_{11} \nabla m_2 - {}\\[6pt]
+{}-2 m_2 \nabla K_{11} - 2 m_1 \nabla K_{12}\,;\  \nabla K_{11,0} =0\,;\\[6pt]
+\hspace*{-12mm}\nabla \dot K_{12} = - K_{22} \nabla m_1 -  K_{12} \nabla m_2 - {}\\[6pt]
+\hspace*{-2mm}{}-\left( m_2+a\right) \nabla K_{12} -  m_1 \nabla K_{22}\,;\
+\nabla K_{12,0} =0\,;\\[6pt]
+\hspace*{-10mm}\nabla \dot K_{22} = h^2  -2a K_{22}\,;\enskip \nabla K_{22,0} =0\,;
+%\label{e6.6-sin}
+\\[6pt]
+\hspace*{-18mm}\nabla \dot c_{2,2} =8c_{2,2} C_{12} K_{12} \nabla m_1 +{}\\[6pt]
+\hspace*{5mm}{}+\left(6+8C_{12} K_{12}\right) c_{2,2} \nabla m_2 +{}\\[6pt]
+\hspace*{5mm}{}+ 8 C_{12} c_{2,2} 
+\left(m_1 + m_2 +a\right) \nabla K_{12}+{}\\[6pt]
+\hspace*{5mm}{}+8K_{12} c_{2,2} \left(m_1 + m_2+a\right) \nabla C_{12}+{}\\[6pt]
+\hspace*{6mm}{}+  h^2 
+\left(4+ 3\nu c_{2,2}\right)\nabla C_{22}+{}\\[6pt]
+ \hspace*{12mm} {}+\left[ \left(m_2 +a\right) \left(6+8C_{12} K_{12}\right) + {}\right.\\[6pt]
+\hspace*{12mm}  \left.{}+8 C_{12} K_{12} - 
+  3 h^2 \nu C_{22}\right] \nabla c_{2,2}\,,\\[6pt] 
+  \hspace*{30mm}\nabla c_{2,20} =0\,.
+  \end{array}
+  \right\}
+  \label{e6.7-sin}
+  \end{equation}
+
+Для стационарного случая в~уравнениях~(\ref{e6.4-sin}) и~(\ref{e6.7-sin}) 
+надо приравнять нулю их  правые части.
+
+При вычислении вероятностных моментов второго порядка МЭА совпадает с~МНА. 
+Если, следуя~\cite{11-sin}, ограничиться вероятностными моментами до четвертого порядка 
+включительно, положив $t\hm\in [0,1]$, $\alp\hm=5$, $h\hm=1$, $m_1 (0) \hm= 0{,}5$, 
+$m_2(0)\hm= 0{,}5$, $K_{11}(0) = D_1(0)=0{,}1$, $K_{22} (0)\hm=D_2(0)=0{,}1$, 
+$K_{12}(0)\hm=0$, то точность МЭА при вычислении начального момента~$\alp_4$ составит 
+около 2\% по отношению к~точному решению. Такую же чувствительность к~параметру  
+$\nu \hm= \Theta$ проявляют  $D_1$, $D_2$, $K_{12}$ и~$c_{2,2}$.
+
+В~\cite{11-sin} показано, что точность вычисления начального момента~$\alp_6$ 
+составляет  8\%, а начального момента $\alp_8$~--- 20\%. Этого обычно достаточно 
+для приложений в~задачах надежности и~безопасности технических систем.
+
+\section{Заключение}
+
+
+Даны обобщения алгоритмов эллипсоидального анализа и~моделирования одно- 
+и~многомерных распределений в~нелинейных МСтС 
+с~винеровскими и~пуассоновскими шумами. Особое
+внимание уделено алгоритмам для систем с~аддитивными негауссовскими шумами.
+
+Получены уравнения точности и~чувствительности к~параметрам. 
+В~качестве иллюстрации рассмотрена нелинейная двумерная угловая система 
+с~аддитивным угловым белым шумом. Составлены\linebreak уравнения точности и~чувствительности, 
+позволяющие оценивать моменты до четвертого порядка включительно. Приведены результаты 
+численных расчетов, показывающие эффективность МЭА (МЭЛ) по сравнению с~общим МОР
+ одномерной плот\-ности. Сформулированы некоторые возможные 
+обобщения.
+
+В качестве обобщений можно рассмотреть задачи аналитического моделирования 
+процессов в~дискретных МСтС, а~также задачи 
+синтеза субоптимальных фильтров для обработки информации\linebreak в~таких стохастических 
+нелинейных системах.
+
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+\bibitem{1-sin}
+ \Au{Пугачёв В.\,С., Синицын~И.\,Н.}
+Стохастические дифференциальные системы. Анализ и~фильтрация.~--- М.:
+Наука,  1990.  632~с. (\Au{Pugachev~V.\,S., Sinitsyn~I.\,N.}
+Stochastic differential systems.
+Analysis and filtering.~--- Chichester\,--\,New York, NY, USA: Jonh Wiley, 1987.
+549~p.)
+
+\bibitem{2-sin}
+ \Au{Пугачёв В.\,С., Синицын~И.\,Н.}
+Теория стохастических систем.~--- М.: Логос, 2000; 2004. 1000~с.
+%(\Au{Pugachev~V.\,S., Sinitsyn~I.\,N.} Stochastic systems. Theory and  applications.~---
+%Singapore: World Scientific, 2001. 908~p.)
+
+
+\bibitem{3-sin}
+ \Au{Синицын И.\,Н.} 
+Стохастические информационные технологии для исследования нелинейных круговых 
+стохастических систем~// Информатика и~её применения, 2011. Т.~5. Вып.~4. С.~78--89.
+
+\bibitem{4-sin}
+\Au{Sinitsyn I.\,N., Belousov~V.\,V., Konashenkova~T.\,D.} 
+Software tools for circular stochastic systems analysis~// 
+29th  Seminar (International) on Stability Problems for Stochastic Models: Abstracts.~--- 
+Svetlogorsk, Russia, 2011. Р.~86--87.
+
+
+\bibitem{5-sin}
+\Au{Синицын И.\,Н. } Математическое обеспечение для анализа 
+нелинейных многоканальных круговых стохастических систем, основанное на 
+параметризации распределений~// Информатика и~её применения, 2012. Т.~6. 
+Вып.~1. С.~12--18.
+
+\bibitem{6-sin}
+\Au{Синицын И.\,Н., Корепанов Э.\,Р., Белоусов~В.\,В., Конашенкова~Т.\,Д.} 
+Развитие математического обеспечения для анализа нелинейных многоканальных круговых 
+стохастических сис\-тем~// Системы и~средства информатики, 2012. Вып.~22. №~1. С.~29--40.
+
+\bibitem{7-sin}
+\Au{Sinitsyn I.\,N., Belousov V.\,V., Konashenkova~T.\,D.} 
+Software tools for spherical stochastic systems analysis and filtering~//  
+Прикладные задачи теории веро\-ят\-ности и~математической статистики, связанные 
+с~моделированием информационных систем.~--- М.: ИПИ РАН, 2012. С.~91--93.
+
+\bibitem{8-sin}
+\Au{Синицын И.\,Н.}
+Параметрическое статистическое и~аналитическое моделирование распределений 
+в~нелинейных стохастических системах на многообразиях~// Информатика и~её применения, 2013. Т.~7. Вып.~2. С.~4--16.
+
+
+\bibitem{9-sin}
+\Au{Синицын И.\,Н.}
+Аналитическое моделирование распределений методом ортогональных разложений 
+в~нелинейных стохастических системах на многообразиях~// Информатика и~её 
+применения, 2015. Т.~9. Вып.~3. С.~17--24.
+
+\bibitem{10-sin}
+\Au{Синицын И.\,Н.}
+Применение ортогональных разложений для аналитического моделирования многомерных 
+распределений в~нелинейных стохастических системах на многообразиях~// Системы 
+и~средства информатики, 2015. Т.~25. №\,3. С.~3--22.
+
+\bibitem{11-sin}
+\Au{Синицын И.\,Н., Синицын В.\,И.}
+Лекции по теории нормальной и~эллипсоидальной аппроксимации распределений 
+в~стохастических системах.~--- М.: ТОРУС ПРЕСС, 2013. 488~с.
+
+
+\bibitem{12-sin}
+\Au{Ватанабэ С., Икэда Н.} Стохастические дифференциальные уравнения 
+и~диффузионные процессы~/ Пер. с~англ.~--- М.: Наука, 1986. 448~с.
+(\Au{Watanabe~S, Ikeda~N.} 
+Stochastic differential equations and diffusion processes.~--- 
+Amsterdam\,--\,Oxford\,--\,New York: North-Holland Publishing Co.; 
+Tokyo: Kodansha Ltd., 1981. 476~p.)
+
+
+
+
+
+
+\bibitem{14-sin}
+\Au{Евланов А.\,Г., Константинов~В.\,М. }
+Системы со случайными параметрами.~--- М.: Наука, 1976. 568~с.
+
+\bibitem{15-sin}
+Справочник по теории автоматического управления~/ Под ред. 
+А.\,А.~Красовского.~--- М.: Наука, 1987. 712~с.
+
+\bibitem{13-sin} %15
+\Au{Александровская Л.\,Н., Аронов И.\,З., Круглов~В.\,И. и~др.}
+ Безопасность и~надежность технических сис\-тем.~--- 
+ М.: Университетская книга, Логос, 2008. 376~с.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 02.12.15}}
+
+%\vspace*{8pt}
+
+\newpage
+
+\vspace*{-24pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{8pt}
+
+\def\tit{ANALYTICAL MODELING OF~DISTRIBUTIONS\\  IN~STOCHASTIC SYSTEMS ON~MANIFOLDS\\
+ BASED ON~ELLIPSOIDAL APPROXIMATION}
+
+\def\titkol{Analytical modeling of~distributions  in~stochastic systems on~manifolds based
+on~ellipsoidal approximation}
+
+\def\aut{I.\,N.~Sinitsyn and V.\,I.~Sinitsyn}
+
+\def\autkol{I.\,N.~Sinitsyn and V.\,I.~Sinitsyn}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+\noindent
+Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences,
+44-2 Vavilov Str., Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2016\ \ \ volume~10\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2016\ \ \ volume~10\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+\Abste{Accuracy and sensitivity problems for algorithms of structural analytical 
+modeling of one- and multidimensional distributions based on the
+method of ellipsoidal approximation (MEA) and the
+method of ellipsoidal linearization (MEL) are considered. 
+General algorithms of ellipsoidal stochastic analysis in nonlinear stochastic 
+systems on manifolds (MStS) with Wiener and Poisson noises are developed. 
+Special attention is paid to MStS with additive noises. Accuracy and sensitivity 
+equations are presented. For two-dimensional nonlinear circular MStS, accuracy and sensitivity 
+equations are derived. Equations make it possible to calculate probability moments up to 
+the fourth order. Algorithms based on orthogonal expansion of one-dimensional density are compared with algorithms based on MEA (MEL). Some generalizations are given.}
+
+\KWE{accuracy equations;
+analytical modeling;
+method  of ellipsoidal linearization (MEL);
+method of ellipsoidal approximation (MEA);
+sensitivity equations;
+stochastic system on manifold (MStS)}
+
+
+\DOI{10.14357/19922264160104} 
+
+\Ack
+\noindent
+The work was supported by the Russian Foundation for
+Basic Research (project 15-07-02244).
+
+
+
+\vspace*{9pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+\bibitem{1-sin-1}
+\Aue{Pugachev, V.\,S., and I.\,N.~Sinitsyn}. 1987.
+Stochastic differential systems. Analysis
+and filtering. -- Chichester\,--\,New York, NY: Jonh Wiley, 1987. 549~p.
+
+\bibitem{2-sin-1}
+ \Aue{Pugachev, V.\,S., and I.\,N.~Sinitsyn.} 
+ 2001.  \textit{Stochastic systems. Theory and  applications}.
+Singapore: World Scientific. 908~p.
+
+
+\bibitem{3-sin-1}
+\Aue{Sinitsyn, I.\,N. } 2011.  Stokhasticheskie informatsionnye 
+tekhnologii dlya issledovaniya nelineynykh krugovykh stokhasticheskikh sistem 
+[Stochastic informational technologies for circular stochastic systems investigation]. 
+\textit{Informatika i~ee Primeneniya}~--- \textit{Inform. Appl.} 5(4):78--89.
+
+\bibitem{4-sin-1}
+\Aue{Sinitsyn, I.\,N., V.\,V.~Belousov, and T.\,D.~Konashenkova.} 
+Software tools for circular stochastic systems analysis. 
+\textit{29th Seminar (International) on Stability Problems 
+for Stochastic Models: Abstracts}. Svetlogorsk, Russia. 86--87.
+
+
+\bibitem{5-sin-1}
+\Aue{Sinitsyn, I.\,N. } 2012.
+Matematicheskoe obespechenie dlya analiza nelineynykh mnogokanal'nykh krugovykh 
+stokhasticheskikh sistem, osnovannoe na parametri\-za\-tsii raspredeleniy 
+[Mathematical software for analysis of nonlinear multichannel circular stochastic 
+systems based on distributions parametrization]. 
+\textit{Informatika i~ee Primeneniya}~--- \textit{Inform. Appl}. 6(1):12--18.
+
+\bibitem{6-sin-1}
+\Aue{Sinitsyn, I.\,N., E.\,R.~Korepanov, V.\,V.~Belousov, 
+and T.\,D.~Konashenkova.}  2012.
+Razvitie matematicheskogo obespecheniya dlya analiza nelineynykh mno\-go\-ka\-nal'\-nykh 
+krugovykh stokhasticheskikh sistem [Development of mathematical software for 
+analysis of nonlinear mutlichannel circular stochastic systems]. 
+\textit{Sistemy i~Sredstva Informatiki}~--- \textit{Systems and Means of Informatics}
+ 22(1):29--40.
+
+\bibitem{7-sin-1}
+\Aue{Sinitsyn, I.\,N., V.\,V.~Belousov, and T.\,D.~Konashenkova.}  2012.
+Software tools for spherical stochastic systems analysis and filtering.  
+\textit{Prikladnye zadachi teorii ve\-ro\-yat\-nosti i~matematicheskoy statistiki, svyazannye 
+s~modelirovaniem informatsionnykh sistem}
+[Applied problems of probability theory and mathematical
+statistics related to modeling
+of information systems]. Moscow:   IPI RAN. 91--93.
+
+\bibitem{8-sin-1}
+\Aue{Sinitsyn, I.\,N.} 2013.
+Parametricheskoe statisticheskoe i~analiticheskoe modelirovanie raspredeleniy 
+v~ne\-li\-ney\-nykh stokhasticheskikh sistemakh na mnogoobraziyakh [Parametric statistical 
+and analytical modeling of distributions in nonlinear stochastic systems on manifolds]. 
+\textit{Informatika i~ee Primeneniya}~--- \textit{Inform. Appl}. 7(2):4--16.
+
+\bibitem{9-sin-1}
+\Aue{Sinitsyn, I.\,N.} 2015.
+Analiticheskoe modelirovanie ras\-predeleniy metodom ortogonal'nykh razlozheniy 
+v~nelineynykh stokhasticheskikh sistemakh na mno\-go\-ob\-ra\-ziyakh [Analytical 
+modeling in stochastic systems on\linebreak manifolds based on orthogonal expansions].
+\textit{Informatika i~ee Primeneniya}~--- \textit{Inform. Appl}. 9(3):17--24.
+
+\bibitem{10-sin-1}
+\Aue{Sinitsyn, I.\,N.} 2015.
+Primenenie ortogonal'nykh raz\-lo\-zheniy dlya analiticheskogo modelirovaniya 
+mno\-go\-mer\-nykh 
+raspredeleniy v~nelineynykh stokhasticheskikh sistemakh na mno\-go\-ob\-ra\-zi\-yakh 
+[Applications of orthogonal\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+ expansions for analytical modeling of multi-dimensional 
+distributions in nonlinear stochastic systems on manifolds].
+\textit{Sistemy i~Sredstva Informatiki}~--- \textit{Systems and Means of Informatics}
+ 25(3):3--22.
+
+\bibitem{11-sin-1}
+\Aue{Sinitsyn, I.\,N., and V.\,I.~Sinitsyn.} 2013.
+\textit{Lektsii po teorii normal'noy i~ellipsoidal'noy approkskimatsii raspredeleniy
+ v~stokhasticheskikh sistemakh} [Lectures on normal and ellipsoidal approximation 
+ of distributions in stochastic systems].  Moscow: TORUS PRESS.  488~p.
+
+
+\bibitem{12-sin-1}
+\Aue{Watanabe,~S., and N. Ikeda}. 1981. 
+\textit{Stochastic differential equations and diffusion processes}. 
+Amsterdam\,--\,Oxford\,--\,New York: North-Holland Publishing Co.; 
+Tokyo: Kodansha Ltd. 476~p.
+
+
+
+\bibitem{14-sin-1}
+\Aue{Evlanov, A.\,G., and V.\,M.~Konstantinov.} 1976.
+\textit{Sistemy so slozhnymi parametrami} [Systems with random parameters]. 
+Moscow: Nauka. 568~p.
+
+\bibitem{15-sin-1}
+Krasovskskii, A.\,A., ed.  1987.
+\textit{Spravochnik po teorii avtomaticheskogo upravleniya} 
+[Handbook for automatic control]. Moscow:   Nauka. 712~p.
+
+\bibitem{13-sin-1} %15
+\Aue{Aleksandrovskaya,~L.\,N., I.\,Z.~Aronov, V.\,I.~Kruglov, \textit{et al.}} 2008.
+\textit{Bezopasnost' i~nadezhnost' tekhnicheskikh sistem} [Security and reliability 
+of technical systems]. Moscow:  Universitetskaya Kniga, Logos.  
+376~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Received December 2, 2015}}
+
+\Contr
+
+\noindent
+\textbf{Sinitsyn Igor N.} (b.\ 1940)~---
+Doctor of Science in technology, professor,
+Honored scientist of RF, Head of Department, Institute of Informatics Problems, Federal Research Center ``Computer Science and
+Control'' of the Russian Academy of Sciences, 44-2 Vavilov Str.,
+Moscow 119333, Russian Federation; sinitsin@dol.ru
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Sinitsyn Vladimir I.} (b.\ 1968)~---
+ Doctor of Science in physics and mathematics,
+associate professor, Head of Department, Institute of Informatics Problems, Federal Research Center ``Computer Science and
+Control'' of the Russian Academy of Sciences, 44-2 Vavilov Str.,
+Moscow 119333, Russian Federation; vsinitsin@ipiran.ru
+
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература}

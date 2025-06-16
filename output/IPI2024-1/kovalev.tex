@@ -1,0 +1,794 @@
+\def\stat{kovalev}
+
+\def\tit{АЛГЕБРАИЧЕСКАЯ СПЕЦИФИКАЦИЯ РАСПРЕДЕЛЕННЫХ СИСТЕМ С~ИЗМЕНЯЮЩЕЙСЯ 
+АРХИТЕКТУРОЙ}
+
+\def\titkol{Алгебраическая спецификация распределенных систем с~изменяющейся 
+архитектурой}
+
+\def\aut{С.\,П.~Ковалёв$^1$}
+
+\def\autkol{С.\,П.~Ковалёв}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Ковалёв С.\,П.}
+\index{Kovalyov S.\,P.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнялась с~использованием инфраструктуры Центра коллективного пользования 
+%<<Высокопроизводительные вычисления и~большие данные>> (ЦКП <<Информатика>> ФИЦ ИУ 
+%РАН, Москва).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем управления им.\ В.\,А.~Трапезникова Российской академии наук, \mbox{kovalyov@sibnet.ru}}
+
+\vspace*{-4pt}
+
+
+
+
+\Abst{Развивается предложенный ранее метод обобщенной алгебраической спецификации 
+распределенных сис\-тем на базе новой тео\-ре\-ти\-ко-ка\-те\-гор\-ной конструкции графалгебры. 
+Основой граф\-ал\-геб\-ра\-иче\-ской спецификации служит ори\-ен\-ти\-ро\-ван\-ный мультиграф, ребра 
+которого пред\-став\-ля\-ют вы\-чис\-ли\-тель\-ные операции, вы\-пол\-ня\-емые в~узлах сис\-те\-мы, 
+а~вершины задают пор\-ты обмена данными между компонентами. Изменение архитектуры 
+сис\-те\-мы в~ходе жизненного цикла приводит к~изменению формы графа, алгоритмов 
+вы\-чис\-ле\-ний и~содержания обмена данными.  Для формального описания таких изменений 
+предложена техника типа трансформации графов для графалгебр. Введена новая 
+ тео\-ре\-ти\-ко-ка\-те\-гор\-ная конструкция гиб\-ких графалгебр, тес\-но связанная с~известной 
+монадой диаграмм. Описан функтор, представляющий конструирование категории гиб\-ких 
+графалгебр по сигнатуре. Тео\-ре\-ти\-че\-ские результаты про\-ил\-люст\-ри\-ро\-ва\-ны примерами из 
+об\-ласти автоматического синтеза архитектуры нейронных сетей путем пошаговых 
+трансформаций.}
+
+\KW{алгебраическая спецификация; распределенная система; эволюция архитектуры; теория 
+категорий; графалгебра; монада диаграмм}
+
+\DOI{10.14357/19922264240102}{MZAHBS}
+  
+%\vspace*{-6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+     Для специфицирования программ с~математическим уровнем строгости 
+нередко применяются алгебраические методы (см., например,~[1]). Они 
+позволяют описывать операции, вы\-пол\-ня\-емые программами, термами языка 
+первого порядка (или его расширений) и~доказывать утверждения об 
+операциях, в~том числе индукцией по синтаксической структуре термов. Для 
+описания программ, изменяющихся во времени (при фиксированной сигнатуре 
+операций), используется аппарат эво\-лю\-ци\-о\-ни\-ру\-ющих алгебр~[2].
+    
+     В то же время классической алгебраической спецификации присущ 
+недостаток, состоящий в~невозможности явно описать структуру 
+многокомпонентной распределенной программной сис\-те\-мы.\linebreak Все операции 
+описываются так, будто выполняются одним универсальным абстрактным 
+вы\-чис\-ли\-тель\-ным устройством. Для преодоления этого\linebreak недостатка была 
+предложена конструкция граф\-ал\-геб\-ры~[3]~--- структуры алгебраического типа 
+над произвольным ориентированным мультиграфом. Реб\-ра этого графа 
+представляют вы\-чис\-ли\-тель\-ные операции, выполняемые в~узлах системы, 
+а~вершины~--- порты обмена данными между компонентами. Сигнатура 
+графалгебры со\-сто\-ит из графа и~правил пред\-став\-ле\-ния данных в~портах.
+     
+     Однако фиксированная форма сигнатуры ограничивает применение 
+категорий графалгебр в~приложениях, поскольку современным распределенным 
+сис\-те\-мам присуща гиб\-кость~--- спо\-соб\-ность изменять граф структуры, в~том 
+числе в~темпе, близком к~реальному времени. Например, архитектура 
+многослойной нейронной сети может быть оптимизирована под класс 
+решаемых задач (по чис\-лу\linebreak слоев, мощ\-ности каждого слоя, топологии и~весам\linebreak 
+связей) путем це\-ле\-на\-прав\-лен\-ных многошаговых трансформаций некоторой 
+небольшой начальной сети~[4], а~распределенные  
+про\-грам\-мно-ап\-па\-рат\-ные сис\-те\-мы всегда изменяются в~ходе создания и~модернизации.
+     
+     Для формального описания и~верификации процедур эволюции систем 
+применяется техника типа трансформации графов~[5]. Для графалгебр такая 
+техника впервые предложена в~на\-сто\-ящей статье. Введена новая тео\-ре\-ти\-ко-ка\-те\-гор\-ная конструкция гибких графалгебр, тес\-но связанная с~известной 
+монадой диаграмм.
+
+\vspace*{-6pt}
+     
+\section{Графалгебры}
+
+\vspace*{-1pt}
+
+     С точки зрения теории категорий алгебра над некоторой 
+категорией~$C$~---  это морфизм~$a: FA \hm\to A$, где $F$~--- эндофунктор 
+в~$C$, представляющий сигнатуру; $A$~--- носитель. У~алгебры 
+первопорядковой сигнатуры~$\Sigma$ функтор~$F$ имеет 
+<<полиномиальный>> вид: 
+$$
+FA=\coprod_{\varphi\in \Sigma}  
+A^{n(\varphi)},
+$$
+ где $n(\varphi)$~--- мест\-ность (чис\-ло аргументных мест) 
+функционального символа $\varphi\hm\in \Sigma$. Алгебру можно 
+рас\-смат\-ри\-вать как $C$-диа\-грам\-му в~форме~\textbf{2} (так обозначается граф, 
+со\-сто\-ящий из двух вершин 0 и~1 и~одного ребра $0\hm\to 1$), а~гомоморфизм 
+алгебр~--- как морфизм носителей, индуцирующий естественное 
+преобразование таких диаграмм. Путем обобщения этой точки зрения 
+получается графалгебра~--- диаграмма произвольной формы, вершины которой 
+помечены результатами действия заданных сигнатурных функторов на 
+носитель~[3]. Все сигнатурные функторы имеют одну и~ту же об\-ласть и~одну 
+и~ту же ко\-об\-ласть (в~общем случае отличную от об\-ласти). Поэтому сигнатурой 
+графалгебры служит любая пара $\langle I, F : D \hm\to C^{\mathrm{Ob}\,I}\rangle$, 
+где $I$~--- малая категория, называемая формой граф\-ал\-геб\-ры; категория~$D$~--- 
+пространство данных; $C$~--- пространство вы\-чис\-ле\-ний. 
+Графалгебра сигнатуры $\langle I, F\rangle$~--- это произвольная пара $(A, 
+\Delta)$, состоящая из носителя $A\hm\in \mathrm{Ob}\,D$ и~диаграммы 
+структуры $\Delta  : I \hm\to C$, такая что $\Delta i \hm= \mathrm{Pr}_iFA$, где $\mathrm{Pr}_i : 
+C^{\mathrm{Ob}\,I} \hm\to C$~--- проекция степени на $i$-й экземп\-ляр основания, $i 
+\hm\in \mathrm{Ob}\,I$. Гомоморфизмом графалгебры $(A, \Delta)$ 
+в~$(A^\prime, \Delta^\prime)$ называется морфизм носителей $f : A\hm\to  
+A^\prime$ такой, что семейство морфизмов $\mathrm{Pr}_iFf : \Delta i \hm\to  
+\Delta^\prime i$, $i \hm\in \mathrm{Ob}\,I$, образует естественное 
+преобразование~$\Delta$ в~$\Delta^\prime$. Все графалгебры некоторой 
+сигнатуры и~все их гомоморфизмы образуют категорию, обозначаемую через 
+$\mathsf {A}_I F$, на которой действуют канонические за\-бы\-ва\-ющие 
+функторы: функтор носителя $U_I^F : \mathsf {A}_IF \hm\to  D : (A, \Delta) 
+\hm\mapsto A$ и~функтор структуры $\mathsf {S}_I^F : \mathsf {A}_IF \hm\to 
+C^I : (A, \Delta) \hm\mapsto \Delta$.
+     
+     Графалгебры выступают спецификациями распределенных сис\-тем: 
+стрелки диаграммы структуры помечаются вычислительными операциями 
+в~узлах системы, а~вершины описывают передаваемые между узлами данные. 
+С~этой точки зрения обычная алгебра действительно представляет автономный 
+вычислительный узел, а,~например, многослойная нейросеть прямого 
+распространения имеет форму нетривиальной конечной цепочки: это граф 
+множеств и~отображений вида
+     $$
+A^{k_0}\to  A^{k_1}\to \cdots\to  A^{k_l},
+$$
+где $A$~--- множество значений распознаваемого сигнала (например, $A\hm= 
+\mathbb{R}$); $l \hm> 1$~--- глубина сети; $k_i \hm> 0$~--- число нейронов  
+в~$i$-м слое, $i \hm= \overline{0,  l - 1}$. Обработка сигнала в~каждом слое $f_i : 
+A^{k_i}\hm\to  A^{k_{i+1}}$ состоит из отоб\-ра\-же\-ний-ком\-по\-нен\-тов (например:
+\begin{multline*}
+     f_{is} : \mathbb{R}^{k_i} \to \mathbb{R} : (x_1, \ldots, x_{k_i}) \mapsto {}\\
+     \mapsto
+\sum\limits_{j=1}^{k_i}  w_{ijs}\sigma_{ij}(x_j + b_{ij}),\enskip
+      s = \overline{1, k_{i+1}}\,,
+     \end{multline*}
+где $\sigma_{ij} : \mathbb{R}\hm\to \mathbb{R}$~--- функция активации $j$-го нейрона $i$-го 
+слоя; $w_{ijs}$ и~$b_{ij}$~--- веса и~смещения, подбираемые при обучении 
+нейросети). Сигнатура графалгебраической спецификации такой нейросети 
+имеет форму цепочки из $l$ стрелок, каждой вершине которой соответствует 
+эндофунктор возведения в~конечную степень в~\textbf{Set}.
+     
+     Распределенные системы общего вида, в~том числе сложно устроенные 
+нейросети, могут иметь графалгебраическую спецификацию практически 
+любой конечной формы (с~учетом ресурсных ограничений). В~дополнение 
+к~конечным цепочкам, пред\-став\-ля\-ющим последовательную конвейерную 
+обработку данных, форма может содержать подграфы, представляющие 
+параллельную обработку (например, $\bullet \rightrightarrows 
+\bullet$), обратную связь (например, $\bullet 
+\rightleftarrows\bullet$), разделяемую память (например, $\hspace*{-4pt}{\raisebox{-2pt}{
+\epsfxsize=3mm %6.548mm
+\epsfbox{kov-t-1.eps}
+}}\! 
+\bullet \hspace*{-4pt}{\raisebox{-2pt}{
+\epsfxsize=3mm %6.548mm
+\epsfbox{kov-t-2.eps}
+}})$, экземпляры других шаблонов проектирования. Сигнатурные 
+функторы полиномиальны, коль скоро функционирование сис\-те\-мы сводится 
+к~традиционным вычислениям и~детерминированному взаимодействию.
+
+\vspace*{-4pt}
+
+\section{Гибкие графалгебры}
+
+\vspace*{-1pt}
+
+     Гомоморфизмы графалгебр фиксированной формы~$I$ индуцируют 
+естественные преобразования диаграмм структуры~--- морфизмы  
+в~ка\-те\-го\-рии-экс\-по\-нен\-те~$C^I$. Чтобы связать морфизмами 
+графалгебры произвольных форм, необходимо объединить и~<<провязать>> 
+меж\-ду собой все экспоненты с~фиксированным основанием~$C$ и~малыми 
+категориями в~качестве показателя. Для этого существует канонический способ, 
+а~именно: уплощающая конструкция Гротендика (Grothendieck flattening 
+construction~[6, п.~12.2.10]). Произвольному функтору вида $F : Q \hm\to 
+\mathbf{CAT}$ эта конструкция со\-по\-став\-ля\-ет категорию $\int F$ типа 
+зависимой суммы (dependent sum), объектом которой служит любая пара $(A, 
+X)$, $X \hm\in \mathrm{Ob}\,Q$, $A \hm\in \mathrm{Ob}\,FX$, а~морфизмом 
+пары $(A, X)$ в~$(A^\prime, X^\prime)$ служит любая пара $(f : (Fg)A \hm\to  
+A^\prime, g : X \hm\to  X^\prime)$ (с законом композиции вида $(f, g) \circ (h, q) 
+\hm= (f \circ (Fg)h, g \circ q))$. Имеется забывающий функтор $\bm{U}_{(F)} : \int 
+F \hm\to  Q : (A, X) \hm\mapsto X$, $(f, g) \hm\mapsto g$. И~обратно: каждый 
+$X\hm\in \mathrm{Ob}\,Q$ по\-рож\-да\-ет вложение $\bm{i}_X : FX \hm\hookrightarrow  
+\int F : A \mapsto (A, X)$, $f \hm\mapsto (f, 1_X)$, причем в~сумме из таких 
+вложений получается вложение  
+$$
+[\bm{i}_X]_{X \in\mathrm{Ob}\,D} : \coprod\limits_{X\in\mathrm{Ob}\,D} FX 
+\hm\hookrightarrow  \int F,
+$$ биективное на объектах.
+     
+     Для функтора $C^{(-)} : \mathbf{Cat}^{\mathrm{op}} \hm\to \mathbf{CAT} : X \hm\mapsto 
+C^X$ конструкция Гротендика дает категорию диа-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+грамм $\mathbf{D}C$, класс 
+объектов которой состоит из всех \mbox{$C$-диа}\-грамм, а~морфизмом диаграммы 
+$\Delta : X \hm\to C$ в~$\Sigma : Y \hm\to C$ служит любая пара вида 
+$\langle\gamma, \mathsf {f}\rangle$, состоящая из функтора $\mathsf {f} : X 
+\hm\to Y$ и~естественного преобразования $\gamma : \Delta \hm\to 
+\Sigma\mathsf {f}$; закон композиции морфизмов диаграмм имеет вид:
+$$
+\langle \gamma, \mathsf {f}\rangle \circ \langle\varphi, \mathsf {g}\rangle = \langle 
+\gamma_{\mathsf {g}(-)} \circ \varphi, \mathsf {fg}\rangle.
+$$
+ С~при\-клад\-ной точ\-ки 
+зрения такие морфизмы описывают структурные преобразования моделей\linebreak 
+сис\-тем в~алгебраическом пред\-став\-ле\-нии~[7]. Имеется забывающий функтор 
+формы $\mathbf{D}!_{C} : \mathbf{D}C\hm\to \mathbf{Cat} : \Delta \mapsto  
+\mathrm{dom}\,\Delta$, $\langle \gamma, \mathsf {f}\rangle \hm\mapsto 
+\mathsf {f}$. Такое обозначение функтора связано с~тем, что соответствие 
+$C\hm\mapsto \mathbf{D}C$ функториально: оно расширяется до эндофунктора 
+$\mathbf{D} : \mathbf{CAT}\hm\to \mathbf{CAT}$ (а~функтор формы 
+получается путем его действия на функтор $!_{C} : C \hm\to \mathbf{1}$, где 
+$\mathbf{1}$~--- сингулярная категория). Эндофунктор~$\mathbf{D}$ 
+индуцирует 2-мо\-на\-ду в~$\mathbf{CAT}$, известную как метамодель 
+системного моделирования, поскольку в~ней <<закодированы>> основ\-ные 
+применяемые в~нем категорные конструкции~[8].
+     
+     Форма графалгебры фигурирует не только в~диаграмме структуры, но 
+и~в~ко\-об\-ласти сигнатурного функтора, в~час\-ти множества вершин, которое\linebreak 
+выступает показателем экспоненты. Каноническое объединение всех экспонент 
+с~фиксированным основанием и~множеством в~качестве показателя так\-же 
+получается путем конструкции \mbox{Гротендика}, только для функтора  
+$C^{(-)}: \mathbf{Set}^{\mathrm{op}}\hm\to \mathbf{CAT}$. Получается полная подкатегория 
+в~$\mathbf{D}C$, со\-сто\-ящая из всех дискретных $C$-диа\-грамм, которую будем 
+обозначать через $\mathbf{D}_{\mathbf{Set}}C$. Она корефлективна 
+в~$\mathbf{D}C$: корефлектор убирает из произвольной диаграммы $\Delta : 
+X\hm\to  C$ все не\-тож\-дест\-вен\-ные морфизмы,  превращая ее в~дискретную 
+диаграмму $]\Delta[ : \mathrm{Ob}\,X \hm\to C : x \hm\mapsto \Delta x$. 
+Соответствие $C\hm\mapsto \mathbf{D}_{\mathbf{Set}}C$ расширяется до 
+эндофунктора в~$\mathbf{CAT}$, ин\-ду\-ци\-ру\-юще\-го подмонаду в~$\mathbf{D}$, 
+причем указанные корефлекторы образуют ретракцию монады~$\mathbf{D}$ на 
+нее.
+     %
+     Тем самым из <<материала>> монады диаграмм получается следующее 
+обобщение конструкции графалгебры.
+     
+     \smallskip
+     
+     \noindent
+     \textbf{Определение~1.}\ Гибкой графалгеброй сигнатуры\linebreak $F : D \hm\to  
+\mathbf{D}_{\mathbf{Set}}C$ называется любая пара $(A, \Delta : I \hm\to  C), A 
+\hm\in \mathrm{Ob}\, D$, $I \hm\in \mathbf{Cat}$, такая что $]\Delta[ \hm= FA$.\linebreak 
+Морфизмом такой гиб\-кой графалгебры в~($A^\prime, \Delta^\prime : 
+I^\prime\hm\to  C$) называется любая пара ($f : A \hm\to  A^\prime, \mathsf {g} : 
+I \hm\to  I^\prime$), такая что существует (обязательно единственное) семейство 
+морфизмов $\theta_i : \Delta i \hm\to  \Delta^\prime \mathsf {g}i$, $i \hm\in 
+\mathrm{Ob}\,I$, такое что пара $\langle \theta, ]\mathsf{g}[ : 
+\mathrm{Ob}\,I\hm\to  \mathrm{Ob}\,I^\prime\rangle$ совпадает с~$Ff : ]\Delta[ 
+\hm\to  ]\Delta^\prime[$, а~пара $\langle\theta, \mathsf {g}\rangle$ 
+пред\-став\-ля\-ет собой морфизм диаграммы~$\Delta$ в~$\Delta^\prime$ 
+в~$\mathbf{D}C$.~\hfill$\square$
+     
+     \smallskip
+     
+     \noindent
+     \textbf{Теорема~1.}\ \textit{Все гибкие графалгебры сигнатуры\linebreak $F : D 
+\hm\to  {\bm D}_{\mathbf{Set}}C$ и~все их морфизмы образуют категорию, изоморфную 
+вершине сле\-ду\-юще\-го декартова квадрата в}~$\mathbf{CAT}$:
+
+%\begin{figure*} %fig
+\vspace*{1pt}
+      \begin{center}
+     \mbox{%
+\epsfxsize=28.351mm 
+\epsfbox{kov-1.eps}
+}
+\end{center}
+%\vspace*{-9pt}
+%\end{figure*}
+
+     \noindent
+     Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \  Проверяется непосредственно по 
+правилам вычисления пределов и~экспонент в~$\mathbf{CAT}$.~\hfill$\square$
+     
+     \smallskip
+     
+     Ребра декартова квадрата из теоремы~1 задают канонические 
+забывающие функторы, которые, аналогично графалгебрам фиксированной 
+формы, выделяют из гиб\-ких графалгебр сигнатуры~$F$ носитель (левая 
+вертикальная стрел\-ка $\mathsf {U}^ F : \mathsf {A}F \hm\to D : (A, \Delta) 
+\hm\mapsto A$) и~структуру (верх\-няя горизонтальная стрелка $\mathsf {S}^F : 
+\mathsf {A}F \hm\to \mathbf{D}C : (A, \Delta) \hm\mapsto \Delta$). Имеет 
+значение также функтор выделения формы
+     \begin{multline*}
+     \mathsf {H}^F = (\mathbf{D}!_C)\mathsf {S}^F : \mathsf {A}F \to 
+\mathbf{Cat} : (A, \Delta) \mapsto \mathrm{dom}\,\Delta,\\
+ (f, \mathsf {g}) \mapsto  
+\mathsf {g}.
+\end{multline*}
+В частности, функтор $\langle \mathsf {U}^F, \mathsf {H}^F \rangle : 
+\mathsf {A}F \hm\to  D \times \mathbf{Cat} : (A, \Delta) \hm\mapsto (A, 
+\mathrm{dom}\ \Delta)$ унивалентен, а~функтор носителя, как правило, нет. Зато 
+есть возможность строить свободные гиб\-кие графалгебры.
+
+\smallskip
+
+     \noindent
+     \textbf{Следствие~1.1.} Функтор носителя гибких графалгебр любой 
+сигнатуры представляет собой корефлектор.
+     
+     \smallskip
+     
+     \noindent
+     Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ Непосредственно проверяется, что 
+класс всех корефлекторов устойчив относительно декартовых квадратов 
+в~$\mathbf{CAT}$. В~явной форме для произвольной сигнатуры гибких 
+графалгебр $F : D \hm\to \mathbf{D}_{\mathbf{Set}}C$ левым сопряженным 
+к~$\mathsf {U}^F$ служит функтор
+     $$
+     \mathsf {G}^F : D \hookrightarrow  \mathsf {A}F : A 
+\mapsto (A, FA), f \mapsto (f, (\mathbf{D}_{\mathbf{Set}}!_C)Ff).
+     $$
+Единица этого сопряжения тождественна, а~коединица состоит из морфизмов 
+гиб\-ких графалгебр ($1_A, \mathrm{Ob}\,\mathrm{dom}\,\Delta   
+\hm\hookrightarrow \mathrm{dom}\,\Delta) : (A, FA) \hm\to  (A, \Delta)$, $(A, 
+\Delta) \hm\in \mathrm{Ob}\,\mathsf {A}F$.~\hfill$\square$
+
+\smallskip
+
+\noindent
+\textbf{Следствие~1.2.}\ Для любой сигнатуры гибких граф\-ал\-гебр $F : D \hm\to 
+{\bm D}_{\mathbf{Set}}C$ следующие утверждения эквивалентны:
+\begin{itemize}
+\item[$(i)$] функтор носителя представляет собой изоморфизм;
+\item[$(ii)$] функтор носителя унивалентен;
+\item[$(iii)$] $F$ сопоставляет любому носителю пустую диаграмму.
+\end{itemize}
+
+     \noindent
+     Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.
+     
+     $(iii)$\;$\Rightarrow$\;$(i)$. Если $]\Delta[$~--- пустая диаграмма, то 
+и~$\Delta$ пуста, поэтому при выполнении условия~($iii$) коединица 
+сопряжения $\mathsf {G}^F \dashv \mathsf {U}^F$ тождественна, т.\,е.\ 
+$\mathsf {G}^F\mathsf {U}^F \hm= 1_{\mathsf {A}F}$.
+
+\vspace*{2pt}
+     
+     $(i)$\;$\Rightarrow$\;$(ii)$. Тривиально.
+     
+     \vspace*{2pt}
+     
+     $(ii)$\;$\Rightarrow$\;$(iii)$. Предположим противное: пусть диаграмма $FA$ 
+при некотором $A \hm\in \mathrm{Ob}\, D$ содержит точку~$i$. Обозначим 
+через $\Delta$ $C$-диа\-грам\-му, полученную из $FA$ путем добавления 
+эндострелки $e : i \hm\to i$ с~законом композиции $e \circ e \hm= 1_i$, 
+помеченной морфизмом $1_{(FA)i}$. Гиб\-кая графалгебра $(A, \Delta)$ имеет два 
+разных эндоморфизма с~тождественным носителем: один переводит $e$ в~$e$, 
+а~другой~--- в~$1_i$.~\hfill$\square$
+
+\smallskip
+     
+     Чтобы выделить в~$\mathsf {A}F$ графалгебры произвольной 
+фиксированной формы~$I$, нужно найти в~$D$\linebreak все носители, которым 
+сигнатурный функ\-тор сопоставляет объекты категории~$C^{\mathrm{Ob}\,I}$. Для 
+этого\linebreak используется конструкция полного прообраза сигнатурного функтора~--- 
+декартова квад\-ра\-та с~со\-от\-вет\-ст\-ву\-ющим вложением. Любая гибкая граф\-ал\-геб\-ра 
+сигнатуры~$F$ содержится в~одной и~только одной из категорий графалгебр 
+фиксированной формы, полученных таким способом.
+     
+     \smallskip
+     
+     \noindent
+     \textbf{Теорема~2.} \textit{Пусть $F : D \hm\to {\bm D}_{\mathbf{Set}}C$~--- 
+сигнатура гибких графалгебр, $I$~--- произвольная форма, $F\vert_I : D\vert_I 
+\hm\to C^{\mathrm{Ob}\,I}$~--- полный прообраз функтора~$F$ относительно 
+канонического вложения $\bm{i}_{\mathrm{Ob}\,I} : C^{\mathrm{Ob}\,I} 
+\hookrightarrow {\bm D}_{\mathbf{Set}}C$. Полный прообраз функтора структуры 
+$\mathsf {S}^F : \mathsf {A}F \hm\to  {\bm D}C$ относительно канонического 
+вложения ${\bm i}_I : C^I \hookrightarrow  {\bm D}C$ совпадает (с точностью 
+до изоморфизма) с~функтором структуры категории  
+$\langle I, F\vert_I\rangle$-ал\-гебр, которая тем самым канонически 
+вкладывается в}~$\mathsf {A}F$:
+
+%\begin{figure*} %fig2
+\vspace*{1pt}
+      \begin{center}
+     \mbox{%
+\epsfxsize=28.307mm 
+\epsfbox{kov-2.eps}
+}
+\end{center}
+%\vspace*{-9pt}
+%\end{figure*}
+
+\noindent
+     Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \  Рассмотрим сле\-ду\-ющую диаграмму в~форме куба:
+     
+%\begin{figure*} %fig3
+\vspace*{1pt}
+      \begin{center}
+     \mbox{%
+\epsfxsize=38.403mm 
+\epsfbox{kov-3.eps}
+}
+\end{center}
+%\vspace*{-9pt}
+%\end{figure*}
+
+\noindent
+     Здесь стрелки с~закругленным началом обозначают канонические 
+вложения (так что, в~част\-ности, правая грань является коммутативным 
+квад\-ра\-том); ниж\-няя грань представляет построение функтора $F\vert_I$ как 
+полного прообраза (т.\,е.\ является декартовым квад\-ра\-том); передняя грань~--- 
+это декартов квад\-рат из тео\-ре\-мы~1; задняя грань (с~правой вертикальной 
+стрелкой $C^{(\mathrm{Ob}\,I \hookrightarrow I)} : C^I \hm\to  C^{\mathrm{Ob}\,I}$)~--- это 
+декартов квадрат, представляющий построение категории графалгебр $\mathsf{A}_I F\vert_I$ [3, 
+теорема~1]; стрелка из $\mathsf {A}_I F\vert_I$ в~$\mathsf {A}F$ изображает 
+единственный функтор, де\-ла\-ющий всю диаграмму коммутативной. Ввиду 
+композиционных свойств декартовых квад\-ра\-тов~[9, предложение~11.10(1)], 
+прямоугольник $\mathsf {A}_I F\vert_I$--$C^I$--$\mathbf{D}_{\mathbf{Set}}C$--$D$ является 
+декартовым, а~значит, и~верх\-няя грань куба~--- декартов квад\-рат.~\hfill$\square$
+     
+     Чтобы описать динамику изменения формы\linebreak структуры распределенной 
+системы, введем пространство данных $D$ вида $\check{D}\times T$, 
+где~$\check{D}$~--- инвариантное (не зависящее от времени) пред\-став\-ле\-ние 
+данных; $T$~--- вполне упорядоченное \mbox{множество}, пред\-став\-ля\-ющее время. 
+(Напомним, что любое предупорядоченное множество стандартным образом 
+пред\-став\-ля\-ет\-ся в~виде категории~[10, \S\,I.2].) Тогда графалгебраические 
+спецификации сис\-тем, которые могут существовать в~некоторый момент 
+времени $t \hm\in T$, определяются как объекты подкатегории 
+$\mathsf {A}F\vert_t \hm\subseteq \mathsf {A}F$~--- полного прообраза 
+функтора носителя относительно сечения 
+$$
+\langle 1_{\check{D}}, \lceil t\rceil  !_{\check{D}}\rangle  : \check{D} \hm\hookrightarrow D : X \hm\mapsto \langle X, 
+t\rangle.
+$$
+
+ Сценарий эволюции некоторой сис\-те\-мы $(A, \Delta) \hm\in 
+\mathrm{Ob}\,\mathsf {A}F$ может быть задан функтором вида $S : T 
+\hookrightarrow \mathsf {A}F$, обратным справа к~функтору проекции 
+{носителя} на~$T$ и~при\-ни\-ма\-ющим значение $(A, \Delta)$ в~начальный момент 
+времени. Появляется воз\-мож\-ность строго специфицировать и~верифицировать 
+структурные требования к~трансформациям архитектуры сис\-те\-мы в~ходе 
+эволюции, такие как переход от реализации некоторого шаб\-ло\-на 
+проектирования к~реализации другого. Требования такого рода задаются как 
+свойства входящих в~об\-ласть значений функтора~$S$ морфизмов гиб\-ких 
+графалгебр.
+     
+     Например, автоматический синтез архитектуры нейросетей путем 
+пошаговых трансформаций описывается гибкими графалгебрами сле\-ду\-ющим 
+образом. Выберем в~качестве $\check{D}$ подкатегорию в~$\mathbf{Set}$, 
+состоящую из единственного объекта~$\mathbb{R}$ и~под\-хо\-дя\-щих 
+вещественных функций (<<перекодировок>> в~составе до\-пус\-ти\-мых 
+трансформаций), в~качестве~$T$ некоторый начальный отрезок натуральных 
+чисел (счетчик шагов), а~в~качестве пространства вы\-чис\-ле\-ний~$C$ категорию 
+$\mathbf{Set}$. Сигнатурный функтор~$F$ сопоставляет паре $(\mathbb{R}, 
+i)$, $i \hm\in T$, конечную дискретную диаграмму, размеченную конечными 
+степенями множества~$\mathbb{R}$. Тем самым сигнатура фиксирует чис\-ло 
+и~мощность слоев нейросети на каждом шаге, но не накладывает ограничений 
+на связи между\linebreak слоями, что поз\-во\-ля\-ет искать среди объектов подкатегории 
+$\mathsf {A}F\vert_i$ наиболее подходящую конфигурацию (топологию и~веса) 
+связей. Можно по\-рож\-дать и~параллельно анализировать разные \mbox{варианты} 
+сигнатуры, например с~по\-мощью генетического алгоритма. В~итоге любой 
+сценарий синтеза сети $S : T \hookrightarrow \mathsf {A}F$ включает морфизм 
+результата $i$-го шага в~результат ($i \hm+ 1$)-го, га\-ран\-ти\-ру\-ющий сохранение 
+функ\-ци\-о\-наль\-ности при трансформации~--- необходимое условие 
+вы\-чис\-ли\-тель\-ной эф\-фек\-тив\-ности алгоритма~[4]. Действительно, требование 
+наличия такого морфизма может существенно \mbox{сузить} пространство поиска 
+конфигурации связей, ограничивая его кообластями морфизмов результата 
+предыду\-ще\-го шага. Тео\-ре\-ти\-ко-ка\-те\-гор\-ное описание открывает путь 
+к~дальнейшему повышению эффективности путем привлечения средств 
+компьютерной алгебры для навигации вдоль морфизмов графалгебр в~ходе 
+поиска.
+     
+     В еще более общем случае эволюции распределенной сис\-те\-мы от 
+времени зависит не только ее форма, но и~пред\-став\-ле\-ние данных. Чтобы 
+обеспечивать преемственность данных по ходу эволюции такой сис\-те\-мы, 
+указанная за\-ви\-си\-мость задается функтором $D^\circ : T \hm\to  \mathbf{CAT}$ 
+таким, что $D^\circ t$~--- представление данных в~момент времени $t \hm\in T$. 
+В~качестве носителя гибких графалгебр целесообразно выбрать конструкцию 
+Гротендика $\int D^\circ$. Если и~пред\-став\-ле\-ние вы\-чис\-ле\-ний зависит от 
+времени, то вводится функ\-тор $C^\circ : T \hm\to \mathbf{CAT}$ и~сигнатура 
+приобретает вид: 
+$$
+F : \int D^\circ \hm\to \mathbf{D}_{\mathbf{Set}} \int C^\circ.
+$$
+ Чтобы она 
+не нарушала при\-чин\-ность, в~любой момент времени~$t$ она долж\-на 
+удовле\-тво\-рять соотношению 
+\begin{multline*}
+\left(\mathbf{D}_{\mathbf{Set}}(\lceil t\rceil !_{\int\! C^\circ})\right)F{\bm i}_t 
+={}\\
+{}= \left(\mathbf{D}_{\mathbf{Set}}{\bm U}_{(C^\circ)}\right)F{\bm i}_t : D^\circ t \hm\to  
+\mathbf{D}_{\mathbf{Set}}T.
+\end{multline*}
+ Сценарий эволюции сис\-те\-мы с~такой сильно изменчивой 
+архитектурой~--- это функтор $S : T \hm\hookrightarrow \mathsf {A}F$ такой, что 
+$$
+\bm{U}_{(D^\circ)}\mathsf {U}^FS \hm= 1_T.
+$$
+ Например, в~этой форме можно будет 
+описать технологии развития компьютерного пред\-став\-ле\-ния объектов 
+управления от грубой рас\-чет\-ной/ин\-фор\-ма\-ци\-он\-ной модели до 
+полнофункционального циф\-ро\-во\-го\- двойника. Такие технологии активно 
+разрабатываются в~настоящее время~[11].
+     
+\section{Функтор гибких графалгебр}
+
+     Примечательно, что сигнатуры гиб\-ких граф\-ал\-гебр также строятся из 
+<<материала>> монады диаграмм: в~со\-во\-куп\-ности все они образуют класс 
+морфизмов категории Клейсли монады $\mathbf{D}_{\mathbf{Set}}$. \mbox{Однако}, чтобы 
+выявить функториальную природу конструкции гиб\-кой графалгебры, требуется 
+категория, в~которой сигнатуры выступают объектами, а~не морфизмами. 
+В~таких случаях применяется другая универсальная конструкция~--- категория 
+запятой (comma category) [10, \S\,II.6] (которая, в~свою очередь, пред\-став\-ля\-ет 
+собой част\-ный случай графалгебры~[3]).
+     
+     \smallskip
+     
+     \noindent
+     \textbf{Теорема~3.}\ \textit{Отображение $F\hm\mapsto \mathsf {A}F$ служит функцией 
+объектов функтора}
+     $$
+     \mathsf {A} : (1_{\mathbf{CAT}}\downarrow 
+\mathbf{D}_{\mathbf{Set}}) \to \mathbf{CAT}\,.
+     $$
+     
+     
+     \noindent
+     Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \  По определению категории запятой 
+объектом в~($1_{\mathbf{CAT}}\downarrow \mathbf{D}_{\mathbf{Set}}$) служит в~точ\-ности любой 
+функтор $F : D \hm\to \mathbf{D}_{\mathbf{Set}}C$, т.\,е.\ сигнатура гибких графалгебр,\linebreak 
+а~его морфизмом в~$F^\prime : D^\prime \hm\to \mathbf{D}_{\mathbf{Set}}C^\prime$ 
+служит любая пара функторов $(R : D \hm\to D^\prime, S : C \hm\to  C^\prime)$, 
+такая что $F^\prime R \hm= (\mathbf{D}_{\mathbf{Set}}S)F$. Эта пара индуцирует 
+единственный функтор из $\mathsf {A}F$ в~$\mathsf {A}F^\prime$, который 
+делает коммутативным весь нижеприведенный куб, передняя и~задняя грани 
+которого представляют собой декартовы квадраты из теоремы~1:
+
+   %  \begin{figure*} %fig4
+     \vspace*{1pt}
+      \begin{center}
+     \mbox{%
+\epsfxsize=37.322mm 
+\epsfbox{kov-4.eps}
+}
+\end{center}
+%\vspace*{-9pt}
+    % \end{figure*}
+     
+
+
+\section{Заключение}
+
+     Конструкция графалгебры открывает новые горизонты в~применении 
+алгебраических методов для анализа и~проектирования распределенных сис\-тем. 
+В~ее гибком варианте появляются возможности формально специфицировать, 
+верифицировать и~в~конечном счете эффективно автоматизировать процедуры 
+эволюционного изменения архитектуры систем. Для практической реализации 
+этих возможностей предстоит создать удобные языки и~инструменты.
+     
+С~теоретической точки зрения примечательно, что гибкие графалгебры 
+строятся из <<материала>> монады диаграмм: это подчеркивает ключевую 
+роль указанной монады в~качестве математического фундамента сис\-тем\-ной 
+инженерии. В~част\-ности, намечается <<сис\-тем\-но-ин\-же\-нер\-ный>> 
+подход к~конструированию классического понятия ал\-геб\-ры: категорию 
+обыч\-ных алгебр можно получить как част\-ный случай комбинации декартовых 
+квад\-ра\-тов, приведенных в~тео\-ре\-мах~1 и~2.
+     
+{\small\frenchspacing
+ { %\baselineskip=10.6pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-kov}
+\Au{Ковалёв С.\,П.} Формальный подход к~разработке программных сис\-тем.~--- 
+Новосибирск: НГУ, 2004. 180~с.
+\bibitem{2-kov}
+\Au{Gurevich Y.} Evolving algebras 1993: Lipari guide~// Specification and validation methods.~--- 
+Oxford: Oxford University Press, 1995. P.~9--36.
+\bibitem{3-kov}
+\Au{Ковалёв С.\,П.} Алгебраическая спецификация графовых вычислительных структур~// 
+Информатика и~её применения, 2022. Т.~16. Вып.~1. С.~2--9. doi: 10.14357/ 19922264220101. 
+EDN: GXHPZI.
+\bibitem{4-kov}
+\Au{Cai H., Chen~T., Zhang~W., Yu~Y., Wang~J.} Efficient architecture search by network 
+transformation~// 32th AAAI Conference  ``Artificial Intelligence'' Proceedings~/ Eds. 
+S.\,A.~McIlraith, K.\,Q.~Weinberger.~--- Palo Alto, CA, USA: AAAI Press, 2018. P.~2787--2794.
+\bibitem{5-kov}
+   \Au{Mens T., Magee~J., Rumpe~B.} Evolving software architecture descriptions of critical 
+systems~// Computer,  2010. Vol.~43. No.\,5. P.~42--48. doi: 10.1109/MC.2010.136.
+
+\bibitem{6-kov}
+\Au{Barr M., Wells~C.} Category theory for computing science.~--- London: Prentice Hall, 1990. 
+538~p.
+\bibitem{7-kov}
+   \Au{Ковалёв С.\,П.} Методы теории категорий в~модельно-ори\-ен\-ти\-ро\-ван\-ной сис\-тем\-ной 
+инженерии~// Информатика и~её применения, 2017. Т.~11. Вып.~3. С.~42--50. doi: 
+10.14357/19922264170305. EDN: ZGIGGD.
+
+\bibitem{8-kov}
+   \Au{Ковалёв С.\,П.} Теория категорий как математическая прагматика модельно-ориентированной сис\-тем\-ной инженерии~// Информатика и~её применения, 2018. Т.~12. 
+Вып.~1. С.~95--104. EDN: YTTRFC.
+
+\bibitem{9-kov}
+\Au{Ad$\acute{\mbox{a}}$mek J., Herrlich~H., Strecker~G.\,E.} Abstract and concrete 
+categories.~--- New York, NY, USA: John Wiley, 1990. 507~p.
+\bibitem{10-kov}
+\Au{Маклейн С.} Категории для работающего математика~/ Пер. с~англ.~--- М.: Физматлит, 
+2004. 352~с. (\Au{Mac Lane~S.} Categories for the working mathematician.~--- New York, NY, 
+USA: Springer, 1978. 317~p.)
+\bibitem{11-kov}
+   \Au{Семенов П.\,В., Семишкур~Р.\,П., Дяченко~И.\,А.} Концептуальная модель 
+реализации технологии <<цифровых двойников>> для предприятий нефтегазового 
+комплекса~// Газовая промышленность, 2019. №\,7(787). С.~24--30. EDN: EZXDVJ.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 12.09.22}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+
+
+\def\tit{ALGEBRAIC SPECIFICATION OF~GRAPH~COMPUTATIONAL~STRUCTURES}
+
+
+\def\titkol{Algebraic specification of~graph computational structures}
+
+
+\def\aut{S.\,P.~Kovalyov}
+
+\def\autkol{S.\,P.~Kovalyov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-8pt}
+
+
+ \noindent
+   V.\,A.~Trapeznikov Institute of Control Sciences of the Russian Academy of Sciences, 
+65~Profsoyuznaya Str., Moscow 117997, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+%\vspace*{3pt}
+
+
+   
+   \Abste{The previously proposed generalized approach to algebraic specification 
+of distributed systems is developed based on the novel category-theoretic construction called graphalgebra. The 
+graphalgebraic specification is based upon a~directed multigraph, the edges of which represent 
+computational operations performed in the nodes of the system and the vertices denote the data 
+exchange ports between the components. Changing the system architecture during the life cycle 
+leads to changes in the graph shape, computation algorithms, and data exchange contents. For 
+a~formal description of such changes, a~graph transformation technique for graphalgebras is proposed. 
+A~novel category-theoretic construction called flexible graphalgebra is introduced which appeared 
+to be closely related to the well-known monad of diagrams. A~functor is presented that produces all 
+categories of flexible graphalgebras from their signatures. The theoretical results are illustrated by 
+examples from the field of automatic synthesis of neural network architecture by step-by-step 
+transformations.}
+   
+   \KWE{algebraic specification; distributed system; architecture evolution; category theory; 
+graphalgebra; monad of diagrams}
+   
+\DOI{10.14357/19922264240102}{MZAHBS}
+
+%\vspace*{-12pt}
+
+%\Ack
+%     \noindent
+ 
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99} 
+\bibitem{1-kov-1}
+   \Aue{Kovalyov, S.\,P.} 2004. \textit{Formal'nyy podkhod k~razrabotke programmnykh sistem} 
+[Formal approach to software systems development]. Novosibirsk: NSU. 180~p.
+\bibitem{2-kov-1}
+\Aue{Gurevich, Y.} 1995. Evolving algebras 1993: Lipari guide. \textit{Specification and 
+validation methods}. Oxford: Oxford University Press. 9--36.
+\bibitem{3-kov-1}
+   \Aue{Kovalyov, S.\,P.} 2022. Algebraicheskaya spetsifikatsiya grafovykh vychislitel'nykh 
+struktur [Algebraic specification of graph computational structures]. \textit{Informatika i~ee 
+Primeneniya~--- Inform. Appl.} 16(1):2--9. doi: 10.14357/ 19922264220101. EDN: GXHPZI.
+\bibitem{4-kov-1}
+   \Aue{Cai, H., T.~Chen, W.~Zhang, Y.~Yu, and J.~Wang.} 2018. Efficient architecture search 
+by network transformation. \textit{32th AAAI Conference ``Artificial Intelligence'' Proceedings.} 
+Eds. S.\,A.~McIlraith and K.\,Q.~Weinberger. Palo Alto, CA: AAAI Press. 2787--2794. 
+\bibitem{5-kov-1}
+   \Aue{Mens, T., J.~Magee, and B.~Rumpe.} 2010. Evolving software architecture descriptions 
+of critical systems. \textit{Computer} 43(5):42--48. doi: 10.1109/MC.2010.136.
+\bibitem{6-kov-1}
+   \Aue{Barr, M., and C.~Wells.} 1990. \textit{Category theory for computing science}. London: 
+Prentice Hall. 538~p.
+ \bibitem{7-kov-1}
+   \Aue{Kovalyov, S.\,P.} 2017. Metody teorii kategoriy v~model'no-orientirovannoy sistemnoy 
+inzhenerii [Methods of category theory in model-based systems engineering]. \textit{Informatika 
+i~ee Primeneniya~--- Inform. Appl.} 11(3):42--50. doi: 10.14357/19922264170305. EDN: ZGIGGD.
+\bibitem{8-kov-1}
+   \Aue{Kovalyov, S.\,P.} 2018. Teoriya kategoriy kak ma\-te\-ma\-ti\-che\-skaya pragmatika  
+model'no-orientirovannoy sistemnoy inzhenerii [Category theory as a~mathematical pragmatics of 
+model-based systems engineering]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 
+ 12(1):95--104. EDN: \mbox{YTTRFC}.
+\bibitem{9-kov-1}
+   \Aue{Ad$\acute{\mbox{a}}$mek, J., H.~Herrlich, and G.\,E.~Strecker.} 1990. \textit{Abstract 
+and concrete categories}. New York, NY: John Wiley. 507~p.
+\bibitem{10-kov-1}
+   \Aue{Mac Lane, S.} 1978. \textit{Categories for the working mathematician}. New York, NY: 
+Springer. 317~p.
+\bibitem{11-kov-1}
+   \Aue{Semenov, P.\,V., R.\,P.~Semishkur, and I.\,A.~Dyachenko.} 2019. Kontseptual'naya 
+model' realizatsii tekhnologii ``tsifrovykh dvoynikov'' dlya predpriyatiy neftegazovogo kompleksa 
+[Conceptual model of digital twin technology implementation for oil and gas industry]. 
+\textit{Gazovaya promyshlennost'} [Gas Industry] 7(787):24--30. EDN: EZXDVJ.
+   
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received September 12, 2022}} 
+
+\vspace*{-18pt}
+     
+     \Contrl
+     
+     \vspace*{-3pt}
+   
+   \noindent
+   \textbf{Kovalyov Sergey P.} (b.\ 1972)~--- Doctor of Science in physics and mathematics, 
+leading scientist, V.\,A.~Trapeznikov Institute of Control Sciences of the Russian Academy of Sciences, 
+65~Profsoyuznaya Str., Moscow 117997, Russian Federation; \mbox{kovalyov@sibnet.ru}
+   
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 
+
+   

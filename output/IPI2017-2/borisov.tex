@@ -1,0 +1,1190 @@
+%\newcommand {\ebd}{\stackrel{\triangleq}{=}}
+\newcommand {\col}{\mathop{\mathrm{col}}}
+\newcommand{\me}[2]{\mathbf{E}_{ #1 }\left\{ \mathop{#2} \right\} }
+\newcommand{\pp}[1]{\mathbf{P}\left\{ #1 \right\}}
+\newcommand {\ppp}{{\mathcal P}}
+
+
+
+\def\stat{borisov}
+
+\def\tit{КЛАССИФИКАЦИЯ ПО НЕПРЕРЫВНЫМ НАБЛЮДЕНИЯМ С~МУЛЬТИПЛИКАТИВНЫМИ ШУМАМИ~II:
+АЛГОРИТМ ЧИСЛЕННОЙ РЕАЛИЗАЦИИ ОЦЕНКИ$^*$}
+
+\def\titkol{Классификация по непрерывным наблюдениям с~мультипликативными шумами~II:
+алгоритм численной реализации} % оценки}
+
+\def\aut{А.\,В.~Борисов$^1$}
+
+\def\autkol{А.\,В.~Борисов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Борисов А.\,В.}
+\index{Borisov A.\,V.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при финансовой поддержке РФФИ (проекты 16-07-00677 
+и~15-37-20611-мол\_а\_вед).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управление>> Российской академии наук,
+\mbox{aborisov@frccsc.ru}}
+
+\vspace*{12pt}
+
+
+
+\Abst{Данная работа является второй частью статьи <<Классификация по непрерывным 
+наблюдениям с~мультипликативными шумами~I: формулы байесовской оценки>>, опубликованной
+ в~журнале <<Информатика и~её применения>>, 2017, том~11, выпуск~1. 
+ Исследования посвящены решению задачи оценивания случайного вектора 
+ с~конечным множеством состояний по непрерывным зашумленным наблюдениям. Особенностью 
+ модели является то, что интенсивность шумов в~наблюдениях зависит от оцениваемого 
+ вектора, что не позволяет применять классические результаты оптимальной нелинейной 
+ фильтрации.
+В~первой части статьи искомая оценка получена как в~явной интегральной форме, так 
+и~в~виде решения некоторой стохастической дифференциальной системы со скачкообразными 
+процессами в~правой части. Во второй части представлен алгоритм приближенного 
+вычисления оценки и~характеристики его точности. Модельный пример иллюстрирует 
+качество предлагаемой оценки и~соответствующей численной процедуры.}
+
+\KW{оптимальная фильтрация; идентифицируемость; рекуррентная схема; 
+порядок точ\-ности; дискретизация по времени}
+
+\vspace*{12pt}
+
+\DOI{10.14357/19922264170204} 
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+ \section{Введение}
+ 
+ Статья является окончанием~\cite{B_17} и~имеет следующую структуру. 
+ 
+ Раздел~2 
+ содержит постановку исследуемой задачи классификации, а~также краткое изложение 
+ теоретических результатов, представленных в~первой части работы. 
+ 
+ В~разд.~3 предлагается алгоритм приближенного вычисления оценки и~характеристики 
+ точности соответствующих аппроксимаций. 
+ Раздел~4 содержит модельный пример, 
+ иллюстрирующий свойства предлагаемой оценки классификации и~алгоритма ее вычисления. 
+ 
+ Обсуждение результатов и~заключительные комментарии представлены в~разд.~5.
+
+  \section{Постановка задачи и~сводка имеющихся результатов}
+  
+  Рассматривается следующая система наблюдения:
+  
+  \noindent
+  \begin{equation}
+\left.
+\begin{array}{l}
+\hspace*{-10mm}\displaystyle dX_t = 0\,, \enskip X_0 = X\,;\\[6pt]
+\hspace*{-10mm}\displaystyle dY_t = \sum\limits_{n=1}^Ne_n^{\top}X_t f_t(n)\,dt + {}\\[6pt] 
+\displaystyle{}+\sum\limits_{n=1}^Ne_n^{\top}X_tg_t(n)\,dW_t\,, \enskip
+Y_0=0\,,
+\end{array}
+\right\}
+\label{eq:obsys_1}
+\end{equation}
+где
+  \begin{itemize}
+  \item $X_t$ --- ненаблюдаемое состояние системы: начальное условие~$X$ 
+  принимает значения из\linebreak множества $\mathbb{S}^N \triangleq \{e_1,\ldots,e_N\}$ 
+  единичных векторов евклидова пространства~$\mathbb{R}^N$ 
+  с~вероятностями~$\{p_n\}_{n=\overline{1,N}}$, $p\triangleq \col\,(p_1,\ldots,p_N)$;
+  \item $Y_t$ --- $M$-мер\-ный процесс наблюдений;
+  \item $W_t \in \mathbb{R}^M$~--- независимый от~$X$ векторный 
+  стандартный винеровский процесс, характери\-зу\-ющий ошибки наблюдений;
+  \item $f_t(n):\;\mathbb{S}^N \times [0,+\infty) \hm\to \mathbb{R}^{M \times 1}$ 
+  $(n\hm=\overline{1,N})$~--- набор неслучайных  
+  век\-тор-функ\-ций, характеризующий <<план наблюдений>>,
+  \item
+  $g_t(n):\;\mathbb{S}^N \times [0,+\infty)\hm \to \mathbb{R}^{M \times M}$ 
+  $(n\hm=\overline{1,N})$~--- набор равномерно невырожденных неслучайных 
+ матричнозначных функций,
+характеризующий условную интенсивность шумов в~наблюдениях в~зависимости от 
+значения состояния~$X_t$.
+  \end{itemize}
+  Функции $\{f_t(n)\}_n$ и~$\{g_t(n)\}_n$ непрерывны справа и~имеют конечные пределы слева.
+
+  Через $\mathcal{Y}_t \triangleq \sigma \{Y_s: s \in [0,t] \}$ 
+  обозначен естественный поток $\sigma$-ал\-гебр, порожденный наблюдениями~$Y$ 
+  до момента~$t$ включительно.
+
+  \textit{Задача байесовской классификации вектора~$X$ по наблюдениям~$Y$, 
+  полученным на отрезке времени $[0,T]$, заключается в~нахождении 
+  $\widehat{X}_T \triangleq \me{}{X|\mathcal{Y}_T}$.}
+
+  Известно~\cite{S_14}, что поток $\{\mathcal{Y}_t\}_{t \geqslant 0}$ 
+  не является непрерывным справа, т.\,е.\ 
+  $\displaystyle \bigcap_{s > t}\mathcal{Y}_s \hm\neq \mathcal{Y}_t$, 
+  что не позволяет непосредственно применять эффективный аппарат 
+  стохастического анализа~\cite{LS_86} для решения поставленной задачи оценивания, 
+  а~требует некоторой ее модификации.
+
+    \textit{Задача локального сглаживания вектора~$X$ по наблюдениям~$Y$ 
+    заключается в~нахождении $\widehat{X}^+_T \triangleq$\linebreak
+    $\triangleq \me{}{X|\mathcal{Y}_{T+}}$.}
+
+    Обозначим
+    \begin{equation*}
+ G_t(n) \triangleq g_t(n)g_t^{\top}(n)\,,\enskip 
+ \mathbf{G}_t(n) \triangleq \int\limits_0^t g_s(n)g^{\top}_s(n)\,ds\,.
+  \label{eq:nots_2}
+    \end{equation*}
+Лемма~1~\cite{B_17} определяет решение задачи байесовской классификации:
+\begin{equation}
+   \widehat{X}_T(n) = \fr{\widetilde{X}_T(n)}{\sum\nolimits_{\ell=1}^N 
+   \widetilde{X}_T(\ell)}\,,
+     \label{eq:int_class}
+  \end{equation}
+  где $\widetilde{X}_T(n)$~---
+   ненормированная условная вероятность события $\{\omega:\;X(\omega)=e_n\}$ 
+  относительно $\mathcal{Y}_T$:
+  \begin{equation}
+  \widetilde{X}_T(n)=
+   \begin{cases}
+  \displaystyle p_n\exp
+ \left\{\int\limits_0^{\mathrm{T}}
+   \left[
+       f_s^{\top}(n)G_s^{-1}(n)\,dY_s -{}\right.\right.\\
+        \displaystyle \left.\left.{}- \fr{1}{2}\,\|f_s(n)\|^2_{G_s^{-1}(n)}\,ds
+        \right] \vphantom{\int_0^{\mathrm{T}}}
+        \right\},  & 
+\hspace*{-13mm}\mbox{ если }\\
+ \hspace*{7mm}\langle Y,Y\rangle_t \equiv \mathbf{G}_t(n), \;\; t \in [0,T);&\\
+ 0 & \hspace*{-52mm}\mbox{ в~противном~случае.}
+   \end{cases}
+  \label{eq:int_class_unnorm}
+  \end{equation}
+ Здесь $\|x\|_A^2 \triangleq x^{\top}Ax$ и~$|A| \triangleq \det A$.
+
+  Для определения локально сглаженной оценки определим неслучайные 
+  моменты $u(\ell,n)$ ($\ell \hm\neq n$):
+  \begin{equation*}
+  u(\ell,n) \triangleq  \left\{
+  \begin{array}{l}
+  \displaystyle
+  \inf \left\{ t\geqslant 0: \; \mathbf{G}_t(\ell) \neq \mathbf{G}_t(n)\right\}\,; \\
+  +\infty, \; \mbox{если $\mathbf{G}_t(\ell) \equiv \mathbf{G}_t(n)$ для $\forall \; t\geqslant 0 $},
+  \end{array}
+  \right.
+  \label{eq:u_def}
+  \end{equation*}
+  множества $\Xi(n)\triangleq\{u(\ell,n)\}_{\ell: \ell \neq n}$, $n\hm=\overline{1,N}$, 
+  и~множество
+   $\Xi \triangleq \{u(\ell,n)\}_{{(\ell,n):}\ {\ell \neq n}}$.
+
+   Наблюдения $\{Y_t\}_{t \geqslant 0}$ являются квадратично интегрируемым 
+   субмартингалом с~$\mathcal{Y}_t$-пред\-ска\-зу\-емой квадратической характеристикой
+  \begin{multline*}
+  \langle Y,Y\rangle_t =
+  Y_t Y_t^{\top}- \int\limits_0^t Y_s \,dY_s^{\top} - \int\limits_0^t \,dY_s Y_s^{\top}
+  ={}\\
+  {}=
+  \int\limits_0^t \sum\limits_{n=1}^Ne_n^{\top}X_s G_s(n)\,ds\,.
+  %\label{eq:sq_char}
+  \end{multline*}
+  Случайные моменты времени
+  \begin{equation*}
+  \xi(n) \triangleq  \left\{
+  \begin{array}{l}
+  \displaystyle
+  \inf \left\{ t\geqslant 0: \; \mathbf{G}_t(n) \neq \langle Y,Y\rangle_t \right\}\,; \\[6pt]
+  +\infty, \; \mbox{если $\displaystyle \mathbf{G}_t(n) \equiv \langle Y,Y\rangle_t$ для $\; t\geqslant 0 $},
+  \end{array}
+  \right.
+ % \label{eq:chi_def}
+  \end{equation*}
+  используют~$\Xi(n)$ в~качестве множества возможных значений и~определяют 
+  следующие скачкообразные $\mathcal{Y}_{t+}$-со\-гла\-со\-ван\-ные процессы:
+    \begin{equation*}
+  \mathcal{I}_t(n)
+   \triangleq \begin{cases}
+   1, &\ \mbox{если } t < \xi(n)\,;\\
+   0, &\ \mbox{если } t \geqslant \xi(n)\,.
+\end{cases}
+  \end{equation*}
+Теорема~1~\cite{B_17} определяет локально сглаженную оценку $\widehat{X}^+_t
+\hm=\mathcal{I}_t(n)\widehat{X}_t$ как решение стохастической дифференциальной 
+системы с~наблюде\-ниями~$Y_t$ и~скачкообразными процессами~$\mathcal{I}_t(n)$ 
+в~правой\linebreak \mbox{части} ($n=\overline{1,N}$):
+  \begin{multline}
+  \widehat{X}_t^+(n) = \fr{p_n\mathcal{I}_{0}(n)}
+  {\sum\nolimits_{k=1}^N p_k\mathcal{I}_{0}(k)} +{}\\
+  {}+
+  \int\limits_0^t \widehat{X}_{s}^+(n)\left(
+  f_n^{\top}(s) - \sum\limits_{\ell=1}^N \widehat{X}_{s-}^+(\ell)f_{\ell}^{\top}(s)
+  \right)\times{}\\
+  {}\times \left( \fr{d\langle Y,Y\rangle_s}{ds}\right)^{-1/2}dZ_s+{} \\
+\!{}  + \sum\limits_{s \leqslant t} \widehat{X}^+_{s-}(n)
+  \left(
+  \fr{1+\Delta\mathcal{I}_{s}(n)}
+  {1+\sum\nolimits_{\ell=1}^N \widehat{X}_{s-}^+(\ell)\Delta\mathcal{I}_{s}(\ell)} 
+  - 1  \! \right)\!,\!\!
+  \label{eq:dif_class_norm}
+  \end{multline}
+  где $Z_t$~--- обновляющий процесс:
+  \begin{equation*}
+Z_t \triangleq \int\limits_0^t \! \left(\fr{d\langle Y,Y\rangle_s}{ds}\right)^{-1/2}\!
+\left( \!dY_s - \sum\limits_{n=1}^Ne_n^{\top}\widehat{X}_{s-}^+ f_s(n)ds \!\right).
+%\label{eq:innov}
+\end{equation*}
+
+  \section{Алгоритм вычисления оценок классификации и~его точность}
+  
+  На первый взгляд, для численного решения сис\-те\-мы~(\ref{eq:dif_class_norm})
+  применимы известные алгоритмы~\cite{PB_10}.
+Однако в~правую часть системы входят~$\mathcal{Y}_{t+}$-со\-гла\-со\-ван\-ные 
+процессы ${d\langle Y,Y\rangle_t}/{dt}$ и~$\{\mathcal{I}_t(n)\}_{n=\overline{1,N}}$.
+Они недоступны прямому наблюдению, и~для их вы\-чис\-ле\-ния требуются 
+нетривиальные преобразования наблюдений, по сложности эквивалентные решению 
+исходной задачи оценивания.
+
+В данной работе предлагается дискретизовать непрерывный процесс и~строить 
+оптимальные оценки уже по дискретизованным наблюдениям. Такой подход близок 
+по смыслу к~численным методам, предложенным 
+в~\cite{PR_10}.
+Введем в~рассмотрение последовательность вложенных двоичных разбиений отрезка $[0,T]$, 
+порожденных множествами точек~$\mathcal{T}^K$, $K\hm \in \mathbb{N}$:
+$$
+  \mathcal{T}^K \triangleq \{\tau_k^K\}_{k=\overline{0,2^K}}: \enskip
+  \tau_k^K \triangleq kh_K\,, \enskip h_K \triangleq \fr{T}{2^K}\,,
+ $$
+  соответствующие наборы дискретизованных наблюдений:
+  \begin{multline*}
+  \Delta Y^K_k \triangleq Y_{\tau_k^K}-Y_{\tau_{k-1}^K} =
+  \int\limits_{\tau_{k-1}^K}^{\tau_{k}^K}\sum\limits_{n=1}^Ne_n^{\top}X_s f_s(n)\,ds +{}\\
+  {}+  \int\limits_{\tau_{k-1}^K}^{\tau_{k}^K}\sum\limits_{n=1}^Ne_n^{\top}X_sg_s(n)\,
+  dW_s\,, \enskip k=\overline{1,2^K}\,,
+  %\label{eq:discr_obs}
+  \end{multline*}
+  и~семейство вложенных $\sigma$-ал\-гебр
+  $\{\mathcal{Y}^K\}_{K \in \mathbb{N}}$: $\mathcal{Y}^K \triangleq$\linebreak $\triangleq \sigma \{\Delta Y^K_k, 
+  \; k=\overline{1,2^K}\}$. Так как процесс~$Y_t$ является сепарабельным, то 
+  $\mathcal{Y}^K \uparrow \mathcal{Y}_T$ при $K \hm\to \infty$ и~по теореме
+   Леви~\cite{LS_74}
+  $$
+  \widehat{X}^K \triangleq \me{}{X |\mathcal{Y}^K} \to \me{}{X |\mathcal{Y}_T} = 
+  \widehat{X}_T \enskip\mbox{$\ppp$-п.~н.}
+  $$
+
+  Тогда компоненты $\widehat{X}^K(n) \triangleq \pp{X=e_n|\mathcal{Y}^K}$ 
+  вектора~$\widehat{X}^K$ определяются формулами:
+    \begin{equation}
+    \widehat{X}^K(n) = \fr{\widetilde{X}^K(n)}
+  {\sum\nolimits_{\ell=1}^N \widetilde{X}^K(\ell)
+  }
+  \label{eq:discr_class}
+  \end{equation}
+  и
+    \begin{multline}
+  \widetilde{X}^K(n) \triangleq p_n\exp\left\{
+  -\fr{1}{2h_K}\sum\limits_{k=1}^{2^K}\left[
+  \vphantom{\left\|\Delta Y^K_k-h_K F_k^K(n)\right\|^2_{
+  \left(G_k^K(n)\right)^{-1}}}
+  \ln\left\vert G_k^K(n)\right\vert h_K +{}\right.\right.\\
+\left.\left.  {}+ \left\|\Delta Y^K_k-h_K F_k^K(n)\right\|^2_{
+  \left(G_k^K(n)\right)^{-1}}
+  \right]
+  \vphantom{\sum\limits_{k=1}^{2^K}}
+  \right\},
+ \label{eq:discr_class_22}
+  \end{multline}
+где
+\begin{align*}
+  F_k^K(n) &
+  \triangleq     \fr{1}{h_K}  \int\limits_{\tau_{k-1}^K}^{\tau_{k}^K}f_s(n)\,ds\,, 
+  \\
+  G_k^K(n) &\triangleq \fr{1}{h_K} \int\limits_{\tau_{k-1}^K}^{\tau_{k}^K}g_s(n)g_s^{\top}(n)\,ds\,.
+  \end{align*}
+%  \label{eq:FG}
+
+Для упрощения выкладок будем дополнительно считать, что существует такое 
+целое число~$K^*$, что $\Xi \backslash \{+\infty\} \subset \mathcal{T}^K$ 
+для всех  $K \hm> K^*$.
+Формулы~(\ref{eq:discr_class}) и~(\ref{eq:discr_class_22}) могут быть реализованы 
+с~по\-мощью сле\-ду\-ющей рекуррентной схемы ($n=\overline{1,N}$):
+\begin{equation}
+\left.
+\begin{array}{l}
+\widehat{\varkappa}_0^K(n) = p_n\,;\\[6pt]
+\widetilde{\varkappa}_{\tau_{k}^{K}}^K(n) = \widehat{\varkappa}_{\tau_{k-1}^{K}}^K(n)
+\left|G_k(n)\right|^{-1/2}\times{}\\
+\hspace*{-1.5mm}{}\times
+\exp \displaystyle\left\{\! -\fr{1}{2h_K}\|\Delta Y_k^K-h_K F_k^K(n)\|^2_{(G_k^K(n))^{-1}}
+\right\};\\[6pt]
+\displaystyle \widehat{\varkappa}_{\tau_{k}^{K}}^K(n) = 
+\fr{\widetilde{\varkappa}_{\tau_{k}^{K}}^K(n)}{\sum\nolimits_{\ell=1}^N \widetilde{\varkappa}_{\tau_{k}^{K}}^K(\ell)}\,, \enskip
+\tau_{k}^{K} \in \mathcal{T}^K\,.
+\end{array}\!
+\right\}\!\!
+\label{eq:sch_norm_2}
+\end{equation}
+
+\vspace*{-2pt}
+
+\noindent
+\textbf{Теорема~1.}\
+\textit{Набор вектров $\{\widehat{\varkappa}^K_t\}_{t \in \mathcal{T}^K}$ 
+является аппроксимацией оценки~$\widehat{X}_t$ на сетке~$\mathcal{T}^K$ 
+$\left(\widehat{X}_{t}\hm \approx \widehat{\varkappa}^K_{t},\ t \hm\in \mathcal{T}^K\right)$. 
+Аппроксимация обеспечивает точность порядка~${1}/{2}$, т.\,е.}
+  \begin{equation}
+  \sqrt{\me{}{\|\widehat{\varkappa}^K_{t}-\widehat{X}_{t}\|^2}} = O\left(h_K^{1/2}\right) \enskip 
+  \forall \; \tau_k^K \in \mathcal{T}^K.
+  \label{eq:approx_ord}
+  \end{equation}
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\ \  \ теоремы~1 приведено в~при\-ложении.
+
+\smallskip
+
+Порядок аппроксимации ${1}/{2}$ является обычным для традиционных схем 
+численного решения стохастических дифференциальных систем с~винеровскими 
+и~пуассоновскими процессами в~правой\linebreak части~\cite{PB_10}.
+Однако <<локальный порядок точности>> аппроксимации $\widehat{\varkappa}_t^K(n)$ 
+компоненты~$\widehat{X}_t(n)$ сразу после момента скачка~$\mathcal{I}_t(n)$ 
+абсолютно другой.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~2.}\ \textit{Пусть множество~$\Xi(n)$ возможных значений 
+момента~$\xi(n)$ и~значение временн$\acute{\mbox{о}}$го лага $H_K \hm> 0$ удовлетворяют следующим 
+условиям}:
+\begin{itemize}
+\item[(а)]
+$\max\{u:\; u \in \Xi(n)\} < + \infty$;
+\item[(б)]
+$\Xi(n) \subseteq \mathcal{T}^{K^*}$, $\{t+H_k\}_{t \in \Xi(n)}\subseteq 
+\mathcal{T}^{K^*}$ \textit{для некоторого} $K^* \hm\in \mathbb{N}$;
+\item[(в)]
+\textit{неравенство}
+\begin{equation*}
+\!\!\!\!\!\!\!\min\limits_{t \in \Xi(n)}\!\!\!\!\int\limits_{t}^{t+H_K}\left[
+\ln\!\fr{|G_s(n)|}{|G_s(\ell)|}
++
+\mathrm{tr}\,
+\left(
+G_s(\ell)
+G_s^{-1}(n)
+\right)
+\right]\,ds \geqslant C_1
+\end{equation*}
+\textit{выполняется для некоторой константы} $C_1\hm>0$.
+\end{itemize}
+\textit{Тогда аппроксимация $\widehat{\varkappa}^K_{\xi(n) + H_K}$ 
+оценки $\widehat{X}_{\xi(n)+H_k}$ имеет экспоненциальную точность, т.\,е.}
+  \begin{multline*}
+ \left( \mathbf{E}\left\{\left(\widehat{\varkappa}^K_{\xi(n) + H_K}(n)-\widehat{X}_{\xi(n) + 
+  H_K}(n)\right)^2\times{}\right.\right.\\
+\left.\left.{}\times  \mathbf{I}_{\{\xi(n)< + \infty\}}(\omega)
+\vphantom{\left(\widehat{\varkappa}^K_{\xi(n) + H_K}(n)-\widehat{X}_{\xi(n) + 
+  H_K}(n)\right)^2}
+  \right\}
+\right)^{1/2} 
+  \leqslant C_2 \exp\left(-{\fr{C_1}{2h_K}} \right)
+  \label{eq:approx_ord_2}
+  \end{multline*}
+ \textit{для некоторого $C_2>0$.}
+ 
+\pagebreak
+
+  \textit{Если дополнительно}
+  \begin{equation*}  %\substack{{i=\overline{1,n}}\\ {j=\overline{1,l}}}
+  \min\limits_{\substack{{(s,t):\; t \in \Xi(n),}\\
+{s \in (t, t+H_K]}}}
+ \left[ \ln\fr{|G_s(n)|}{|G_s(\ell)|}
++\mathrm{tr}\,
+\left(
+G_s(\ell)
+G_s^{-1}(n)\right)\right] \geqslant C_3
+%\label{eq:neq_1}
+  \end{equation*}
+  \textit{для некоторого $C_3>0$,
+   то}
+    \begin{multline*}
+\left(\mathbf{E}\left\{\left(\widehat{\varkappa}^K_{\xi(n) + H_K}(n)-\widehat{X}_{\xi(n) + 
+  H_K}(n)\right)^2\times{}\right.\right.\\
+ \left. \left.{}\times
+  \mathbf{I}_{\{\xi(n)< + \infty\}}(\omega)
+  \vphantom{\left(\widehat{\varkappa}^K_{\xi(n) + H_K}(n)-\widehat{X}_{\xi(n) + 
+  H_K}(n)\right)^2}
+  \right\}
+\right)^{1/2} \leqslant  C_2 \exp\left(-{\fr{C_3H_K}{2h_K}} \right)\,.
+  %\label{eq:approx_ord_3}
+  \end{multline*}
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\ \ теоремы~2 дано в~прило-\linebreak жении.
+
+Так как оценки $\{\widehat{X}_t\}_{t \geqslant 0}$ 
+и~$\{\widehat{X}_t^+\}_{t \geqslant 0}$
+различаются не более чем на множестве~$\Xi$
+потенциальных моментов скачков,
+численная схема~(\ref{eq:sch_norm_2})
+может быть использована также и~для вычисления локально сглаженной 
+оценки~$\widehat{X}^+$. Действительно, ввиду тео\-ре\-мы~2,
+аппроксимации оценок классификации~(\ref{eq:sch_norm_2})
+могут быть легко преобразованы в~аппроксимации оценок сглаживания с~фиксированным 
+лагом путем очевидного переопределения:
+$$
+\widehat{X}_{\tau_k^K}^+ \approx \widehat{\varkappa}_{\tau_k^K+H_K}^K\,,
+$$
+где $H_K$~--- величина лага. Процедура локального сглаживания позволит значительно 
+увеличить точность аппроксимации в~точках разрыва 
+решения при малых абсолютных значениях временн$\acute{\mbox{о}}$го лага~$H_K$.
+Если выполнены условия второй час\-ти теоремы~2, то лаг следует выбирать из 
+условия: 
+$$
+\lim\limits_{K \to +\infty} \fr{H_K}{h_K}=+\infty\,.
+$$
+
+%\vspace*{-9pt}
+
+  \section{Численный пример}
+  
+  Данный численный пример является абстрактным, однако он иллюстрирует 
+  свойства предложенной оценки и~алгоритма ее аппроксимации.
+
+  Рассматривается система наблюдения~(\ref{eq:obsys_1}) со следующими параметрами:
+ $N\hm=4$; $M\hm=1$; $T \hm= 1$; $p=\mathrm{col}({1}/{4},{1}/{4},{1}/{4},{1}/{4})$;
+ \begin{equation*}
+\begin{array}{l}
+f_t(1) = 1\cdot\mathbf{I}_{[0,{1}/{4})}(t) +
+1\cdot\mathbf{I}_{[{1}/{2},{3}/{4})}(t)\,;
+\\[6pt]
+f_t(2) = 2\cdot\mathbf{I}_{[0,{1}/{4})}(t) +
+2\cdot\mathbf{I}_{[{1}/{2},{3}/{4})}(t)\,;
+\\[6pt]
+f_t(3) = 3\cdot\mathbf{I}_{[0,{1}/{4})}(t) +
+3\cdot\mathbf{I}_{[{1}/{2},{3}/{4})}(t)\,;
+\\[6pt]
+f_t(4) = 4\cdot\mathbf{I}_{[0,{1}/{4})}(t) +
+4\cdot\mathbf{I}_{[\frac{1}{2},{3}/{4})}(t)\,;\\[6pt]
+g_t(1) = 1\cdot\mathbf{I}_{[0,{3}/{4})}(t) + 
+1{,}1\cdot\mathbf{I}_{[{3}/{4},{1}/{2}]}(t)\,;
+\\[6pt]
+g_t(2) = 1\cdot\mathbf{I}_{[0,{3}/{4})}(t) + 1{,}2\cdot\mathbf{I}_{[{3}/{4},{1}/{2}]}
+(t)\,; \\[6pt]
+g_t(3) = 1\cdot\mathbf{I}_{[0,{3}/{4})}(t) + 1{,}3\cdot\mathbf{I}_{[{3}/{4},{1}/{2}]}(t)\,;
+\end{array}
+\end{equation*}
+
+ { \begin{center}  %fig1
+ \vspace*{1pt}
+ \mbox{%
+\epsfxsize=77.118mm
+\epsfbox{bor-1.eps}
+}
+
+
+\vspace*{9pt}
+
+
+\noindent
+{{\figurename~1}\ \ \small{Интенсивности шумов $g_t(n)$ ($n=\overline{1,4}$)}}
+\end{center}
+}
+
+\vspace*{6pt}
+
+\addtocounter{figure}{1}
+
+
+\noindent
+\begin{multline*}
+g_t(4) = 1{,}0\cdot\mathbf{I}_{[0,{1}/{2})}(t) + (t-{1}/{4})\cdot\mathbf{I}_{[{1}/{4},
+{1}/{2})}(t) +{}\\
+{}+
+1{,}0\cdot\mathbf{I}_{[{1}/{2},{3}/{4})}(t)
++ 1{,}4\cdot\mathbf{I}_{[{3}/{4},1]}(t)\,.
+\end{multline*}
+Графики $\{g_n\}$ приведены на рис.~1.
+
+
+
+Точки разрывности потока $\sigma$-ал\-гебр~$\mathcal{Y}_t$ образуют множество 
+$\Xi\hm=\left\{{1}/{4},{1}/{2},{3}/{4}\right\}$.
+Система наблюдения такова, что компонента~$X(4)$ может быть точно восстановлена 
+по~$\mathcal{Y}_{({1}/{4})+}$,
+в~то время как весь вектор~$X$ может быть точно восстановлен 
+по~$\mathcal{Y}_{({3}/{4})+}$. При этом в~момент $t\hm={1}/{4}$ для компоненты~$X(4)$ 
+выполняется первое условие идентифицируемости теоремы~2, а~в~момент 
+$t\hm={3}/{4}$ для оставшихся компонент~--- второе условие идентифицируемости.
+
+%Далее, на интервалах $(0,{1}/{4})$ и~$({1}/{2},{3}/{4})$ интенсивность шумов
+ %в~наблюдениях не зависит от состояния~$X$.
+%Это классический случай аддитивных шумов. 
+Еще одной из целей данного примера является 
+сравнение точности фильтрации при наличии аддитивных и~мультипликативных шумов.
+
+Наконец, в~примере компоненты сноса~$\{f_n\}$ значительно отличаются друг 
+от друга (до~400\%), в~то время как компоненты диффузии~$\{g_n\}$ варьируются 
+значительно меньше (до~40\%).
+
+Результаты примера демонстрируют, что даже малые различия интенсивностей шумов 
+в~наблюдениях
+обеспечивают быстрое и~точное восстановление вектора~$X$.
+
+Аппроксимации $\widehat{\varkappa}_t^K$ были вычислены с~по\-мощью 
+алгоритма~(\ref{eq:sch_norm_2}) при разных значениях шага дискретизации 
+$h_K\hm=2^{-K}$ ($K\hm=10$, 12, 14, 16).
+Результаты оценивания представлены на рис.~\ref{pic:pic_2}. В~этом эксперименте 
+$X\hm=e_1$. Графики демонстрируют сходимость $\widehat{\varkappa}_t^K \hm\to 
+\widehat{X}_t$ при $K\hm \to +\infty$.
+
+
+Точность оценок фильтрации и~их численной реализации представлены на 
+рис.~3.
+
+На нем приведены графики среднеквадратических отклонений (СКО)
+$\widehat{\sigma}^{16}_t$  ошибок оценивания компонент~$X(n)$, вычисленных 
+при шаге дискретизации $h_K\hm=2^{-16}$. Значения СКО рассчитываются
+ с~помощью 
+метода Мон\-те Кар\-ло путем осредне-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\end{multicols}
+
+\begin{figure*} %fig2
+%\includegraphics[width=1.0\columnwidth]{pic_2.pdf}
+\vspace*{1pt}
+\begin{center}
+\mbox{%
+\epsfxsize=146.393mm
+\epsfbox{bor-2.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Оценки $\widehat{\varkappa}^K_t(n)$, вычисленные при $h_K=2^{-K}$:
+\textit{1}~--- $K\hm=10$;
+\textit{2}~--- 12; \textit{3}~--- 14; \textit{4}~--- $K\hm=16$} 
+\label{pic:pic_2}
+\vspace*{5pt}
+\end{figure*}
+
+
+\begin{multicols}{2}
+
+
+{ \begin{center}  %fig3
+ \vspace*{1pt}
+ \mbox{%
+\epsfxsize=77.371mm
+\epsfbox{bor-3.eps}
+}
+\end{center}
+
+\vspace*{-3pt}
+
+
+\noindent
+{{\figurename~3}\ \ \small{Среднеквадратические отклонения~$\widehat{\sigma}^{16}_t(n)$ 
+ошибок оценок $\widehat{X}_t(n)$: \textit{1}~--- $n\hm=1$;
+\textit{2}~--- 2; \textit{3}~--- 3; \textit{4}~--- $n\hm=4$}}
+}
+
+\vspace*{12pt}
+
+\addtocounter{figure}{1}
+ 
+
+
+\noindent
+ния~1000~траекторий.
+Графики зависимости СКО от
+ времени подтверждают представленные теоретические 
+результаты. Иследуемая система наблюдения сконструирована таким 
+образом, что на интервалах времени $(0,{1}/{4})$ и~$({1}/{2},{3}/{4})$ 
+интенсивности шумов в~наблюдениях одинаковы, а различаются только коэффициенты сноса.
+ Это классический случай
+   наблюдений с~аддитивными шумами. 
+   
+   Из графиков можно 
+ заключить, что в~данном примере на интервалах аддитивных шумов точность 
+ оценивания
+ с~ростом времени наблюдения меняется незначительно: не более 
+ чем на~10\% за интервал наблюдения длиной~${1}/{4}$.
+В~то же время после момента $t\hm={1}/{4}$ компонента~$X(4)$ идентифицируется точно 
+по наблюдениям, полученным на интервале времени длиной менее~0,12. 
+Оставшиеся компоненты точно идентифицируются после момента $t\hm={3}/{4}$ 
+за время не более~0,06. Причиной такой точности оценивания является наличие
+ мультипликативных шумов и~выполнение условий иден\-ти\-фи\-ци\-ру\-емости. Компоненты~$X$ 
+ не идентифицируются точно в~моменты~${1}/{4}$ и~${3}/{4}$ из-за того, что в~примере 
+ используются аппроксимации оценок, а~не их точные значения. При этом время точной 
+ идентификации компоненты~$X(4)$ больше, чем время идентификации остальных компонент. 
+ Это связано с~тем, что в~случае идентификации~$X(4)$ выполняются мягкие 
+ условия идентифицируемости, определенные первой частью теоремы~2, 
+ а~для остальных компонент~--- более ограничительные, но <<эффективные>> для 
+ идентификации условия второй части теоремы.
+
+Одной из целей рассматриваемого примера являлась проверка 
+порядка точ\-ности ${1}/{2}$ численной аппроксимации~(\ref{eq:sch_norm_2}). 
+Согласно следствию~1~\cite{B_17},  $\widehat{X}^+_t\hm=X$ $\ppp$-п.~н.\ 
+для любого $t \hm> {3}/{4}$. В~качестве временн$\acute{\mbox{о}}$го лага была выбрана 
+величина $H\hm=2^{-7}$. Поэтому для исследования порядка точности был выбран 
+момент времени $t^*\hm={3}/{4}+{1}/{2^7}$. Среднеквадратическая ошибка 
+аппроксимации (СКОА) $\Delta_{t^*}^K(n) \triangleq \me{}{(\widehat{\varkappa}^K_{t^*}
+(n)-X(n))^2}$ компонент вектора вычислялась методом Мон\-те Кар\-ло 
+путем осреднения пучка~1000~траекторий.
+Согласно теореме~1 $\Delta_{t^*}^K(n)\hm \leqslant C_4 h_K$ для некоторого $C_4\hm>0$ 
+и~любого $K \hm> K^*$.
+Так как $h_K\hm=2^{-K}$, то $\log_2\Delta_{t^*}^K(n) \hm\leqslant \log_2 C_4 \hm- K$. 
+Рисунок~4 демонстрирует зависимость $\log_2\Delta_{t^*}^K$
+ от~$K$ ($K\hm=\overline{7,20}$) для всех ком понент вектора.
+Графики зависимостей являются
+ вогнутыми, что соответствует утверждению теоремы~1, 
+и~демонстрируют консервативный характер
+ оценки~(\ref{eq:approx_ord}): 
+порядок аппроксимации, полученный в~рассмотренном примере, выше чем~${1}/{2}$.
+
+   { \begin{center}  %fig4
+ \vspace*{18pt}
+ \mbox{%
+\epsfxsize=78.033mm
+\epsfbox{bor-4.eps}
+}
+\end{center}
+
+%\vspace*{-3pt}
+
+
+\noindent
+{{\figurename~4}\ \ \small{Зависимость СКОА $\Delta_{t^*}^K$ от $K$:
+\textit{1}~--- $n\hm=1$;
+\textit{2}~--- 2; \textit{3}~--- 3; \textit{4}~--- $n\hm=4$}}
+}
+
+%\vspace*{12pt}
+
+\addtocounter{figure}{1}
+ 
+  
+% \noindent
+
+
+
+  \section{Заключение}
+
+  Вторая часть статьи посвящена разработке чис\-лен\-но\-го алгоритма, реализующего 
+  решение за\-да\-чи байесовской классификации. 
+  
+  Предлагается отказаться от 
+  непосредственной численной ап\-прок\-си\-ма\-ции решения стохастической дифференциальной 
+  системы, определяющей искомую оценку классификации, в~пользу по\-стро\-ения 
+  байесовской оценки по дискретизованным наблюдениям. Помимо формул, 
+  определяющих чис\-лен\-ную схему аппроксимации искомой оценки, в~работе также 
+  исследована точность этой аппроксимации. Предложенный численный пример 
+  иллюстрирует свойства оценки и~качество ее аппроксимаций.
+
+  Полученные в~обеих частях работы теоретические результаты и~схемы 
+  численной ап\-прок\-си\-мации могут рассматриваться как часть алгоритмического 
+  обеспечения систем информатики при реше\-нии задач ве\-ро\-ят\-ност\-но-ста\-ти\-cти\-че\-ско\-го 
+  экс\-пресс-мо\-де\-ли\-ро\-ва\-ния и~оценивания по вы\-со\-ко\-час\-тотным данным.
+
+ {\small \section*{\raggedleft Приложение}
+
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\ \ 
+теоремы~1.\ %\ \begin{proofoftheorem}{\ref{th:thm3}}
+Доказательство теоремы опирается на формулы~(\ref{eq:int_class}), 
+(\ref{eq:int_class_unnorm}), (\ref{eq:discr_class}) и~(\ref{eq:discr_class_22}).
+ Заметим, что на промежутке времени $(0,\xi(n))$ 
+ производная ${d\langle Y,Y\rangle_t}/{dt}$ существует почти всюду по мере Лебега
+  и~также почти всюду верно равенство
+ \begin{equation*}
+ \fr{d\langle Y,Y\rangle_t}{dt} \equiv G_t(n)\,.
+ %\label{eq:qch}
+ \end{equation*}
+ Введем следующие обозначения:
+ \begin{align*}
+ \psi(n) &\triangleq \displaystyle \int\limits_0^{\mathrm{T}} \left[ \ln|G_s(n)|+ \mathrm{tr}\left( 
+ G_s(\omega) G_s^{-1}(n)\right)\right]\,ds\,;\\
+ \displaystyle
+ \eta(n) &\displaystyle\triangleq -\int\limits_0^{\mathrm{T}} \left[
+\fr{1}{2}\|f_s(n)\|^2_{
+  G_s^{-1}(n)}ds - f_s^{\top}(n)G_s^{-1}(n)\,dY_s
+  \right]\,.
+% \label{eq:eqpr_1}
+ \end{align*}
+
+ Зафиксируем $n \in \{1,\ldots,N\}$ и~построим множества
+ \begin{align*}
+ S_T &\triangleq \{\ell: \; 1\leqslant \ell \leqslant N:\; 
+ \mathbf{G}_t(\ell)\equiv \langle Y,Y\rangle_t, \; t \in [0,T] \}; \\
+ \overline{S}_T &\triangleq \{1,\ldots,N\} \backslash S_T\,.
+% \label{eq:not_2}
+ \end{align*}
+ Очевидно, что $S_T \hm\neq \varnothing$, так как гарантированно $n \hm\in S_T$. 
+ Из определения случайного момента $\xi(n)$ следует, что $\{\omega:\; \xi(n) 
+ \hm\geqslant T\} \hm=\{\omega:\; X(\omega)\hm=e_q,\; q \hm\in S_T\}$. При этом 
+ из доказательства леммы~1~\cite{B_17} следует, что 
+ на множестве $\{\omega:\; X(\omega)\hm=
+ e_q,\; q\hm\in S_T\}$
+ $\psi(\ell)\hm - \psi(q)\hm \equiv 0$ $\forall \; \ell \hm\in S_T$ и~$\psi(j)\hm - 
+ \psi(q) \hm> 0$ $\forall \; j\hm \in \overline{S}_T$.
+
+ Далее без ограничения общности для упрощения выкладок будем считать, 
+ что 
+ $$\pp{\omega:\; \xi(n) < T}>0\,.
+ $$
+ Оценим сверху средний квадрат ошибки аппроксимации 
+ $I^K(n) \triangleq \me{}{(\widehat{X}^K(n)-\widehat{X}(n))^2}$:
+ \begin{multline*}
+ I^K(n) = \sum\limits_{q \in S_T}
+ \me{}{(\widehat{X}^K(n)-\widehat{X}(n))^2\mathbf{I}_{\{X=e_q\}}(\omega)} + {}
+ \\ 
+ {}+\sum\limits_{j \in \overline{S}_T}\me{}{(\widehat{X}^K(n)-
+ \widehat{X}(n))^2\mathbf{I}_{\{X=e_j\}}(\omega)}.
+ %\label{eq:eqpr_3}
+ \end{multline*}
+ Сначала для фиксированного $q \hm\in S_T$ рассмотрим на множестве 
+ $\{\omega: \; X(\omega)\hm=e_q\}$ случайную величину $|\widehat{X}^K(n)\hm-
+ \widehat{X}(n)|\mathbf{I}_{\{X=e_q\}}(\omega)$, учитывая, что на этом множестве
+ \begin{equation*}
+ \widehat{X}(n) = \fr{\widetilde{X}(n)}{\sum\nolimits_{\ell \in S_T}\widetilde{X}(\ell)} =
+ \fr{p_n e^{\eta(n)}}{\sum\nolimits_{\ell \in S_T}p_{\ell} e^{\eta(\ell)}}\,.
+% \label{eq:eqpr_4}
+ \end{equation*}
+ Тогда верна следующая цепочка неравенств:
+ \begin{multline*}
+ \left\vert \widehat{X}^K(n)-\widehat{X}(n)\right\vert
+ \mathbf{I}_{\{X=e_q\}}(\omega) ={}\\[1pt]
+ {}= \widehat{X}(n)\mathbf{I}_{\{X=e_q\}}(\omega)
+ \left|\fr{\widehat{X}^K(n)}{\widehat{X}(n)} -1\right| = {}
+ \\[1pt]
+ {}=
+ \widehat{X}(n)\mathbf{I}_{\{X=e_q\}}(\omega)
+ \left|\fr{\widetilde{X}^K(n)\sum\nolimits_{\ell \in S_T} \widetilde{X}(\ell)}
+ {\sum\nolimits_{m=1}^N\widetilde{X}^K(m)\widetilde{X}(n) } -1\right| ={}\\[1pt]
+ {}=
+ \widehat{X}(n)\mathbf{I}_{\{X=e_q\}}(\omega)
+  \left(\left|\sum\limits_{\ell \in S_T}\left( 
+ \fr{\widetilde{X}^K(n)}{\widetilde{X}(n)}\,
+ \widetilde{X}(\ell)- {}\right.\right.\right.\\[1pt]
+\left.\left.\left. {}-\widetilde{X}^K(\ell)\right)-\sum\limits_{j \in 
+ \overline{S}_T}\widetilde{X}^K(j)\right|\right)\Bigg /
+ \sum\limits_{m=1}^N\widetilde{X}^K(m) \leqslant{}\\[1pt]
+ {} \leqslant
+ \mathbf{I}_{\{X=e_q\}}(\omega)
+ \left(\left|\sum\limits_{\ell \in S_T}\left( 
+ \fr{\widetilde{X}^K(n)}{\widetilde{X}(n)}\,\widetilde{X}(\ell)-{} \right.\right.\right.\\[1pt]
+\left.\left.\left.{}- \widetilde{X}^K(\ell)\right)-
+\sum\limits_{j \in \overline{S}_T}
+ \widetilde{X}^K(j)\right| \right) \Bigg / 
+ \widetilde{X}^K(q) \leqslant{} \\[1pt]
+ {}\leqslant
+ \mathbf{I}_{\{X=e_q\}}(\omega) \left[
+ \sum\limits_{\ell \in S_T}\left|
+ \fr{\widetilde{X}^K(n)}{\widetilde{X}^K(q)}\,
+ \fr{\widetilde{X}(\ell)}{\widetilde{X}(n)}-
+ \fr{\widetilde{X}^K(\ell)}{\widetilde{X}^K(q)}
+ \right| +{}\right.\\[1pt]
+ \left. {}+ \sum\limits_{j \in \overline{S}_T} 
+ \fr{\widetilde{X}^K(j)}{\widetilde{X}^K(q)}
+ \right] = {}\\[1pt]
+ \! \!{}=
+ \mathbf{I}_{\{X=e_q\}}(\omega)\! \left(\sum\limits_{\ell \in S_T}\!\!
+ e^{\eta(\ell)-\eta(q)-\phi^K(q)}\left\vert e^{\phi^K(n)}-e^{\phi^K(q)}\right\vert +{}\right.\hspace*{-3.99pt}\\[1pt]
+  \left. {}+
+ \!\sum\limits_{j \in \overline{S}_T}\!
+ e^{-(({\psi(j)-\psi(q)})/({2h_K}))+\eta(j)-\eta(q)+\phi^K(j)-\phi^K(q)}\right) 
+ \leqslant{} \hspace*{-1.65pt}
+% \label{eq:eqpr_5}
+ \\[1pt]
+ \hspace*{-8.60881pt}{}\leqslant
+ \mathbf{I}_{\{X=e_q\}}(\omega) \!\left(\!\sum\limits_{\ell \in S_T}
+ e^{\eta(\ell)-\eta(q)-\phi^K(q)}\left\vert
+ e^{\phi^K(n)}-e^{\phi^K(q)}\right\vert +{}\right.\\[1pt]
+\left. {}+
+ e^{-({\mu(q)}/({2h_K}))}
+ \sum\limits_{j \in \overline{S}_T}
+ e^{\eta(j)-\eta(q)+\phi^K(j)-\phi^K(q)}\right),
+ %\label{eq:eqpr_6}
+ \end{multline*}
+ где
+ \begin{equation*}
+ \mu(q) \triangleq \min\limits_{j \in \overline{S}_T} \int\limits_0^T \left[ 
+ \ln \fr{|G_s(j)|}{|G_s(q)|}
+ + \mathrm{tr}\left (G_s(q)G_s^{-1}(j)\right)
+ \right]ds > 0\,.
+ %\label{eq:eqpr_7}
+ \end{equation*}
+Тогда $\forall \; q \in S_T$
+\begin{multline*}
+\me{}{(\widehat{X}^K(n)-\widehat{X}(n))^2\mathbf{I}_{\{X=e_q\}}(\omega)} 
+\leqslant {}\\[1pt] 
+{}\leqslant
+N \sum\limits_{\ell \in S_T} \mathbf{E}\left\{
+\vphantom{\left(e^{\phi^K(n)}-e^{\phi^K(q)}\right)^2}
+\mathbf{I}_{\{X=e_q\}}
+(\omega)e^{2(\eta(\ell)-
+\eta(q)-\phi^K(q))}\times{}\right.\\[1pt]
+\left.{}\times\left(e^{\phi^K(n)}-e^{\phi^K(q)}\right)^2\right\}+
+Ne^{-{\mu(q)}/{h_K}}\times{}\\[1pt]
+{}\times
+\sum\limits_{j \in \overline{S}_T}\me{}{\mathbf{I}_{\{X=e_q\}}
+(\omega)e^{2(\eta(j)-\eta(q)+\phi^K(j)-\phi^K(q))}}.
+%\label{eq:eqpr_7}
+ \end{multline*}
+ При условии $X(\omega)=e_q$ величины 
+ $\{\phi^K(\ell)\}_{\ell=\overline{1,N}}$ имеют гауссовское распределение. 
+ Можно показать, что в~случае, когда $\me{}{(\phi^K(\ell))^2}\hm=O(h_K)$, 
+ оценка $\me{}{(\phi^K(\ell)\hm-\phi^K(m))^4}\hm=O(h_K^2)$ верна для 
+ любых $\ell,m \hm\in \{1,\ldots,N\}$ и~любой зависимости $\phi^K(\ell)$ 
+ и~$\phi^K(m)$. При этом случайные величины $\{e^{4(\eta(\ell)\hm-
+ \eta(q)-\phi^K(q))}\}_{\ell \in S_T}$ и~$\{e^{2(\eta(j)\hm-
+ \eta(q)+\phi^K(j)-\phi^K(q))}\}_{j \in \overline{S}_T}$ имеют 
+ логнормальное распределение с~ограниченными по~$\ell$ и~$j$ математическими 
+ ожиданиями. Одновременно с~этим функция $e^{-({\mu(q)}/{h_K})}$ стремится к~0 
+ при~$h_K \hm\to 0$ быстрее любой степени~$h_K$. Используя все вышесказанное, 
+ а~также неравенство Ко\-ши--Бу\-ня\-ков\-ско\-го, 
+ можно построить следующую цепочку неравенств:
+  \begin{multline}
+\me{}{(\widehat{X}^K(n)-\widehat{X}(n))^2\mathbf{I}_{\{X=e_q\}}(\omega)} 
+\leqslant {}\\[1pt] 
+{}\leqslant
+N \sum\limits_{\ell \in S_T}
+\sqrt{
+\me{}{\mathbf{I}_{\{X=e_q\}}(\omega)e^{4(\eta(\ell)-\eta(q)-\phi^K(q))}}} 
+C_{nq}h_K+{}\\[1pt]
+{}+
+Ne^{-({\mu(q)}/{h_K})}\times{}\\[1pt]
+{}\times \sum\limits_{j \in \overline{S}_T}\me{}{\mathbf{I}_{\{X=e_q\}}
+(\omega)e^{2(\eta(j)-\eta(q)+\phi^K(j)-\phi^K(q))}} \leqslant{}\\[1pt]
+{}\leqslant Q_{nq}h_K
+\label{eq:eqpr_8}
+ \end{multline}
+ для некоторых положительных констант~$C_{nq}$ и~$Q_{nq}$,
+  что и~доказывает истинность оценки~(\ref{eq:approx_ord}).
+
+  Далее рассмотрим величину $|\widehat{X}^K(n)\hm-\widehat{X}(n)|\mathbf{I}_{\{X=e_q\}}
+  (\omega)$ на множестве $\{\omega: X(\omega)\hm=e_q\}$ для некоторого 
+  фиксированного~$q \hm\in \overline{S}_T$. Из~(\ref{eq:int_class}) 
+  и~(\ref{eq:int_class_unnorm}) следует, что $\widehat{X}(n)\mathbf{I}_{\{X=e_q\}}
+  (\omega)=0$ $\ppp$-п.~н., поэтому
+    \begin{multline}
+\left\vert \widehat{X}^K(n)-\widehat{X}(n)\right\vert\mathbf{I}_{\{X=e_q\}}(\omega) ={}\\[1pt]
+{}=
+\mathbf{I}_{\{X=e_q\}}(\omega)
+\fr{p_n\widetilde{X}^K(n)}{\sum\nolimits_{\ell=1}^Np_n\widetilde{X}^K(\ell)} \leqslant
+\mathbf{I}_{\{X=e_q\}}(\omega) \fr{p_n}{p_q}\times{}\\[1pt]
+{}\times
+e^{-(({\psi(n)-\psi(q)})/({2h_k}))+\eta(n)-\eta(q)+\phi^K(n)-\phi^K(q)}\,,
+\label{eq:eqpr_9}
+ \end{multline}
+причем из леммы~1~\cite{B_17} следует, что $\psi(n)\hm-\psi(q)\hm>0$ на 
+множестве $\{\omega:\;X(\omega)\hm=e_q\}$. Вычисляя математические ожидания квадратов 
+левой и~правой частей~(\ref{eq:eqpr_9}) и~используя ту же аргументацию, 
+можно видеть, что оценка~(\ref{eq:eqpr_8}) справедлива также и~для всех $q \hm\in 
+\overline{S}_T$. Таким образом,
+\begin{equation*}
+I^K(n) \leqslant \sum\limits_{q=1}^N
+Q_{nq}h_K\,,
+%\label{eq:eqpr_10}
+\end{equation*}
+
+\noindent
+что доказывает истинность оценки~(\ref{eq:approx_ord}).
+ Теорема~1 дока\-зана.
+
+\smallskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\ \ теоремы~2. 
+%\begin{proofoftheorem}{\ref{th:thm4}}
+Воспользуемся приемами доказательства теоремы~1. Прежде всего, 
+$\widehat{X}_{\xi(n)+H_K}(n)\hm=0$ $\ppp$-п.~н., а~также
+\begin{multline*}
+\widehat{\varkappa}^K_{\xi(n)+H_K}(n)\mathbf{I}_{\{\xi(n)<T\}}(\omega)={}\\[1pt]
+{}=
+\sum\limits_{q:q\neq n}\widehat{\varkappa}^K_{\xi(n)+H_K}(n)\mathbf{I}_{\{X=e_q\}}
+(\omega)= {}\\[1pt] 
+{}=
+\sum\limits_{q:q\neq n} \mathbf{I}_{\{X=e_q\}}(\omega)
+\left(\widehat{\varkappa}^K_{u(q,n)}(n)\exp\left\{
+-\fr{\psi_{H_K}(n)}{2h_K}+{}\right.\right.\\[1pt]
+\!\left.\left.{}+\eta_{H_K}(n)+\phi_{H_K}^K(n)
+\vphantom{\fr{\psi_{H_K}(n)}{2h_K}}\!
+\right\}\!
+\right)\!\!\Bigg/ \!\!
+\sum\limits_{\ell=1}^N\!
+\widehat{\varkappa}^K_{u(q,n)}(\ell)\exp\left\{\!
+-\fr{\psi_{H_K}(\ell)}{2h_K}
++{}\right.\hspace*{-1.55pt}\\[1pt]
+\left.{}+\eta_{H_K}(\ell)+\phi_{H_K}^K(\ell)
+\vphantom{\fr{\psi_{H_K}(n)}{2h_K}}
+\right\}\,,
+%\label{eq:eqpr_11}
+ \end{multline*}
+ где
+ \begin{align*}
+ \psi_{H_K}(\ell) &\triangleq
+\displaystyle \int\limits_{u(q,n)}^{u(q,n)+H_K}\left[
+\left\vert G_s(n)\right\vert
++
+\mathrm{tr}\left(G_s(q) G_s^{-1}(n)
+\right)
+\right]\,ds\,;
+ \\[1pt]
+  \eta_{H_K}(\ell) &\triangleq
+\int\limits_{u(q,n)}^{u(q,n)+H_K}
+  \left(
+{\fr{1}{2}}\,\|f_s(n)\|^2_{G^{-1}_s(n)}-{}\right.\\
+&\hspace*{30mm}\left.{}-f_s^{\top}(n)G^{-1}_s(n)\,dY_s
+  \vphantom{\fr{1}{2}}\right),
+ %\label{eq:eqpr_12}
+ \end{align*}
+ а $\{\phi_{H_K}^K(\ell)\}_{\ell=\overline{1,N}}$~--- 
+ набор таких случайных последовательностей, что $\me{}{(\phi_{H_K}^K(\ell))^2}\hm=O(h_K)$.
+
+ Тогда в~силу условия~(в) теоремы верно следующее неравенство:
+ \begin{multline*}
+\widehat{\varkappa}^K_{\xi(n)+H_K}(n)\mathbf{I}_{\{\xi(n)<T\}}(\omega) \leqslant {}\\[1pt] 
+{}\leqslant
+\mathbf{I}_{\{X=e_q\}}(\omega) e^{-{C_1}/({2h_K})}\!
+\sum\limits_{q:q\neq n} \fr{\widehat{\varkappa}^K_{u(q,n)}(n)}
+{\widehat{\varkappa}^K_{u(q,n)}(q)} \exp
+\left\{\!
+\vphantom{\phi_{H_K}^K(q)}
+\eta_{H_K}(n)+{}\right.\\[1pt]
+\left.{}+\phi_{H_K}^K(n)-\eta_{H_K}(q)-\phi_{H_K}^K(q)\right\}\,.
+%\label{eq:eqpr_12}
+ \end{multline*}
+ Далее
+ \begin{multline}
+\mathbf{E}\left\{(\widehat{\varkappa}^K_{\xi(n)+H_K}(n)- 
+ \widehat{X}_{\xi(n)+H_K}(n))^2\mathbf{I}_{\{\xi(n)<T\}}(\omega)\right\}
+ \leqslant {}\\
+ {}\leqslant \!
+e^{-{C_1}/{h_K}}(N-1)\times{}\\[2pt]
+{}\times\sum\limits_{q:q\neq n}\!\! 
+\mathbf{E}\left\{\!\mathbf{I}_{\{X=e_q\}}(\omega)
+\left(\fr{\widehat{\varkappa}^K_{u(q,n)}(n)}{\widehat{\varkappa}^K_{u(q,n)}(q)}
+\right)^2
+\exp\left\{2\left(
+\vphantom{\phi_{H_K}^K(q)}
+\eta_{H_K}(n)+{}\right.\right.\right.\\
+\left.\left.\left.{}+\phi_{H_K}^K(n)-\eta_{H_K}(q)-
+\phi_{H_K}^K(q)\right)\right\}
+\vphantom{\fr{\widehat{\varkappa}^K_{u(q,n)}(n)}{\widehat{\varkappa}^K_{u(q,n)}(q)}}
+\right\}\!.
+\label{eq:eqpr_13}
+ \end{multline}
+ Математические ожидания в~правой части~(\ref{eq:eqpr_13}) ограничены по $K \hm\in 
+ \mathbb{N}$ некоторой положительной константой~$Q$, поэтому первое утверждение 
+ теоремы непосредственно следует из~(\ref{eq:eqpr_13}), если обозначить\linebreak 
+ $C_2 \hm= \sqrt{(N-1)Q}$. Второе утверждение теоремы доказывается абсолютно 
+ аналогично путем замены константы~$C_1$ на~$C_3H_K$.
+ { %\looseness=1
+ 
+ }
+
+ Теорема~2 доказана.
+ 
+ }
+
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{B_17}
+\Au{Борисов А.\,В.} Классификация по непрерывным наблюдениям с~мультипликативными 
+шумами~I: формулы байесовской оценки~// Информатика и~её применения, 2017. 
+Т.~11. Вып.~1. C.~11--19.
+
+\bibitem{S_14}
+\Au{Стоянов Й.} Контрпримеры в~теории вероятностей~/
+Пер. с~англ.~--- М.: МЦНМО, 2014. 296~с.
+(\Au{Stoyanov~J.} {Counterexamples in probability.}~--- 
+New York, NY, USA: John Wiley, 1987. 313~p.)
+
+\bibitem{LS_86}
+\Au{Липцер Р.\,Ш., Ширяев А.\,Н.} Теория мартингалов.~---~ М.: Наука, 1986. 512~c.
+
+\bibitem{PB_10}
+\Au{Platen E., Bruti-Liberati~N.}
+Numerical solution of stochastic differential equations with jumps in finance.~--- 
+New York, NY, USA: Springer, 2010. 868~p.
+
+\bibitem{PR_10}
+\Au{Platen E., Rendek~R.}
+Quasi-exact approximation of hidden Markov chain filters~//
+Commun. Stoch. Anal., 2010. Vol.~4. No.\,1. P.~129--142.
+
+\bibitem{LS_74}
+\Au{Липцер Р.\,Ш., Ширяев~А.\,Н.} Статистика случайных процессов.~--- 
+М.: Наука, 1974. 512~с.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 19.12.16}}
+
+\vspace*{8pt}
+
+%\newpage
+
+%\vspace*{-24pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+\vspace*{8pt}
+
+
+\def\tit{CLASSIFICATION BY CONTINUOUS-TIME OBSERVATIONS 
+IN~MULTIPLICATIVE NOISE~II: NUMERICAL ALGORITHM}
+
+\def\titkol{Classification by continuous-time observations in multiplicative noise~II: Numerical algorithm}
+
+\def\aut{A.\,V.~Borisov}
+
+\def\autkol{A.\,V.~Borisov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian
+Academy of Sciences,  44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+\Abste{This is the second part of the paper ``Classification by continuous-time 
+observations in multiplicative noise~I: Formulae for Bayesian estimate'' 
+published in ``Informatics and Applications,'' 2017, 11(1). Investigations 
+are aimed at estimation of a~finite-state random vector given
+continuous-time noised observations. The key feature\linebreak\vspace*{-12pt}}
+
+\Abstend{is that the 
+observation noise intensity is a function of the estimated vector, 
+which makes useless the known results in the optimal filtering.
+In the first part of the paper, the required estimate is obtained 
+both in the explicit integral form and as a~solution to 
+a~stochastic differential system with some jump processes in the right-hand side.
+The second part contains a~numerical algorithm of the estimate approximate 
+calculation together with its accuracy analysis. An example illustrating the 
+performance of the proposed estimate is also presented.}
+
+\KWE{optimal filtering; identifiability; recursive scheme; approximation order;
+ time discretization}
+
+
+
+\DOI{10.14357/19922264170204} 
+
+%\vspace*{-18pt}
+
+\Ack
+\noindent
+The work was supported in part by the Russian Foundation
+for Basic Research (projects Nos.\,15-37-20611 and
+16-07-00677).
+
+
+
+%\vspace*{3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{B_17-1}
+\Aue{Borisov, A.\,V.} 2017. 
+Klassifikatsiya po nepreryvnym nablyudeniyam s~mul'tiplikativnymi shumami~I:
+Formuly Bayesovskoy otsenki 
+[Classification by continuous-time observations in multiplicative noise~I: 
+Formulae for Bayesian estimate]~//
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 11(1):11--19.
+
+ \bibitem{S_14-1}
+\Aue{Stoyanov, J.} 1987. \textit{Counterexamples in probability.} 
+New York, NY: John Wiley. 313~p.
+
+\bibitem{LS_86-1}
+\Aue{Liptser, R.\,Sh., and A.\,N.~Shiryayev.} 1989. \textit{Theory of martingales.}
+New York, NY: Springer. 812~p.
+
+\bibitem{PB_10-1}
+\Aue{Platen, E., and N.~Bruti-Liberati}. 2010.
+\textit{Numerical solution of stochastic differential equations with jumps in finance.}
+New York, NY: Springer. 868~p.
+
+\bibitem{PR_10-1}
+\Aue{Platen, E., and R.~Rendek}. 2010.
+Quasi-exact approximation of hidden Markov chain filters.
+\textit{Commun. Stoch. Anal.} 4(1):129--142.
+
+\bibitem{LS_74-1}
+\Aue{Liptser, R.\,Sh., and A.\,N.~Shiryayev.} 2001. 
+\textit{Statistics of random processes: I.~General theory.} Berlin: Springer. 427~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Received December 19, 2016}}
+
+\Contrl
+
+\noindent
+\textbf{Borisov Andrey V.} (b.\ 1965)~--- 
+Doctor of Science in physics and mathematics, principal scientist, Institute of
+Informatics Problems, Federal Research Center ``Computer Science and Control'' 
+of the Russian Academy of
+Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{aborisov@frccsc.ru}
+
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература} 

@@ -1,0 +1,1102 @@
+\renewcommand{\figurename}{\protect\bf Figure}
+\renewcommand{\tablename}{\protect\bf Table}
+
+\def\stat{nuriev}
+
+
+\def\tit{MACHINE TRANSLATION OF~RUSSIAN CONNECTIVES INTO~FRENCH: ERRORS 
+AND~QUALITY FAILURES}
+
+\def\titkol{Machine translation of Russian connectives into French: Errors 
+and~quality failures}
+
+\def\autkol{V.~Nuriev, N.~Buntman, and~O.~Inkova}
+
+\def\aut{V.~Nuriev$^1$, N.~Buntman$^2$, and~O.~Inkova$^3$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+%\footnotetext[1] {The 
+%research of Yuri Kabanov was done under partial financial support   of the grant 
+%of  RSF No.\,14-49-00079.}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Institute of Linguistics of the Russian Academy of Sciences, 1~bld.~1~Bolshoy 
+Kislovsky Lane, Moscow 125009, Russian Federation; Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences,  
+44-2~Vavilov Str., Moscow 119333, Russian Federation, \mbox{nurieff.v@gmail.com}}
+\footnotetext[2]{M.\,V.~Lomonosov Moscow State University, GSP-1, Leninskie Gory, Moscow 
+119991, Russian Federation, \mbox{nabunt@hotmail.com}}
+\footnotetext[3]{University of Geneva, 24~du  
+G$\acute{\mbox{e}}$n$\acute{\mbox{e}}$ral-Dufour Str., 
+Gen$\Grave{\mbox{e}}$ve  4~1211, Switzerland, \mbox{Olga.Inkova@unige.ch}}
+
+
+\index{Nuriev V.}
+\index{Buntman N.}
+\index{Inkova О.}
+\index{Нуриев В.\,А.}
+\index{Бунтман Н.\,В.}
+\index{Инькова О.\,Ю.}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+
+
+     \Abste{The paper shows what machine errors and quality failures may occur when 
+translating connectives. To that end, a~statistical machine translation 
+(SMT) system has been used in 
+order to generate translation samples. The opening part presents a~brief retrospective on how 
+machine translation has been developing for over~60~years; it sets out the necessary 
+background and provides the context. Also, section~1 explains how an SMT 
+system works. Then, the paper takes a~closer look at the problem of evaluation of 
+machine translation quality. Several approaches to classifying machine translation errors are 
+considered to finally attempt a~taxonomy that covers specifically the errors central to 
+translation of connectives (from Russian into French). The closing section provides examples 
+of these machine translation errors.}
+     
+     \KWE{statistical machine translation; corpus linguistics; machine translation errors; 
+parallel texts}
+
+\DOI{10.14357/19922264180215} 
+
+
+%\vspace*{-4pt}
+
+
+\vskip 12pt plus 9pt minus 6pt
+
+      \thispagestyle{myheadings}
+
+      \begin{multicols}{2}
+
+                  \label{st\stat}
+     
+\section{Introduction: Historical Background}
+
+  \noindent
+  Historically, in order to acquire the state-of-the-art accomplishments, machine 
+translation has progressed through several stages, with this progress giving rise to 
+a~huge bulk of knowledge, which has quite naturally resulted in a~large body of 
+literature (see, for example,~[1--7]). As the immediate purpose of the present paper is 
+neither to produce an elaborate history of machine translation nor to inform readers 
+on emerging trends in the field (i.\,e., neural machine translation), we will limit 
+ourselves to outlining briefly main kinds of machine translation systems and their 
+developmental steps.
+  
+  The first significant attempts to coherently approach automatic translation date 
+back to the early 1950s. They brought about Rule-Based Machine Translation 
+(RBMT), the paradigm that remained prevalent for decades thereafter. Within it, 
+there were three basic approaches, namely: ($i$)~the `direct translation' model; 
+($ii$)~the `interlingua' model; and ($iii$)~the `transfer' model.
+  
+  In the `direct translation' model, programming rules are developed and intended 
+to translate ``specifically from one source language (SL) into one particular target 
+language (TL) with a~minimal amount of analysis and syntactic 
+reorganization''~[8]. To put it differently, this model sees an~SL sentence as a~string 
+of words, gets their TL equivalents from accessible bilingual dictionaries, and 
+reorganizes these equivalents into the TL sentence, maintaining the original word 
+order as much as possible. Relevant linguistic knowledge is usually stored in 
+bilingual dictionaries, it can also be described by algorithms and then coded. The 
+translation potential of the model is constrained by both various problems of 
+lexical ambiguity (e.\,g., homonyms) and syntactic limitations, as it is preferably 
+applied to pairs of languages with similar syntactic features~[9].
+  
+  The `interlingua' model favors the use of an artificial mediating language. The 
+development of this model is grounded in a~preconception that different natural 
+languages can be reduced to a~number of abstract language-neutral representations 
+(codes independent of both SL and TL), and they would serve as 
+a~semantic-syntactic intermediator when translating between languages. Hence, translation 
+proceeds in two stages: the system converts an~SL text into interlingua to further 
+synthesize a~TL text based on the interlingual representations. These 
+representations are conceived to be clear-cut and express the content of an~ST text to 
+the fullest extent~--- its morphological, syntactic, and semantic information~--- 
+since such RBMT ``systems depend crucially on the common language into and 
+out of which all sentences accepted by the system are mapped''~\cite{2-n}. One of 
+the most serious shortcomings the `interlingua' model is blamed for is the lack of 
+language-specificity and an oversimplification through which natural language is 
+perceived.
+  
+  The third~--- `transfer'~--- model converts the input text into a~transfer structure 
+that abstracts away from some grammatical details of the SL to produce 
+a~disambiguated representation of the source input. Then, this SL-dependent 
+representation is transferred into a~corresponding TL-dependent structure, from 
+which a~target output is generated. Thus, here, translation consists of three stages: 
+analysis, transfer, and generation (synthesis). Therefore, at the very least, ``transfer 
+systems require monolingual modules to analyse and generate sentences, and 
+transfer modules to relate translationally equivalent representations of those 
+sentences''~\cite{2-n}. In contrast with the `direct translation' approach, the 
+`transfer' model sees a~sentence as a~structure other than a~linear string of words, 
+which makes it more flexible and complex. Unlike interlingua systems, the SL and 
+TL representations in this model are language-specific (and not language-neutral). 
+It is noteworthy that for a~transfer system, the number of transfer modules grows 
+dramatically with the number of languages: for~$n$~languages, one needs at least 
+$[n(n \hm- 1)]/2$ transfer modules. ``This is because for each of 
+the~$n$~languages, there are ($n\hm-1$) possible TL $\langle\ldots\rangle$ If these 
+modules are reversible, then only half of this number of transfer modules are 
+required''~\cite{2-n}. This is generally regarded as the foremost disadvantage of 
+transfer systems, since they get more expensive the more languages they acquire.
+  
+  Of the three RBMT approaches, the latter two persisted over the years. Only 
+in~1981 Makoto Nagao\footnote{The idea was presented by Makoto Nagao at a~1981 
+conference, and his paper on this was published only three years later.} proposed
+ a~framework 
+of machine translation that was aimed at overcoming weaknesses of RBMT when 
+one translated between languages syntactic structures of which differed drastically 
+(for more on this, see~\cite{10-n, 11-n}). His approach started from the analogy 
+principle of translation, i.\,e., translation was perceived as a~search for `analogues' 
+(similar in meaning and form) of SL sentences, phrases, or word strings in TL 
+sentences stored in a~database. Those databases were derived from parallel corpora 
+where TL texts represented examples of translations previously produced by 
+professional translators, and thus, the approach was dubbed `example-based 
+machine translation' (EBMT). On the one hand, since EBMT systems made use of 
+human translations, they succeeded more in tackling such problems as 
+idiomaticity. On the other hand, one of their major issues was the recombination 
+of selected TL examples (most commonly short strings of words or phrases) in 
+order to produce fluent and grammatical output~\cite{8-n}.
+  
+  Another corpus-based approach, of more recent origin, is 
+SMT. It began to score its first successes in the~1990s. First, SMT 
+systems had provided word-based translation only, but over time, they became 
+phrase- and syntax-based. Statistical machine translation 
+is probabilistic by nature focusing on how to 
+generate multiple hypothetical translations for the input string of words, and then 
+how to work out which one of those is most likely. It employs two processes: 
+training and decoding. In the course of training, a~statistical model of translation is 
+extracted from a~parallel corpus, and a~statistical model of the TL from a~monolingual corpus. The translation model consists of a~bilingual dictionary 
+where to each possible translation for a~given SL word or phrase, a~probability is 
+assigned. Yet, the model is not similar to a~common dictionary, since its entries 
+may contain not only the translations that are plausible and evident; there may be 
+translations that are unlikely but not impossible, and the assigned probabilities 
+show this. The language model comprises a~database of TL word sequences, to 
+each of which a~probability is also assigned. During training, additional 
+information can be extracted, such as models of relative sentence length, word 
+reordering, etc. These models are then used in decoding, the process that actually 
+produces an output translation. The decoding is per se a~search process: a~decoder 
+searches over all possible translations for the one that will have the highest overall 
+probability according to the translation and language models. In other words, SMT 
+tries to solve the following decision problem: which translation is the most likely? 
+There are two formulae to compute that score: the noisy channel model
+\begin{equation}
+  \mathrm{Translation} = \argmax\limits_T P(S\vert T)  P(T)
+  \label{e1-n}
+  \end{equation}
+and~--- more flexible and widespread~--- the log-linear model
+\begin{equation}
+  \mathrm{Translation} = \argmax\limits_T \sum\limits_{m=1}^M \lambda_m h_m(T,S)
+  \label{e2-n}
+  \end{equation}
+(for a~full 
+description of these formulae, see~\cite{12-n}).
+   
+ 
+  
+  
+  As one can see, the leftmost parts of Eqs.~(1) and~(2) ($\mathrm{Translation} \hm= 
+\argmax_T\ldots$) are the same. They are to be interpreted as follows: given that 
+we have $T$ candidate translations, we will let the output $\mathrm{Translation}$ be 
+the~$T$ with the maximum ($\argmax$) score. The rightmost parts of these 
+equations differ as to how each candidate translation should be scored.
+  
+  Model 1 has two component (or `feature') scores $P(S\vert T)$ and $P(T)$ that 
+are to be multiplied together. $P(S\vert T)$ gives the likelihood that the SL 
+sentence~$S$ and the candidate translation~$T$ are translationally equivalent. 
+This feature is referred to as the $translation\ model$. $P(T)$ gives the likelihood 
+that the candidate translation~$T$ is actually a~valid sentence in the TL and is 
+referred to as the $language\ model$.
+  
+  The right-hand-side of the model 2 equation shows that this model comprises 
+  a~set of log feature scores to be added together. The $\sum\nolimits^M_{m=1}$ 
+notation indicates that there are a~total of~$M$~features to be scored and that their 
+individual scores are to be added up. ``These individual scores are to be computed 
+by multiplying together two feature-specific values, $\lambda_m$ and~$h_m (T, 
+S)$ where~$\lambda_m$ is simply the~weight indicating the importance of that 
+feature relative to the other features, and $h_m (T, S)$ is the log probability 
+assigned to the source--candidate pair by that feature''~\cite{12-n}.
+  
+  In the present study,  an~SMT system\footnote{Here, it is used as a~web service.} 
+  has been employed. It 
+works with the major European languages and all translation directions are 
+reversible (e.\,g., English--Spanish and vice versa). As well as other SMT systems, 
+this one has three key components: a~translation model, a~language model, and 
+a~decoder. The translation model is expected to construct a~graph that would 
+encompass every possible way to translate an input sentence and estimate the 
+probability of each translation. To that end, the translation model learns from 
+bilingual parallel corpora. On the contrary, the language model gathers its data 
+from single-language corpora and stores all TL frequent $n$-word combinations, 
+along with information about frequency of use, $n$~may be from~1 to~7 (usually,~5). 
+The 3rd component, the decoder, performs the output translation. For every 
+sentence of the SL text, it chooses all possible translation options, combining 
+phrases from the translation model and sorting them out in terms of probability. 
+The decoder then matches all the variations against the language model. In so 
+doing, it searches for the sentence with the highest probability~--- according to the 
+translation model, and the highest frequency of use~--- according to the language 
+model.
+
+\vspace*{-6pt}
+  
+\section{Evaluation of~Machine Translation Quality}
+
+\noindent
+  In the present study, the ultimate purpose of which is to contrast human (reference) 
+translations of Russian connectives into French against automated translations,  
+an~SMT system is used to generate samples of machine translations (for 
+examples, see section~3). With such a~purpose, one has to build a~taxonomy of 
+possible quality failures or errors occurring when a~machine translator processes 
+sentences with the linguistic units in question.
+
+  
+  While in the literature there are a~number of examples of those taxonomies, we 
+will only pay attention to some especially interesting cases\footnote{For a~concise 
+description of how the ideas behind the analysis of machine translation errors developed, see section~2 
+in~\cite{14-n}.}. The first case is described in~\cite{13-n}, where the authors argue 
+that automated quality metrics (BLEU, NIST, etc.), however useful and important, 
+cannot be used all alone to identify machine translation errors; manual error 
+analysis appears to be also necessary. The typology of errors proposed  
+in~\cite{13-n} has a~hierarchical structure, with five classes of errors at the highest 
+level: ``Missing Words,'' ``Word Order,'' ``Incorrect Words,'' ``Unknown Words,'' 
+and ``Punctuation'' errors.
+  
+  Errors of the first type occur when in the generated output, a~word is missing. 
+This class divides into two subclasses of errors arising ($i$)~when the missing word 
+is central to the meaning of the SL sentence; and ($ii$)~when the missing word 
+ensures the well-formedness of the output, but does not alter the meaning.
+  
+  ``Word Order'' errors are classified according to the reordering principle, i.\,e., to 
+what extent the gen\-er\-ated output needs to be reordered so as to get a~correct 
+translation out of the generated hypothesis. The authors distinguish between word- 
+and phrase-based reorderings and, further, between local and long-range 
+reorderings. A~word-based reordering involves moving separated words only, 
+whereas a~phrase-based reordering moves whole strings of words. The distinction 
+between local and long-range is somewhat less obvious, it is stated that the former 
+takes place when the words have to be reordered only in a~local context (within the 
+same syntactic chunk), while the latter results from moving the words into another 
+chunk.
+  
+  In this classification, ``Incorrect Words'' errors represent the largest class of 
+machine translation errors. They occur once the system is unable to find a~correct 
+translation of a~TL word or phrase. There are five types of errors falling into this 
+category. Incorrect words are: ($i$)~TL equivalents distorting the meaning of the 
+sentence; ($ii$)~TL equivalents in the wrong grammatical form (for inflected 
+languages); ($iii$)~redundant words (in case of spoken language translation); 
+($i\nu$)~words that do not fit in stylistically with the rest of the TL sentence or 
+neighboring context; and ($\nu$)~idiomatic expressions unknown to the system and 
+translated word-for-word (incorrectly).
+{ %\looseness=1
+
+}
+  
+  ``Unknown words'' errors occur if the system fails to identify the SL word. This 
+may happen when either unknown words (and stems) or unseen forms of the known 
+stems are processed.
+  
+  Also, the authors mention ``Punctuation'' errors, without paying much attention 
+to them.
+  
+  It is emphasized that the error types are not mutually exclusive and errors rarely 
+occur in isolation, i.\,e., one may bring about another.
+  
+  One more example of taxonomy of machine translation errors  referred to here is 
+taken from~\cite{14-n}. This taxonomy classifies errors in terms of the linguistic 
+item affected by the error, taking into account different language levels where the 
+error is located\footnote{A~somewhat similar approach is used in~\cite{15-n}.}.
+  
+  Orthography level errors result from misuse of punctuation and misspelling of 
+words. They are divided into three types: punctuation, capitalization (inappropriate 
+use of capital letters), and spelling errors.
+  
+  Lexis level errors include omission, addition, and untranslated. Omission and 
+addition errors are further analyzed considering the nature of words they affect: 
+(a)~content words (or lexical words), i.\,e., words that carry the meaning of 
+a~sentence; and (b)~function (or grammatical) words, i.\,e., words that may have little 
+lexical meaning, but convey grammatical relationships within a~sentence. Omission 
+errors occur when the translation of a~word present in the SL text is missing in the 
+TL output; an addition error represents the opposite. Untranslated errors happen 
+when the system fails to find any translation candidate for a~given SL word and 
+leaves it as it is, without translation.
+  
+  Grammar level errors cover morphological and syntactic content. They are 
+grouped into two categories: misselection and misordering errors. Misselection 
+errors are morphological, encompassing problems at word class-level (e.\,g.,  
+part-of-speech confusion) and at verbal level (tense and person), errors of 
+agreement (gender, number, person) and those in contractions (between 
+prepositions and articles). Misordering errors are related with syntactic problems 
+that the TL output may demonstrate.
+  
+  Semantic errors arise from problems related to the meaning of the words and 
+wrong word selection. The authors propose to individuate three types of errors: 
+confusion of senses, wrong choice, and collocational and idiomatic errors. Confusion 
+of senses takes place when an~SL word is translated by a~TL equivalent representing 
+one of its possible meanings, but, in the given context, the chosen translation does 
+not fit. Wrong choice errors are produced if the chosen translation candidate is 
+totally incorrect (e.\,g., in the case of homonyms). Collocational and idiomatic 
+errors happen when the translation breaks the rules of compositional semantics.
+{ %\looseness=1
+
+}
+  
+  Discourse-level errors result from failure to choose the most natural discursive 
+option. At the discourse level, the errors are considered in terms of style, variety, 
+and linguistic items that should not be translated. Style errors concern stylistically 
+poor decision-making. Variety errors occur in cases where the TL is marked by 
+dialect variation and the machine translator loosely combines lexical or 
+grammatical structures, choosing from a~mixture of dialects. Under the 
+`should not 
+be translated' category, the authors consider SL sequences of words that should not 
+be translated in the TL (e.\,g., book or film titles).
+  
+  Based on these examples and some other insights, we have devised a~taxonomy 
+of machine translation errors, identifying specifically the errors central to 
+translation of connectives.  To differentiate between the following types 
+of errors, we propose:
+  \begin{enumerate}[(1)]
+  \item  AgramTotal (the output sentence is agrammatical);
+  \item ErrorTotal (the SL connective is translated by a~nonexisting linguistic 
+item);
+  \item AgramPostCNT (there are grammatical errors in the chunk introduced by 
+the connective);
+  \item AgramLocal (there are grammatical errors in the chunk that is not 
+introduced by the connective);
+  \item AgramOrth (in the TL output, the connective is misspelled);
+  \item ErrorCNT (the choice of the TL connective is semantically ill-motivated);
+  \item Cyrillic (the TL sentence has nontranslated words left in Cyrillic); and
+  \item ErrorPart (a part of a~multicomponent connective is mistranslated).
+  \end{enumerate}
+  
+  Machine translations, stored in a~supracorpora database (SCDB) of 
+connectives\footnote{For more on the SCDB of connectives, see~[16--20].}, are annotated 
+according to this taxonomy. Also, while annotating, the translation is labelled as 
+either `congruent' (the Russian connective is translated by a~French connective) or 
+`divergent' (the Russian connective is translated by a~nonconnective). If there are 
+no errors in the TL output, the translation is marked as NoError.
+  
+  As in~\cite{13-n}, we have not opted for automated quality metrics in order to 
+identify errors of machine translation and estimate its quality. Instead, manual error 
+analysis has been chosen, since connectives are complex linguistic units, having 
+the ability to take both sentential and discursive scope. Manual error analysis 
+proceeds in two steps: ($i$)~the translation is annotated, i.\,e., an expert linguist 
+identifies translation errors; and ($ii$)~the annotation is double-checked for accuracy and 
+reliability by another expert linguist (and translator).
+
+
+  
+  In the SCDB of connectives, there is at least one reference~--- performed by 
+a~human~--- translation for each sample of machine translation, which opens up 
+vast opportunities for users to compare human and automated translations.
+
+\vspace*{-6pt}
+  
+\section{Statistical Machine Translation of~Connectives: Exemplifying Errors}
+
+\noindent
+  The present section lists examples of SMT errors mentioned above. The 
+translation direction is from Russian\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\end{multicols}
+
+  \begin{table*}\small %tabl1
+  %\vspace*{3pt}
+  \begin{center}
+  \Caption{AgramTotal errors}
+  \vspace*{2ex}
+  
+  \begin{tabular}{p{50mm}p{25mm}p{50mm}p{25mm}}
+  \hline
+\multicolumn{1}{c}{SL 
+fragment}&\multicolumn{1}{c}{Connective}&\multicolumn{1}{c}{Translation}&
+\multicolumn{1}{c}{\tabcolsep=0pt\begin{tabular}{c}TL equivalent\\ 
+and SMT errors\end{tabular}}\\
+\hline
+что ж тут, во всем этом, в~самом деле, такого особенно преступного с~моей стороны, 
+\textbf{то есть} без предрассудков-то, а~здраво судя?&\hspace*{8mm}\textbf{то есть}\newline
+\hspace*{8mm}$\langle$CNT$\rangle$&dans tout cela, en fait, ce sont particuli$\Grave{\mbox{e}}$rement 
+criminel de ma part, \textbf{c'est $\Grave{\mbox{a}}$~dire} sans 
+pr$\acute{\mbox{e}}$jug$\acute{\mbox{e}}$s chose, et la sant$\acute{\mbox{e}}$ 
+pour en juger?&
+\hspace*{3.5mm}\textbf{c'est-$\Grave{\mbox{a}}$-dire}\newline
+\hspace*{3.5mm}$\langle$AgramTotal$\rangle$\\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{2pt}
+%\end{table*}
+%\begin{table*}\small %tabl2
+  \begin{center}
+  \Caption{AgramTotal and Cyrillic errors}
+  \vspace*{2ex}
+  
+  \begin{tabular}{p{50mm}p{25mm}p{50mm}p{25mm}}
+  \hline
+\multicolumn{1}{c}{SL 
+fragment}&\multicolumn{1}{c}{Connective}&\multicolumn{1}{c}{Translation}&
+\multicolumn{1}{c}{\tabcolsep=0pt\begin{tabular}{c}TL equivalent\\ and SMT errors\end{tabular}}\\
+\hline
+заразительная игра воздуха в легких обойдет всех, \textbf{причем} иного прошибет 
+слеза.&\hspace*{7mm}\textbf{Причем}\newline
+\hspace*{7mm}$\langle$CNT$\rangle$&заразительная le jeu de l'air dans les poumons 
+$\acute{\mbox{e}}$vitera tous, \textbf{et} d'autre прошибет larme.&
+\hspace*{4mm}\textbf{et}\newline
+\hspace*{4mm}$\langle$AgramTotal$\rangle$\newline
+\hspace*{4mm}$\langle$Cyrillic$\rangle$\\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{2pt}
+%\end{table*}
+%\begin{table*}\small %tabl3
+  \begin{center}
+  \Caption{AgramTotal and ErrorCNT errors}
+  \vspace*{2ex}
+  
+  \begin{tabular}{p{50mm}p{25mm}p{50mm}p{25mm}}
+  \hline
+\multicolumn{1}{c}{SL 
+fragment}&\multicolumn{1}{c}{Connective}&\multicolumn{1}{c}{Translation}&
+\multicolumn{1}{c}{\tabcolsep=0pt\begin{tabular}{c}TL equivalent\\ and SMT errors\end{tabular}}\\
+  \hline 
+Поверите ли, сударь, что собачонка не стоит восьми гривен, \textbf{то есть} я не дал бы за 
+нее и восьми грошей$\ldots$&
+\hspace*{7mm}\textbf{то есть}\newline
+\hspace*{7mm}$\langle$CNT$\rangle$&le Croirez~---, monsieur, que le chien 
+n'est pas la peine de huit 
+hryvnia, \textbf{c'est que} je ne donnerais pour elle, et huit
+ deniers$\ldots$&\hspace*{3mm}\textbf{c'est que}\newline
+\hspace*{3mm}$\langle$AgramTotal$\rangle$\newline
+\hspace*{3mm}$\langle$ErrorCNT$\rangle$\\
+\hline
+Очень многие, \textbf{и~притом} важнейшие, идеи, темы и образы его творчества~--- 
+и~предшествующего и~последующего~--- появляются здесь в~предельно острой 
+и~обнажённой форме$\ldots$&\hspace*{7mm}\textbf{и~притом}\newline
+\hspace*{7mm}$\langle$CNT$\rangle$&Tr$\Grave{\mbox{e}}$s nombreux, \textbf{et bien que} les critiques, 
+les id$\acute{\mbox{e}}$es, les th$\Grave{\mbox{e}}$mes et les images de sa 
+cr$\acute{\mbox{e}}$ativit$\acute{\mbox{e}}$ et 
+pr$\acute{\mbox{e}}$c$\acute{\mbox{e}}$dant et suivant~---  apparaissent ici 
+tr$\Grave{\mbox{e}}$s aigu$\ddot{\mbox{e}}$ et nue sous la forme de$\ldots$&
+\hspace*{3mm}\textbf{et bien  que}\newline
+\hspace*{3mm}$\langle$AgramTotal$\rangle$\newline
+\hspace*{3mm}$\langle$ErrorCNT$\rangle$\\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{4pt}
+\end{table*}
+
+\begin{multicols}{2}
+
+\noindent
+ into French. All examples are collected from 
+the SCDB
+ of connectives\footnote{As of December~17, 2017, the SCDB contains parallel texts 
+(mostly fiction) in Russian and French of~3.5~million tokens, 15,328 annotations of translations from 
+Russian into French (3,606 of which are annotations of machine translations).}.
+  
+  AgramTotal errors make the TL output agrammatical, while the connective itself 
+may be translated correctly (Table~1).
+
+  The degree of agrammaticality is hard to define, and the study is not aimed at 
+providing such data. Nevertheless, it has been established that AgramTotal errors 
+may occur in translations that contain Cyrillic errors (Table~2).
+  As in the previous example, one can see that the connective is translated 
+correctly by one of its regular equivalents.
+  
+  AgramTotal errors may be encountered in the TL output where there are 
+semantic errors in choice of connectives (ErrorCNT). This is to say that, in the TL 
+sentence, the connective conveys the type of logical-semantic relations, drastically 
+different from that expressed by the SL connective and inappropriate in the given 
+context, which also contributes to agrammaticality of the output sentence 
+(Table~3).
+    Here, one can see that in the output sentence \textit{to est'}, a~reformulation 
+marker, is rendered by the causative connective \textit{c'est que}, and 
+\textit{i~protom} (the concomitance relation) is translated by \textit{et bien que} 
+(the concessive relation).
+  
+  The kind of errors to pay special attention to is \mbox{ErrorTotal}. A~nonexisting 
+linguistic item generated as a~TL equivalent of the SL connective may consist of 
+elements each of which occurs naturally in the TL, yet combining these elements 
+does not produce a~fluent translation in the given context (Table~4).
+  
+ \begin{table*}\small %tabl4
+  \begin{center}
+  \Caption{ErrorTotal and AgramLocal errors}
+  \vspace*{2ex}
+  
+  \begin{tabular}{p{50mm}p{25mm}p{50mm}p{25mm}}
+  \hline
+\multicolumn{1}{c}{SL 
+fragment}&\multicolumn{1}{c}{Connective}&\multicolumn{1}{c}{Translation}&
+\multicolumn{1}{c}{\tabcolsep=0pt\begin{tabular}{c}TL equivalent\\ and SMT errors\end{tabular}}\\
+\hline 
+  ---~Я отвык совсем ездить; с непривычки, \textbf{да еще} зимой, признаюсь, мне бы 
+трудно было, не хотелось бы\ldots&\hspace*{7mm}\textbf{да еще}\newline
+\hspace*{7mm}$\langle$CNT$\rangle$&Je suis tout $\Grave{\mbox{a}}$~fait perdu l'habitude de conduire; de 
+l'habitude, \textbf{et oui, m$\hat{\mbox{e}}$me} en hiver, je l'avoue, il m'aurait 
+$\acute{\mbox{e}}$t$\acute{\mbox{e}}$ difficile, je ne voudrais pas\ldots&
+\hspace*{3mm}\textbf{et oui, 
+m$\hat{\mbox{e}}$me}\newline 
+\hspace*{3mm}$\langle$ErrorTotal$\rangle$\newline
+\hspace*{3mm}$\langle$AgramLocal$\rangle$\\
+\hline
+Он кинулся к комоду, с грохотом вытащил ящик, а из него портфель, бессвязно 
+\textbf{при этом } выкрикивая$\ldots$&\hspace*{7mm}\textbf{при этом}\newline
+\hspace*{7mm}$\langle$CNT$\rangle$ &Il s'est jet$\acute{\mbox{e}}$ $\Grave{\mbox{a}}$~la poitrine, avec 
+le fracas tir$\acute{\mbox{e}}$ de lettres, de portefeuille, de \mbox{fa\!{\ptb\c{c}}on} 
+incoh$\acute{\mbox{e}}$rente \textbf{lors de cette} criant$\ldots$&
+\hspace*{3mm}\textbf{lors de cette}\newline
+\hspace*{3mm}$\langle$AgramTotal$\rangle$\newline
+\hspace*{3mm}$\langle$ErrorTotal$\rangle$\\
+\hline
+\end{tabular}
+\end{center}
+%\end{table*}
+% \begin{table*}\small %tabl5
+  \begin{center}
+  \Caption{AgramPostCNT errors}
+  \vspace*{2ex}
+  
+  \begin{tabular}{p{50mm}p{25mm}p{50mm}p{25mm}}
+  \hline
+\multicolumn{1}{c}{SL 
+fragment}&\multicolumn{1}{c}{Connective}&\multicolumn{1}{c}{Translation}&
+\multicolumn{1}{c}{\tabcolsep=0pt\begin{tabular}{c}TL equivalent\\ and SMT errors\end{tabular}}\\
+\hline 
+  ---~Но, видно, это было неизбежно: \textbf{зато} как я покоен теперь и$\ldots$ как 
+счастлив!&\hspace*{8mm}\textbf{зато}\newline
+\hspace*{8mm}$\langle$CNT$\rangle$&---~Mais, on le voit, c'$\acute{\mbox{e}}$tait 
+in$\acute{\mbox{e}}$vitable, \textbf{mais} comme je l'est 
+d$\acute{\mbox{e}}$c$\acute{\mbox{e}}$d$\acute{\mbox{e}}$ maintenant, et$\ldots$\ \
+heureux!&\textbf{mais}\newline
+$\langle$AgramPostCNT$\rangle$\\
+\hline
+\end{tabular}
+\end{center}
+%\end{table*}  
+%\begin{table*}\small %tabl6
+  \begin{center}
+  \Caption{AgramLocal and Cyrillic errors}
+  \vspace*{2ex}
+  
+\begin{tabular}{p{50mm}p{25mm}p{50mm}p{25mm}}
+  \hline
+\multicolumn{1}{c}{SL 
+fragment}&\multicolumn{1}{c}{Connective}&\multicolumn{1}{c}{Translation}&
+\multicolumn{1}{c}{\tabcolsep=0pt\begin{tabular}{c}TL equivalent\\ and SMT errors\end{tabular}}\\
+\hline 
+  Шлиппенбах возбужденно жестикулировал. \textbf{Зато} водитель оставался совершенно 
+невозмутимым.&\hspace*{8mm}\textbf{зато}\newline
+\hspace*{8mm}$\langle$CNT$\rangle$&Шлиппенбах excit$\acute{\mbox{e}}$ жестикулировал. 
+\textbf{Mais} le conducteur est rest$\acute{\mbox{e}}$ totalement 
+impassible.&\hspace*{3mm}\textbf{mais}\newline
+\hspace*{3mm}$\langle$Cyrillic$\rangle$\newline
+\hspace*{3mm}$\langle$AgramLocal$\rangle$\\
+\hline
+\end{tabular}
+\end{center}
+%\end{table*}
+%\begin{table*}\small %tabl7
+  \begin{center}
+  \Caption{AgramOrth and AgramLocal errors}
+  \vspace*{2ex}
+  
+\begin{tabular}{p{50mm}p{25mm}p{50mm}p{25mm}}
+  \hline
+\multicolumn{1}{c}{SL 
+fragment}&\multicolumn{1}{c}{Connective}&\multicolumn{1}{c}{Translation}&
+\multicolumn{1}{c}{\tabcolsep=0pt\begin{tabular}{c}TL equivalent\\ and SMT errors\end{tabular}}\\
+\hline 
+Он, как только проснулся, тотчас же вознамерился встать, умыться и, напившись чаю, 
+подумать хорошенько, кое-что сообразить, записать \textbf{и вообще} заняться этим 
+делом как следует. &\hspace*{6mm}\textbf{и вообще}\newline
+\hspace*{6mm}$\langle$CNT$\rangle$&Il est, d$\Grave{\mbox{e}}$s que s'est 
+r$\acute{\mbox{e}}$veill$\acute{\mbox{e}}$, il a~imm$\acute{\mbox{e}}$diatement 
+d$\acute{\mbox{e}}$cid$\acute{\mbox{e}}$ de se lever, de se laver et de peur qu'en buvant du 
+th$\acute{\mbox{e}}$, penser bien, quelque chose de comprendre, d'$\acute{\mbox{e}}$crire 
+\textbf{et} de s'occuper \textbf{en gnral} cette affaire comme il se doit.& 
+\hspace*{3mm}$\acute{\mbox{e}}$et$\vert$\textbf{en gnral}\newline
+\hspace*{3mm}$\langle$AgramLocal$\rangle$\newline
+\hspace*{3mm}$\langle$AgramOrth$\rangle$\\
+\hline
+\end{tabular}
+\end{center}
+%\end{table*}
+%  \begin{table*}\small %tabl8
+  \begin{center}
+  \Caption{ErrorPart and AgramPostCNT errors}
+  \vspace*{2ex}
+  
+\begin{tabular}{p{50mm}p{25mm}p{50mm}p{25mm}}
+  \hline
+\multicolumn{1}{c}{SL 
+fragment}&\multicolumn{1}{c}{Connective}&\multicolumn{1}{c}{Translation}&
+\multicolumn{1}{c}{\tabcolsep=0pt\begin{tabular}{c}TL equivalent\\ and SMT errors\end{tabular}}\\
+\hline 
+---~Не могу сказать; \textbf{но} меня интересует \textbf{при этом} другое обстоятельство, 
+так сказать$\ldots$& 
+\hspace*{4mm}\textbf{но}$\vert$\textbf{при этом}\newline
+\hspace*{4mm}$\langle$CNT$\rangle$&Je ne puis le dire; \textbf{mais} ce qui m'int$\acute{\mbox{e}}$resse 
+\textbf{lorsque} cette autre circonstance$\ldots$&\textbf{mais}$\vert$\textbf{lorsque}\newline
+$\langle$ErrorPart$\rangle$\newline
+$\langle$AgramPostCNT$\rangle$\\
+\hline
+\end{tabular}
+\end{center}
+%\end{table*}
+%\begin{table*}\small %tabl9
+  \begin{center}
+  \Caption{NoError case}
+  \vspace*{2ex}
+  
+\begin{tabular}{p{50mm}p{25mm}p{50mm}p{25mm}}
+  \hline
+\multicolumn{1}{c}{SL 
+fragment}&\multicolumn{1}{c}{Connective}&\multicolumn{1}{c}{Translation}&
+\multicolumn{1}{c}{\tabcolsep=0pt\begin{tabular}{c}TL equivalent\\ and SMT errors\end{tabular}}\\
+\hline 
+\textbf{И однако ж}, одеваясь, он осмотрел свой костюм тщательнее 
+обыкновенного.&\hspace*{5mm}\textbf{и однако ж}\newline
+\hspace*{5mm}$\langle$CNT$\rangle$&\textbf{Et cependant}, en s'habillant, il a~regard$\acute{\mbox{e}}$ 
+son costume plus soigneusement que d'habitude.&
+\hspace*{5mm}\textbf{et cependant}\newline
+\hspace*{5mm}$\langle$NoError$\rangle$\\
+\hline
+\end{tabular}
+\end{center}
+\end{table*}
+
+ 
+  It is noteworthy that the examples given in Table~4
+  demonstrate how the SMT system fails 
+to consider a~multiword connective as a~whole~--- inseparable linguistic unit.
+  
+  In the case of AgramPostCNT errors, agrammaticality of the chunk introduced 
+by the connective also comes in different guises. It does not necessarily result from 
+the wrong use of connectives, it may be caused by problems of grammatical 
+agreement in the TL output (Table~5).
+  
+  
+
+
+  Unlikely AgramPostCNT errors, AgramLocal ones occur in the fragment that is 
+not introduced by the connective (Table~6).
+  
+
+  
+
+  
+  AgramOrth errors are relatively rare; however, there are a~few examples 
+(Table~7).
+  
+  
+
+  
+  The ErrorPart label is used to annotate cases where the SMT system fails to 
+translate a~part of a~multicomponent connective (Table~8).
+  
+
+
+  In the database of connectives, there are cases annotated as NoError where the 
+SMT system does not make any errors at all (Table~9).
+  
+  %\vspace*{-6pt}
+
+\section{Concluding Remarks}
+
+  %\vspace*{-2pt}
+
+\noindent
+  In the present paper, the authors have focused on the SMT approach and showed its evolution 
+throughout the years. Statistical machine translation 
+is not the leading paradigm any more, with neural 
+machine translation systems being actively developed. Yet, many publicly 
+available automated translation systems are still statistical, and we employ one of 
+these systems in our study of connectives, at least at the current stage. That is why, 
+it was necessary to show how SMT systems worked.
+  
+Also, the evaluation of machine translation quality has been  discussed. Arguing that 
+the role of automatic evaluation metrics is overly important nowadays, we 
+suggested the necessity of manual error analysis made by real users and experts. 
+To perform such analysis, one has to build a~taxonomy of possible quality failures 
+or errors occurring when a~machine translation system processes the SL input. We 
+considered several different cases of those taxonomies in order to propose our 
+classification that would cover specifically the errors central to translation of 
+connectives (eight types of errors).
+  
+  Finally, we have provided specific examples to show errors that the SMT 
+system can make when processing sentences with connectives.
+  
+  This study opens up some perspectives of further research. First, it would be 
+interesting to make it more grounded in empirical evidence, i.\,e., to gather reliable 
+statistics on every type of SMT errors mentioned above. Second, it would be 
+fruitful to see what errors neural machine translation systems make when 
+translating connectives. Comparing their errors with those made by SMT systems 
+could be insightful.
+
+  %\vspace*{-6pt}
+  
+  \Ack
+  
+    %\vspace*{-2pt}
+    
+  \noindent
+   The study has been conducted at the Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences with financial aid from the Russian 
+Foundation for Basic Research (Grant No.\,16-24-41002) and the Swiss National Science Foundation 
+(Grant No.\,IZLRZ1\_164059/1).
+  
+\renewcommand{\bibname}{\protect\rmfamily References}
+
+%\vspace*{-6pt}
+
+
+
+{\small\frenchspacing
+{\baselineskip=10.65pt
+\begin{thebibliography}{99}
+
+\bibitem{2-n} %1
+\Aue{Trujillo, A.} 1999. \textit{Translation engines: Techniques for machine 
+translation}. Berlin\,--\,Heidelberg\,--\,New York: Springer. 306~p.
+
+\bibitem{1-n} %2
+\Aue{Hutchins, W.\,J.} 2000. \textit{Early years in machine translation: 
+Memoirs and biographies of pioneers.} Amsterdam--Philadelphia: John 
+Benjamins. 400~p.
+\bibitem{3-n}
+Nirenburg, S., H.~Somers, and Y.~Wilks, eds. 2003. \textit{Readings in 
+machine translation}. Cambridge--London: The MIT Press. 430~p.
+\bibitem{4-n}
+\Aue{Wilks, Y.} 2009. \textit{Machine translation. Its scope and limits}. New 
+York, NY: Springer. 246~p.
+\bibitem{5-n}
+Goutte, C., N.~Cancedda, M.~Dymetman, and G.~Foster, eds. 2009. 
+\textit{Learning machine translation}. Cambridge--London: The MIT 
+Press. 329~p.
+\bibitem{6-n}
+\Aue{Koehn, Ph.} 2010. \textit{Statistical machine translation}. New York, 
+NY: Cambridge University Press. 447~p.
+\bibitem{7-n}
+\Aue{Du, J., and A.~Way.} 2017. Neural pre-translation for hybrid machine 
+translation. \textit{MT Summit XVI, the 16th Machine 
+Translation Summit Proceedings}. Eds.\ S.~Kurohashi  and P.~Fung. Nagoya. 27--40. 
+Available at: {\sf  
+http://aamt.info/app-def/S-102/mtsummit/2017/wp-content/uploads/sites/2/2017/09/MTSummitXVI\_\linebreak ResearchTrack.pdf} (accessed 
+December~12, 2017).
+\bibitem{8-n}
+\Aue{Hutchins, W.\,J.} 2010. Machine translation: A~concise history. 
+\textit{Transl. Stud.} 13(1-2):29--70.
+\bibitem{9-n}
+\Aue{Shiwen, Y., and X.~Bai.} 2015. Rule-based machine translation.
+\textit{The Routledge encyclopedia of translation technology}.
+Ed. Ch.~Sin-wai.  Abingdon\,--\,New York: Routledge. 186--200.
+\bibitem{10-n}
+\Aue{Nagao, M.} 1984. A~framework of a~mechanical translation between 
+Japanese and English by analogy principle. \textit{Artificial and human 
+intelligence.} Eds.\ A.~Elithorn and R.~Banerji. Amsterdam: Elsevier.  
+173--180.
+\bibitem{11-n}
+\Aue{Hutchins, W.\,J.} 2005. Towards a~definition of example-based machine 
+translation. \textit{MT Summit X Second\linebreak Workshop on Example-Based Machine 
+Translation Proceedings}. Phuket. 63--70. Available at: {\sf  
+http://www.\linebreak mt-archive.info/MTS-2005-Hutchins.pdf} (accessed December~12, 
+2017).
+\bibitem{12-n}
+\Aue{Hearne, M., and A.~Way.} 2011. Statistical machine translation: A~guide 
+for linguists and translators. \textit{Lang. Linguist. Compass}  
+5(5):205--226.
+
+\bibitem{14-n} %13
+\Aue{Costa, $\hat{\mbox{A}}$., W.~Ling, T.~\mbox{Lu{\!\!\hspace*{-0.1pt}\ptb{\'{\!\i}}}s}, 
+R.~Correia, and L.~Coheur.} 2015. A~linguistically motivated taxonomy for 
+machine translation error analysis. \textit{Machine Translation} 29:127--161.
+\bibitem{13-n} %14
+\Aue{Vilar, D., J.~Xu, L.~D'Haro, and H.~Ney.} 2006. Error analysis of 
+statistical machine translation output. \textit{5th Conference (International) on 
+Language Resources and Evaluation Proceedings}. Genoa, Italy: European 
+Language Resources Association (ELRA). Available at: 
+{\sf http://www.lrec-conf.org/proceedings/lrec2006/pdf/413\_pdf.pdf} 
+(accessed December~12, 2017).
+\bibitem{15-n}
+\Aue{Buntman, N., J.-L.~Minel, D.~Le~Pesant, and I.~Zatsman.} 2010. 
+Typology and computer modelling of translation
+%\pagebreak
+ difficulties. \textit{Informatika 
+i~ee Primeneniya~--- Inform. Appl.} 3(4):77--83.
+
+\bibitem{20-n} %16
+\Aue{Popkova, N.\,A., O.\,Yu.~In'kova, I.\,M.~Zatsman, and 
+M.\,G.~Kruzhkov}. 2015. Metodika postroeniya monoekvivalentsiy 
+v~nadkorpusnoy baze dannykh konnektorov [Methodology of constructing 
+monoequivalences in the supracorpora database of connectors]. \textit{Tr. 2-y 
+nauchn. konf. ``Zadachi sovremennoy informatiki''} [2nd Scientific Conference 
+``Problems of Modern Informatics'' Proceedings]. Moscow: FRC CSC RAS. 
+143--153.
+
+\bibitem{19-n} %17
+\Aue{Zatsman, I.\,M., O.\,Yu.~In'kova, M.\,G.~Kruzhkov, and 
+N.\,A.~Popkova}. 2016. Predstavlenie krossyazykovykh znaniy 
+o~konnektorakh v~nadkorpusnykh bazakh dannykh [Representation of  
+cross-lingual knowledge about
+ connectors in supracorpora databases]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 10(1):106--118.
+
+\bibitem{18-n} %18
+\Aue{Zaliznyak, Anna~A., I.\,M.~Zatsman, and O.\,Yu.~In'kova.} 2017. 
+Nadkorpusnaya baza dannykh konnektorov: postroenie sistemy terminov 
+[Supracorpora database on connectives: Term system development]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 11(1):100--108.
+
+\bibitem{17-n} %19
+\Aue{Zatsman, I.\,M., O.\,S.~Mamonova, and A.\,Yu.~Shchurova.} 2017. 
+Obratimost' i~al'ternativnost' generalizatsii modeley perevoda konnektorov 
+v~parallel'nykh tekstakh [Reversibility and alternativeness of generalization of 
+connectives translations models in parallel texts]. \textit{Sistemy i~Sredstva 
+Informatiki~--- Systems and Means of Informatics} 27(2):125--142.
+\bibitem{16-n} %20
+\Aue{In'kova, O.\,Yu., and N.\,A.~Popkova.} 2017. Statistical data as 
+information source for linguistic analysis of Russian connectors. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 11(3):123--131.
+
+
+\end{thebibliography} } }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received March 15, 2018}}
+
+\vspace*{-12pt}
+   
+  \Contr
+  
+  \noindent
+  \textbf{Nuriev Vitaly A.} (b.\ 1980)~--- Candidate of Science (PhD) in 
+philology, senior scientist, Institute of Linguistics of the Russian Academy of 
+Sciences, 1 bld.~1 Bolshoy Kislovsky Lane, Moscow 125009, Russian Federation; 
+senior scientist, Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 44-2 
+Vavilov Str., Moscow 119333, Russian Federation; \mbox{nurieff.v@gmail.com}
+  
+  \vspace*{3pt}
+  
+  \noindent
+  \textbf{Buntman Nadezhda V.} (b.\ 1957)~--- Candidate of Science (PhD) in 
+philology, associate professor, M.\,V.~Lomonosov Moscow State University, 
+GSP-1, Leninskie Gory, Moscow 119991, Russian Federation; 
+\mbox{nabunt@hotmail.com}
+  
+  \vspace*{3pt}
+  
+  \noindent
+  \textbf{Inkova Olga Yu}. (b.\ 1965)~--- Doctor of Science (PhD) in philology, 
+associate professor, Faculty of Arts, University of Geneva, 24~du 
+G$\acute{\mbox{e}}$n$\acute{\mbox{e}}$ral-Dufour Str., 
+Gen$\Grave{\mbox{e}}$ve  4~1211, Switzerland; 
+\mbox{Olga.Inkova@unige.ch}
+   
+   \vspace*{8pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{6pt}
+
+%\newpage
+
+
+
+\def\tit{ОШИБКИ И~НЕТОЧНОСТИ МАШИННОГО ПЕРЕВОДА РУССКИХ КОННЕКТОРОВ 
+НА~ФРАНЦУЗСКИЙ ЯЗЫК$^*$}
+
+
+
+
+\def\titkol{Ошибки и~неточности машинного перевода русских коннекторов 
+на~французский язык}
+
+\def\aut{В.\,А.~Нуриев$^{1,2}$, Н.\,В.~Бунтман$^3$, О.\,Ю.~Инькова$^4$}
+
+\def\autkol{В.\,А.~Нуриев, Н.\,В.~Бунтман, О.\,Ю.~Инькова}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Исследование выполнено при финансовой поддержке РФФИ
+(грант №\,16-24-41002) и~Швейцарского национального научного фонда (грант №\,IZLRZ1\_164059/1).}}
+
+
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+\noindent
+$^1$Институт языкознания Российской академии наук
+
+\noindent
+$^2$Институт проблем информатики Федерального исследовательского центра <<Информатика 
+и~управ\-ле\-ние>>\linebreak
+$\hphantom{^1}$Российской академии наук
+
+\noindent
+$^3$Московский государственный университет им.\ М.\,В.~Ломоносова
+   
+   \noindent
+   $^4$Филологический факультет Женевского университета
+
+
+
+\vspace*{5pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 12\ \ \ выпуск\ 2\ \ \ 2018}
+}%
+ \def\rightfootline{\small{ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 12\ \ \ выпуск\ 2\ \ \ 2018
+\hfill \textbf{\thepage}}}
+
+\vspace*{-3pt}
+  
+  \Abst{Описываются ошибки и неточности, возникающие при машинном 
+переводе коннекторов. Для генерирования образцов перевода использовался 
+статистический машинный переводчик. В~первом разделе рассматривается 
+история развития машинного перевода и объясняются принципы работы 
+статистического машинного переводчика. Во втором разделе поднимается 
+проблема оценки качества машинного перевода. Здесь представлены 
+несколько подходов к~классификации ошибок машинного перевода, а~также 
+предлагается таксономия ошибок, разработанная применительно к~переводу 
+коннекторов (с~русского языка на французский). В~заключительной части 
+демонстрируются примеры этих ошибок.}
+  
+  \KW{статистический машинный перевод; корпусная лингвистика; ошибки 
+машинного перевода; параллельные тексты}
+  
+\DOI{10.14357/19922264180215}
+
+
+
+%\vspace*{6pt}
+
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily Литература}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\begin{thebibliography}{99}
+
+
+\bibitem{2-n1} %1
+\Au{Trujillo A.} Translation engines: Techniques for machine translation.~--- 
+Berlin\,--\,Heidelberg\,--\,New York: Springer, 1999. 306~p.
+
+\bibitem{1-n1} %2
+\Au{Hutchins W.\,J.} Early years in machine translation: Memoirs and 
+biographies of pioneers.~--- Amsterdam--Philadelphia: John Benjamins, 2000. 
+400~p.
+\bibitem{3-nl}
+Readings in machine translation~/ Eds.\ S.~Nirenburg, H.~Somers,  
+Y.~Wilks.~--- Cambridge--London: The MIT Press, 2003. 430~p.
+\bibitem{4-nl}
+\Au{Wilks Y.} Machine translation. Its scope and limits.~--- New York, NY, 
+USA: Springer, 2009. 246~p.
+\bibitem{5-nl}
+Learning machine translation~/ Eds.\ C.~Goutte, N.~Cancedda, M.~Dymetman, 
+G.~Foster.~--- Cambridge--London: The MIT Press, 2009. 329~p.
+\bibitem{6-nl}
+\Au{Koehn Ph.} Statistical machine translation.~--- New York, NY, USA: 
+Cambridge University Press, 2010. 447~p.
+\bibitem{7-nl}
+\Au{Du J., Way~A.} Neural pre-translation for hybrid machine translation~// 
+MT Summit XVI, the 16th Machine Translation Summit Proceedings~/ Eds. 
+S.~Ku\-ro\-ha\-shi, P.~Fung.~--- Nagoya, 2017. P.~27--40. {\sf  
+http://aamt.\linebreak  info/app-def/S-102/mtsummit/2017/wp-content/\linebreak
+ uploads/sites/2/2017/09/MTSummitXVI\_\linebreak ResearchTrack.pdf}.
+\bibitem{8-nl}
+\Au{Hutchins W.\,J.} Machine translation: A~concise history~// Transl. 
+Stud., 2010. 
+Vol.~13. No.\,1-2. P.~29--70.
+\bibitem{9-nl}
+\Au{Shiwen Y., Bai~X.} Rule-based machine translation~// The Routledge 
+encyclopedia of translation technology~/ Ed. Ch.~Sin-wai.~--- Abingdon\,--\,New 
+York: Routledge, 2015. P.~186--200.
+\bibitem{10-nl}
+\Au{Nagao M.} A~framework of a~mechanical translation between Japanese 
+and English by analogy principle~// Artificial and human intelligence~/ Eds.  
+A.~Elithorn, R.~Banerji.~--- Amsterdam: Elsevier, 1984. P.~173--180.
+\bibitem{11-nl}
+\Au{Hutchins W.\,J.} Towards a~definition of example-based machine 
+translation~// MT Summit X Second Workshop on Example-Based Machine 
+Translation Proceedings.~--- Phuket, 2005. P.~63--70. {\sf  
+http://www.mt-archive.info/MTS-2005-Hutchins.pdf}.
+\bibitem{12-nl}
+\Au{Hearne M., Way~A.} Statistical machine translation: A~guide for linguists 
+and translators~// Lang. Linguist. Compass, 2011. No.\,5(5). P.~205--226.
+
+\bibitem{14-nl} %13
+\Au{Costa~$\hat{\mbox{A}}$., Ling~W., \mbox{Lu{\!\!\ptb{\!\'{\!\i}}}s}~T., 
+Correia~R., Coheur~L.} A~linguistically motivated taxonomy for machine 
+translation error analysis~// Machine Translation, 2015. Vol.~29. Iss.~2.  
+P.~127--161.
+\bibitem{13-nl} %14
+\Au{Vilar D., Xu~J., D'Haro~L., Ney~H.} Error analysis of statistical machine 
+translation output~// 5th Conference (International) on Language Resources and 
+Evaluation Proceedings .~--- Genoa, Italy: European Language Resources 
+Association (ELRA), 2006. {\sf  
+http://www.lrec-conf.org/proceedings/lrec2006/pdf/413\_pdf.pdf}.
+\bibitem{15-nl} %15
+\Au{Buntman N., Minel~J.-L., Le~Pesant~D., Zatsman~I.} Typology and 
+computer modelling of translation difficulties~// Информатика и её 
+применения, 2010. Т.~4. Вып.~3. С.~77--83.
+\bibitem{20-nl} %16
+\Au{Попкова Н.\,А., Инькова~О.\,Ю., Зацман~И.\,М., Кружков~М.\,Г.} 
+Методика построения моноэквиваленций в~надкорпусной базе данных 
+коннекторов~// Задачи современной информатики: Тр. 2-й конф.~--- М.: 
+ФИЦ ИУ РАН, 2015. С.~143--153.
+\bibitem{19-nl} %17
+\Au{Зацман И.\,М., Инькова~О.\,Ю., Кружков~М.\,Г., Попкова~Н.\,А.} 
+Представление кроссязыковых знаний о~коннекторах в~надкорпусных 
+базах данных~// Информатика и~её применения, 2016. Т.~10. Вып.~1. 
+С.~106--118.
+\bibitem{18-nl} %18
+\Au{Зализняк Анна~А., Зацман~И.\,М., Инькова~О.\,Ю.} Надкорпусная 
+база данных коннекторов: построение сис\-те\-мы терминов~// Информатика 
+и~её применения, 2017. Т.~11. Вып.~1. С.~100--108.
+\bibitem{17-nl} %19
+\Au{Зацман И.\,М., Мамонова~О.\,С., Щурова~А.\,Ю.} Об\-ра\-тимость 
+и~альтернативность генерализации моделей\linebreak перевода коннекторов 
+в~параллельных текстах~// Сис\-те\-мы и~средства информатики, 2017. Т.~27. 
+№\,2. С.~125--142.
+\bibitem{16-nl} %20
+\Au{In'kova Yu.\,O., Popkova~N.\,A.} Statistical data as information source for 
+linguistic analysis of Russian connectors~// Информатика и~её применения, 
+2017. Т.~11. Вып.~3. С.~123--131.
+
+
+
+
+\end{thebibliography}
+} }
+
+\end{multicols}
+
+ \label{end\stat}
+
+ \vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в редакцию  15.03.2018}}
+
+
+%\renewcommand{\bibname}{\protect\rm Литература}
+\renewcommand{\figurename}{\protect\bf Рис.}
+\renewcommand{\tablename}{\protect\bf Таблица}

@@ -1,0 +1,989 @@
+%\renewcommand{\figurename}{\protect\bf Figure}
+\renewcommand{\tablename}{\protect\bf Table}
+
+\def\stat{razum}
+
+
+\def\tit{COMPARISON OF TWO ACTIVE QUEUE MANAGEMENT SCHEMES THROUGH THE~$M/D/1/N$ 
+QUEUE}
+
+\def\titkol{Comparison of two active queue management schemes through the $M/D/1/N$ 
+queue}
+
+\def\autkol{M.\,G.~Konovalov and R.\,V.~Razumchik}
+
+\def\aut{M.\,G.~Konovalov$^1$ and R.\,V.~Razumchik$^2$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+%\footnotetext[1] {The 
+%research of Yuri Kabanov was done under partial financial support   of the grant 
+%of  RSF No.\,14-49-00079.}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Institute of Informatics Problems, Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences,
+44/2~Vavilov Str., Moscow 119333, Russian Federation, \mbox{mkonovalov@ipiran.ru}}
+\footnotetext[2]{Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences,
+44/2~Vavilov Str., Moscow 119333, Russian Federation; 
+Peoples' Friendship University of Russia (RUDN University),
+6~Miklukho-Maklaya Str., Moscow 117198, Russian 
+Federation; 
+\mbox{rrazumchik@ipiran.ru} %\mbox{razumchik\_rv@rudn.ru
+}
+
+
+\index{Konovalov M.\,G.}
+\index{Razumchik R.\,V.}
+\index{Коновалов М.\,Г.}
+\index{Разумчик Р.\,В.}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+
+
+\Abste{The paper focuses on giving the first in the literature numerical evidence
+that the stationary performance characteristics of single-server queues
+with the general renovation mechanism may be as good as of single-server queues
+with the RED-type active queue management mechanisms
+(AQM). Comparison is made in the queueing
+theory context: the basic model is the $M/D/1/N$ queue. 
+The characteristics reported are: the loss ratio, average system size, and 
+average number of consecutive losses along 
+with the standard deviations. Numerical results are based on the 
+well-known facts and some new analytic results, presented in the paper.}
+
+\KWE{queueing system; active queue management; RED; renovation}
+
+\DOI{10.14357/19922264180402}
+
+
+\vspace*{1pt}
+
+
+\vskip 12pt plus 9pt minus 6pt
+
+      \thispagestyle{myheadings}
+
+      \begin{multicols}{2}
+
+                  \label{st\stat}
+
+
+\section{Introduction}
+
+\noindent
+A large number of AQM mechanisms have been developed
+up to nowadays and quite a~lot of efforts have been devoted to the studies of
+their efficiency. 
+These mechanisms may be applicable in different contexts but historically, 
+they are more often related to communication networks
+in the context of mitigation of congestion and congestion avoidance.
+This problem, as highlighted in the latest RFC~7567~\cite{RFC7567},
+still does not have a~satisfying solution. 
+An AQM mechanism is an advanced rejection discipline, 
+when an arriving customer (packet, job, etc.) is lost randomly with a~probability 
+that may depend on the (current, past, average, etc.) system state or performance.
+The most popular class of AQM mechanisms seems to be the Random Early Detection (RED) and
+its ramifications like GRED (Gentle RED), REM 
+(Random Exponential Marking),
+etc.\ (a~recent survey on the AQM can be found in~\cite{Adams}).
+The goals of AQM are usually diverse and conflicting: 
+prevent queues from growing too long, maintain high server (processor) utilization
+and low variance of the queue size, ensure fairness among competing flows, 
+and others. These are discussed in detail in~\cite{RFC7567} in the context
+of communications network but most of the goals are applicable in other contexts as well
+(buffer-bloat problems in data-center, etc.).
+
+Besides simulation, analytic performance evaluation of systems with AQM is quite often
+carried out in the queueing theory context (see,
+for example,~\cite{Bonald,Chyd,Chyd2,oleg,hao,konnew} and references therein). 
+Usually, the system with an AQM mechanism is modeled as a~queueing system or network
+and then its performance characteristics are studied using known analytic techniques. 
+Throughout the paper, we stay within the queueing theory context.
+
+In the series of recent papers~\cite{Kreinin,Zaryadov2010,zarN1,zarN2,Zaryadov2009},
+the authors have proposed the new type of AQM mechanism which they call 
+\textit{renovation}. 
+Roughly speaking, renovation implies that each customer, 
+having received service, may remove some additional work from the system
+(i.\,e., may renovate it). We will make this definition more precise in the next 
+section 
+but for now, note 
+that queue management \textit{after service completions} is what makes the renovation
+ different 
+from the most known AQM schemes\footnote[3]{Indeed, renovation and most of the known AQM 
+mechanisms
+are conceptually different. One of the main goals of AQM mechanisms is to prevent 
+queue from growing too large
+leaving space for potential new arrivals.
+In systems with renovation, the queue can become full (meaning that fewer customers are 
+lost)
+but after a~service completion, several customers may be removed from it. In this way, 
+the content of the queue
+can be preserved at a~certain average level but the loss pattern becomes intricate.}, 
+in which the decisions are made \textit{upon arrivals}.  
+To our best knowledge, there are no studies, 
+which tell whether the performance of the systems with renovation is
+better/same/worse than that of the same systems but with the implemented AQM mechanisms.
+Thus, there is a~lack of bridge between available theoretical results for renovation and 
+its practical perspective.
+
+The scope of this paper is to give the first in the literature numerical evidence 
+that the stationary performance of 
+single-server queueing systems with the implemented renovation mechanism can
+be as good as of 
+the same single-server queues but the well-known packed dropping procedures like RED.
+The emphasis is primarily on the reporting of this finding, complemented 
+with some new insights into 
+queueing systems with renovation. The relation to other 
+AQM mechanisms like CoDel~\cite{RFC8289} is not discussed here. 
+Moreover, in the numerical experiments presented here, 
+we did not use any benchmarks to generate the traffic profiles 
+but used the theoretical distributions instead.
+
+The main stationary performance characteristics reported are: the loss ratio, 
+the average number in the system
+(average system size), and the average number of consecutive losses along with 
+their standard deviations.
+After introducing the renovation mechanism and the analytic setting,
+in which  renovation mechanism is compared with RED, we give the new analytic results 
+for computing system size moments and the loss ratio under the renovation mechanism.
+The results presented in the numerical section are based on the analytic results. 
+Monte-Carlo simulation is used only for the average (and standard deviation) 
+number of consecutive losses in the system with renovation. 
+
+
+\section{Settings and the Model}
+
+\noindent
+We follow the queueing theoretic approach and as the basic model, we use $M/D/1/N$ queue,
+i.\,e., queue of finite capacity~$N$ fed at rate~$\lambda$ by a~Poisson flow of customers,
+which are served on a~first-come-first-served basis  by a~single server with constant
+service time $d>0$.
+We assume that the system is in the steady state.
+When an arriving customer sees that the queue is full,
+it is lost. If no other type of losses occur in the system,
+we say that the Tail Drop mechanism is implemented in it.
+
+If an arriving customer is lost with probability~$d_n$
+where~$n$ is the total number of customers 
+it sees in the system on arrival, then we say that an AQM mechanism 
+is implemented in the system. Various dropping functions can be obtained
+by specifying the values of~$d_n$
+(see, for example, RED dropping function in~\cite[Example 1]{Chyd}).
+Important notice should be made here. In practice, RED-type mechanisms 
+may use moving averages of the queue size instead of its instantaneous value. 
+Thus, the way~$d_n$ introduced above is a~simplified way of thinking.
+Yet, this trade-off is important because it allows to keep the mathematical 
+models of RED-type AQM tractable.
+Luckily, as noticed in~\cite[Section II.C]{Bonald}, such approximation may not
+lead to significant bias, when the weight of the moving average scheme is small
+(which is claimed to be the case sometimes in practice).
+
+The renovation mechanism, which is implemented in a~system with Tail Drop,
+works as follows. Define $N+1$ numbers, say, $q_i\ge 0$,
+$0 \le i \le N$, satisfying \mbox{$\sum\nolimits_{i=0}^N q_i=1$}.
+If upon service completion there are $i$, $1 \le i \le N$, customers
+waiting in the queue, then the served customer leaves the system and
+\begin{itemize}
+\item with probability $q_0+Q_i$ nothing else happens, where 
+$Q_i=q_i+q_{i+1}+\dots+ q_N$; and
+\item with probability $q_j$, $0<j<i$, exactly $j$ customers
+from the queue leave the system and those customers 
+are chosen successively \textit{starting from the head of the queue}.
+\end{itemize}
+%\noindent
+The served customer, which sees the empty queue, leaves the system.
+Thus, after the renovation (if it happened), the system never becomes empty.
+%what is appealing from the practical point of view. 
+
+In the numerical section, we rank the systems with RED 
+and renovation according to the stationary loss ratio, average system size,  
+and average number of consecutive losses along with their standard deviations. 
+The system with the Tail Drop is the standard $M/D/1/N$ queue, 
+for which all these performance characteristics follow
+from the classical results in queueing theory (see, for example,~\cite{Riordan1962}).
+Analytic results for the systems of $M/G/1/N$ type with relatively 
+arbitrary dropping functions are given in~\cite{Chyd}.
+Yet, for the system with renovation, we need to derive these 
+performance characteristics anew, since 
+the available results in~\cite{Zaryadov2010,Zaryadov2009} 
+are not valid for the renovation mechanism introduced above.
+We briefly sketch the derivations in the next
+section and omit most of the details
+since they are based on the methodology, 
+developed in~\cite{Zaryadov2010,Zaryadov2009},
+and reviewed in~\cite{arxivRK}.
+
+%Note that the above mentioned performance characteristics 
+%do not depend on the order in which the customers
+%are removed from the system; yet in the derivations we assume that the customers
+%are chosen successively \textit{starting from the head of the queue}.
+
+%The analytic results and parameters' values for 
+%RED and REM are due to \cite{Chyd}.
+
+\section{Performance Characteristics}
+
+\noindent
+Consider the $M/D/1/N$ queue with the renovation mechanism
+introduced above. Since a~customer is served for constant service time
+$d$, then for the cumulative distribution function $B(x)$ 
+of its service time, one has: 
+$$
+B(x)=
+\begin{cases}
+0 & \mbox{if } x \le d\,;\\
+1 & \mbox{if } x>d\,.
+\end{cases}
+$$
+Let $N(t)$ be the total number of customers %\footnote{We assume that the system 
+%starts empty, i.\,e., $N(0)=0$.} 
+in the system at instant $t$ 
+and $E(t)$ be the elapsed service time of the customer in server
+(if there is one). 
+In order to compute the stationary system size moments, 
+one needs to know the stationary distribution:
+\begin{equation*}
+%\label{pn}
+P_n=\lim\limits_{t \rightarrow \infty} \mathbf{P}\{ N(t)=n \},\enskip  0 \le n \le N+1\,.
+\end{equation*} 
+For the computation of the loss ratio,
+due to the \mbox{PASTA} (Poisson Arrivals See Time Averages) 
+property, it is sufficient to know
+ the stationary probability densities
+$p_n(x)=P'_n(x)$ where
+\begin{multline*}
+%\label{pnx}
+P_n(x)=\lim\limits_{t \rightarrow \infty} \mathbf{P}\{ N(t)=n, E(t)<x \}, \\ 
+1\le n \le N, \ x \in [0,d]\,.
+\end{multline*}
+Since we are dealing with the finite-capacity queue 
+and work conserving service discipline, the
+introduced stationary distributions exist.  
+The probabilities~$P_n$ and 
+the densities~$p_n(x)$ can be computed as follows. 
+Let~$t_n$ denotes the $n$th service completion epoch 
+and $N_n=N(t_n+0)$ denotes the total number of customers in the system. 
+Clearly, $\{ N_n, \ n \ge 1\}$ is the finite-state Markov chain.
+The entries of the transition probability matrix $\mathbb{P}=(p_{ij})$
+of this chain have the form:
+$$
+p_{0j}=p_{1j}=
+\begin{cases}
+\beta_0, & \hspace*{-20mm}j=0;\\
+\beta_j Q_j + \displaystyle\sum\limits_{k=j}^N \beta_k q_{k-j} +  B_N q_{N-j}, &\\
+&\hspace*{-20mm} 1 \le j \le N-1\,;\\
+(q_0 + q_N) B_{N-1}, & \hspace*{-20mm}j=N\,;
+\end{cases}
+$$
+\begin{multline*}
+\!\!p_{ij}=
+\begin{cases}
+0, & \hspace*{-38mm}j=0;\\
+\sum\limits_{k=j-1}^{N-1} \beta_k q_{k-j+1} +  B_{N-1} q_{N-j}, & \\
+& \hspace*{-38mm}1 \le j \le i-2\,;\\
+\beta_{j-i+1} Q_j + \displaystyle\!\sum\limits_{k=j-1}^{N-1}\!\! \beta_k q_{k-j+1} + 
+ B_{N-1} q_{N-j}, &\\
+ &\hspace*{-38mm} i-1 \le j \le N-1;\\
+(q_{0} +  q_{N})B_{N-i} , &\hspace*{-38mm} j=N\,,
+\end{cases}
+\\
+ 2 \le i \le N\,.
+\end{multline*}
+Here, $B_0=1-\beta_0$; $B_k=B_{k-1}-\beta_k$; and 
+$\beta_k=[{(\lambda d)^k / k!}]e^{-\lambda d}$.
+The matrix $\mathbb{P}$ does not have any special structure. 
+So, the stationary distribution $\{P^+_n, \ 0 \le n\linebreak \le N\}$
+may be found in a~straightforward manner by solving the system of linear algebraic 
+equations 
+$$
+{\vec P}^+={\vec P}^+ \mathbb{P};\enskip 
+{\vec P}^+ {\vec 1} =1
+$$ 
+where ${\vec P}^+= (P^+_0,\dots,P^+_N)$ and $\vec 1$ is the vector of ones. 
+{\looseness=1
+
+}
+
+Once the probabilities $P^+_n$ are found,
+the stationary distribution \mbox{$\{P_n, \ 0 \le n \le N+1\}$} 
+is computed from the relation\footnote{This follows
+from the well-known results for the Markov regenerative processes (see, for 
+example,~\cite[Theorem 9.19]{kulk}).} 
+$$
+P_n=\sum\limits_{i=0}^N P^+_i \fr{f_{in}}{f^*}
+$$
+where $f_{in}$ is the average time during which there were $n$ customers in the system
+provided that the system started with~$i$ customers in it; 
+and~$f^*$ is the mean time between transitions of the embedded
+Markov chain $\{ N_n, \ n \ge 1\}$.
+{\looseness=1
+
+}
+
+
+Finally,the stationary probability densities $p_n(x)\linebreak =P'_n(x)$
+can be computed using the fact that the relation for~$p_n(x)$ 
+coincides with the relation for $p_n(x)$ in 
+the standard $M/D/1/N$ queue.
+Thus, $p_n(x)$ are given by (see, for example,~\cite[p.~72]{Riordan1962})
+
+\noindent
+\begin{multline}
+\label{eq3}
+p_n(x)=e^{-\lambda x} \left (1-B(x) \right ) 
+\sum\limits_{k=0}^{n-1} p_{n-k}(0) 
+\fr{(\lambda x)^k}{k!}\,, \\
+1 \le n \le N\,,  \ x \in [0,d]\,.
+\end{multline}
+Even though~(\ref{eq3}) holds,
+due to the presence of renovation, the boundary conditions $p_{n}(0)$ 
+for the considered queue do not coincide 
+with boundary conditions $p_{n}(0)$ for the standard $M/D/1/N$ queue.
+By integration~(\ref{eq3}) from~0 to~$d$, one gets 
+the following relation between~$p_{n}(0)$ and $P_n=\int\nolimits_0^d p_n(x) dx$: 
+\begin{multline}
+\label{eq3nn}
+p_n(0)
+= \fr{1}{B_0} \left (\lambda P_n- \sum\limits_{k=1}^{n-1} B_k p_{n-k}(0)
+\right )\,, \\ 
+1 \le n \le N\,.
+\end{multline}
+Since the stationary distribution \mbox{$\{P_n, \ 0 \le n \le N+1\}$} 
+is already known, the values of $p_n(0)$ are computed recursively from~(\ref{eq3nn}).
+The closed-form expressions for
+ the average and the standard deviation of the system size are, in the most cases,
+ not available and thus, they can be computed,
+respectively, by $\sum\nolimits_{n=0}^{N+1} nP_n$ and  
+$\sqrt{\sum\nolimits_{n=0}^{N+1} n^2P_n-(\sum_{n=0}^{N+1} nP_n)^2}$.
+
+The computation of the loss ratio~$\pi$, i.\,e., the probability that the arriving customer is lost, 
+is more involved. This is due to the fact that the accepted customer
+may be lost either after the first service completion or the second, etc.
+and the chance to be lost varies, depending on the number of
+new customers that have arrived between successive service completions.
+ 
+Let us introduce two quantities:
+\begin{enumerate}[(1)]
+\item $\gamma_{ij}$, $1 \le i \le N$, $j \ge 0$,~--- probability that the arriving customer
+finds~$i$~customers in the system and until the next
+service completion, exactly $j$ new customers arrive 
+at the system; and
+\item
+$r_{ij}$, $0\le j \le N-1$, $0 \le i \le N-j-1$,~--- probability that the 
+tagged customer waiting in the queue
+\textit{will not} be served (i.\,e., will be lost), if there are~$j$~customers
+ in front of it in the queue (excluding the one in server)
+and~$i$ behind.
+\end{enumerate}
+
+Given that $\gamma_{ij}$ and $r_{ij}$ are known, the loss ratio~$\pi$  
+can be computed as
+\begin{multline*}
+\pi =
+P_{N+1}
+ + 
+\sum\limits_{i=1}^{N} \left [
+\sum\limits_{j=0}^{N-i}
+\gamma_{ij} \left ( \sum\limits_{k=0}^{i-2} q_k r_{j,i-2-k}
+ +{}\right.\right.\\
+\left. {}+ \sum\limits_{k=i}^{i+j-1} q_k  + Q_{j+i} r_{j,i-2} \right )
+ + {}
+\end{multline*}
+
+\noindent
+\begin{multline*}
+{}+ \sum\limits_{j=N-i+1}^{\infty} \gamma_{ij} \left (
+\sum\limits_{k=0}^{i-2} q_k r_{N-i,i-2-k}  + {}\right.\\
+\left.\left.{}+\sum\limits_{k=i}^{N-1}
+q_k  + Q_{N} r_{N-i,i-2} \right )
+\right ]\,.
+%\label{ploss2}
+\end{multline*}
+
+Due to the PASTA property of Poisson arrivals,
+the expression for $\gamma_{ij}$ follows 
+from the law of total probability:
+\begin{multline*}
+\gamma_{ij}
+= \int\limits_0^d p_{i}(x) \fr{(\lambda (d- x))^j }{j!}\, e^{-\lambda (d-x)}\, dx\,,
+\\
+ 1 \le i \le N\,, \ j \ge 0\,.
+\end{multline*}
+Again, by applying the law of total probability,
+one gets the relations for the recursive computation of~$r_{ij}$, 
+$0\le j \le N-1$, $0 \le i \le N-j-1$:
+\begin{align*}
+r_{i0}&= \sum\limits_{m=0}^{N-i-1}
+\beta_m 
+\sum\limits_{k=1}^{m+i} q_k +
+B_{N-i-1} \sum\limits_{k=1}^{N-1} q_k\,;\\
+r_{ij}&= \sum\limits_{m=i}^{N-1-j} \beta_{m-i} \left (
+\vphantom{\sum\limits_{k=j+1}^{m+j} q_k + Q_{j+m+1} r_{m,j-1}}
+\sum\limits_{k=0}^{j-1} q_k r_{m,j-1-k} +{}\right.\\
+&\left.{}+
+\sum\limits_{k=j+1}^{m+j} q_k + Q_{j+m+1} r_{m,j-1}
+\right ) +{}
+\\
+&{}+ B_{N-j-i-1}
+\left ( \vphantom{\sum\limits_{k=j+1}^{m+j} q_k + Q_{j+m+1} r_{m,j-1}}
+\sum\limits_{k=0}^{j-1} q_k r_{N-j-1,j-1-k} +{}\right.\\
+&\hspace*{16mm}\left.{}+\sum\limits_{k=j+1}^{N-1} q_k +Q_{N} r_{N-j-1,j-1}
+\right ).
+\end{align*}
+The expressions above can be further simplified\footnote{There
+are no principal difficulties in generalizing
+the results for the $\mathrm{BMAP}/G/1/N$ queue.
+Yet, this would obscure the goal of the paper and thus, 
+we remain with the simple model.} by computing 
+the integrals explicitly, but we do not dwell on it here.
+For small and moderate values of~$d$, $N$, and~$\lambda$,
+they can be directly used for numerical implementation.
+In the numerical section, precisely these expressions are used to calculate
+the loss ratio. The expressions for the average and the standard
+deviation of consecutive losses are much harder to derive
+and we leave it for a~separate study. The values of these 
+two parameters were taken from the Monte-Carlo simulation. 
+
+\section{Numerical Example}
+
+\noindent
+As the reference point, we have chosen the numerical results in~\cite{Chyd}
+which are based on the analytic expressions and which show the 
+performance characteristics 
+of the $M/D/1/N$ queue with four different AQM mechanisms. 
+Since RED scheme is one of the best among the four,
+our goal here is to rank the $M/D/1/N$ queue with RED from~\cite{Chyd}
+and the $M/D/1/N$ queue with renovation. Comparison is made 
+according to the stationary loss ratio, average system size,  
+and average number of consecutive losses along with 
+their standard deviations.
+
+The initial conditions are: 
+the maximum queue size is $N=9$ and the service time is $d=1$. 
+Thus, the offered load is $\rho=\lambda d$. 
+The RED dropping function is given by (see~\cite[Eq. (59)]{Chyd}):
+\begin{equation}
+\label{df}
+d_n=
+\begin{cases}
+0\,, & n\le 3\,;\\
+0.11917n - 0.35752\,, & 4 \le n \le 9\,;\\
+1\,, & n=10.
+\end{cases}
+\end{equation}
+The performance of the $M/D/1/N$ queue with this RED dropping function 
+is given in~\cite[Tables 1, 3, and~4]{Chyd}.
+In order to find out whether there exists a~renovation 
+mechanism under which the $M/D/1/N$ queue can perform at least as good as
+under RED, one needs to perform exhaustive search over
+the possible values of the renovation parameters $\{q_i, \ 0 \le i \le N\}$.
+Since we are unaware of any analytic way of choosing these values,
+adaptive search algorithms for partially observable
+Markov decision processes from~\cite{kono1} were used instead.
+Meta-heuristics (like particle swarm optimization), which are also applicable here,
+were not used.
+
+In Tables~1 and~2, one can see the numerical results for the four different
+cases of the offered load\footnote{For the sake of reproducibility 
+of the results 
+presented in the paper, we also report the obtained values of the renovation 
+probabilities: for $\rho=0.5$,
+${\vec q}=(0.2544,0.0037,0.0053,0.0065,0.0122,0.0352,0.1108,0.1898,0.2129,0.1691)$;
+for $\rho=1$, $q_0=0.0551$, $q_6=0.051$, $q_7=0.7166$, $q_8=0.0917$, and
+$q_9=0.0856$;
+for $\rho=2$, $q_0=0.1078$, $q_1=0.6374$, $q_4=0.0042$, $q_6=0.0084$, and
+$q_9=0.2422$; and
+for $\rho=3$, $q_1=0.4608$, and $q_2=0.5392$.}~$\rho$: $\rho=0.5$~--- underloaded system;
+$\rho=1$~--- critically loaded system;
+and $\rho=2$ and~3~--- overloaded system. The values displayed are the 
+values from the numerical experiments rounded to three decimal digits.
+
+%\noindent and in each case compute the stationary 
+%loss ratio, average system content  
+%and average number of consecutive losses along with
+%their standard deviations. 
+
+
+\begin{table*}\small
+\begin{center}
+\parbox{400pt}{\Caption{Performance characteristics of the $M/D/1/9$ system with the RED 
+mechanism~(\ref{df}) and the $M/D/1/9$ the renovation mechanism (ren.)\
+under the offered load $\rho=0.5$ and $\rho=1$}
+}
+%\label{my-label}
+\vspace*{2ex}
+
+\tabcolsep=8pt
+\begin{tabular}{cc|c|c|c||c|c|c|}
+\cline{3-8}
+                                        &  & \multicolumn{3}{c||}{$\rho=0.5$} & \multicolumn{3}{c|}{$\rho=1$} \\ \cline{3-8} 
+                                        &  &   Tail Drop      & RED     &    ren.   &    Tail Drop   &      RED &    ren.   \\ \hline
+\multicolumn{2}{|c|}{loss ratio}    &   0    &   0.002        &   0.002  &    0.051   &    0.091        &   0.104    \\ \hline
+\multicolumn{1}{|c|}{\textbf{system}} & average &   0.750    &   0.741        &    0.744    &    5.064   &      3.000       &   2.999  \\ \cline{2-8} 
+\multicolumn{1}{|c|}{\textbf{size}} & standard deviation &   0.946    &    0.920      &    0.935      &    2.897   &   1.887       &   2.091      \\ \hline
+\multicolumn{1}{|c|}{\textbf{consecutive}} &average  &  1.152     &  1.053        &   1.800     &    1.359   &    1.239       &  6.876         \\ \cline{2-8} 
+\multicolumn{1}{|c|}{\textbf{losses}} & standard deviation &  0.403     &   0.240       &    1.260     &    0.647   &       0.561        &   0.852     \\ \hline
+\end{tabular}
+\end{center}
+\vspace*{-6pt}
+\end{table*}
+
+
+
+
+\begin{table*}\small %tabl2
+\begin{center}
+\parbox{400pt}{\Caption{Performance characteristics of the $M/D/1/9$ system with the RED 
+mechanism~(\ref{df}) and the $M/D/1/9$ the renovation mechanism (ren.)\
+under the offered load $\rho=2$ and $\rho=3$}
+}
+%\label{my-label}
+\vspace*{2ex}
+
+\tabcolsep=8pt
+\begin{tabular}{cc|c|c|c||c|c|c|}
+\cline{3-8}
+                                        &  & \multicolumn{3}{c||}{$\rho=2$} & \multicolumn{3}{c|}{$\rho=3$} \\ \cline{3-8} 
+                                        &  &   Tail Drop      & RED     &    ren.   &    Tail Drop   &      RED &    ren.   \\ \hline
+\multicolumn{2}{|c|}{loss ratio}    &   0.500    &    0.500        &   0.502     &    0.667   &    0.667       &     0.667      \\ \hline
+\multicolumn{1}{|c|}{\textbf{system}} & average &   9.372    &    7.146       &   7.142      &  9.646     &      8.390        &    7.114  \\ \cline{2-8} 
+\multicolumn{1}{|c|}{\textbf{size}} & standard deviation &   0.744    &     1.436       &  2.387      &    0.523   &     1.090        &    2.246  \\ \hline
+\multicolumn{1}{|c|}{\textbf{consecutive}} &average  &  1.884     &   1.996         &  1.592       &     2.542  &     2.876        &   2.141    \\ \cline{2-8} 
+\multicolumn{1}{|c|}{\textbf{losses}} & standard deviation &   1.069    &    1.366        &  1.100      &    1.454   &       2.064       &  1.236        \\ \hline
+\end{tabular}
+\end{center}
+\end{table*}
+
+
+Data is the tables show that with respect to the loss ratio,
+renovation can perform as good as RED in the wide range of the offered load~$\rho$.
+The only exception is the case $\rho=1$: here, renovation can keep
+only the average system size at the same level as RED; other four 
+performance characteristics are worse. 
+
+If we fix the loss ratio, then the renovation mechanism
+can guarantee at least the same value of the average system size as guaranteed by RED.
+It is worth noticing that as the offered load increases, the average system size 
+under the renovation mechanism becomes smaller than the average system size under RED.
+Yet, renovation keeps the queue less stable than RED:
+the standard deviation of system size is always smaller for RED.
+
+If we fix the loss ratio and the average system size,
+then the renovation mechanism spreads out the losses 
+worse than RED when the system is underloaded and 
+better than RED when it is overloaded.
+This can be seen from the values of the averages and
+standard deviations in the last two rows of Tables~1 and~2.
+
+\vspace*{-6pt}
+
+\section{Concluding Remarks}
+
+\noindent
+Even though the idea behind the renovation-type AQMs is completely 
+different from the idea behind RED-type AQMs, 
+renovation-type AQMs may allow one to achieve in some cases at least 
+the same system performance level as guaranteed by RED-type AQMs. 
+Although the comparison presented here is based only on a~single RED dropping 
+function~(\ref{df}), 
+our numerical experiments show that the results remain 
+qualitatively the same for RED-type AQMs with other dropping functions.
+Being defined by~$N$~parameters, the renovation mechanism is very flexible
+and this constitutes its strength and weakness.
+By varying the values of the renovation probabilities~$q_i$,
+it is possible to carry out conditional optimization,
+but good searching procedures are required here.
+
+Implementation of the renovation as a~packet dropping mechanism
+requires \textit{a~priori} tuning and/or operational configuration of its parameters.
+Thus, whether it is appropriate to use renovation as a~packet dropping mechanism 
+or not in practice heavily depends on the use case.
+Although the tuning of the renovation parameters~$q_i$ can be made on the 
+fly during operation, with respect to the recommendations of the RFC~7567~\cite{RFC7567},
+renovation mechanism is not the proper choice for the network congestion control 
+unless simple recommendations on how to set up the renovation parameters are given.
+We believe this can be done based on more deep and insightful numerical experiments.
+
+There remain a~large number of unresolved issues 
+related to the renovation mechanism 
+(e.\,g., can renovation ensure fairness among competing flows?
+may the average queue size instead of its instantaneous value
+increase the efficiency of the renovation mechanism?)
+and this motivates its further analysis. 
+Furthermore, evaluation of the renovation mechanism with parameters 
+adapted to a~realistic router/switch use case
+and/or evaluation which includes TCP feedback loops 
+of several flows remains an open issue as well.
+
+\vspace*{-6pt}
+
+
+\Ack
+  \noindent
+   The reported study was partially funded by the Russian Foundation for 
+Basic Research according to the research project No.\,18-07-00692.
+
+The authors would like to thank the anonymous referees for their valuable comments 
+which helped to improve the paper.
+  
+ \renewcommand{\bibname}{\protect\rmfamily References}
+
+%\vspace*{-6pt}
+
+\vspace*{-6pt}
+
+{\small\frenchspacing
+{\baselineskip=10.65pt
+\begin{thebibliography}{99}
+\bibitem{RFC7567} %1
+\Aue{Baker, F., and G.~Fairhurst.} 2015.
+IETF recommendations regarding active queue management.
+Available at: {\sf https://tools.ietf.org/html/7567} (accessed October~4, 2018).
+
+
+
+\bibitem{Adams} %2
+\Aue{Adams, R.} 2013. 
+Active queue management: A~survey. \textit{IEEE Commun. Surv.
+Tut.} 15(3):1425--1476.
+
+\bibitem{Bonald} %3
+\Aue{Bonald, T., M.~May, and J.\,C.~Bolot.}
+2000. Analytic evaluation of RED performance. 
+\textit{IEEE Conference on Computer Communications Proceedings}
+3:1415--1424.
+
+\bibitem{hao} %4
+\Aue{Hao, W., and Y.~Wei.} 2005.
+An extended $GI^X/M/1/N$ queueing
+model for evaluating the performance of AQM algorithms
+with aggregate traffic.
+\textit{Networking and mobile computing}.
+Eds.\ Xicheng Lu and Wei Zhao.
+{Lecture notes in computer science ser.} Springer. 3619:395--404.
+
+\bibitem{Chyd} %5
+\Aue{Chydzi$\acute{\mbox{n}}$nski, A., and L.~Chr$\acute{\mbox{o}}$st.} 
+2011. Analysis of AQM queues with queue size based packet
+dropping. \textit{Int. J.~Appl. Math. Comp.} 21(3):567--577.
+
+\bibitem{Chyd2} %6
+\Aue{Chydzi$\acute{\mbox{n}}$nski, A., and P.~Mrozowski.} 2016. 
+Queues with dropping functions and general arrival
+processes. \textit{PLoS ONE} 11(3):e0150702. Available at: 
+{\sf https://\linebreak journals.plos.org/plosone/article?id=10.1371/journal.\linebreak pone.0150702} 
+(accessed October~4, 2018).
+
+\bibitem{oleg} %7
+\Aue{Tikhonenko, O., and W.~Kempa.} 2016. Performance evaluation of 
+an $M/G/n$-type queue
+with bounded capacity and packet dropping. \textit{Int. J.~Appl.
+Math. Comp.} 26(4):841--854.
+
+
+
+
+\bibitem{konnew} %8
+\Aue{Konovalov, M.\,G., and R.\,V.~Razumchik.} 2018. 
+Numerical analysis of improved access restriction algorithms in a~$GI/G/1/N$
+system. \textit{J.~Commun. Technol. El.} 63(6):616--625. 
+
+
+\bibitem{Kreinin} %9
+\Aue{Kreinin, A.\,Y.} 1997.
+Queueing systems with renovation. 
+\textit{J.~Appl. Math. Stochastic Analysis} 10(4):431--441.
+
+
+\bibitem{zarN2} %10
+\Aue{Zaryadov, I.\,S.} 2009. Queueing systems with general renovation.
+\textit{Conference (International)
+on Ultra Modern Telecommunications Proceedings}. 1--4.
+
+\bibitem{Zaryadov2009} %11
+\Aue{Zaryadov, I.\,S., and A.\,V.~Pechinkin.} 2009.
+Stationary time characteristics of the ${GI/M/n/\infty}$
+system with some variants of the generalized renovation discipline. \textit{Automat.
+Rem. Contr.} 70(12):2085--2097.
+
+\bibitem{Zaryadov2010} %12
+\Aue{Zaryadov, I.\,S.}
+2010. The ${GI/M/n/\infty}$ queuing system with generalized renovation.
+\textit{Automat. Rem. Contr.} 71(4):663--671.
+
+\bibitem{zarN1} %13
+\Aue{Korolkova, A., and I.~Zaryadov.} 2010.
+The mathematical model of the traffic transfer process with a~rate adjustable by {RED}.
+\textit{Conference (International) on Ultra Modern Telecommunications Proceedings}. 
+1046--1050.
+
+\bibitem{RFC8289} %14
+\Aue{Nichols, K., V.~Jacobson, A.~McGregor, and J.~Iyengar.} 2018.
+Controlled delay active queue management.
+Available at: {\sf https://datatracker.ietf.org/doc/rfc8289} (accessed October~4, 2018).
+
+\bibitem{Riordan1962} %15
+\Aue{Riordan, J.} 1962. \textit{Stochastic service systems}. 
+SIAM ser. in applied mathematics. New York, NY: Wiley. 139~p.
+
+\bibitem{arxivRK}  %16
+\Aue{Konovalov, M.,  and R.~Razumchik.} 2017.
+Queueing systems with renovation vs.\ queues with RED. Supplementary material. 
+\textit{ArXiv e-prints}. Available at: {\sf https://arxiv.\linebreak org/abs/1709.01477/}
+(accessed October~4, 2018).
+
+\bibitem{kulk} %17
+\Aue{Kulkarni, V.\,G.} 2016. \textit{Modeling and analysis of stochastic systems}. 
+3rd ed. Chapman \&~Hall/CRC texts in statistical science ser.
+Chapman \&~Hall/CRC. 606~p.
+
+\bibitem{kono1} %18
+\Aue{Konovalov, M.\,G.} 2007.
+\textit{Metody adaptivnoy obrabotki informatsii i~ikh prilozheniya}
+[Methods of adaptive information processing and their applications]. 
+Moscow: Institute of Informatics Problems of RAS. 212~p.
+\end{thebibliography} } }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received October 9, 2018}}
+
+\vspace*{-18pt}
+  
+
+ \Contr
+
+\noindent
+\textbf{Konovalov Mikhail G.} (b.\ 1950)~--- 
+Doctor of Science in technology, principal scientist, Institute of Informatics
+Problems, Federal Research Center ``Computer Science and Control'' 
+of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, 
+Russian Federation; \mbox{mkonovalov@ipiran.ru}
+
+\vspace*{3pt}
+
+
+\noindent
+\textbf{Razumchik Rostislav V.} (b.\ 1984)~--- 
+Candidate of Science (PhD) in physics and mathematics, leading scientist,
+Institute of Informatics Problems, Federal Research Center ``Computer 
+Science and Control'' of the Russian
+Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+associate professor, Peoples'
+Friendship University of Russia (RUDN University), 
+6~Miklukho-Maklaya Str., Moscow 117198, Russian
+Federation; \mbox{rrazumchik@ipiran.ru} %; \mbox{razumchik\_rv@rudn.ru}
+
+\vspace*{6pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+\vspace*{-2pt}
+
+%\newpage
+
+%\vspace*{-24pt}
+
+\def\tit{СРАВНЕНИЕ ДВУХ МЕХАНИЗМОВ АКТИВНОГО УПРАВЛЕНИЯ ОЧЕРЕДЬЮ В~СИСТЕМЕ $M/D/1/N$$^*$}
+
+\def\titkol{Сравнение двух механизмов активного управления очередью в~системе $M/D/1/N$}
+
+\def\aut{М.\,Г.~Коновалов$^1$, Р.\,В.~Разумчик$^{1,2}$}
+
+\def\autkol{М.\,Г.~Коновалов, Р.\,В.~Разумчик}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Исследование выполнено при частичной финансовой поддержке РФФИ (проект 18-07-00692).}}
+
+
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+\noindent
+$^1$Институт проблем информатики Федерального исследовательского 
+центра <<Информатика и управление>>\linebreak
+$\hphantom{^1}$Российской академии наук
+
+\noindent
+$^2$Российский университет дружбы народов 
+
+\vspace*{5pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 12\ \ \ выпуск\ 4\ \ \ 2018}
+}%
+ \def\rightfootline{\small{ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 12\ \ \ выпуск\ 4\ \ \ 2018
+\hfill \textbf{\thepage}}}
+
+\vspace*{-3pt}
+
+
+\Abst{Представлены некоторые результаты численных экспериментов, подтверждающие
+следующее обстоятельство: параметры механизма обобщенного обновления
+могут быть подобраны таким образом,\linebreak\vspace*{-12pt}}
+
+\Abstend{что уровень производительности
+однолинейных сис\-тем массового обслуживания с обобщенным обновлением
+может быть не ниже уровня производительности
+систем с RED-по\-доб\-ны\-ми механизмами активного управ\-ле\-ния очередями.
+Механизмы сравниваются на примере сис\-те\-мы $M/D/1/N$
+по стационарным значениям сле\-ду\-ющих характеристик:
+вероятность потери заявки, среднее число заявок в сис\-те\-ме,
+среднее чис\-ло последовательных потерь заявок 
+и~их средние квадратические отклонения.
+Расчеты основаны на известных фактах,
+а~также на ряде новых аналитических результатов для систем
+с~обобщенным обновлением, полученных в данной работе.}
+
+\KW{система массового обслуживания; 
+алгоритмы активного управления очередями; обобщенное обновление}
+
+\DOI{10.14357/19922264180402}
+
+
+
+%\vspace*{-3pt}
+
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily Литература}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\begin{thebibliography}{99}
+%\vspace*{-3pt}
+
+\bibitem{RFC7567-1} %1
+\Au{Baker F., Fairhurst~G.}
+IETF recommendations regarding active queue management, 2015.
+{\sf https://tools.\linebreak ietf.org/html/7567}.
+
+
+
+\bibitem{Adams-1} %2
+\Au{Adams R.}
+Active queue management: A~survey~// 
+{IEEE Commun. Surv. Tut.}, 2013. Vol.~15. No.\,3. P.~1425--1476.
+
+\bibitem{Bonald-1} %3
+\Au{Bonald T., May M., Bolot~J.\,C.} Analytic evaluation of RED performance~//
+{IEEE Conference on Computer Communications Proceedings}, 2000. 
+Vol.~3. P.~1415--1424.
+
+\bibitem{hao-1} %4
+\Au{Hao W., Wei~Y.}
+An extended $GI^X/M/1/N$ queueing
+model for evaluating the performance of AQM algorithms
+with aggregate traffic~// Networking and mobile computing~/
+Eds. Xicheng Lu and Wei Zhao.~---
+Lecture notes in computer science ser.~--- Springer, 2005. Vol.~3619. P.~395--404.
+
+\bibitem{Chyd-1} %5
+\Au{Chydzi$\acute{\mbox{n}}$ski A., Chr$\acute{\mbox{o}}$st~L.} 
+Analysis of AQM queues with queue size based packet
+dropping~// Int. J.~Appl. Math. Comp., 2011. Vol.~21. No.\,3. P.~567--577.
+
+\bibitem{Chyd2-1} %6
+\Au{Chydzi$\acute{\mbox{n}}$ski A.,  Mrozowski~P.}
+ Queues with dropping functions and general arrival
+processes~// PLoS ONE, 2016. Vol.~11. No.\,3. 
+{\sf https://journals.plos.org/plosone/\linebreak article?id=10.1371/journal.pone.0150702}.
+
+\bibitem{oleg-1} %7
+\Au{Tikhonenko O., Kempa~W.} Performance evaluation of an $M/G/n$-type queue
+with bounded capacity and packet dropping~// {Int. J.~Appl.
+Math. Comp.}, 2016. Vol.~26. No.~4. P.~841--854.
+
+
+
+\bibitem{konnew-1} %8
+\Au{Konovalov M.\,G., Razumchik~R.\,V.}
+Numerical analysis of improved access restriction algorithms in a~$GI/G/1/N$
+system // {J.~Commun. Technol. El.}, 2018. Vol.~63. No.\,6. P.~616--625.
+
+\bibitem{Kreinin-1} %9
+\Au{Kreinin A.\,Y.}
+Queueing systems with renovation //
+{J.~Appl. Math. Stochastic Analysis}, 1997. Vol.~10. No.~4. P.~431--441.
+
+\bibitem{zarN2-1} %10
+\Au{Zaryadov~I.\,S.} Queueing systems with general renovation~//
+{Conference (International) on Ultra Modern Telecommunications Proceedings}, 2009.
+P.~1--4.
+
+\bibitem{Zaryadov2009-1} %11
+\Au{Зарядов И.\,С.,  Печинкин~А.\,В.}
+Стационарные временные характеристики системы ${GI/M/n/\infty}$
+с~некоторыми вариантами дисциплины обобщенного об\-нов\-ле\-ния~//
+{Автоматика и~телемеханика}, 2009. Вып.~12. С.~161--174.
+
+\bibitem{Zaryadov2010-1} %12
+\Au{Зарядов И.\,С.} 
+Система массового обслуживания $GI/M/n/\infty$ с~обобщенным об\-нов\-ле\-ни\-ем~//
+{Автоматика и~телемеханика}, 2010. Вып.~4. С.~130--139.
+
+\bibitem{zarN1-1} %13
+\Au{Korolkova A., Zaryadov~I.}
+The mathematical model of the traffic transfer process with a~rate adjustable by {RED}~//
+{Conference (International) on Ultra Modern Telecommunications Proceedings}, 2010.
+P.~1046--1050.
+
+\bibitem{RFC8289-1} %14
+\Au{Nichols K., Jacobson V., McGregor A., Iyengar J.}
+Controlled delay active queue management, 2018.
+{\sf https:// datatracker.ietf.org/doc/rfc8289}.
+
+
+\bibitem{Riordan1962-1} %15
+\Au{Riordan J.} {Stochastic service systems}.~--- 
+SIAM ser. in applied mathematics.~--- New York, NY, USA: Wiley, 1962. 139~p.
+
+\bibitem{arxivRK-1} %16
+\Au{Konovalov M.,  Razumchik~R.}
+Queueing systems with renovation vs.\ queues with RED. Supplementary material~//
+{ArXiv e-prints}, 2017. {\sf https://arxiv.\linebreak org/abs/1709.01477/}.
+
+\bibitem{kulk-1} %17
+\Au{Kulkarni V.\,G.} Modeling and analysis of stochastic systems. 3rd ed.~--- 
+Chapman \&~Hall/CRC texts in statistical science ser.~---
+Chapman \& Hall/CRC, 2016. 606~p.
+
+\bibitem{kono1-1}
+\Au{Коновалов М.\,Г.} 
+{Методы адаптивной обработки информации и~их приложения.}~--- 
+М.: ИПИ РАН, 2007. 212~с.
+\end{thebibliography}
+} }
+
+\end{multicols}
+
+ \label{end\stat}
+
+ \vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию  09.10.2018}}
+
+
+%\renewcommand{\bibname}{\protect\rm Литература}
+%\renewcommand{\figurename}{\protect\bf Рис.}
+\renewcommand{\tablename}{\protect\bf Таблица}

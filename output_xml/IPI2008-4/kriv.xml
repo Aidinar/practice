@@ -1,0 +1,4801 @@
+<?xml version="1.0" encoding="utf-8"?>
+<papers>
+  <paper>
+    <metadata>
+      <annotation value="\Abst{Рассматривается представление плотности распределения в виде смеси двух составляющих и задача оценивания параметров этой смеси при имеющихся выборках из самой плотности и из одной из составляющих. Предлагаются два метода построения оценок, строятся соответствующие алгоритмы и проводится их сравнительный анализ.}"/>
+      <keywords>
+        <braces>
+          <text value="\KW{смесь нормальных распределений; расщепление смеси распределений; EM-алгоритм}"/>
+        </braces>
+      </keywords>
+    </metadata>
+    <fulltext>
+      <literature/>
+      <text value="kriv"/>
+      <text value="РАСЩЕПЛЕНИЕ СМЕСИ ВЕРОЯТНОСТНЫХ РАСПРЕДЕЛЕНИЙ НА ДВЕ СОСТАВЛЯЮЩИЕ"/>
+      <text value="Расщепление смеси вероятностных распределений на две составляющие"/>
+      <text value="М."/>
+      <text value="П. Кривенко"/>
+      <text value="М."/>
+      <text value="П. Кривенко"/>
+      <command value="\titel">
+        <braces>
+          <braces>
+            <text value="{}"/>
+            <command value="\tit">
+              <braces/>
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <command value="\aut">
+                    <braces/>
+                    <braces>
+                      <braces>
+                        <text value="{}"/>
+                        <command value="\autkol">
+                          <braces/>
+                          <braces>
+                            <braces>
+                              <text value="{}"/>
+                              <command value="\titkol">
+                                <braces/>
+                              </command>
+                            </braces>
+                          </braces>
+                        </command>
+                      </braces>
+                    </braces>
+                  </command>
+                </braces>
+              </braces>
+            </command>
+          </braces>
+        </braces>
+      </command>
+      <command value="\renewcommand">
+        <braces>
+          <braces>
+            <text value="{}"/>
+            <command value="\thefootnote">
+              <braces/>
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <command value="\arabic">
+                    <braces>
+                      <braces>
+                        <text value="{}"/>
+                        <text value="footnote"/>
+                      </braces>
+                    </braces>
+                    <braces/>
+                    <braces/>
+                  </command>
+                </braces>
+              </braces>
+            </command>
+          </braces>
+        </braces>
+      </command>
+      <command value="\footnotetext">
+        <braces>
+          <text value="\footnotetext[1]{}"/>
+        </braces>
+      </command>
+      <text value="Институт проблем информатики Российской академии наук, mkrivenko@ipiran.ru"/>
+      <command value="\vskip">
+        <braces>
+          <text value="24pt plus 9pt minus 6pt"/>
+        </braces>
+      </command>
+      <command value="\thispagestyle">
+        <braces>
+          <braces>
+            <text value="{}"/>
+            <text value="headings"/>
+          </braces>
+        </braces>
+        <braces/>
+      </command>
+      <command value="\begin">
+        <braces>
+          <braces>
+            <text value="{}"/>
+            <text value="2"/>
+          </braces>
+        </braces>
+        <braces/>
+      </command>
+      <command value="\label">
+        <braces>
+          <braces>
+            <text value="{}"/>
+            <text value="st"/>
+            <command value="\stat">
+              <braces/>
+            </command>
+          </braces>
+        </braces>
+      </command>
+      <section id="id1">
+        <braces>
+          <text value="\section{}"/>
+        </braces>
+        <text value="Введение"/>
+        <text value="Рассмотрим представление плотности распределения в виде смеси, состоящей из двух составляющих:"/>
+        <formula id="id2" value="Token(TokenType.FORMULA&amp;quot;, &amp;quot;\begin{equation}&#10;    g_{B,S} (u) = pg_B (u) +(1-p)g_S (u)\,,\ \mbox{где}\ p\in [0,\,1]\,,&#10;     \label{e1kr}&#10;     \end{equation}&amp;quot;, line=45, col=22)"/>
+        <text value="и задачу оценивания элементов этого представления при условии наличия двух выборок:"/>
+        <formula id="id3" value="$X_{B,S}$"/>
+        <text value="из"/>
+        <formula id="id4" value="$g_{B,S}(u)$"/>
+        <text value="и$X_B$из"/>
+        <formula id="id5" value="$g_B(u)$"/>
+        <text value=". Дадим пример практической ситуации, в рамках которой может возникнуть сформулированная задача"/>
+        <command value="\cite">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="1kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=". Речь идет об обработке изображений, когда интенсивности серого у пикселов для изображений знаков на некотором фоне отличаются от интенсивностей пикселов самого фона. Необходимо по изображению знаков на некотором фоне (выборка"/>
+          </braces>
+        </command>
+        <formula id="id6" value="$X_{B,S}$"/>
+        <text value="из"/>
+        <formula id="id7" value="$g_{B,S}(u)$"/>
+        <text value=") и изображению только фона (выборка$X_B$из"/>
+        <formula id="id8" value="$g_B(u)$"/>
+        <text value=") составить представление об уровне фона (оценить$p$) и описать распределения интенсивностей серого как знаков, так и фона (оценить"/>
+        <formula id="id9" value="$g_S(u)$"/>
+        <text value="и"/>
+        <formula id="id10" value="$g_B(u)$"/>
+        <text value="). После получения перечисленных оценок становится возможным оценить порог$T$, отделяющий &amp;lt;&amp;lt;оптимальным&amp;gt;&amp;gt; образом пикселы фона и знаков, и, например, перейти к черно-белому изображению. Важность подобного автоматического метода оценивания порога$T$с помощью экспериментальных данных для практики объясняется следующим: качество реальных изображений может быть невысоким и существенно меняться в процессе распознавания определенного текста, в силу чего процесс экспертного установления значения$T$становится достаточно трудоемким, а основанные на черно-белом изображении процедуры распознавания оказываются достаточно эффективными. При этом$T$понимается как решение уравнения"/>
+        <command value="\noindent">
+          <braces>
+            <text value="\noindent"/>
+          </braces>
+        </command>
+        <text value="$$"/>
+        <command value="\alpha">
+          <braces>
+            <text value="(T) ="/>
+          </braces>
+        </command>
+        <command value="\beta">
+          <braces>
+            <text value="(T)"/>
+          </braces>
+        </command>
+        <text value=",$$где"/>
+        <formula id="id11" value="$\alpha (T)$"/>
+        <text value=","/>
+        <formula id="id12" value="$\beta &#10;(T)$"/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="ошибки при разделении двух классов, а именно первого класса, соответствующего фону с вероятностью появления$p$и плотностью распределения"/>
+        <formula id="id13" value="$g_B(u)$"/>
+        <text value=", и второго класса, соответствующего пикселам знаков с вероятностью появления$1-p$и плотностью распределения"/>
+        <formula id="id14" value="$g_S(u)$"/>
+        <text value=". Рассмотрим ("/>
+        <command value="\ref">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="e1kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=") как уравнение относительно"/>
+          </braces>
+        </command>
+        <formula id="id15" value="$g_S(u)$"/>
+        <text value=". Если"/>
+        <formula id="id16" value="$g_B(u)&amp;gt;0$"/>
+        <text value="для"/>
+        <formula id="id17" value="$\forall u$"/>
+        <text value=", то$$g_S (u) ="/>
+        <command value="\fr">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="g_B(u)"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="1-p"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\left">
+          <braces>
+            <text value="("/>
+          </braces>
+        </command>
+        <command value="\fr">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="g_"/>
+            </braces>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="B,S"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="(u)"/>
+          </braces>
+          <braces/>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="g_B(u)"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="-p"/>
+          </braces>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")"/>
+          </braces>
+        </command>
+        <text value=".$$Тогда решение ("/>
+        <command value="\ref">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="e1kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=") является либо единственным и$p=0$, либо неединственным и существует для всех"/>
+          </braces>
+        </command>
+        <formula id="id18" value="$p\in [0,\,\underset{u}{\mathrm{inf}} (g_{B,S}(u)/g_B(u))]$"/>
+        <text value=". Вряд ли такой вывод практически интересен. Введем дополнительные ограничения, позволяющие сначала определиться со значением$p$, а затем пытаться находить"/>
+        <formula id="id19" value="$g_S(u)$"/>
+        <text value=". Пусть существуют значения$u$, для которых"/>
+        <formula id="id20" value="$g_S(u)=0$"/>
+        <text value="и"/>
+        <formula id="id21" value="$g_{B,S} &#10;\not= 0$"/>
+        <text value=". Для таких точек ("/>
+        <command value="\ref">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="e1kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=") дает уравнение"/>
+          </braces>
+        </command>
+        <formula id="id22" value="Token(TokenType.FORMULA&amp;quot;, &amp;quot;\begin{equation}&#10;     g_{B,S}(u) =pg_B(u)\,,&#10;     \label{e2kr}&#10;     \end{equation}&amp;quot;, line=93, col=22)"/>
+        <text value="после чего при известных"/>
+        <formula id="id23" value="$g_{B,S}(u)$"/>
+        <text value="и"/>
+        <formula id="id24" value="$g_B(u)$"/>
+        <text value="становится возможным найти искомое$p$и, следовательно,"/>
+        <formula id="id25" value="$g_S(u)$"/>
+        <text value=", если, конечно, соотношения ("/>
+        <command value="\ref">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="e1kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=") и ("/>
+          </braces>
+        </command>
+        <command value="\ref">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="e2kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=") не становятся противоречивыми для различных точек$u$. Приведенные рассуждения носят прикидочный характер, позволяют прояснить идеи, которые положены автором в алгоритмы решения поставленной задачи. При оценивании элементов представления ("/>
+          </braces>
+        </command>
+        <command value="\ref">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="e1kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=") можно следовать одной из следующих схем:"/>
+          </braces>
+        </command>
+        <itemize/>
+        <text value="Для оценивания"/>
+        <formula id="id26" value="$g_{B,S}(u)$"/>
+        <text value=","/>
+        <formula id="id27" value="$g_B(u)$"/>
+        <text value="и"/>
+        <formula id="id28" value="$g_S(u)$"/>
+        <text value="удобно представить их в виде смеси нормальных распределений с неизвестными параметрами. Таким образом, модель смеси распределений используется как для описания сложной структуры данных, так и для аппроксимации реальных распределений данных с помощью плотностей нормального распределения."/>
+      </section>
+      <section id="id29">
+        <braces>
+          <text value="\section{}"/>
+        </braces>
+        <text value="Модель смеси нормальных распределений и оценивание ее параметров"/>
+        <text value="Рассмотрим модель смеси распределений, когда плотность некоторого распределения"/>
+        <formula id="id30" value="$f(u)$"/>
+        <text value="представима в виде"/>
+        <formula id="id31" value="Token(TokenType.FORMULA&amp;quot;, &amp;quot;\begin{equation}&#10;     f(u) = \sum\limits_{j=1}^k p_{f_j} h\left ( u,\vartheta_{f_j}\right )\,.&#10;     \label{e3kr}&#10;     \end{equation}&amp;quot;, line=129, col=22)"/>
+        <text value="В представлении ("/>
+        <command value="\ref">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="e3kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=") неизвестными являются все или часть следующих характеристик (параметров смеси): число$k$элементов смеси (число компонентов смеси), вероятности"/>
+          </braces>
+        </command>
+        <formula id="id32" value="$p_{f_j}$"/>
+        <text value="элементов смеси (веса элементов смеси), параметры"/>
+        <formula id="id33" value="$\vartheta_{f_j}$"/>
+        <text value="элементов смеси. Вид плотности"/>
+        <formula id="id34" value="$h(u,\vartheta )$"/>
+        <text value="предполагается известным:$$h(u,"/>
+        <command value="\vartheta">
+          <braces>
+            <text value=")"/>
+          </braces>
+        </command>
+        <command value="\equiv">
+          <braces>
+            <text value="h(u,a,c)="/>
+          </braces>
+        </command>
+        <command value="\fr">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\sqrt">
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="2"/>
+                    <command value="\pi">
+                      <braces/>
+                    </command>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <text value="c"/>
+        <command value="\exp"/>
+        <command value="\left"/>
+        <text value="-"/>
+        <command value="\fr">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="(u- a)^2"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="2c^2"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\right"/>
+        <text value=".$$Для оценивания неизвестных параметров ("/>
+        <command value="\ref">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="e3kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=") используется метод максимального правдоподобия. При решении задачи оценивания параметров смеси далее предполагается, что число$k$элементов смеси задано. Согласно принципу максимального правдоподобия центральным становится решение оптимизационной задачи вида"/>
+          </braces>
+        </command>
+        <command value="\begin"/>
+        <command value="\ln">
+          <braces>
+            <text value="L(p_f,"/>
+          </braces>
+        </command>
+        <command value="\vartheta">
+          <braces>
+            <text value="_f )"/>
+          </braces>
+        </command>
+        <command value="\equiv"/>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="i=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^N"/>
+          </braces>
+        </command>
+        <command value="\ln"/>
+        <command value="\left">
+          <braces>
+            <text value="("/>
+          </braces>
+        </command>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="j=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^k p_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="f_j"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="h"/>
+          </braces>
+        </command>
+        <command value="\left">
+          <braces>
+            <text value="( x_i,"/>
+          </braces>
+        </command>
+        <command value="\vartheta">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="f_j"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")"/>
+          </braces>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")"/>
+          </braces>
+        </command>
+        <command value="\rightarrow">
+          <braces>
+            <braces>
+              <text value="{}"/>
+            </braces>
+          </braces>
+        </command>
+        <braces>
+          <text value="{}"/>
+          <command value="\rightarrow"/>
+          <command value="\underset">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <command value="\substack">
+                  <braces>
+                    <braces>
+                      <text value="{p_{f_1},\ldots , p_{f_k}, \sum\limits_{j=1}^k p_{f_j} &#10;=1,}"/>
+                    </braces>
+                  </braces>
+                </command>
+              </braces>
+            </braces>
+          </command>
+        </braces>
+        <braces>
+          <text value="{}"/>
+          <command value="\vartheta">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="f_1"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value=","/>
+            </braces>
+          </command>
+          <command value="\ldots">
+            <braces>
+              <text value=","/>
+            </braces>
+          </command>
+          <command value="\vartheta">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="f_k"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces/>
+            <braces/>
+            <braces/>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <command value="\max">
+                  <braces/>
+                </command>
+              </braces>
+            </braces>
+          </command>
+        </braces>
+        <text value="."/>
+        <command value="\label">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="e4kr"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="multline"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="Наиболее работоспособную общую схему построения процедур, позволяющих находить решения задачи ("/>
+          </braces>
+        </command>
+        <command value="\ref">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="e4kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="), обычно называют EM-алгоритмом"/>
+          </braces>
+        </command>
+        <command value="\cite">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="2kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=". Введем в рассмотрение так называемые апостериорные вероятности"/>
+          </braces>
+        </command>
+        <formula id="id35" value="$q_{ij}$"/>
+        <text value="принадлежности наблюдения$x_i$к$j$-му элементу смеси. Если известны значения параметров"/>
+        <formula id="id36" value="$p_{f_j}$"/>
+        <text value="и"/>
+        <formula id="id37" value="$\vartheta_{f_j}$"/>
+        <text value=","/>
+        <formula id="id38" value="$j=1,\ldots , k$"/>
+        <text value=", то при наблюденном значении$x_i$,"/>
+        <formula id="id39" value="$i=1,\ldots , N$"/>
+        <text value=", апостериорная вероятность принадлежности этого значения к$j$-му элементу смеси принимает вид:"/>
+        <formula id="id40" value="Token(TokenType.FORMULA&amp;quot;, &amp;quot;\begin{equation}&#10;     q_{ij} (x_i, p_{f_j}, \vartheta_{f_j}) = \fr{p_{f_j} h(x_i, &#10;\vartheta_{f_j})}{\sum\limits_{l=1}^k p_{f_l} h(x_i, \vartheta_{f_l})}\,.&#10;     \label{e5kr}&#10;     \end{equation}&amp;quot;, line=168, col=22)"/>
+        <text value="Если это не будет искажать смысл, то в записи апостериорных вероятностей будем далее опускать перечисление аргументов, т."/>
+        <text value="е."/>
+        <text value="вместо"/>
+        <formula id="id41" value="$q_{ij}(x_i, p_{f_j}, &#10;\vartheta_{f_j})$"/>
+        <text value="будем просто записывать"/>
+        <formula id="id42" value="$q_{ij}$"/>
+        <text value=". Из определения следует, что для всех допустимых$i$и$j$выполняется следующее:$$q_"/>
+        <braces>
+          <text value="{}"/>
+          <text value="ij"/>
+        </braces>
+        <command value="\geq">
+          <braces>
+            <text value="0"/>
+          </braces>
+        </command>
+        <command value="\mbox">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="и"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="j=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^k q_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="ij"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="=1"/>
+          </braces>
+        </command>
+        <text value=".$$Преобразуем так логарифм функции правдоподобия, чтобы в получившемся для него выражении фигурировали апостериорные вероятности"/>
+        <formula id="id43" value="$q_{ij}$"/>
+        <text value=", а именно при"/>
+        <formula id="id44" value="$p_{f_j} h(x_i,\vartheta_{f_j})\not=0$"/>
+        <text value="имело место представление:"/>
+        <command value="\begin"/>
+        <command value="\ln">
+          <braces>
+            <text value="L(p_f,"/>
+          </braces>
+        </command>
+        <command value="\vartheta">
+          <braces>
+            <text value="_f ) ="/>
+          </braces>
+        </command>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="j=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^k"/>
+          </braces>
+        </command>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="i=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^N q_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="ij"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\ln">
+          <braces>
+            <text value="p_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="f_j"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="+"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+            </braces>
+          </braces>
+        </command>
+        <braces>
+          <text value="{}"/>
+          <text value="+"/>
+          <command value="\sum"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="j=1"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^k"/>
+            </braces>
+          </command>
+          <command value="\sum"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="i=1"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^N q_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="ij"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\ln">
+            <braces>
+              <text value="h(x_i,"/>
+            </braces>
+          </command>
+          <command value="\vartheta">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="f_j"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value=")-"/>
+            </braces>
+          </command>
+          <command value="\sum"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="j=1"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^k"/>
+            </braces>
+          </command>
+          <command value="\sum"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="i=1"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^N q_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="ij"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\ln">
+            <braces>
+              <text value="q_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="ij"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+        </braces>
+        <text value="."/>
+        <command value="\label">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="e6kr"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="multline"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="Для доказательства справедливости этого представления достаточно в правую часть ("/>
+          </braces>
+        </command>
+        <command value="\ref">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="e6kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=") подставить выражение для апостериорной вероятности. Теперь для нахождения оценки параметров смеси распределений появляется возможность сформулировать"/>
+          </braces>
+        </command>
+        <command value="\textbf">
+          <braces>
+            <text value="\textbf{}"/>
+          </braces>
+          <text value="ЕМ-алгоритм:"/>
+        </command>
+        <command value="\noindent">
+          <braces>
+            <text value="\noindent"/>
+          </braces>
+        </command>
+        <enumerate/>
+        <command value="\bigskip">
+          <braces>
+            <text value="Решение оптимизационной задачи$$"/>
+          </braces>
+        </command>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="j=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^k"/>
+          </braces>
+        </command>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="i=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^N q_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="ij"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\ln">
+          <braces>
+            <text value="p_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="f_j"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\rightarrow"/>
+        <command value="\underset">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\substack">
+                <braces>
+                  <braces>
+                    <text value="{p_{f_1},\ldots ,p_{f_k}}"/>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <braces>
+          <text value="{}"/>
+          <command value="\sum"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="j=1"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^k p_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="f_j"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="=1"/>
+            </braces>
+            <braces/>
+            <braces/>
+            <braces/>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <command value="\max">
+                  <braces/>
+                  <braces>
+                    <text value="$$имеет вид:"/>
+                  </braces>
+                </command>
+                <command value="\begin">
+                  <braces>
+                    <text value="p_"/>
+                  </braces>
+                  <braces>
+                    <braces>
+                      <text value="{}"/>
+                      <text value="f_j"/>
+                    </braces>
+                  </braces>
+                  <braces/>
+                  <braces>
+                    <text value="^* ="/>
+                  </braces>
+                </command>
+                <command value="\fr">
+                  <braces>
+                    <braces>
+                      <text value="{}"/>
+                      <text value="w_j"/>
+                    </braces>
+                  </braces>
+                  <braces/>
+                  <braces>
+                    <braces>
+                      <text value="{}"/>
+                      <text value="N"/>
+                    </braces>
+                  </braces>
+                  <braces/>
+                </command>
+              </braces>
+            </braces>
+          </command>
+        </braces>
+        <text value=","/>
+        <command value="\quad">
+          <braces>
+            <text value="j=1,"/>
+          </braces>
+        </command>
+        <command value="\ldots">
+          <braces>
+            <text value=",k"/>
+          </braces>
+        </command>
+        <text value=","/>
+        <command value="\mbox">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="где"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <text value="w_j ="/>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="i=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^N q_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="ij"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <text value="."/>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="equation*"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="Для доказательства этого достаточно рассмотреть функцию Лагранжа. Решение оптимизационной задачи$$"/>
+          </braces>
+        </command>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="j=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^k"/>
+          </braces>
+        </command>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="i=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^N q_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="ij"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\ln">
+          <braces>
+            <text value="h(x_i,"/>
+          </braces>
+        </command>
+        <command value="\vartheta">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="f_j"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=")"/>
+          </braces>
+        </command>
+        <command value="\rightarrow"/>
+        <command value="\underset">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\vartheta">
+                <braces>
+                  <text value="_"/>
+                </braces>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="f_j"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces>
+                  <text value=","/>
+                </braces>
+              </command>
+              <command value="\ldots">
+                <braces>
+                  <text value=","/>
+                </braces>
+              </command>
+              <command value="\vartheta">
+                <braces>
+                  <text value="_"/>
+                </braces>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="f_k"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces/>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <command value="\max">
+                      <braces/>
+                      <braces>
+                        <text value="$$распадается на решения для"/>
+                      </braces>
+                    </command>
+                    <formula id="id45" value="$j=1,\ldots ,k$"/>
+                    <text value="отдельных задач:"/>
+                    <formula id="id46" value="Token(TokenType.FORMULA&amp;quot;, &amp;quot;\begin{equation}&#10;\sum\limits_{i=1}^N q_{ij}\ln h(x_i, \vartheta_{f_j})\rightarrow&#10;\underset{\vartheta_{f_j}}{\max}\,,&#10;\label{e8kr}&#10;\end{equation}&amp;quot;, line=242, col=17)"/>
+                    <text value="в случае нормального распределения они могут быть получены аналитическим путем:"/>
+                    <command value="\begin">
+                      <braces>
+                        <text value="a^*_"/>
+                      </braces>
+                      <braces>
+                        <braces>
+                          <text value="{}"/>
+                          <text value="f_j"/>
+                        </braces>
+                      </braces>
+                      <braces/>
+                      <braces>
+                        <text value="="/>
+                      </braces>
+                    </command>
+                    <command value="\fr">
+                      <braces>
+                        <braces>
+                          <text value="{}"/>
+                          <command value="\sum"/>
+                          <command value="\limits">
+                            <braces>
+                              <text value="_"/>
+                            </braces>
+                            <braces>
+                              <braces>
+                                <text value="{}"/>
+                                <text value="i=1"/>
+                              </braces>
+                            </braces>
+                            <braces/>
+                            <braces>
+                              <text value="^N q_"/>
+                            </braces>
+                            <braces>
+                              <braces>
+                                <text value="{}"/>
+                                <text value="ij"/>
+                              </braces>
+                            </braces>
+                            <braces/>
+                            <braces>
+                              <text value="x_i"/>
+                            </braces>
+                            <braces/>
+                            <braces>
+                              <braces>
+                                <text value="{}"/>
+                                <text value="w_j"/>
+                              </braces>
+                            </braces>
+                            <braces/>
+                          </command>
+                        </braces>
+                      </braces>
+                    </command>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <text value=","/>
+        <command value="\quad"/>
+        <command value="\left">
+          <braces>
+            <text value="( c^2_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="f_j"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")^* ="/>
+          </braces>
+        </command>
+        <command value="\fr">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\sum"/>
+              <command value="\limits">
+                <braces>
+                  <text value="_"/>
+                </braces>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="i=1"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces>
+                  <text value="^N q_"/>
+                </braces>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="ij"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces>
+                  <text value="(x_i -a^*_"/>
+                </braces>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="f_j"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces>
+                  <text value=")^2"/>
+                </braces>
+                <braces/>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="w_j"/>
+                  </braces>
+                </braces>
+                <braces/>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <text value="."/>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="equation*"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="Постановка задачи в виде ("/>
+          </braces>
+        </command>
+        <command value="\ref">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="e8kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=") без дополнительных ограничений на параметр"/>
+          </braces>
+        </command>
+        <formula id="id47" value="$\vartheta_{f_j}$"/>
+        <text value="может привести к появлению бесконечно большого вклада в значение функции правдоподобия. Причина этого может состоять в том, что к$j$-му элементу смеси в ходе работы ЕМ-алгоритма могут быть отнесены либо единственное наблюденное значение, либо совпадающие наблюденные значения, при этом выборочная дисперсия оказывается равной нулю. В этом случае можно ограничивать множество допустимых значений дисперсии и тем самым ограничивать значение максимума функции правдоподобия. Таким образом, задача ("/>
+        <command value="\ref">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="e8kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=") принимает вид:"/>
+          </braces>
+        </command>
+        <command value="\begin"/>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="i=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^N q_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="ij"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\ln">
+          <braces>
+            <text value="h(x_i,a_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="f_j"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=",c_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="f_j"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=")"/>
+          </braces>
+        </command>
+        <command value="\rightarrow"/>
+        <command value="\underset">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\substack">
+                <braces>
+                  <braces>
+                    <text value="{a_{f_j}, c_{f_j},}"/>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <braces>
+          <text value="{}"/>
+          <text value="c_"/>
+        </braces>
+        <braces>
+          <text value="{}"/>
+          <text value="f_j"/>
+        </braces>
+        <command value="\geq">
+          <braces>
+            <text value="c_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\min">
+                <braces/>
+                <braces/>
+                <braces/>
+                <braces/>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <command value="\max">
+                      <braces/>
+                    </command>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <text value=","/>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="equation*"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="где"/>
+          </braces>
+        </command>
+        <formula id="id48" value="$c_{\min}$"/>
+        <text value="задано, а ее решение, согласно"/>
+        <command value="\cite">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="1kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=", имеет следующий вид:"/>
+          </braces>
+        </command>
+        <command value="\begin">
+          <braces>
+            <text value="a_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="f_j"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="**"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="=a_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="f_j"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^*"/>
+          </braces>
+        </command>
+        <text value=","/>
+        <command value="\quad"/>
+        <command value="\left">
+          <braces>
+            <text value="( c^2_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="f_j"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")^"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="**"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="="/>
+          </braces>
+        </command>
+        <command value="\begin"/>
+        <command value="\left">
+          <braces>
+            <text value="( c^2_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="f_j"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")^*"/>
+          </braces>
+        </command>
+        <text value=", &amp;amp;"/>
+        <command value="\left">
+          <braces>
+            <text value="( c_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="f_j"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^2"/>
+          </braces>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")^* &amp;gt; c^2_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\min">
+                <braces/>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <text value=","/>
+        <text value="c^2_"/>
+        <braces>
+          <text value="{}"/>
+          <command value="\min">
+            <braces/>
+          </command>
+        </braces>
+        <text value=", &amp;amp;"/>
+        <command value="\left">
+          <braces>
+            <text value="( c_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="f_j"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^2"/>
+          </braces>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")^*"/>
+          </braces>
+        </command>
+        <command value="\leq">
+          <braces>
+            <text value="c^2_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\min">
+                <braces/>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <text value="."/>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="cases"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="equation*"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="Заметим, что если вместо ("/>
+          </braces>
+        </command>
+        <command value="\ref">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="e4kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=") решается задача"/>
+          </braces>
+        </command>
+        <command value="\begin"/>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="i=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^N"/>
+          </braces>
+        </command>
+        <command value="\ln"/>
+        <command value="\left">
+          <braces>
+            <text value="("/>
+          </braces>
+        </command>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="j=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^k p_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="f_j"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="h"/>
+          </braces>
+        </command>
+        <command value="\left">
+          <braces>
+            <text value="(x_i,"/>
+          </braces>
+        </command>
+        <command value="\vartheta">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="f_j"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")"/>
+          </braces>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")"/>
+          </braces>
+        </command>
+        <command value="\rightarrow"/>
+        <command value="\underset">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\substack">
+                <braces>
+                  <braces>
+                    <text value="{p_{f_1},\ldots &#10;,p_{f_k},}"/>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <braces>
+          <text value="{}"/>
+          <command value="\sum"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="j=1"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^k p_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="f_j"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="=1"/>
+            </braces>
+            <braces/>
+            <braces/>
+            <braces/>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <command value="\max">
+                  <braces/>
+                </command>
+              </braces>
+            </braces>
+          </command>
+        </braces>
+        <text value=","/>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="equation*"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="то это просто приводит к упрощению 3-го шага ЕМ-алгоритма."/>
+          </braces>
+        </command>
+      </section>
+      <section id="id49">
+        <braces>
+          <text value="\section{}"/>
+        </braces>
+        <text value="Процедуры расщепления смеси"/>
+        <text value="Реализация описанной схемы от частного к общему оказалась неработоспособной, так как при нахождении$p^*$,"/>
+        <formula id="id50" value="$g_S^*(u)$"/>
+        <text value="при уже полученной"/>
+        <formula id="id51" value="$g_B^*(u)$"/>
+        <text value="часто возникает следующая ситуация:$p^*$устремляется к нулю и"/>
+        <formula id="id52" value="$g_S^*(u)$"/>
+        <text value="становится оценкой для"/>
+        <formula id="id53" value="$g_{B,S}(u)$"/>
+        <text value=", а не для"/>
+        <formula id="id54" value="$g_S(u)$"/>
+        <text value=". При оценивании элементов модели ("/>
+        <command value="\ref">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="e1kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=") в соответствии со схемой от общего к частному сначала для выборки"/>
+          </braces>
+        </command>
+        <formula id="id55" value="$X_{B,S}$"/>
+        <text value="решается задача нахождения оценки"/>
+        <formula id="id56" value="$g_{B,S}^*(u)$"/>
+        <text value="в виде смеси"/>
+        <formula id="id57" value="Token(TokenType.FORMULA&amp;quot;, &amp;quot;\begin{equation}&#10;g_{B,S}^* (u) = \sum\limits_{j=1}^{k_{B,S}} p_{B,S_j}^* h\left ( &#10;u,\vartheta_{B,S_j}^* \right )\,,&#10;     \label{e11kr}&#10;     \end{equation}&amp;quot;, line=296, col=22)"/>
+        <text value="а затем решается задача расщепления смеси"/>
+        <formula id="id58" value="$g_{B,S}^*(u)$"/>
+        <text value="на две части вида ("/>
+        <command value="\ref">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="e1kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="). Последнее предлагается реализовать одним из двух возможных способов:"/>
+          </braces>
+        </command>
+        <enumerate/>
+        <text value="При реализации 1-го способа можно предложить два варианта выбора набора индексов элементов смеси ("/>
+        <command value="\ref">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="e11kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="):"/>
+          </braces>
+        </command>
+        <itemize/>
+        <text value="В данной работе рассматривается использование только оптимального выбора набора индексов. Дадим более подробное описание конкретных вариантов соответствующих процедур обработки данных. Их работа определяется следующими основными входными параметрами:"/>
+        <itemize/>
+        <text value="а также выходными параметрами:"/>
+        <itemize/>
+        <subsection>
+          <text value="Процедура одновременного оценивания"/>
+          <text value="В основе этого алгоритма лежит предположение, что составляющие"/>
+          <formula id="id59" value="$g_S(u)$"/>
+          <text value="и"/>
+          <formula id="id60" value="$g_B(u)$"/>
+          <text value="&amp;lt;&amp;lt;отделимы&amp;gt;&amp;gt; друг от друга в том смысле, что в разложении"/>
+          <formula id="id61" value="$g_{B,S}(u)$"/>
+          <text value="по некоторой системе плотностей одна его часть относится к"/>
+          <formula id="id62" value="$g_S(u)$"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="к"/>
+          <formula id="id63" value="$g_B(u)$"/>
+          <text value=". Поэтому группирование элементов смеси с целью одновременного формирования составляющих"/>
+          <formula id="id64" value="$g_S^*(u)$"/>
+          <text value="и"/>
+          <formula id="id65" value="$g_B^*(u)$"/>
+          <text value="может быть реализовано с помощью следующей последовательности действий ("/>
+          <command value="\textbf">
+            <braces>
+              <text value="\textbf{}"/>
+            </braces>
+            <text value="алгоритм А1"/>
+          </command>
+          <text value="):"/>
+          <command value="\noindent">
+            <braces>
+              <text value="\noindent"/>
+            </braces>
+          </command>
+          <enumerate/>
+          <command value="\bigskip">
+            <braces>
+              <text value="Пусть$I_B$"/>
+            </braces>
+          </command>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="подмножество множества индексов элементов смеси заданного набора"/>
+          <formula id="id66" value="$\{ p_{B,S_j}^* h(u, \vartheta_{B,S_j}^*), j=1,\ldots , k_{B,S}\}$"/>
+          <text value=", а$N$"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="объем выборки$X_B$. Обозначив с целью упрощения записи$$p_j = p_"/>
+          <braces>
+            <text value="{}"/>
+            <text value="B,S_j"/>
+          </braces>
+          <text value="^*"/>
+          <text value=","/>
+          <text value="a_j = a_"/>
+          <braces>
+            <text value="{}"/>
+            <text value="B,S_j"/>
+          </braces>
+          <text value="^*"/>
+          <text value=","/>
+          <text value="c_j=c_"/>
+          <braces>
+            <text value="{}"/>
+            <text value="B,S_j"/>
+          </braces>
+          <text value="^*"/>
+          <text value=","/>
+          <text value="j=1,"/>
+          <command value="\ldots">
+            <braces>
+              <text value=",k_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B,S"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <text value=",$$выпишем формулы для подсчета функции правдоподобия:"/>
+          <command value="\begin"/>
+          <command value="\ln">
+            <braces>
+              <text value="L (p,a,c"/>
+            </braces>
+          </command>
+          <command value="\vert">
+            <braces>
+              <text value="I_B) ="/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+              </braces>
+            </braces>
+          </command>
+          <braces>
+            <text value="{}"/>
+            <text value="="/>
+            <command value="\sum"/>
+            <command value="\limits">
+              <braces>
+                <text value="_"/>
+              </braces>
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <text value="i=1"/>
+                </braces>
+              </braces>
+              <braces/>
+              <braces>
+                <text value="^N"/>
+              </braces>
+            </command>
+            <command value="\ln"/>
+            <command value="\left">
+              <braces>
+                <text value="("/>
+              </braces>
+            </command>
+            <command value="\sum"/>
+            <command value="\limits">
+              <braces>
+                <text value="_"/>
+              </braces>
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <text value="j"/>
+                  <command value="\in">
+                    <braces>
+                      <text value="I_B"/>
+                    </braces>
+                    <braces/>
+                  </command>
+                  <command value="\fr">
+                    <braces>
+                      <braces>
+                        <text value="{}"/>
+                        <text value="p_j"/>
+                      </braces>
+                    </braces>
+                    <braces/>
+                    <braces>
+                      <braces>
+                        <text value="{}"/>
+                        <command value="\sum"/>
+                        <command value="\limits">
+                          <braces>
+                            <text value="_"/>
+                          </braces>
+                          <braces>
+                            <braces>
+                              <text value="{}"/>
+                              <text value="j"/>
+                              <command value="\in">
+                                <braces>
+                                  <text value="I_B"/>
+                                </braces>
+                                <braces/>
+                                <braces>
+                                  <text value="p_"/>
+                                </braces>
+                                <braces>
+                                  <braces>
+                                    <text value="{}"/>
+                                    <text value="j"/>
+                                  </braces>
+                                </braces>
+                                <braces/>
+                                <braces/>
+                              </command>
+                            </braces>
+                          </braces>
+                        </command>
+                      </braces>
+                    </braces>
+                  </command>
+                </braces>
+              </braces>
+            </command>
+          </braces>
+          <text value="h(x_i, a_j, c_j )"/>
+          <command value="\right">
+            <braces>
+              <text value=")="/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+              </braces>
+            </braces>
+          </command>
+          <braces>
+            <text value="{}"/>
+            <text value="="/>
+            <command value="\sum"/>
+            <command value="\limits">
+              <braces>
+                <text value="_"/>
+              </braces>
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <text value="i=1"/>
+                </braces>
+              </braces>
+              <braces/>
+              <braces>
+                <text value="^N"/>
+              </braces>
+            </command>
+            <command value="\ln"/>
+            <command value="\left">
+              <braces>
+                <text value="("/>
+              </braces>
+            </command>
+            <command value="\sum"/>
+            <command value="\limits">
+              <braces>
+                <text value="_"/>
+              </braces>
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <text value="j"/>
+                  <command value="\in">
+                    <braces>
+                      <text value="I_B"/>
+                    </braces>
+                    <braces/>
+                    <braces>
+                      <text value="p_j"/>
+                    </braces>
+                  </command>
+                  <command value="\fr">
+                    <braces>
+                      <braces>
+                        <text value="{}"/>
+                        <text value="1"/>
+                      </braces>
+                    </braces>
+                    <braces/>
+                    <braces>
+                      <braces>
+                        <text value="{}"/>
+                        <command value="\sqrt">
+                          <braces>
+                            <braces>
+                              <text value="{}"/>
+                              <text value="2"/>
+                              <command value="\pi">
+                                <braces/>
+                              </command>
+                            </braces>
+                          </braces>
+                        </command>
+                      </braces>
+                    </braces>
+                  </command>
+                </braces>
+              </braces>
+            </command>
+          </braces>
+          <text value="c_j"/>
+          <command value="\exp"/>
+          <command value="\left">
+            <braces/>
+            <braces>
+              <text value="-"/>
+            </braces>
+          </command>
+          <command value="\fr">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="(x_i -a_j)^2"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="2c_j^2"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\right">
+            <braces/>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=") -"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+              </braces>
+            </braces>
+          </command>
+          <braces>
+            <text value="{}"/>
+            <text value="- N"/>
+            <command value="\ln"/>
+            <command value="\sum"/>
+            <command value="\limits">
+              <braces>
+                <text value="_"/>
+              </braces>
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <text value="j"/>
+                  <command value="\in">
+                    <braces>
+                      <text value="I_B"/>
+                    </braces>
+                    <braces/>
+                    <braces>
+                      <text value="p_j ="/>
+                    </braces>
+                  </command>
+                  <command value="\sum"/>
+                  <command value="\limits">
+                    <braces>
+                      <text value="_"/>
+                    </braces>
+                    <braces>
+                      <braces>
+                        <text value="{}"/>
+                        <text value="i=1"/>
+                      </braces>
+                    </braces>
+                    <braces/>
+                    <braces>
+                      <text value="^N"/>
+                    </braces>
+                  </command>
+                  <command value="\ln"/>
+                  <command value="\left">
+                    <braces>
+                      <text value="("/>
+                    </braces>
+                  </command>
+                  <command value="\sum"/>
+                  <command value="\limits">
+                    <braces>
+                      <text value="_"/>
+                    </braces>
+                    <braces>
+                      <braces>
+                        <text value="{}"/>
+                        <text value="j"/>
+                        <command value="\in">
+                          <braces>
+                            <text value="I_B"/>
+                          </braces>
+                          <braces/>
+                          <braces>
+                            <text value="h_"/>
+                          </braces>
+                          <braces>
+                            <braces>
+                              <text value="{}"/>
+                              <text value="ij"/>
+                            </braces>
+                          </braces>
+                          <braces/>
+                        </command>
+                        <command value="\right">
+                          <braces>
+                            <text value=") -"/>
+                          </braces>
+                          <braces>
+                            <braces>
+                              <text value="{}"/>
+                            </braces>
+                          </braces>
+                        </command>
+                      </braces>
+                    </braces>
+                  </command>
+                </braces>
+              </braces>
+            </command>
+          </braces>
+          <braces>
+            <text value="{}"/>
+            <text value="-N"/>
+            <command value="\ln"/>
+            <command value="\sum"/>
+            <command value="\limits">
+              <braces>
+                <text value="_"/>
+              </braces>
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <text value="j"/>
+                  <command value="\in">
+                    <braces>
+                      <text value="I_B"/>
+                    </braces>
+                    <braces/>
+                    <braces>
+                      <text value="p_j -"/>
+                    </braces>
+                  </command>
+                  <command value="\fr">
+                    <braces>
+                      <braces>
+                        <text value="{}"/>
+                        <text value="N"/>
+                      </braces>
+                    </braces>
+                    <braces/>
+                    <braces>
+                      <braces>
+                        <text value="{}"/>
+                        <text value="2"/>
+                      </braces>
+                    </braces>
+                    <braces/>
+                  </command>
+                </braces>
+              </braces>
+            </command>
+          </braces>
+          <command value="\ln"/>
+          <command value="\left">
+            <braces>
+              <text value="(2"/>
+            </braces>
+          </command>
+          <command value="\pi"/>
+          <command value="\right">
+            <braces>
+              <text value=")"/>
+            </braces>
+          </command>
+          <text value=","/>
+          <command value="\label">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="e12kr"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\end">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="multline"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="где$$h_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="ij"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="="/>
+            </braces>
+          </command>
+          <command value="\fr">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="p_j"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="c_j"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\exp"/>
+          <command value="\left">
+            <braces/>
+            <braces>
+              <text value="-"/>
+            </braces>
+          </command>
+          <command value="\fr">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="(x_i-a_j)^2"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="2c_j^2"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\right">
+            <braces/>
+            <braces>
+              <text value="$$для"/>
+            </braces>
+          </command>
+          <formula id="id67" value="$i=1,\ldots ,N$"/>
+          <text value="и"/>
+          <formula id="id68" value="$j=1,\ldots ,k_{B,S}$"/>
+          <text value=". После того как найдено подмножество"/>
+          <formula id="id69" value="$\{ p_{B_j}^* h(u,\vartheta_{B_j}^*),\, &#10;j=1,\ldots ,k_B\}$"/>
+          <text value="и соответствующее"/>
+          <formula id="id70" value="$I_B^*$"/>
+          <text value=", оценки для"/>
+          <formula id="id71" value="$g_B^*(u)$"/>
+          <text value="и$p^*$принимают следующий вид:"/>
+          <formula id="id72" value="Token(TokenType.FORMULA&amp;quot;, &amp;quot;\begin{align}&#10;     p^* &amp;amp; = \sum\limits_{j\in I_B^*} p_{B,S_j}^*\equiv \sum\limits_{j=1,\ldots , &#10;k_B} p_{B_j}^*\,;\notag\\[-6pt]&#10;     &amp;amp;\label{e13kr}\\[-6pt]&#10;     g_B^*(u) &amp;amp; = \fr{1}{p^*}\sum\limits_{j\in I_B^*}  p_{B,S_j}^* h\left ( u, &#10;\vartheta_{B,S_j}^* \right)\,.\notag&#10;     \end{align}&amp;quot;, line=411, col=19)"/>
+          <text value="И, наконец,"/>
+          <command value="\begin">
+            <braces>
+              <text value="g_S^*(u) ="/>
+            </braces>
+          </command>
+          <command value="\left"/>
+          <text value="p_"/>
+          <braces>
+            <text value="{}"/>
+            <text value="B,S_j"/>
+          </braces>
+          <text value="^* h"/>
+          <command value="\left">
+            <braces>
+              <text value="( u,"/>
+            </braces>
+          </command>
+          <command value="\vartheta">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B,S_j"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^*"/>
+            </braces>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")"/>
+            </braces>
+          </command>
+          <text value=","/>
+          <text value="j=1,"/>
+          <command value="\ldots">
+            <braces>
+              <text value=",k_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B,S"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\right"/>
+          <command value="\backslash"/>
+          <command value="\left"/>
+          <text value="p_"/>
+          <braces>
+            <text value="{}"/>
+            <text value="B_j"/>
+          </braces>
+          <text value="^* h"/>
+          <command value="\left">
+            <braces>
+              <text value="( u,"/>
+            </braces>
+          </command>
+          <command value="\vartheta">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B_j"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^*"/>
+            </braces>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")"/>
+            </braces>
+          </command>
+          <text value=","/>
+          <text value="j=1,"/>
+          <command value="\ldots">
+            <braces>
+              <text value=",k_B"/>
+            </braces>
+          </command>
+          <command value="\right"/>
+          <text value="."/>
+          <command value="\label">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="e14kr"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\end">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="multline"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+        </subsection>
+        <subsection>
+          <text value="Процедура последовательного оценивания"/>
+          <text value="В основе этого алгоритма лежит предположение, что существует множество значений$u$, для которых"/>
+          <formula id="id73" value="$g_S(u)=0$"/>
+          <text value="и"/>
+          <formula id="id74" value="$g_{B,S}(u)\not= 0$"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="область"/>
+          <formula id="id75" value="$u\in [b,\,+\infty)$"/>
+          <text value=", где$b$"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="некоторое значение, и задается оно либо априори (например, исходя из сущности решаемой задачи), либо по имеющимся данным (например, как найденная по выборке$X_B$оценка среднего распределения"/>
+          <formula id="id76" value="$g_B(u)$"/>
+          <text value="или как найденная по выборке$X_B$оценка квантиля распределения"/>
+          <formula id="id77" value="$g_B(u)$"/>
+          <text value="некоторого порядка). Выбирая тем или иным способом$b$, необходимо быть только уверенным, что"/>
+          <formula id="id78" value="$g_S(u)\approx 0$"/>
+          <text value="при$u&amp;gt;b$. Тогда нахождение требуемых оценок осуществляется с помощью следующих шагов ("/>
+          <command value="\textbf">
+            <braces>
+              <text value="\textbf{}"/>
+            </braces>
+            <text value="алгоритм А2"/>
+          </command>
+          <text value="):"/>
+          <command value="\noindent">
+            <braces>
+              <text value="\noindent"/>
+            </braces>
+          </command>
+          <enumerate/>
+          <command value="\bigskip">
+            <braces>
+              <text value="Пусть"/>
+            </braces>
+          </command>
+          <formula id="id79" value="$1-\overline{G}_{B,S}(u)$"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="функция распределения для"/>
+          <formula id="id80" value="$g_{B,S}(u)$"/>
+          <text value=", а"/>
+          <formula id="id81" value="$1-\overline{G}_B(u)$"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="для"/>
+          <formula id="id82" value="$g_B(u)$"/>
+          <text value=". Тогда имеем следующие соотношения:"/>
+          <command value="\begin"/>
+          <command value="\overline">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="G"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B,S"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="(b) ="/>
+            </braces>
+          </command>
+          <command value="\int"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="b"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="+"/>
+                <command value="\infty">
+                  <braces/>
+                  <braces>
+                    <text value="g_"/>
+                  </braces>
+                  <braces>
+                    <braces>
+                      <text value="{}"/>
+                      <text value="B,S"/>
+                    </braces>
+                  </braces>
+                  <braces/>
+                  <braces>
+                    <text value="(u)"/>
+                  </braces>
+                </command>
+              </braces>
+            </braces>
+          </command>
+          <text value="du ="/>
+          <command value="\int"/>
+          <command value="\limits">
+            <braces>
+              <text value="_b^"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="+"/>
+                <command value="\infty">
+                  <braces/>
+                </command>
+                <command value="\left">
+                  <braces>
+                    <text value="("/>
+                  </braces>
+                </command>
+                <command value="\left">
+                  <braces>
+                    <text value="( 1-p"/>
+                  </braces>
+                </command>
+                <command value="\right">
+                  <braces>
+                    <text value=") g_S(u)"/>
+                  </braces>
+                </command>
+                <command value="\right">
+                  <braces>
+                    <text value=". +"/>
+                  </braces>
+                  <braces>
+                    <braces>
+                      <text value="{}"/>
+                    </braces>
+                  </braces>
+                </command>
+              </braces>
+            </braces>
+          </command>
+          <command value="\left">
+            <braces>
+              <text value="."/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="+ pg_B(u)"/>
+                <command value="\right">
+                  <braces>
+                    <text value=")"/>
+                  </braces>
+                </command>
+              </braces>
+            </braces>
+          </command>
+          <text value="du"/>
+          <command value="\approx"/>
+          <command value="\int"/>
+          <command value="\limits">
+            <braces>
+              <text value="_b^"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="+"/>
+                <command value="\infty">
+                  <braces/>
+                  <braces>
+                    <text value="pg_B(u)"/>
+                  </braces>
+                </command>
+              </braces>
+            </braces>
+          </command>
+          <text value="du = p"/>
+          <command value="\overline">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="G"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="_B(b)"/>
+            </braces>
+          </command>
+          <text value="."/>
+          <command value="\end">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="multline*"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="Отсюда получаем:"/>
+            </braces>
+          </command>
+          <formula id="id83" value="Token(TokenType.FORMULA&amp;quot;, &amp;quot;\begin{align}&#10;\widetilde{p}^* &amp;amp; = \fr{\overline{G}_{B,S}^*(b)}{\overline{G}_B^*(b)}\,;\notag\\[-6pt]&#10;&amp;amp;\label{e15kr}\\[-6pt]&#10;p^* &amp;amp; = &#10;\begin{cases}&#10;\widetilde{p}^*\,, &amp;amp; \overline{G}_{B,S}^*(b)\not= 0\ \mbox{и}\ \widetilde{p}^*\leq &#10;1\,,\\&#10;1\,, &amp;amp; \mbox{в иных случаях}\,,&#10;\end}\notag&#10;\end{align}&amp;quot;, line=467, col=14)"/>
+          <text value="где оценка"/>
+          <formula id="id84" value="$\overline{G}_{B,S}^*(b)$"/>
+          <text value="получена по выборке"/>
+          <formula id="id85" value="$X_{B,S}$"/>
+          <text value=", а"/>
+          <formula id="id86" value="$\overline{G}_B^*(b)$"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="по выборке$X_B$. После выполнения 2-го и 3-го шагов алгоритма А2 получены следующие два разложения:"/>
+          <command value="\begin">
+            <braces>
+              <text value="g_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B,S"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^* (u) &amp;amp; ="/>
+            </braces>
+          </command>
+          <command value="\sum"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="j=1"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="k_"/>
+              </braces>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B,S"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces/>
+            <braces>
+              <text value="p_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B,S_j"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^* h"/>
+            </braces>
+          </command>
+          <command value="\left">
+            <braces>
+              <text value="(u,"/>
+            </braces>
+          </command>
+          <command value="\vartheta">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B,S_j"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^*"/>
+            </braces>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")"/>
+            </braces>
+          </command>
+          <text value=";"/>
+          <text value="g_"/>
+          <braces>
+            <text value="{}"/>
+            <text value="B"/>
+          </braces>
+          <text value="^* (u) &amp;amp; ="/>
+          <command value="\sum"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="j=1"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="k_"/>
+              </braces>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B,S"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces/>
+            <braces>
+              <text value="p_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B_j"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^* h"/>
+            </braces>
+          </command>
+          <command value="\left">
+            <braces>
+              <text value="(u,"/>
+            </braces>
+          </command>
+          <command value="\vartheta">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B,S_j"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^*"/>
+            </braces>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")"/>
+            </braces>
+          </command>
+          <text value="."/>
+          <command value="\end">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="align*"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="Тогда оценка для составляющей"/>
+            </braces>
+          </command>
+          <formula id="id87" value="$g_S(u)$"/>
+          <text value="принимает вид:$$g_S^*(u) ="/>
+          <command value="\sum"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="j=1"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="k_"/>
+              </braces>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B,S"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces/>
+            <braces>
+              <text value="p_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="S_j"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^* h(u,"/>
+            </braces>
+          </command>
+          <command value="\vartheta">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B,S_j"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value=")"/>
+            </braces>
+          </command>
+          <text value=",$$где для нахождения"/>
+          <formula id="id88" value="$p_{S_j}^*$"/>
+          <text value="необходимо последовательно получить следующее:"/>
+          <command value="\begin"/>
+          <command value="\widetilde">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="p"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="S_j"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^* &amp;amp; ="/>
+            </braces>
+          </command>
+          <command value="\begin">
+            <braces>
+              <text value="p_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B,S_j"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^* -p^* p_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B_j"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^*"/>
+            </braces>
+          </command>
+          <text value=", &amp;amp; p_"/>
+          <braces>
+            <text value="{}"/>
+            <text value="B,S_j"/>
+          </braces>
+          <text value="^*-p^* p_"/>
+          <braces>
+            <text value="{}"/>
+            <text value="B_j"/>
+          </braces>
+          <text value="^* &amp;gt;0"/>
+          <text value=","/>
+          <text value="0"/>
+          <text value=", &amp;amp; p_"/>
+          <braces>
+            <text value="{}"/>
+            <text value="B,S_j"/>
+          </braces>
+          <text value="^* - p^* p_"/>
+          <braces>
+            <text value="{}"/>
+            <text value="B_j"/>
+          </braces>
+          <text value="^*"/>
+          <command value="\leq">
+            <braces>
+              <text value="0"/>
+            </braces>
+          </command>
+          <text value=","/>
+          <command value="\end">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="cases"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <text value="&amp;amp;"/>
+          <command value="\mbox">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="для"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <text value="j=1,"/>
+          <command value="\ldots">
+            <braces>
+              <text value=",k_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B,S"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <text value=";"/>
+          <command value="\widetilde">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="P"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="_S^* &amp;amp; ="/>
+            </braces>
+          </command>
+          <command value="\sum"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="j=1"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="k_"/>
+              </braces>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B,S"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces/>
+          </command>
+          <command value="\widetilde">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="p"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="S_j"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^*"/>
+            </braces>
+          </command>
+          <text value=";"/>
+          <text value="p_"/>
+          <braces>
+            <text value="{}"/>
+            <text value="S_j"/>
+          </braces>
+          <text value="^* &amp;amp;="/>
+          <command value="\fr">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <command value="\widetilde">
+                  <braces>
+                    <braces>
+                      <text value="{}"/>
+                      <text value="p"/>
+                    </braces>
+                  </braces>
+                  <braces/>
+                  <braces>
+                    <text value="^*_"/>
+                  </braces>
+                  <braces>
+                    <braces>
+                      <text value="{}"/>
+                      <text value="S_j"/>
+                    </braces>
+                  </braces>
+                  <braces/>
+                  <braces/>
+                  <braces>
+                    <braces>
+                      <text value="{}"/>
+                      <command value="\widetilde">
+                        <braces>
+                          <braces>
+                            <text value="{}"/>
+                            <text value="P"/>
+                          </braces>
+                        </braces>
+                        <braces/>
+                        <braces>
+                          <text value="_S^*"/>
+                        </braces>
+                        <braces/>
+                      </command>
+                    </braces>
+                  </braces>
+                </command>
+              </braces>
+            </braces>
+          </command>
+          <command value="\mbox">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="для"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <text value="j=1,"/>
+          <command value="\ldots">
+            <braces>
+              <text value=",k_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B,S"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <text value="."/>
+          <command value="\end">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="align*"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="Мерой точности такого приближенного решения ("/>
+            </braces>
+          </command>
+          <command value="\ref">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="e1kr"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value=") как уравнения относительно"/>
+            </braces>
+          </command>
+          <formula id="id89" value="$g_S(u)$"/>
+          <text value="может служить следующая величина:$$"/>
+          <command value="\varepsilon">
+            <braces>
+              <text value="="/>
+            </braces>
+          </command>
+          <command value="\left">
+            <braces>
+              <text value="(1-p^*"/>
+            </braces>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")"/>
+            </braces>
+          </command>
+          <command value="\sum"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <command value="\substack">
+                  <braces>
+                    <braces>
+                      <text value="{j=1,\ldots &#10;,k_{B,S}}"/>
+                    </braces>
+                  </braces>
+                </command>
+              </braces>
+            </braces>
+          </command>
+          <braces>
+            <text value="{}"/>
+            <text value="p_"/>
+          </braces>
+          <braces>
+            <text value="{}"/>
+            <text value="B,S_j"/>
+          </braces>
+          <text value="^* -p^*p_"/>
+          <braces>
+            <text value="{}"/>
+            <text value="B_j"/>
+          </braces>
+          <text value="^* &amp;lt;0"/>
+          <command value="\left"/>
+          <command value="\vert">
+            <braces>
+              <text value="p^*_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B,S_j"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="-p^*p_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="B_j"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^*"/>
+            </braces>
+          </command>
+          <command value="\right"/>
+          <command value="\vert"/>
+          <text value=".$$Для оценки$p^*$можно, в принципе, построить ее распределение. Действительно, оценки"/>
+          <formula id="id90" value="$\overline{G}_B^*(b)$"/>
+          <text value="и"/>
+          <formula id="id91" value="$\overline{G}_{B,S}^*(b)$"/>
+          <text value="основываются на числе успехов в последовательности испытаний Бернулли: для"/>
+          <formula id="id92" value="$\overline{G}_B^*(b)$"/>
+          <text value="это"/>
+          <formula id="id93" value="$\widetilde{v}$"/>
+          <text value="в$N$испытаниях с вероятностью успеха$q$, для"/>
+          <formula id="id94" value="$\overline{G}_{B,S}^*(b)$"/>
+          <text value="это"/>
+          <formula id="id95" value="$\widetilde{w}$"/>
+          <text value="в$M$испытаниях с вероятностью успеха$pq$. Здесь$N$"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="объем выборки$X_B$и"/>
+          <formula id="id96" value="$q=\int\limits_b^{+\infty} g_B(u)\,du$"/>
+          <text value=",$M$"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="объем выборки"/>
+          <formula id="id97" value="$X_{B,S}$"/>
+          <text value="и"/>
+          <formula id="id98" value="$pq = &#10;\int\limits_b^{+\infty} g_{B,S}(u)\,du$"/>
+          <text value=". Предполагается, что выборки$X_B$и"/>
+          <formula id="id99" value="$X_{B,S}$"/>
+          <text value="являются независимыми. Тогда совместное распределение числа успехов в двух испытаниях Бернулли есть"/>
+          <command value="\begin"/>
+          <command value="\mathrm">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="Pr"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\widetilde">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="V"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="="/>
+            </braces>
+          </command>
+          <command value="\widetilde">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="v"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value=","/>
+            </braces>
+          </command>
+          <command value="\widetilde">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="W"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="="/>
+            </braces>
+          </command>
+          <command value="\widetilde">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="w"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <text value="="/>
+          <braces>
+            <text value="{}"/>
+          </braces>
+          <braces>
+            <text value="{}"/>
+            <text value="="/>
+            <command value="\begin">
+              <braces>
+                <text value="N"/>
+              </braces>
+            </command>
+          </braces>
+          <command value="\widetilde">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="v"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\end">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="pmatrix"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="q^"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <command value="\widetilde">
+                  <braces>
+                    <braces>
+                      <text value="{}"/>
+                      <text value="v"/>
+                    </braces>
+                  </braces>
+                  <braces/>
+                  <braces/>
+                </command>
+                <command value="\left">
+                  <braces>
+                    <text value="(1-q"/>
+                  </braces>
+                </command>
+                <command value="\right">
+                  <braces>
+                    <text value=") ^"/>
+                  </braces>
+                  <braces>
+                    <braces>
+                      <text value="{}"/>
+                      <text value="N-"/>
+                      <command value="\widetilde">
+                        <braces>
+                          <braces>
+                            <text value="{}"/>
+                            <text value="v"/>
+                          </braces>
+                        </braces>
+                        <braces/>
+                        <braces/>
+                      </command>
+                      <command value="\begin">
+                        <braces>
+                          <text value="M"/>
+                        </braces>
+                      </command>
+                    </braces>
+                  </braces>
+                </command>
+              </braces>
+            </braces>
+          </command>
+          <command value="\widetilde">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="w"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\end">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="pmatrix"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\left">
+            <braces>
+              <text value="( pq"/>
+            </braces>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")^"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <command value="\widetilde">
+                  <braces>
+                    <braces>
+                      <text value="{}"/>
+                      <text value="w"/>
+                    </braces>
+                  </braces>
+                  <braces/>
+                  <braces/>
+                </command>
+                <command value="\left">
+                  <braces>
+                    <text value="(1-pq"/>
+                  </braces>
+                </command>
+                <command value="\right">
+                  <braces>
+                    <text value=")^"/>
+                  </braces>
+                  <braces>
+                    <braces>
+                      <text value="{}"/>
+                      <text value="M-"/>
+                      <command value="\widetilde">
+                        <braces>
+                          <braces>
+                            <text value="{}"/>
+                            <text value="w"/>
+                          </braces>
+                        </braces>
+                        <braces/>
+                        <braces/>
+                      </command>
+                    </braces>
+                  </braces>
+                </command>
+              </braces>
+            </braces>
+          </command>
+          <text value="."/>
+          <command value="\end">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="multline*"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="Это позволяет в явном виде записать вероятность появления любого допустимого значения для$W/V$, где"/>
+            </braces>
+          </command>
+          <formula id="id100" value="$W = \widetilde{W}/M$"/>
+          <text value="и"/>
+          <formula id="id101" value="$v=\widetilde{V}/N$"/>
+          <text value=", а следовательно, получить все необходимые характеристики случайной величины$p^*$, определенной в ("/>
+          <command value="\ref">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="e15kr"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="). Асимптотический подход может дать более простые результаты. Если через"/>
+            </braces>
+          </command>
+          <formula id="id102" value="$\Phi (a,c^2)$"/>
+          <text value="обозначить нормальное распределение с параметрами"/>
+          <formula id="id103" value="$(a,c^2)$"/>
+          <text value=", а знак"/>
+          <formula id="id104" value="$\Leftarrow$"/>
+          <text value="употреблять между обозначениями случайной величины и ее распределением, то при"/>
+          <formula id="id105" value="$M,N\rightarrow &#10;\infty$"/>
+          <text value="имеем:"/>
+          <command value="\begin">
+            <braces>
+              <text value="V &amp;amp;"/>
+            </braces>
+          </command>
+          <command value="\Leftarrow"/>
+          <command value="\Phi"/>
+          <command value="\left">
+            <braces>
+              <text value="(q,"/>
+            </braces>
+          </command>
+          <command value="\fr">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="q(1-q)"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="N"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")"/>
+            </braces>
+          </command>
+          <text value=";"/>
+          <text value="W &amp;amp;"/>
+          <command value="\Leftarrow"/>
+          <command value="\Phi"/>
+          <command value="\left">
+            <braces>
+              <text value="( pq,"/>
+            </braces>
+          </command>
+          <command value="\fr">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="pq(1-pq)"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="M"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")"/>
+            </braces>
+          </command>
+          <text value="."/>
+          <command value="\end">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="align*"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="Найдем вероятность"/>
+            </braces>
+          </command>
+          <formula id="id106" value="$\mathrm{Pr}\{W-uV\leq y\}$"/>
+          <text value="для некоторых значений$u$,$y$. Имеем:$$W-uV"/>
+          <command value="\Leftarrow"/>
+          <command value="\Phi"/>
+          <command value="\left">
+            <braces>
+              <text value="( pq-uq,"/>
+            </braces>
+          </command>
+          <command value="\fr">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="pq(1-pq)"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="M"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="+u^2"/>
+            </braces>
+          </command>
+          <command value="\fr">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="q(1-q)"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="N"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")$$и, следовательно,"/>
+            </braces>
+          </command>
+          <command value="\begin"/>
+          <command value="\mathrm">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="Pr"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\left"/>
+          <text value="W-uV"/>
+          <command value="\leq">
+            <braces>
+              <text value="y"/>
+            </braces>
+          </command>
+          <command value="\right"/>
+          <text value="="/>
+          <braces>
+            <text value="{}"/>
+          </braces>
+          <braces>
+            <text value="{}"/>
+            <text value="="/>
+            <command value="\Phi">
+              <braces>
+                <text value="_"/>
+              </braces>
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <text value="0,1"/>
+                </braces>
+              </braces>
+              <braces/>
+            </command>
+            <command value="\left">
+              <braces>
+                <text value="("/>
+              </braces>
+            </command>
+            <command value="\fr">
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <text value="y-(pq- uq)"/>
+                </braces>
+              </braces>
+              <braces/>
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <command value="\sqrt">
+                    <braces>
+                      <braces>
+                        <text value="{}"/>
+                        <text value="pq(1-pq)/M+u^2q(1-q)/N"/>
+                      </braces>
+                    </braces>
+                    <braces/>
+                    <braces/>
+                  </command>
+                  <command value="\right">
+                    <braces>
+                      <text value=")"/>
+                    </braces>
+                  </command>
+                </braces>
+              </braces>
+            </command>
+          </braces>
+          <text value=","/>
+          <command value="\end">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="multline*"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="где"/>
+            </braces>
+          </command>
+          <formula id="id107" value="$\Phi_{0,1}$"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="функция стандартного нормального распределения. Но$$"/>
+          <command value="\mathrm">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="Pr"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <text value="W-uV"/>
+          <command value="\leq">
+            <braces>
+              <text value="0"/>
+            </braces>
+          </command>
+          <text value="="/>
+          <command value="\mathrm">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="Pr"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <text value="W"/>
+          <command value="\leq">
+            <braces>
+              <text value="uV"/>
+            </braces>
+          </command>
+          <command value="\approx"/>
+          <command value="\mathrm">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="Pr"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\left"/>
+          <command value="\fr">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="W"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="V"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\leq">
+            <braces>
+              <text value="u"/>
+            </braces>
+          </command>
+          <command value="\right"/>
+          <text value=".$$Таким образом,"/>
+          <command value="\begin"/>
+          <command value="\mathrm">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="Pr"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <text value="P^*"/>
+          <command value="\leq">
+            <braces>
+              <text value="u"/>
+            </braces>
+          </command>
+          <command value="\equiv"/>
+          <command value="\mathrm">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="Pr"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\left"/>
+          <command value="\fr">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="W"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="v"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\leq">
+            <braces>
+              <text value="u"/>
+            </braces>
+          </command>
+          <command value="\right"/>
+          <command value="\approx">
+            <braces>
+              <braces>
+                <text value="{}"/>
+              </braces>
+            </braces>
+          </command>
+          <braces>
+            <text value="{}"/>
+            <command value="\approx"/>
+            <command value="\Phi">
+              <braces>
+                <text value="_"/>
+              </braces>
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <text value="0,1"/>
+                </braces>
+              </braces>
+              <braces/>
+            </command>
+            <command value="\left">
+              <braces>
+                <text value="("/>
+              </braces>
+            </command>
+            <command value="\fr">
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <text value="uq-pq"/>
+                </braces>
+              </braces>
+              <braces/>
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <command value="\sqrt">
+                    <braces>
+                      <braces>
+                        <text value="{}"/>
+                        <text value="pq(1-pq)/M+u^2q(1- q)/N"/>
+                      </braces>
+                    </braces>
+                    <braces/>
+                    <braces/>
+                  </command>
+                  <command value="\right">
+                    <braces>
+                      <text value=")"/>
+                    </braces>
+                  </command>
+                </braces>
+              </braces>
+            </command>
+          </braces>
+          <text value="."/>
+          <command value="\label">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="e16kr"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\end">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="multline"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="С помощью ("/>
+            </braces>
+          </command>
+          <command value="\ref">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="e16kr"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value=") можно, в частности, проанализировать зависимость свойств оценки$p^*$от выбора значения$q$. В качестве выборочных свойств оценки рассмотрим смещение и стандартное отклонение, а именно: если$p^*$есть оценка параметра$p$, принимающего значение$p_0$, то смещение этой оценки есть"/>
+            </braces>
+          </command>
+          <formula id="id108" value="$\mathrm{Bias} (p^*) = E\{p^*\} -p_0$"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <formula id="id109" value="$\mathrm{St}D (p^*) =\sqrt{E\{(p^*-E\{p^*\})^2\}}$"/>
+          <text value=". Для вычисления смещения и стандартной среднеквадратичной ошибки используем ("/>
+          <command value="\ref">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="e16kr"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value=") и приближенный метод вычисления соответствующих интегралов. На рис. 1 дан график зависимостей введенных выборочных характеристик оценки от значения$q$для"/>
+            </braces>
+          </command>
+          <formula id="id110" value="$p_0 = 50\%$"/>
+          <text value=","/>
+          <formula id="id111" value="$M = N = 800$"/>
+          <text value=". Из него, в частности, видно, что с точки зрения качества оценки$p^*$значение$q$следует выбирать как можно большим; но при этом не следует забывать, что с точки зрения коррект-"/>
+          <command value="\linebreak">
+            <braces>
+              <text value="\linebreak"/>
+            </braces>
+          </command>
+          <command value="\vspace*">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="-12pt"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <center/>
+          <command value="\vspace*">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="1pt"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <braces>
+            <text value="{\figurename~1}"/>
+          </braces>
+          <command value="\small">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="Зависимости свойств оценки$p^*$от выбора$q$:"/>
+              </braces>
+            </braces>
+          </command>
+          <command value="\textit">
+            <braces>
+              <text value="\textit{}"/>
+            </braces>
+            <text value="1"/>
+          </command>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <formula id="id112" value="$\mathrm{Bias} (p^*)$"/>
+          <text value=";"/>
+          <command value="\textit">
+            <braces>
+              <text value="\textit{}"/>
+            </braces>
+            <text value="2"/>
+          </command>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <formula id="id113" value="$\mathrm{St}D(p^*)$"/>
+          <command value="\bigskip"/>
+          <command value="\addtocounter">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="figure"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="1"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\noindent">
+            <braces>
+              <text value="\noindent"/>
+            </braces>
+          </command>
+          <text value="ности отделения"/>
+          <formula id="id114" value="$g_S(u)$"/>
+          <text value="и"/>
+          <formula id="id115" value="$g_B(u)$"/>
+          <text value="значение$q$следует выбирать как можно меньшим (соответствующее значение$b$должно быть как можно большим)."/>
+        </subsection>
+      </section>
+      <section id="id116">
+        <braces>
+          <text value="\section{}"/>
+        </braces>
+        <text value="Эксперименты"/>
+        <text value="Цель экспериментов состояла в сравнительном анализе свойств построенных алгоритмов. В качестве модели обрабатываемых данных была выбрана смесь распределений"/>
+        <formula id="id117" value="$g_B(u)$"/>
+        <text value="и"/>
+        <formula id="id118" value="$g_S(u)$"/>
+        <text value=". Каждая составляющая"/>
+        <formula id="id119" value="$g_B(u)$"/>
+        <text value="и"/>
+        <formula id="id120" value="$g_S(u)$"/>
+        <text value="описывалась, в свою очередь, с помощью смесей нормальных распределений следующего общего вида:"/>
+        <command value="\begin">
+          <braces>
+            <text value="g_B(u) &amp;amp; ="/>
+          </braces>
+        </command>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="j=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="16"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="p_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="B_j"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="h"/>
+          </braces>
+        </command>
+        <command value="\left">
+          <braces>
+            <text value="(u,a_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="B_j"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=",c_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="B_j"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")"/>
+          </braces>
+        </command>
+        <text value=";"/>
+        <text value="g_S(u) &amp;amp; ="/>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="j=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^6 p_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="S_j"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="h"/>
+          </braces>
+        </command>
+        <command value="\left">
+          <braces>
+            <text value="(u, a_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="S_j"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=", c_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="S_j"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")"/>
+          </braces>
+        </command>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="align*"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="(значения параметров приведены в табл."/>
+          </braces>
+        </command>
+        <command value="\ref">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="t1kr"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="); с помощью этих смесей аппроксимировались распределения реальных данных, встречающихся при распознавании зашумленного изображения текста. Качество процедур расщепления смеси на две составляющие характеризовалось выборочными свойствами оценок веса$p^*$и порога$T^*$, а также временем обработки выборок. Параметрами задачи сравнительного анализа свойств алгоритмов являлись следующие: значение$p_0$, значение объема выборок (объемы"/>
+          </braces>
+        </command>
+        <formula id="id121" value="$X_{B,S}$"/>
+        <text value="и$X_B$здесь и далее брались равными), значение$k$"/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="числа элементов смеси, принятого для описания выборочных распределений. Для обеих процедур многократно проводились эксперименты по моделированию выборок из"/>
+        <formula id="id122" value="$g_{B,S}(u) = (1-p_0)g_S(u) +p_0g_B(u)$"/>
+        <text value="и построению оценок$p^*$(A1) и$p^*$(A2). После получения"/>
+        <command value="\linebreak">
+          <braces>
+            <text value="\linebreak"/>
+          </braces>
+        </command>
+        <command value="\vspace*">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="-12pt"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\pagebreak"/>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="multicols"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\begin"/>
+        <command value="\small"/>
+        <center/>
+        <command value="\vspace">
+          <braces>
+            <text value="\vspace{6pt}"/>
+          </braces>
+        </command>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="table"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <figure id="id123" value="Token(TokenType.COMMAND&amp;quot;, &amp;quot;\begin{figure}&#10;\vspace*{1pt}&#10;\begin{center}&#10;\mbox{%&#10;\epsfxsize=160.172mm&#10;\epsfbox{kri-2.eps}&#10;}&#10;\end}&#10;\vspace*{-9pt}&#10;     \Caption{Сравнительные характеристики качества оценок $p^*$ и~$T^*$&#10;     \label{f2kr}}&#10;     \end{figure}&amp;quot;, line=679, col=20)">
+          <command value="\begin">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="2"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\noindent">
+            <braces>
+              <text value="\noindent"/>
+            </braces>
+          </command>
+          <text value="100 пар этих значений по ним строились оценки для"/>
+          <formula id="id124" value="$\mathrm{Bias}(p^*(\mathrm{A1}))$"/>
+          <text value="и"/>
+          <formula id="id125" value="$\mathrm{Bias}(p^*(\mathrm{A2}))$"/>
+          <text value=","/>
+          <formula id="id126" value="$\mathrm{St}D(p^*(\mathrm{A1}))$"/>
+          <text value="и"/>
+          <formula id="id127" value="$\mathrm{St}D(p^*(\mathrm{A2}))$"/>
+          <text value="(с целью упрощения записи далее под"/>
+          <formula id="id128" value="$\mathrm{Bias}(\ldots)$"/>
+          <text value="и"/>
+          <formula id="id129" value="$\mathrm{St}D(\ldots)$"/>
+          <text value="понимаются их оценки). Далее в плоскости значений"/>
+          <formula id="id130" value="$(\mathrm{abs}(\mathrm{Bias}(p^*(\mathrm{A2}))) -$"/>
+          <formula id="id131" value="$-\;\mathrm{abs}(\mathrm{Bias}(p^*(\mathrm{A1})))$"/>
+          <text value=","/>
+          <formula id="id132" value="$\mathrm{St}D(p^*(\mathrm{A2})) - &#10;\mathrm{St}D(p^*(\mathrm{A1})))$"/>
+          <text value="для"/>
+          <formula id="id133" value="$p_0 = 25\%$"/>
+          <text value=", 50"/>
+          <text value=", 75"/>
+          <text value=","/>
+          <formula id="id134" value="$N = M = 200$"/>
+          <text value=", 800, 3"/>
+          <text value="200, 12"/>
+          <text value="800,"/>
+          <formula id="id135" value="$k = 8$"/>
+          <text value=", 12, 16 отмечались точки, соответствующие результатам применения двух процедур."/>
+          <braces>
+            <text value="{}"/>
+          </braces>
+          <text value="Аналогичные действия проводились для оценок$T^*$; полученные результаты представлены в графическом виде на рис."/>
+          <command value="\ref">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="f2kr"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value=". Из них на множестве рассмотренных вариантов видно преимущество последовательного оценивания (процедура А2) по сравнению с процедурой одновременного оценивания (процедура А1) параметров"/>
+            </braces>
+          </command>
+          <text value="расщепленной смеси, так как показатели качества оценок в основном выше для А2 по сравнению с А1."/>
+          <braces>
+            <text value="{}"/>
+          </braces>
+          <text value="Кроме того, временные показатели А2 также лучше, чем у А1, что отображено на рис."/>
+          <command value="\ref">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="f3kr"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value=", где в плоскости (log(среднее"/>
+            </braces>
+          </command>
+          <text value="время"/>
+          <text value="А1), log(среднее"/>
+          <text value="время"/>
+          <text value="А2)) точками отмечены перечисленные варианты моделирования и обработки данных. Таким образом, предпочтение следует отдать последовательной процедуре оценивания параметров расщепленной смеси."/>
+          <text value="Самостоятельный интерес представляет поведение качества оценок при увеличении объема выборок, соответствующие результаты представлены на рис."/>
+          <command value="\ref">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="f4kr"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="и"/>
+            </braces>
+          </command>
+          <command value="\ref">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="f5kr"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value=". Обращает на себя внимание &amp;lt;&amp;lt;необычное&amp;gt;&amp;gt; поведение свойств оценок при различных значени-"/>
+            </braces>
+          </command>
+          <command value="\linebreak">
+            <braces>
+              <text value="\linebreak"/>
+            </braces>
+          </command>
+          <command value="\vspace*">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="-12pt"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\pagebreak"/>
+          <command value="\end">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="multicols"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <figure id="id136" value="Token(TokenType.COMMAND&amp;quot;, &amp;quot;\begin{figure}&#10;\vspace*{1pt}&#10;\begin{center}&#10;\mbox{%&#10;\epsfxsize=162.586mm&#10;\epsfbox{kri-3-4.eps}&#10;}&#10;\end}&#10;\vspace*{-9pt}&#10;\begin{minipage}[t]{82mm}&#10;%\vspace*{-9pt}&#10;\Caption{Сравнительные характеристики среднего времени расщепления смеси&#10;\label{f3kr}}&#10;%\end}&#10;\end}&#10;\hfill&#10;\begin{minipage}[t]{76mm}&#10;%\begin{figure*} %fig4&#10;%\vspace*{1pt}&#10;%\begin{center}&#10;%\mbox{%&#10;%\epsfxsize=73.966mm&#10;%\epsfbox{kri-4.eps}&#10;%}&#10;%\end}&#10;%\vspace*{-9pt}&#10;     \Caption{Зависимости свойств оценки $p^*$ от объема выборок~$N$: &#10;\textit{1}~--- $\mathrm{Bias} (p^*)$; \textit{2}~--- $\mathrm{St}D(p^*)$&#10;     \label{f4kr}}&#10;%     \end}&#10;\end}&#10;     \vspace*{6pt}&#10;\end{figure}&amp;quot;, line=743, col=15)">
+            <figure id="id137" value="Token(TokenType.COMMAND&amp;quot;, &amp;quot;\begin{figure}&#10;     \vspace*{1pt}&#10;\begin{center}&#10;\mbox{%&#10;\epsfxsize=165.777mm&#10;\epsfbox{kri-5.eps}&#10;}&#10;\end}&#10;\vspace*{-9pt}&#10;     \Caption{Зависимости свойств оценки $T^*$ от объема выборок~$N$:&#10;     \textit{1}~--- $k=8$; \textit{2}~--- $k=12$; \textit{3}~--- $k=16$&#10;     \label{f5kr}}&#10;     \vspace*{6pt}&#10;     \end{figure}&amp;quot;, line=777, col=20)">
+              <command value="\begin">
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="2"/>
+                  </braces>
+                </braces>
+                <braces/>
+              </command>
+              <command value="\noindent">
+                <braces>
+                  <text value="\noindent"/>
+                </braces>
+              </command>
+              <text value="ях числа элементов смеси$k$. Представляется, что увеличение этого параметра должно приводить к улучшению аппроксимации и поэтому к более качественным результатам (заметим, что оценка$p^*$не зависит от$k$). В связи с чем отдельно проводилось моделирование зависимости свойств$T^*$от числа элементов смеси (рис. 6). Полученные результаты позволяют сформулировать следующее предположение: существует некоторое оптимальное значение$k$, позволяющее наилучшим образом решить задачу аппроксимации распределений"/>
+              <formula id="id138" value="$g_B(u)$"/>
+              <text value="и"/>
+              <formula id="id139" value="$g_S(u)$"/>
+              <text value=". При этом, к счастью, для практических применений увеличение значения$k$несущественно сказывается на свойствах получающихся оценок."/>
+            </figure>
+          </figure>
+        </figure>
+      </section>
+      <section id="id140">
+        <braces>
+          <text value="\section{}"/>
+        </braces>
+        <text value="Заключение"/>
+        <text value="Полученные решения задачи расщепления смеси на две составляющие представляют самосто-"/>
+        <command value="\linebreak">
+          <braces>
+            <text value="\linebreak"/>
+          </braces>
+        </command>
+        <command value="\vspace*">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="-12pt"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <center/>
+        <command value="\vspace*">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="2pt"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <braces>
+          <text value="{\figurename~6}"/>
+        </braces>
+        <command value="\small">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="Зависимости свойств оценки$T^*$от числа элементов смеси$k$:"/>
+            </braces>
+          </braces>
+        </command>
+        <command value="\textit">
+          <braces>
+            <text value="\textit{}"/>
+          </braces>
+          <text value="1"/>
+        </command>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <formula id="id141" value="$\mathrm{Bias} (T^*)$"/>
+        <text value=";"/>
+        <command value="\textit">
+          <braces>
+            <text value="\textit{}"/>
+          </braces>
+          <text value="2"/>
+        </command>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <formula id="id142" value="$\mathrm{St}D(T^*)$"/>
+        <command value="\bigskip"/>
+        <command value="\addtocounter">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="figure"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="1"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\noindent">
+          <braces>
+            <text value="\noindent"/>
+          </braces>
+        </command>
+        <text value="ятельный интерес, достаточны для их применения на практике. Проведенные эксперименты не только продемонстрировали работоспособность предложенных решений, но и дали схемы исследования в духе бутстреп-метода свойств оценок, существенно зависящих от множества таких параметров, как объемы выборок, значения$q$(или$b$, где"/>
+        <formula id="id143" value="$q=\int\limits_b^{+\infty} g_B(u)\,du$"/>
+        <text value="), параметры ЕМ-алгоритма (число элементов смеси$k$, критическое значение дисперсии"/>
+        <formula id="id144" value="$c^2_{\min}$"/>
+        <text value=", максимальное число итераций, ошибка нахождения максимума функции правдоподобия)."/>
+        <braces>
+          <text value="{}"/>
+        </braces>
+        <braces>
+          <text value="{}"/>
+          <command value="\small"/>
+          <command value="\frenchspacing">
+            <braces>
+              <braces>
+                <text value="{}"/>
+              </braces>
+            </braces>
+          </command>
+        </braces>
+        <command value="\addcontentsline">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="toc"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="section"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="Литература"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\begin">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="9"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <item id="id145" value="\bibitem">
+          <braces>
+            <text value="\bibitem{1kr}"/>
+          </braces>
+        </item>
+        <author value="\Au{}"/>
+        <text value="Кривенко М."/>
+        <text value="П."/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="М.: ИПИ РАН, 2007. Вып. 17. С. 30--51."/>
+        <command value="\label">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="end"/>
+              <command value="\stat">
+                <braces/>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <item id="id146" value="\bibitem">
+          <braces>
+            <text value="\bibitem{2kr}"/>
+          </braces>
+        </item>
+        <author value="\Au{}"/>
+        <text value="McLachlan G."/>
+        <text value="J., Peel D."/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="New York: Wiley, 2000. 419 p."/>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="thebibliography"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces/>
+          <braces/>
+        </command>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="multicols"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+      </section>
+    </fulltext>
+  </paper>
+</papers>

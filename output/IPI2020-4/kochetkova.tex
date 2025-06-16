@@ -1,0 +1,856 @@
+%есть рисунки
+
+\def\stat{kochetkova}
+
+\def\tit{СИСТЕМА МАССОВОГО ОБСЛУЖИВАНИЯ С~ОРБИТАМИ ДЛЯ~АНАЛИЗА
+ СОВМЕСТНОГО ОБСЛУЖИВАНИЯ ТРАФИКА С~МАЛЫМИ ЗАДЕРЖКАМИ URLLC 
+ И~ШИРОКОПОЛОСНОГО ДОСТУПА eMBB В~БЕСПРОВОДНЫХ СЕТЯХ ПЯТОГО ПОКОЛЕНИЯ$^*$}
+
+\def\titkol{Система массового обслуживания с~орбитами для анализа 
+совместного обслуживания трафика}
+% с~малыми задержками URLLC и~широкополосного 
+%доступа 
+%\mbox{eMBB} в~беспроводных сетях пятого поколения}
+
+\def\aut{П.\,А.~Харин$^1$, Е.\,Д.~Макеева$^2$, И.\,А.~Кочеткова$^3$,
+ Д.\,В.~Ефросинин$^4$, С.\,Я.~Шоргин$^5$}
+
+\def\autkol{П.\,А.~Харин, Е.\,Д.~Макеева, И.\,А.~Кочеткова и~др.}
+%, Д.\,В.~Ефросинин$^4%, С.\,Я.~Шоргин$^5$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Харин П.\,А.}
+\index{Макеева Е.\,Д.}
+\index{Кочеткова И.\,А.}
+\index{Ефросинин Д.\,В.}
+\index{Шоргин С.\,Я.}
+\index{Kharin P.\,A.}
+\index{Makeeva E.\,D.}
+\index{Kochetkova I.\,A.}
+\index{Efrosinin D.\,V.}
+\index{Shorgin S.\,Ya.}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Публикация подготовлена при поддержке Программы 
+РУДН <<5-100>>. Исследование выполнено при финансовой поддержке РФФИ 
+(проекты 18-00-01555(18-00-01685) и~20-37-70079).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Российский университет дружбы народов, {pxarin@mail.ru}}
+\footnotetext[2]{Российский университет дружбы народов, {len16730637@yandex.ru}}
+\footnotetext[3]{Российский университет дружбы народов; Институт 
+проблем информатики Федерального исследовательского центра <<Информатика и~управление>> 
+Российской академии наук, \mbox{gudkova-ia@rudn.ru}}
+\footnotetext[4]{Университет имени Иоганна Кеплера, Австрия; 
+Российский университет дружбы народов, \mbox{dmitry.efrosinin@jku.at}}
+\footnotetext[5]{Институт проблем информатики Федерального исследовательского центра 
+<<Информатика и~управление>> Российской академии наук, \mbox{sshorgin@ipiran.ru}}
+
+
+\vspace*{-10pt}
+
+
+\Abst{Для современных беспроводных сетей пятого поколения (5G) характерны три 
+сценария их использования~--- крупномасштабные системы межмашинной связи 
+(massive machine-type communication, mMTC), сверхнадежная передача данных с~малой задержкой (ultrareliable 
+low-latency communication, URLLC) и~усовершенствованная подвижная широкополосная 
+связь (enhanced mobile broadband, \mbox{eMBB}). Требования к~качеству предоставления услуг и~их 
+параметры в~рамках данных сценариев существенно разнятся: так, для URLLC характерна сверхнизкая, 
+до 1~мс, задержка, а для \mbox{eMBB}~--- сверхвысокая скорость передачи данных. Возникает актуальная задача 
+организации совместного предоставления таких услуг. В~статье построена схема совместного обслуживания 
+трафика URLLC и~\mbox{eMBB}, исходя из того что данные URLLC имеют малый объем и~могут занимать менее одного
+ ресурсного блока (physical resource block, PRB). Анализ схемы проведен при помощи разработанной 
+ системы массового обслуживания (СМО) с~двумя орбитами, предназначенными для временного хранения 
+ прерываемых и~ожидающих начала обслуживания менее приоритетных запросов \mbox{eMBB}. Получен матричный алгоритм 
+ для расчета распределения вероятностей и~формулы для вероятностных характеристик системы.}
+
+\KW{5G; сверхнадежная передача данных с~малой задержкой (URLLC); усовершенствованная подвижная 
+широкополосная связь (\mbox{eMBB}); система массового обслуживания с~орбитами; прерывание обслуживания}
+
+\DOI{10.14357/19922264200403} 
+  
+%\vspace*{9pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+\section{Введение}
+
+С развитием технологий беспроводной передачи данных увеличивается объем генерируемой и~передаваемой
+ информации. Согласно прогнозам Cisco Systems, рост числа мобильных устройств к~2021~г.\ составит 
+ до 11,6~млрд при 8~млрд в~2016~г. 
+ 
+ Для сетей 5G выделяют три сценария их 
+ использования в~соответствии со следующими характеристиками: сверхвысокая скорость передачи данных, 
+ спектральная эффективность, плотность\linebreak подключения устройств, сверхнизкая задержка и~сверхвысокая 
+ надежность передачи данных. Сценарии~--- крупномасштабные системы межмашинной связи (mMTC), 
+ сверхнадежная передача данных с~малой задержкой (URLLC) 
+ и~усовершенствованная подвижная широкополосная связь 
+ (\mbox{eMBB})~\cite{Popovski2018}.
+ 
+  Для mMTC специфична высокая плотность подключения устройств, что необходимо 
+  для приложений умного города, умного дома, индустриального интернета вещей. 
+  
+  Сценарий URLLC используется для 
+  передачи небольшого объема данных, но с~высокой надежностью и~очень низкими задержками для обеспечения 
+  мониторинга в~реальном времени, например сети беспилотных автомобилей или беспилотных летательных 
+  аппаратов~\cite{Cheng2020, Tun2020}. 
+  
+  Сценарий \mbox{eMBB} используется для предоставления пользователю высоких скоростей
+   передачи, которые необходимы, например, для потоковой передачи видео в~реальном времени с~высокой 
+   чет\-костью, виртуальной реальности,  дополненной реальности, телемедицины и~дистанционного обучения.
+
+
+Требования к~качеству обслуживания для каж\-до\-го сценария существенно различаются, поэтому возникает 
+задача организации совместного обслуживания соответствующего трафика~\cite{DosSantos2020, Kim2020}. 
+В~данной работе построена модель совместного обслуживания трафика URLLC и~\mbox{eMBB} в~условиях, когда 
+высший приоритет имеет трафик URLLC~\cite{Anand2020, Li2020}. Ввиду приоритетного обслуживания URLLC, 
+допустимо прерывание \mbox{eMBB}, как, например, в~работах~\cite{Gudkova2012, Makeeva2019}. 
+
+Авторы продолжают 
+исследование~\cite{Makeeva2019}, добавив более гибкий механизм в~отношении трафика \mbox{eMBB}~--- 
+допустимо возобновление его обслуживания после прерывания.
+
+
+\section{Системная модель обслуживания трафика URLLC~и~\mbox{eMBB}}
+
+Рассмотрим выделенную соту беспроводной сети, в~которой реализованы сценарии URLLC и~\mbox{eMBB}. 
+Предположим, что запросы на предостав\-ле\-ние услуг \mbox{eMBB} и~URLLC~--- передачу соответствующего 
+трафика~--- поступают согласно пуассоновскому закону с~интенсивностями~$\lambda_{m}$ и~$\lambda_{u}$ соответственно. Трафик URLLC имеет высокие требования к~задержке и~надежности 
+передачи данных, поэтому является приоритетным по отношению к~\mbox{eMBB}.
+
+Организованы два буфера для устройств \mbox{eMBB}. Первый буфер~$Q_1$ предназначен для устройств 
+\mbox{eMBB} с~задержкой передачи данных, т.\,е.\ для устройств \mbox{eMBB}, которые не смогли поступить на 
+обслуживание в~связи с~отсутствием свободных ресурсов. Второй буфер~$Q_2$ предназначен для прерванных 
+\mbox{eMBB}-устрой\-ств новыми поступившими URLLC-устрой\-ст\-ва\-ми в~систему. Буферы~$Q_1$ и~$Q_2$ системы 
+ограничены~$C_1$ и~$C_2$ соответственно. Пример такой соты показан на рис.~1.
+
+
+
+Фрагмент канала такой системы показан на  рис.~2. Данный канал состоит 
+из $N$ физических ресурсных блоков (PRB), которые, в~свою очередь, делятся на~$b$ ресурсных единиц. 
+Длительность одного PRB равна 1~слоту ($\sim0{,}5$~мс). Для удовлетворения требований устройств 
+URLLC к~задержке передачи данных каждый слот делится на минислоты.
+
+Так как трафик \mbox{eMBB} предназначен для передачи данных большого объема, а~трафик URLLC~--- для 
+передачи небольшого объема данных, то планирование передачи данных устройств \mbox{eMBB}\linebreak
+ проводится относительно 
+PRB, а~устройств URLLC~--- относительно ресурсных единиц
+(resource unit, RU). Совместное планирование обслуживания проводится 
+на разных частотах и~в~разное время для каждого типа трафика согласно\linebreak ортогональному множественному доступу 
+(orthogonal multiple access, OMA). Для рассматриваемой модели сделаем следующее предположение по нагрузке:
+ каждое устройство \mbox{eMBB}
+ требует $1$~PRB, т.\,е.\ $b$ ресурсных единиц, а~каждое устройство URLLC~--- $1$~ресурсную единицу.
+Для того чтобы принять устройство \mbox{eMBB}, необходимо наличие хотя бы одного свободного PRB, 
+при этом буферы должны быть пусты. Таким образом, если данные условия выполнены, планировщик назначает 
+один из свободных PRB, $b$ ресурсных единиц, новому устройству \mbox{eMBB}. Иначе, при наличии хотя бы одного 
+свободного места в~первом буфере, планировщик записывает это устройство в~буфер~$Q_1$, в~противном случае 
+это устройство будет заблокировано.
+
+{ \begin{center}  %fig1
+ \vspace*{12pt}
+     \mbox{%
+ \epsfxsize=78.325mm 
+ \epsfbox{koc-1.eps}
+ }
+
+\vspace*{6pt}
+
+\noindent
+{{\figurename~1}\ \ \small{
+Схема соты с~устройствами URLLC и~\mbox{eMBB}
+}}
+\end{center}}
+
+\vspace*{6pt}
+
+
+
+{ \begin{center}  %fig2
+ \vspace*{3pt}
+    \mbox{%
+ \epsfxsize=79mm 
+ \epsfbox{koc-2.eps}
+ }
+
+\end{center}
+
+\noindent
+{{\figurename~2}\ \ \small{
+Схема занятия радиоресурсов устройствами \mbox{URLLC}~(\textit{1}) и~\mbox{eMBB}~(\textit{2})
+}}}
+
+%\vspace*{6pt}
+
+\setcounter{figure}{2}
+\begin{figure*}[b] %fig3
+\vspace*{-3pt}
+ \begin{center}  
+ \mbox{%
+ \epsfxsize=136.498mm 
+ \epsfbox{koc-3.eps}
+ }
+\end{center}
+\vspace*{-9pt}
+\Caption{Схема СМО с~двумя орбитами}
+\label{fig_QS}
+\end{figure*}
+
+
+В случае же устройства URLLC для принятия к~обслуживанию достаточно наличия хотя бы одной ресурсной 
+единицы в~системе, иначе возможны два исхода событий. Если в~системе обслуживается хотя бы одно устройство
+ \mbox{eMBB}, то планировщик приостанавливает передачу данных случайно выбранного устройства \mbox{eMBB}, таким образом
+  освободив один PRB, и~назначает одну ресурсную единицу освободившегося PRB новому устройству URLLC. 
+  А~прерванный сеанс записывается во второй буфер для прерванных устройств \mbox{eMBB} для последующего 
+  восстановления соединения. Если все ресурсные единицы заняты под устройства URLLC, то новое устройство 
+  URLLC блокируется.
+После окончания обслуживания каждого из устройств освобождаются ресурсные единицы и~больше ничего не 
+происходит, т.\,е.\ устройства в~буферах продолжают свое ожидание обслуживания.
+
+ Устройства из первого буфера~$Q_1$ и~второго буфера~$Q_2$ пытаются перезапустить или возобновить\linebreak 
+ обслуживание через экспоненциально распределенное время с~параметрами 
+ $ \gamma_ {1}\hm> 0 $ и~$ \gamma_ {2}\hm> 0 $ соответственно. Поскольку прерванные 
+ сеансы \mbox{eMBB} должны быть возобновлены как можно скорее,  буфер~$Q_2$ считается приоритетным. 
+ Таким образом, устройство \mbox{eMBB} с~задержкой из буфера~$Q_1$ может установить соединение только в~том случае, 
+ когда буфер~$Q_2$ полностью свободен и~в~системе есть хотя бы один свободный PRB. А~для восстановления сеанса 
+ прерванного устройства \mbox{eMBB} достаточно наличия хотя бы одного свободного PRB в~системе, несмотря на состояние
+  первого буфера. В~случае когда устройства с~буферов не могут быть приняты к~обслуживанию, они продолжают
+   ожидание.
+
+\section{Система массового обслуживания с~орбитами}
+
+Рассматриваемую системную модель можно представить в~виде СМО с~двумя 
+орбитами с~исходными параметрами, описанными выше. Схема такой СМО показана на рис.~\ref{fig_QS}.
+
+Функционирование данной СМО опишем четырехмерным марковским случайным процессом (СП): 
+$$
+\vec{X}(t)_{t\geq 0}=\left(N_{{m}}(t), N_{{u}}(t),Q_{1}(t), Q_{2}(t)\right)_{t \geq 0},
+$$ 
+где $N_{{m}} (t)$ и~$N_{{u}} (t)$~--- число сессий соответственно типа \mbox{eMBB} и~URLLC в~зоне 
+обслуживания в~момент времени~$t$;
+$Q_{1} (t)$~--- число новых сессий \mbox{eMBB} на орбите~1; $Q_{2} (t)$~--- число прерванных сессий 
+\mbox{eMBB} на орбите~2  в~момент времени~$t$.
+
+Пространство состояний СП имеет следующий вид:
+\begin{multline}
+\hspace*{-8pt}\mathcal{N}=   \left\{ \left( n_{{m}},n_{{u}},q_{1},q_{2} \right):n_{{m}}\ge 0,n_{{u}}\ge 0, 
+    0\le q_{1}\le C_{1},\right.\\
+   \left. 0\le q_{2}\le C_{2}, bn_{{m}}+n_{{u}}\le C,n_{{m}}+q_{2}\le N\right\}\,,
+      \label{eq_N}
+\end{multline}
+где  $n_{{m}}$ и~$n_{{u}}$--- соответственно число \mbox{eMBB}- и~\mbox{URLLC}-сес\-сий на 
+обслуживании; 
+$q_1$ и~$q_2$~--- число \mbox{eMBB}-сес\-сий соответственно на орбите~$Q_{1}$ и~$Q_{2}$. Обозначим через 
+$ \pi \left( n_{m},n_{u},q_1,q_2 \right)$  вероятность нахождения сис\-те\-мы в~со\-сто\-янии 
+$\left( n_{m},n_{u},q_1,q_2 \right)$.
+
+
+
+\section{Алгоритм расчета распределения вероятностей}
+
+Получим рекуррентный алгоритм для расчета финального распределения вероятностей состояний  
+рассматриваемой системы. Матрица интенсивностей переходов представима 
+в~блоч\-но-трех\-диа\-го\-наль\-ном виде, представленном ниже в~виде утверждения~1.
+
+\smallskip
+
+\noindent
+\textbf{Утверждение 1.}\ \textit{
+%\label{utv_1}
+Если на множестве}~(\ref{eq_N}) \textit{введен лексикографический порядок}
+\begin{equation*} 
+%\label{lexicographic}
+    \begin{array}{l}
+(n'_{{m}},n'_{{u}},q'_{1},q'_{2})>(n_{{m}},n_{{u}},q_{1},q_{2})<=>q'_{1}>q_{1}\\ 
+\mbox{\textit{или}}\  
+        (q'_{1}=q_{1},(q'_{2}>q_{2} \mbox{\textit{ или}}\
+        ( q'_{2}=q_{2},(n'_{{m}}>n_{{m}}\\
+\mbox{\textit{или}}~(n'_{{m}}=n_{{m}},n'_{{u}}>n_{{u}}))))),
+    \end{array}
+\end{equation*}
+ %\begin{enumerate}
+    %\item
+   \textit{то матрица интенсивностей переходов СП представима в~следующем блочном трехдиагональном виде}:
+    \begin{equation*}
+    \mathbf\Lambda=
+    %\left(
+    \begin{array}{|cccccccc|}
+    \mathbf\Lambda_{00}&\mathbf\Lambda_{11}&0&0&0&\cdots&\cdots&0
+    \\
+    \mathbf\Lambda_{21}&\mathbf\Lambda_{01}&\mathbf\Lambda_{12}&0&0&\cdots&\cdots&0
+    \\
+    0&\mathbf\Lambda_{22}&\mathbf\Lambda_{02}&\mathbf\Lambda_{13}&0&\cdots&\cdots&0
+    \\
+    \cdots&\cdots &\cdots &\cdots &\cdots&\cdots&\cdots&\cdots
+    \\
+    0&0&0&0&0&0&\mathbf\Lambda_{2C_1}&\mathbf\Lambda_{0C_1}
+    \end{array}\,;
+    %\right)
+    \end{equation*}
+\textit{размерности блоков матрицы $\Lambda$ представимы в~виде}:
+    \begin{equation*}
+    \begin{array}{l}
+       \mathbf\Lambda_{0k}:\,\mathrm{dim}\,(N(k))\times \mathrm{dim}\,(N(k)),\ k=0,\ldots ,C_1;
+       \\
+       \mathbf\Lambda _{1k}:\,\mathrm{dim}\,(N(k-1))\times \mathrm{dim}\,(N(k)),\ k=1,\ldots ,C_1;
+       \\
+       \mathbf\Lambda_{2k}:\,\mathrm{dim}\,(N(k))\times \mathrm{dim}\,(N(k-1)),\ k=1,\ldots ,C_1,
+    \end{array}
+    \end{equation*}
+    \textit{где} 
+    $$\mathrm{dim}\,(N(k))=\sum\limits_{q_2=0}^{C_2}
+    {\sum\limits_{n_{m}=0}^{N-q_2}{\sum\limits_{n_{u}=0}^{C-bn_{m}}1}};
+    $$
+
+    \noindent
+    \textit{ненулевые элементы блоков $~\mathbf{\Lambda}_{1k}$, 
+    $\mathbf{\Lambda}_{2k}$ и~$\mathbf{\Lambda} _{0k}$ мат\-ри\-цы~$\mathbf{\Lambda} $ выглядят 
+    следующим образом}:
+\begin{multline*}
+   % \label{eq_Lambda1k}
+    \mathbf\Lambda_{1k}\left(
+     (n_{m},n_{u},q_1,q_2), (n'_{m},n'_{u},q'_1,q'_2)
+    \right)={}\\
+    {}=\left\{
+ \lambda_{m},
+ q'_1=q_1+1,\ q_1\neq 0~\mbox{или}\ q_2\neq 0;
+ \right.
+ \end{multline*}
+    
+  %  \vspace*{-12pt}
+ 
+ \noindent
+ \begin{multline*}
+% \label{eq_Lambda2k}
+ \mathbf\Lambda_{2k}\left(
+  (n_{m},n_{u},q_1,q_2),
+  (n'_{m},n'_{u},q'_1,q'_2)
+ \right)={}\\
+ {}=\left\{
+ \gamma_1,
+ n_{m}'=n_{m}+1,~q'_1=q_1-1, \right.\\
+ bn_{m}+n_{u}<C-b,~q_2=0,~q_1\neq0;
+ \end{multline*}
+    
+    \vspace*{-12pt}
+
+    \noindent
+    \begin{multline*}
+   % \label{eq_Lambda0k}
+     \mathbf\Lambda_{0k}\left(
+     %\begin{array}{l}
+     (n_{m},n_{u}, q_1,q_2), \left(n'_{m},n'_{u}, q'_1,q'_2\right)
+     %\end{array}
+     \right)={}\\
+     {}=\!
+     \left\{
+     \begin{array}{ll}
+     \lambda_{u}, & n'_{m}=n_m,~n'_{u}=n_{u}+1,~q'_1=q_1,\\
+     &\hspace*{44.5mm}q'_2=q_2; \\
+&    \mbox{или}\\
+     &
+     n'_{m}=n_{m}-1,~n'_{u}=n_{u}+1,\\
+     &\hspace*{38mm}q'_2=q_2+1;
+     \\[2.5pt]
+     n_{u}\mu_{u},&
+     n'_{m}=n_{m},~n'_{u}=n_{u}-1,q'_1=q_1,\\
+     &\hspace*{44.5mm}q'_2=q_2;
+     \\[2.5pt]
+     \lambda_{m},&
+     n'_{m}=n_{m}+1,~n'_{u}=n_{u},~q'_1=q_1=0,\\
+     &
+     \hspace*{38mm}q'_2=q_2=0;
+     \\[2.5pt]
+     n_{m}\mu_{m},& n'_{m}=n_{m}-1,n'_{u}=n_{u},~q'_1=q_1,\\
+     &\hspace*{44.5mm}q'_2=q_2;
+     \\[2.5pt]
+     \gamma_2, & n'_{m}=n_{m}+1,~n'_{u}=n_{u},~q'_1=q_1,\\
+     &
+     \hspace*{38.5mm}q'_2=q_2-1;
+     \\[2.5pt]
+     *, &
+     n'_{m}=n_{m},~n'_{u}=n_{u},~q'_1=q_1,~q'_2=q_2,
+     \end{array}
+    \right.
+    \end{multline*}
+    \textit{где $*$ равно сумме всех ненулевых элементов матрицы~$\mathbf\Lambda$ по строке 
+    со знаком минус}.
+
+
+\smallskip
+
+После упорядочения пространства состояний согласно утверждению выше, 
+получим алгоритм нахождения финальных вероятностей в~форме утверждения~2.
+
+\smallskip
+
+\noindent
+\textbf{Утверждение 2.}
+\label{utv_2}
+\textit{Компоненты $\boldsymbol{\pi} _{k}$, $k\hm=\overline {0,{C_1} - 1}$, вектора 
+финальных вероятностей $\boldsymbol{\pi}$ можно вы\-чис\-лить, используя подход 
+<<блок\,--\,впе\-ред\,--\,исклю\-че\-ние\,--\,обрат\-ное замещение>>, согласно формуле}
+\begin{equation*}
+{{\boldsymbol{\pi }}_k} = {{\boldsymbol{\pi }}_{{C_1}}}\prod\limits_{j = 1}^{N - k}
+{{{\mathbf{M}}_{{C_1} - j}}} ,\enskip k = \overline {0,{C_1} - 1},
+%\label{eq:2}
+\end{equation*}
+\textit{где компонента $\boldsymbol{\pi} _{C_1}$ является единственным решением системы уравнений}
+\begin{align*}
+%\left\{ \begin{array}{l}
+\sum\limits_{k = 0}^{{C_1}} \left( \boldsymbol{\pi }_{C_1}\prod\limits_{j =1}^{C_1 - k} 
+\mathbf{M}_{{C_1} - j}  \right)\mathbf{e} &= \mathbf{1} ;\\
+\boldsymbol{\pi }_{C_1}\left(\boldsymbol{\Lambda }_{0{C_1}} + \boldsymbol{\Lambda
+}_{2{C_1}}{{\mathbf{M}}_{{C_1} - 1}}\right) &= \mathbf{0},
+%\end{array} \right.
+%\label{eq:3}
+\end{align*}
+\textit{где $\mathbf{e}$~--- вектор-стол\-бец из единиц размерностью $\mathrm{dim}\,\mathcal{N}(k)$,
+ а матрицы~$\mathbf{M}_{C_1-j}$ вычисляются следующим образом}:
+\begin{equation*} 
+%\label{GrindEQ__2_64_}
+\begin{array}{l} 
+{\boldsymbol{M}_{0}  = -\boldsymbol{\Lambda} _{11} \cdot \boldsymbol{\Lambda} _{00} {}^{-1} }; \\[6pt] 
+\boldsymbol{M}_{k} =-\boldsymbol{\Lambda} _{1 \ k+1} \left(\boldsymbol{\Lambda} _{0k} +\boldsymbol{M}_{k-1}
+ \cdot \boldsymbol{\Lambda} _{2k} \right)^{-1},\\[6pt]
+\hspace*{44mm}k=\overline{1,C_1-1}.  
+\end{array}
+\end{equation*}
+
+\begin{figure*}[b] %fig4
+\vspace*{-6pt}
+ \begin{center}  
+ \mbox{%
+ \epsfxsize=163mm 
+ \epsfbox{koc-4.eps}
+ }
+\end{center}
+\vspace*{-6pt}
+    \Caption{Первый сценарий: (\textit{а})~среднее число активных сессий \mbox{eMBB};
+    (\textit{б})~вероятность прерывания сессии \mbox{eMBB};
+    \textit{1}~--- $\lambda_u\hm=40$; \textit{2}~--- 80; \textit{3}~--- $\lambda_u\hm=120$}
+    \label{fig_Ne}
+\end{figure*}
+
+\section{Алгоритм расчета вероятностных характеристик модели}
+
+Получив финальное распределение вероятностей по утверждению~2, можно рассчитать характеристики 
+рассматриваемой модели.
+\begin{enumerate}[1.]
+    \item Вероятность блокировки новой сессии URLLC:
+    \begin{equation*}
+    B_{u}=\sum\limits_{q_1=0}^{C_1}{\sum\limits_{q_2=0}^{C_2}\pi\left(0,C,q_1,q_2\right)}.
+    \end{equation*}
+    \item Вероятность задержки передачи новой сессии \mbox{eMBB}:
+    \begin{equation*}
+    D=\sum\limits_{\left(n_{m},n_{u},q_1,q_2\right)\in {\cal{N}}_{D}}\!\!\!\! \pi\left(n_{m},n_{u},q_1,q_2\right),
+    \end{equation*}
+    где 
+    $\mathcal N_{D}=\left(n_{m},n_{u},q_1,q_2\right)\hm 
+    \in \mathcal N: \left( b\left( n_{m}+1\right)+\right.$\linebreak
+    $+\;n_{u} \hm\le C$, $q_1\hm<C_1$, $q_2\hm<C_2$,
+    $\left(\left(q_1\neq 0\right)\right.$ {или} 
+    $\left.\left.\left(q_2\hm\neq 0 \right)\right)\right)$, {или} 
+    $\left(b\left(n_{m}\hm+1\right)n_{u}\hm>C,q_1\hm<C_1\right)$~--- 
+    множество состояний, где новое устройство \mbox{eMBB} будет отправлено на орбиту $Q_ {1}$.
+    \item Вероятность прерывания сессии \mbox{eMBB}:
+    \begin{multline*}
+   \hspace*{-8mm} I=\!\!\!\sum\limits_{n_{m} =1}^{N}\sum\limits_{q_{1} =0}^{C_{1} }
+   \sum\limits_{q_{2} =0}^{C_{2} }\!
+    \left(\!\fr{\pi\left(n_{m} ,C-bn_{m} ,q_{1} ,q_{2} \right)}{n_m}\right. \lambda_u  /
+     \left(\lambda _{u} +\right.\hspace*{-0.4pt} \\
+\left. \hspace*{-4.69067mm}{}+ \left.{} n_{m} \mu _{m} +n_{u} \mu _{u}
+   1(A)+\lambda _{m} +\gamma _{1} 1(B)+\gamma _{2} 1(C)\right)
+   \vphantom{\fr{\pi\left(n_{m} ,C-bn_{m} ,q_{1} ,q_{2} \right)}{n_m}}
+     \!\!\right)\!,\hspace*{-6.28122pt}
+    \end{multline*}
+    где $A=n_{u}>0$, $B\hm=b\left( n_{m}\hm+1 \right)\hm+n_{u}\hm\le C$, $q_1\hm>0$, $q_2\hm=0$;     
+    $C\hm=b\left( n_{m}\hm+1 \right)\hm+n_{u} \hm\le C$, $q_2\hm>0$.
+    \item Вероятность блокировки новой сессии \mbox{eMBB}:
+    \begin{equation*}
+    B_{m}=
+    \sum\limits_{n_{m}=0}^{N}
+    {\sum\limits_{n_{u}=0}^{C}
+    {\sum\limits_{q_2=0}^{C_2}
+    {\pi\left(n_{m},n_{u},q_1,q_2 \right).}}}
+    \end{equation*}
+    \item Среднее число обслуживаемых устройств URLLC в~системе (активных сессий URLLC):
+    \begin{equation*}
+        \overline{n_{u}}=
+        \sum\limits_{n_{u}=1}^{C}n_{u}\!
+        {\sum\limits_{n_{m}=0}^
+        {\left\lfloor ({C-n_{u}})/{b} \right\rfloor}
+\!        {\sum\limits_{q_1=0}^{C_1}
+        {\sum\limits_{q_2=0}^{C_2}
+        {\pi \left(n_{m},n_{u},q_1,q_2 \right)}}}}.
+    \end{equation*}
+    \item Среднее число обслуживаемых устройств \mbox{eMBB} в~системе (активных сессий \mbox{eMBB}):
+    \begin{equation*}
+    \overline{n_{m}}=
+        \sum\limits_{n_{m}=1}^{N}n_{m}
+        {\sum\limits_{n_{u}=0}^{C-bn_{m}}
+        {\sum\limits_{q_1=0}^{C_1}
+        {\sum\limits_{q_2=0}^{C_2}
+        {\pi \left(n_{m},n_{u},q_1,q_2 \right)}}}}.
+    \end{equation*}
+    \item Среднее число устройств \mbox{eMBB} с~задержкой передачи данных, т.\,е.\ 
+    среднее число сессий \mbox{eMBB} на орбите~$Q_1$:
+    \begin{equation*}
+        \overline{q_1}=
+        \sum\limits_{q_1=1}^{C_1}
+        q_1
+        {\sum\limits_{n_{m}=0}^{N}
+        {\sum\limits_{n_{u}=0}^{C-bn_{m}}
+        {\sum\limits_{q_2=0}^{C_2}
+        {\pi\left(n_{m},n_{u},q_1,q_2 \right)}}}}.
+    \end{equation*}
+    \item Среднее число прерванных устройств \mbox{eMBB}, т.\,е.\ среднее число сессий \mbox{eMBB} на орбите~$Q_2$:
+    \begin{equation*}
+         \overline{q_2}=
+        \sum\limits_{q_2=1}^{C_2}
+        q_2
+        {\sum\limits_{n_{m}=0}^{N}
+        {\sum\limits_{n_{u}=0}^{C-bn_{m}}
+        {\sum\limits_{q_1=0}^{C_1}
+        {\pi\left(n_{m},n_{u},q_1,q_2 \right)}}}}.
+    \end{equation*}
+\end{enumerate}
+
+\vspace*{-9pt}
+
+
+\section{Пример численного анализа}
+
+\vspace*{-2pt}
+
+
+\begin{figure*} %fig5
+\vspace*{1pt}
+ \begin{center}  
+ \mbox{%
+ \epsfxsize=163mm 
+ \epsfbox{koc-5.eps}
+ }
+\end{center}
+\vspace*{-6pt}
+    \Caption{Второй сценарий: (\textit{а})~вероятность блокировки новой сессии URLLC;
+    (\textit{б})~среднее число сессий \mbox{eMBB} на орбите~$Q_1$;  \textit{1}~--- 
+    $\lambda_m\hm=40$; \textit{2}~--- 80; \textit{3}~--- $\lambda_m\hm=120$}
+    \label{fig_Bu}
+\end{figure*}
+
+
+Для проведения численного анализа рас\-смот\-рим следующие исходные данные: $N \hm= 6$ 
+ресурсных блоков по $b \hm= 12$ ресурсных единиц; $C_1 \hm= C_2 \hm= 6$ мест на 
+орбитах~$Q_1$ и~$Q_2$. Анализ проведем для двух сценариев: в~первом сценарии рас\-смат\-ри\-ва\-ет\-ся зависимость 
+от изменения  ин\-тен\-сив\-ности поступления  сессий \mbox{eMBB}~$\lambda_{m}$ с~шагом~$40$
+(рис.~4),\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+ во втором~--- от 
+изменения интенсивности поступления сессий URLLC~$\lambda_{u}$ с~тем же шагом
+(рис.~5). Среднее время 
+обслуживания сессий фиксированное: $\mu_{{m}}^{- 1} \hm= 1^{- 1}$, $\mu_{{u }}^{- 1} 
+\hm= 3^{- 1}$, интенсивности повторных попыток установления соединения сессиями \mbox{eMBB} с~орбит~$Q_1$ и~$Q_2$ 
+равны $\gamma_1 \hm= \gamma_2 \hm= 100$ .
+
+Как можно видеть на рис.~\ref{fig_Bu},\,\textit{а}, интенсивность поступления в~систему сессий 
+\mbox{eMBB} не оказывает влияния на вероятность блокировки новых сессий URLLC. Этот результат объясняется 
+абсолютным приоритетом сессий URLLC по отношению к~сессиям \mbox{eMBB}. Что касается сессий \mbox{eMBB} в~системе 
+на рис.~\ref{fig_Ne},\,\textit{а}, наибольшее влияние на их число оказывает интенсивность поступления сессий URLLC. 
+Следовательно, чем ниже скорость поступления устройств URLLC, тем больше устройств \mbox{eMBB} может быть 
+обслужено.
+
+Отметим, что на рис.~5,\,\textit{б} видно, что орбита~$Q_1$ почти все время занята, т.\,е.\ вероятность 
+блокировки новой сессии \mbox{eMBB} близка к~100\%. Заметим, графики вероятности прерывания сессий \mbox{eMBB} 
+(см.\ рис.~4,\,\textit{б}) сначала возрастают, затем резко убывают. Это можно объяснить снижением среднего числа
+ сессий \mbox{eMBB} в~системе (рис.~4,\,\textit{а}), что вполне логично: чем меньше число обслуживаемых сессий, 
+ тем меньше вероятность их прерывания.
+Также отметим, что рассмотренные характеристики орбит~$Q_1$ и~$Q_2$ зависят от двух рассмотренных 
+интенсивностей поступления сессий.
+
+\section{Заключение}
+
+В данной  работе представлена модель совместного обслуживания трафика \mbox{eMBB} и~URLLC в~виде СМО с~двумя 
+орбитами. Разработан алгоритм расчета финальных вероятностей в~матричной форме. Проведен численный анализ 
+характеристик такой системы.
+
+
+\vspace*{-6pt}
+
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+ 
+ \vspace*{-2pt}
+
+\bibitem{Popovski2018}
+\Au{Popovski P., Trillingsgaard K.\,F., Simeone~O., Durisi~G.} 5G wireless network slicing for \mbox{eMBB}, 
+URLLC, and mMTC: A~communication-theoretic view~// IEEE Access, 2018. Vol.~6. 
+P.~55765--55779.
+
+\bibitem{Cheng2020}
+\Au{Cheng S., Wang L., Hwang~C., Chen~J., Cheng~L.}  On-device cognitive spectrum allocation for 
+coexisting URLLC and eMBB users in 5G systems~// IEEE T. Cognitive Communications 
+ Networking, 2020. 13~p. doi: 10.1109/ \mbox{TCCN}.2020.3007890.
+(This article has been accepted for publication in a future issue of this journal, but 
+has not been fully edited.) %у этой статьи нету волюма и~номер страниц
+
+\bibitem{Tun2020}
+\Au{Tun Y.\,K., Kim~D.\,H., Alsenwi~M., Tran~N.\,H., Han~Z., Hong~C.\,S.}  
+Energy efficient communication and computation resource slicing for \mbox{eMBB} and URLLC 
+coexistence in 5G and beyond~// IEEE Access, 2020. Vol.~8. P.~136024--136035.
+
+\bibitem{DosSantos2020}
+\Au{Dos Santos E.\,J., Jr., Souza~R.\,D., Rebelatto~J.\,L., Alves~H.} Network slicing 
+for URLLC and \mbox{eMBB} with max-matching diversity channel allocation~// IEEE Commun. 
+Lett., 2020. Vol.~24. Iss.~3. P.~658--661.
+
+\bibitem{Kim2020}
+\Au{Kim Y., Park S.} Calculation method of spectrum requirement for IMT-2020 \mbox{eMBB} and 
+URLLC with puncturing based on $M/G/1$ priority queuing model~// IEEE Access, 2020. Vol.~8. P.~25027--25040.
+
+\bibitem{Anand2020}
+\Au{Anand A., De Veciana G., Shakkottai~S.} Joint scheduling of URLLC and \mbox{eMBB} traffic in 
+5G wireless networks~// IEEE ACM~T. Network.,  2020. Vol.~28. Iss.~2. P.~477--490.
+
+\bibitem{Li2020}
+\Au{Li J., Zhang X.} Deep reinforcement learning-based joint scheduling of \mbox{eMBB} and URLLC 
+in 5G networks~// IEEE Wirel. Commun. Lett.,  2020. Vol.~9. Iss.~9. P.~1543--1546.
+
+\bibitem{Gudkova2012}
+\Au{Gudkova I.\,A., Samouylov~K.\,E.} Modelling a radio admission control scheme for video 
+telephony service in wireless networks~//  Internet of things, smart spaces, and next generation networking~/  
+Eds. S.~Andreev, S.~Balandin,\linebreak\vspace*{-10pt}
+
+\pagebreak
+
+\noindent  Y.~Koucheryavy.~--- Lecture notes in computer sacience ser.~--- 
+Springer, 2012. Vol.~7469. P.~208--215.
+
+\bibitem{Makeeva2019}
+\Au{Makeeva E., Polyakov~N., Kharin~P., Gudkova~I.} Probability model for performance analysis 
+of joint URLLC and \mbox{eMBB} transmission in 5G networks~//
+{Internet of things, smart spaces, and next generation networks and systems}~/ Eds. O.~Galinina, 
+S.~Andreev, S.~Balandin,  Y.~Koucheryavy.~--- Lecture notes in computer science ser.~--- Springer,  
+2019. Vol.~11660. P.~635--648.
+{\looseness=1
+
+}
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 15.10.20}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+\vspace*{-2pt}
+
+\def\tit{RETRIAL QUEUING MODEL FOR~ANALYZING JOINT URLLC AND~eMBB TRANSMISSION IN~5G~NETWORKS}
+
+
+\def\titkol{Retrial queuing model for analyzing joint URLLC and eMBB transmission in 5G networks}
+
+
+\def\aut{P.\,A.~Kharin$^1$, E.\,D.~Makeeva$^1$, I.\,A.~Kochetkova$^{1,2}$, 
+D.\,V.~Efrosinin$^{1,3}$, and~S.\,Ya.~Shorgin$^2$}
+
+\def\autkol{P.\,A.~Kharin, E.\,D.~Makeeva, I.\,A.~Kochetkova, et al.}
+%D.\,V.~Efrosinin$^{1,2}$, and~S.\,Ya.~Shorgin$^3$
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+\noindent
+$^1$Peoples' Friendship University of Russia (RUDN University), 6~Miklukho-Maklaya Str., 
+Moscow 117198, Russian\linebreak
+$\hphantom{^1}$Federation
+
+\noindent
+$^2$Institute of Informatics Problems, Federal Research Center ``Computer Science and 
+Control'' of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences; 44-2~Vavilov Str., Moscow 119133, Russian Federation
+
+\noindent
+$^3$Johannes Kepler Universitaet Linz, 69 Altenbergerstrasse, Linz 4040, Austria
+
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+     \vspace*{3pt}
+
+
+\Abste{Fifth-generation (5G) networks are characterized by three use cases~--- massive machine-type 
+communication (mMTC), ultra-reliable low-latency communication (URLLC), and enhanced 
+mobile broadband (\mbox{eMBB}). Quality of service requirements as well as service parameters within 
+these use cases vary significantly, e.\,g.,
+ URLLC is characterized by an ultralow latency of up to 1~ms, while \mbox{eMBB} has an ultrahigh data 
+ transfer rate. The task is to organize the joint provision of such services. The paper proposes 
+ a~scheme for joint URLLC and \mbox{eMBB} traffic transmission. It is based on the fact that URLLC data 
+ has a small volume and can occupy less than one physical resource block. The authors analyze 
+ the scheme using the developed retrial queuing system with two orbits~--- one for temporary 
+ storage of interrupted \mbox{eMBB} users and the other for \mbox{eMBB} users waiting for service to start. 
+ The authors propose the matrix geometric algorithm for calculating the probability distribution
+  as well as formulas for probabilistic characteristics.}
+
+\KWE{5G; ultra-reliable low latency communication (URLLC); enhanced mobile broadband (\mbox{eMBB}); 
+retrial queuing system; interruption}
+
+\DOI{10.14357/19922264200403} 
+
+%\vspace*{-20pt}
+
+\Ack
+\noindent
+The publication has been prepared with the support of the ``RUDN University Program 5-100.''
+ The reported study was funded by RFBR, projects Nos.\,18-00-01555(18-00-01685) and 20-37-70079.
+
+
+
+%\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+\bibitem{1-koc}
+\Aue{Popovski, P., K.\,F.~Trillingsgaard, O.~Simeone, and G.~Durisi}. 2018. 5G wireless
+ network slicing for \mbox{eMBB}, URLLC, and mMTC: A~communication-theoretic view. \textit{IEEE Access} 
+ 6:55765--55779.
+\bibitem{2-koc}
+\Aue{Cheng, S., L. Wang, C.~Hwang, J.~Chen, and L.~Cheng.} 2020. On-device cognitive spectrum 
+allocation for coexisting URLLC and \mbox{eMBB} users in 5G systems. \textit{IEEE T. Cognitive 
+Communications  Networking}.  13~p. doi: 10.1109/ \mbox{TCCN}.2020.3007890.
+(This article has been accepted for publication in a future issue of this journal, but 
+has not been fully edited.)
+\bibitem{3-koc}
+\Aue{Tun, Y.\,K., D.\,H. Kim, M.~Alsenwi, N.\,H.~Tran, Z.~Han, and C.\,S.~Hong}. 2020. Energy 
+efficient communication and computation resource slicing for \mbox{eMBB} and URLLC coexistence in 5G and beyond. 
+\textit{IEEE Access} 8:136024--136035.
+\bibitem{4-koc}
+\Aue{Dos Santos, E.\,J., R.\,D.~Souza, Jr., J.\,L.~Rebelatto, and H.~Alves.} 2020.  Network 
+slicing for URLLC and \mbox{eMBB} with max-matching diversity channel allocation. \textit{IEEE Commun. Lett.} 24(3):658--661.
+\bibitem{5-koc}
+\Aue{Kim, Y., and S. Park.} 2020. Calculation method of spectrum requirement for IMT-2020 
+\mbox{eMBB} and URLLC with puncturing based on $M/G/1$ priority queuing model. \textit{IEEE Access} 8:25027--25040.
+\bibitem{6-koc}
+\Aue{Anand, A., G. De Veciana, and S.~Shakkottai}. 2020. Joint scheduling of URLLC and \mbox{eMBB} traffic 
+in 5G wireless networks. \textit{IEEE ACM~T. Network.} 28(2):477--490.
+\bibitem{7-koc}
+\Aue{Li, J., and X. Zhang.} 2020. Deep reinforcement learning-based joint scheduling of \mbox{eMBB} 
+and URLLC in 5G networks. \textit{IEEE Wirel. Commun. Lett.} 9(9):1543--1546.
+\bibitem{8-koc}
+\Aue{Gudkova, I.\,A., and K.\,E.~Samouylov.} 2012. Modelling a~radio admission control scheme 
+for video telephony service in wireless networks. \textit{Internet of things, smart spaces, and 
+next generation networking}. Eds. S.~Andreev, S.~Balandin, and Y.~Koucheryavy. Lecture notes in 
+computer science ser. Springer. 7469:208--215.
+\bibitem{9-koc}
+\Aue{Makeeva, E., N. Polyakov, P.~Kharin, and I.~Gudkova.} 2019. Probability model for performance 
+analysis of joint URLLC and \mbox{eMBB} transmission in 5G networks. \textit{Internet of things, smart spaces, 
+and next generation networks and systems}. Eds. O.~Galinina, S.~Andreev, S.~Balandin, and Y.~Koucheryavy. 
+Lecture notes in computer science ser. Springer. 11660:635--648.
+{\looseness=1
+
+}
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Received October 15, 2020}}
+
+%\pagebreak
+
+%\vspace*{-24pt}
+
+\Contr
+
+\noindent
+\textbf{Kharin Petr A.} (b.\ 1993)~--- PhD student, Peoples' Friendship University of Russia 
+(RUDN University), 
+6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation; \mbox{pxarin@mail.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Makeeva Elena D.} (b.\ 1996)~--- PhD student, Peoples' Friendship University of Russia 
+(RUDN University), 
+6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation; \mbox{len16730637@yandex.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Kochetkova Irina A.} (b.\ 1985)~--- Candidate of Science (PhD) in physics and mathematics, 
+associate professor, Peoples' Friendship University of Russia (RUDN University), 
+6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation; senior scientist, Institute of Informatics 
+Problems, Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119133, Russian Federation; \mbox{gudkova-ia@rudn.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Efrosinin Dmitry V.} (b.\ 1977)~--- Doctor of Science in physics and mathematics, associate 
+professor, Johannes Kepler Universitaet Linz, 69~Altenbergerstrasse, Linz 4040, Austria; associate 
+professor, Peoples' Friendship University of Russia (RUDN University), 6~Miklukho-Maklaya Str., 
+Moscow 117198, Russian Federation; \mbox{dmitry.efrosinin@jku.at}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Shorgin Sergey Ya.} (b.\ 1952)~--- Doctor of Science in physics and mathematics, professor, 
+principal scientist, Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., 
+Moscow 119133, Russian Federation; \mbox{sshorgin@ipiran.ru}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

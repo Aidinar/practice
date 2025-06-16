@@ -1,0 +1,1062 @@
+\def\stat{gorshenin}
+
+\def\tit{АНАЛИЗ ВЕРОЯТНОСТНО-СТАТИСТИЧЕСКИХ ХАРАКТЕРИСТИК ОСАДКОВ НА~ОСНОВЕ ПАТТЕРНОВ$^*$}
+
+\def\titkol{Анализ вероятностно-статистических характеристик осадков на основе паттернов}
+
+\def\aut{А.\,К.~Горшенин$^1$}
+
+\def\autkol{А.\,К.~Горшенин}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Горшенин А.\,К.}
+\index{Gorshenin A.\,K.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при поддержке РФФИ (проекты 17-07-00851, 15-07-04040 и~15-07-05316).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики 
+Федерального исследовательского центра <<Информатика и~управ\-ле\-ние>> 
+Российской академии наук;
+Институт океанологии им.\ П.\,П.~Ширшова Российской академии наук,
+\mbox{agorshenin@frccsc.ru}}
+
+%\vspace*{-18pt}
+
+
+
+
+\Abst{Осадки входят в~число ключевых параметров гидрологических
+моделей, поэтому их исследование необходимо для решения различных
+прикладных задач. В~работе продемонстрировано нарушение марковского
+свойства для осадков, наблюдаемых в~существенно различающихся между собой
+климатических областях~--- в~Потсдаме и~Элисте. Такие сведения о~данных,
+наряду с~ранее исследованными свойствами, представляют базовую информацию,
+необходимую для дальнейшего корректного построения вероятностных моделей, 
+в~частности для распределений объемов экстремальных осадков. Для анализа
+вероятностного поведения процесса выпадения осадков и~построения прогнозов
+предложено использование цепочек событий (паттернов), выделенных из данных.
+При этом статистические процедуры автоматизированы с~использованием
+программных инструментов пакета {\sf MATLAB}. В~качестве альтернативного
+инструмента прогнозирования на основе паттернов использованы нейронные сети,
+при этом наиболее точные результаты продемонстрированы в~архитектуре,
+учитывающей сезонность, с~двумя скрытыми слоями нейронов и~сигмоидной
+функцией активации. Предложены направления дальнейших исследований 
+в~данной области.}
+
+\KW{осадки; паттерны; прогноз; нейронные сети; 
+вероятностное прогнозирование; марковское свойство}
+
+\DOI{10.14357/19922264170405} 
+
+\vspace*{19pt}
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+\section{Введение}
+
+Как известно, осадки являются важной частью гидрологических моделей, поэтому
+востребовано построение адекватных математических моделей (в~том
+числе ве\-ро\-ят\-ност\-но-ста\-ти\-сти\-че\-ских), например для работы 
+с~регионами, в~которых сети датчиков не покрывают полностью зоны
+необходимого наблюдения~\cite{Strauch2012}. Такие модели могут быть
+использованы для решения задач вероятностного
+прогнозирования (см., например, работу~\cite{Krzysztofowicz2001}), формирования
+статистических сценариев (см.\ статью~\cite{Pinson2009}, в~которой подобная
+задача решается в~области ветроэнергетики). Более того, возможно построение
+сложных прогностических математических моделей на основе плотностей 
+и~функций распределения~\cite{Gneiting2007}.
+{\looseness=1
+
+}
+
+Выявление и~моделирование закономерностей для экстремальных осадков
+весьма важны при решении различных задач изучения климата~\cite{Kharin2007}, 
+в~том числе с~целью понимания процессов его изменения. Можно анализировать
+усредненные объемы осадков, кумулятивные данные за каждый дождливый период
+или ежедневные наблюдения. При этом в~последнем случае результаты достаточно
+сильно зависят от точности измерений, более чувствительны к~наличию
+пропусков~\cite{Zolina2005}.
+
+\begin{figure*}[b] %fig1
+      \vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=120.85mm 
+ \epsfbox{gor-1.eps}
+ }
+\end{center}
+\vspace*{-11pt}
+\Caption{Частоты для четырехдневных паттернов (Потсдам)
+\label{FigPatternsPotsdam4}}
+\end{figure*}
+
+Настоящая работа посвящена изучению ряда вероятностно-статистических
+характеристик для процесса выпадения осадков на основе анализа суточных
+наблюдений для двух городов~--- Потсдама и~Элисты. Предложена замена
+непрерывных значений дискретной шкалой из <<0>> и~<<1>>, со\-от\-вет\-ст\-ву\-ющих
+дням, в~которых осадки не наблюдались (<<D>>, от \verb"Dry") или были
+зарегистрированы ненулевые наблюдения (<<W>>, от \verb"Wet"). Наборы~<<0--1>>
+удобны, например, с~точки зрения программной реализации (как аналог булевых
+векторов), однако всюду далее в~статье для наглядности будут использованы
+символы <<D>> и~<<W>> для обозначения со\-от\-вет\-ст\-ву\-ющих событий.
+Рассмотрено по\-стро\-ение прогнозов для преобразованных таким образом данных
+(в~том числе с~помощью нейронных сетей), а~также предложен ряд направлений
+дальнейших исследований. 
+
+Стоит отметить, что 
+продемонстрированная достаточно высокая прогностическая точность для нейросетей~--- 
+около~80\% даже для умеренного объема тестовых выборок~--- 
+основана на анализе исключительно базовых статистических данных без 
+привлечения ка\-ких-ли\-бо дополнительных сведений о~метеорологических условиях.
+
+\section{Дискретизация величины дневных объемов осадков}
+
+Рассмотрим преобразование исходных объемов суточных осадков~$V_{\mathrm{daily}}$,
+представляющих собой неотрицательные данные, по следующему правилу: если 
+в~данный $i$-й день наблюдалась ка\-кая-ли\-бо положительная величина, то она
+заменяется на единицу ($\widetilde{V}_{\mathrm{daily}}^{(i)}=1$), иначе
+$\widetilde{V}_{\mathrm{daily}}^{(i)}$ остается равной нулю. Таким образом, исходный ряд,
+состоящий из непрерывных значений, становится дискретным, принимающим два
+возможных значения $\{0,1\}$. Данное упрощение позволяет анализировать
+непосредственно наличие или отсутствие осадков безотносительно к~их объему.
+Стоит отметить, что подобная дискретизация не позволяет решать задачу
+определения экстремальности величины того или иного <<дождя>>, однако ряд
+представленных в~данном разделе результатов использовался в~качестве
+предпосылок для построения моделей в~\mbox{статье}~\cite{Gorshenin2017a}.
+
+Любая последовательность <<сухих>> (без осадков) и~<<дождливых>> (с~любым
+ненулевым объемом) дней представляет собой цепочку~--- паттерн~--- 
+из~<<0>> и~<<1>> (или~<<D>> и~<<W>>, как было отмечено в~предыду\-щем разделе). Для
+каждого такого набора можно в~рамках исторических данных определить частоты
+появления как отношение числа таких паттернов фиксированной длины~$N$ 
+к~общему числу возможных наборов (очевидно, $2^N$), т.\,е.\ фактически
+получить значения вероятностей (согласно классическому определению).
+
+
+
+В рамках настоящего исследования были проанализированы наблюдения
+примерно за $60$ лет для значений параметра~$N$ от~1 до~14. Для каждого
+набора были получены значения частот (вероятностей), определен паттерн 
+с~максимальным значением. Подобные данные удобно визуализировать 
+в~табличной форме (см.\ табл.~1 и~2 для трехдневных
+паттернов Потсдама и~Элис\-ты соответственно). Кроме того, в~наглядной форме
+результаты можно представить в~виде столбчатых диаграмм (см.\
+рис.~\ref{FigPatternsPotsdam4} и~\ref{FigPatternsElista4} для четырехдневных
+паттернов Потсдама и~Элис\-ты соответственно).
+
+\begin{figure*} %fig2
+\vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=120.754mm 
+ \epsfbox{gor-2.eps}
+ }
+\end{center}
+\vspace*{-11pt}
+\Caption{Частоты для четырехдневных паттернов (Элиста)\label{FigPatternsElista4}}
+\end{figure*}
+
+\setcounter{table}{2}
+
+\begin{table*}[b]\small %tabl3
+\vspace*{-6pt}
+\begin{center}
+\Caption{Таблица значений для условных вероятностей (Потсдам)}
+\label{TabProbPotsdam}
+\vspace*{2ex}
+
+\tabcolsep=16pt
+\begin{tabular}{|c|c|}
+\hline
+{Выражение}&{Значение}\\
+\hline
+$\mathbb{P}(\{\mathrm{DDD}\}\mid \{\mathrm{DD}\})$&$0{,}7774$\\
+%\hline
+$\mathbb{P}(\{\mathrm{DDW}\}\mid \{\mathrm{DD}\})$&$0{,}2226$\\
+%\hline
+$\mathbb{P}(\{\mathrm{DWD}\}\mid \{\mathrm{DW}\})$&$0{,}3785$\\
+%\hline
+$\mathbb{P}(\{\mathrm{DWW}\}\mid \{\mathrm{DW}\})$&$0{,}6215$\\
+%\hline
+$\mathbb{P}(\{\mathrm{WDD}\}\mid \{\mathrm{WD}\})$&$0{,}6043$\\
+%\hline
+$\mathbb{P}(\{\mathrm{WDW}\}\mid \{\mathrm{WD}\})$&$0{,}3957$\\
+%\hline
+$\mathbb{P}(\{\mathrm{WWD}\}\mid \{\mathrm{WW}\})$&$0{,}3484$\\
+%\hline
+$\mathbb{P}(\{\mathrm{WWW}\}\mid \{\mathrm{WW}\})$&$0{,}6516$\\
+%\hline
+$\left|\mathbb{P}(\{\mathrm{DDD}\}\mid \{\mathrm{DD}\})-\mathbb{P}(\{\mathrm{DD}\}\mid \{\mathrm{D}\})\right|$&$0{,}0466$\\
+%\hline
+$\left|\mathbb{P}(\{\mathrm{DDW}\}\mid \{\mathrm{DD}\})-\mathbb{P}(\{\mathrm{DW}\}\mid \{\mathrm{D}\})\right|$&$0{,}0466$\\
+%\hline
+$\left|\mathbb{P}(\{\mathrm{DWD}\}\mid \{\mathrm{DW}\})-\mathbb{P}(\{\mathrm{WD}\}\mid \{\mathrm{W}\})\right|$&$0{,}0192$\\
+%\hline
+$\left|\mathbb{P}(\{\mathrm{DWW}\}\mid \{\mathrm{DW}\})-\mathbb{P}(\{\mathrm{WW}\}
+\mid \{\mathrm{W}\})\right|$&$0{,}0192$\\
+%\hline
+$\left|\mathbb{P}(\{\mathrm{WDD}\}\mid \{\mathrm{DD}\})-\mathbb{P}(\{\mathrm{DD}\}\mid \{\mathrm{D}\})\right|$&$0{,}1265$\\
+%\hline
+$\left|\mathbb{P}(\{\mathrm{WDW}\}\mid \{\mathrm{WD}\})-\mathbb{P}(\{\mathrm{DW}\}\mid \{\mathrm{D}\})\right|$&$0{,}1265$\\
+%\hline
+$\left|\mathbb{P}(\{\mathrm{WWD}\}\mid \mathrm{WW})-\mathbb{P}(\{\mathrm{WD}\}\mid \{\mathrm{W}\})\right|$&$0{,}0107$\\
+%\hline
+$\left|\mathbb{P}(\{\mathrm{WWW}\}\mid \{\mathrm{WW}\})-\mathbb{P}(\{\mathrm{WW}\}\mid \{\mathrm{W}\})\right|$&$0{,}0107$\\
+\hline
+\end{tabular}
+\end{center}
+\end{table*}
+
+Представленные таблицы и~диаграммы позволяют делать определенные выводы
+о~климатических зонах, в~которых расположены соответствующие города. Так, 
+в~Потсдаме климат умеренный, продолжительные осадки не редкость (например,
+для  трех  дней подряд частота~--- $0{,}1789$), в~то время как\linebreak\vspace*{-12pt}
+
+%\begin{table*}
+{
+\begin{center}
+\vspace*{3pt}
+\begin{minipage}[t]{38mm}
+%\Caption{Значения частот для трехдневных паттернов (Потсдам)}
+%\label{TabPotsdam}
+%\vspace*{2ex}
+{{\tablename~1}\ \ \small{Значения час\-тот для трехдневных паттернов (Потсдам)}}
+
+\vspace*{2ex}
+
+\tabcolsep=5.5pt
+{\small \begin{tabular}{|c|c|}
+\hline
+{Набор}&{Частота}\\
+\hline
+\verb"Dry-Dry-Dry"&$\bf 0{,}3247$\\
+%\hline
+\verb"Dry-Dry-Wet"&$0{,}0930$\\
+%\hline
+\verb"Dry-Wet-Dry"&$0{,}0582$\\
+%\hline
+\verb"Dry-Wet-Wet"&$0{,}0956$\\
+%\hline
+\verb"Wet-Dry-Dry"&$0{,}0930$\\
+%\hline
+\verb"Wet-Dry-Wet"&$0{,}0609$\\
+%\hline
+\verb"Wet-Wet-Dry"&$0{,}0957$\\
+%\hline
+\verb"Wet-Wet-Wet"&$0{,}1789$\\
+\hline
+\end{tabular}
+}
+%\end{center}
+\end{minipage}
+%\end{table*}
+%\begin{table*}
+\hfill
+\begin{minipage}[t]{38mm}
+%{\small %tabl2
+%\begin{center}
+%\Caption{Значения частот для трехдневных паттернов (Элиста)}
+%\label{TabElista}
+%\vspace*{2ex}
+{{\tablename~2}\ \ \small{Значения час\-тот для трехдневных паттернов (Элиста)}}
+
+\vspace*{2ex}
+
+\tabcolsep=5.5pt
+{\small
+\begin{tabular}{|c|c|}
+\hline
+{Набор}&{Частота}\\
+\hline
+\verb"Dry-Dry-Dry"&$\bf 0{,}4864$\\
+%\hline
+\verb"Dry-Dry-Wet"&$0{,}1021$\\
+%\hline
+\verb"Dry-Wet-Dry"&$0{,}0751$\\
+%\hline
+\verb"Dry-Wet-Wet"&$0{,}0660$\\
+%\hline
+\verb"Wet-Dry-Dry"&$0{,}1022$\\
+%\hline
+\verb"Wet-Dry-Wet"&$0{,}0390$\\
+%\hline
+\verb"Wet-Wet-Dry"&$0{,}0660$\\
+%\hline
+\verb"Wet-Wet-Wet"&$0{,}0631$\\
+\hline
+\end{tabular}}
+\end{minipage}
+\end{center}
+}
+%\end{table*}
+
+
+
+\noindent
+ в~Элисте климат
+резко континентальный с~умеренным числом осадков (частота <<трехдневного>>
+дождя за период наблюдений составила всего~$0{,}0631$). Для
+четырнадцатидневных наборов максимальную час\-то\-ту для обоих городов имеет
+последовательность из всех <<сухих>> дней, при этом для Элисты
+соответствующая частота составила~$0{,}1138$, а~для Потсдама~--- $0{,}0671$.
+
+\setcounter{table}{3}
+
+\begin{table*}\small %tabl4
+\begin{center}
+\Caption{Таблица значений для условных вероятностей (Элиста)}
+\label{TabProbElista}
+\vspace*{2ex}
+
+\tabcolsep=14pt
+\begin{tabular}{|c|c|}
+\hline
+{Выражение}&{Значение}\\
+\hline
+$\mathbb{P}(\{\mathrm{DDD}\}\mid \{\mathrm{DD}\})$&$0{,}8264$\\
+%\hline
+$\mathbb{P}(\{\mathrm{DDW}\}\mid \{\mathrm{DD}\})$&$0{,}1736$\\
+%\hline
+$\mathbb{P}(\{\mathrm{DWD}\}\mid \{\mathrm{DW}\})$&$0{,}532$\hphantom{9}\\
+%\hline
+$\mathbb{P}(\{\mathrm{DWW}\}\mid \{\mathrm{DW}\})$&$0{,}468$\hphantom{9}\\
+%\hline
+$\mathbb{P}(\{\mathrm{WDD}\}\mid \{\mathrm{WD}\})$&$0{,}2761$\\
+%\hline
+$\mathbb{P}(\{\mathrm{WDW}\}\mid \{\mathrm{WD}\})$&$0{,}5114$\\
+%\hline
+$\mathbb{P}(\{\mathrm{WWD}\}\mid \{\mathrm{WW}\})$&$0{,}4887$\\
+%\hline
+$\mathbb{P}(\{\mathrm{WWW}\}\mid \{\mathrm{WW}\})$&$0{,}8264$\\
+%\hline
+$\left|\mathbb{P}(\{\mathrm{DDD}\}\mid \{\mathrm{DD}\})-\mathbb{P}
+(\{\mathrm{DD}\}\mid \{\mathrm{D}\})\right|$&$0{,}0198$\\
+%\hline
+$\left|\mathbb{P}(\{\mathrm{DDW}\}\mid \{\mathrm{DD}\})-\mathbb{P}
+(\{\mathrm{DW}\}\mid \{\mathrm{D}\})\right|$&$0{,}0198$\\
+%\hline
+$\left|\mathbb{P}(\{\mathrm{DWD}\}\mid \{\mathrm{DW}\})-\mathbb{P}
+(\{\mathrm{WD}\}\mid \{\mathrm{W}\})\right|$&$0{,}0098$\\
+%\hline
+$\left|\mathbb{P}(\{\mathrm{DWW}\}\mid \{\mathrm{DW}\})-\mathbb{P}
+(\{\mathrm{WW}\}\mid \{\mathrm{W}\})\right|$&$0{,}0098$\\
+%\hline
+$\left|\mathbb{P}(\{\mathrm{WDD}\}\mid \{\mathrm{DD}\})-\mathbb{P}
+(\{\mathrm{DD}\}\mid \{\mathrm{D}\})\right|$&$0{,}827$\hphantom{9}\\
+%\hline
+$\left|\mathbb{P}(\{\mathrm{WDW}\}\mid \{\mathrm{WD}\})-\mathbb{P}
+(\{\mathrm{DW}\}\mid \{\mathrm{D}\})\right|$&$0{,}827$\hphantom{9}\\
+%\hline
+$\left|\mathbb{P}(\{\mathrm{WWD}\}\mid \mathrm{WW})-\mathbb{P}
+(\{\mathrm{WD}\}\mid \{\mathrm{W}\})\right|$&$0{,}0109$\\
+%\hline
+$\left|\mathbb{P}(\{\mathrm{WWW}\}\mid \{\mathrm{WW}\})-\mathbb{P}
+(\{\mathrm{WW}\}\mid \{\mathrm{W}\})\right|$&$0{,}0109$\\
+\hline
+\end{tabular}
+\end{center}
+\end{table*}
+
+
+\vspace*{-6pt}
+
+
+\section{Проверка марковского свойства}
+
+\vspace*{-2pt}
+
+В большинстве работ, посвященных статистическому
+анализу метеорологических данных, считается, что продолжительность периода
+выпадения осадков, измеренная в~сутках (т.\,е.\ число последовательных
+<<дождливых>> дней), подчиняется гео\-мет\-ри\-че\-ско\-му распределению
+вероятностей (см., например,~\cite{Zolina2013}). Возможно, данные предположения
+базируются на классической интерпретации гео\-мет\-ри\-че\-ско\-го распределения 
+в~терминах испытаний Бернулли как распределения числа последовательных
+<<дождливых>> дней (<<успех>>) до первого дня без осадков (<<неудача>>). Для
+изучаемых в~работе городов проверим более слабое предположение, а~именно:
+наличие марковости для данных.
+
+
+
+Для этого потребуется вычисление условных вероятностей, но, как было отмечено
+в предыдущем разделе, необходимые базовые величины определены ранее,
+поэтому с~помощью классической формулы
+\begin{equation*}
+P(A|B)=\fr{P(AB)}{P(B)}
+\end{equation*}
+могут быть получены требуемые значения. В~табл.~\ref{TabProbPotsdam}
+и~\ref{TabProbElista} представлены условные вероятности и~модули их разностей
+для Потсдама и~Элисты, демонстрирующие отсутствие свойства марковости 
+у~данных.
+
+
+
+Таким образом, последовательность <<дождливых>> и~<<сухих>> дней
+не является марковской, поэтому использование схемы испытаний Бернулли
+некорректно. Альтернативные вероятностные модели предложены в~статьях~\cite{Gorshenin2017a,Gorshenin2017b}.
+
+\vspace*{-4pt}
+
+\section{Вероятностное прогнозирование осадков 
+с~использованием исторических паттернов}
+
+\vspace*{-2pt}
+
+Паттерны в~анализе данных могут быть использованы для повышения точности 
+и~скорости построения прогнозов (см., например, статью~\cite{Gould2008}).\linebreak
+ Кроме
+того, они являются достаточно распространенным инструментом в~рамках
+решения различных климатологических задач (см., например,\linebreak
+работы~\cite{Abaurrea2005,Stopa2013}). В~данном разделе будет реализована
+достаточно простая схема построения вероятностных прогнозов для
+последовательностей <<сухих>> и~<<дождливых>> дней на основе исторических
+паттернов для маркированных данных (<<0--1>> или <<D--W>>).
+
+При определении частот (вероятностей) появления той или иной
+последовательности событий по дням в~предыдущем разделе были вычислены
+соответствующие величины для наборов различной длины. Используя эти данные,
+можно вычислять значения условных вероятностей появления в~будущем
+определенных комбинаций, т.\,е.\ построения прогноза. При этом, в~отличие от
+стандартной для анализа данных практики, когда пред\-ска\-зы\-ва\-емое окно не должно
+превышать размер входных наблюдений, для исторических значений это правило
+может нарушаться.
+
+%\vspace*{6pt}
+
+\begin{figure*}[b] %fig3
+\vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=163.425mm 
+ \epsfbox{gor-3.eps}
+ }
+\end{center}
+\vspace*{-11pt}
+\Caption{Точность построения прогноза по месяцам в~процессе обучения
+(пример): (\textit{а})~однодневный прогноз;
+(\textit{б})~двухдневный прогноз.
+Графики справа соответствуют модели с~учетом сезонности
+\label{FigNN}}
+\vspace*{-6pt}
+\end{figure*}
+ 
+
+
+В качестве примера рассмотрим построение вероятностного прогноза на два
+следующих дня для Потсдама и~Элисты при условии текущих наблюдений
+вида <<\verb"Wet-Wet-Dry-Dry">>, т.\,е.\ два дня подряд выпали осадки, в~следующие
+двое суток они не регистрировались. В~табл.~5 
+и~6 представлены вероятности соответствующих событий
+(полужирным шрифтом выделено наиболее вероятное событие).\linebreak\vspace*{-12pt}
+
+\vspace*{8pt}
+
+%tabl5
+\begin{center}
+\parbox{68mm}{{{\tablename~5}\ \ \small{Пример: прогнозирование осадков, Потсдам}}}
+
+\vspace*{2ex}
+
+{\small
+\begin{tabular}{|c|c|}
+\hline
+{Прогноз на 2 следующих дня}&{Вероятность}\\
+\hline
+\verb"Dry-Dry"&$\bf 0{,}4828$\\
+%\hline
+\verb"Dry-Wet"&$0{,}1909$\\
+%\hline
+\verb"Wet-Dry"&$0{,}1211$\\
+%\hline
+\verb"Wet-Wet"&$0{,}2053$\\
+\hline
+\end{tabular}
+}
+\vspace*{10pt}
+
+%\begin{center}
+\parbox{68mm}{{{\tablename~6}\ \ \small{Пример: прогнозирование осадков, Элис\-та}}}
+
+\vspace*{2ex}
+
+{\small
+\begin{tabular}{|c|c|}
+\hline
+{Прогноз на 2 следующих дня}&{Вероятность}\\
+\hline
+\verb"Dry-Dry"&$\bf 0{,}5852$\\
+%\hline
+\verb"Dry-Wet"&$0{,}1641$\\
+%\hline
+\verb"Wet-Dry"&$0{,}1259$\\
+%\hline
+\verb"Wet-Wet"&$0{,}1249$\\
+\hline
+\end{tabular}
+}
+\vspace*{2pt}
+%\end{center}
+\end{center}
+
+\noindent
+ Соответственно,
+можно формулировать утверждения следующего вида: <<Вероятность осадков
+\textit{через}~2~дня в~Потсдаме при текущих наблюдениях
+\verb"Wet-Wet-Dry-Dry" составляет~$0{,}3961$, а вероятность отсутствия осадков
+\textit{через}~2~дня~--- $0{,}6039$>>; <<Вероятность осадков \textit{через}~2~дня 
+в~Элисте при текущих наблюдениях \verb"Wet-Wet-Dry-Dry" составляет~$0{,}2889$, 
+а~вероятность отсутствия осадков \textit{через}~2~дня~--- $0{,}7111$>>.
+
+
+
+Стоит отметить, что поступление новых данных может существенным образом
+изменить вероятности событий только при значительном объеме новых
+наблюдений, что позволяет говорить об устойчивости прогнозов. При этом с~сугубо
+вычислительной точки зрения обновление данных не является трудоемкой
+задачей.
+
+\section{Построение прогнозов с~помощью нейронных сетей}
+
+В данном разделе рассмотрим технологию прогнозирования событий, связанных 
+с~выпадением осадков, на основе использования нейронных сетей. При этом 
+в~качестве обучающих рядов задействуются те же самые паттерны, о~которых шла
+речь выше. Однако в~явном виде частота каждого из наборов не используется, 
+а~соответствующие процедуры реализуются в~скрытых слоях нейронной сети.
+
+Было проведено исследование возможности построения прогностической модели
+для данных с~помощью многослойного перцептрона на основе биб\-лио\-те\-ки
+\verb"PHP-ML" для языка программирования \verb"PHP"
+({\sf https://github.com/php-ai/php-ml}). Исходные наблюдения случайным образом
+разделялись на обуча\-ющие и~тестовые выборки в~отношении~$7:3$. В~качестве
+результата работы нейронной сети получается прогноз на следующие за входным
+набором~1--2~дня.
+
+Тестировались нейронные сети с~одним и~двумя скрытыми слоями в~архитектуре,
+при этом достигнутая точность составила~73\% (в~среднем) для однодневного
+прогноза при объеме входной выборки в~7~элементов (дней) и~56\% для
+двухдневного прогноза при размере входных данных в~10~наблюдений. Затем
+модель была усложнена за счет учета сезонности как отдельной компоненты 
+(к~выборке каждый раз добавлялось еще одно наблюдение с~номером месяца,
+соответствующего последнему наблюдению). Такое решение позволило повысить
+точность прогнозирования до~82\% для однодневного прогноза и~74\% для
+двухдневного при сохранении тех же параметров входных данных. Добавление
+третьего скрытого слоя не привело к~заметному улучшению  качества прогноза,
+при этом скорость обучения снизилась, поэтому разумно отказаться от такого
+решения в~данной конфигурации нейросети.
+
+На рис.~\ref{FigNN} продемонстрированы графики точ\-ности прогнозов 
+нейронных сетей по месяцам, построенные по выборке из~7~наблюдений 
+как с~учетом сезонности (правый столбец), так и~без (левый столбец). 
+На рис.~3,\,\textit{а} приводится однодневный прогноз, на рис.~3,\,\textit{б}~--- 
+двухдневный. Для расчетов в~данном случае использовался укороченный набор 
+данных за четырехлетний период для уменьшения времени, необходимого 
+для корректной настройки нейросети.
+
+
+Как видно из рис.~\ref{FigNN}, введение в~модель се\-зон\-ности 
+повышает качество прогнозирования, особенно для случая двухдневного 
+предсказания. Например, на рис.~3,\,\textit{б} (левый столбец)
+в~феврале \mbox{точ\-ность} 
+со\-став\-ля\-ла около~26\%, а~с~использованием сезонности удалось добиться 
+увеличения данного показателя в~2~раза~--- до~52\% (см.\ рис.~3,\,\textit{б},
+правый столбец).
+
+Очевидно, что качество прогноза может быть повышено за счет увеличения
+объемов тестовых данных, использования высокопроизводительных решений,
+развития архитектуры нейросети и~т.\,д. Представленные в~данном разделе
+результаты демонстрируют успешность применения инструментария нейросетей 
+в~решении задачи прогнозирования в~указанной постановке, однако не являются
+окончательными по своей точности. Подробнее вопрос получения высокоточных 
+прогнозов будет изучаться в~дальнейших работах.
+
+\vspace*{-9pt}
+
+\section{Заключение}
+
+\vspace*{-2pt}
+
+В работе продемонстрировано нарушение марковского свойства для осадков,
+наблюдаемых в~существенно различающихся между собой климатических
+областях~--- в~Потсдаме и~Элисте. Такие сведения о данных, наряду 
+с~исследованными в~работе~\cite{Gorshenin2017b} статистическими свойствами,
+представляют базовую информацию, необходимую для дальнейшего корректного
+построения вероятностных моделей, в~част\-ности для распределений объемов
+экстремальных осадков~\cite{Gorshenin2017a}.
+
+Для анализа вероятностного поведения процесса выпадения осадков 
+и~построения прогнозов
+предложено использование цепочек событий (паттернов), выделенных из данных.
+При этом статистические процедуры автоматизированы с~использованием
+программных инструментов пакета \verb"MATLAB". В~качестве альтернативного
+инструмента прогнозирования на основе паттернов были использованы нейронные
+сети с~учетом сезонности, двумя скрытыми слоями нейронов и~сигмоидной
+функцией активации, реализованные с~помощью средств языка \verb"PHP".
+
+В качестве одного из направлений дальнейших исследований можно предложить
+переход от двоичной модели дискретизации событий к~$k$-ичной. Это позволит
+решать более сложные задачи вероятностного прогнозирования, например можно
+предсказывать величину осадков в~терминах попадания в~тот или иной диапазон
+(соответствующие интервалы формируются с~учетом значений квантилей
+распределения для объемов, см., например,
+\mbox{статьи}~\cite{Zolina2009,Gorshenin2017c}).
+
+Работа с~паттернами представляет интерес с~точки зрения верификации
+ансамблей прогнозов~--- например, европейские климатологические агентства
+достаточно точно предсказывают общий объем осадков, который выпадет за
+некоторый период, но остается актуальной задача определения структуры\linebreak его
+распределения по дням. Кроме того, данная методология может быть 
+использована для прогнозирования поведения моментных 
+характеристик (мате\-ма\-ти\-че\-ское ожидание, дисперсия, коэффициенты 
+ассиметрии и~эксцесса) конечных смесей вероятностных 
+распределений~\cite{Gorshenin2016} для определения направления 
+изменения тренда (аналогия со случайным блужданием), 
+например в~рамках моделирования физических~\cite{Gorshenin2011} 
+и~иных процессов.
+
+Методы прогнозирования на основе нейронных сетей вполне могут быть включены
+в~состав комплекса стохастического анализа
+данных~\cite{Gorshenin2015,Gorshenin2017d} как отдельный элемент. При этом
+наибольший интерес представляет использование алгоритмов EM (expectation-maximization)
+ти\-па, прежде
+всего сеточных~\cite{Gorshenin2013a,Gorshenin2013b}, в~процессе обучения. 
+
+Для
+классического EM-ал\-го\-рит\-ма ранее продемонстрированы определенные успехи
+(см., например, статьи~\cite{Freitas2000,Ng2004}) в~рамках такого использования,
+кроме того, установлена взаимосвязь обобщенного EM-ал\-го\-рит\-ма с~методами
+обуче\-ния нейронных сетей~\cite{Audhkhasi2016}, однако для сеточных
+модификаций результаты (как теоретические, так и~эмпирические) отсутствуют.
+
+Стоит отметить, что расширение функциональных возможностей упомянутого
+комплекса стохастического анализа данных с~точки зрения включения 
+в~пользовательский интерфейс~\cite{Gorshenin2016} новых\linebreak методов предусмотрено
+за счет реализации в~ее рамках специализированного
+фреймворка~\cite{Gorshenin2017Soft}.
+
+\smallskip
+
+{Автор выражает признательность чле\-ну-кор\-рес\-пон\-ден\-ту РАН, доктору
+фи\-зи\-ко-ма\-те\-ма\-ти\-че\-ских наук,
+профессору Сергею Константиновичу Гулеву за предоставленные данные,
+доктору
+фи\-зи\-ко-ма\-те\-ма\-ти\-че\-ских наук, профессору Виктору Юрьевичу Королеву за полезные обсуждения 
+в~рамках совместных исследований метеорологических явлений и~Виктору Кузьмину
+за помощь в~реализации обучения нейронных сетей.}
+
+\vspace*{-4pt}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{Strauch2012} 
+\Au{Strauch~M., Bernhofer~C., Koide~S., Volk~M., Lorz~C.,
+Makeschin~F.} Using precipitation data ensemble for uncertainty analysis in SWAT
+streamflow simulation~// J.~Hydrol., 2012. Vol.~414. P.~413--424.
+
+\bibitem{Krzysztofowicz2001} 
+\Au{Krzysztofowicz~R.} The case for probabilistic
+forecasting in hydrology~// J.~Hydrol., 2001. Vol.~249. Iss.~1-4. P.~2--9.
+
+\bibitem{Pinson2009} 
+\Au{Pinson~P., Madsen~H., Nielsen~H.\,A., Papaefthymiou~G.,
+Klockl~B.} From probabilistic forecasts to statistical scenarios of short-term wind
+power production~// Wind Energy, 2009. Vol.~12. Iss.~1. P.~51--62.
+
+\bibitem{Gneiting2007} 
+\Au{Gneiting~T., Balabdaoui~F., Raftery~A.\,E.} Probabilistic
+forecasts, calibration and sharpness~// J.~Roy. Stat. Soc. B, 2007. Vol.~69. P.~243--268.
+
+\bibitem{Kharin2007} 
+\Au{Kharin~V.\,V., Zwiers~F.\,W., Zhang~X., Hegerl~G.\,C.}
+Changes in temperature and precipitation extremes in the IPCC ensemble of global
+coupled model simulations~// J.~Climate, 2007. Vol.~20. Iss.~8. P.~1419--1444.
+
+\bibitem{Zolina2005}  %6
+\Au{Zolina~O., Simmer~C., Kapala~A., Gulev~S.\,K.} On the
+robustness of the estimates of centennial-scale variability in heavy precipitation from
+station data over Europe~// Geophys. Res. Lett., 2005. Vol.~32. P.~L14707-1--L14707-5.
+
+\bibitem{Gorshenin2017a} %7
+\Au{Королев~В.\,Ю., Горшенин~А.\,К.} О~распределении
+вероятностей экстремальных осадков~// Докл. РАН, 2017. Т.~477.
+Вып.~5. C.~604--609.
+
+\bibitem{Zolina2013}  %8
+\Au{Zolina~O., Simmer~C., Belyaev~K., Gulev~S., Koltermann~P.}
+Changes in the duration of European wet and dry spells during the last~60~years~// 
+J.~Climate, 2013. Vol.~26. P.~2022--2047.
+
+
+
+\bibitem{Gorshenin2017b}  %9
+\Au{Korolev~V.\,Yu., Gorshenin~A.\,K., Gulev~S.\,K.,
+Belyaev~K.\,P., Grusho~A.\,A.} Statistical analysis of precipitation events~// AIP
+Conf. Proc., 2017. Vol.~1863. P.~090011-1--090011-4.
+
+\bibitem{Gould2008}
+\Au{Gould~P.\,G., Koehler~A.\,B., Ord~J.\,K., Snyder~R.\,D.,
+Hyndman~R.\,J., Vahid-Araghi~F.} Forecasting time series with multiple seasonal
+patterns~// Eur. J.~Oper. Res., 2008. Vol.~191. Iss.~1.
+P.~207--222.
+
+\bibitem{Abaurrea2005} 
+\Au{Abaurrea~J.} Forecasting local daily precipitation patterns
+in a~climate change scenario~// Clim. Res., 2005. Vol.~28. Iss.~3. P.~183--197.
+
+\bibitem{Stopa2013} 
+\Au{Stopa~J.\,E., Cheung~K.\,F., Tolman~H.\,L., Chawla~A.}
+Patterns and cycles in the Climate Forecast System Reanalysis wind and wave data~//
+Ocean Model., 2013. Vol.~70. P.~207--220.
+
+\bibitem{Zolina2009} 
+\Au{Zolina~O., Simmer~C., Belyaev~K., Kapala~A., Gulev~S.\,K.}
+Improving estimates of heavy and extreme precipitation using daily records from
+European rain gauges~// J.~Hydrometeorol., 2009. Vol.~10. P.~701--716.
+
+\bibitem{Gorshenin2017c} 
+\Au{Горшенин~А.\,К.} О~некоторых математических 
+и~программных методах построения структурных моделей информационных
+потоков~// Информатика и~её применения, 2017. Т.~11. Вып.~1. C.~58--68.
+
+\bibitem{Gorshenin2016} 
+\Au{Gorshenin~A., Kuzmin~V.} On an interface of the online
+system for a~stochastic analysis of the varied information flows~// AIP Conf.
+Proc., 2016. Vol.~1738. P.~220009-1--220009-4.
+
+\bibitem{Gorshenin2011}
+\Au{Батанов~Г.\,М., Горшенин~А.\,К.,
+Королев~В.\,Ю., Малахов~Д.\,В., Скворцова~Н.\,Н.} Эволюция
+вероятностных характеристик низкочастотной турбулентности плазмы 
+в~микроволновом поле~// Математическое моделирование, 2011.
+Т.~23. №\,5. C.~35--55.
+
+\bibitem{Gorshenin2015} 
+\Au{Gorshenin~A., Kuzmin~V.} Online system for the
+construction of structural models of information flows~// 7th
+ Congress (International) on Ultra Modern Telecommunications and Control Systems and
+Workshops Proceedings.~--- Piscataway, NJ, USA: IEEE, 2015. P.~216--219.
+
+\bibitem{Gorshenin2017d} 
+\Au{Gorshenin~A.\,K., Kuzmin~V.\,Yu.} Research support
+system for stochastic data processing~// Pattern Recogn. Image Anal., 2017.
+Vol.~27. No.\,3. P.~518--524.
+
+
+
+\bibitem{Gorshenin2013b} %19
+\Au{Gorshenin~A., Korolev~V., Kuzmin~V., Zeifman~A.}
+Coordinate-wise versions of the grid method for the analysis of intensities of
+non-stationary information flows by moving separation of mixtures of
+gamma-distribution~// 27th European Conference on Modelling and
+Simulation Proceedings.~--- Dudweiler, Germany: Digitaldruck Pirrot GmbHP, 2013. P.~565--568.
+
+\bibitem{Gorshenin2013a}  %20
+\Au{Gorshenin~A., Korolev~V.} Modelling of statistical
+fluctuations of information flows by mixtures of gamma distributions~// 
+27th European Conference on Modelling and Simulation Proceedings.~--- 
+Dudweiler, Germany: Digitaldruck Pirrot GmbHP, 2013. P.~569--572.
+
+\bibitem{Freitas2000} 
+\Au{De Freitas~J., Niranjan~M., Gee~A.} Dynamic learning with
+the EM algorithm for neural networks~// J.~VLSI Sig. Proc. Syst., 
+2000. Vol.~26. Iss.~1-2. P.~119--131.
+
+\bibitem{Ng2004} 
+\Au{Ng~S.\,K., McLachlan~G.\,J.} Using the EM algorithm to train
+neural networks: Misconceptions and a~new algorithm for multiclass classification~// 
+IEEE T.~Neural Networ., 2004. Vol.~15. Iss.~3. P.~738--749.
+
+\bibitem{Audhkhasi2016} 
+\Au{Audhkhasi~K., Osoba~O., Kosko~B.} Noise-enhanced
+convolutional neural networks~// Neural Networks, 2016. Vol.~78. P.~15--23.
+
+\bibitem{Gorshenin2017Soft} 
+\Au{Горшенин~А.\,К., Кузьмин~В.\,Ю.} Фреймворк
+вычислительной части системы поддержки научных исследований. Свидетельство
+о~государственной регистрации программ для ЭВМ №\,2017617610 от 11.07.2017.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 20.10.17}}
+
+%\vspace*{8pt}
+
+\newpage
+
+\vspace*{-24pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{8pt}
+
+
+\def\tit{PATTERN-BASED ANALYSIS OF~PROBABILISTIC AND~STATISTICAL CHARACTERISTICS 
+OF~EXTREME PRECIPITATION}
+
+\def\titkol{Pattern-based analysis of~probabilistic and~statistical characteristics 
+of~extreme precipitation}
+
+\def\aut{A.\,K.~Gorshenin$^{1,2}$}
+
+\def\autkol{A.\,K.~Gorshenin}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+$^1$Institute of Informatics Problems, Federal Research Center ``Computer Science and
+Control'' of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 44-2~Vavilova Str., Moscow 119333,
+Russian Federation
+
+\noindent
+$^2$P.\,P.~Shirshov Institute of Oceanology of the Russian Academy of Sciences,
+36~Nakhimovski Prosp., Moscow\linebreak
+$\hphantom{^1}$117997, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+\Abste{Precipitations are the key parameters of hydrological models; so, research
+related to precipitation processes is necessary for solving various applied problems.
+ The
+paper demonstrates a~violation of the Markov property for precipitation observed in
+essentially different climatic regions~--- in the cities of Potsdam and Elista. Such
+information about the data, along with previously studied properties, 
+represents the basic
+information which is necessary for the further correct construction of 
+probabilistic models,
+in particular, for probability distribution of the volumes of extreme 
+precipitation. For the
+analysis of the probabilistic behavior of the precipitation process and 
+the construction of
+forecasts, it is suggested to use chains of events (patterns) extracted from the data. 
+At the same time, statistical procedures are automated using the software 
+tools of the
+{\sf MATLAB} package. Neural networks were used as an alternative forecasting tool
+based on patterns, and the best results were demonstrated via the 
+architecture that takes
+into account a seasonality, has two hidden layers of neurons and a~sigmoid activation
+function. The ideas for further research in this field are suggested.}
+
+\KWE{precipitations; patterns; forecast; neural networks; probabilistic 
+forecasting; Markov property}
+
+  \DOI{10.14357/19922264170405} 
+
+%\vspace*{-12pt}
+
+\Ack
+\noindent
+The research was supported by the Russian Foundation for Basic Research (projects
+17-07-00851, 15-07-04040, and 15-07-05316).
+
+
+%\vspace*{3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+
+\bibitem{1-gor}
+\Aue{Strauch,~M., C.~Bernhofer, S.~Koide, M.~Volk, C.~Lorz, and F.~Makeschin.} 2012.
+Using precipitation data ensemble for uncertainty analysis in SWAT streamflow
+simulation. \textit{J.~Hydrol.} 414:413--424.
+
+\bibitem{2-gor}
+\Aue{Krzysztofowicz,~R.} 2001. The case for probabilistic forecasting in hydrology. 
+\textit{J.~Hydrol.} 249(1-4):2--9.
+
+\bibitem{3-gor}
+\Aue{Pinson,~P., H.~Madsen, H.\,A.~Nielsen, G.~Papaefthymiou, and B.~Klockl.} 2009.
+From probabilistic forecasts to statistical scenarios of short-term wind power
+production. \textit{Wind Energy} 12(1):51--62.
+\bibitem{4-gor}
+\Aue{Gneiting,~T., F.~Balabdaoui, and A.\,E.~Raftery.} 2007. Probabilistic forecasts,
+calibration and sharpness.
+\textit{J.~Roy. Stat. Soc.~B} 69:243--268.
+\bibitem{5-gor}
+\Aue{Kharin,~V.\,V., F.\,W.~Zwiers, X.~Zhang, and G.\,C.~Hegerl.} 2007. Changes in
+temperature and precipitation extremes in the IPCC ensemble of global coupled model
+simulations. \textit{J.~Climate} 20(8):1419--1444.
+
+\bibitem{6-gor}
+\Aue{Zolina,~O., C.~Simmer, A.~Kapala, and S.\,K.~Gulev.} 
+2005. On the robustness of the
+estimates of centennial-scale variability in heavy precipitation from station data over
+Europe. \textit{Geophys. Res. Lett.} 32:L14707-1--L14707-5.
+
+\bibitem{8-gor} %7
+\Aue{Korolev,~V.\,Yu., and A.\,K.~Gorshenin.} 2017. The probability distribution of extreme precipitation. 
+\textit{Dokl. Earth Sci.} 477(2):1461--1466.
+
+\bibitem{7-gor} %8
+\Aue{Zolina,~O., C.~Simmer, K.~Belyaev, S.~Gulev, and P.~Koltermann.} 2013.
+Changes in the duration of European wet and dry spells during the last~60~years. 
+\textit{J.~Climate} 26:2022--2047.
+
+
+
+\bibitem{9-gor}
+\Aue{Korolev,~V.\,Yu., A.\,K.~Gorshenin, S.\,K.~Gulev, K.\,P.~Belyaev, and 
+A.\,A.~Grusho.}
+2017. Statistical analysis of precipitation events. 
+\textit{AIP Conf. Proc.} 1863:090011-1--090011-4.
+
+\bibitem{10-gor}
+\Aue{Gould,~P.\,G., A.\,B.~Koehler, J.\,K.~Ord, R.\,D.~Snyder, R.\,J.~Hyndman, and
+F.~Vahid-Araghi.} 2008. Forecasting time series with multiple seasonal patterns.  
+\textit{European J.~Oper. Res.} 191(1):207--222.
+
+\bibitem{11-gor}
+\Aue{Abaurrea,~J.} 2005. Forecasting local daily precipitation patterns in 
+a~climate change scenario. \textit{Clim. Res.} 28(3):183--197.
+
+\bibitem{12-gor}
+\Aue{Stopa,~J.\,E., K.\,F.~Cheung, H.\,L.~Tolman, and A.~Chawla.} 
+2013. Patterns and cycles
+in the Climate Forecast System Reanalysis wind and wave data. 
+\textit{Ocean Model.} 70:207--220.
+
+\bibitem{13-gor}
+\Aue{Zolina,~O., C.~Simmer, K.~Belyaev, A.~Kapala, and S.\,K.~Gulev.} 2009. Improving
+estimates of heavy and extreme precipitation using daily records from European rain
+gauges. \textit{J.~Hydrometeorol.} 10:701--716.
+
+\bibitem{14-gor}
+\Aue{Gorshenin,~A.\,K.} 2017. O~nekotorykh matematicheskikh i~programmnykh metodakh
+postroeniya strukturnykh modeley informatsionnykh potokov [On some mathematical and
+programming methods for construction of structural models of information flows]. 
+\textit{Informatika i~ee Primeneniya~---  Inform. Appl.} 11(1):58--68.
+
+\bibitem{15-gor}
+\Aue{Gorshenin,~A., and V.~Kuzmin.}  2016. 
+On an interface of the online system for a
+stochastic analysis of the varied information flows. 
+\textit{AIP Conf. Proc.}
+1738:220009-1--\mbox{220009-4}.
+
+\bibitem{16-gor}
+\Aue{Batanov,~G.\,M., A.\,K.~Gorshenin, V.\,Yu.~Korolev, D.\,V.~Malakhov, and
+N.\,N.~Skvortsova.} 2012. The evolution of probability characteristics of
+low-frequency plasma turbulence. \textit{Math. Models Computer
+Simulations} 4(1):10--25.
+
+\bibitem{17-gor}
+\Aue{Gorshenin,~A.\,K., and V.~Kuzmin.} 2015. Online system for the construction of
+structural models of information flows. \textit{7th 
+Congress (International) on Ultra Modern Telecommunications and Control Systems and Workshops
+Proceedings}. Piscataway, NJ: IEEE. 216--219.
+
+\bibitem{18-gor}
+\Aue{Gorshenin,~A.\,K., and V.\,Yu.~Kuzmin.} 2017. 
+Research support system for stochastic
+data processing. \textit{Pattern Recogn. Image Anal.} 27(3):518--524.
+
+
+
+\bibitem{20-gor}
+\Aue{Gorshenin,~A.\,K., V.~Korolev, V.~Kuzmin, and A.~Zeifman.} 2013.  Coordinate-wise
+versions of the grid method for the analysis of intensities of non-stationary information
+flows by moving separation of mixtures of gamma-distribution.  
+\textit{27th European Conference on Modelling and Simulation
+Proceedings}. Dudweiler, Germany: Digitaldruck Pirrot GmbHP. 565--568.
+
+\bibitem{19-gor}
+\Aue{Gorshenin~A.\,K., and V.~Korolev.} 2013.  
+Modelling of statistical fluctuations of
+information flows by mixtures of gamma distributions. 
+\textit{27th
+European Conference on Modelling and Simulation Proceedings}.
+Dudweiler, Germany: Digitaldruck Pirrot GmbHP. 569--572.
+
+\bibitem{21-gor}
+\Aue{De Freitas,~J., M.~Niranjan, and A.~Gee.} 2000. Dynamic learning with the EM
+algorithm for neural networks. \textit{J.~VLSI Sig. Proc. Syst.} 26(1-2):119--131.
+
+\bibitem{22-gor}
+\Aue{Ng,~S.\,K., and G.\,J.~McLachlan.} 2004. Using the EM algorithm to train neural
+networks: Misconceptions and a~new algorithm for multiclass classification. 
+\textit{IEEE T.~Neural Networ.} 15(3):738--749.
+
+\bibitem{23-gor}
+\Aue{Audhkhasi,~K., O.~Osoba, and B.~Kosko.} 2016. Noise-enhanced convolutional
+neural networks. \textit{Neural Networks} 78:15--23.
+
+\bibitem{24-gor}
+\Aue{Gorshenin,~A.\,K., and V.\,Yu.~Kuzmin.} 2017. 
+Freymvork vychislitel'noy chasti sistemy
+podderzhki nauchnykh issledovaniy [Framework for computational part of  scientific
+research support system]. Certificate RF of state registration of computer programs
+No.\,2017617610.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received October 20, 2017}}
+
+%\vspace*{-10pt}
+
+
+\Contrl
+
+\noindent
+\textbf{Gorshenin Andrey K.} (b.\ 1986)~--- Candidate of Science (PhD) in physics and
+mathematics, associate professor, leading scientist, Institute of Informatics Problems,
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of
+Sciences, 44-2~Vavilova Str., Moscow 119333, Russian Federation;
+senior scientist, P.\,P.~Shirshov Institute of Oceanology of the Russian Academy of Sciences,
+36~Nakhimovski Prosp., Moscow 117997, Russian Federation
+\mbox{agorshenin@frccsc.ru}
+
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература} 

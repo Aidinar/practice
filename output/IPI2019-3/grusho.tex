@@ -1,0 +1,646 @@
+\def\stat{grusho}
+
+\def\tit{МЕТОДЫ ВЫЯВЛЕНИЯ <<СЛАБЫХ>> ПРИЗНАКОВ НАРУШЕНИЙ 
+ИНФОРМАЦИОННОЙ БЕЗОПАСНОСТИ$^*$}
+
+\def\titkol{Методы выявления <<слабых>> признаков нарушений 
+информационной безопасности}
+
+\def\aut{А.\,А.~Грушо$^1$, Н.\,А.~Грушо$^2$, Е.\,Е.~Тимонина$^3$}
+
+\def\autkol{А.\,А.~Грушо, Н.\,А.~Грушо, Е.\,Е.~Тимонина}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Грушо А.\,А.}
+\index{Грушо Н.\,А.}
+\index{Тимонина Е.\,Е.}
+\index{Grusho A.\,A.}
+\index{Grusho N.\,A.}
+\index{Timonina E.\,E.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа частично поддержана РФФИ (проект 18-07-00274).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского центра <<Информатика 
+и~управ\-ле\-ние>> Российской академии наук, \mbox{grusho@yandex.ru}}
+\footnotetext[2]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управление>> 
+Российской академии наук, \mbox{info@itake.ru}}
+\footnotetext[3]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управление>> 
+Российской академии наук, \mbox{eltimon@yandex.ru}}
+
+%\vspace*{-2pt}
+
+    
+  \Abst{Предложен новый подход к~выявлению <<слабых>> признаков нарушений 
+информационной безопасности. Исходной информацией для выявления <<слабых>> признаков 
+нарушений информационной безопасности инсайдером-злоумышленником служат 
+наблюдаемые потенциальные цели инсайдера-злоумышленника.
+  Появление новой ценной информации, в~которой заинтересован  
+ин\-сай\-дер-зло\-умыш\-лен\-ник, вызовет поведенческую реакцию  
+ин\-сай\-де\-ра-зло\-умыш\-лен\-ни\-ка в~ка\-ких-то информационных пространствах. Методы 
+поиска таких реакций в~различных информационных пространствах являются целью данной 
+работы.
+  Построена вероятностная модель реакции ин\-сай\-де\-ра-зло\-умыш\-лен\-ни\-ка в~случае 
+повторного появления цели. Показано, что использование многих информационных 
+пространств существенно повышает возможности выявления влияния цели на поведение  
+ин\-сай\-де\-ра-зло\-умыш\-лен\-ника.}
+  
+  \KW{информационная безопасность; информационные пространства; поведенческие 
+признаки нарушителя информационной безопасности}
+
+\DOI{10.14357/19922264190301} 
+  
+%\vspace*{1pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+  
+\section{Введение}
+
+  Цифровая экономика подразумевает массовое использование вычислительной 
+техники в~бизнесе. Предполагается, что через сеть (например, интернет) можно 
+наблюдать за поведением пользователей и~связывать это поведение с~действиями 
+нарушителя информационной безопасности.
+  
+  Проблема поиска инсайдера-злоумышленника (далее~--- инсайдера) актуальна и~исследовалась с~различных сторон многими учеными. Надо отметить наиболее 
+серьезные исследования в~этой области. В~рамках программы CERT 
+(Computer Emergency Response Team)
+в~2002~г.\ 
+был организован центр изучения угроз инсайдера~[1]. Работы CERT носят, 
+в~основном, обзорный и~методический характер. Согласно этим исследованиям 
+отмечено следующее:
+  \begin{itemize}
+\item почти всегда для инсайдера характерны специфические особенности 
+поведения. В~частности, отмечается наличие стресса, инициированного 
+внешними причинами или осознанием противоправности своих действий~[2];
+\item для атаки инсайдером создаются скрытые пути доступа к~информации, 
+которые изобретаются и~реализуются заранее с~использованием специфики 
+информационной системы~[3]. 
+\end{itemize}
+
+  Как правило, действия инсайдера в~информационной системе связано 
+с~появлением где-ли\-бо аномалий. В~2010~г.\ DARPA (Defense Advanced Research
+Projects Agency) начала программу 
+ADAMS (Anomaly Detection At Multiple Scales)~[4] выявления аномалий 
+в~информационных системах. В~рамках этой 
+программы реализован проект PRODIGAL (PROactive Discovery of Insider threats using
+Graph Analysis and Learning)~[5]. Главной целью проекта 
+PRODIGAL ставилась разработка подходов к~обнаружению <<слабых сигналов>>, 
+которые характерны для хорошо замаскированных действий инсайдеров. 
+Предполагается, что <<слабые сигналы>> присутствуют в~действиях и~функциях 
+пользователей компьютерных систем. 
+  
+  Среди целей инсайдеров выделим следующие:
+  \begin{itemize}
+\item хищение информации;
+\item нарушение целостности информации и~ресурсов.
+\end{itemize}
+
+  Один из выводов проекта PRODIGAL состоял в~том, что для выявления 
+инсайдеров требуется дополнительная информация, не связанная с~действиями 
+пользователей в~компьютерных системах, т.\,е.\ для выявления инсайдера 
+необходимо искать различные дополнительные источники данных поведенческого 
+характера. 
+  
+  В работах~[6, 7] построена модель независимого исследования нескольких 
+информационных пространств и~предложены формальные методы объединения 
+результатов этих исследований на основе понятия запрета вероятностной 
+меры~[8]. 
+  
+  Из работы~\cite{5-gr} следует, что многообразие возможностей для действий 
+инсайдера порождает неопределенность в~выборе средств анализа данных. 
+Отметим, что возможны изощренные пути доступа к~ценной информации, 
+которые не выявляются с~помощью логов компьютерных систем~\cite{3-gr}. 
+  
+  В основном поиск аномалий ведется статистическими методами в~условиях 
+множества малых выборок. При использовании этих методов следует учитывать 
+различные виды шума и~возникающих отсюда ошибок в~принятии решений. 
+В~работе~\cite{9-gr} показано, что при обработке большого числа малых выборок 
+либо часто возникают ложные тревоги, либо существенно увеличивается 
+вероятность потери правильного решения. 
+  
+  В данной работе предложен подход, отличный от подходов, указанных выше. 
+Исходной информацией для выявления инсайдера служат его наблюдаемые 
+потенциальные цели. Допустим, что квалификация инсайдера достаточно высока 
+для того, чтобы сделать доступ к~ценной информации <<невидимым>> для 
+контролеров~--- офицеров службы информационной безопасности. Однако 
+допустим, что новая ценная информация, представляющая интерес для инсайдера, 
+появляется достаточно регулярно. Появление новой ценной информации, 
+в~которой заинтересован инсайдер, каким-то неизвестным образом становится 
+ему известной, и~это вызовет его поведенческую реакцию в~ка\-ких-то 
+информационных пространствах. Методы поиска таких реакций в~различных 
+информационных пространствах являются целью данной работы.
+{ %\looseness=1
+
+}
+  
+  Обозначим через~$\Theta$ появление цели для инсайдера в~компьютерной 
+системе. Например, $\Theta$~--- это очередное появление новой ценной 
+информации. Допустим, что~$\Theta$ в~обновленном виде повторяется, т.\,е.\ если 
+инсайдер <<добывает>> ценную информацию в~компьютерной системе, то он 
+делает это неоднократно (и неизвестным образом). 
+  
+  Выделим моменты появления~$\Theta$ и~обозначим это множество 
+моментов~($+$). События~$\Theta$ позволяют выделить <<разумные>> сегменты 
+наблюдаемых событий в~процессах ожидаемой реакции инсайдера в~выбранном 
+информационном пространстве. Множество этих интервалов также будем 
+обозначать~($+$). Если цели~$\Theta$ отражаются в~наблюдаемом процессе 
+в~выбранном информационном пространстве, то возникают некоторые повторы 
+реакций в~выделенных сегментах~($+$). Эти повторы могут появляться 
+нерегулярно, поэтому их можно от\-нес\-ти к~<<слабым влияниям>>. 
+  
+  Обозначим через ($-$) данные в~наблюдаемом процессе в~выбранном 
+информационном пространстве вне интервалов~($+$). Отсюда появляется 
+возможность сравнения и~выявления неслучайных повторов искомых 
+поведенческих реакций. Если появлений~$\Theta$ набирается достаточно много, 
+то выявление влияния~$\Theta$ на наблюдаемый процесс в~выбранном 
+информационном пространстве может быть хорошо заметно. 
+  
+  Решение задачи выявления влияния~$\Theta$ на наблюдаемый процесс 
+в~выбранном информационном пространстве может вестись несколькими 
+способами:
+  \begin{itemize}
+\item логическими методами~\cite{10-gr}~--- выделение знаний из фактов;
+\item статистическими методами~\cite{11-gr}~--- выделение вкраплений, 
+используя данные~($-$) для формирования понятия <<обычное 
+поведение>>.
+\end{itemize}
+
+  В отличие от~\cite{11-gr}, в~поиске влияния~$\Theta$ порядок интервалов 
+оказывается несущественным. 
+  
+  Работая статистическими методами, необходимо иметь в~виду, что возможно 
+случайное появление признаков, которые можно было бы считать влиянием. 
+Поэтому надо выявлять различия между появлением искомых признаков ($+$) 
+и~($-$). 
+  
+  \section{Математическая модель}
+  
+  Построим математическую модель влияния появления целей для инсайдера на 
+аспекты его поведения. Пусть в~бизнес-процессе организации и~в~порождаемых 
+им информационных технологиях возникают события~$\Theta$, которые 
+предположительно интересны для инсайдера. Предположим, что рассматривается 
+информационное пространство, в~котором могут проявиться действия или 
+изменения поведения инсайдера при появлениях~$\Theta$. Пусть время~$t$ 
+дискретно и~офицер безопасности может синхронизировать появление~$\Theta$ 
+и~наблюдаемый в~информационном пространстве процесс событий $\xi^+(t)$, 
+$t\hm=1,2,\ldots$, который может отражать реакцию инсайдера на~$\Theta$. 
+Предположим, что офицер безопасности знает допустимые времена задержки, 
+которые происходят между событиями~$\Theta$ и~возможным влиянием этих 
+событий на поведение инсайдера. Эти выделенные сегменты обозначим~($+$). 
+Пусть имеется возможность наблюдать независимый аналогичный процесс~$\xi^-(t)$,  
+$t\hm = 1, 2,\ldots$, без событий~$\Theta$ и~вне временн$\acute{\mbox{ы}}$х сегментов. 
+  
+  Определим универсальный язык~$L$ значений наблюдаемого процесса 
+в~информационном пространстве следующим образом. Поскольку целью 
+исследования являются действия инсайдера и~их характеристики, то алфавит~$A$ 
+в~языке~$L$~--- это пары (действия, значения характеристик при выполнении 
+действий). Выражения языка~$L$ состоят из одной или нескольких букв 
+алфавита~$A$.
+  
+  \bigskip
+  
+  \noindent
+  \textbf{Пример.}\ Пусть наблюдаются звонки пользователей. Тогда 
+алфавит~$A$ состоит из пар (звонок, номер). Выделенные~($+$) пары 
+в~моменты~$\Theta$ не означают, что именно данный звонок надо рассматривать 
+как признак влияния. Однако выделение нескольких выражений после очередного 
+появления~$\Theta$ может нести информацию о влиянии.
+  
+  В качестве основной исследуемой характеристики будем изучать превышение 
+повторов некоторых букв или выражений в~множестве~($+$) над аналогичными 
+характеристиками, типичными для множества~($-$) для пользователя. С~этой 
+целью необходимо исследовать возможности случайных повторений 
+в~множестве~($-$). Будем считать, что буквы алфавита или выражения из 
+выделенного фиксированного множества появляются равновероятно и~независимо 
+друг от друга (распределения можно оценивать из практики).
+  
+  Воспользуемся сделанным ранее замечанием, что, в~отличие от 
+модели~\cite{10-gr}, в~данной задаче представляют интерес только повторы букв 
+или выражений. Тогда моделью для множества~($-$) служит классическая задача 
+размещения частиц по ячейкам~\cite{12-gr}. Пусть все рассматриваемые 
+выражения имеют фиксированную длину~$h$. Предположим, что в~множестве 
+всех выражений длины~$h$ в~алфавите~$A$ определена равновероятная мера. 
+Эти выражения будем рассматривать как уникальные имена ячеек, тогда 
+последовательность~$\xi^-(t)$, $t \hm= 1, 2,\ldots$, будет формально распределять 
+различные частицы по этим ячейкам. 
+  
+  Задача о выявлении повторений сводится к~существованию ячеек, число частиц 
+в~которых превышает некоторый порог,  определяемый из модели~($-$). 
+Пороги заполнения ячеек можно получить из данных модели~($-$). 
+  
+  Рассмотрим вероятностную схему размещения~$n$~частиц 
+по~$N$~ячейкам~\cite{13-gr}. Обозначим~$\eta_i$ число частиц в~ячейке с~номером~$i$, 
+$i\hm=1,\ldots , N$. Пусть $\eta_{(1)},\ldots, \eta_{(N)}$~--- вариационный ряд, 
+построенный по набору ($\eta_1,\ldots, \eta_N$), где $\eta_{(1)}$~--- минимальное 
+чис\-ло частиц в~ячейке, а~$\eta_{(N)}$~--- максимальное чис\-ло. Обозначим 
+  $$
+  \alpha=\fr{n}{N}\,;\enskip p_k=\fr{\alpha^k}{k!}\,e^{-\alpha}\,,\enskip k=0, 1,\ldots
+  $$
+  
+  Предельное поведение~$\eta_{(N)}$ описывается, например, следующей 
+теоремой.
+  
+\smallskip
+  
+  \noindent
+  \textbf{Теорема~1}~\cite{13-gr}. \textit{Если $n,N\hm\to \infty$, $\alpha/\ln N 
+\hm\to 0$ и~$r\hm= r(\alpha,N)$ выбрано так, что $r\hm>0$ и~$N p_r\hm\to 
+\lambda$, где $\lambda$~--- положительная постоянная, то} 
+ \begin{gather*}
+  {\sf P}\left\{ \eta_{(N)} =r-1\right\}\to e^{-\lambda}\,;\\
+  {\sf P}\left\{ \eta_{(N)} = 
+r\right\} \to 1-e^{-\lambda}\,.
+\end{gather*}
+  
+  
+  Вернемся к~примеру. Пусть у подозреваемого инсайдера 50 телефонных 
+номеров. Рассмотрим $h\hm = 1$, $N \hm= 50$, $\sqrt{N}\hm\approx 7{,}07$, 
+а~$n$~--- сумма длин сегментов~($+$). Согласно~\cite{13-gr}, в~асимптотике 
+при~$n, N\hm\to \infty$ и~$n\hm=\sqrt{N}$ возможны случайные повторения. 
+Поэтому очевидно, что для такого короткого объема данных~($+$) поиск 
+повторений не имеет смысла. 
+  
+  Однако можно рассмотреть повторы выражений, состоящих из трех 
+упорядоченных звонков (которые могут быть разнесены между другими 
+звонками), попавших в~отдельные сегменты~($+$). В~данном случае асимптотика 
+работает достаточно уверенно, а именно: $N\hm=50^3\hm= 125\cdot 10^3$, 
+$\sqrt{N}\hm\approx 353{,}55$. 
+  
+  Предположим, что множество сегментов~($+$) состоит из~5~сегментов 
+длиной~10 каждый и~все подпоследовательности длиной~3 независимы 
+и~равновероятны. В~каждом сегменте содержится $n\hm = 720$ 
+подпоследовательностей длиной~3. Тогда необходимо оценить возможности 
+появления повторов в~аналогичном наборе сегментов~($-$). Выбранные 
+параметры показывают, что каждый сегмент приблизительно удовлетворяет 
+условиям теоремы~1 для $r \hm=2$ при $\lambda\hm\approx2$. Это означает, что 
+в~одном сегменте возможны повторы, но не более двух раз для одного знака. 
+Поэтому в~данных~($-$) целесообразно рассматривать возможность повторов 
+трехчленных выражений по одному в~каждом из трех сегментов, т.\,е.\ 
+целесообразно рассматривать~3~сегмента~$B$, $C$ и~$D$, длиной~10~букв каждый, так 
+как в~любых двух сегментах возможны указанные повторения выражений (по 
+одному в~каждом). 
+  
+  Выделим по одному фиксированному месту в~каждом из сегментов~$C$ и~$D$. 
+Вероятность того, что на этих местах расположены одинаковые фиксированные 
+буквы, равна~$1/N^2$. Вероятность того, что первая бук\-ва сегмента~$B$ совпадает 
+с~бук\-вой в~выделенных местах сегментов~$C$ и~$D$, равна~$1/N^2$, а~вероятность 
+того, что на первом месте сегмента~$B$ находится бук\-ва, не совпадающая с~бук\-вой 
+в~выделенных местах сегментов~$C$ и~$D$, равна $1\hm- 1/N^2$. Вероятность того, 
+что ни одна бук\-ва из сегмента~$B$ не совпадет с~буквой в~выделенных местах 
+сегментов~$C$ и~$D$, равна $(1-1/N^2)^{720}$. Тогда вероятность хотя бы одного 
+совпадения бук\-вы в~сегменте~$B$ и~в~фиксированных местах сегментов~$C$ и~$D$ 
+равна $1\hm- (1\hm- 1/N^2)^{720}$. 
+  %
+  Отсюда получаем среднее число повторов букв одновременно в~$B$, $C$ и~$D$:
+  $720^2\left( 1\hm-\left( 1-{1}/{N^2}\right)^{720}\right).$
+  
+  Оценку искомой вероятности получаем из неравенства Маркова~\cite{14-gr} 
+и~полученной формулы для математического ожидания. Отсюда получаем оценку 
+искомой вероятности:
+$$
+\fr{720^3}{(125\cdot 10^3)^2}\cong 0{,}024\,.
+$$
+  
+  Аналогично получаем оценку вероятности встретить такой повтор в~трех из пяти 
+сегментов:
+$$
+\left( \begin{matrix} 5\\ 3\end{matrix}\right)\cdot 0{,}024\hm= 0{,}24\,.
+$$
+ Этот 
+результат можно считать подтверждением наличия влияния. 
+  
+  \section{Случай многих информационных пространств}
+  
+  Различные информационные пространства могут в~совокупности повышать 
+уверенность в~наличии влияния~$\Theta$ на поведение инсайдера. Для простоты 
+рассмотрим следующую схему.
+  
+  Пусть определены два информационных пространства~$\mathrm{IS}_1$ и~$\mathrm{IS}_2$ 
+и~мощность каждого из них равна~$N$. Пусть по-прежнему существует 
+возможность синхронизации событий~$\Theta$ с~последовательностью значений 
+во всех информационных пространствах, т.\,е.\ в~предположении дискретного 
+времени значения рассматриваемых процессов во всех пространствах 
+описываются векторами~$\overline{x}_n$, $n \hm= 0, 1,\ldots$, где 
+$\overline{x}_n=\left( \xi_n^{(1)}, \xi_n^{(2)}\right)$, $\xi_n^{(i)}\hm\in \mathrm{IS}_i$, 
+$i\hm = 1, 2$. Опять сведем задачу к~поиску повторений и~для этого используем 
+вероятностную схему размещения частиц по ячейкам~\cite{13-gr}. 
+  
+  Одновременное влияние в~информационных пространствах~$\mathrm{IS}_1$ и~$\mathrm{IS}_2$ 
+описывается увеличением числа повторений по каждой координате 
+в~$m$~сегментах~($+$) длины~$n$ последовательностей~$\overline{x}_t$, $t\hm = 0, 
+1,\ldots$ Если~$n$ и~$N$ удовлетворяют теореме~1 при $r\hm=2$, то возможны 
+случайные пары повторений по каждой координате вектора~$\overline{x}_t$. 
+Поэтому необходимо рассматривать тройные повторения по каждой координате. 
+Выберем произвольным образом одно из информационных пространств. Число 
+троек возможных сегментов в~этом пространстве равно~$\begin{pmatrix} 
+m\\3\end{pmatrix}$. 
+  
+  В схеме~($-$) вероятность того, что данная тройка содержит один и~тот же 
+элемент на фиксированных местах, равна $N\cdot1/N^3$. Тогда математическое 
+ожидание числа повторов длины~3 во множестве сегментов выбранного 
+информационного пространства равно $\begin{pmatrix} m\\ 3\end{pmatrix} 
+\fr{n^3}{N^2}$. 
+  
+  Пусть $n=\sqrt{N}$, тогда указанное математическое ожидание имеет порядок 
+  $\displaystyle {\begin{pmatrix} m\\ 3\end{pmatrix}}/{\sqrt{N}}$ . 
+  
+  Используя неравенство Маркова~\cite{14-gr}, получим оценку вероятности 
+появления тройки повторений в~различных сегментах одного информационного 
+пространства. Независимость координат вектора~$\overline{x}_t$ позволяет 
+оценить вероятность случайного возникновения влияния в~информационных 
+пространствах~$\mathrm{IS}_1$ и~$\mathrm{IS}_2$ следующим образом: 
+  $\displaystyle {\left( \begin{matrix} m\\ 3\end{matrix}\right)^2}/{N}$. 
+  
+  \section{Заключение }
+  
+  В работе рассмотрена задача выявления инсайдера по изменению его поведения 
+при появлении цели его преступной деятельности. Предположим, что инсайдер 
+обладает временем и~интеллектом, чтобы скрыть от офицеров информационной 
+без\-опас\-ности, откуда и~как он получает информацию о~цели преступной 
+деятельности. В~связи с~этим необходимо искать <<следы>> его интереса к~цели 
+в~различных информационных пространствах, которые доступны наблюдению 
+офицеру информационной безопасности. 
+  
+  Построена вероятностная модель реакции инсайдера в~случае повторного 
+появления цели. Показано, что использование многих информационных 
+пространств существенно повышает возможности выявления влияния цели на 
+поведение инсайдера.
+  
+  Отметим, что асимптотические результаты используются в~основном как 
+<<путеводная звезда>>, позволяющая правильно сформировать условия поиска 
+влияния.
+  
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-gr}
+\Au{Cappelli D., Moore~A., Trzeciak~R.} The CERT guide to insider threats: How to prevent, detect, 
+and respond to information technology crimes (theft, sabotage, fraud).~--- Addison-Wesley 
+Professional, 2012. 430~p. 
+\bibitem{2-gr}
+\Au{Band S.\,R., Cappelli~D., Fischer~L.\,F., Moore~A.\,P., Shaw~E.\,D., Trzeciak~R.\,F.} Comparing 
+insider IT sabotage and espionage: A~model-based analysis. CMU/SEI-2006-TR-026.~--- Software 
+Engineering Institute, Carnegie Mellon University, 2006. 108~p. {\sf 
+http://\linebreak resources.sei.cmu.edu/library/asset-view.cfm?AssetID= 8163}.
+\bibitem{3-gr}
+\Au{Тимонина~Е.\,Е.} Анализ угроз скрытых каналов и~методы построения гарантированно 
+защищенных распределенных автоматизированных систем: Дисс.\ \ldots\ докт. техн. наук.~--- 
+М.: РГГУ, 2004. 204~с.  
+\bibitem{4-gr}
+Anomaly Detection at Multiple Scales (ADAMS). 2011. {\sf  
+https://info.publicintelligence.net/DARPA-ADAMS.pdf}.
+\bibitem{5-gr}
+\Au{Senator T.\,E., Goldberg H.\,G., Memory~A., \textit{et al.}} 
+Detecting insider threats in a~real corporate database of 
+computer usage activity~// 19th ACM SIGKDD Conference (International) on Knowledge Discovery 
+and Data Mining Proceedings.~--- New York, NY, USA: ACM, 2013. P.~1393--1401.
+
+\bibitem{7-gr} %6
+\Au{Грушо А.\,А., Грушо~Н.\,А., Забежайло~М.\,И., Смирнов~Д.\,В., Тимонина~Е.\,Е.}
+ Параметризация в~прикладных задачах поиска эмпирических причин~// 
+ Информатика и~её применения, 2018. Т.~12. Вып.~3. С.~62--66.
+
+%Grusho~A., Grusho~N., Timonina~E.} Power functions of statistical criteria defined by bans~// 
+%29th European Conference on Modelling and Simulation Proceedings.~--- Dudweiler, 
+%Germany: Digitaldruck Pirrot GmbH, 2015. P.~617--621.
+
+\bibitem{6-gr} %7
+\Au{Грушо А.\,А., Забежайло~М.\,И., Смирнов~Д.\,В., Тимонина~Е.\,Е.} Модель множества 
+информационных пространств в~задаче поиска инсайдера~// Информатика и~её применения, 
+2017. Т.~11. Вып.~4. С.~65--69.
+
+\bibitem{8-gr}
+\Au{Грушо А., Тимонина~Е.} Запреты в~дискретных вероятностно-статистических задачах~// 
+Дискретная математика, 2011. Т.~23. Вып.~2. С.~53--58.
+\bibitem{9-gr}
+\Au{Axelsson S.} The base-rate fallacy and its implications for the difficulty of intrusion detection~// 
+6th Conference on Computer and Communications Security Proceedings.~--- New York, NY, USA: 
+ACM, 1999. P.~1--7.
+\bibitem{10-gr}
+\Au{Финн В.\,К.} Искусственный интеллект: Методология, применения, философия.~--- М.: 
+Красанд, 2011. 448~с.
+\bibitem{11-gr}
+\Au{Тьюки Дж.} Анализ результатов наблюдений. Разведочный анализ приложения~/ Пер. 
+с~англ.~--- М.: Мир, 1981. 694~с. (\Au{Tukey~J.\,W.} Exploratory data analysis.~--- Addison Wesley 
+Pub. Co., Inc., 1977. 711~р.)
+\bibitem{12-gr}
+\Au{Феллер~В.} Введение в~теорию вероятностей и~ее приложения~/ Пер. с~англ.~--- М.: Мир, 
+1967. Т.~1. 499~с. (\Au{Feller~W.} An introduction to probability theory and its applications.~--- 2nd 
+ed.~--- New York, NY, USA: John Wiley and Sons, Inc., 1950. Vol.~1. 520~p.)
+\bibitem{13-gr}
+\Au{Колчин~В.\,Ф., Севастьянов~Б.\,А., Чистяков~В.\,П.} Случайные размещения.~--- М.: 
+Наука, 1976. 224~с. 
+\bibitem{14-gr}
+\Au{Ширяев А.\,Н.} Вероятность.~--- В 2-х кн.~--- 3-е изд., перераб. и~доп.~--- М.: МЦНМО, 
+2004. 521~с. 
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Поступила в~редакцию 07.07.19}}
+
+\vspace*{6pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+\vspace*{-3pt}
+
+\def\tit{METHODS OF IDENTIFICATION OF~``WEAK'' SIGNS 
+OF~VIOLATIONS OF~INFORMATION SECURITY}
+
+
+\def\titkol{Methods of identification of~``weak'' signs 
+of~violations of~information security}
+
+\def\aut{A.\,A.~Grusho, N.\,A.~Grusho, and E.\,E.~Timonina}
+
+\def\autkol{A.\,A.~Grusho, N.\,A.~Grusho, and E.\,E.~Timonina}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-14pt}
+
+
+\noindent
+Institute of Informatics Problems, Federal Research Center ``Computer Science and Control'' of the 
+Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation 
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{1pt}    
+
+   
+\Abste{New approach of identification of ``weak'' signs of violations of information security is 
+suggested. Initial information for identification of ``weak'' signs of violations of information security by 
+the insider-malefactor are the observed potential purposes of the insider-malefactor.
+   Emergence of new valuable information, in which the insider-malefactor is interested, will cause 
+behavioral reaction of the insider-malefactor in some information spaces. Methods of searching of 
+such reactions in various information spaces are the purpose of this work.
+   The probability model of a reaction of an insider-malefactor in case of repeated emergence of 
+a~purpose is constructed. It is shown that usage of many information spaces significantly increases 
+possibilities of identification of influence of a purpose on behavior of an insider-malefactor.}
+
+\KWE{information security; information spaces; behavioral signs of a violator of information 
+security}
+   
+   
+
+\DOI{10.14357/19922264190301} 
+
+\vspace*{-21pt}
+
+\Ack
+
+\vspace*{-2pt}
+
+   \noindent
+   The paper was partially supported by the Russian Foundation for Basic Research (project  
+18-07-00274-a).
+
+
+%\vspace*{-6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-gr-1}
+\Aue{Cappelli, D., A.~Moore, and R.~Trzeciak}. 2012. \textit{The CERT guide to insider threats: 
+How to prevent, detect, and respond to information technology crimes (theft, sabotage, fraud)}. 
+Addison-Wesley Professional. 430~p.
+\bibitem{2-gr-1}
+\Aue{Band, S., D.~Cappelli, L.~Fischer, A.~Moore, E.~Shaw, and R.~Trzeciak.} 2006. Comparing 
+insider IT sabotage and espionage: A~model-based analysis. CMU/SEI-2006-TR-026. Software 
+Engineering Institute, Carnegie Mellon University. 108~p. Available at: {\sf 
+http://resources.\linebreak  sei.cmu.edu/library/asset-view.cfm? AssetID=8163} (accessed June~20, 2019).
+\bibitem{3-gr-1}
+\Aue{Timonina, E.\,E.} 2004. Analiz ugroz skrytykh kanalov i~metody postroeniya garantirovanno 
+zashchishchennykh raspredelennykh avtomatizirovannykh sistem [The analysis of threats of covert 
+channels and methods of creation of guaranteed protected distributed 
+automated systems]. Moscow: Russian State University for the Humanities. 
+D.Sc. Diss. 204~p. 
+\bibitem{4-gr-1}
+Anomaly Detection at Multiple Scales (ADAMS). 2011. Available at: {\sf 
+https://info.publicintelligence.net/DARPA-ADAMS.pdf} (accessed June~20, 2019).
+\bibitem{5-gr-1}
+\Aue{Senator, T.\,E., H.\,G.~Goldberg, A.~Memory, \textit{et al.}} 2013. Detecting insider threats in a real corporate database 
+of computer usage activity. \textit{19th ACM SIGKDD Conference (Internationl) on Knowledge 
+Discovery and Data Mining Proceedings}. New York, NY: ACM. 1393--1401.
+
+\bibitem{7-gr-1}
+\Aue{Grusho, A.\,A., N.\,A.~Grusho, M.\,I.~Zabezhailo, D.\,V.~Smirnov, and E.\,E.~Timonina.}
+2018. Parametrizatsiya v~prikladnykh zadachakh poiska empiricheskikh prichin 
+[Parametrization in applied problems of search of the empirical reasons]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 12(3):62--66.
+
+%Grusho,~A., N.~Grusho, and E.~Timonina.} 2015. Power functions of statistical criteria defined 
+%by bans. \textit{29th European Conference on Modelling and Simulation Proceedings}. 
+%Dudweiler, Germany: Digitaldruck Pirrot GmbH. 617--621.
+
+\bibitem{6-gr-1}
+\Aue{Grusho, A.\,A., M.\,I.~Zabezhailo, D.\,V.~Smirnov, and E.\,E.~Timonina.} 2017. Model' 
+mnozhestva informatsionnykh prostranstv v~zadache poiska insaydera [The model of the set of 
+information spaces in the problem of insider detection]. \textit{Informatika i~ee Primeneniya~--- 
+Inform. Appl.} 11(4):65--69.
+\bibitem{8-gr-1}
+\Aue{Grusho,~A., and E.~Timonina.} 2011. Prohibitions in discrete probabilistic statistical problems. 
+\textit{Discrete Math. Appl.} 21(3):275--281.
+\bibitem{9-gr-1}
+\Aue{Axelsson, S.} 1999. The base-rate fallacy and its implications for the difficulty of intrusion 
+detection. \textit{6th ACM Conference on Computer and Communications Proceedings}. 
+New York, NY: ACM. 1--7.
+\bibitem{10-gr-1}
+\Aue{Finn, V.\,K.} 2011. \textit{Iskusstvennyy intellekt: metodologiya, primeneniya, filosofiya} 
+[Artificial intelligence: Methodology, applications, philosophy]. Moscow: KRASAND. 448~p.
+\bibitem{11-gr-1}
+\Aue{Tukey, J.\,W.} 1977. \textit{Exploratory data analysis}. Addison Wesley Pub. Co., Inc. 711~р.
+\bibitem{12-gr-1}
+\Aue{Feller, W.} 1950. An introduction to probability theory and its applications. 2nd ed. New York, 
+NY: John Wiley and Sons, Inc. Vol.~1. 520~p.
+\bibitem{13-gr-1}
+\Aue{Kolchin, V.\,F., B.\,A.~Sevastyanov, and V.\,P.~Chistyakov.} 1978. \textit{Random allocations}. 
+Washington, DC: V. H. Winston \& Sons. 270~p.
+\bibitem{14-gr-1}
+\Aue{Shiryaev, A.\,N.} 2004. \textit{Veroyatnost'} [Probability]. Moscow: MTsNMO. 521~p.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+%\vspace*{-7pt}
+
+\hfill{\small\textit{Received July 7, 2019}}
+
+%\pagebreak
+
+%\vspace*{-22pt}
+
+\Contr
+
+\noindent
+\textbf{Grusho Alexander A.} (b.\ 1946)~--- Doctor of Science in physics and 
+mathematics, professor, principal scientist, Institute of Informatics Problems, Federal 
+Research Center ``Computer Sciences and Control'' of the Russian Academy of 
+Sciences, 44-2~Vavilov Str., Moscow 119133, Russian Federation; 
+\mbox{grusho@yandex.ru} 
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Grusho Nikolai A.} (b.\ 1982)~--- Candidate of Science (PhD) in physics and 
+mathematics, senior scientist, Institute of Informatics Problems, Federal Research 
+Center ``Computer Sciences and Control'' of the Russian Academy of Sciences,  
+44-2~Vavilov Str., Moscow 119133, Russian Federation; \mbox{info@itake.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Timonina Elena E.} (b.\ 1952)~--- Doctor of Science in technology, professor, 
+leading scientist, Institute of Informatics Problems, Federal Research Center 
+``Computer Sciences and Control'' of the Russian Academy of Sciences, 44-2~Vavilov 
+Str., Moscow 119133, Russian Federation; \mbox{eltimon@yandex.ru} 
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}  

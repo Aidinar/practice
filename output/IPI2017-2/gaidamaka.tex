@@ -1,0 +1,912 @@
+\def\stat{gaidamaka}
+
+\def\tit{МОДЕЛИРОВАНИЕ ОТНОШЕНИЯ СИГНАЛ/ИНТЕРФЕРЕНЦИЯ В~МОБИЛЬНОЙ СЕТИ 
+СО~СЛУЧАЙНЫМ БЛУЖДАНИЕМ ВЗАИМОДЕЙСТВУЮЩИХ УСТРОЙСТВ$^*$}
+
+\def\titkol{Моделирование отношения сигнал/интерференция в~мобильной сети 
+со случайным блужданием %взаимодействующих 
+устройств}
+
+\def\aut{Ю.\,В.~Гайдамака$^1$, Ю.\,Н.~Орлов$^2$, Д.\,А.~Молчанов$^3$, 
+А.\,К.~Самуйлов$^4$}
+
+\def\autkol{Ю.\,В.~Гайдамака, Ю.\,Н.~Орлов, Д.\,А.~Молчанов, 
+А.\,К.~Самуйлов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Ю.\,В.~Гайдамака, Ю.\,Н.~Орлов, Д.\,А.~Молчанов, 
+А.\,К.~Самуйлов}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Публикация подготовлена при финансовой поддержке Минобрнауки 
+России (№\,2.3397.2017).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Российский университет дружбы народов; Институт проблем информатики Федерального исследовательского 
+центра <<Информатика и~управ\-ле\-ние>> Российской академии наук, 
+\mbox{gaydamaka\_yuv@rudn.university}}
+\footnotetext[2]{Институт прикладной математики им. М.\,В.~Келдыша Российской академии наук, \mbox{yuno@kiam.ru}}
+\footnotetext[3]{Российский университет дружбы народов, molchanov\_da@rudn.university}
+\footnotetext[4]{Российский университет дружбы народов, samuylov\_ak@rudn.university}
+
+\vspace*{-12pt}
+
+\Abst{Целью исследования является анализ отношения сиг\-нал/ин\-тер\-фе\-рен\-ция (SIR,
+signal-to-interference 
+ratio) 
+при прямом взаимодействии устройств в~мобильных сетях 5-го поколения (5G) с~учетом 
+перемещения прие\-мо\-пе\-ре\-да\-ющих устройств в~зоне обслуживания. Величина SIR на 
+приемнике ас\-со\-ци\-иро\-ван\-ной пары исследуется как изменяющийся во времени случайный 
+процесс, а~математическая модель движения задана кинетическим уравнением с~учетом 
+скорости перемещения устройств, их пространственной плотности и~максимально 
+допустимого радиуса взаимодействия. Задача численного анализа решается методом 
+имитационного моделирования. В~качестве функционала величины SIR исследуется 
+плотность распределения случайной величины (СВ) длительности периода наличия 
+(отсутствия) связи. Показано, что вероятность обрыва связи логарифмически растет 
+с~увеличением как ско\-рости перемещения взаимодействующих устройств, так и~их числа 
+в~заданной зоне обслуживания.}
+ 
+\KW{беспроводная сеть; отношение сигнал/интерференция; взаимодействие устройств; 
+стохастическая геометрия; модель движения; кинетическое уравнение; показатель 
+эффективности; вероятность обрыва связи; длительность периода наличия связи}
+
+\vspace*{-6pt}
+
+\DOI{10.14357/19922264170206} 
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+\section{Введение}
+
+  Методы анализа SIR 
+  как ключевого показателя, характеризующего качество предоставления 
+услуг в~беспроводной сети~[1, 2], разрабатывались начиная примерно с~2005~г. 
+Хотя большинство исследователей используют для анализа этой 
+характеристики методы имитационного моделирования, известны также 
+точные~[3--6] и~приближенные~[7--9] аналитические методы расчета SIR, 
+использующие аппарат стохастической геометрии и~предназначенные для 
+анализа характеристик сети в~случае неподвижных абонентов~[10, 11].
+%
+ Авторам 
+не известны публикации, где проводится анализ SIR, меняющегося 
+во времени, а~именно в~этих предположениях следует исследовать 
+интерференцию при анализе показателей эффективности беспроводных сетей 
+с~перемещающимися абонентами. Первые шаги в~этом направлении 
+предприняты в~[12]. 
+
+В~данной статье отношение SIR на приемнике 
+ассоциированной пары исследуется как случайный процесс, состояние которого 
+зависит от ско\-рости движения при\-емо\-пе\-ре\-да\-ющих устройств, плот\-ности 
+размещения передатчиков в~зоне об\-служивания и~расстояния 
+в~ассоциированной паре при\-ем\-ник--пе\-ре\-дат\-чик. Для случая однород-\linebreak ных 
+абонентов, перемещающихся на плоскости, получены распределения 
+длительности периода\linebreak наличия и~периода отсутствия связи между 
+устройствами пары. В~исследуемой модели задано кинетическое уравнение 
+относительно плотности распределения случайных приращений координат для 
+описания движения абонента, плотность абонентов, а~также максимальный 
+допустимый радиус взаимодействия для прямых соединений. 
+%
+На основе 
+построенной в~разд.~2 модели прямых соединений в~разд.~3 разработан метод 
+расчета отношения сигнал/интерференция, а~в~разд.~4 определены показатели 
+эффективности модели. 
+%
+С~использованием траекторий SIR во времени 
+в~разд.~5 численно исследованы плотности распределения длительностей 
+периода наличия и~периода отсутствия связи.
+
+\vspace*{-6pt}
+
+\section{Системная модель}
+
+  Рассматривается сценарий, где в~ограниченной зоне обслуживания~$V$, 
+представляющей собою область в~$M$-мер\-ном пространстве, перемещаются 
+носители идентичных прие\-мо\-пе\-ре\-да\-ющих устройств. Такой сценарий 
+пригоден, например, для описания хаотичного перемещения зрителей на 
+городской площади, на стадионе во время массовых мероприятий ($M\hm=2$) 
+или для описания движения покупателей в~многоуровневом торговом центре 
+($M\hm=3$). Для исследования интерференции на приемнике произвольной 
+ассоциированной пары взаимодействующих устройств, созда\-ва\-емой 
+передатчиками других пар, рассмотрено~$N$~пар устройств, 
+взаимодействующих напрямую (D2D, device-to-device) на основе одной из 
+чувствительных к~интерференции (interference-limited) технологий, например 
+LTE, Release~13 или Wi-Fi Direct Connect~[13, 14]. Перемещение передатчиков 
+сочетает целеполагающее поступательное движение\linebreak и~хаотическое блуждание
+ и~определяется кинетическим уравнением типа Фок\-ке\-ра--План\-ка 
+с~заданной ско\-ростью сноса~$u$ и~коэффициентом диф\-фузии~$\alpha$. 
+Ассоциированный приемник движется\linebreak вмес\-те с~передатчиком внут\-ри 
+окруж\-ности максимально допустимого радиуса взаимодействия~$d$ с~центром 
+в~точке расположения передатчика. Мощ\-ность сигнала на приемнике 
+определяется из стандартной модели распространения сигнала $\phi(r)\hm= 
+Ar^{-\gamma}$, где $r$~--- расстояние в~паре при\-ем\-ник--пе\-ре\-дат\-чик; 
+$A$~--- константа, учитывающая излучаемую мощность и~коэффициенты 
+усиления приемной и~передающей антенны; $\gamma$~--- коэффициент 
+распространения сигнала. 
+  
+  Для оценки интерференции на приемнике используется SIR, 
+вычисляемое по формуле:
+  \begin{equation}
+  \mathrm{SIR} =\fr{\phi(r_0)}{\sum\nolimits_{n=1}^{N-1} \phi(d_n)}\,,
+  \label{e1-gai}
+  \end{equation}
+где $r_0$~--- расстояние между приемником и~передатчиком в~исследуемой 
+паре; $d_n$~--- расстояние между приемником из исследуемой пары 
+и~передатчиком из $n$-й интерферирующей пары. 
+
+Также задан порог SIR$^*$, 
+определяющий минимальное значение SIR, необходимое для 
+поддержания соединения. При падении SIR на приемнике ниже 
+порогового значения SIR$^*$ связь в~паре прерывается до момента, когда 
+SIR вновь превысит данный порог. 
+Таким образом, задачей 
+исследования является нахождение плотностей распределения длительностей 
+периодов наличия и~отсутствия связи. 
+
+\vspace*{-6pt}
+
+\section{Метод расчета отношения сигнал/интерференция}
+
+\vspace*{-2pt}
+
+  Моделирование траекторий проводится для случая нестационарного 
+блуждания на задаваемом временн$\acute{\mbox{о}}$м горизонте $t\hm\in [1,T]$ в~дискретном 
+времени с~единичным шагом по времени, следуя результатам~[15--17]. На 
+каждом шаге $k\hm=1,2,\ldots, T$ для каждого устройства генерируется 
+приращение координат в~соответствии с~решением уравнения  
+Фок\-ке\-ра--План\-ка, которое для случая моделирования одномерного 
+блуждания ($M\hm=1$) имеет вид:
+  \begin{multline}
+  \fr{\partial f(x,t)}{\partial t} +\fr{\partial}{\partial x}\left( u(x,t)f(x,t)\right) -
+\fr{\alpha(t)}{2}\,\fr{\partial^2 f(x,t)}{\partial x^2}={}\\
+{}=0\,.
+  \label{e2-gai}
+  \end{multline}
+Здесь $f(x,t)$~--- плотность распределения приращений координат~$x$ 
+положения устройств в~момент времени~$t$, а~параметры уравнения~--- 
+скорость сноса $u(x,t)$ и~нестационарный в~общем случае неотрицательный 
+коэффициент диффузии $\alpha(t)$~--- в~данной работе были построены по 
+моделям типичных нестационарных процессов, описывающих изменения 
+положений случайно блуждающих объектов, обсуждаемых в~\cite{17-gai}. Для 
+полученного ансамбля траекторий расстояние~$r_{ij}(k)$ между точками~$i$ 
+с~координатами~$R^i(k)$ и~$j$ с~координатами~$R^j(k)$, которые находятся 
+на разных траекториях в~некоторой об\-ласти~$V$ в~$M$-мер\-ном пространстве 
+в~один и~тот же момент времени $t\hm=k$, вычисляются по формуле:
+$$
+r_{ij}^2(k)= \sum\limits_{m=1}^M \left( R^i_m(k)-R_m^j(k)\right)^2\,.
+  $$
+  
+  Введем функцию от расстояния между двумя точками $\phi_{ij}\hm= 
+\phi(r_{ij})$, соответствующую определенной выше стандартной модели 
+распространения сигнала $\phi(r)\hm= Ar^{-\gamma}$. Для произвольной пары 
+точек, например $i\hm=1$ и~$j\hm=2$, функционал~(1) SIR от 
+расстояния~$r_{12}(k)$ во введенных обозначениях в~момент времени 
+$t\hm=k$ определяется формулой:
+  \begin{equation}
+  S\left( r_{12}(k),N\right) =\fr{\phi_{12}(k)}{\sum\nolimits_{j=3}^N 
+\phi_{1j}(k)}\,.
+  \label{e3-gai}
+  \end{equation}
+  
+  С точки зрения анализа устойчивости соединения основной задачей является 
+вычисление суммы мощностей сигналов в~знаменателе формулы~(\ref{e3-gai}), 
+поскольку мощность сигнала в~числителе ограничивается максимально 
+допустимым радиусом взаимодействия~$d$.
+  
+  Изложим далее общий сценарий численного моделирования величины SIR на 
+одном из~$N$~взаимодействующих в~области~$V$ устройств, например на 
+приемнике, расположенном в~точке $i\hm=1$.
+  
+  Сумма в~знаменателе формулы~(\ref{e3-gai}) за вычетом 
+величины~$\phi_{12}$ представляет собой умноженное на $N\hm-1$ среднее по 
+ансамблю значение функции связи с~первой точкой, определяемое как 
+  $$
+  U\left( r_{12}(k),k\right) =\int\limits_V \phi\left( \left\vert r_{12}(k)-
+r^\prime\right\vert \right) f\left( r^\prime, k\right)\,dr^\prime\,,
+  $$ 
+где $f(r^\prime, k)$ есть плотность распределения~$N$~точек в~об\-ласти~$V$ 
+в~момент времени $t\hm=k$ в~соответствии с~решением кинетического 
+уравнения~(\ref{e2-gai}).
+
+  Положим $r(k)=r_{12}(k)$ и~рассмотрим все остальные точки в~системе 
+отсчета, связанной со второй точкой. Тогда функционал~(\ref{e3-gai}) примет 
+вид:
+  \begin{multline*}
+ \hspace*{-4.2027pt} S(k)\equiv S(k;u,\alpha) = \fr{\phi(r(k))}{(N-1)U(r(k),k)-\phi(r(k))}= {}\\
+  {}=
+\fr{\phi(r(k))}{NU(r(k),k)}+o\left( \fr{1}{N}\right)\,.
+  \end{multline*}
+  
+  Отметим, что зависимость функции $U(r(t),t)$ от времени двоякая:  
+во-пер\-вых, эта зависимость неявно определяется тем, что положение точек 
+получено генерацией их из распределения, построенного как решение 
+кинетического уравнения~(\ref{e2-gai}) в~момент времени $t\hm=k$;  
+во-вто\-рых, эта зависимость определяется и~самой плот\-ностью функ\-ции
+рас\-пре\-де\-ле\-ния $f(r,t)$. Учитывая это, 
+будем для краткости писать далее
+  \begin{equation}
+  U\equiv U(r,t)=\int\limits_V \phi\left(\left\vert r-r^\prime\right\vert \right) 
+f\left(r^\prime, t\right)\,dr^\prime\,.
+  \label{e4-gai}
+  \end{equation}
+  
+  Заметим теперь, что выбранные выше точки~1 и~2, связь между которыми 
+изучается с~помощью функционала~(\ref{e4-gai}), движутся по тому же 
+статистическому закону, что и~прочие точки системы, т.\,е.\ в~каж\-дый момент 
+времени они случайно перемещаются в~пространстве в~соответствии с~тем, 
+какая конкретная выборочная траектория реализована для моделирования 
+движения каждой из них. Поскольку выбранная пара точек произвольна, то 
+качество связи между двумя точками определяется средним по ансамблю 
+значением~$q(t)$ функционала~$S(r(t),t)$:
+  \begin{equation}
+  q(t)=\fr{1}{N}\int\limits_V \fr{\phi(r)}{U(r,t)}\,f(r,t)\,dr\,.
+  \label{e5-gai}
+  \end{equation}
+  
+  Выведем уравнение эволюции среднего значения функционала SIR, т.\,е.\ 
+величины~(\ref{e5-gai}). Из~(\ref{e4-gai}) имеем:
+  \begin{multline}
+  N\fr{dq}{dt}=\int\limits_V \fr{\phi(r)}{U(r,t)}\,\fr{\partial f(r,t)}
+  {\partial t}\,dr- {}\\
+  {}-
+\int\limits_V \fr{\phi(r)}{U^2(r,t)}\,\fr{\partial U(r,t)} {\partial t}\,f(r,t)\,dr\,.
+  \label{e6-gai}
+  \end{multline}
+  
+  Считая, что на границе области функция распределения обращается в~ноль, 
+для производной $\partial U/\partial t$ получаем после подстановки производной 
+$\partial f /\partial t$ из уравнения~(\ref{e2-gai}), интегрирования по частям 
+и~замены возникающей после этого действия производной функции $\phi(\vert 
+r\hm- r^\prime\vert)$ по~$r^\prime$ на производную по~$r$ следующее 
+выражение:
+  $$
+  \fr{\partial U}{\partial t} =\fr{\alpha}{2}\,\Delta U-\mathrm{div}\, \mathbf{J}\,,
+  $$
+  где
+  $$
+  \mathbf{J}=\int\limits_V\phi\left( \left\vert r-r^\prime\right\vert \right) u\left( 
+r^\prime, t\right) f\left( r^\prime, t\right)\,dr^\prime\,.
+  $$
+  
+  Далее первое слагаемое в~(\ref{e6-gai}) с~использованием~(\ref{e2-gai}) 
+преобразуется к~виду:
+  \begin{multline*}
+  \int\limits_V \fr{\phi(r)}{U(r,t)}\,\fr{\partial f(r,t)}{\partial t}\,dr={}\\
+  {}= -\int\limits_V 
+\fr{\phi(r)}{U(r,t)}\,\mathrm{div}\, (uf)\,dr+\fr{\alpha}{2} \int\limits_V \fr{\phi(r)} 
+{U(r,t)}\,\Delta f\,dr\,,
+\end{multline*}
+где $\Delta$ обозначен оператор Лапласа. После интегрирования по частям 
+получаем:
+$$
+\int\limits_V\fr{\phi}{U}\,\fr{\partial f}{\partial t}\,dr=\int\limits_V f\left( u\nabla 
++\fr{\alpha}{2}\,\Delta\right) \left( \fr{\phi}{U}\right)\,dr\,.
+$$
+
+\begin{figure*}[b] %fig1
+ \vspace*{-3pt}
+\begin{center}
+\mbox{%
+\epsfxsize=129.591mm
+\epsfbox{gay-1.eps}
+}
+\end{center}
+\vspace*{-9pt}
+ \Caption{Фрагмент временн$\acute{\mbox{ы}}$х рядов SIR для различной плотности устройств: \textit{1}~--- 
+$N\hm=100$; \textit{2}~--- $N\hm=10$}
+ \end{figure*}
+  
+  В результате уравнение~(\ref{e6-gai}) принимает вид:
+  \begin{multline*}
+  N\fr{dq}{dt} =\int\limits_V \left(\left( u\nabla +
+  \fr{\alpha}{2}\,\Delta\right) \left( 
+\fr{\phi}{U} \right) -{}\right.\\
+\left.{}-\fr{\phi}{U^2}\left( \fr{\alpha}{2}\,\Delta U+ 
+\mathrm{div}\,\mathbf{J}\right)\right) f(r,t)\,dr\,.
+  \end{multline*}
+    Это уравнение сложным нелинейным образом зависит от функции 
+распределения точек, т.\,е.\ от плотности ансамбля их выборочных траек-\linebreak торий. 
+
+Следовательно, актуальной задачей дальнейших исследований является 
+численное моделирование статистик, связанных с~распределением 
+величины~$S(r(t),t)$ зависимости SIR от 
+расстояния до точки~2, и~величины~$q(t)$, которая представляет собой среднее 
+значение функционала~$S(r(t),t)$ по ан\-самблю траекторий. 
+  
+\section{Показатели эффективности}
+
+\vspace*{2pt}
+
+  Для определения показателей эффективности передачи данных в~канале 
+между взаимодей\-ст\-ву\-ющи\-ми устройствами ассоциированной пары в~зоне 
+обслуживания на рис.~1 приведены примеры чис\-лен\-но\-го моделирования SIR 
+для некоторой пары устройств по описанной методике. 
+  
+
+ 
+  Для оценки вероятности обрыва связи между взаимодействующими 
+устройствами следует учитывать количество выбросов SIR ниже порога SIR$^*$ 
+на длительном интервале наблюдения. Кроме вероятности обрыва связи 
+интересными для анализа исследуемой системы являются характеристики СВ 
+$\tau^-_l$~--- длительности периода отсутствия и~СВ $\tau_l^+$~--- 
+длительности периода наличия связи между устройствами, которые показаны 
+на рис.~1 вместе с~необходимыми для их определения моментами~$t_l^-$ 
+и~$t_l^+$ пересечения графиком величины SIR порогового значения отношения 
+SIR$^*$. В~первую очередь интерес представляет плотность распределения  
+СВ~$\tau_l^-$ и~$\tau_l^+$ в~предположении об их независимости 
+в~совокупности и~одинаковом распределении. 
+  
+  В качестве примеров могут быть рассмотрены два типа приложений, 
+использующих прямые соединения при предостав\-ле\-нии услуг~--- приложения 
+в~реальном времени и~приложения с~кэшированием данных. К~приложениям 
+в~реальном времени относятся, например, набирающие популярность игровые 
+приложения и~голосовые приложения. Для таких приложений критична 
+возможность непрерывного поддержания соединения в~ассоциированной паре, 
+поэтому ключевым показателем качества предостав\-ле\-ния услуги является 
+вероятность того, что SIR упадет ниже заданного порога SIR$^*$ на 
+определенном отрезке времени (вероятность выброса величины SIR вниз). 
+В~этом случае соединение в~такой ассоциированной паре прерывается 
+и~планировщиком базовой станции сети LTE или контролирующим узлом D2D 
+соединения для передачи данных в~паре при\-ем\-ник--пе\-ре\-дат\-чик должна 
+быть выбрана новая радиочастота. Таким образом, для приложений в~реальном 
+времени длительность интервала до прерывания соединения совпадает 
+с~длительностью периода наличия связи~$\tau_1^+$ до первого обрыва связи 
+в~момент~$t_1^-$. 
+
+  \begin{table*}[b]\small
+  \begin{center}
+ 
+  
+  \begin{tabular}{|l|c|}
+\multicolumn{2}{c}{Параметры системной модели}\\
+\multicolumn{2}{c}{\ }\\[-6pt]
+  \hline
+\multicolumn{1}{|c|}{Параметр}&Значение\\
+\hline
+Область обслуживания в~($M=2$)-мер\-ном пространстве, $V$&$50\times50$ 
+кв.\ м\\
+Число пар <<приемник--передатчик>>, $N$&10, 30, 50, 100\\
+Средняя скорость сноса, $v$&1, 3, 5, 10, 40~м/c\\
+Параметр диффузии, $\alpha$&2\\
+Константа распространения, $A$&1\\
+Коэффициент распространения, $\gamma$&3\\
+Максимальное расстояние от приемника до передатчика в~ассоциированной 
+паре, $d$&5~м\\
+Расстояние от приемника до передатчика в~ассоциированной паре, $r_0$&$0<r_0\leq 
+d$\\
+Диффузия приемника в~ассоциированной паре&1 м/с\\
+Уровень отсутствия связи, SIR$^*$&0,01\\
+\hline
+\end{tabular}
+\end{center}
+\end{table*}
+
+  
+  В отличие от приложений в~реальном времени, для кэшируемых 
+приложений, к~которым в~первую очередь относится передача видео, обрыв 
+связи не всегда приводит к~прерыванию соединения. Если качество соединения 
+в~ассоциированной паре позволяет передавать данные на скорости, 
+превышающей требуемую скорость воспроизведения, то при кратковременном 
+отсутствии связи буферизация обеспечит непрерывное воспроизведение видео. 
+Таким образом, для кэшируемых приложений падение SIR ниже заданного 
+порога, приводящее к~обрыву связи, не является критичным для 
+предо\-став\-ле\-ния услуги. Для таких приложений важны длительности периодов 
+наличия и~отсутствия связи, поскольку новая радиочастота для поддержания 
+соединения в~паре при\-ем\-ник--пе\-ре\-дат\-чик должна быть назначена, 
+только если временное отсутствие связи не может быть компенсировано\linebreak 
+механизмом буферизации. Для кэшируемых приложений длительность 
+интервала времени до прерывания соединения определяется моментом обрыва 
+связи~$t^-_{L(\tau^*)}$, $L(\tau^*)\hm\geq 1$, соответст\-ву\-ющий 
+интервал~$\tau^-_{L(\tau^*)}$ отсутствия связи после которого превысит 
+порог~$\tau^*$~--- задержку, которая может быть сглажена с~помощью 
+механизма буферизации. В~этом случае длительность интервала времени до 
+прерывания соединения равна $t^-_{L(\tau^*)}\hm+\tau^*$ и~определяется 
+формулой $\sum\nolimits_{l=1}^{L(\tau^*)} (\tau_l^+\hm+\min (\tau_l^-,\tau^*))$, 
+где $L(\tau^*)\hm= \mathrm{inf}\, \left\{ l:\ \tau^-_{L(\tau^*)} \hm\geq 
+\tau^*\right\}$.
+  
+  Таким образом, основными метриками, определяющими качество 
+функционирования кэширу\-емых приложений, являются характеристики 
+СВ~$\tau_l^+$ ($\tau_l^-$) длительности периода наличия (отсутствия) связи 
+между взаимодействующими устройствами. Обозначим $F_{\tau^+}(x)\hm= 
+P\left\{ \tau_l^+<x\right\}$ $(F_{\tau^-}(x)\hm= P\{ \tau_l^-<x\})$ и~
+$f_{\tau^+}(x)\hm= F^\prime_{\tau^+}(x)$ $(f_{\tau^-}(x)\hm= F^\prime_{\tau^-
+}(x))$ функции и~плотности распределения этих СВ соответственно.
+  
+  Задачу численного анализа в~следующем разделе статьи будем решать 
+изложенным выше методом с~использованием имитационного моделирования. 
+Анализ вероятностных характеристик будем проводить в~зависимости от 
+средней скорости движения устройств $v\hm= \int\nolimits_V u(x,t)f(x,t)\,dx$, 
+предполагая для простоты эту скорость постоянной, а~также в~зависимости от 
+числа~$N$ пар при\-емо\-пе\-ре\-да\-ющих устройств.
+
+\vspace*{-8pt}
+
+\section{Численный анализ}
+
+\vspace*{-2pt}
+
+  В~качестве примера численного анализа рассматривается сценарий 
+перемещения носителей устройств внутри торгового центра (см.\ таблицу).
+  
+
+  Графики плотностей распределения длитель\-ности периодов наличия 
+$f_{\tau^+}(x)$ и~отсутствия~$f_{\tau^-}(x)$ связи между устройствами 
+в~зависимости от средней скорости~$v$ передвижения устройств и~числа~$N$ 
+пар взаимодействующих устройств приведены на рис.~2 и~3.
+  
+  Рисунки~2,\,\textit{а} и~3,\,\textit{а} иллюстрируют плотность 
+$f_{\tau^+}(x)$ распределения длительности периода наличия связи при уровне 
+порога $\mathrm{SIR}^*\hm=0{,}01$ для различных значений средней скорости и~числа пар устройств. Следует отметить, что качественное поведение графика 
+плотности остается неизменным для различных значений скоростей 
+и~количества пар. Кроме того, статистика свидетельствует о~характерных для 
+показательного распределения длительностях периодов наличия связи.
+  
+
+
+  Аналогично периодам наличия связи, плотность $f_{\tau^-}(x)$ 
+распределения периода отсутствия связи (см.\ рис.~2,\,\textit{б} и~3,\,\textit{б}) 
+имеет ярко выраженный показательный характер. Эти наблюдения хорошо 
+согласуются с~теоретическими результатами, представленными в~[18], где 
+показано, что выбросы траекторий стационарного нормального случайного 
+процесса имеют показательный характер.
+
+
+  
+  Представленные результаты численного анализа плотностей распределения 
+длительности периодов наличия и~отсутствия связи позволяют сделать важные 
+практические выводы относительно качества обслуживания прямых 
+соединений в~сетях беспроводной связи. Известно, что показательное %\linebreak 
+распределение характеризуется отсутствием памяти. Таким образом, если 
+можно утверждать о~достаточ\-но большом значении SIR в~момент 
+установления прямого соединения, то сделать обоснованный количественный 
+вывод о~продолжительности периода наличия устойчивой связи не 
+представляется возможным вследствие характера плотности распределения 
+периода наличия устойчивой связи. Аналогичные выводы можно сделать 
+и~о~периоде\linebreak отсутствия связи. Наконец, необходимо отметить, что указанное 
+поведение характерно для выбран-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\end{multicols}
+
+\begin{figure*} %fig2
+\vspace*{1pt}
+\begin{center}
+\mbox{%
+\epsfxsize=161.511mm
+\epsfbox{gay-2.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Плотность распределения длительности периода наличия~(\textit{а})
+и~отсутствия~(\textit{б}) связи при 
+различных скоростях~$v$ ($N\hm=10$):
+\textit{1}~--- $v\hm=1$; \textit{2}~--- 3; \textit{3}~--- 5; \textit{4}~--- 10; \textit{5}~--- 
+$v\hm=40$}
+%\end{figure*}
+%  \begin{figure*} %fig3
+  \vspace*{6pt}
+\begin{center}
+\mbox{%
+\epsfxsize=161.632mm
+\epsfbox{gay-3.eps}
+}
+\end{center}
+\vspace*{-9pt}
+  \Caption{Плотность распределения длительности периода наличия~(\textit{a})
+  и~отсутствия~(\textit{б}) связи
+для различного числа пар~$N$ ($v\hm=5$~м/с):
+\textit{1}~--- $N\hm=10$; \textit{2}~--- 30; \textit{3}~--- 50; \textit{4}~--- $N\hm=100$}
+\end{figure*}
+
+\begin{multicols}{2}
+
+\noindent
+ной модели движения и~может отличаться для 
+других моделей, что является предметом дальнейших исследований. 
+
+\vspace*{-6pt}
+
+\section{Заключение}
+
+\vspace*{-2pt}
+
+  В представленной работе построена модель для анализа характеристик 
+беспроводных соединений с~технологией прямого взаимодействия устройств, 
+которая является неотъемлемой частью сетей связи~5G. 
+
+С~использованием аппарата кинетических уравнений движения получены 
+характеристики, определяющие качество обслуживания для приложений 
+в~реальном времени и~кэшируемых приложений. В~частности, исследованы 
+плотности распределения длительности периодов наличия и~отсутствия связи 
+как функции от скорости перемещения абонентов и~числа пар 
+взаимодействующих устройств.
+  
+  Результаты численного анализа, представленные в~работе, показывают, что 
+вероятность обрыва связи экспоненциально уменьшается при увеличении как 
+числа пар взаимодействующих устройств, так и~скорости перемещения 
+абонентов. Важным результатом для длительности периодов наличия 
+и~отсутствия связи является показательный характер их распределений.
+  
+  Проведенный численный анализ позволяет сделать вывод о том, что 
+поддержка приложений в~реальном времени в~сетях D2D возможна только в~тех 
+областях, где средняя скорость устройств не превышает нескольких метров 
+в~секунду, например внутри зданий, в~пешеходных зонах на открытой 
+местности. Кроме того, при принятии решения об установлении нового 
+прямого соединения должно учитываться количество уже установленных 
+соединений. Выбор оптимального значения~$N$ для некоторого порога 
+SIR$^*$ может быть сделан на основе предложенной в~статье методологии. Для 
+кэшируемых приложений при дальнейших исследованиях интервал времени до 
+прерывания соединения может быть представлен как сумма случайных 
+величин, где число слагаемых имеет геометрическое распределение.
+  
+  В дальнейшем интересно провести качественный и~количественный анализ 
+ве\-ро\-ят\-ност\-но-вре\-мен\-н$\acute{\mbox{ы}}$х характеристик периодов наличия 
+и~отсутствия связи при различных типах случайного блужда\-ния абонентов. 
+Отдельным направлением может также стать расширение сценария на случай 
+наличия базовых станций. Кроме того, комментарий по дальнейшим 
+исследованиям содержится в~заключении разд.~3 статьи.
+  
+  \smallskip
+  
+  В заключение авторы благодарят проф.\ К.\,Е.~Самуйлова за обсуждение 
+постановки задачи исследований. 
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-gai}
+\Au{Rong~Z., Rappaport T.\,S.} Wireless communications: Principles and practice.~---1st ed.~---
+ Upper Saddle River, NJ, USA: Prentice Hall, 1996. 641~p.
+\bibitem{2-gai}
+\Au{Andrews J.\,G., Claussen~H., Dohler~M., Rangan~S., Reed~M.\,C.} Femtocells: Past, present, 
+and future~// IEEE J.~Sel. Area. Comm., 2012. Vol.~30. Iss.~3. P.~497--508. doi: 
+10.1109/JSAC.2012.120401.
+
+\bibitem{4-gai} %3
+\Au{Samuylov A., Gaidamaka~Yu., Moltchanov~D., Andreev~S., Koucheryavy~Y.} Random 
+triangle: A~baseline model for interference analysis in heterogeneous networks~// IEEE 
+Trans. Veh. Technol., 2015. Vol.~65. Iss.~8. P.~6778--6782. doi: 
+10.1109/TVT.2016.2596324.
+\bibitem{5-gai} %4
+\Au{Гайдамака Ю.\,В., Самуйлов~А.\,К.} Метод расчета характеристик интерференции двух 
+взаимодей\-ст\-ву\-ющих устройств в~беспроводной гетерогенной сети~// Информатика и~её 
+применения, 2015. Т.~9. Вып.~1. С.~9--14. doi:10.14357/19922264150102.
+
+\bibitem{6-gai} %5
+\Au{Гайдамака Ю.\,В., Андреев~С.\,Д., Сопин~Э.\,С., Самуйлов~К.\,Е., Шоргин~С.\,Я.} 
+Анализ характеристик интерференции в~модели взаимодействия устройств с~учетом среды 
+распространения сигнала~// Информатика и~её применения, 2016. Т.~10. Вып.~4. С.~2--10.
+doi: 10.14357/19922264160401.
+
+\bibitem{3-gai} %6
+\Au{Samuylov A., Ometov~A., Begishev~V., Kovalchukov~R., Moltchanov~D., Gaidamaka~Yu., 
+Samouylov~K., Andreev~S., Koucheryavy~Y.} Analytical performance estimation of 
+network-assisted D2D communications in urban scenarios with rectangular cells~// Trans.
+ Emerg. 
+Telecommun. Technol., 2017. Vol.~28. No.\,2. P.~2999-1--2999-15. 
+doi: 10.1002/ett.2999.
+ (Version of record 
+online: November~12,  2015.)
+
+\bibitem{8-gai} %7
+\Au{Gong Z., Haenggi~M.} Interference and outage in mobile random networks: Expectation, 
+distribution, and correlation~// IEEE Trans. Mobile Comput., 2014. Vol.~13.  
+P.~337--349. doi: 10.1109/TMC.2012.253.
+
+\bibitem{7-gai} %8
+\Au{Etezov Sh.\,A., Gaidamaka~Yu.\,V., Samouylov~K.\,E., Moltchanov~D.\,A., Samuylov~A.\,K., 
+Andreev~S.\,D., Koucheryavy~E.\,A.} On distribution of SIR in dense D2D deployments~// 22nd 
+European Wireless Conference Proceedings.~--- VDE, 2016. 
+P.~333--337.
+
+\bibitem{9-gai}
+\Au{Petrov~V., Komarov~M., Moltchanov~D., Jornet~J.\,M., 
+Koucheryavy~Y.}  Interference and SINR in millimeter
+wave and terahertz communication systems with 
+blocking and directional antennas~//
+{IEEE Trans. Wireless Commun.}, 2017.
+Vol.~16. P.~1791--1808. %ISSN 1536-1276.
+%%2016 IEEE Global Communications Conference 
+%(GLOBECOM), 2016. 7~p. doi: 10.1109/\mbox{GLOCOM}.2016.7841910.
+\bibitem{10-gai}
+\Au{Baccelli F., Blaszczyszyn~B.} Stochastic geometry and wireless networks~// Found. 
+Trends Netw., 2010. Vol.~3. No.\,3-4. P.~249--449. 
+doi:10.1561/1300000006; Vol.~4. No.\,1-2. P.~1--312. doi:10.1561/1300000026.
+\bibitem{11-gai}
+\Au{Haenggi M.} Stochastic geometry for wireless networks.~--- Cambridge: Cambridge University 
+Press, 2012. 298~p.
+\bibitem{12-gai}
+\Au{Orlov Yu.\,N., Fedorov~S.\,L., Samuylov~A.\,K., Gaidamaka~Yu.\,V., Molchanov~D.\,A.} 
+Simulation of devices mobility to estimate wireless channel quality metrics in 5G networks~// AIP 
+Conference Proceedings: 12th Conference (International) of Numerical Analysis and Applied 
+Mathematics.~--- New York, NY, USA: AIP Publishing, 
+2017 (in press).
+\bibitem{13-gai}
+3GPP LTE Release 10 \& beyond (LTE-Advanced).~--- December 2009. {\sf 
+ftp://www.3gpp.org/workshop/2009-12-17\_ITU-R\_IMT-Adv\_eval/docs/pdf/REV-090006.pdf}.
+\bibitem{14-gai}
+Wi-Fi Peer-to-Peer (P2P) Technical Specification v1.7.~--- Wi-Fi Alliance, 2010. {\sf 
+https://www.wi-fi.\linebreak org/downloads-registered-guest/Wi-Fi\_P2P\_Technical\_\linebreak Specification\_v1.7.pdf/29559}.
+\bibitem{15-gai}
+\Au{Босов А.\,Д., Кальметьев~Р.\,Ш., Орлов~Ю.\,Н.} Моделирование нестационарного 
+временного ряда с~заданными свойствами выборочного распределения~// Мат. 
+моделирование, 2014. Т.~26. №\,3. С.~97--107.
+\bibitem{16-gai}
+\Au{Орлов Ю.\,Н., Федоров~С.\,Л.} Генерация нестационарных траекторий временного ряда 
+на основе уравнения Фок\-ке\-ра--План\-ка~// Труды МФТИ, 2016. Т.~8. №\,2. С.~126--133.
+\bibitem{17-gai}
+\Au{Орлов Ю.\,Н., Федоров~С.\,Л.} Методы численного моделирования процессов 
+нестационарного случайного блуждания.~--- М.: МФТИ, 2016. 112~с.
+\bibitem{18-gai}
+\Au{Тихонов В.\,И., Хименко~В.\,И.} Выбросы траекторий случайных процессов.~--- М.: 
+Наука, 1987. 304~с.
+
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 15.04.17}}
+
+%\vspace*{8pt}
+
+\newpage
+
+\vspace*{-24pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{8pt}
+
+
+\def\tit{MODELING THE SIGNAL-TO-INTERFERENCE RATIO\\ IN A~MOBILE NETWORK WITH MOVING 
+DEVICES}
+
+\def\titkol{Modeling the signal-to-interference ratio in a~mobile network with moving 
+devices}
+
+\def\aut{Yu.\,V.~Gaidamaka$^{1,2}$, Yu.\,N.~Orlov$^3$, D.\,A.~Molchanov$^1$,  
+and~A.\,K.~Samuylov$^1$}
+
+\def\autkol{Yu.\,V.~Gaidamaka, Yu.\,N.~Orlov, D.\,A.~Molchanov,  
+and~A.\,K.~Samuylov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+$^1$Peoples' Friendship University of Russia (RUDN University),  
+6~Miklukho-Maklaya Str., Moscow 117198, Russian\linebreak
+$\hphantom{^1}$Federation
+
+\noindent
+$^2$Institute of Informatics Problems, Federal Research Center ``Computer Science 
+and Control'' of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 44-2~Vavilov Str., Moscow 
+119333, Russian Federation
+
+\noindent
+$^3$Keldysh Institute of Applied Mathematics of the Russian Academy of Sciences, 
+4~Miusskaya Sq., Moscow 125047,\linebreak
+$\hphantom{^1}$Russian Federation
+
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+\Abste{The goal of the study is to analyze the signal-to-interference ratio (SIR) for device-to-device 
+interaction of devices communication in the 5th generation mobile networks, taking into account 
+the movement of the receiving and transmitting devices in the service area. The SIR value at the 
+receiver of the associated pair is studied as a~time-varying random process, and the mathematical 
+model of motion is given by a kinetic equation taking into account the given average speed of the 
+devices, their spatial density, and the maximum allowable communication radius. The measures of 
+performance quality were studied by numerical analysis using SIR simulation of a~key channel. The 
+measures are the following: the signal interruption probability for the receiver--transmitter pair, the 
+probability density function of the random variables for the duration of the availability period, and 
+the period of absence of communication. It is shown that the signal interruption probability grows 
+logarithmically as either the average device speed or the number of devices in the service area 
+increases.}
+
+\KWE{wireless network; signal-to-interference ratio; device-to-device; stochastic geometry; motion 
+model; kinetic equation; performance measure; signal interruption probability}
+
+\DOI{10.14357/19922264170206} 
+
+
+\vspace*{-10pt}
+
+\Ack
+\noindent
+The publication was supported by the Ministry of Education and Science of the Russian Federation (project 
+No.\,2.3397.2017).
+
+
+
+%\vspace*{3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-gai-1}
+\Aue{Rong,~Z., and T.\,S.~Rappaport}. 1996. 
+\textit{Wireless communications: Principles and 
+practice}. 1st ed. Upper Saddle River, NJ: Prentice Hall. 641~p.
+\bibitem{2-gai-1}
+\Aue{Andrews, J.\,G., H.~Claussen, M.~Dohler, S.~Rangan, and M.\,C.~Reed.} 2012. Femtocells: 
+Past, present, and future. \textit{IEEE J.~Sel. Area. Comm.} 30(3):497--508. 
+doi: 10.1109/JSAC.2012.120401.
+
+\bibitem{4-gai-1} %3
+\Aue{Samuylov, A., Yu.~Gaidamaka, D.~Moltchanov, S.~Andreev, and Y.~Koucheryavy}. 2015. 
+Random triangle: A~baseline model for interference analysis in heterogeneous networks. 
+\textit{IEEE Trans. Veh. Technol.} 65(8):6778--6782. doi: 
+10.1109/TVT.2016.2596324.
+\bibitem{5-gai-1} %4
+\Aue{Gaydamaka, Yu.\,V., and A.\,K.~Samuylov.} 2009. Metod rascheta kharakteristik 
+interferentsii dvukh vzaimo\-dey\-st\-vu\-yushchikh ustroystv v~besprovodnoy geterogennoy seti [The 
+method of calculation of the characteristics of the interference of two interacting devices in 
+a~wireless heterogeneous network]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.}  
+9(1):9--14. doi:10.14357/19922264150102.
+\bibitem{6-gai-1} %5
+\Aue{Gaydamaka, Yu.\,V., S.\,D.~Andreev, E.\,S.~Sopin, K.\,E.~Samouylov, and S.\,Ya.~Shorgin}. 
+2016. Analiz kharakteristik interferentsii v~modeli vzaimodeystviya ustroystv s~uchetom sredy 
+rasprostraneniya signala [Analysis of the characteristics of the interference in the model of 
+interaction between devices taking into account the signal propagation environment]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 10(4):2--10. doi: 
+10.14357/19922264160401.
+
+\bibitem{3-gai-1} %6
+\Aue{Samuylov, A., A.~Ometov, V.~Begishev, R.~Kovalchukov, D.~Moltchanov, 
+Yu.~Gaidamaka, K.~Samouylov, S.~Andreev, and Y.~Koucheryavy}. 2015. Analytical 
+performance estimation of network-assisted D2D communications in urban scenarios with 
+rectangular cells. \textit{Trans. Emerg. Telecommun. Technol.} 28(2):2999-1--2999-15. 
+doi: 10.1002/ett.2999.  (Version of record 
+online: November~12,  2015.)
+
+\bibitem{8-gai-1} %7
+\Aue{Gong, Z., and M.~Haenggi}. 2014. Interference and outage in mobile random networks: 
+Expectation, distribution, and correlation. \textit{IEEE Trans. Mobile Comput.}  
+13:337--349. doi: 10.1109/TMC.2012.253.
+
+\bibitem{7-gai-1} %8
+\Aue{Etezov, Sh., Yu.~Gaidamaka, K.~Samouylov, D.~Mol\-tcha\-nov, A.~Samuylov, S.~Andreev, 
+and E.~Koucheryavy.} 2016. On distribution of SIR in dense D2D deployments. \textit{22nd 
+European Wireless Conference Proceedings.} VDE.
+333--337.
+
+\bibitem{9-gai-1}
+\Aue{Petrov, V., M.~Komarov, D.~Moltchanov, J.\,M.~Jornet, 
+and Y.~Koucheryavy.} 2017. Interference and SINR in millimeter
+wave and terahertz communication systems with 
+blocking and directional antennas. \textit{IEEE Trans. Wireless Commun.}
+16:1791--1808. %ISSN 1536-1276.
+%doi: 10.1109/\mbox{GLOCOM}.2016.7841910.
+\bibitem{10-gai-1}
+\Aue{Baccelli, F., and B.~Blaszczyszyn.} 2010. Stochastic geometry and wireless networks. 
+\textit{Found. Trends Netw.} 3(3-4):249--449. 
+doi:10.1561/1300000006;  4(1-2):1--312. 
+doi:10.1561/1300000026.
+\bibitem{11-gai-1}
+\Aue{Haenggi, M.} 2012. \textit{Stochastic geometry for wireless networks}. Cambridge: 
+Cambridge University Press. 298~p.
+\bibitem{12-gai-1}
+\Aue{Orlov, Yu.\,N., S.\,L.~Fedorov, A.\,K.~Samuylov, Yu.\,V.~Gai\-da\-ma\-ka, and 
+D.\,A.~Molchanov}. 2017 (in press). Simulation of devices mobility to estimate wireless channel quality 
+metrics in 5G networks. \textit{AIP Conference Proceedings: 12th Conference (International) of 
+Numerical Analysis and Applied Mathematics}. New York, NY: 
+AIP Publishing. 
+\bibitem{13-gai-1}
+3GPP LTE Release 10 \& beyond (LTE-Advanced).  December 2009. Available at: {\sf 
+ftp://www.3gpp.org/\linebreak workshop/2009-12-17\_ITU-R\_IMT-Adv\_eval/docs/pdf/\linebreak REV-090006.pdf} (accessed 
+April~20, 2017).
+\bibitem{14-gai-1}
+Wi-Fi Peer-to-Peer (P2P) Technical Specification v1.7.   Wi-Fi Alliance, 2010. Available at: {\sf 
+https://www.wi-fi.\linebreak org/downloads-registered-guest/Wi-Fi\_P2P\_Technical\_\linebreak Specification\_v1.7.pdf/29559} 
+(accessed April~20, 2017).
+\bibitem{15-gai-1}
+\Aue{Bosov, A.\,D., R.\,S.~Kalmetiev, and Yu.\,N.~Orlov.} 2014. Modelirovanie 
+nestatsionarnogo vremennogo ryada s~zadannymi svoystvami vyborochnogo raspredeleniya 
+[Sample distribution function construction for non-stationary
+time-series forecasting]. 
+\textit{Matematicheskoe mo\-de\-li\-ro\-va\-nie} [Mathematical Simulation] 26(3):97--107.
+\bibitem{16-gai-1}
+\Aue{Orlov, Yu.\,N., and S.\,L.~Fedorov.} 2016. Generatsiya ne\-sta\-tsi\-o\-nar\-nykh traektoriy 
+vremennogo ryada na osnove uravneniya Fokkera--Planka [Generation of nonstationary 
+trajectories of the time series based on the Fokker--Planck equation]. \textit{Trudy MFTI} 
+[Proceedings of MIPT] 8(2):126--133.
+\bibitem{17-gai-1}
+\Aue{Orlov, Yu.\,N., and S.\,L.~Fedorov.} 2016. Metody chislennogo modelirovaniya protsessov 
+nestatsionarnogo sluchaynogo bluzhdaniya [Methods of a numerical simulation of nonstationary 
+random walk]. Moscow: MFTI. 112~p.
+\bibitem{18-gai-1}
+\Aue{Tikhonov, V.\,I., and V.\,I.~Khimenko}. 1987. \textit{Vybrosy traektoriy sluchaynykh 
+protsessov} [Emissions of trajectories of random processes]. Moscow: Nauka. 304~p.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Received April 15, 2017}}
+
+\Contr
+
+\noindent
+\textbf{Gaidamaka Yuliya V.} (b.\ 1971)~--- Candidate of Science (PhD) in physics 
+and mathematics, associate professor, Peoples' Friendship University of Russia 
+(RUDN University), 6~Miklukho-Maklaya Str., Moscow 117198, Russian 
+Federation; senior scientist, Institute of Informatics Problems, Federal Research 
+Center ``Computer Science and Control'' of the Russian Academy of Sciences,  
+44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{gaydamaka\_yuv@rudn.university}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Orlov Yurii N.} (b.\ 1964)~--- Doctor of Science in physics and 
+mathematics, professor, head of sector, Keldysh Institute of Applied Mathematics of 
+the Russian Academy of Sciences, 4~Miusskaya Sq., Moscow 125047, Russian 
+Federation; \mbox{yuno@kiam.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Molchanov Dmitri A.} (b.\ 1978)~---  Candidate of Science (PhD) in 
+technology, associate professor, Peoples' Friendship University of Russia (RUDN 
+University), 6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation; 
+\mbox{molchanov\_da@rudn.university}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Samuylov Andrey K.} (b.\ 1988)~--- Candidate of Science (PhD) in 
+physics and mathematics, associate professor, Peoples' Friendship University of 
+Russia (RUDN University), 6~Miklukho-Maklaya Str., Moscow 117198, Russian 
+Federation; \mbox{samuylov\_ak@rudn.university}
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература} 

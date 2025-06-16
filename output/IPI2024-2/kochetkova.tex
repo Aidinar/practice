@@ -1,0 +1,749 @@
+\def\stat{kochetkova}
+
+\def\tit{ВЕРОЯТНОСТНАЯ МОДЕЛЬ ЗАТУХАНИЯ МОЩНОСТИ СИГНАЛА В СЦЕНАРИЯХ 3GPP TR 38.901 
+РАЗВЕРТЫВАНИЯ СЕТИ 5G$^*$}
+
+\def\titkol{Вероятностная модель затухания мощности сигнала в~сценариях 3GPP TR 38.901 
+развертывания сети 5G}
+
+\def\aut{Е.\,Д.~Макеева$^1$, И.\,А.~Кочеткова$^2$, С.\,Я.~Шоргин$^3$}
+
+\def\autkol{Е.\,Д.~Макеева, И.\,А.~Кочеткова, С.\,Я.~Шоргин}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Макеева Е.\,Д.}
+\index{Кочеткова И.\,А.}
+\index{Шоргин С.\,Я.}
+\index{Makeeva E.\,D.}
+\index{Kochetkova I.\,A.}
+\index{Shorgin S.\,Ya.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Публикация выполнена в~рамках проекта №\,025319-2-000 Системы грантовой 
+поддержки научных проектов РУДН.}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Российский университет дружбы народов имени Патриса Лумумбы; 
+Институт проблем управления имени В.\,А.~Трапезникова Российской академии наук, 
+\mbox{elena-makeeva-96@mail.ru}}
+\footnotetext[2]{Российский университет дружбы народов имени Патриса Лумумбы; 
+Федеральный исследовательский центр <<Информатика и~управ\-ле\-ние>> Российской 
+академии наук, \mbox{kochetkova-ia@rudn.ru}}
+\footnotetext[3]{Федеральный исследовательский центр <<Информатика 
+и~управ\-ле\-ние>> Российской академии наук, \mbox{sshorgin@ipiran.ru}}
+
+\vspace*{2pt}
+
+
+
+
+
+
+\Abst{Сети пятого (5G) и~последующих поколений будут использовать терагерцевый диапазон 
+радиочастот, что обеспечит сверхвысокую скорость передачи данных. Однако при 
+этом возможны потери сигнала при прохождении через препятствия. Поэтому 
+становится крайне важным моделирование распространения сигнала с~по\-мощью 
+стохастической геометрии и~использование актуальных моделей затухания сигнала. 
+Модели для описания затухания сигнала для различных сценариев развертывания сети 
+5G в~виде эмпирических формул содержатся в~спецификации 3GPP TR 38.901. Тем не 
+менее обычно для построения моделей стохастической геометрии используются 
+упрощенные виды формул. В~\mbox{статье} представлена функция распределения (ФР) затухания 
+мощности сигнала при случайном расположении пользователей в~соответствии со 
+сценариями, описанными в~3GPP TR 38.901. На численных примерах показано, что 
+разница значений с~упрощенной формулой значительна и~может привести к~занижению 
+оценки пропускной способности сети.}
+
+\KW{беспроводная сеть; 5G; 3GPP TR 38.901; мощ\-ность затухания сигнала; прямая 
+видимость; непрямая ви\-ди\-мость; сто\-ха\-сти\-че\-ская гео\-метрия}
+
+\DOI{10.14357/19922264240204}{EKLCAP}
+  
+%\vspace*{-6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+
+\section{Введение}
+
+Сети пятого и~последующих поколений будут использовать терагерцевый 
+диапазон радиочастот, чтобы обеспечить сверхвысокую скорость передачи данных и~пропускную способность. Однако использование миллиметровых волн связано со 
+сложностями из-за потери сигнала при про\-хож\-де\-нии препятствий. Таким образом, для 
+обеспечения производительности сетей~5G становится крайне важным моделирование 
+распространения сигнала. Формула Шен\-но\-на--Харт\-ли с~формулой Фрииса задают 
+пропускную способность канала
+$$
+C=B \log_2 \left(1+\fr{P_t G_t G_r}{(N+I) \mathrm{PL}}\right),
+$$
+ где $B$~--- полоса 
+пропускания канала; $P_t$~--- мощ\-ность передающей антенны; $G_t$~--- коэффициент 
+усиления передающей антенны; $G_r$~--- коэффициент усиления приемной антенны; $N$~--- мощ\-ность шума; 
+$I$~--- мощ\-ность интерференции; $\mathrm{PL}$~--- мощ\-ность затухания 
+сигнала (path loss, PL) на расстоянии от передающей антенны до приемной 
+антенны~\cite{Moltchanov2022a}.
+Пропускная способность канала уже далее используется в~управ\-ле\-нии занятием 
+радиоресурсов базовой станции (БС) для соблюдения необходимого качества обслуживания 
+пользователей по требуемой ско\-рости передачи данных.
+
+ Ввиду того что пользователи находятся на разных расстояниях от БС, 
+значения мощностей затухания сигнала будут случайными. Как показано в~работе~\cite{Hmamouche2021}, для учета влияния на пропускную\linebreak
+ способность канала 
+случайного положения пользователей в~соте применяется стохастическая гео\-мет\-рия. 
+Рассмотреть совместное занятие радиоресурсов и~случайный характер поведения 
+пользователей позволяет модель на основе аппарата \mbox{ресурсных} сис\-тем массового 
+обслуживания~\cite{Naumov2016, Gorbunova2018}. Такие модели применяются для 
+исследования различных сценариев развертывания сетей 
+5G~\cite{Moltchanov2022b, Markova2019}, например при анализе совместного 
+обслуживания трафика со сверхнизкой задержкой и~широкополосного трафика~\cite{Kochetkova2021}.
+
+\begin{figure*}[b] %fig1
+\vspace*{-6pt}
+      \begin{center}
+     \mbox{%
+\epsfxsize=124.62mm 
+\epsfbox{koc-1.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Схема системной модели}
+\label{fig1}
+\end{figure*}
+
+Модели для описания мощности $\mathrm{PL}$ затухания сигнала для разных сценариев 
+отражены в~спецификации 3GPP TR 38.901~\cite{3GPP38901}. И~если при проведении 
+имитационного моделирования исследователи по большей части полностью реализуют 
+эти модели~\cite{Bolla2023}, то при построении моделей стохастической гео\-мет\-рии 
+зачастую применяется упрощенный вид формул.
+В~обзоре~\cite{Hmamouche2021} рассмотрены различные виды функциональной 
+зависимости затухания мощ\-ности сигнала от расстояния между пользователем 
+и~БС, которые применяют исследователи. Например, для простоты 
+расчетов в~работе~\cite{Moltchanov2022b} используются упрощенные формулы без 
+учета ку\-соч\-но-за\-дан\-но\-го вида функции для прямой видимости и~максимума нескольких 
+величин мощностей PL для непрямой видимости при по\-стро\-ении~ФР.
+
+В данной статье получена ФР затухания мощ\-ности сигнала при случайном 
+расположении пользователей в~соответствии со сценариями 3GPP TR~38.901 
+развертывания сети 5G. Использованы формулы из этой спецификации, где приведены 
+зависимости PL от расстояния между пользователем и~БС. В~данной 
+статье закон распределения пользователей в~соте взят произвольный, а~для 
+численного анализа~--- в~соответствии с~типовыми рекомендованными значениями 
+параметров сценариев.
+
+
+
+\section{Затухание сигнала как функция от параметров сценария 3GPP} \label{sec2}
+
+При исследовании распространения сигнала необходимо учитывать множество 
+параметров сети, таких как частота, основные характеристики местности, высота 
+принимающей и~передающей антенн, конфигурация антенн и~другие факторы. Для 
+упрощения расчетов мощности PL затухания сигнала стандартом 3GPP TR~38.901~\cite{3GPP38901} 
+были выделены основные сценарии развертывания сети~5G: 
+мак\-ро\-со\-та в~городе (urban macro, UMa), микросота в~городе (urban micro, UMi), 
+мак\-ро\-со\-та в~сельской местности (rural macro, RMa), точка доступа внут\-ри 
+помещения (indoor hotspot, InH) и~крытая фабрика (indoor factory, InF),~--- 
+и~путем экспериментов были получены эмпирические модели затухания сигнала для них. 
+На основе этих моделей и~в~предположении случайного характера поведения 
+пользователей в~данном разделе получена ФР мощности затухания сигнала с~учетом 
+особенностей, описанных в~данной спецификации.
+
+
+Рассмотрим общее описание предлагаемых сценариев (рис.~\ref{fig1}). Пусть 
+передающая антенна БС расположена на высоте~$h_{\mathrm{BS}}$, 
+использует несущую частоту~$f_c$ и~создает покрытие радиуса~$R$. 
+Пользовательские устройства (ПУ) находятся на высоте~$h_{\mathrm{UT}}$, а~проекция 
+расстоянии от ПУ до БС со\-став\-ля\-ет $d$.
+
+В зависимости от своего расположения ПУ может находиться в~зоне прямой видимости 
+(line-of-sight, LOS) с~устойчивым уровнем сигнала или вне этой зоны (non-line-of-sight, NLOS). 
+Если ПУ расположено на расстоянии~$d$, то ве\-ро\-ят\-ность того, что 
+ПУ находится в~зоне прямой видимости, пред\-став\-ля\-ет собой кусочно-заданную 
+функцию:
+\begin{equation}
+\label{eq1}
+{\mathrm{Pr}}_{\mathrm{LOS}}(d)=
+\begin{cases}
+{\mathrm{Pr}}_1^{\mathrm{LOS}}(d), & 0=r_0 \leq d < r_1; \\
+{\mathrm{Pr}}_2^{\mathrm{LOS}}(d), & r_1 \leq d < r_2; \\
+\cdots & \cdots \\
+{\mathrm{Pr}}_I^{\mathrm{LOS}}(d), & r_{I-1} \leq d \leq r_I=R,
+\end{cases}
+\end{equation}
+где радиусы $R_i$ определяют границы интервалов. 
+
+Тогда мощ\-ность $\mathrm{PL}(d)$ 
+затухания сигнала примет вид:
+\begin{multline}
+\label{eq2}
+\mathrm{PL}\,(d)= \mathrm{PL}_{\mathrm{LOS}}(d)  {\mathrm{Pr}}_{\mathrm{LOS}}(d) + {}\\
+{}+\mathrm{PL}_{\mathrm{NLOS}}(d)  \left[1-
+{\mathrm{Pr}}_{\mathrm{LOS}}(d)\right].
+\end{multline}
+
+Мощность затухания сигнала в~условиях прямой видимости LOS описывается ку\-соч\-но-за\-дан\-ной функцией
+\begin{multline}
+\label{eq3}
+\mathrm{PL}^{\mathrm{LOS}}(d)={}\\
+{}=
+\begin{cases}
+\mathrm{PL}_1^{\mathrm{LOS}}(d), & 0=d_0 \leq d < d_1;\\
+\mathrm{PL}_2^{\mathrm{LOS}}(d), & d_1 \leq d < d_2;\\
+\cdots & \cdots \\
+\mathrm{PL}_J^{\mathrm{LOS}}(d), & d_{J-1} \leq d \leq d_J=R,
+\end{cases}
+\end{multline}
+где $d_j$~--- границы интервалов (break point distance), а~в~условиях непрямой 
+видимости NLOS пред\-став\-ля\-ет собой максимум
+\begin{multline}
+\label{eq4}
+\mathrm{PL}_{\mathrm{NLOS}}(d) = {}\\
+\!\!{}=\!
+\max\left(\mathrm{PL}^{\mathrm{LOS}}(d),\mathrm{PL}^{\mathrm{NLOS}}_1(d), \ldots, \mathrm{PL}^{\mathrm{NLOS}}_K(d)\right)\!.\!\!
+\end{multline}
+
+Каждая из компонент функций для случаев LOS и~NLOS имеет схожую структуру:
+\begin{multline}
+ \mathrm{PL}^{l}_m(d)[\mathrm{dB}] = \alpha_m^{l}[\mathrm{dB}]+\beta_m^{l}[\mathrm{dB}]\log_{10}{D(d)},
+ \\
+ \mathrm{PL}^{l}_m(d) = \alpha_m^{l} \cdot D^{\beta_m^{l}}(d),
+\\
+ l=\begin{cases}
+ \mbox{``}\mathrm{LOS}\mbox{''}, & m=j=\overline{0,J}\,; \\
+ \mbox{``}\mathrm{NLOS}\mbox{''},& m=k=\overline{0,K}\,,
+ \end{cases}
+\label{eq5}
+\end{multline}
+где $D(d)=\sqrt{d^2+(h_{\mathrm{BS}}\hm-h_{\mathrm{UT}})^2}$~--- расстояние от ПУ до БС в~трехмерном 
+пространстве; $\alpha$ и~$\beta$~--- коэффициенты модели затухания сигнала~--- 
+константы для каждого из сценариев 3GPP TR~38.901.
+
+
+
+\section{Функция распределения затухания сигнала при~случайном расположении 
+пользователей} \label{sec3}
+
+Примем теперь, что расстояние между ПУ и~БС~--- случайная величина (СВ)~$\xi_d$ 
+со значениями~$d$ и~ФР~$F_{\xi_d}(x)$. Тогда расстояние от ПУ до БС в~трехмерном 
+пространстве~$\xi_D$ будет функцией от СВ~$\xi_d$ с~ФР
+
+\noindent
+\begin{multline*}
+F_{\xi_D}(x)  =
+\mathrm{Pr}\,(\xi_D \leq x) ={}\\
+{}=
+\mathrm{Pr}\left(\sqrt{\xi_d^2+(h_{\mathrm{BS}}- h_{\mathrm{UT}})^2} \leq x \right) ={} \\
+{} = \mathrm{Pr}\left(\xi_d \leq \sqrt{x^2-(h_{\mathrm{BS}}- h_{\mathrm{UT}})^2} \right) ={}\\
+{}=
+F_{\xi_d}\left(\sqrt{x^2-(h_{\mathrm{BS}}- h_{\mathrm{UT}})^2} \right).
+\end{multline*}
+
+Случайная величина $\xi_m^l$~--- компонента функции затухания сигнала~--- зависит от СВ $\xi_D$ и~по формуле~(\ref{eq5}) имеет ФР
+\begin{multline*}
+F_{\xi_m^l}(x)  =
+\mathrm{Pr}\,(\xi_m^l \leq x) =
+\mathrm{Pr}\left(\alpha_m^{l}  ({\xi}_D)^{\beta_m^{l}} \leq x \right) = {}\\
+{}=
+\mathrm{Pr}\left(\xi_D \leq \left(\fr{x}{\alpha_m^{l}}\right)^{{1}/{\beta_m^{l}}} \right) = 
+F_{\xi_D}\left( \left( \fr{x}{\alpha_m^{l}}\right)^{{1}/{\beta_m^{l}}} 
+\right) ={}\\
+{}=  F_{\xi_d}\left( \sqrt{ 
+\left(\fr{x}{\alpha_m^{l}}\right)^{{2}/{\beta_m^{l}}} - \left(h_\mathrm{BS}-h_\mathrm{UT}\right)^2 }\right), \\
+ l=\begin{cases}
+ \mbox{``}\mathrm{LOS}\mbox{''}, &  m=j=\overline{0,J}\,; \\
+ \mbox{``}\mathrm{NLOS}\mbox{''}, & m=k=\overline{0,K}\,.
+ \end{cases}
+\end{multline*}
+
+Для затухания сигнала в~условиях прямой видимости ФР СВ~$\xi_{\mathrm{LOS}}$ по 
+формуле~(\ref{eq3}) примет вид:
+\begin{multline}
+F_{\xi_{\mathrm{LOS}}}(x) =
+\mathrm{Pr}\,(\xi_{\mathrm{LOS}} \leq x) = {} \\
+{}= \sum\limits_{j=1}^J  \mathrm{Pr}\left(\xi_{\mathrm{LOS}} \leq x \mid d_{j-1} \leq \xi_d < d_j\right) \times{}\\
+{}\times \mathrm{Pr}\left(d_{j-1} \leq  \xi_d < d_j\right) = {}\\
+{} = \sum\limits_{j=1}^J F_{\xi_j^{\mathrm{LOS}}}(x) \left[ F_{\xi_d}(d_j) - 
+F_{\xi_d}(d_{j-1}) \right], 
+\label{eq6}
+\end{multline}
+а для непрямой видимости ФР СВ $\xi_{\mathrm{NLOS}}$ по формуле~(\ref{eq4}) 
+и~с~учетом~\cite{Ventzel2018} запишем как
+\begin{multline}
+F_{\xi_{\mathrm{NLOS}}}(x)  =
+\mathrm{Pr}\,(\xi_{\mathrm{NLOS}} \leq x) ={}\\
+{}=
+\mathrm{Pr}\left(\max{\left(\xi_{\mathrm{LOS}}, \; \xi^{\mathrm{NLOS}}_1, \ldots, \xi^{\mathrm{NLOS}}_K \right)} 
+\leq x \right) = {} \\
+{} = \mathrm{Pr}\left(\xi_{\mathrm{LOS}} \leq x, \; \xi^{\mathrm{NLOS}}_1 \leq x, \ldots, \xi^{\mathrm{NLOS}}_K 
+\leq x \right) = {}\\
+{} = \mathrm{Pr}\,(\xi_{\mathrm{LOS}} \leq x)  \prod\limits_{k=1}^K{\mathrm{Pr}\left(\xi^{\mathrm{NLOS}}_k \leq x 
+\right)} = {}\\
+{}=
+F_{\xi_{\mathrm{LOS}}}(x)  \prod\limits_{k=1}^K F_{\xi_k^{\mathrm{NLOS}}}(x). 
+\label{eq7}
+\end{multline}
+
+Наконец, ФР СВ $\xi_{\mathrm{PL}}$ затухания сигнала по формуле~(\ref{eq2}) запишем 
+следующим образом:
+\begin{multline*}
+F_{\xi_{\mathrm{PL}}}(x) =
+\mathrm{Pr}\,(\xi_{\mathrm{PL}} \leq x) ={}\\
+{}=
+\mathrm{Pr}\left(\xi_{\mathrm{LOS}}  \xi_{\mathrm{Pr}_{\mathrm{LOS}}} + \xi_{\mathrm{NLOS}} \left[1-
+\xi_{\mathrm{Pr}_{\mathrm{LOS}}}\right] \leq x \right),
+\end{multline*}
+где $\xi_{\mathrm{Pr}_{\mathrm{LOS}}}$~--- СВ вероятности расположения ПУ в~зоне прямой 
+видимости~(\ref{eq1}).
+Функция распределения $F_{\xi_{\mathrm{PL}}}(x)$ будет приближенно представлять собой свертку.
+
+
+
+\section{Численный анализ}
+
+
+\begin{figure*}[b]\small
+\begin{center}
+\tabcolsep=4pt
+\begin{tabular}{|c|l|c|c|}
+
+\multicolumn{4}{c}{Коэффициенты модели затухания сигнала для UMa и~UMi}\\
+\multicolumn{4}{c}{\ }\\[-6pt]
+\hline
+ Зона& \multicolumn{1}{c|}{[dB]} & UMa & UMi \\
+\hline
+&&&\\[-9pt]
+ & $\alpha_1^{\mathrm{LOS}}$ & $28+20 \log_{10}{f_c}$ & $32{,}4+20\log_{10}{f_c}$\\
+% \cline{2-4}
+ LOS& $\beta_1^{\mathrm{LOS}}$ & $22$ & $21$\\
+% \cline{2-4}
+ & $\alpha_2^{\mathrm{LOS}}$ & $28+20 \log_{10}{f_c}-9\log_{10}{\left(d_1^2+(h_{\mathrm{BS}}-h_{\mathrm{UT}})^2\right)} $ 
+ & $32{,}4+20\log_{10}{f_c}- 9{,}5\log_{10}{\left(d_1^2+(h_{\mathrm{BS}}-h_{\mathrm{UT}})^2\right)}$\\
+% \cline{2-4}
+ & $\beta_2^{\mathrm{LOS}}$ & $40$ & $40$\\
+\hline
+&&&\\[-9pt]
+& $\alpha_1^{\mathrm{NLOS}}$ & $13{,}54+20\log_{10}{f_c}-0{,}6(h_{\mathrm{UT}}-1,5)$ & 
+$22{,}4+21{,}3\log_{10}{f_c} - 0{,}3(h_{\mathrm{UT}}-1{,}5)$ \\
+ %\cline{2-4}
+NLOS  & $\beta_1^{\mathrm{NLOS}}$ & $39{,}08$ & $35{,}3$\\
+ %\cline{2-4}
+ & $\alpha_{\mathrm{Opt}}$ & $32{,}4+20\log_{10}{f_c}$ & $32{,}4+20\log_{10}{f_c} $\\
+ %\cline{2-4}
+ & $\beta_{\mathrm{Opt}}$ & $30$ & $31{,}9$\\
+ \hline
+\end{tabular}
+\end{center}
+%\end{table*}
+%\begin{figure*}[b] %fig2
+\setcounter{figure}{1}
+\vspace*{12pt}
+      \begin{center}
+     \mbox{%
+\epsfxsize=163mm 
+\epsfbox{koc-2.eps}
+}
+\end{center}
+\vspace*{-10pt}
+  \Caption{Функции распределения PL для LOS~(\textit{а}) и ~NLOS~(\textit{б}) для сценариев UMa (черные кривые) и~UMi~(серые кривые):
+  \textit{1}~--- расчет по формулам~(6) для LOS и~(7) для NLOS; \textit{2}~--- расчет по упрощенным формулам}
+ \label{fig:1}
+ \end{figure*}
+
+ В спецификации 3GPP TR 38.901 указаны основные диапазоны значений параметров 
+для сценариев развертывания сетей~5G. Рассмотрим сценарии макросоты UMa и~микросоты UMi в~городе со следующим набором исходных данных: радиус действия БС 
+$R\hm=5000$~м, центральная частота $f_c\hm=6$~ГГц, высота ПУ
+$h_{\mathrm{UT}}\hm=1{,}5$~м, высоты БС для UMa $h_{\mathrm{BS}}\hm=25$ м и~для UMi $h_{\mathrm{BS}}\hm=10$~м. 
+Предположим, что пользователи распределены равномерно в~об\-ласти действия БС 
+радиусом~$R$.
+
+Согласно упрощенным формулам, подобным тем, что описаны в~работе~\cite{Moltchanov2022b}, ФР мощности PL затухания сигнала в~условиях 
+прямой и~непрямой видимости могут быть представлены как 
+$$
+F_{\xi_\mathrm{LOS}}(x) = 
+F_{\xi_1^{\mathrm{LOS}}}(x)\,;
+$$
+
+\noindent
+\begin{multline*}
+F_{\xi_\mathrm{NLOS}}(x)=F_{\mathrm{Opt}}(x)={}\\
+{}= F_{\xi_d}\left( \sqrt{ 
+\left(\fr {x}{\alpha_{\mathrm{Opt}}}\right)^{{2}/{\beta_{\mathrm{Opt}}}} - 
+(h_\mathrm{BS}-h_\mathrm{UT})^2 }\,\right).
+\end{multline*}
+
+\noindent
+ Коэффициенты модели затухания сигнала $\alpha_m^{l}$ 
+[dB] и~$\beta_m^{l}$ [dB] для сценариев UMa и~UMi, согласно~\cite{3GPP38901}, 
+представлены в~таб\-лице.
+
+
+ 
+ \begin{figure*} %fig3
+ \vspace*{1pt}
+      \begin{center}
+     \mbox{%
+\epsfxsize=163.204mm 
+\epsfbox{koc-3.eps}
+}
+\end{center}
+\vspace*{-15pt}
+ \Caption{Разница значений ФР PL для LOS~(\textit{а}) и~NLOS~(\textit{б}):
+ \textit{1}~--- UMa; \textit{2}~--- UMi}
+ \label{fig:2}
+  \vspace*{-3pt}
+ \end{figure*}
+
+ 
+ 
+
+В рамках данного численного анализа покажем графики ФР моделей PL затухания 
+сигнала для сценариев UMa и~UMi в~условиях прямой и~непрямой видимости по 
+формулам~(\ref{eq6}) и~(\ref{eq7}) и~упрощенным формулам. Графики с~полученными 
+результатами представлены на рис.~\ref{fig:1} и~3. Во всех случаях 
+график ФР по упрощенным формулам идет выше, что представляет собой 
+верхнюю оценку. Однако при дальнейших расчетах с~использованием упрощенных 
+формул пропускная спо\-соб\-ность и~максимальное число обслуженных пользователей 
+в~соте оказываются занижены. Таким образом, авторы рекомендуют при использовании 
+модели затухания сигнала как компоненты, например в~ресурсных сис\-те\-мах массового 
+обслуживания для анализа беспроводных сетей, использовать формулы (\ref{eq6}) и~(\ref{eq7}).
+
+
+\section{Заключение}
+
+В статье исследована модель затухания сигнала по формулам сценариев 3GPP TR 
+38.901. Была получена функция распределения (ФР) мощности затухания сигнала при 
+случайном (произвольный закон) расположении пользователей в~зоне покрытия 
+БС. Она учитывает ку\-соч\-но-за\-дан\-ный вид функции для LOS и~максимум 
+нескольких величин для NLOS. Проведен численный анализ для данных из 
+спецификации 3GPP TR 38.90 для сценариев макро- и~микросот в~городе для 
+сравнения ФР, представленных в~данной работе, и~ФР, полученных с~по\-мощью 
+упрощенных формул. Результат анализа показал, что ФР по упрощенным формулам дает 
+оценку сверху, что может понижать точность расчетов пропускной способности 
+канала. Отметим, что авторы статьи не ставили перед собой задачу аналитического 
+сравнения двух ФР, а~хотели бы обратить внимание на несложный вид полученных 
+формул, которые рекомендуют для использования как компоненту в~ресурсных 
+системах массового обслуживания при моделировании беспроводных сетей 5G/6G. 
+Задачей дальнейшего исследования станет разработка ресурсной системы массового 
+обслуживания с~учетом случайного расположения пользователей в~соте через 
+пред\-став\-лен\-ную ФР для оценки схемы приоритетного обслуживания узкополосного 
+трафика и~прерывания обслуживания широкополосного трафика в~се\-ти~5G.
+
+
+\vspace*{-12pt}
+
+{\small\frenchspacing
+ {\baselineskip=10.5pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+ \vspace*{-2pt}
+ 
+\bibitem{Moltchanov2022a}
+\Au{Молчанов~Д.\,А., Бегишев~В.\,О., Самуйлов~К.\,Е., Кучерявый~Е.\,А.}
+Сети 5G/6G: архитектура, технологии, методы анализа и~расчета.~--- 
+М.: РУДН, 2022. 516~с.
+
+\bibitem{Hmamouche2021}
+\textit{Hmamouche~Y., Benjillali~M., Saoudi~S., Yanikomeroglu~H., Renzo~M.\,D.}
+New trends in stochastic geometry for wireless networks: A~tutorial and survey~//
+P.~IEEE, 2021. Vol.~109. No.\,7. P.~1200--1252.
+doi: 10.1109/JPROC.2021.3061778.
+
+\bibitem{Naumov2016}
+\Au{Наумов~В.\,А., Самуйлов~К.\,Е.}
+О~связи ресурсных сис\-тем массового обслуживания с~сетями Эрланга~//
+Информатика и~её применения, 2016. Т.~10. Вып.~3. С.~9--14.
+doi: 10.14357/19922264160302.
+
+\bibitem{Gorbunova2018} %4
+\Au{Горбунова~А.\,В., Наумов~В.\,А., Гайдамака~Ю.\,В., Самуйлов~К.\,Е.}
+Ресурсные системы массового обслуживания как модели беспроводных сис\-тем связи~//
+Информатика и~её применения, 2018. Т.~12. Вып.~3. С.~48--55.
+doi: 10.14357/19922264180307.
+
+\bibitem{Markova2019} %5
+\Au{Маркова~Е.\,В., Гольская~А.\,А., Дзантиев~И.\,Л., Гудкова~И.\,А., 
+Шоргин~С.\,Я.}
+Сравнительный анализ показателей эффективности модели беспроводной сети 
+межмашинного взаимодействия, работающей в~рамках двух политик разделения 
+радиоресурсов~//
+Информатика и~её применения, 2019. Т.~13. Вып.~1. С.~108--116.
+doi: 10.14357/19922264190115.
+
+\bibitem{Moltchanov2022b} %6
+\Au{Moltchanov~D.\,A., Sopin~E.\,S., Begishev~V.\,O., Sa\-muylov~A.\,K., Koucheryavy~Y.\,A., 
+Sa\-mouylov~K.\,E.}
+A~tutorial on mathematical modeling of 5G/6G millimeter wave and terahertz 
+cellular systems~//
+IEEE Commun. Surv.  Tut., 2022. Vol.~24. No.\,2. P.~1072--1116.
+doi: 10.1109/ COMST.2022.3156207.
+
+
+
+\bibitem{Kochetkova2021}
+\Au{Кочеткова~И.\,А., Кущазли~А.\,И., Харин~П.\,А., Шоргин~С.\,Я.}
+Модель схемы приоритетного доступа трафика URLLC и~eMBB в~сети пятого поколения в~виде ресурсной сис\-те\-мы массового обслуживания~//
+Информатика и~её применения, 2021. Т.~15. Вып.~4. С.~87--92.
+doi: 10.14357/19922264210412.
+
+\bibitem{3GPP38901}
+3GPP TR 38.901. Study on channel model for frequencies from~0.5 to~100~GHz, 
+2024. Release 17.1.0.
+
+\bibitem{Bolla2023}
+\Au{Bolla~R., Bruschi~R., Lombardo~C., Mohammadpour~A., Trivisonno~R., 
+Poe~W.\,Y.}
+A~5G multi-gNodeB simulator for ultra-reliable 0.5--100~GHz communication in 
+indoor Industry~4.0 environments~//
+Comput. Netw., 2023. Vol.~237. Art. No.\,110103.
+doi: 10.1016/j.comnet.2023.11010.
+
+\bibitem{Ventzel2018}
+\textit{Вентцель~Е.\,С., Овчаров~Л.\,А.}
+Теория вероятностей и~ее инженерные приложения.~--- М.: Юстиция, 
+2018. 480~c.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-10pt}
+
+\hfill{\small\textit{Поступила в~редакцию 15.03.24}}
+
+%\vspace*{10pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+
+
+\def\tit{STOCHASTIC PATH LOSS MODEL IN~5G~NETWORK DEPLOYMENT SCENARIOS: A~STUDY BASED ON~3GPP~TR~38.901}
+
+
+\def\titkol{Stochastic Path Loss Model in 5G Network Deployment Scenarios: A~Study Based on 3GPP TR 38.901}
+
+
+\def\aut{E.\,D.~Makeeva$^{1,2}$, I.\,A.~Kochetkova$^{1,3}$, and~S.\,Ya.~Shorgin$^{3}$}
+
+\def\autkol{E.\,D.~Makeeva, I.\,A.~Kochetkova, and~S.\,Ya.~Shorgin}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-8pt}
+
+
+\noindent
+$^1$RUDN University, 6 Miklukho-Maklaya Str., Moscow 117198, Russian Federation
+
+\noindent
+$^2$V.\,A.~Trapeznikov Institute of Control Science of the Russian Academy of 
+Sciences, 65~Profsoyuznaya Str., Moscow\linebreak
+$\hphantom{^1}$117997, Russian Federation
+
+\noindent
+$^3$Federal Research Center ``Computer Science and Control'' of the Russian 
+Academy of Sciences, 44-2~Vavilov\linebreak
+$\hphantom{^1}$Str., Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+
+\Abste{The fifth-generation (5G) and beyond networks will utilize radio frequencies in the terahertz 
+spectrum, enabling extremely high data transmission rates. However, signal loss may occur when signals 
+pass through obstacles, making it crucial to simulate signal propagation using stochastic geometry 
+and apply up-to-date models for signal attenuation. The 3GPP TR~38.901 specification includes models that describe signal
+ attenuation in various 5G~network scenarios using empirical formulas. Nevertheless, simpler formulas are typically employed 
+ to create models based on stochastic geometry. The authors present the cumulative distribution function 
+ for path loss at random user locations according to the scenarios described in 3GPP TR~38.901. In numerical examples, it is shown that the difference 
+in values with the simplified formula can be significant and lead to underestimation of the network's capacity}
+
+\KWE{wireless network; 5G; 3GPP TR 38.901; path loss; line-of-sight (LOS); non-line-of-sight (NLOS); stochastic geometry}
+
+
+
+\DOI{10.14357/19922264240204}{EKLCAP}
+
+\vspace*{-12pt}
+
+\Ack
+
+\vspace*{-3pt}
+
+\noindent
+The publication has been supported by the RUDN University Scientific Projects 
+Grant System, project No.\,025319-2-000.
+
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99} 
+\bibitem{Moltchanov2022a-1}
+\Aue{Moltchanov,~D.\,A., V.\,O.~Begishev, K.\,E.~Samouylov, and Y.\,A.~Koucheryavy.}
+2022.
+\textit{Seti 5G/6G: arkhitektura, tekhnologii, metody analiza i~rascheta}
+[The 5G/6G networks: Architecture, technologies, analysis methods, and calculations].
+Moscow: RUDN University. 516~p.
+
+\bibitem{Hmamouche2021-a}
+\Aue{Hmamouche,~Y., M.~Benjillali, S.~Saoudi, H.~Yanikomeroglu, and 
+M.\,D.~Renzo.}
+2021.
+New trends in stochastic geometry for wireless networks: A~tutorial and survey.
+\textit{P.~IEEE}. 109(7):1200--1252.
+doi: 10.1109/ JPROC.2021.3061778.
+
+\bibitem{Naumov2016-1}
+\Aue{Naumov,~V.\,A., and K.\,E.~Samouylov.}
+2016. O~svyazi resursnykh sistem massovogo obsluzhivaniya s~setyami Erlanga
+[On relationship between queuing systems with resources and Erlang networks].
+\textit{Informatika i~ee Primeneniya~--- Inform Appl.} 10(3):9--14.
+doi: 10.14357/ 19922264160302.
+
+\bibitem{Gorbunova2018-1} %4
+\Aue{Gorbunova,~A.\,V., V.\,A.~Naumov, Yu.\,V.~Gaidamaka, and K.\,E.~Samouylov.}
+2018. Resursnye sistemy massovogo obsluzhivaniya kak modeli besprovodnykh sistem svyazi
+[Resource queuing systems as models of wireless communication systems].
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 12(3):48--55.
+doi: 10.14357/19922264180307.
+
+
+
+\bibitem{Markova2019-1} %5
+\Aue{Markova,~E.\,V., A.\,A.~Golskaia, I.\,L.~Dzantiev, I.\,A.~Gudkova, and 
+S.\,Ya.~Shorgin.}
+2019. Sravnitel'nyy analiz pokazateley effektivnosti modeli besprovodnoy seti mezhmashinnogo 
+vzaimodeystviya, rabotayushchey v~ramkakh dvukh politik razdeleniya radioresursov
+[Comparative analysis of performance measures for a~wireless machine-to-machine 
+network model operating within two radio resource management policies].
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl}. 13(1):108--116.
+doi: 10.14357/ 19922264190115.
+
+
+\bibitem{Moltchanov2022b-1} %6
+\Aue{Moltchanov,~D.\,A., E.\,S.~Sopin, V.\,O.~Begishev, A.\,K.~Sa\-muy\-lov, 
+Y.\,A.~Koucheryavy, and K.\,E.~Samouylov.}
+2022.
+A tutorial on mathematical modeling of 5G/6G millimeter wave and terahertz 
+cellular systems.
+\textit{IEEE Commun. Surv. Tut.} 24(2):1072--1116.
+doi: 10.1109/COMST. 2022.3156207.
+
+\bibitem{Kochetkova2021-1} %7
+\Aue{Kochetkova,~I.\,A., A.\,I.~Kushchazli, P.\,A.~Kharin, and S.\,Ya.~Shorgin.}
+2021. Model' skhemy prioritetnogo do\-stu\-pa trafika URLLC i~eMBB v~seti pyatogo pokoleniya v~vide resursnoy sistemy massovogo obsluzhivaniya
+[Model for analyzing priority admission control of URLLC and eMBB communications 
+in 5G networks as a~resource queuing system].
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl}. 15(4):87--92.
+doi: 10.14357/19922264210412.
+
+\bibitem{3GPP38901-1}
+3GPP TR 38.901. 2023. Study on channel model for frequencies from~0.5 to~100~GHz, 
+Release 17.1.0.
+
+\bibitem{Bolla2023-1}
+\Aue{Bolla,~R., R.~Bruschi, C.~Lombardo, A.~Mohammadpour, R.~Trivisonno, and 
+W.\,Y.~Poe.}
+2023.
+A 5G multi-gNodeB\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+ simulator for ultra-reliable 0.5--100~GHz communication in 
+indoor Industry 4.0 environments.
+\textit{Comput. Netw.} 37:110103. doi: 10.1016/j.comnet.2023.11010.
+
+\bibitem{Ventzel2018-1}
+\Aue{Ventzel,~E.\,S. and L.\,A.~Ovcharov.}
+2018.
+\textit{Teoriya veroyatnostey i~ee inzhenernye prilozheniya}
+[Probability theory and its engineering applications].
+Moscow: Justice. 480~p.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received March 15, 2024}} 
+
+\vspace*{-12pt}
+
+
+\Contr
+
+\vspace*{-3pt}
+
+\noindent
+\textbf{Makeeva Elena D.} (b.\ 1996)~--- PhD student, Department of Probability 
+Theory and Cyber Security, RUDN University, 6~Miklukho-Maklaya Str., Moscow 
+117198, Russian Federation; junior scientist, V.\,A.~Trapeznikov Institute of 
+Control Science of the Russian Academy of Sciences, 65~Profsoyuznaya Str., 
+Moscow 117997, Russian Federation; \mbox{elena-makeeva-96@mail.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Kochetkova Irina A.} (b.\ 1985)~--- Candidate of Science (PhD) in physics 
+and mathematics, associate professor, Department of Probability Theory and Cyber 
+Security, RUDN University, 6~Miklukho-Maklaya Str., Moscow 117198, Russian 
+Federation; senior scientist, Federal Research Center ``Computer Science and 
+Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, 
+Russian Federation; \mbox{kochetkova-ia@rudn.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Shorgin Sergey Ya.} (b.\ 1952)~--- Doctor of Science in physics and 
+mathematics, professor, principal scientist, Federal Research Center ``Computer Science and Control'' of the Russian Academy of 
+Sciences, 44-2~Vavilov Str., Moscow 119133, Russian Federation; 
+\mbox{sshorgin@ipiran.ru}
+
+
+
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

@@ -1,0 +1,1111 @@
+\def\stat{zakharova}
+
+\def\tit{СЕГМЕНТИРОВАНИЕ НЕСТАЦИОНАРНЫХ СИГНАЛОВ НА~ОСНОВЕ 
+ВЕРОЯТНОСТНЫХ СВОЙСТВ ОКОННОЙ ДИСПЕРСИИ}
+
+\def\titkol{Сегментирование нестационарных сигналов на основе вероятностных свойств оконной дисперсии}
+
+\def\aut{М.\,А.~Драницына$^1$, Т.\,В.~Захарова$^2$}
+
+\def\autkol{М.\,А.~Драницына, Т.\,В.~Захарова}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Драницына М.\,А.}
+\index{Захарова Т.\,В.}
+\index{Dranitsyna M.\,A.}
+\index{Zakharova T.\,V.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Исследование выполнено при финансовой поддержке Российского научного фонда (проект 16-11-10227).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет имени М.\,В.~Ломоносова,
+факультет вычислительной математики и~кибернетики; \mbox{margarita13april@mail.ru}}
+\footnotetext[2]{Московский государственный университет имени М.\,В.~Ломоносова, 
+факультет вычислительной математики и~кибернетики; 
+Институт проб\-лем информатики Федерального исследовательского центра <<Информатика 
+и~управ\-ле\-ние>> Российской академии наук, \mbox{lsa@cs.msu.ru}}
+
+%\vspace*{-18pt}
+
+
+\Abst{Выделение фрагментов регистрируемого сигнала, т.\,е.\ 
+его сегментация, является актуальной задачей, в~частности для биомедицинской отрасли. 
+Сегментация как этап обработки сигналов, зачастую обязательный, может способствовать 
+интерпретации и~классификации регистрируемых данных. Особенно сложно сегментировать 
+нестационарные сигналы с~малым отношением сиг\-нал/шум. В~рамках данной работы 
+основное внимание уделяется изучению шумовой компоненты оконной дисперсии как 
+случайной величины в~рассматриваемых моделях. Авторами предложены модели для 
+представления мультикомпонентных сигналов, а~также исследованы некоторые 
+вероятностные характеристики шумовой компоненты оконной дисперсии сигналов 
+как случайного процесса в~представленных моделях. Результаты работы 
+согласуются с~установленными эмпирически свойствами шумовой компоненты оконной 
+дисперсии (для миограммы). Полученные результаты планируется 
+использовать в~практических задачах сегментирования сигналов и~выделения
+ интервалов с~преобладанием тех или иных компонент процесса, а~также для 
+ прогнозирования поведения сигналов.}
+
+\KW{оконная дисперсия; модель сигнала}
+
+\DOI{10.14357/19922264170302} 
+
+\vspace*{2pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+
+Выделение фрагментов регистрируемого сигнала с~различными характеристиками, т.\,е.\ 
+его сегментация, является актуальной задачей, в~частности для биомедицинской отрасли 
+(например, при анализе электроэнцефалограмм~\cite{Kos, Aza}, данных различных 
+мониторирующих состояние здоровья устройств~\cite{Kal} и~других моно- 
+и~мультикомпонентных сигналов~\cite{Z7}). Сегментация сигналов как этап их обработки, 
+зачастую обязательный~\cite{Kal, Z7}, может способствовать интерпретации 
+и~классификации регистрируемых данных.
+
+Будем рассматривать некоторый нестационарный сигнал. Этот сигнал может быть 
+пред\-став\-лен в~виде временного ряда, который образуют результаты измерения 
+сигнала в~точках~$\tau_{k}$, $k\hm =  1, 2, \ldots, r$. При этом сигнал образован 
+составляющими его процессами $A_{1}, A_{2}, \cdots, A_{m}$, каждый из которых 
+может быть преобладающим на том или ином временн$\acute{\mbox{о}}$м интервале регистрации сигнала.
+
+Примером такого сигнала может служить фармакокинетическая кривая, т.\,е.\ 
+кривая, отра\-жа\-ющая зависимость концентрации вещества, чаще всего в~крови, от времени. 
+Для действующего вещества лекарственного препарата, пред\-став\-ля\-юще\-го собой таблетку 
+или капсулу, профиль такой кривой определяется ско\-ростью абсорбции вещества из 
+просвета тонкой кишки, являющейся наиболее час\-тым абсорбирующим органом, и~количеством 
+уже абсорбированного вещества, ско\-ростью распределения вещества из 
+крови в~периферические ткани (с~достижением динамического равновесия) и~выведением 
+его из организма как за счет метаболизма, так и~выделения соответствующими органами.
+
+Ассоциированная с~подлежащими процессами шумовая компонента предполагается 
+случайной величи\-ной. Изменение вероятностных характеристик шумовой компоненты 
+оконной дисперсии будет основанием для сегментирования ре\-гист\-ри\-ру\-емо\-го 
+сигнала в~дальнейшем на практике. Оконная дисперсия для выделения определенных 
+участков сигналов была использована, например, для анализа 
+магнитоэнцефалограмм~\cite{Z7} с~целью определения момента начала движения. 
+Для выделения опорных точек на миограмме, регистрируемой параллельно 
+с~магнитоэнцефалограммой, в~работе~\cite{Khazi} была предложена методология, 
+которая использована и~обобщена для модели с~общей шумовой компонентой в~настоящей 
+работе. Кроме того, распределение шумовой компоненты оконной дисперсии миограммы 
+было охарактеризовано эмпирически в~работе~\cite{All}.
+
+В рамках данной работы рассматриваются модели мультикомпонентных сигналов, 
+при этом основное внимание уделяется исследованию изменения вероятностных 
+характеристик оконной дисперсии сигнала на разных временн$\acute{\mbox{ы}}$х интервалах.
+
+\section{Модель с~общей шумовой компонентой}
+
+\subsection{Общее представление модели}
+%\label{1.1.1}
+
+Пусть регистрируется некий сигнал. Представим в~каждой точке~$t$ 
+наблюдаемое значение~$C(t)$ в~виде суммы истинных значений процессов,
+ формирующих результирующий сигнал, $A_{1}(t), A_{2}(t), \ldots, A_{m}(t)$ и~белого 
+ гауссовского шума~$\xi(t)$,
+характеризующегося нормальным распределением с~нулевым математическим 
+ожиданием и~дисперсией~$\sigma^{2}$. Таким образом, наблюдаемый сигнал~$C(t)$ 
+представим в~виде:
+\begin{equation}
+\label{1}
+C(t) = \sum\limits_{l=1}^{m}A_{l}(t) + \xi(t)\,.
+\end{equation}
+
+Пусть $n$~--- ширина окна, т.\,е.\ число точек, используемых при расчете 
+скользящего среднего~$\bar{C}_n$ сигнала~$C(t)$.
+Через $C_{i}$ и~$\xi_{i}$ для $i\hm=0,1,\ldots,n-1$ обозначим соответственно 
+значение сигнала и~шума в~$i$-й точке окна.
+
+Во введенных  обозначениях для~$\bar{C}_n$ справедливо следующее представление:
+\begin{multline}
+\label{2}
+\bar{C}_n= \fr{1}{n}\sum\limits_{i=0}^{n-1}C_{i} = \fr{1}{n}
+\sum\limits_{i=0}^{n-1}\left[ \sum\limits_{l=1}^{m}A_{l,i} +
+ \xi_{i} \right] = {}\\
+ {}=\sum\limits_{l=1}^{m}\bar{A}_{l,n} + \bar{\xi}_{n}  \,,
+\end{multline}
+где $\bar{A}_{1,n}, \bar{A}_{2,n}, \ldots, \bar{A}_{m,n},$~--- 
+скользящее среднее истинных составляющих регистрируемого сигнала, а~$\bar{\xi}_{n}$~--- 
+скользящее среднее шума.
+
+Оконная дисперсия по определению имеет вид:
+\begin{equation}
+\label{3}
+W_n= \fr{1}{n}\sum\limits_{i=0}^{n-1}\left( C_{i} -\bar{C}_n \right)^2 \,.
+\end{equation}
+
+Исследуем свойства оконной дисперсии сигнала и~оконной дисперсии 
+шума в~рассматриваемой модели.
+
+\noindent
+\textbf{Лемма.} \textit{Для оконной дисперсии~$W_n$ 
+справедливо следующее представление}:
+\begin{multline}
+\label{4}
+W_n= {}\\
+{}=\sum\limits_{l=1}^{m}W_n^{A_l} + 
+\sum\limits_{s\neq l; s, l=1}^{m}\!\!W_n^{A_l,s} + W_n^{\xi} + 
+\sum\limits_{l=1}^{m}W_n^{A_l\xi}\,,
+\end{multline}
+где
+\begin{align*}
+W_n^{A_l} &= \fr{1}{n}\sum\limits_{i=0}^{n-1}A_{l,i}^{2} + \bar{A}_{l,n}^{2}\,,
+\enskip l \in \{1, 2, \ldots, m \}\,;
+\\
+W_n^{A_l,s} &= \fr{2}{n}\sum\limits_{i=0}^{n-1}A_{l,i}\left( A_{s,i} - 
+\bar{A}_{s,n}\right)\,,\\
+&\hspace*{23mm} l, s \in \{1, 2, \ldots, m \}\,, l \neq s\,;
+\\
+W_n^{\xi} &= \fr{1}{n}\sum\limits_{i=0}^{n-1}\xi_{i}^{2} + \bar{\xi}_{n}^{2}\,;
+\\
+W_n^{A_l\xi} &= \fr{2}{n}\sum\limits_{i=0}^{n-1}\xi_{i}\left( A_{l,i} - 
+\bar{A}_{l,n}\right)\,,\enskip l \in \{1, 2, \ldots, m \}\,.
+\end{align*}
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ 
+Подставим~(\ref{1}) и~(\ref{2}) в~уравнение~(\ref{3}) и~раскроем скобки, тогда
+\begin{multline*}
+W_n= \fr{1}{n}\sum\limits_{i=0}^{n-1}\left( \sum\limits_{l=1}^{m}\left( A_{l,i} - 
+\bar{A}_{l,n} \right) + \left( \xi_{i} - \bar{\xi}_{n}\right) \right)^{2} ={}\\
+{}= \fr{1}{n}\sum\limits_{i=0}^{n-1}\left( A_{1,i} - \bar{A}_{1,n} \right)^{2} + \cdots 
++ \fr{1}{n}\sum\limits_{i=0}^{n-1}\left( A_{l,i} - \bar{A}_{l,n} \right)^{2} + {}\\
+{}+
+\fr{1}{n}\sum\limits_{i=0}^{n-1}\left( \xi_{i} - \bar{\xi}_{n}\right)^{2} +{}\\
+{}+ \sum\limits_{s\neq l; s, l=1}^{m}\left[ \fr{2}{n}\sum\limits_{i=0}^{n-1}\left( 
+A_{l,i} - \bar{A}_{l,n}\right) \left( A_{s,i} - \bar{A}_{s,n}\right) \right] + {}\\
+{}+
+\sum\limits_{ l=1}^{m}\left[ \fr{2}{n}\sum\limits_{i=0}^{n-1}\left( A_{l,i} - 
+\bar{A}_{l,n}\right) \left( \xi_{i} - \bar{\xi}_{n}\right) \right] =  {}\\
+{}= \sum\limits_{l=1}^{m}W_n^{A_l} + 
+\sum\limits_{s\neq l; s, l=1}^{m}W_n^{A_l,s} + W_n^{\xi} + 
+\sum\limits_{l=1}^{m}W_n^{A_l\xi} \,.
+\end{multline*}
+
+Последнее равенство совпадает с~утверждением леммы.
+
+Такое представление~(\ref{4}) оконной дисперсии может быть интерпретировано 
+следующим образом:
+\begin{itemize}
+    \item
+    компоненты $W_n^{A_l}, l \in \{ 1, 2, \ldots, m\} $, характеризуют тренд, 
+    обусловленный истинными компонентами регистрируемого сигнала в~отсутствие шума;
+    \item
+    компоненты $W_n^{A_l,s}, s, l \in \{ 1, 2, \ldots, m\}, s\neq l, $ характеризуют 
+    суперпозицию истинных компонент регистрируемого сигнала;
+    \item
+    компонента $W_n^{\xi}$  характеризует дисперсию случайной компоненты 
+    регистрируемого сигнала~--- оконная дисперсия шума;
+    \item
+    компоненты $W_n^{A_l\xi}$ характеризуют суперпозицию истинных компонент и~шума.
+\end{itemize}
+
+Таким образом, оконная дисперсия рассматриваемого сигнала состоит 
+из суммы компонент, обусловленных изменением истинного сигнала во времени,
+ и~компонент, ассоциированных с~шумом.
+
+Раскроем скобки для компонент $W_n^{A_l}$, $l \hm\in \{ 1, 2, \ldots, m\} $, 
+и~получим:
+\begin{multline*}$$
+W_n^{A_l} = \fr{1}{n}\sum\limits_{i=0}^{n-1}\left( A_{l,i} - \bar{A}_{l,n}\right)^{2} 
+= {}\\
+{}=\fr{1}{n}\sum\limits_{i=0}^{n-1}\left( A_{l,i}^{2} + \bar{A}_{l,n}^{2} - 
+2A_{l,i}\bar{A}_{l,n}\right) ={}
+\\
+{}= \fr{1}{n}\left[ \sum\limits_{i=0}^{n-1}\left( A_{l,i}^{2} - 2A_{l,i}\bar{A}_{l,n} 
+\right) + n\bar{A}_{l,n}^{2} \right] = {}\\
+{}=
+\fr{1}{n} \sum\limits_{i=0}^{n-1}A_{l,i}^{2} - \bar{A}_{l,n}^{2}\,.
+\end{multline*}
+
+Для оконной дисперсии шума $W_n^{\xi}$ справедливы аналогичные 
+преобразования и~представление:
+\begin{multline*}
+\hspace*{-7pt}W_n^{\xi} = \fr{1}{n}\sum\limits_{i=0}^{n-1}\left( \xi_{i} - \bar{\xi}_{n}\right)^{2} = \frac{1}{n}\sum\limits_{i=0}^{n-1}
+\left( \xi_{i}^{2} + \bar{\xi}_{n}^{2} - 2\xi_{i}\bar{\xi}_{n}\right) ={}
+\\
+{}= \fr{1}{n}\left[ \sum\limits_{i=0}^{n-1}\left( \xi_{i}^{2} -
+ 2\xi_{i}\bar{\xi}_{n} \right) + n\bar{\xi}_{n}^{2} \right] = 
+ \fr{1}{n} \sum\limits_{i=0}^{n-1}\xi_{i}^{2} - \bar{\xi}_{n}^{2}\,.
+\end{multline*}
+
+
+Рассмотрим компоненты, представляющие собой суперпозиции истинных 
+компонент сигнала~$W_n^{A_l,s}$ для $s, l \hm\in \{ 1, 2, \ldots, m\}$, $s\hm\neq l $, 
+тогда
+\begin{multline*}
+W_n^{A_l,s} =  \fr{2}{n}\sum\limits_{i=0}^{n-1}\left( A_{l,i} - 
+\bar{A}_{l,n}\right) \left( A_{s,i} - \bar{A}_{s,n}\right)  ={}
+\\
+{}= \fr{2}{n}\sum\limits_{i=0}^{n-1}\!A_{s,i}\left( A_{l,i} - \bar{A}_{l,n}\right) - 
+ \fr{2\bar{A}_{s,n}}{n}\hspace*{-0.6pt}\sum\limits_{i=0}^{n-1}\!\left( A_{l,i} - \bar{A}_{l,n}\right) = {}\\
+ {}=
+ \fr{2}{n}\sum\limits_{i=0}^{n-1}A_{s,i}\left( A_{l,i} - \bar{A}_{l,n}\right)\,.
+\end{multline*}
+
+
+Проведем аналогичные преобразования для компонент~$W_n^{A_l\xi}$, 
+$l \hm\in \{ 1, 2, \ldots, m\}$, и~получим:
+
+\noindent
+\begin{multline*}
+W_n^{A_l\xi} =  \fr{2}{n}\sum\limits_{i=0}^{n-1}\left( A_{l,i} - 
+\bar{A}_{l,n}\right) \left( \xi_{i} - \bar{\xi}_{n}\right)  ={}
+\\
+{}= \fr{2}{n}\sum\limits_{i=0}^{n-1}\xi_{i}\left( A_{l,i} - \bar{A}_{l,n}\right) -  
+\fr{2\bar{\xi}_{n}}{n}\sum\limits_{i=0}^{n-1}\left( A_{l,i} - \bar{A}_{l,n}\right) = {}\\
+{}=
+\fr{2}{n}\sum\limits_{i=0}^{n-1}\xi_{i}\left( A_{l,i} - \bar{A}_{l,n}\right).
+\end{multline*}
+
+Подставив полученные выражения в~уравнение~(\ref{4}), получим утверждение леммы.
+
+
+\subsection{Свойства шумовой компоненты оконной дисперсии в~модели 
+с~общей~шумовой~компонентой}
+%\label{1.1.2}
+
+Обозначим через $W_{n}^{\Xi}$ шумовую компоненту оконной дисперсии 
+регистрируемого сигнала, которая представляет собой сумму оконной 
+дис\-пер\-сии шума и~суперпозицию шума и~истинных компонент:
+\begin{equation}
+\label{5}
+\begin{matrix}
+W_{n}^{\Xi}= W_n^{\xi} + \sum\limits_{l=1}^{m}W_n^{A_l\xi}\,.
+\end{matrix}
+\end{equation}
+
+\noindent
+\textbf{Теорема.}
+\textit{В каждой точке наблюдения~$\tau_{k}$ шумовая компонента оконной 
+дисперсии~$W_n^{\Xi}$ представима в~\mbox{виде}}:
+\begin{equation*}
+%\label{6}
+W_{n}^{\Xi} = W_n^{\xi}\,,\end{equation*}
+ если 
+ $
+\left( A_{l,i} - \bar{A}_{l,n}\right) = 0 \ \forall\
+   l  \hm\in \{ 1, 2, \ldots, m\},\ \forall \ i \hm\in \{ 0, 1, \ldots, n-1\},
+$
+где $W_n^{\xi}$ имеет распределение:
+$$
+W_n^{\xi} \sim \Gamma\left( \fr{n}{2\sigma^{2}}, \frac{n-1}{2}\right)\,,
+$$
+иначе
+$$
+W_{n}^{\Xi} = W_n^{\xi}  + \sum\limits_{l: \left( A_{l,i} - \bar{A}_{l,n}\right) 
+\neq 0}^{m}W_n^{A_l\xi}\,,
+$$
+если $\exists \ 
+l, i : \left( A_{l,i} - \bar{A}_{l,n}\right)\hm \neq 0,$
+при этом $W_n^{A_l\xi}$ имеет распределение:
+$$
+W_n^{A_l\xi} \sim N \left( 0, \fr{4\sigma^{2}}{n}W_n^{A_l}\right)\,.
+$$
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \
+По определению случайные величины~$\xi_{k} $ являются независимыми одинаково 
+распределенными с~нулевым математическим ожиданием и~дисперсией~$\sigma^{2}$. 
+Поэтому распределение компоненты  ${nW_n^{\xi}}/{\sigma^{2}}$ 
+как оконной дисперсии случайной величины со стандартным нормальным распределением
+ является хи-квад\-рат-рас\-пре\-де\-ле\-ни\-ем вида:
+$$
+\fr{nW_n^{\xi}}{\sigma^{2}} \sim \chi^{2}_{n-1} = 
+\Gamma\left( \fr{1}{2}, \fr{n-1}{2}\right)\,. 
+$$
+
+Теперь по свойствам гам\-ма-рас\-пре\-де\-ле\-ния получаем:
+$$
+W_{n}^{\xi} \sim \chi^{2}_{n-1} = \Gamma\left( \fr{n}{2\sigma^{2}}, 
+\fr{n-1}{2}\right)\,.
+$$
+
+Компоненты, характеризующие суперпозицию шума и~истинных компонент 
+сигнала,~$W_{n}^{A_l\xi}$, $l \hm\in \{ 1, 2, \ldots, m\}$, представляют 
+собой суммы независимых нормально распределенных случайных величин:
+$$
+W_n^{A_l\xi} = \fr{2}{n}\sum\limits_{i=0}^{n-1}\xi_{i}\left( A_{l,i} - 
+\bar{A}_{l,n}\right)\,,
+$$
+при этом
+$$
+\fr{2}{n}\xi_{i}\left( A_{l,i} - \bar{A}_{l,n}\right)  
+\sim N \left( 0, \left[\fr{2\sigma}{n}\left( A_{l,i} - \bar{A}_{l,n}\right) \right]^{2} \right)\,.
+$$
+
+Вследствие усиленной воспроизводимости нормального распределения сумма таких 
+величин по~$i$ будет иметь нормальное распределение вида:
+\begin{multline*}
+W_n^{A_l\xi} \sim N \left( 0, \fr{4\sigma^{2}}{n^{2}}\sum\limits_{i=0}^{n-1}
+\left( A_{l,i} - \bar{A}_{l,n}\right)^{2} \right) = {}\\
+{}=
+N \left( 0, \fr{4\sigma^{2}}{n}W_n^{A_l}\right)\,.
+\end{multline*}
+
+Итак, доказано, что в~тех случаях, когда истинные компоненты, формирующие 
+сигнал, не изменяются, т.\,е.\ $ A_{l,i} \hm- \bar{A}_{l,n} \hm= 0$, 
+оконная дис\-пер\-сия шума характеризуется гам\-ма-рас\-пре\-де\-ле\-ни\-ем с~параметрами 
+формы и~масштаба~$({n-1})/{2}$  и~${n}/({2\sigma^{2}})$ 
+соответственно. Если же для ка\-ких-ли\-бо из истинных компонент  
+$ A_{l,i} \hm- \bar{A}_{l,n} \hm\neq 0$, тогда шумовая компонента 
+оконной дисперсии~$W_{n}^{\Xi}$ пред\-став\-ля\-ет собой сумму зависимых случайных 
+величин с~гам\-ма-рас\-пре\-де\-ле\-ни\-ем и~нормально распределенных.
+
+\section{Модель с~несколькими различными шумовыми компонентами}
+
+\subsection{Общее представление модели}
+
+%\label{1.2.1}
+Обратимся теперь к~несколько иному пред\-став\-ле\-нию модели, а~именно: 
+представим для каждой точки~$\tau_{k}$ значение сигнала~$C$ в~виде 
+суммы независимых в~физическом смысле истинных значений нескольких процессов, 
+формирующих сигнал~$A_{l}$, $l \hm= 1, 2, \ldots, m$, и~соответствующего каждой 
+такой истинной компоненте независимого в~статистическом смысле 
+шума $\xi_{1}, \xi_{2}, \ldots, \xi_{m}$, при этом случайная величина~$\xi_{l, k} $ 
+характеризуется нормальным распреде\-лением с~нулевым математическим 
+ожиданием и~дисперсией~$\sigma^{2}_{l, k}$, $l \hm= 1, 2, \ldots , m$, 
+причем для всех точек~$\tau_{k}$ для фиксированной истинной компоненты~$A_{l}$ 
+изучаемого сигнала случайные величины~$\xi_{k,l}$~--- 
+независимые одинаково распределенные случайные величины. Тогда для любого~$\tau_{k}$ 
+сигнал~$C$  представим в~виде:
+\begin{equation}
+\label{7}
+C = \sum\limits_{l=1}^{m}C_{l} = \sum\limits_{l=1}^{m}\left( A_{l}+\xi_{l}\right)\,.
+\end{equation}
+
+Обозначим
+$$
+\bar{C}_{n} = \sum\limits_{l=1}^{m} \bar{C}_{l,n}\,; 
+\quad W_{n} = \sum\limits_{l=1}^{m} W_{l,n}\,,
+$$
+где $\bar{C}_{n}$~--- скользящее среднее регистрируемого сигнала~$C$, 
+а~$ W_{n}$~--- оконная дисперсия сигнала.
+
+Далее рассмотрим отдельно компоненты этой суммы~(\ref{7}) 
+$C_{l}\hm =  A_{l}\hm+\xi_{l}$. Для каждой компоненты~$C_{l}$ 
+в~соответствии с~леммой справедливо разложение~(\ref{4}), поэтому
+$$
+\bar{C}_{l,n}=\fr{1}{n} \sum\limits_{i=0}^{n-1}C_{l,i} = \fr{1}{n} 
+\sum\limits_{i=0}^{n-1}\left( A_{l,i}+\xi_{l,i}\right)\,;
+$$
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+W_{l,n}=\fr{1}{n} \sum\limits_{i=0}^{n-1}\left( C_{l,i} - \bar{C}_{l,n}\right)^{2} 
+=\fr{1}{n} \sum\limits_{i=0}^{n-1} A_{l,i}^{2}-
+\bar{A}_{l,n}^{2} +{}\\
+{}+ 
+\fr{1}{n} \sum\limits_{i=0}^{n-1} \xi_{l,i}^{2}-\bar{\xi}_{l,n}^{2} + 
+\fr{2}{n} \sum\limits_{i=0}^{n-1}\xi_{l,i} \left( A_{l,i}-\bar{A}_{l,n}\right)\,.
+\end{multline*}
+
+Зафиксируем $l$ и~далее для наглядности изложения опустим 
+этот индекс, т.\,е.\ будем рассматривать лишь одну истинную 
+компоненту и~соответст\-ву\-ющую шумовую компоненту.
+
+Рассмотрим шумовую компоненту оконной дисперсии и~представим ее в~специальном виде:
+\begin{multline*}
+W_{n}^{\Xi}= \fr{1}{n} \sum\limits_{i=0}^{n-1} \xi_{i}^{2}-\bar{\xi}_{n}^{2} + 
+\fr{2}{n} \sum\limits_{i=0}^{n-1}\xi_{i} \left( A_{i}-\bar{A}_{n}\right) = {}\\
+{}=\fr{1}{n} \sum\limits_{i=0}^{n-1}\left( \xi_{i}^{2} + \xi_{i} 
+\left( 2A_{i}-2\bar{A}_{n}\right)\right)  - \bar{\xi}_{n}^{2}\,.
+\end{multline*}
+
+Случайная величина $\bar{\xi}_{n}^{2}$ сходится по вероят\-ности к~нулю, а~свойства 
+слагаемых
+$\xi_{i}^{2} \hm+ \xi_{i} \left( 2A_{i}\hm-2\bar{A}_{n}\right)$
+будут описаны в~подразделе ниже.
+
+Частный случай $l\hm=1$ соответствует сигналу с~единственной истинной 
+компонентой и~соответствующим шумом, пример такого сигнала рас\-смот\-рен 
+в~работах~\cite{Z7, Khazi}.
+
+\subsection{Свойства случайной величины вида $\left( \xi^{2} + a\xi\right)$}
+%    \label{1.2.2}
+
+Рассмотрим свойства одного слагаемого шумовой компоненты 
+$ \xi_{i}^{2} \hm+ \xi_{i} \left(2 A_{i}\hm-2\bar{A}_{n}\right)$.
+Зафиксировав~$i$ и~введя обозначение $a\hm = 2\left( A\hm-\bar{A}\right)$, 
+получим случайную величину вида $ \xi^{2} \hm+ a\xi$. Ее 
+свойства отражены в~следующей лемме.
+
+\smallskip
+    
+\noindent
+\textbf{Лемма.}\ \textit{Пусть случайная величина~$\xi$ распределена по нормальному 
+закону $N\left( 0, \sigma^{2}\right)$, тогда  $\xi^{2}\hm +a \xi$ 
+имеет распределение, соответствующее характеристической функции вида}:
+ $$
+ \varphi_{\xi^{2} + a\xi}\left(t \right)  = 
+ \fr{1}{\sqrt{1-2it\sigma^2}}\,
+ e^{{a^{2}t^{2}}/\left({4\left(it - {1}/\left({2\sigma^{2}}\right)\right) }\right)}.
+$$
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \
+ Вычислим характеристическую функцию для $\xi^{2} \hm+a \xi$.
+
+Запишем определение:
+\begin{multline*}
+    \varphi_{\xi^{2} + a\xi} \left(t \right) = 
+    Ee^{it\left( \xi^{2} + a\xi \right) } = 
+      \int\limits_{-\infty}^{\infty}e^{it\left( x^{2} + ax \right) } dF\left( x\right) ={}\\
+{}    = \int\limits_{-\infty}^{\infty}
+e^{it\left( x^{2} + ax \right) } 
+\fr{1}{\sqrt{2\pi\sigma^2}}\,
+e^{-{x^{2}}/\left({2\sigma^{2}}\right)} dx ={}\\
+{}=\fr{1}{\sqrt{2\pi\sigma^2}}
+\int\limits_{-\infty}^{\infty}e^{it\left( x^{2} + 
+ax \right) }e^{-{x^{2}}/\left({2\sigma^{2}}\right)} \,dx\,,\enskip
+t\in R\,.
+\end{multline*}
+    
+Сначала подробно рассмотрим частный случай $a\hm=1$, $\sigma^{2}\hm = 1$, 
+который затем обобщим для произвольных параметров~$a$ и~$\sigma^{2}$.
+
+Проведем элементарные преобразования, выделяя полный квадрат и~проводя 
+замену переменных, получим:
+\begin{multline*}
+\varphi_{\xi^{2} + \xi} \left(t \right) = 
+\fr{1}{\sqrt{2\pi}}\int\limits_{-\infty}^{\infty}e^{it\left( x^{2} + x \right) }
+e^{-{x^{2}}/{2}}\, dx  ={}\\
+{}= 
+\fr{1}{\sqrt{2\pi}}\int\limits_{-\infty}^{\infty}
+e^{-\left( {1}/{2}-it\right) \left( x + {it}/\left({2\left( it - {1}/{2}\right) }\right) 
+\right)^{2} }\times{}\\
+{}\times e^{-\left( it - {1}/{2}\right) \left( 
+{it}/({2\left(it - {1}/{2}\right) })\right)^{2} } \, dx ={}\\
+{}= 
+\fr{1}{\sqrt{2\pi\left( {1}/{2}-it\right) }}\,
+e^{-\left( it - {1}/{2}\right) \left( 
+{it}/({2\left(it - {1}/{2}\right) })\right)^{2} }\times{}\\
+{}\times 
+\int\limits_{-\infty}^{\infty}
+e^{-\left( \sqrt{{1}/{2}-it} \left( x + 
+{it}/({2\left( it - {1}/{2}\right) }) \right)\right)^{2} }\times{}\\
+{}\times d
+\left( \sqrt{\fr{1}{2}-it}\,
+ \left( x + \fr{it}{2\left( it - {1}/{2}\right) } \right)\right) ={}
+\end{multline*}
+
+\noindent
+\begin{multline*}
+{}= 
+\fr{\sqrt{\pi}}{\sqrt{2\pi\left( {1}/{2}-it\right) }}\,
+e^{-{\left( it\right)^{2}\left( it - {1}/{2}\right) }/
+\left({4\left(it - {1}/{2}\right)^2 }\right)} = {}\\
+{}=
+\fr{1}{\sqrt{1-2it}}\,e^{{t^{2}}/({4\left(it - {1}/{2}\right) })}\,.
+\end{multline*}
+    
+Теперь проведем аналогичные преобразования для любых~$a$ и~$\sigma^{2}$:
+   \begin{multline*}
+    \varphi_{\xi^{2} + a\xi} \left(t \right) = 
+    \fr{1}{\sqrt{2\pi\sigma^2}}\int\limits_{-\infty}^{\infty}
+    e^{it\left( x^{2} + a x \right) }
+    e^{-{x^{2}}/\left({2\sigma^{2}}\right)}\, dx = {}\\
+    {}=
+    \fr{1}{\sigma\sqrt{{1}/{\sigma^{2}}-2it}}\,
+    e^{{a^{2}t^{2}}/\left({4\left(it - {1}/\left({2\sigma^{2}}\right)\right) }\right)} = {}\\
+    {}=
+    \fr{1}{\sqrt{1-2it\sigma^2}}\,e^{{a^{2}t^{2}}/
+    \left({4\left(it - {1}/\left({2\sigma^{2}}\right)\right) }\right)}.
+\end{multline*}
+    
+    Лемма доказана.
+    
+    \smallskip
+    
+Согласно теореме единственности полученная характеристическая функция 
+однозначным образом определяет функцию распределения случайной величины. 
+Рассчитаем первые моменты рассматриваемой случайной величины. Результаты 
+расчета приведены в~нижеследующей лемме.
+
+\smallskip
+    
+\noindent
+\textbf{Лемма.}
+    Случайная величина $\xi^{2} \hm+ a\xi$ имеет сле\-ду\-ющие 
+    математическое ожидание и~дисперсию:
+$$
+    {\sf E}\left( \xi^{2} + a\xi \right) = \sigma^2\,; \enskip 
+    {\sf D}\left( \xi^{2} + a\xi \right) = \sigma^6 + 3\sigma^5+4 a^2 \sigma^3.
+$$
+    
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \
+Для вывода формул используем следующее свойство характеристических функций:
+\begin{equation*}
+{\sf E}\left(\left( \xi^{2} + a\xi\right)^n \right)  =
+\fr{\varphi^{(n)}(0)}{i^n }\,.
+\end{equation*}
+
+Первая и~вторая производные по~$t$ для функции~$\varphi(t)$ имеют вид:
+\begin{multline*} 
+    \fr{d}{dt}\,\varphi\left( t\right) =
+    \fr{d}{dt}\,\fr{e^{{a^2 t^2}/\left({4(-{1}/\left({2 \sigma^2}\right)+i t)}\right)}}
+    {\sqrt{1-2 i t\sigma^2}} = {}\\
+    {}=
+    \fr{i e^{{a^2 t^2}/\left({4 \left(-{1}/\left({2 \sigma^2}\right)+i t\right)}\right)}}
+    {\sigma \left({1}/{\sigma^2}-2 i t\right)^{3/2}}+{}
+\\
+        {}+
+       e^{{a^2t^2}/\left({4 \left(-{1}/\left({2 \sigma^2}\right)+i t\right)}\right)} 
+       \left(
+    \fr{a^2 t}{2 \left(-{1}/\left({2 \sigma^2}\right)+i t\right)}-{}\right.\\
+\left.    {}-
+   \fr{i a^2 t^2}{4 \left(-{1}/\left(2 \sigma^2\right)+i t\right)^2}
+  \right)
+  \Bigg / 
+    \left(\sigma\sqrt{\fr{1}{\sigma^2}-2 it}\right)\,;
+\end{multline*}
+
+\vspace*{-12pt}
+    
+\noindent
+\begin{multline*}  
+    \fr{d^2}{dt^2}\,\varphi\left( t\right) = 
+    -\fr{3 e^{{a^2 t^2}/\left({4 \left(-{1}/\left({2 \sigma^2}\right)+i t\right)}\right)}}
+    {\sigma \left({1}/{\sigma^2}-2 it\right)^{5/2}}+{}\\
+    {}+
+    e^{{a^2 t^2}/\left({4 \left(-{1}/\left({2\sigma^2}\right)+it\right)}\right)} 
+    \left(
+    \fr{a^2}{2 \left(-{1}/\left({2 \sigma^2}\right)+i t\right)}-{}\right.
+    \end{multline*}
+
+\noindent
+\begin{multline*}
+    {}-
+    \fr{i a^2 t}{\left(-{1}/\left({2
+            \sigma^2}\right)+i t\right){}^2}-{}\\
+\left.            {}-
+            \fr{a^2 t^2}{2 \left(-{1}/\left({2\sigma^2}\right)+it\right)^3}\right)
+            \Bigg/
+            \left(\sigma\sqrt{\fr{1}{\sigma^2}-2 it}\right)+{}\\
+{}+ 2 i e^{{a^2 t^2}/\left({4 \left(-{1}/\left({2\sigma^2}\right)+it\right)}\right)} 
+\left(
+\fr{a^2 t}{2 \left(-{1}/\left({2 \sigma^2}\right)+i t\right)}-{}\right.\\
+\left.{}-
+\fr{i a^2 t^2}{4 \left(-{1}/\left({2 \sigma^2}\right)+it \right)^2}\right)
+\!\Bigg/\!
+\left(\sigma\left(\fr{1}{\sigma^2}-2 i t\right)^{3/2}\right)+{}\\
+{}+
+e^{{a^2 t^2}/\left({4 \left(-{1}/\left({2\sigma^2}\right)+i t\right)}\right)} 
+\left(
+\fr{a^2 t}{2 \left(-{1}/\left({2 \sigma^2}\right)+i t\right)}-{}\right.\\
+\left.{}-
+\fr{ia^2 t^2}{4 \left(-{1}/\left({2 \sigma^2}\right)+i t\right)^2}\right)^2\Bigg/
+\left(\sigma\sqrt{\fr{1}{\sigma^2}-2 i t}\right)\,.
+\end{multline*}
+   
+\noindent
+Поэтому
+$$  
+iE\left( \xi^{2} + a\xi\right)  = \fr{i}{\left({1}/{\sigma^2}\right)^{3/2} \sigma }= 
+i \sigma^2
+$$  
+и
+\begin{multline*}
+i^2 E\left( \xi^{2} + a\xi\right)^2 =  {}\\
+{}=
+-\fr{3}{\left({1}/{\sigma^2}\right)^{5/2} \sigma}-
+\fr{a^2 \sigma}{\sqrt{{1}/{\sigma^2}}} = i^2\left(3\sigma^4 + a^2\sigma^2\right)\,.
+\end{multline*} 
+
+С помощью начальных моментов найдем дисперсию:
+\begin{multline*}  
+    D\left( \xi^{2} + a\xi \right)  =  E\left( \xi^{2} + a\xi\right)^2 - 
+    \left( E\left(\xi^{2} + a\xi \right)\right)^2 ={}\\
+    {}= 3\sigma^4 + a^2\sigma^2 - \left(\sigma^2\right)^2 = 2\sigma^4 + a^2\sigma^2 \,.
+\end{multline*}
+
+Таким образом, утверждения леммы  доказаны.
+
+\subsection{Свойства шумовой компоненты оконной дисперсии в~модели 
+с~несколькими шумовыми компонентами}
+%    \label{1.2.3}
+
+    Заменим обратно~$a$ на $ 2A\hm-2\bar{A}$ и~сформулируем 
+    теорему о~свойствах шумовой компоненты оконной дисперсии.
+
+\smallskip
+
+\noindent
+    \textbf{Теорема.}
+\textit{Для регистрируемого сигнала $C\left(t \right)$ в~каж\-дой точке~$\tau_{k}$, 
+$k\hm= \left\lbrace  1, 2, \ldots, r\right\rbrace$, шумовая компонента 
+оконной дисперсии~$W_{n}^{\Xi}$ представляет собой}:
+\begin{enumerate}[($i$)]
+    \item \textit{случайную величину} 
+    $$
+    \sum\limits_{l=1}^{m} W_{l,n}^{\xi}\sim 
+    \Gamma\left(\fr{n}{2\sigma_{l}^{2}}, \fr{n-1}{2}\right)\,,
+    $$ 
+    \textit{если} 
+   \begin{multline*}
+     A_{l,j} \hm- \bar{A}_{l,n}= \emptyset \ \forall\ 
+     l  \hm\in \left\lbrace 1, 2, \ldots, m\right\rbrace ,\\
+      \forall\ 
+     j \hm\in \left\lbrace 0, 1, \ldots, n-1\right\rbrace\,;
+     \end{multline*}
+    
+    \item \textit{сумму случайных величин} 
+    $\sum\nolimits_{l=1}^{m}\sum\nolimits_{j=0}^{n-1}({1}/{n})\times$\linebreak
+$\times     \left( \xi_{l,j}^{2}\hm+\xi_{l,j} \left( 2A_{l,j}\hm-2\bar{A}_{l,n}\right)\right)  \hm-
+       \sum\nolimits_{l=1}^{m}\bar{\xi}_{l,n}^{2}$, 
+       \textit{если} $\exists\ l \hm\in \left\lbrace 1, 2, \ldots, m\right\rbrace$
+\textit{и}  $j \hm\in \left\lbrace 0, 1, \ldots, n-1\right\rbrace :
+    A_{l,j}\hm - \bar{A}_{n} \hm\neq 0$,
+    
+    \textit{при этом}
+    $$
+    \bar{\xi}_{l,n}^{2}  \sim  \Gamma\left( \fr{n}{2\sigma_{l}^{2}}, 
+    \fr{1}{2}\right)\,,
+    $$ 
+    
+    \textit{a характеристическая функция случайной величины} 
+    $\sum\nolimits_{l=1}^{m}(1/n) \!\sum\nolimits_{j=0}^{n-1}\!\left( \xi_{l,j}^{2} + 
+    \xi_{l,j} \left( 2A_{l,j}-\right.\right.$\linebreak 
+    $\left.\left.-\;2\bar{A}_{l,n}\right)\!\right)$ 
+    \textit{имеет вид} : 
+    \begin{multline*}
+    \varphi\left( t\right) \hm= \prod\limits_{l=1}^{m} 
+    \left( 1-\fr{2it\sigma_l^2}{n}\right)^{-{n}/{2}}\times{}\\
+    {}\times  
+    \prod\limits_{j=0}^{n-1} e^{{\left(A_{l,j}-\bar{A}_{l,n}\right)^{2}t^{2}
+    \sigma^{2}_{l}}/\left({itn\sigma^{2}_{l} - {n^{2}}/2}\right)}\,.
+    \end{multline*}
+    
+\end{enumerate}
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \
+        Сначала будем рассматривать случай для фиксированного~$l$ или, 
+        иными словами, сигнал, сформированный единственной истинной 
+        компонентой и~соответствующим шумом.
+    
+    В этом случае (см.\ подразд.~3.1) шумовая компонента для оконной дисперсии 
+    сигнала имеет вид:
+    $$
+    W_{n}^{\Xi}= \fr{1}{n} \sum\limits_{j=0}^{n-1}\left( \xi_{j}^{2} + \xi_{j} \left( 2A_{j}-2\bar{A}_{n}\right)\right)  - \bar{\xi}_{n}^{2}\,.
+$$
+
+   \noindent
+    Так как
+\begin{multline*}
+ \fr{1}{n} \sum\limits_{j=0}^{n-1}\left( \xi_{j}^{2} + \xi_{j} \left( 2A_{j}-
+ 2\bar{A}_{n}\right)\right) ={}\\
+ {}= \sum\limits_{j=0}^{n-1}\frac{1}{n} 
+ \left( \xi_{j}^{2} + \xi_{j} \left( 2A_{j}-2\bar{A}_{n}\right)\right)\,, 
+ \end{multline*}
+то, используя свойства характеристической функции, получим характеристическую 
+функцию для случайной величины $({1}/{n}) \left( \xi_{j}^{2} \hm+ 
+\xi_{j} \left( 2A_{j}\hm-2\bar{A}_{n}\right)\right)$ при каждом фиксированном~$j$:
+\begin{multline*}
+\varphi_{({1}/{n}) \left( \xi_{j}^{2} + \xi_{j} \left( 2A_{j}-2\bar{A}_{n}\right)
+\right) }\left( t\right)  = {}\\
+{}=
+\varphi_{  \xi_{j}^{2} + \xi_{j} \left( 2A_{j}-2\bar{A}_{n}\right) } 
+\left( \fr{t}{n} \right) = {}\\
+{}=
+\fr{1}{\sqrt{1-{2it\sigma^2}/{n}}}\,
+e^{{\left( 2A_{j}-2\bar{A}_{n}\right)^{2}t^{2}}/
+\left({4\left(i\,t\,n - {n^2}/\left({2\sigma^{2}}\right)\right) }\right)}\,.
+\end{multline*}
+    
+   \noindent
+    Тогда характеристическая функция для случайной величины  
+    $({1}/{n}) \sum\nolimits_{j=0}^{n-1}\left( \xi_{j}^{2}\hm + 
+    \xi_{j} \left( 2A_{j}\hm-2\bar{A}_{n}\right)\right)$ может быть записана в~виде:
+\begin{multline*}
+    \varphi_{({1}/{n}) \sum\nolimits_{j=0}^{n-1}\left( \xi_{j}^{2} + \xi_{j} 
+    \left( 2A_{j}-2\bar{A}_{n}\right)\right) }\left( t\right)  = {}\\
+    {}=
+    \prod\limits_{j=0}^{n-1}\varphi_{({1}/{n})\left( 
+    \xi_{j}^{2} + \xi_{j} \left( 2A_{j}-2\bar{A}_{n}\right)\right) } = 
+    \fr{1}{\left( 1-{2it\sigma^2}/{n}\right)^{{n}/{2}} } \times{}\hspace*{-6pt}\\
+    {}\times
+\prod\limits_{j=0}^{n-1} 
+e^{{\left( 2A_{j}-2\bar{A}_{n}\right)^{2}t^{2}}/
+\left({4\left(i\,t\,n - {n^2}/\left({2\sigma^{2}}\right)\right) }\right)} = {}\\
+{}= 
+\left( 1-\fr{2it\sigma^2}{n}\right)^{-{n}/{2}} \times{}\\
+{}\times \prod\limits_{j=0}^{n-1} 
+e^{{\left( 2A_{j}-2\bar{A}_{n}\right)^{2}t^{2}}/
+\left({4\left(\,i\,t\,n - {n^2}/\left({2\sigma^{2}}\right)\right) }\right)} = {}\\
+{}=
+\left( 1-\fr{2it\sigma^2}{n}\right)^{-{n}/{2}}  
+\prod\limits_{j=0}^{n-1} e^{{\left( A_{j}-\bar{A}_{n}\right)^{2}t^{2} \sigma^{2} }/
+\left({itn\sigma^2 - {n^2}/{2} }\right) }\,.\hspace*{-6pt}
+\end{multline*}
+    
+    Рассмотрим теперь компоненту шумовой со\-став\-ля\-ющей сигнала $\bar{\xi}_{n}^{2}$, 
+    которая представляет собой квадрат нормально распределенной случайной 
+    величины~$\bar{\xi}_{n}$ с~математическим ожиданием~0 
+    и~дис\-пер\-си\-ей~${\sigma^{2}}/{n}$. Поскольку
+$$
+    \fr{\sqrt{n}}{\sigma}\,\bar{\xi} \sim N \left( 0, 1\right)\,,
+$$
+то
+$$
+    \fr{n}{\sigma^{2}}\,\bar{\xi}_{n}^{2}  \sim \chi^{2}_{1} = 
+    \Gamma\left( \fr{1}{2}, \fr{1}{2}\right)
+    $$
+    и
+    $$ 
+    \bar{\xi}_{n}^{2}  \sim  \Gamma\left( \fr{n}{2\sigma^{2}}, \fr{1}{2}\right).
+$$
+    
+    Отметим, что математическое ожидание~$\bar{\xi}_{n}^{2}$ есть~${\sigma^{2}}/{n}$, 
+    а~дисперсия равна ${2\sigma^{4}}/{n^{2}}$ и~эти характеристики зависят от числа 
+    точек расчета оконной дисперсии~$n$, убывая  как~$n$ и~$n^{2}$ соответственно. 
+    Отсюда следует, что можно выбрать такое~$n$, что среднее 
+    и~дисперсия~$\bar{\xi}_{n}^{2}$ будут меньше заданной точности измерений.
+    
+    Принимая во внимание результаты подразд.~2.2, для каждого фиксированного~$l$ шумовую 
+    компоненту сигнала можно представить в~виде:
+   \begin{enumerate}[($i$)]
+        \item случайной величины
+        $$
+        W_n^{\xi} = \fr{1}{n} 
+        \sum\limits_{j=0}^{n-1}\xi_{j}^{2} - \bar{\xi}_{n}^{2} 
+        \sim \Gamma\left( \fr{n}{2\sigma^{2}}, \fr{n-1}{2}\right)\,, 
+        $$
+        если $ A_{j} \hm- \bar{A}_{n} \hm= 0 \ \forall \ j \hm\in 
+        \left\lbrace  0, 1, \ldots, n-1\right\rbrace$;
+        \item суммы случайных величин $({1}/{n}) \sum\nolimits_{j=0}^{n-1}
+        \left( \xi_{j}^{2} +\right.$\linebreak
+        $\left.+\;\xi_{j} \left( 2A_{j}-2\bar{A}_{n}\right)\right)  \hm- 
+        \bar{\xi}_{n}^{2}$, если $\exists \ j \hm\in \left\lbrace 0, 1, \ldots, 
+        n-1\right\rbrace : \left( A_{j} \hm- \bar{A}_{n}\right)\hm \neq 0$, при этом
+        $$
+        \bar{\xi}_{n}^{2}  \sim  \Gamma\left(\fr{n}{2\sigma^{2}}, \,
+\fr{1}{2}\right)\,;
+        $$ 
+        
+        \vspace*{-12pt}
+        
+        \noindent
+        \begin{multline*}
+        \varphi_{({1}/{n}) \sum\nolimits_{j=0}^{n-1}\left( \xi_{j}^{2} + 
+        \xi_{j} \left( 2A_{j}-2\bar{A}_{n}\right)\right) }\left( t\right)  
+        ={}\\
+        \hspace*{-30pt}{}= \left( 1-\fr{2it\sigma^2}{n}\right)^{-{n}/{2}}  
+        \prod\limits_{j=0}^{n-1} 
+        e^{{\left(A_{j}-\bar{A}_{n}\right)^{2}t^{2}\sigma^{2}}/\left({i  tn\sigma^{2} - 
+        {n^{2}}/{2} }\right)}.\hspace*{-3.77995pt}
+        \end{multline*}
+            \end{enumerate}
+
+
+Регистрируемый сигнал~$C$ представляет собой сумму независимых истинных компонент 
+и~соответствующих независимых шумовых со\-став\-ля\-ющих, поэтому
+\begin{multline*}
+    W_{l,n}^{\Xi} = {}\\
+    {}= \sum\limits_{l=1}^{m}\left[ \fr{1}{n} 
+    \sum\limits_{j=0}^{n-1}\left( \xi_{l,j}^{2} + \xi_{l,j} \left( 2A_{l,j}-
+    2\bar{A}_{l,n}\right)\right)  - \bar{\xi}_{l,n}^{2}\right] ={}
+\\
+{}    = \sum\limits_{l=1}^{m}\sum\limits_{j=0}^{n-1}\frac{1}{n} \left( \xi_{l,j}^{2} + \xi_{l,j} \left( 2A_{l,j}-2\bar{A}_{l,n}\right)\right)  -  \sum\limits_{l=1}^{m}\bar{\xi}_{l,n}^{2}.
+\end{multline*}
+    
+    Рассмотрим случай, когда $\left( A_{l,j} \hm- \bar{A}_{l,n}\right)\hm = 0 
+    \ \forall \   l  \hm\in \{ 1, 2, \ldots, m\}, \ \forall \ 
+    j \hm\in \{ 0, 1, \ldots, n-1\} $, т.\,е.\ 
+    истинные компоненты сигнала не меняются на фиксированном окне. Тогда
+$$
+    W_{l,n}^{\Xi} =  \sum\limits_{l=1}^{m}\sum\limits_{j=0}^{n-1}\fr{1}{n} 
+    \xi_{l,j}^{2}  -  \sum\limits_{l=1}^{m}\bar{\xi}_{l,n}^{2}  = 
+    \sum\limits_{l=1}^{m} W_{l,n}^{\xi}\,.
+$$
+    
+    Таким образом, оконная дисперсия шумовой составляющей сигнала в~данном 
+    случае представляет собой сумму гам\-ма-рас\-пре\-де\-лен\-ных случайных величин
+$$
+W_{l,n}^{\xi}  \sim  \Gamma\left( \fr{n}{2\sigma_{l}^{2}}, \fr{n-1}{2}\right).
+$$
+
+    Рассмотрим случай, когда существуют $l \hm\in 
+    \{ 1, 2, \ldots, m\}$  и~$j \hm\in \{ 0, 1, \ldots, n-1\}$, 
+    при которых $A_{l,j} \hm- \bar{A}_{l,n} \hm\neq 0$. Тогда
+ оконная дисперсия шума представляет разность зависимых сумм случайных величин. 
+ При этом
+функция распределения случайной величины $\sum\nolimits_{l=1}^{m}\sum\nolimits_{j=0}^{n-1}
+({1}/{n}) \left( \xi_{l,j}^{2} \hm+ \xi_{l,j} \left( 2A_{l,j}\hm-
+2\bar{A}_{l,n}\right)\right)$ соответствует характеристической функции
+\begin{multline*}
+    \varphi(t)  = \prod\limits_{l=1}^{m}\varphi_{({1}/{n})
+     \sum\nolimits_{j=0}^{n-1}\left( \xi_{l,j}^{2} + \xi_{l,j} \left( 
+     2A_{l,j}-2\bar{A}_{l,n}\right)\right)}(t) ={}
+\\
+  {}  =   \prod\limits_{l=1}^{m} \left( 1-\fr{2it\sigma_l^2}{n}\right)^{-{n}/{2}}\times{}\\
+  {}\times  
+  \prod\limits_{j=0}^{n-1} 
+  e^{{\left(A_{l,j}-\bar{A}_{l,n}\right)^{2}t^{2}\sigma^{2}_{l}}/
+  \left({i  t n\sigma^{2}_{l} - {n^{2}}/{2} }\right)}.
+\end{multline*}
+
+Очевидно, что случайная величина $\sum\nolimits_{l=1}^{m}\bar{\xi}_{l,n}^{2} $ 
+представляет собой сумму независимых гам\-ма-рас\-пре\-де\-лен\-ных величин 
+с~параметрами формы~${1}/{2}$ и,~вообще говоря, различными параметрами 
+масштаба~${n}/({2\sigma_{l}^{2})}$.
+
+   
+Теорема доказана.
+    
+\smallskip
+
+Отметим также, что так как случайная величи-\linebreak на $\bar{\xi}_{l,n}^{2}$ 
+неотрицательна, то
+    на практике величина\linebreak $ \sum\nolimits_{l=1}^{m}\sum\nolimits_{i=0}^{n-1}({1}/{n})
+     \left( \xi_{l,i}^{2} \hm+ \xi_{l,i} \left( 2A_{l,i}-2\bar{A}_{l,n}\right)\right)$ 
+     может служить верхней оценкой шумовой компоненты оконной дисперсии~$W_{l,n}^{\Xi} $ 
+     регистрируемого сигнала~$C$.
+
+\section{Заключение}
+
+В рамках работы предложены модели для представления сигналов в~виде суммы нескольких 
+подлежащих процессов, а~также исследованы некоторые вероятностные характеристики 
+оконной диспер\-сии сигналов как случайных процессов в~представленных моделях. 
+Результаты работы согласуются с~установленными эмпирически свойствами шумовой 
+компоненты оконной дисперсии миограммы~\cite{All}.  В~работе продемонстрировано, 
+что на миограмме в~период покоя, т.\,е.\ в~отсутствие полезных компонент сигнала, 
+оконная дисперсия характеризуется гам\-ма-рас\-пре\-де\-ле\-нием.
+
+Полученные результаты планируется использовать в~практических задачах 
+сегментирования сигналов и~выделения интервалов с~преобладанием тех или 
+иных подлежащих процессов. Кроме того, вероятностные характеристики шумовой 
+компоненты могут использоваться для прогнозирования поведения сигнала. 
+В~частности, предполагается\linebreak приме\-нить эти теоретические результаты для анализа 
+фармакокинетических данных.
+
+
+   {\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+    \bibitem{Kos}
+    \Au{Kosar K., Lhotsk$\acute{\mbox{a}}$ L., Krajca~V.} 
+    Classification of long-term EEG recordings~//  Biological
+    and medical data analysis.~---
+    Lecture notes in computer science ser.~--- Springer, 2004. Vol.~3337. P.~322--332.
+    doi: 10.1007/978-3-540-30547-7\_33.
+    
+    \bibitem{Aza}
+    \Au{Azami H., Mohammadi~K., Hassanpour~H.}  
+    A~hybrid evolutionary approach to segmentation of nonstationary signals~// 
+    Digit. Signal Process., 2013. Vol.~23. No.\,4. P.~1103--1114.
+    doi: 10.1016/j.dsp.2013.02.019.
+    
+    \bibitem{Kal}
+    \Au{Kalantarian H., Sarrafzadeh~M.} 
+    Probabilistic time-series segmentation~// Pervasive Mob. Comput., 
+ 2017. doi: 10.1016/j.pmcj.2017.03.005.
+    
+    \bibitem{Z7}
+    \Au{Захарова Т.\,В., Никифоров~С.\,Ю., Гончаренко~М.\,Б., Драницына~М.\,А., 
+    Климов~Г.\,А., Хазиахметов~М.\,Ш., Чаянов~Н.\,В.} 
+    Методы обработки сигналов для локализации невосполнимых областей головного мозга~// 
+    Системы и~средства информатики, 2012. T.~22. №\,2. C.~157--175.
+    
+    \bibitem{Khazi}
+    \Au{Хазиахметов М.\,Ш.} Свойства оконной дисперсии миограммы как 
+    случайного процесса~// Системы и~средства информатики, 2014. T.~24. №\,3. C.~110--120.
+    
+    \bibitem{All}
+    \Au{Allakhverdieva V.\,M., Chshenyavskaya~E.\,V.,  Dranitsyna~M.\,A., 
+    Karpov~P.\,I., Zakharova~T.\,V.} An 
+    approach to the inverse problem of brain functional mapping under the assumption of gamma distributed myogram noise within rest intervals using the independent component analysis~// 
+    J.~Math. Sci., 2016. Vol.~214. No.\,1. P.~3--11. doi: 10.1007/s10958-016-2753-x.
+   \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+%\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 19.04.17}}
+
+\vspace*{10pt}
+
+%\newpage
+
+%\vspace*{-24pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{8pt}
+
+
+\def\tit{SEGMENTATION OF NONSTATIONARY SIGNALS USING STOCHASTIC CHARACTERISTICS 
+OF~THE~WINDOW VARIANCE}
+
+\def\titkol{Segmentation of nonstationary signals using stochastic characteristics 
+of~the~window variance}
+
+\def\aut{M.\,A.~Dranitsyna$^1$ and~T.\,V.~Zakharova$^{1,2}$}
+
+\def\autkol{M.\,A.~Dranitsyna and~T.\,V.~Zakharova}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+$^1$Department of Mathematical Statistics, Faculty of Computational 
+Mathematics and Cybernetics, M.\,V.~Lo-\linebreak
+$\hphantom{^1}$monosov Moscow State University, 
+1-52~Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation
+
+\noindent
+$^2$Institute of Informatics Problems, Federal Research Center ``Computer 
+Science and Control'' of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 44-2~Vavilov Str., 
+Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{6pt}
+    
+
+\Abste{Signal or response partitioning (i.\,e., signal segmentation) 
+is of great interest, e.\,g., for biomedical research. 
+Signal segmentation, being an essential part of signal processing,
+ may serve as a~tool for advanced signal interpretation and data classification. 
+ Segmentation of nonstationary signals with a~small signal-to-noise ratio 
+ is a~particulary complicated task. 
+ The paper is mainly devoted to exploration of the window variance noise component 
+ as a~random variable for the proposed signal models. 
+ Some stochastic characteristics of the window variance noise\linebreak\vspace*{-12pt}}
+ 
+ \Abstend{components 
+ are investigated in accordance with the models. 
+ Theoretical findings are consistent with the previously obtained empirical characteristics 
+ of the window variance noise component and are supposed to be of potential use for signal segmentation 
+ and prediction.}
+
+\KWE{window variance; signal model}
+
+\DOI{10.14357/19922264170302} 
+
+%\vspace*{-18pt}
+
+%\Ack
+%\noindent
+
+
+%\vspace*{3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+
+\bibitem{1-za}
+\Aue{Kosar, K., L.~Lhotska, and V.~Krajca.} 2004. 
+Classification of long-term EEG recordings. 
+\textit{ Biological
+    and medical data analysis}.
+{Lecture notes in computer science ser.} 3337:322-332. 
+doi: 10.1007/978-3-540-30547-7\_33.
+
+\bibitem{2-za}
+\Aue{Azami, H., K.~Mohammadi, and H.~Hassanpour.} 2013. 
+A~hybrid evolutionary approach to segmentation of nonstationary signals. 
+\textit{Digit. Signal Process.} 23(4):1103-1114. doi: 10.1016/j.dsp.2013.02.019.
+
+\bibitem{3-zh}
+\Aue{Kalantarian, H., and M.~Sarrafzadeh.} 2017. 
+Probabilistic time-series segmentation. 
+\textit{Pervasive Mob. Comput.} doi: 10.1016/j.pmcj.2017.03.005.
+
+\bibitem{4-zh}
+\Aue{Zakharova, T.\,V., S.\,Yu.~Nikiforov, M.\,B.~Goncharenko, M.\,A.~Dranitsyna, 
+G.\,A.~Klimov, M.\,Sh.~Khaziakhmetov, and N.\,V.~Chayanov.} 
+2012. Metody obrabotki signalov dlya lokalizatsii nevospolnimykh oblastey
+ golovnogo mozga [Signal processing methods for localization of nonrenewable 
+ brain regions]. \textit{Sistemy i~Sredstva Informatiki~--- 
+ Systems and Means of Informatics} 22(2):157--175.
+
+\bibitem{5-zh}
+\Aue{Khaziakhmetov, M.\,Sh.} 2014. Svoystva okonnoy dispersii miogrammy kak
+ sluchaynogo protsessa [Properties of window dispersion of myogram as 
+ a~stochastic process]. \textit{Sistemy i~Sredstva Informatiki~---
+ Systems and Means of Informatics} 24(3):110--120.
+
+\bibitem{6-zh}
+\Aue{Allakhverdieva, V.\,M., E.\,V.~Chshenyavskaya, M.\,A.~Dranitsyna, 
+P.\,I.~Karpov, and T.\,V.~Zakharova.} 2016. 
+An approach to the inverse problem of brain functional mapping under the assumption of gamma distributed myogram noise within rest intervals using the independent component analysis. 
+\textit{J.~Math Sci.} 214(1):3--11. doi: 10.1007/s10958-016-2753-x.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Received April 19, 2017}}
+
+
+\Contr
+
+\noindent
+\textbf{Dranitsyna Margarita A.} (b.\ 1983)~---
+PhD student, Department of Mathematical Statistics, Faculty of Computational 
+Mathematics and Cybernetics, M.\,V.~Lomonosov Moscow State University, 
+1-52~Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation; 
+\mbox{margarita13april@mail.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Zakharova Tatiana V.} (b.\ 1962)~---
+Candidate of Science (PhD) in physics and mathematics, associate professor, 
+Department of Mathematical Statistics, Faculty of Computational Mathematics 
+and Cybernetics, M.\,V.~Lomonosov Moscow State University, 1-52~Leninskiye 
+Gory, GSP-1, Moscow 119991, Russian Federation; senior scientist, 
+Institute of Informatics Problems, Federal Research Center ``Computer 
+Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., 
+Moscow 119333, Russian Federation; \mbox{lsa@cs.msu.ru}
+
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература} 

@@ -1,0 +1,638 @@
+\def\stat{agalarov}
+
+\def\tit{ДОКАЗАТЕЛЬСТВО УНИМОДАЛЬНОСТИ ЦЕЛЕВОЙ ФУНКЦИИ В~ЗАДАЧЕ 
+ПОРОГОВОГО УПРАВЛЕНИЯ НАГРУЗКОЙ НА~СЕРВЕР$^*$}
+
+\def\titkol{Доказательство унимодальности целевой функции в~задаче 
+порогового управления нагрузкой на~сервер}
+
+\def\aut{Я.\,М.~Агаларов$^1$, М.\,Г.~Коновалов$^2$}
+
+\def\autkol{Я.\,М.~Агаларов, М.\,Г.~Коновалов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Агаларов Я.\,М.}
+\index{Коновалов М.\,Г.}
+\index{Agalarov Ya.\,M.}
+\index{Konovalov M.\,G.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при частичной финансовой поддержке РФФИ 
+(проекты 18-07-00692 и~19-07-00739).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проб\-лем информатики Федерального исследовательского центра 
+<<Информатика и~управ\-ле\-ние>> Российской академии наук, \mbox{agglar@yandex.ru}}
+\footnotetext[2]{Институт проб\-лем информатики Федерального исследовательского центра 
+<<Информатика и~управ\-ле\-ние>> Российской академии наук, \mbox{mkonovalov@ipiran.ru}}
+
+\vspace*{-4pt}
+
+
+\Abst{Рассматривается задача ограничения нагрузки в~системе $M/M/N/\infty$ с~помощью 
+простой пороговой стратегии. Процесс обслуживания характеризуется наличием дедлайна 
+для времени выполнения заданий. Другая особенность постановки задачи заключается 
+в~системе доходов и~штрафов, которые получает система в~зависимости от качества 
+обслуживания. Качество управления оценивается в~терминах предельного среднего дохода, 
+а~оптимальным считается значение порога, которое максимизирует эту величину. 
+Нахождение оптимального порога существенно облегчается, когда целевая функция имеет 
+единственный максимум. Результаты экспериментов свидетельствуют об унимодальности 
+целевой функции для широкого класса входных потоков. Однако строгое доказательство 
+этого факта отсутствует, и~в~статье этот пробел восполняется для пуассоновской нагрузки. 
+При доказательстве используются результаты теории марковских цепей и~теории массового 
+обслуживания.}
+
+\KW{цепи Маркова; система $M/M/N/\infty$; ограничение нагрузки; пороговое управление; 
+дедлайн}
+
+\DOI{10.14357/19922264190201}
+  
+%\vspace*{4pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+  \section{Введение}
+  
+  Эта заметка продолжает и~дополняет работы~[1, 2], в~которых на простых 
+моделях сервера с~фиксированным числом мест обслуживания и~потенциально 
+бесконечной очередью изучались стратегии ограничения входной нагрузки. 
+Основной результат~\cite{1-ag} за\-клю\-чал\-ся в~том, что в~многоканальной 
+сис\-те\-ме с~дедлайном и~экспоненциальным временем обслуживания 
+оптимальная в~смысле предельного среднего дохода стратегия ограничения 
+нагрузки является прос\-той пороговой стратегией и~при этом утверж\-де\-ние 
+справедливо для достаточно широкого класса входных потоков. Отсюда 
+естественным образом возникает проблема отыскания оптимального значения 
+порога, которая в~\cite{1-ag} изучалась с~по\-мощью имитационного 
+моделирования. Все результаты чис\-лен\-ных экспериментов показали, что 
+целевая функция вогнута и~имеет единственный максимум по значению порога. 
+В~\cite{2-ag} доказана унимодальность целевой функции для случая 
+одноканальной сис\-те\-мы без дед\-лай\-на. В~данной \mbox{статье} приведено формальное 
+доказательство аналогичного результата для многоканальной сис\-те\-мы 
+с~пуассоновским входным потоком.
+  
+  Стратегии порогового типа возникают во многих задачах управления 
+  и~имеют большое значение, в~част\-ности, для решения проблемы контроля над 
+перегрузками в~объектах, трактуемых как системы обслуживания. 
+Привлекательность таких стратегий заключается в~сочетании простоты 
+реализации с~удовлетворительным качеством, которое они обеспечивают даже 
+в~сравнении с~более изощренными алгоритмами. Материал по тематике 
+порогового управления весьма обширен и~труднообозрим. В~части, 
+касающейся контроля над перегрузками, полезно опираться на 
+фундаментальную обзорную статью~[3]. Применительно к~содержанию 
+конкретно данной работы отметим статью~[4].
+  
+  В разд.~2 приводятся строгое описание постановки задачи и~формулировка 
+результата об унимодальности предельного среднего дохода в~многоканальной 
+системе с~пороговым ограничением нагрузки, пуассоновским входом, 
+дедлайном и~сис\-те\-мой доходов и~штрафов за качество обслуживания. Раздел~3 
+содержит доказательство тео\-ремы.
+
+\vspace*{-9pt}
+  
+  \section{Описание модели и~результат}
+  
+  \vspace*{-2pt}
+  
+  Рассматривается сервер, имеющий $N\hm<\infty$ обслуживающих мест 
+(процессоров) для выполнения заданий, поступающих извне в~виде 
+рекуррентного потока. В~каждый момент появления очередной заявки должно 
+быть принято одно из двух возможных решений: задание может быть либо 
+оставлено в~системе для последующей обработки, либо отвергнуто. Принятое 
+на обслуживание задание сразу помещается на свободный процессор, если 
+таковой имеется, либо становится в~очередь, которая предполагается 
+неограниченной. Продвижение в~очереди осуществляется по принципу 
+<<первый при\-шел\,--\,пер\-вый обслуживается>>. Время выполнения задания на 
+любом процессоре является случайным и~имеющим экспоненциальное 
+распределение с~параметром~$\mu$. Общее время пребывания задания 
+в~сис\-те\-ме не должно превышать заданный предельный срок~$\delta$ (так 
+называемый дедлайн).
+  
+  Процесс выполнения заданий сопровождается получением доходов 
+и~штрафов по следующей схеме. Если поступившее задание принято и~если 
+время его выполнения не превысило дедлайн, то система получает доход, 
+равный $C_0\hm>0$. Если поступившее задание принято, но время его 
+выполнения превысило величину~$\delta$, то система платит штраф 
+$C_1\hm>0$. Наконец, если поступившая заявка отклонена, то штраф 
+составляет $C_2\hm>0$.
+  
+  Обозначим через~$\tau_n$, $n\hm=1,2,\ldots$, последовательные моменты 
+поступления заявок, а через~$v_n$~--- общее число заданий, находящихся на 
+сервере\linebreak в~момент~$\tau_n$. Предположим, что управление по\-сту\-па\-ющи\-ми 
+заявками осуществляется согласно (прос\-той) пороговой стратегии с~порогом 
+$h\hm\geq N$. Таким образом, задание, поступившее в~момент~$\tau_n$, 
+принимается на обслуживание, если $v_n\hm<h$, и~отклоняется, если 
+$v_n\hm=h$.
+  
+  Пусть $g_n^{(h)}$~--- средний доход, связанный с~заявкой, поступившей 
+в~момент~$\tau_n$. Определим предельный средний доход, усредненный по 
+числу поступивших заявок, как 
+  $$
+  w(h) =\lim\limits_{T\to\infty} \fr{1}{T}\sum\limits^T_{n=1} g_n^{(h)}\,.
+  $$
+  
+  \noindent
+  \textbf{Теорема.}\ \textit{Если входной поток пуассоновский, то 
+функция~$w(h)$ имеет единственный максимум по~$h$}.
+  
+  
+  \section{Доказательство теоремы}
+  
+  При сделанных предположениях относительно процесса обслуживания 
+и~рекуррентном входящем потоке последовательность~$v_n$ образует 
+марковскую цепь с~множеством состояний $\{0, \ldots , h\}$ и~переходными 
+вероятностями
+  $$
+  p_{ij}^{(h)} =\begin{cases}
+  q_{ij} &\mbox{при } j\leq i+1\leq N-1\,;\\[3pt]
+  r_{i+1-j} &\mbox{при } N\leq j\leq i+1\leq h\,;\\[3pt]
+  s_{ij} &\mbox{при } j<N\leq i+1\leq h\,;\\[3pt]
+  0 &\mbox{при } j>i+1\,.
+  \end{cases}
+  $$
+Здесь
+\begin{align*}
+q_{ij} &= \int\limits_0^\infty \begin{pmatrix}
+i+1\\ j\end{pmatrix} 
+\left[ 1-e^{-\mu t}\right]^{i+1-j} e^{-\mu t j} \,dF(t)\,;\\
+r_{i+1-j}&=\int\limits_0^\infty \fr{(N\mu t)^{i+1-j}}{(i+1-j)!}\,e^{-N\mu t}\, dF(t)\,;\\
+s_{ij}&= \int\limits_0^\infty \begin{pmatrix}
+N\\ j\end{pmatrix}
+e^{-\mu t j} \times{}\\
+&\hspace*{-24pt}{}\times \left[ \int\limits^t_0 \fr{(N\mu y)^{i-N}} {(i-N)!}\left( 
+e^{-\mu y} -e^{-\mu t}\right)^{N-j} N \mu\,dy\right]dF(t)\,,
+\end{align*}
+где $F(t)$~--- функция распределения между последовательными поступлениями 
+заявок.
+
+  Стандартные рассуждения показывают, что стационарные вероятности 
+состояний $\{ \pi_i^{(h)}, \ 0\hm\leq i\hm\leq h\}$ рассматриваемой марковской 
+цепи удовлетворяют следующей системе уравнений равновесия:
+  \begin{align*}
+  \pi_0^{(h)} &=\sum\limits^h_{i=0} \pi_i^{(h)} p_{i0}^{(h)}\,;\\ 
+  \pi_j^{(h)}&=\sum\limits^h_{i=j-1} \pi_i^{(h)} p_{ij}^{(h)}\,,\enskip
+j=1,\ldots , h-1\,;\\
+  \pi_h^{(h)}& =\pi^{(h)}_{h-1} p^{(h)}_{h-1,h} +\pi_h^{(h)} p^{(h)}_{h-
+1,h}\,;\\ 
+  \sum\limits^n_{i=0}\pi_i^{(h)}&=1\,,\enskip \pi_i^{(h)} \geq 0\,,\enskip i=0,\ldots , 
+h\,.
+  \end{align*}
+  
+  Решив данную систему, получим для $j\hm=0,\ldots$\linebreak $\ldots , h\hm-1$ следующие 
+соотношения:
+  \begin{equation}
+  \left.
+  \begin{array}{l}
+  \pi_h^{(h)}=\left( 1+\sum\limits_{i=0}^{h-1} D_i^{(h)}\right)^{-1}\,;\\
+  \pi_j^{(h)}=D_j^{(h)} \pi_h^{(h)}=D_j^{(h)} \left( 1+\sum\limits_{i=0}^{h-1} 
+D_i^{(h)}\right)^{-1}\,.
+  \end{array}
+  \right\}
+  \label{e1-ag}
+  \end{equation}
+Здесь
+  \begin{gather*}
+  D_h^{(h)}=1\,;\enskip D^{(h)}_{h-1}=\fr{1-r_0}{r_0}\,;\\
+   \hspace*{-25mm}D_{j-1}^{(h)}=\fr{1}{r_0}
+   \left( \vphantom{\sum\limits^{h-1}_{i=j+1} }
+   D_j^{(h)}(1-r_1)-{}\right.\\
+\left.   {}-\sum\limits^{h-1}_{i=j+1} D_i^{(h)} r_{i+1-j}-
+r_{h-j}\right)\,,\enskip  N\leq j\leq h-1\,;\\
+  \hspace*{-10mm}D^{(h)}_{N-2}= \fr{1}{q_{N-2,N-1}}
+\left( \vphantom{\sum\limits^{h-1}_{i=N} }
+D^{(h)}_{N-1} \left(1-r_0\right)-{}\right.\\
+\hspace*{28mm}\left.{}-\sum\limits^{h-1}_{i=N} 
+D_i^{(h)} s_{i,N-1}-s_{h,N-1}\right)\,;
+\end{gather*}
+\begin{multline*}
+  D^{(h)}_{j-1}= \fr{1}{q_{j-1,j}}
+  \left(D_j^{(h)}(1-q_{jj}) -\sum\limits^{N-1}_{i=j+1} D_i^{(h)} 
+q_{ij} -{}\right.\\
+\left.{}-\sum\limits^{h-1}_{i=N} D_i^{(h)} s_{ij}-s_{hj}
+\vphantom{\sum\limits^{N-1}_{i=j+1}}
+\right) \,,\enskip
+1\leq j< N-1\,.
+\end{multline*}
+  
+  Среднее значение дохода, получаемого системой в~состоянии~$i$, равно
+  $$
+  R_i^{(h)}=\begin{cases}
+  C_0\Gamma_{\mu,1}(\delta) -C_1\left[ 1-\Gamma_{\mu,1}(\delta)\right]\,, 
+&\\
+&\hspace*{-30mm}\mbox{если } 0\leq i<N\,;\\[3pt]
+  C_0\Gamma_{N\mu, i+1}(\delta) -C_1\left[ 1-\Gamma_{N\mu, 
+i+1}(\delta)\right)\,, &\\
+&\hspace*{-30mm}\mbox{если } N\leq i<h\,;\\[3pt]
+  -C_2\,, &\hspace*{-30mm}\mbox{если } i=h\,,
+  \end{cases}
+  $$
+где $\Gamma_{a,b}(\cdot)$~--- функция гам\-ма-рас\-пре\-де\-ле\~ния 
+с~параметрами~$a$ и~$b$.
+
+  Представим последнюю формулу в~виде:
+  \begin{equation}
+  R_i^{(h)}=\begin{cases}
+  \left( C_0+C_1\right) \Gamma_{\mu,1}(\delta)-C_1\,, &\\
+  &\hspace*{-25mm}\mbox{если } 0\leq 
+i<N\,;\\[3pt]
+  \left( C_0+C_1\right)\Gamma_{N\mu, i+1}(\delta) -C_1\,, &\\
+  &\hspace*{-25mm} \mbox{если } N\leq 
+i <h\,;\\[3pt]
+  -C_2\,, &\hspace*{-25mm}\mbox{если } i=h\,.
+  \end{cases}
+  \label{e2-ag}
+  \end{equation}
+     Отсюда при $0\hm\leq i\hm\leq h\hm-2$ получим, что
+  \begin{equation}
+  R^{(h)}_{i+1}=\begin{cases} 
+  R_i^{(h)}\,, &  \hspace*{-35mm}\mbox{если } 0\leq i<N\,;\\[3pt]
+  R_i^{(h)}-\left( C_0+C_1\right) \fr{(N\mu\delta)^{i+1}}{(i+1)!}\,e^{-N\mu\delta}\,, &\\
+  & \hspace*{-35mm}\mbox{если } N\leq i\leq h-2\,.
+  \end{cases}
+  \label{e3-ag}
+  \end{equation}
+
+
+  Как следует из~(\ref{e1-ag}), справедливы также формулы:
+  \begin{equation}
+  \pi_{j+1}^{(h+1)}=A_{h+1} \pi_j^{(h)}\,,\enskip j=N-1,\ldots , h\,.
+  \label{e4-ag}
+  \end{equation}
+Здесь
+
+\noindent
+\begin{equation*}
+A_{h+1}=\fr{1-B^{(h+1)}_{N-1}}{1-B^{(h)}_{N-2}}<1\,,
+\end{equation*}
+где
+
+\noindent
+\begin{align*} 
+B_{N-1}^{(h+1)}& =\sum\limits_{i=0}^{N-1} \pi_i^{(h+1)}\,;
+\\
+B^{(h)}_{N-2}&=\begin{cases}
+0\,, & \mbox{если } N=1\,;\\[3pt]
+\displaystyle\sum\limits_{i=0}^{N-2} \pi_i^{(h)}\,,& \mbox{если } N\geq 2\,.
+\end{cases}
+\end{align*}
+  
+  Обозначив 
+  $$
+  \Delta_{i+1}^{(h+1)}= R_{i+1}^{(h+1)}- R_i^{(h+1)}\,,\enskip 
+i=1,\ldots , h,
+$$
+ и~применив формулы~(\ref{e4-ag}), находим:
+ 
+ \columnbreak
+ 
+\noindent
+  \begin{multline*}
+  \!\!w(h)-w(h+1)=\sum\limits^h_{i=0} \!\pi_i^{(h)} R_i^{(h)}-\sum\limits_{i=0}^{h+1} \!
+\pi_i^{(h+1)}R_i^{(h+1)}={}\\[-1pt]
+  {}=\left[ \left( C_0+C_1\right) \Gamma_{\mu,1}(\delta) -C_1\right] 
+\sum\limits_{i=0}^{N-2} \!\pi_i^{(h)} +\!\!\sum\limits^h_{i=N-1} \!\!\!\!\pi_i^{(h)}R_i^{(h)}-
+{}\\[-1pt]
+  {}-\left[ \left( C_0+C_1\right) \Gamma_{\mu,1}(\delta) -C_1\right] 
+\sum\limits_{i=0}^{N-1} \!\pi_i^{(h+1)} +{}\\[-1pt]
+{}+\sum\limits^{h+1}_{i=N} \!\pi_i^{(h+1)} 
+R_i^{(h+1)}={}\\[-1pt]
+  {}= \left[ \left( C_0+C_1\right)\Gamma_{\mu,1}(\delta) -C_1\right] \left( 
+B^{(h)}_{N-2} -B^{(h+1)}_{N-1}\right) +{}\\[-1pt]
+{}+\sum\limits^h_{i=N-1}\!\! \pi_i^{(h)} 
+R_i^{(h)}-{}\\[-1pt]
+  {}- A_{h+1}\!\left[ \sum\limits^{h-1}_{i=N-1}\hspace*{-5.5pt} \pi_i^{(h)} 
+  \!\left( R_i^{(h+1)} 
++\Delta^{(h+1)}_{i+1} \right)\! +\pi_h^{(h)}R^{(h+1)}_{h+1}\right].\hspace*{-6.0207pt}
+  \end{multline*}
+  
+  \vspace*{-5pt}
+  
+  Из~(\ref{e2-ag}) следует, что $R_i^{(h)}\hm= R_i^{(h+1)}$ при $i\hm=0, \ldots 
+,h\hm-1$ и~$R_h^{(h)}\hm= R^{(h+1)}_{h+1}$. Продолжая преобразования  
+с~по\-мощью~(\ref{e3-ag}), получим 
+
+\vspace*{-10pt}
+
+\noindent
+  \begin{multline*}
+  w(h)-w(h+1)={}\\
+  \!{}=\left[ \left( C_0+C_1\right) \Gamma_{\mu,1}(\delta) -C_1\right] 
+\left( Q^{(h)}_{N-2}-Q_{N-1}^{(h+1)}\right)+{}\\
+  {}+\left( 1-A_{h+1}\right) \!\!\sum\limits^h_{i=N-1}\!\!\! \pi_i^{(h)} R_i^{(h)} -A_{h+1}\!\! 
+\sum\limits^{h-1}_{i=N-1} \!\!\!\pi_i^{(h)} \Delta_{i+1}^{(h+1)}={}\\
+  {}=-\left[ \left( C_0+C_1\right) \Gamma_{\mu,1}(\delta) -C_1\right] 
+\fr{B^{(h+1)}_{N-1}-B^{(h)}_{N-2}}{1-B^{(h)}_{N-2}}+{}\\
+{}+
+  \left[ \vphantom{\sum\limits^h_{i=N-1}}
+   \left[\left( C_0+C_1\right) \Gamma_{\mu,1}(\delta) -C_1\right] 
+  B^{(h)}_{N-2}+{}\right.\\
+\left.  {}+\sum\limits^h_{i=N-1}\!\!\pi_i^{(h)} R_i^{(h)}\right]
+\fr{B^{(h+1)}_{N-1}- B^{(h)}_{N-2}} {1-B^{(h)}_{N-2}} -{}\\
+{}-
+  A_{h-1}\sum\limits^{h-1}_{i=N-1}\pi_i^{(h)} \Delta^{(h+1)}_{i+1}={}\\
+  {}=\left( 1-A_{h+1}\right) \left[ 
+  \vphantom{\sum\limits^{h-1}_{i=N-1} \pi_i^{(h)} \fr{(N\mu\delta)^{i+1}}{(i+1)!}}
+  w(h)-\left( C_0+C_1\right) 
+\Gamma_{\mu,1}(\delta)+C_1+{}\right.\\
+ \hspace*{-1.73294pt} \left.{}+ \left(C_0+C_1\right) \fr{A_{h+1}}{1-A_{h+1}} 
+  \sum\limits^{h-1}_{i=N-1} \!\!\!\!\pi_i^{(h)} \fr{(N\mu\delta)^{i+1}}{(i+1)!}\, 
+e^{-N\mu\delta}\right]\!={}
+\\
+  {}=
+  \left( 1-A_{h+1}\right) \left[
+  \vphantom{\sum\limits^h_{i=N} \pi_i^{(h+1)} \fr{(N\mu\delta)^i}{i!}}
+   w(h)-\left( C_0+C_1\right)\Gamma_{\mu,1}(\delta)+C_1+{}\right.\\
+  \left.{}+ \left(C_0+C_1\right) \fr{e^{-N\mu\delta}}{1-
+A_{h+1}}\sum\limits^h_{i=N} \pi_i^{(h+1)} \fr{(N\mu\delta)^i}{i!}\right]\,.
+  \end{multline*}
+  
+  Таким образом, рассматриваемое равенство приводится к~виду:
+ %  \pagebreak
+   \begin{equation}
+  w(h)-w(h+1)=\left(1-A_{h+1}\right)[w(h)-G(h)]\,,
+  \label{e5-ag}
+  \end{equation}
+где 
+
+\noindent
+\begin{multline*}
+G(h)=\left( C_0+C_1\right) \Gamma_{\mu,1}(\delta) -C_2-{}\\
+{}-\left( C_0+C_1\right) 
+\fr{e^{-N\mu\delta}}{1-A_{h+1}}\sum\limits^h_{i=N} 
+\pi_i^{(h+1)}\fr{(N\mu\delta)^i}{i!}\,.
+\end{multline*}
+  
+  Докажем, что функция $G(h)$ убывает с~возрастанием переменной $h\hm\geq 
+N$. Для этого достаточно показать, что функция $\varphi(h)\hm= (1/(1\hm-A_{h+1}) 
+\sum\nolimits^h_{i=N} \pi_i^{(h+1)} (N \mu \delta)^i/(i!)$~---  возрастающая по 
+$h\hm\geq N$. Начиная с~этого места, воспользуемся тем, что по условию 
+доказываемого утверждения 
+  $$
+  F(t)=1- e^{-\lambda t},\enskip  t\geq 0\,.
+  $$
+  
+  Применим известные формулы для величин~$\pi_i^{(h)}$, которые имеют 
+место для систем массового обслуживания типа $M/M/N/h$~\cite[с.~123]{5-ag}:
+  $$
+  \pi_i^{(h)} =\begin{cases}
+  \pi_0^{(h)}\fr{\rho^i}{i!}\,, & \mbox{если } 0\leq i\leq N-1\,;\\[3pt]
+  \pi_0^{(h)}\fr{\rho^N}{n!}\left( \fr{\rho}{N}\right)^{i-N}\,, & \mbox{если } N\leq i\leq h\,,
+  \end{cases}
+  $$
+где
+
+\vspace*{-2pt}
+
+\noindent
+$$
+\rho=\fr{\lambda}{\mu}\,;\enskip \pi_0^{(h)}= \left( \sum\limits_{j=0}^{N-1} 
+\fr{\rho^j}{j!} +\fr{\rho^N}{N!}\sum\limits_{j=0}^{h-N}\left( 
+\fr{\rho}{N}\right)^j\right)^{-1}\,.
+$$
+
+\vspace*{-2pt}
+
+\noindent
+    Имеем:
+    
+    \noindent
+  $$
+  \varphi(h)=\psi(h)\fr{\rho^N}{N!}\sum\limits^h_{i=N} \left( 
+\fr{\rho}{N}\right)^{i-N}\fr{(N\mu\delta)^i}{i!}\,,
+  $$
+где $\psi(h)=\pi_0^{(h+1)}/(1-A_{h+1})$. Поскольку сумма в~последнем 
+выражении~--- возрастающая функция по~$h$, то достаточно показать, что 
+функция $\psi(h)$ не зависит от~$h$. Но этот факт следует из того, что
+\begin{multline*}
+\psi(h+1)-\psi(h+2)=\sum\limits_{j=0}^{h+1-N} \left(\fr{\rho}{N}\right)^i\Bigg/ 
+\left(\left[ 
+\vphantom{\left(\fr{\rho}{N}\right)^{h+2-N}}
+1-\right.\right.\\
+\left.{}-\left(\fr{\rho}{N}\right)^{h+2-N} 
+\right] \sum\limits_{j=0}^{N-1}\fr{\rho^j}{j!} +{}\\
+\left.{}+
+\left(\fr{\rho^N}{N!}\right) 
+\sum\limits_{j=0}^{h+1-N} \left(\fr{\rho}{N}\right)^j\right) -
+ {\sum\limits_{j=0}^{h+2-N} 
+\left(\fr{\rho}{N}\right)^j }\Bigg/
+\left( \left[ 
+\vphantom{\left(\fr{\rho}{N}\right)^{h+2-N}}
+1-{}\right.\right.\hspace*{-0.33632pt}\\
+\!\left.\left.{}-
+\left(\fr{\rho}{N}\right)^{h+3-N} \right] \sum\limits_{j=0}^{N-1}
+\fr{\rho^j}{j!} +\fr{\rho^N}{N!} 
+\sum\limits_{j=0}^{h+2-N} \!\!\left(\fr{\rho}{N}\right)^j \right)=0\,.\hspace*{-4.11052pt}
+\end{multline*}
+  
+  Следовательно, функция $\varphi(h)$ возрастает, а~функ\-ция~$G(h)$, 
+соответственно, убывает по~$h$, если $h\hm\geq N$.
+  
+Далее доказательство практически идентично рассуждениям, проведенным 
+в~теореме~1 из~\cite{2-ag}, в~которых фигурирует аналог функции~$w(h)$, 
+представленной в~виде~(\ref{e5-ag}), где $G(h)$~--- невозрастающая функция, 
+$0\hm< A_{h+1}\hm<1$. Эти рассуждения приводят к~утверждению теоремы об 
+унимодальности~$w(h)$. 
+
+
+  \section{Заключение}
+  
+  В работе приведено доказательство существования и~единственности 
+оптимального значения порога в~задаче управления нагрузкой на сервер 
+с~несколькими параллельными местами обслуживания и~бесконечной 
+очередью. Модель предполагает пуассоновскую нагрузку, экспоненциальное 
+время обслуживания, возможность регулировать чис\-ло заданий в~системе, 
+а~также доходы или штрафы в~зависимости от качества обслуживания. Целевой 
+функцией выступает предельный средний доход.
+  
+  Результат статьи частично восполняет пробел в~теории, где свойства целевой 
+функции в~задачах порогового управления изучены недостаточно. Анализ 
+доказательства показывает, что б$\acute{\mbox{о}}$льшая часть рассуждений справедлива также 
+для произвольного рекуррентного входного потока. Это дает основание 
+продолжить работу над получением аналогичного, более общего результата для 
+системы $G/M/N/\infty$.
+  
+ {\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+  \bibitem{1-ag}
+  \Au{Коновалов М.\,Г.} Об одной задаче оптимального управ\-ле\-ния нагрузкой 
+на сервер~// Информатика и~её применения, 2013. Т.~7. Вып.~4. С.~34--43.
+  \bibitem{2-ag}
+  \Au{Агаларов Я.\,М., Шоргин~В.\,С.} Об одной задаче максимизации дохода 
+системы массового обслуживания типа $G/M/1$ с~пороговым управ\-ле\-ни\-ем очередью~// Информатика и~её 
+применения, 2017. Т.~11. Вып.~4. С.~55--64.
+  \bibitem{3-ag}
+  \Au{Adams R.} Active queue management: A~survey~// IEEE Commun. 
+Surv. Tut., 2013. Vol.~15. No.\,3. P.~1425--1476.
+  \bibitem{4-ag}
+  \Au{Жерновый Ю.\,В.} Решение задач оптимального синтеза для некоторых 
+марковских моделей обслуживания~// Информационные процессы, 2010. Т.~10. 
+№\,3. С.~257--274.
+  \bibitem{5-ag}
+  \Au{Бочаров П.\,П., Печинкин~А.\,В.} Теория массового обслуживания.~--- 
+М.: РУДН, 1995. 529~с.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 20.02.19}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{PROOF OF~THE~UNIMODALITY OF~THE~OBJECTIVE FUNCTION 
+IN~$M/M/N$ QUEUE WITH~THRESHOLD-BASED CONGESTION CONTROL}
+
+
+\def\titkol{Proof of~the~unimodality of~the~objective function 
+in~$M/M/N$ queue with~threshold-based congestion control}
+
+\def\aut{Ya.\,M.~Agalarov and~M.\,G.~Konovalov}
+
+\def\autkol{Ya.\,M.~Agalarov and~M.\,G.~Konovalov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+
+\noindent
+Institute of Informatics Problems, Federal Research Center ``Computer Science and Control'' of the 
+Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{6pt}
+  
+\Abste{The problem of limiting the load in the system $M/M/N/\infty$ 
+is considered using a~simple threshold strategy. In addition to the service time, each task 
+is characterized by a deadline. Depending on the quality of service, the system 
+receives either  a~fixed income or a~penalty. The quality of control is determined by the 
+marginal average income and the threshold value that maximizes this value is considered 
+as optimal. Usually, it is much easier to find the optimal threshold if the objective 
+function has a~single maximum. The experimental results show the unimodality of the 
+objective function for a~wide class of arrival flows. However, there is no rigorous 
+proof of this fact and in the paper, this gap is filled up for the Poisson arrivals. 
+The proof is based on the results of the Markov chain theory and queueing theory.}
+
+\KWE{Markov chains; $M/M/N/\infty$ system; congestion control; threshold 
+control; deadline}
+
+
+  
+  
+ \DOI{10.14357/19922264190201}
+
+%\vspace*{-14pt}
+
+
+\Ack
+\noindent
+The reported study was partly funded by the Russian Foundation for Basic Research 
+according to the research projects 
+No.\,18-07-00692 and No.\,19-07-00739.
+
+
+%\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+  \bibitem{1-ag-1}
+\Aue{Konovalov, M.\,G.} 2013. Ob odnoy zadache optimal'nogo upravleniya 
+nagruzkoy na server [About one task of overload control]. \textit{Informatika i~ee 
+Primeneniya~--- Inform. Appl.} 7(4):34--43.
+  \bibitem{2-ag-1}
+\Aue{Agalarov, Ya.\,M., and V.\,S.~Shorgin.} 2017. Ob odnoy zadache 
+maksimizatsii dokhoda sistemy massovogo obsluzhivaniya tipa $G/M/1$ s~porogovym upravleniem ochered'yu  
+[About the problem of profit maximization in $G/M/1$ queuing system 
+with threshold control of the queue]. \textit{Informatika i ee Primeneniya~--- Inform. Appl.} 
+11(4):55--64.
+  \bibitem{3-ag-1}
+\Aue{Adams,~R.} 2013. Active queue management: A~survey. \textit{IEEE 
+Commun. Surv.  Tut.} 15(3):1425--1476.
+  \bibitem{4-ag-1}
+\Aue{Zhernovyj, Ju.\,V.} 2010. Reshenie zadach optimal'nogo sinteza dlya 
+nekotorykh markovskikh modeley obsluzhivaniya [Solution of optimum synthesis 
+problem for some Markov models of service]. \textit{Information Processes} 10(3):257--274.
+  \bibitem{5-ag-1}
+\Aue{Bocharov, P.\,P., and A.\,V.~Pechinkin.} 1995. \textit{Teoriya massovogo 
+obsluzhivaniya} [Queueing theory]. Moscow: RUDN. 529~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received February 20, 2019}}
+
+%\pagebreak
+
+%\vspace*{-18pt}   
+  
+  
+  \Contr
+  
+  \noindent
+  \textbf{Agalarov Yaver M.} (b.\ 1952)~---  Candidate of Science (PhD) in technology, associate 
+professor; leading scientist, Institute of Informatics Problems, Federal Research Center ``Computer Science 
+and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{agglar@yandex.ru}
+   
+   \vspace*{3pt}
+   
+  \noindent
+  \textbf{Konovalov Mikhail~G.} (b.\ 1950)~--- Doctor of Science in technology, principal scientist, 
+Institute of Informatics Problems, Federal Research Center ``Computer Science and Control'' of the Russian 
+Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{mkonovalov@ipiran.ru}
+  
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 
+   

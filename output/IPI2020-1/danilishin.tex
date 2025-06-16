@@ -1,0 +1,1006 @@
+\def\stat{danilishin}
+
+\def\tit{РИСК-НЕЙТРАЛЬНАЯ ДИНАМИКА ДЛЯ МОДЕЛИ ARIMA-GARCH 
+С~ОШИБКАМИ, РАСПРЕДЕЛЕННЫМИ ПО~ЗАКОНУ~{\boldmath{$S_U$}} ДЖОНСОНА}
+
+\def\titkol{Риск-нейтральная динамика для модели ARIMA-GARCH 
+с~ошибками, распределенными по~закону~{\boldmath{$S_U$}} Джонсона}
+
+\def\aut{А.\,Р.~Данилишин$^1$, Д.\,Ю.~Голембиовский$^2$}
+
+\def\autkol{А.\,Р.~Данилишин, Д.\,Ю.~Голембиовский}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Данилишин А.\,Р.}
+\index{Голембиовский Д.\,Ю.}
+\index{Danilishin A.\,R.}
+\index{Golembiovsky D.\,Yu.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнена при частичной поддержке РФФИ (проект 19-07-00187~А).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет им.\ М.\,В.~Ломоносова, факультет вычислительной математики 
+и~кибернетики, \mbox{danilishin-artem@mail.ru}}
+\footnotetext[2]{Московский государственный университет им.\ М.\,В.~Ломоносова, 
+факультет вычислительной 
+математики и~кибернетики; Московский фи\-нан\-со\-во-про\-мыш\-лен\-ный 
+университет <<Синергия>>,  \mbox{golemb@cs.msu.su}}
+
+%\vspace*{-12pt}
+
+\Abst{Риск-нейтральный мир выступает одной из фундаментальных моделей финансовой 
+математики, на которой основывается определение справедливой стоимости производных 
+финансовых инструментов. В~статье рассматривается построение риск-нейт\-раль\-ной 
+динамики для случайного процесса ARIMA-GARCH  (Autoregressive Integrated 
+Moving Average, Generalized AutoRegressive Conditional Heteroskedasticity~--- 
+интегрированная модель авторегрессии и~скользящего среднего, обобщенная 
+авторегрессионная условная гетероскедастичность)
+с~ошибками, распределенными по 
+закону~$S_U$ Джонсона. Для нахождения коэффициентов модели, соответствующих 
+риск-нейт\-раль\-ной динамике, в~большинстве преобразований (примерами таких преобразований 
+являются преобразование Эшера, расширенный принцип Гирсанова) необходимо 
+существование производящей функции моментов. Для таких распределений, как 
+распределение Стьюдента и~$S_U$ Джонсона, данная функция неизвестна. В~статье 
+формируется производящая функция моментов для распределения~$S_U$ Джонсона 
+и~доказывается, что, используя модификацию расширенного принципа Гирсанова, можно 
+получить риск-нейтральную меру относительно выбранного распределения.}
+ 
+\KW{ARIMA; GARCH; риск-нейтральная мера; расширенный принцип Гирсанова;  
+распределение $S_U$ Джонсона; ценообразование опционов}
+
+\DOI{10.14357/19922264200107} 
+  
+%\vspace*{-3pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+\section{Введение}
+
+Основой для нахождения справедливой сто\-и\-мости производных финансовых 
+инструментов является моделирование поведения цен базовых активов~[1]. 
+Существует множество моделей, однако в~случае дискретного времени 
+широкую популярность получила ARIMA-GARCH~--- модель, позволяющая 
+описывать переменную волатильность\linebreak случайного процесса~[2]. В~статье 
+рас\-смат\-ри\-ва\-ется модель ARIMA-GARCH с~ошибками, рас\-пределенными по 
+закону $S_U$ Джонсона. Данное\linebreak распределение получается нелинейным 
+преобразованием нормального распределения и,~в~силу свойств данного 
+преобразования, характеризуется асим\-мет\-рич\-ностью и~наличием <<тяжелых 
+хвостов>>, что позволяет достаточно хорошо приближать реальные цены 
+базовых активов~[3, 4].
+
+  На финансовых рынках одним из главных принципов ценообразования 
+финансового инструмента выступает безарбитражность, т.\,е.\ отсутствие 
+возможности получения безрисковой прибыли при нулевых затратах~[5]. 
+Свойству безарбитражности рынка отвечает существование  
+риск-нейт\-раль\-ной вероятностной меры. Полный рынок характеризуется 
+наличием единственной риск-нейт\-раль\-ной меры, неполный же рынок имеет 
+множество подобных мер.
+  
+  Главным ограничением многих принципов получения риск-нейтральных мер 
+(преобразование Эшера, расширенный принцип Гирсанова) является наличие 
+производящей функции моментов исследуемого распределения. Производящая 
+функция моментов распределения $S_U$ Джонсона~[6, 7] не описана 
+в~литературе. Цель статьи~--- получение данной производящей функции 
+моментов, обобщение расширенного принципа Гирсанова и~на\-хож\-де\-ние 
+риск-нейт\-раль\-ной меры для рас\-смат\-ри\-ва\-емо\-го случайного процесса. Подробное 
+описание расширенного принципа Гирсанова можно найти в~статье~[8], а его 
+применение к~различным типам моделей GARCH~--- в~работе~[9].
+  
+  Статья построена следующим образом. В~разд.~2 введены основные 
+положения модели, описаны принципы построения риск-нейтральной меры на 
+основе расширенного принципа Гирсанова, определены понятия ARIMA, 
+GARCH и~распределения $S_U$ Джонсона, приведен вывод производящей 
+функции моментов~[10] для распределения $S_U$ Джонсона. В~разд.~3 
+применяется расширенный принцип Гирсанова для распределения $S_U$ 
+Джонсона. В~разд.~4 приводится модификация расширенного принципа 
+Гирсанова и~получение риск-нейт\-раль\-ных коэффициентов модели  
+ARIMA-GARCH~[11]. В~заключении статьи приводятся выводы исследования.
+  
+\section{Модель динамики цены базового актива}
+ 
+  Пусть случайный процесс (цена базового актива опциона) $S\hm= 
+(S_t)^T_{t=0}$ задан на вероятностном пространстве $(\Omega, \mathcal{F}, 
+\mathbb{P})$ с~фильтрацией $(\mathcal{F}_t)^T_{t=0}$, где $\mathcal{F}_0\hm= 
+\{\emptyset, \Omega)$, $\mathcal{F}_T\hm=\mathcal{F}$. Рассмотрим случайный 
+процесс логарифмических приращений цены базового актива
+  \begin{equation*}
+  Y_t=\ln \left( \fr{S_t}{S_{t-1}}\right)\,,\enskip Y_0=0\,,\ t=1,2,\ldots ,T\,.
+  %\label{e1-dan}
+  \end{equation*}
+  
+  Для отсутствия арбитражных возможностей процесс эволюции цены 
+базового актива должен быть согласован с~мартингальной мерой~$\mathbb{Q}$. 
+Данная мера должна быть эквивалентна исходной (физической) 
+мере~$\mathbb{P}$ ($\mathbb{P}\hm\approx \mathbb{Q}, \ \forall~B\hm\in 
+\mathcal{F}$: $\mathbb{Q}(B)\hm=0\hm\Leftrightarrow \mathbb{P}(B)\hm=0$). 
+Мера~$\mathbb{Q}$ является мартингальной, если справедливо равенство
+  \begin{equation*}
+  \mathbb{E}^{\mathbb{Q}}\left[ \tilde{S}_t \vert \mathcal{F}_{t-1}\right] 
+=\tilde{S}_{t-1}\,.
+  %\label{e2-dan}
+  \end{equation*}
+Здесь $\mathbb{E}^{\mathbb{Q}}[*\vert *]$~--- условное математическое 
+ожидание относительно меры~$\mathbb{Q}$; $\tilde{S}_t$~--- 
+дисконтированные цены базового актива относительно безрисковой ставки~$r$ 
+($\tilde{S}_t\hm=e^{-rt}S_t$). Условие мартингальности можно переписать 
+в~следующем виде:
+\begin{equation*}
+\mathbb{E}^{\mathbb{Q}} \left[ e^{Y_t}\vert \mathcal{F}_{t-
+1}\right] =e^r\,.
+%\label{e3-dan}
+\end{equation*}
+  
+  Расширенный принцип Гирсанова описывает динамику дисконтированных 
+цен базового актива следующим образом~[8, 9]:
+  \begin{equation}
+  \tilde{S}_t=\tilde{S}_0 A_t M_t\,,\ A_t=\prod\limits^t_{k=1} 
+\mathbb{E}^{\mathbb{P}} \left[ \fr{\tilde{S}_k}{\tilde{S}_{k-1}}\vert 
+\mathcal{F}_{t-1}\right]\,,
+  \label{e4-dan}
+  \end{equation}
+где процесс $M_t$ является мартингалом~[12]. Поделив левую и~правую части 
+выражения~(\ref{e4-dan}) на~$\tilde{S}_{t-1}$ и~сделав соответствующие 
+преобразования, получим:
+\begin{multline*}
+\tilde{S}_t=\tilde{S}_{t-1} e^{-r+\ln\left(\mathbb{E}^{\mathbb{P}}
+\left[e^{Y_t}\vert 
+\mathcal{F}_{t-1}\right]\right)} W_t =\tilde{S}_{t-1} e^{v_t} W_t\,,\\ 
+W_t=\fr{M_t}{M_{t-1}}\,.
+%\label{e5-dan}
+\end{multline*}
+  
+  В расширенном принципе Гирсанова утверждается, что процесс 
+  $$
+  Z_t= \prod\limits^t_{k=1} \fr{g_{W_k}^{\mathbb{P}}\left(\tilde{S}_k/
+  \tilde{S}_{k-1}\right) e^{v_k}}{ g_{W_k}^{\mathbb{P}} \left(e^{-
+v_k}\tilde{S}_k/\tilde{S}_{k-1}\right)}\,,
+  $$ 
+  порождаемый производной Ра\-до\-на--Ни\-ко\-ди\-
+ма~$d\mathbb{Q}/d\mathbb{P}$~[13, 14], где $g_{W_t}^{\mathbb{P}}$~--- 
+условная плот\-ность распределения~$W_t$, обеспечивает  
+риск-нейт\-раль\-ную динамику для~$\tilde{S}_t$ в~новой мере~$\mathbb{Q}$, 
+относительно старой~$\mathbb{P}$~[8]. Данное утверждение можно записать 
+следующим образом:
+$$
+\mathcal{L}^{\mathbb{Q}}\left( \tilde{S}_t\vert 
+\mathcal{F}_{t-1}\right)= \mathcal{L}^{\mathbb{P}}\left( M_t\vert 
+\mathcal{F}_{t-1}\right)\,.
+$$
+
+ Для процесса~$Y_t$ с~плотностью 
+распределения~$f_{Y_t}^{\mathbb{P}}$ выражение для~$Z_t$ примет 
+следующий вид~[9]:
+  \begin{equation*}
+  Z_t= \prod\limits^t_{k=1} \fr{ f_{Y_k}^{\mathbb{P}} \left(Y_k-r+\ln 
+(M_{Y_k\vert\mathcal{F}_{t-1}}(1))\right)}{f_{Y_t}^{\mathbb{P}}(Y_k)}\,.
+ % \label{e6-dan}
+  \end{equation*}
+  
+  Переход от физической меры к~риск-нейт\-раль\-ной осуществляется 
+с~помощью производящей функции моментов~[8]:
+  \begin{equation}
+  M_{Y_t}^{\mathbb{Q}}(c)=e^{-c(-r+\ln(M_{Y_t}(1)))} 
+M_{Y_t}^{\mathbb{P}}(c)\,.
+  \label{e7-dan}
+  \end{equation}
+  
+  Модель $\mathrm{ARIMA}\,(p,d,q)$-$\mathrm{GARCH}\,(P,Q)$ является комбинацией моделей 
+$\mathrm{ARIMA}\,(p,d,q)$~--- интегрированной модели авторегрессии и~скользящего 
+среднего~--- и~$\mathrm{GARCH}\,(P,Q)$~--- обобщенной авторегрессионной условной 
+ге\-те\-ро\-ске\-да\-стич\-ности~[7,~9]: 
+  \begin{gather*}
+  \Delta^dy_t=m_t+\delta_t\varepsilon_t,\quad \varepsilon_t
+  \vert_{\mathcal{F}_{t-1}}\sim \mathrm{JSU}\,(\xi, 
+\lambda, \gamma, \delta)\,;\\
+  m_t=\mathbb{E}\left[ \Delta^d y_t\vert \mathcal{F}_{t-1} \right] =\phi_0 
++\phi_1\Delta^d y_{t-1}+\cdots \\
+\cdots + \phi_p\Delta^d y_{t-p}+\theta_1 \delta_{t-1} 
+\varepsilon_{t-1}+\cdots + \theta_q \delta_{t-q} \varepsilon_{t-q}\,;\\[6pt]
+  \delta^2_t=\mathrm{Var}\left[ \Delta^d y_t\vert \mathcal{F}_{t-1}\right] =\alpha_0 
++\alpha_1\delta^2_{t-1} +\cdots\\[6pt]
+\cdots + \alpha_{P}\delta^2_{t-P}+\beta_1 \delta^2_{t-1} 
+\varepsilon^2_{t-1} + \cdots +\beta_Q \delta^2_{t-Q} \varepsilon^2_{t-Q}\,.
+   \end{gather*}
+  
+  Будем рассматривать модель $\mathrm{ARIMA}\,(p,d,q)$-$\mathrm{GARCH}\,(P,Q)$ 
+с~ошибками~$\varepsilon_t$, имеющими распределение $S_U$ Джонсона. 
+Распределение $S_U$ Джонсона~--- $\mathrm{JSU}\,(\xi, \lambda, \gamma,\delta)$~--- 
+представляет собой\linebreak четырехпараметрическое вероятностное распределение, 
+которое образуется в~результате нелинейного преобразования нормально 
+распределенной случайной величины $X\sim N(0,1)$:
+  \begin{equation*}
+  \varepsilon_t=\xi +\lambda\,\mathrm{sinh}\left( \fr{X_t-\gamma}{\delta}\right) 
+=g(X_t)\,,
+ % \label{e8-dan}
+  \end{equation*}
+где $-\infty <\xi\hm< \infty$~--- параметр сдвига местоположения; $0\hm< 
+\lambda\hm< \infty$~--- параметр масштабирования; $-\infty \hm< \gamma \hm< 
+\infty$~--- параметр асим\-мет\-рии; $0\hm< \delta\hm<\infty$~--- показатель 
+эксцесса. Функция плотности распределения имеет следующий вид:
+\begin{multline}
+f_{\varepsilon_t}(\varepsilon)=\fr{\delta}{\lambda\sqrt{2\pi}} \times{}\\
+{}\times\fr{1}{\sqrt{1+((\varepsilon-\xi)/\lambda)^2}}\,
+e^{-(\gamma+\delta\,\mathrm{sinh}^{-1}(({\varepsilon-\xi})/{\lambda}))^2/2}.
+\label{e9-dan}
+\end{multline}
+  
+  Математическое ожидание и~дисперсия~$\varepsilon_t$ должны равняться~0 
+и~1 соответственно:
+  \begin{align*}
+  \mathbb{E}\left[\varepsilon_t\right]&=\xi-\lambda 
+e^{1/(2\delta^2)}\mathrm{sinh}\left(\fr{\gamma}{\delta}\right)=0\,;\\
+  \mathrm{Var}\left[ \varepsilon_t\right] &= \fr{\lambda^2}{2}\!\left( 
+  e^{1/\delta^2}-1\right)\! 
+\left( e^{1/\delta^2} \mathrm{cosh}\left(\!\fr{2\gamma}{\delta}\right)+1\!\right)=1\,.
+  \end{align*}
+  Введем соответствующие замены переменных: 
+  \begin{align*}
+  \tilde{\xi} &=\tilde{\lambda} e^{1/(2\delta^2)}\mathrm{sinh}\left( 
+\fr{\gamma}{\delta}\right)\,;\\
+  \tilde{\lambda} &= \sqrt{2}\left(\left( e^{1/\delta^2} -1\right) \left( e^{1/\delta^2} 
+\mathrm{cosh}\left(\fr{2\gamma}{\delta}\right)+1\right)\right)^{-1/2}\,,
+  \end{align*} 
+  тогда ошибки будут иметь распределение с~уже новыми параметрами: 
+  $$
+  \varepsilon_t\vert_{\mathcal{F}_{t-1}}\sim \mathrm{JSU} \left( \tilde{\xi},\tilde{\lambda}, 
+\gamma, \delta\right)\,.
+  $$
+
+\smallskip
+
+\noindent
+\textbf{Утверждение~1.} \textit{Производящая функция моментов для 
+распределения $S_U$ Джонсона имеет следующий вид}:
+\begin{multline*}
+M_Y(c)=e^{\xi c} \sum\limits^\infty_{n=0} \left( \fr{c\lambda}{2}\right)^n \fr{1}{n!}
+\times{}\\
+{}\times \sum\limits^n_{j=0} (-1)^{n-j} 
+C_n^j e^{(n-2j)^2/({2\delta^2})+ \gamma(n-
+2j)/\delta}\,.
+%\label{e10-dan}
+\end{multline*}
+
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,. 
+\begin{multline*}
+\fr{Y-\xi}{\lambda}=\mathrm{sinh}\,\fr{X-\gamma}{\delta}={}\\
+{}=\fr{1}{2} \left( 
+e^{({X-\gamma})/{\delta}}-e^{-({X-\gamma})/{\delta}}\right)
+\Rightarrow \mathbb{E}\left[ \left( \fr{Y-\xi}{\lambda}\right)^n\right]={}\\
+{}= \fr{1}{2^n}\int\limits^\infty_{-\infty} \left( 
+e^{({x-\gamma})/{\delta}}-
+e^{-({x-\gamma})/{\delta}}\right)^n f_{\mathrm{norm}}(x)\,dx={}\\
+{}= \fr{1}{2^n}\!\!\! \int\limits_{-\infty}^\infty 
+\sum\limits^n_{j=0} (-1)^{n-j} C_n^j 
+e^{-{(x-\gamma)(n-2j)}/{\delta}} f_{\mathrm{norm}}(x)\,dx={}\hspace*{-9.6583pt}
+\end{multline*}
+
+\noindent
+\begin{multline*}
+{}=\fr{1}{2^n}\sum\limits^n_{j=0} (-1)^{n-j}C_n^j 
+e^{{\gamma}(n-2j)/\delta}\times{}\\
+{}\times \int\limits^\infty_{-\infty} 
+e^{-{x}(n-2j)/\delta} f_{\mathrm{norm}}(x)\,dx={}\\
+{}=\fr{1}{2^n}\sum\limits^n_{j=0} (-1)^{n-j}C_n^j 
+e^{{(n-2j)^2}/({2\delta^2})+{\gamma(n-2j)}/{\delta}}\,.
+\end{multline*}
+Свойство 
+$$
+M_{({Y-\xi})/{\lambda}}(c)=e^{-{\xi c}/{\lambda}} M_y\left( 
+\fr{c}{\lambda}\right)
+$$
+ производящей функции моментов завершает доказательство.
+
+\section{Риск-нейтральная динамика на~основе расширенного 
+принципа Гирсанова}
+
+  Зная распределение ошибок $\varepsilon_t\vert_{\mathcal{F}_{t-1}}\hm\sim 
+\mathrm{JSU}\,(\tilde{\xi},\tilde{\lambda},\gamma,\delta)$~(\ref{e9-dan}), можно найти 
+распределение случайного процесса~$Y_t$:
+  \begin{multline}
+ \hspace*{-8.8pt} f_{Y_t}(y_t)=\fr{\delta}{\tilde{\lambda}\delta_t \sqrt{2\pi}}\,\fr{1} 
+{\sqrt{1+((y_t-(m_t+\tilde{\xi}\delta_t))/(\delta_t\tilde{\lambda}))^2}}\times{}\\
+{}\times
+e^{-\left(\gamma+\delta\,\mathrm{sinh}^{-1}\left(
+({y_t-(m_t+\tilde{\xi}\delta_t)})/
+({\delta_t\tilde{\lambda}})\right)\right)^2/2}\,.
+  \label{e11-dan}
+  \end{multline}
+Тогда, сравнивая плотности~(\ref{e9-dan}) и~(\ref{e11-dan}), получаем, что 
+$Y_t\vert_{\mathcal{F}_{t-1}}$ имеет распределение $\mathrm{JSU}\,(m_t\hm+ 
+\tilde{\xi} \delta_t, 
+\tilde{\lambda}\delta_t, \gamma, \delta)$. Производящая функция моментов для 
+случайного процесса~$Y_t$ будет иметь следующий вид:
+\begin{equation}
+M_{Y_t}^{\mathbb{P}}(c)=e^{(m_t+\delta_t\tilde{\xi})c}\sum\limits^\infty_{n=0} 
+\left( \fr{c\tilde{\lambda}\delta_t}{2}\right)^n\fr{1}{n!}\,A_n\,,
+\label{e12-dan}
+\end{equation}
+где
+$$
+A_n=\sum\limits^n_{j=0} (-1)^{n-j} C_n^j e^{{(n-
+2j)^2}/({2\delta^2})+{\gamma(n-2j)}/{\delta}}\,.
+$$
+Пользуясь выражением~(\ref{e7-dan}), найдем производящую функцию 
+моментов относительно риск-нейт\-раль\-ной меры~$\mathbb{Q}$:
+\begin{multline}
+M_{Y_t}^{\mathbb{Q}}(c) = e^{-c(-r+\ln M_{Y_t}^{\mathbb{P}}(1))}
+M^{\mathbb{P}}_{Y_t}(c)={}\\
+{}=
+e^{c(m_t+\delta_t \tilde{\xi} +r-\ln M_{Y_t}^{\mathbb{P}}(1))} 
+\sum\limits^\infty_{n=0} \left( \fr{c\tilde{\lambda}\delta_t}{2}\right)^n 
+\fr{1}{n!}\,A_n={}\\
+\!{}=e^{c\left(
+r-\ln \left(\sum\nolimits^\infty_{n=0} \!
+\left(\tilde{\lambda}\delta_t/2\right)^{n} 
+A_n/n!\right)\right)} \!
+\sum\limits^\infty_{n=0}\! \left( \fr{c\tilde{\lambda}\delta_t}{2}\right)^{\!\!\!n} 
+\fr{1}{n!}\,A_n.\!\!
+\label{e13-dan}
+\end{multline}
+Сравнивая выражения~(\ref{e12-dan}) и~(\ref{e13-dan}), приходим к~выводу, 
+что в~новой мере~$\mathbb{Q}$ процесс $Y_t\vert_{\mathcal{F}_{t-1}}$ имеет 
+распределение $\mathrm{JSU}\,(r\hm-\ln 
+\left(\sum\nolimits^\infty_{n=0}(\tilde{\lambda}\delta_t/2)^n  A_n/n!), 
+\tilde{\lambda}\delta_t, \gamma, \delta\right)$. Модель ARIMA-GARCH примет 
+следующий вид:
+\begin{multline*}
+Y_t=r-\ln \left( \sum\limits^\infty_{n=0} \left( 
+\fr{\tilde{\lambda}\delta_t}{2}\right)^n\times{}\right.\\
+\left.{}\times \fr{1}{n!}\sum\limits^n_{j=0} 
+(-1)^{n-j}C_n^j 
+e^{{(n-2j)^2}/({2\delta^2})+{\gamma(n-2j)}/{\delta}}\right)-{}\\
+{}-\tilde{\lambda} \delta_t e^{{1}/({2\delta^2})}\mathrm{sinh}\left( 
+\fr{\gamma}{\delta} \right)+
+\delta_t\varepsilon_t\,,\\
+ \varepsilon_{t\vert 
+\mathcal{F}_{t-1}}\sim \mathrm{JSU} \left( \tilde{\xi}, \tilde{\lambda},\gamma,\delta\right)\,.
+%\label{e14-dan}
+\end{multline*}
+  
+  Исследуем вопрос о существовании условного математического ожидания 
+в~новой метрике. Заметим, что для существования первого момента 
+необходимо, чтобы сходился следующий ряд:
+  \begin{equation}
+ \! \sum\limits^\infty_{n=0}\!\! \left(\! \fr{\tilde{\lambda}\delta_t}{2}\!\!\right)^{\!\!n}\!\! 
+\fr{1}{n!}\!\sum\limits^n_{j=0} (\!-1)^{n-j} C_n^j e^{{(n-
+2j)^2}\!/({2\delta^2})+{\gamma(n-2j)}/{\delta}}.\!\!\!\!\!
+  \label{e15-dan}
+  \end{equation}
+Ряд~(\ref{e15-dan}) является степенным рядом и~имеет вид 
+$\sum\nolimits^\infty_{n=0}a_n X^n$, где 
+\begin{align*}
+X&= \fr{\tilde{\lambda}\delta_t}{2}\,; \\
+a_n&= \fr{1}{n!}\sum\limits^n_{j=0} (-1)^{n-j} C_n^j e^{{(n-
+2j)^2}/({2\delta^2})+{\gamma(n-2j)}/{\delta}}\,.
+\end{align*} 
+Найдем радиус схо\-ди\-мости данного степенного \mbox{ряда}:
+\begin{multline*}
+R=\lim\limits_{n\to\infty} \left\vert \fr{a_n}{a_{n+1}}\right\vert 
+=
+\lim\limits_{n\to\infty} (n+1)\times{}\\
+{}\times \left\vert 
+\fr{ \sum\nolimits^n_{j=0}(-1)^{n-j}C_n^j 
+e^{\frac{(n-2j)^2}{2\delta^2}+\frac{\gamma(n-2j)}{\delta}}} 
+{\sum\nolimits_{j=0}^{n+1} (-1)^{n+1-j}C^j_{n+1} 
+e^{\frac{(n+1-2j)^2}{2\delta^2}+\frac{\gamma(n+1-2j)}{\delta}}}\right\vert ={}\\
+{}=\lim\limits_{n\to\infty} (n+1)\fr{e^{n^2/(2\delta^2)+\gamma 
+n/\delta}}{e^{{(n+1)^2}/({2\delta^2})+{\gamma(n+1)}/{\delta}}}\times{}\\
+{}\times \left\vert 
+\fr{\sum\nolimits^n_{j=0} (-1)^{n-j}C_{n}^j e^{-
+\frac{2jn}{\delta^2}+\frac{2j^2}/{\delta^2}-\frac{2j\gamma}{\delta}}}
+{\sum\nolimits_{j=0}^{n+1}(-1)^{n+1-j} C^j_{n+1} e^{-
+\frac{2j(n+1)}{\delta^2}+\frac{2j^2}{\delta^2}-
+\frac{2j\gamma}{\delta}}}\right\vert ={}\\
+{}=\lim\limits_{n\to\infty} (n+1) \fr{e^{n^2/(2\delta^2)+\gamma 
+n/\delta}}{e^{(n+1)^2/(2\delta^2)+\gamma(n+1)/\delta}}={}\\
+{}=\lim\limits_{n\to\infty} 
+\fr{n+1}{e^{n/\delta^2+1/(2\delta^2)+\gamma/\delta}} =0\,.
+\end{multline*}
+Здесь использовано то обстоятельство, что
+\begin{multline*}
+0\leq \lim\limits_{n\to\infty} C_n^j 
+e^{-{2jn}/{\delta^2}+{2j^2}/{\delta^2}-
+{2j\gamma}/{\delta}} \leq{}\\
+{}\leq \lim\limits_{n\to\infty} \fr{n^j}{j!}e^{-
+{2jn}/{\delta^2}+{2j^2}/{\delta^2}-{2j\gamma}/{\delta}} =0\,.
+\end{multline*}
+Таким образом, ряд сходится только в~нуле, а ввиду того, что 
+$\tilde{\lambda}\not=0$ и~$\delta_t\not\equiv 0$, условное математическое ожидание в~новой метрике будет отсутствовать.
+
+\vspace*{-3pt}
+
+\section{Модификация расширенного принципа Гирсанова}
+
+\vspace*{-3pt}
+
+  В расширенном принципе Гирсанова рас\-смат\-ри\-ва\-ют\-ся логарифмы 
+отношения цен базового актива $Y_t\hm= \ln (S_t/S_{t-1})$. Предлагается 
+рассматривать относительные цены $\tilde{Y}_t\hm= S_t/S_{t-1}\hm-1$. При 
+таком предположении динамика базового актива будет иметь следующий вид: 
+$$
+  \tilde{S}_t= \tilde{S}_{t-1} (1+ \mu_t)W_t\,,
+  $$
+   где 
+  $$
+  \mu_t= \fr{\mathbb{E}^{\mathbb{P}}\left[ \tilde{Y}_t+1\vert  
+\mathcal{F}_{t-1}\right]}{(1+r/n)^n}-1\,;
+  $$
+  $n$~--- количество начислений риск-нейт\-раль\-ной ставки за год. 
+  
+  \smallskip
+  
+  \noindent
+\textbf{Теорема~1.} \textit{Процесс}
+\begin{equation*}
+Z_t=\prod\limits^t_{k=1} \fr{g_{W_k}^{\mathbb{P}} \left( 
+\tilde{S}_k/\tilde{S}_{k-1}\right) (1+\mu_k)}
+{g_{W_k}^{\mathbb{P}} ((1+\mu_k)^{-1} 
+\tilde{S}_k/\tilde{S}_{k-1})}
+%\label{e16-dan}
+\end{equation*}
+\textit{обеспечивает риск-нейт\-раль\-ную динамику для~$\tilde{S}_t$ в~новой 
+мере~$\mathbb{Q}$ относительно старой}~$\mathbb{P}$:
+$$
+\mathcal{L}^{\mathbb{Q}} \left( \tilde{S}_t\vert \mathcal{F}_{t-1} \right)= 
+\mathcal{L}^{\mathbb{P}} \left( M_t\vert \mathcal{F}_{t-1}\right)\,.
+$$
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.
+\begin{multline*}
+Z_t=Z_{t-1}\fr{g^{\mathbb{P}}_{W_k}(\tilde{S}_t/\tilde{S}_{t-1})(1+\mu_t)} { 
+g^{\mathbb{P}}_{W_k} ((1+\mu_t)^{-1}\tilde{S}_t/\tilde{S}_{t-1})}={}\\
+{}= Z_{t-1}\fr{ 
+g^{\mathbb{P}}_{W_k} ((1+\mu_t)W_t)(1+\mu_t)} { 
+g^{\mathbb{P}}_{W_k}(W_t)}\,;
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+\mathbb{E}^{\mathbb{P}}\left[ Z_t\vert \mathcal{F}_{t-1}\right] ={}\\
+{}=Z_{t-1} 
+\int\limits^\infty_{-\infty} g^{\mathbb{P}}_{W_k} \left( 
+\left(1+\mu_t\right)w_t\right)\left( 1+\mu_t\right)dw_t=Z_{t-1}\,.
+\end{multline*}
+Необходимо показать, что закон распределения дисконтированной цены 
+базового актива~$\tilde{S}_t$ для меры~$\mathbb{Q}$ совпадает с~законом 
+распределения случайного процесса~$M_t$ для меры~$\mathbb{P}$. 
+Обозначим условную плотность распределения случайного процесса~$M_t$ 
+для меры~$\mathbb{P}$ как $\rho_t(M_t)$: 
+\begin{multline*}
+\rho_t(M_t)=P\left(M_t<a\right)^\prime_{a=M_t}= {}\\
+{}=P\left( \fr{M_t}{M_{t-1}}<\fr{a}{M_{t-
+1}}\right)^\prime_{a=M_t}={}\\
+{}=P\left( W_t<\fr{a}{M_{t-
+1}}\right)^\prime_{a=M_t}=\fr{g^{\mathbb{P}}_{W_k}(M_t/M_{t-1})}{M_{t-
+1}}\,.
+\end{multline*}
+Введем обозначение 
+$$
+\tilde{W}_t= \left(1+\mu_t\right)W_t,
+$$
+ тогда структура 
+уравнений, описывающих динамики~$M_t$ и~$\tilde{S}_t$, будет совпадать: 
+$$
+M_t= M_{t-1} W_t\,;\enskip \tilde{S}_t\hm= \tilde{S}_{t-1}\tilde{W}_t\,.
+$$
+
+ Далее 
+обозначим условную плотность случайного процесса~$\tilde{S}_t$ по 
+метрике~$\mathbb{Q}$ как~$\tilde{\rho}_t(\tilde{S}_t)$: 
+\begin{multline*}
+\tilde{\rho}_t(\tilde{S}_t) =Q\left(\tilde{S}_t<a\right)^\prime_{a=\tilde{S}_t}={}\\
+{}= 
+Q\!\left( \fr{\tilde{S}_t}{\tilde{S}_{t-1}}<\fr{a}{\tilde{S}_{t-
+1}}\right)^\prime_{a=\tilde{S}_t}=Q\!\left( \tilde{W}_t<\fr{a}{\tilde{S}_{t-
+1}}\right)^\prime_{a=\tilde{S}_t}={}\\
+{}= 
+\fr{\tilde{g}^{\mathbb{Q}}_{\tilde{W}_t}(\tilde{S}_t/\tilde{S}_{t-
+1})}{\tilde{S}_{t-1}}\,,
+\end{multline*}
+где $\tilde{g}^{\mathbb{Q}}_{\tilde{W}_t}$~--- условная плот\-ность 
+распределения случайного процесса~$\tilde{W}_t$ по мере~$\mathbb{Q}$.
+
+  Осталось показать, что закон распределения случайного процесса~$W_t$ 
+совпадает с~законом распределения случайного процесса~$\tilde{W}_t$. 
+Определим функцию 
+распределения~${\tilde{G}}_{\tilde{W}_t}^{\mathbb{Q}}$ для~$\tilde{W}_t$:
+  \begin{multline*}
+  \tilde{G}_{\tilde{W}_t}^{\mathbb{Q}}(a)=\fr{\mathbb{E}^{\mathbb{P}}\left[ Z_t 
+I_{\{\tilde{W}_t<a\}}\vert \mathcal{F}_{t-1}\right]} 
+{\mathbb{E}^{\mathbb{P}}\left[ Z_t\vert\mathcal{F}_{t-1}\right]}= {}\\
+{}=
+\int\limits^\infty_{-\infty} g^{\mathbb{P}}_{W_t}\left(\left( 1+\mu_t\right) 
+w_t\right)(1+\mu_t)I_{\{\tilde{W}_t<a\}}dw_t ={}\\
+  {}=\int\limits^\infty_{-\infty} 
+g^{\mathbb{P}}_{W_t}(\tilde{w}_t)I_{\{\tilde{W}_t<a\}}d\tilde{w}_t={}\\
+  {}= \int\limits_{-\infty}^\infty g_{W_t}^{\mathbb{P}} (\tilde{w}_t)\, 
+d\tilde{w}_{t_{\tilde{W}_t<a}}\Rightarrow 
+\tilde{g}_{\tilde{W}_t}^{\mathbb{Q}}=g^{\mathbb{P}}_{W_t}\,.
+  \end{multline*}
+  
+  
+  \smallskip
+  
+  \noindent
+\textbf{Теорема~2.}
+\begin{multline*}
+\prod\limits^t_{k=1}\fr{g^{\mathbb{P}}_{W_k} (\tilde{S}_k/\tilde{S}_{k-
+1})(1+\mu_k)}{ g^{\mathbb{P}}_{W_k} ((1+\mu_k)^{-1} \tilde{S}_k/\tilde{S}_{k-
+1})}={}\\
+{}= \prod\limits^t_{k=1}
+\fr{f^{\mathbb{P}}_{\tilde{Y}_k} (\tilde{Y}_k(1+\mu_k)+\mu_k)(1+\mu_k)} 
+{f^{\mathbb{P}}_{\tilde{Y}_k} (\tilde{Y}_k)}\,.
+%\label{e17-dan}
+\end{multline*}
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.
+\begin{multline*}
+g^{\mathbb{P}}_{W_k}\left( \fr{\tilde{S}_k}{\tilde{S}_{k-1}}\right)=
+P\left(\!W_k<a\right)^\prime_{a=\tilde{S}_k/\tilde{S}_{k-1}}={}\\
+P\left( \fr{S_k}{S_{k-1}}-1<a(1+\mu_k)\!\left(\!1+\fr{r}{n}\!\right)^{\!n}-
+1\!\right)^\prime_{a=\tilde{S}_k/\tilde{S}_{k-1}}=\\
+{}= f^{\mathbb{P}}_{\tilde{Y}_k} \left(\fr{\tilde{S}_k}{\tilde{S}_{k-1}} 
+\left(1+\mu_k\right) \left(1+\fr{r}{n}\right)^n-1\right) \times{}\\
+{}\times(1+\mu_k) 
+\left(1+\fr{r}{n}\right)^n={}\\
+{}=f^{\mathbb{P}}_{\tilde{Y}_k} 
+(\tilde{Y}_k(1+\mu_k)+\mu_k)(1+\mu_k)\left(1+\fr{r}{n}\right)^n\,;
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+g_{W_k}^{\mathbb{P}}\left( (1+\mu_k)^{-1}\fr{\tilde{S}_k}{\tilde{S}_{k-1}}
+\right)={}\\
+{}=P \left(W_k<a\right)^\prime_{a=(1+\mu_k)^{-1}{\tilde{S}_k}/{\tilde{S}_{k-1}}}
+=P\left(\fr{S_k}{S_{k-1}}-1<{}\right.\\
+\left.{}<a(1+\mu_k)\left(1+\fr{r}{n}
+\right)^n-1\right)^\prime_{a=(1+\mu_k)^{-1}
+{\tilde{S}_k}/{\tilde{S}_{k-1}}}={}\\
+{}=
+f^{\mathbb{P}}_{\tilde{Y}_k}\left( \! (1+\mu_k)^{-1} 
+\fr{\tilde{S}_k}{\tilde{S}_{k-1}}\left( 1+\mu_k\right) 
+\left( 1+\fr{r}{n}\right)^n \!\!- 1\! \right) \times{}\\
+{}\times (1+\mu_k)\left(1+\fr{r}{n}\right)^n=
+f^{\mathbb{P}}_{\tilde{Y}_k} (\tilde{Y}_k)(1+\mu_k)(1+r)\,;
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+\fr{g^{\mathbb{P}}_{W_k}(\tilde{S}_k/\tilde{S}_{k-1})(1+\mu_k)} 
+{g^{\mathbb{P}}_{W_k}((1+\mu_k)^{-1}\tilde{S}_k/\tilde{S}_{k-1})}={}\\
+\hspace*{-0.3215pt}\!=\!\fr{ 
+f^{\mathbb{P}}_{\tilde{Y}_k}(\tilde{Y}_k(1+\mu_k)+\mu_k)(1+\mu_k)(1+r/n)^n 
+(1+\mu_k)}{ f^{\mathbb{P}}_{\tilde{Y}_k}(\tilde{Y}_k) 
+(1+\mu_k)(1+r/n)^n}\!=\\
+{}=\fr{ f^{\mathbb{P}}_{\tilde{Y}_k}(\tilde{Y}_k(1+\mu_k)+\mu_k)(1+\mu_k)}
+{f^{\mathbb{P}}_{\tilde{Y}_k}(\tilde{Y}_k)}\,.
+  \end{multline*}
+  
+  Воспользовавшись теоремами~1 и~2, найдем производящую функцию 
+моментов в~новой метрике.
+  
+  \smallskip
+  
+  \noindent
+\textbf{Утверждение~2.} 
+\begin{equation}
+M^{\mathbb{Q}}_{\tilde{Y}_t} (c)=e^{-\mu_t c/(1+\mu_t)} 
+M^{\mathbb{P}}_{\tilde{Y}_t} \left( \fr{c}{1+\mu_t}\right)\,.
+\label{e18-dan}
+\end{equation}
+
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.
+\begin{multline*}
+M^{\mathbb{Q}}_{\tilde{Y}_t}(c)=\mathbb{E}^{\mathbb{Q}} \left[ 
+e^{\tilde{Y}_t c}\vert \mathcal{F}_{t-1}\right]= 
+\mathbb{E}^{\mathbb{P}} \times{}\\
+{}\times \left[ \left. e^{\tilde{Y}_t c} 
+\fr{f^{\mathbb{P}}_{\tilde{Y}_t} c (\tilde{Y}_t 
+(1+\mu_t)+\mu_t)(1+\mu_t)}{f^{\mathbb{P}}_{\tilde{Y}_t} (\tilde{Y}_t)}\,Z_{t-
+1}\right\vert \mathcal{F}_{t-1}\right]={}\\
+{}= \mathbb{E}^{\mathbb{P}} \left[ \left. e^{\tilde{Y}_t c} 
+\fr{f^{\mathbb{P}}_{\tilde{Y}_t} (\tilde{Y}_t 
+(1+\mu_t)+\mu_t)(1+\mu_t)}{f^{\mathbb{P}}_{\tilde{Y}_t} (\tilde{Y}_t)} 
+\right\vert \mathcal{F}_{t-1}\right] \times{}\\
+{}\times \mathbb{E}^{\mathbb{P}}\left[ Z_{t-1}\vert 
+\mathcal{F}_{t-1}\right]\,;
+\end{multline*}
+
+\vspace{-12pt}
+
+\noindent
+\begin{multline*}
+\mathbb{E}^{\mathbb{P}}\left[ Z_{t-1}\vert \mathcal{F}_{t-1}\right] 
+=\mathbb{E}^{\mathbb{P}} \left[ Z_{t-1}\right]={}\\
+{}=\int\limits_{-\infty}^\infty \!\!\cdots\!\! 
+ \int\limits_{-\infty}^\infty  \prod\limits_{k=1}^{t-1} 
+\fr{ f^{\mathbb{P}}_{\tilde{Y}_k}(\tilde{y}_k(1+\mu_k)+\mu_k)(1+\mu_k)} 
+{f^{\mathbb{P}}_{\tilde{Y}_k}(\tilde{y}_k)}\times{}\\
+{}\times f^{\mathbb{P}}_{\tilde{Y}_k}(\tilde{y}_k)\,d\tilde{y}_k={}\\
+{}= \int\limits_{-\infty}^\infty \!\!\cdots\!\!  
+\int\limits_{-\infty}^\infty \prod\limits_{k=1}^{t-1}
+f^{\mathbb{P}}_{\tilde{Y}_k}(\tilde{y}_k(1+\mu_k)+\mu_k)(1+\mu_k)\,d\tilde{y}_k\,.
+\end{multline*}
+Введем замену переменной: 
+$$
+\tilde{y}_k(1+\mu_k)+\mu_k=u_k\Rightarrow d\tilde{y}_k=\fr{du_k}{1+\mu_k}\,.
+$$
+ Тогда
+\begin{multline*}
+\int\limits^\infty_{-\infty}\!\!\cdots\!\!\int\limits^\infty_{-\infty} 
+\prod\limits^{t-1}_{k=1} 
+f^{\mathbb{P}}_{\tilde{Y}_k}\left( \tilde{y}_k(1+\mu_k) 
++\mu_k\right)(1+\mu_k)\,d\tilde{y}_k={}\\
+{}= \int\limits^\infty_{-\infty}\!\!\cdots\!\! \int\limits^\infty_{-\infty} \prod\limits^{t-
+1}_{k=1} f^{\mathbb{P}}_{\tilde{Y}_k} (u_k) \,du_k=1\,;
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*} 
+\mathbb{E}^{\mathbb{P}}\left[ \left. e^{\tilde{Y}_t c} 
+\fr{f^{\mathbb{P}}_{\tilde{Y}_t}  (\tilde{Y}_t 
+(1+\mu_t)+\mu_t)(1+\mu_t)}{f^{\mathbb{P}}_{\tilde{Y}_t} (\tilde{Y}_t)} 
+\right\vert \mathcal{F}_{t-1}\right]={}\\
+{}=\int\limits^\infty_{-\infty} e^{\tilde{y}_t c}
+\fr{f^{\mathbb{P}}_{\tilde{Y}_t} 
+(\tilde{y}_t(1+\mu_t)+\mu_t)(1+\mu_t)}{ 
+f^{\mathbb{P}}_{\tilde{Y}_t}(\tilde{y}_t)}\,
+f^{\mathbb{P}}_{\tilde{Y}_t}(\tilde{y}_t)\,d\tilde{y}_t={}\\
+{}= \int\limits_{-\infty}^\infty e^{\tilde{y}_t c} 
+f^{\mathbb{P}}_{\tilde{Y}_t}(\tilde{y}_t(1+\mu_t)+\mu_t)
+(1+\mu_t)\,d\tilde{y}_t={}
+\\
+{}= \int\limits^\infty_{-\infty} e^{c{(u_t-\mu_t)}/({1+\mu_t})} 
+f^{\mathbb{P}}_{\tilde{Y}_t}(u_t)\,du_t={}\\
+{}=
+e^{-\mu_t c/(1+\mu_t)} \!\int\limits^\infty_{-\infty}\! 
+e^{u_t{c}/({1+\mu_t})} 
+f^{\mathbb{P}}_{\tilde{Y}_t}(u_t) \,du_t={}\\
+{}=e^{-\mu_t c/(1+\mu_t)} 
+M^{\mathbb{P}}_{\tilde{Y}_t} \left( \fr{c}{1+\mu_t}\right)\,.
+\end{multline*}
+Применим формулу~(\ref{e18-dan}) к~производящей функции моментов: 
+\begin{multline*}
+M_{\tilde{Y}_t}^{\mathbb{Q}}(c)=e^{-{\mu_t c}/({1+\mu_t})}\times{}\\
+{}\times
+e^{c(m_t 
++\delta_t \tilde{\xi})/(1+\mu_t)} 
+\sum\limits_{n=0}^\infty \left( \fr{ 
+c\tilde{\lambda}\delta_t}{2(1+\mu_t)}\right)^n 
+\fr{1}{n!}\,A_n={}\\
+{}=e^{c(m_t+\delta_t\tilde{\xi}-
+\mu_t)/(1+\mu_t)}\sum\limits^\infty_{n=0}\left( 
+\fr{c\tilde{\lambda}\delta_t}{2(1+\mu_t)}\right)^n \fr{1}{n!}\,A_n\,.
+\end{multline*}
+В~итоге получаем, что процесс $\tilde{Y}_t\vert_{\mathcal{F}_{t-1}}$ 
+относительно метрики~$\mathbb{Q}$ имеет распределение 
+$\mathrm{JSU}\,((m_t\hm+\delta_t\xi\hm-\mu_t)/(1\hm+\mu_t), \tilde{\lambda}\delta_t/(1+\mu_t), 
+\gamma, \delta)$, риск-нейт\-раль\-ный ARIMA-GARCH-процесс динамики 
+базового актива $\tilde{Y}_t\hm= S_t/S_{t-1} \hm-1$ описывается уравнением:
+\begin{multline*}
+\tilde{Y}_t=\left(1+\fr{r}{n}\right)^n-1+
+\delta_t\fr{(1+r/n)^n}{1+m_t}\,\varepsilon_t\,,\\
+\varepsilon_{t\vert \mathcal{F}_{t-1}}\sim \mathrm{JSU} \left( \tilde{\xi}, 
+\tilde{\lambda},\gamma,\delta\right)\,.
+\end{multline*}
+  
+\section{Заключение}
+  
+  В статье рассмотрена задача получения риск-нейт\-раль\-но\-го 
+преобразования динамики до\-ход\-ности базового актива производных 
+финансовых инструментов. Для аппроксимации динамики была использована 
+модель ARIMA-GARCH с~ошибками, распределенными по закону $S_U$ 
+Джонсона. Распределение~$S_U$ Джонсона на данный момент часто 
+используется при моделировании временн$\acute{\mbox{ы}}$х рядов базовых активов для 
+разного рода производ-\linebreak ных финансовых инструментов~[11]. Главное 
+пре-\linebreak имущество данного распределения заключается в~воз\-мож\-ности 
+моделировать временн$\acute{\mbox{ы}}$е ряды\linebreak с~<<тяжелыми хвостами>>. Однако для 
+данного распределения неизвестна производящая функция\linebreak моментов, что 
+делало невозможным получение со\-от\-вет\-ст\-ву\-ющей риск-нейт\-раль\-ной динамики 
+методами, которые используют данную функцию. 
+  
+  Первым результатом статьи является получе\-ние производящей функции 
+моментов в~виде сте\-пенного ряда, что дает возможность, используя 
+рас\-ширенный принцип Гирсанова, получить ко\-эффициенты, обеспечивающие 
+риск-нейтральную динамику для модели ARIMA-GARCH. Однако условное 
+математическое ожидание данного случайного процесса не существует, так как 
+соответствующий ряд не сходится. 
+
+Вторым результатом работы является 
+переход от логарифма отношения цен базового актива непосредственно 
+к~доходности. Это дает возможность не вычислять значение производящей 
+функции моментов в~конкретной точке, а,~используя ее общий вид, получать 
+распределение случайного процесса в~новой (риск-нейт\-раль\-ной) метрике. 
+Полученное риск-нейт\-раль\-ное распределение используется для построения 
+окончательного вида риск-нейт\-раль\-но\-го ARIMA-GARCH-процесса 
+динамики стоимости базового актива. 
+  
+ {\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-dan}
+\Au{Hull J.} Options, futures, and other derivatives.~--- 10th ed.~--- Pearson, 2018. 896~p.
+\bibitem{2-dan}
+\Au{Patton A.} Quantitative finance.~--- London: University of London Press Publisher, 2015. 
+65~p.
+
+\bibitem{4-dan} %3
+\Au{Akgiray V.} Conditional heteroscedasticity in time series of stock returns: Evidence and 
+forecasts~// J.~Bus., 1989. Vol.~62. Iss.~1. P.~55--80. doi: 10.1086/296451.
+\bibitem{3-dan} %4
+\Au{Ter$\ddot{\mbox{a}}$svirta T.} 
+An introduction to univariate GARCH models~// 
+Handbook of financial time series~/ Eds. T.\,G.~Andersen, R.\,A.~Davis,  
+J.-P.~Kreiss, Th.\,V.~Mikosch.~--- Berlin--Heidelberg: Springer, 2009. 
+Vol.~10. P.~17--42. doi: 10.1007/978-3-540-71297-8\_1.
+
+\bibitem{5-dan}
+\Au{Follmer H., Schied~A.} Stochastic finance: An introduction in discrete time.~--- Berlin: Walter 
+de Gruyter, 2002. 422~p.
+\bibitem{6-dan}
+\Au{Bollerslev T.} A~conditionally heteroskedastic time series model for speculative prices and 
+rates of return~// Rev. Econ. Stat., 1987. Vol.~69. Iss.~3. P.~542--547. doi: 
+10.2307/1925546.
+\bibitem{7-dan}
+\Au{Simonato J.\,G.} GARCH processes with skewed and leptokurtic innovations: Revisiting the 
+Johnson $S_U$ case. May~16, 2012. {\sf https://ssrn.com/abstract=2060994}.
+\bibitem{8-dan}
+\Au{Elliott R.\,J., Madan~D.\,B.} A~discrete time equivalent martingale 
+measure~// Math. Financ., 
+1998. Vol.~8. Iss.~2. P.~127--152. doi: 10.1111/1467-9965.00048.
+\bibitem{9-dan}
+\Au{Yi Xi.} Comparison of option pricing between ARMA-GARCH and GARCH-M 
+models.~--- London, Ontario, Canada: University of Western Ontario, 2013. 
+MoS Thesis. 73~p.
+\bibitem{10-dan}
+\Au{Enrique R., Escobar~L.} Using moment generating functions to derive mixture distributions~// 
+Am. Stat., 2006. Vol.~60. Iss.~1. P.~75--80. doi: 10.1198/000313006X90819.
+\bibitem{11-dan}
+\Au{Simonato J.\,G., Stentoft~L.} Which pricing approach for options under GARCH with  
+non-normal innovations? July 2015. {\sf 
+https://www.degroote.mcmaster.ca/files/2015/ 11/SimonatoStentoft.pdf}.
+\bibitem{12-dan}
+\Au{Williams D.} Probability with martingales.~--- Cambridge: Cambridge University Press, 1991. 
+251~p.
+
+\bibitem{14-dan}
+\Au{Cameron R.\,H., Martin~W.\,T.} Transformation of Wiener integrals under a general class of 
+linear transformations translations~// T.~Am. Math. Soc., 1945. Vol.~58. P.~184--219. doi: 
+10.1090/S0002-9947-1945-0013240-1.
+
+\bibitem{13-dan} %14
+\Au{Bell D.} 
+Transformations of measures on an infinite-dimensional vector space~// 
+Seminar on stochastic processes, 1990~/ 
+Eds. 
+\mbox{E.~{\!\ptb{\c{С}}}inlar}, P.\,J.~Fitzsimmons, R.\,J.~Williams.~--- 
+Progress in 
+probability book ser.~--- Birkh$\ddot{\mbox{a}}$user Boston, 1991. Vol.~24.  P.~15--25. doi: 
+10.1007/ 978-1-4684-0562-0\_3.
+
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 23.06.19}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{RISK-NEUTRAL DYNAMICS FOR~THE~ARIMA-GARCH\\ RANDOM 
+PROCESS WITH~ERRORS DISTRIBUTED\\ ACCORDING 
+TO~THE~JOHNSON'S {\boldmath{$S_U$}} LAW}
+
+
+\def\titkol{Risk-neutral dynamics for~the~ARIMA-GARCH random 
+process with~errors distributed according 
+to~the~Johnson's $S_U$ law}
+
+\def\aut{A.\,R.~Danilishin$^1$ and D.\,Yu.~Golembiovsky$^{1,2}$}
+
+\def\autkol{A.\,R.~Danilishin and D.\,Yu.~Golembiovsky}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+\noindent
+$^1$Department of Operations Research, Faculty of Computational Mathematics and Cybernetics, 
+M.\,V.~Lomonosov\linebreak
+$\hphantom{^1}$Moscow State University, 1-52~Leninskiye Gory, Moscow 119991, GSP-1, Russian 
+Federation
+
+\noindent
+$^2$Department of Banking, Sinergy University, 80-G~Leningradskiy Prospect, Moscow 125190, Russian 
+Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+
+
+\Abste{Risk-neutral world is one of the fundamental principles of financial 
+mathematics, for definition of a~fair value of derivative financial instruments. The 
+article deals with the construction of risk-neutral dynamics for the 
+ARIMA-GARCH  (Autoregressive Integrated 
+Moving Average, Generalized AutoRegressive Conditional Heteroskedasticity)
+random process with errors distributed according to the Johnson's $S_U$ law. 
+Methods for finding risk-neutral coefficients require the existence of a~generating 
+function of moments (examples of such transformations are the Escher 
+transformation, the extended Girsanov principle). A~generating function of moments 
+is not known for Student and Johnson's $S_U$ distributions. The authors form a 
+generating function of moments for the Johnson's $S_U$ distribution and prove that 
+a~modification of the extended Girsanov principle may obtain a risk-neutral measure 
+with respect to the chosen distribution.}
+
+\KWE{ARIMA; GARCH; risk-neutral measure; Girsanov extended principle; 
+Johnson's $S_U$; option pricing}
+
+\DOI{10.14357/19922264200107} 
+
+%\vspace*{-14pt}
+
+%\Ack
+%\noindent
+
+
+
+%\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-dan-1}
+\Aue{Hull, J.} 2018. \textit{Options, futures, and other derivatives}. 10th ed. 
+Pearson. 896~p.
+\bibitem{2-dan-1}
+\Aue{Patton, A.} 2015. 
+\textit{Quantitative finance}. London: University of London 
+Press Publisher. 65~p.
+
+\bibitem{4-dan-1} %3
+\Aue{Akgiray, V.} 1989. Conditional heteroscedasticity in time series of stock 
+returns: Evidence and forecasts. \textit{J.~Bus.} 62(1):55--80. doi: 
+10.1086/296451.
+
+\bibitem{3-dan-1} %4
+\Aue{Ter$\ddot{\mbox{a}}$svirta, T.} 2009. An introduction to univariate GARCH models. 
+\textit{Handbook of financial time series.} Eds. T.\,G.~Andersen, R.\,A.~Davis,  
+J.-P.~Kreiss, and Th.\,V.~Mikosch. Berlin--Heidelberg: Springer. 10:17--42. doi:  
+10.1007/978-3-540-71297-8\_1.
+
+\bibitem{5-dan-1}
+\Aue{Follmer, H., and A.~Schied.} 2002. \textit{Stochastic finance: An introduction 
+in discrete time}. Berlin: Walter de Gruyter. 422~p.
+\bibitem{6-dan-1}
+\Aue{Bollerslev, T.} 1987. A~conditionally heteroskedastic time series model for 
+speculative prices and rates of return. \textit{Rev. Econ. Stat.} 
+69(3):542--547. doi: 10.2307/1925546.
+\bibitem{7-dan-1}
+\Aue{Simonato, J.\,G.} 2012. GARCH processes with skewed and leptokurtic 
+innovations: Revisiting the Johnson $S_U$ case. Available at: {\sf 
+https://ssrn.com/abstract=2060994} (accessed May~18, 2012).
+\bibitem{8-dan-1}
+\Aue{Elliott, R.\,J., and D.\,B.~Madan.} 1998. A Discrete time equivalent martingale 
+measure. \textit{Math. Financ.} 8(2):127--152. doi: 10.1111/1467-9965.00048.
+\bibitem{9-dan-1}
+\Aue{Yi, X.} 2013. Comparison of option pricing between ARMA-GARCH and 
+GARCH-M models. 
+ London, Ontario, Canada: University of Western Ontario.  MoS Thesis. 73~p.
+\bibitem{10-dan-1}
+\Aue{Enrique, R., and L.~Escobar.} 2006. Using moment generating functions to 
+derive mixture distributions. \textit{Am. Stat.} 60(1):75--80. doi: 
+10.1198/000313006X90819.
+\bibitem{11-dan-1}
+\Aue{Simonato, J.\,G., and L.~Stentoft.} 2015. Which pricing approach for options 
+under GARCH with non-normal innovations? Available at: {\sf 
+https://www.degroote. mcmaster.ca/files/2015/11/SimonatoStentoft.pdf} (accessed 
+November 2015).
+\bibitem{12-dan-1}
+\Aue{Williams, D.} 1991. \textit{Probability with martingales}. Cambridge: 
+Cambridge University Press. 251~p.
+\bibitem{14-dan-1} %13
+\Aue{Cameron, R.\,H., and W.\,T.~Martin.} 1945. Transformation of Wiener 
+integrals under a~general class of linear transformations translations. 
+\textit{T.~Am. Math. Soc.} 58:184--219. doi: 10.1090/S0002-9947-1945-0013240-1.
+
+\bibitem{13-dan-1} %14
+\Aue{Bell, D.} 1991. Transformations of measures on an infinite-dimensional vector 
+space. \textit{Seminar on stochastic processes, 1990}. 
+Eds. 
+E.~{\ptb{\c{С}}}inlar, P.\,J.~Fitzsimmons, and R.\,J.~Williams. 
+Progress in probability book ser. 
+Birkh$\ddot{\mbox{a}}$user Boston. 24:15--25. doi: 10.1007/978-1-4684-0562-0\_3.
+
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+%\vspace*{-7pt}
+
+\hfill{\small\textit{Received June 23, 2019}}
+
+%\pagebreak
+
+%\vspace*{-22pt}
+
+\Contr
+
+\noindent
+\textbf{Danilishin Artem R.} (b.\ 1992)~--- PhD student, Department of Operations Research, Faculty of 
+Computational Mathematics and Cybernetics, M.\,V.~Lomonosov Moscow State University,  
+1-52~Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation; \mbox{danilishin-artem@mail.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Golembiovsky Dmitry Y.} (b.\ 1960)~--- Doctor of Science in technology, professor, Department of 
+Operation Research, Faculty of Computational Mathematics and Cybernetics, M. V. Lomonosov Moscow 
+State University, 1-52~Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation; professor, Department 
+of Banking, Sinergy University, 80-G~Leningradskiy Prospect, Moscow 125190, Russian Federation; 
+\mbox{golemb@cs.msu.su}
+   
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

@@ -1,0 +1,692 @@
+\def\stat{senko}
+
+\def\tit{ИССЛЕДОВАНИЕ ВОЗМОЖНОСТИ ПРОГНОЗИРОВАНИЯ ИЗМЕНЕНИЯ ФИНАНСОВОГО 
+СОСТОЯНИЯ КРЕДИТНОЙ ОРГАНИЗАЦИИ НА~ОСНОВЕ ПУБЛИКУЕМОЙ ОТЧЕТНОСТИ$^*$}
+
+\def\titkol{Исследование возможности прогнозирования изменения финансового 
+состояния кредитной организации} % на основе публикуемой отчетности}
+
+\def\aut{Ю.\,И.~Журавлев$^1$, О.\,В.~Сенько$^2$, Н.\,Н.~Бондаренко$^3$, 
+В.\,В.~Рязанов$^4$, А.\,А.~Докукин$^5$, А.\,П.~Виноградов$^6$}
+
+\def\autkol{Ю.\,И.~Журавлев, О.\,В.~Сенько, Н.\,Н.~Бондаренко и~др.}
+
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Журавлев Ю.\,И.}
+\index{Сенько О.\,В.}
+\index{Бондаренко Н.\,Н.}
+\index{Рязанов В.\,В.}
+\index{Докукин А.\,А.}
+\index{Виноградов А.\,П.}
+\index{Zhuravlev Yu.\,I.}
+\index{Sen'ko O.\,V.} 
+\index{Bondarenko N.\,N.}
+\index{Ryazanov V.\,V.}
+\index{Dokukin A.\,A.}
+\index{Vinogradov A.\,P.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при частичной финансовой поддержке РФФИ (проект 18-29-03151).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управ\-ле\-ние>>
+  Российской академии наук; 
+Московский государственный университет им.\ М.\,В.~Ломоносова, \mbox{zhur@ccas.ru}}
+\footnotetext[2]{Федеральный исследовательский центр <<Информатика и~управ\-ле\-ние>>
+  Российской академии наук, \mbox{senkoov@mail.ru}}
+\footnotetext[3]{Московский государственный университет им.\ М.\,В.~Ломоносова, \mbox{kolianmos1@gmail.com}}
+\footnotetext[4]{Федеральный исследовательский центр <<Информатика и~управ\-ле\-ние>>
+  Российской академии наук, 
+\mbox{rvvccas@mail.ru}}
+\footnotetext[5]{Федеральный исследовательский центр <<Информатика и~управ\-ле\-ние>>
+  Российской академии наук, 
+\mbox{dalex@ccas.ru}}
+\footnotetext[6]{Федеральный исследовательский центр <<Информатика и~управ\-ле\-ние>>
+  Российской академии наук, 
+\mbox{vngrccas@mail.ru}}
+
+\vspace*{-3pt}
+
+   
+       
+       \Abst{Рассматривается математическая модель для прогноза отзыва лицензии 
+кредитной организации на период до 6~месяцев по данным из публикуемой отчетности 
+кредитных организаций. Модель является коллективным решением по набору 
+ком\-би\-на\-тор\-но-ло\-ги\-че\-ских методов распознавания и~ре\-ша\-ющих лесов различного типа. 
+Оценка эффективности разработанной коллективной модели по показателю ROC AUC 
+(area under receiver operating characteristic curve)
+составила~0,74. Модель позволяет выделять группы кредитных организаций 
+с~повышенным и~пониженным риском отзыва лицензии. Было проведено ранжирование 
+различных показателей, показавшее важность величины ликвидных и~высоколиквидных 
+активов.}
+        
+       \KW{прогнозирование; коллективные методы; финансовое состояние; кредитная 
+организация}
+
+\DOI{10.14357/19922264190405} 
+  
+\vspace*{-3pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+     
+      
+\section{Введение }
+
+Банковский сектор представляет собой крупнейшую по объему средств часть 
+финансового рынка России, и~трудно переоценить важность деятельности 
+кредитных организаций для экономики\linebreak страны в~целом и~отдельных 
+компаний и~граждан в~частности. Банком России на протяжении последних 
+лет проводилась работа по выводу с~рынка недобросовестных и~финансово 
+несостоятельных участников: у кредитных организаций отзывались\linebreak лицензии 
+на осуществление банковских операций или проводились мероприятия по 
+финансовому оздо\-ров\-ле\-нию с~приостановкой полномочий бывших 
+собственников и~руководства. Как правило, данные события были связаны 
+с~ухудшением финансового состояния кредитной организации. Однако для 
+клиентов банков момент наступления\linebreak такого негативного события мог стать 
+полной неожиданностью. 
+
+Естественно, что деятельность банковского %\linebreak 
+надзора, связанная с~банковской тайной и~информацией ограниченного 
+доступа, является не\-пуб\-лич\-ной. Поэтому невозможно заранее сказать, 
+безопас\-но ли хранить средства (в~размере, превышающем объем страховой 
+ответственности Государственной корпорации
+<<Агентство по страхованию вкладов>>) в~данном банке или нет. Однако существуют 
+раз\-личные методики, в~частности у кредитных рейтинговых агентств, 
+позволяющие на основе количественных и~качественных показателей 
+оценить вероятность наступления дефолта кредитной организации на 
+определенном горизонте. Следует отметить, что отзыв лицензии может 
+произойти и~без наступления дефолта кредитной организации. В~связи 
+с~этим возникает потребность исследования возможности прогнозирования 
+ухудшения финансового состояния кредитной организации заранее.
+
+ Для 
+решения этой задачи объективно могут использо\-вать\-ся средства машинного 
+обучения. Их очевидными преимуществами по сравнению с~экспертными 
+оценками являются объ\-ек\-тив\-ность, универсаль\-ность, относительно низкая 
+сто\-и\-мость, воз\-мож\-ность быст\-рой коррекции алгоритмов прогнозирования по 
+мере поступления новой информации. 
+
+Перечисленные преимущества не 
+могут не привлекать внимание исследователей и~вызывают появление работ 
+по тематике использования методов компьютерного обучения для решения 
+задач прогнозирования в~банковской сфере~[1, 2]. 
+
+      В настоящее время существует большое число технологий обучения, 
+а~также средств статистически корректной оценки эффективности 
+полученных решений~[3, 4]. Большое значение имеют также сопутствующие 
+обучению методы ранжирования показателей по их значимости при 
+прогнозировании. Такое разнообразие технологий вызывает необходимость 
+исследования как их эф\-фек\-тив\-ности по отдельности, так и~выбора 
+оптимальной схемы построения коллективных решений~\cite{3-sen}.
+      
+\section{Использование для~прогноза методов распознавания }
+
+ Сформулируем поставленную выше задачу прогнозирования ухудшения 
+состояния кредитных организа\-ций как задачу предсказания отзыва лицензии 
+по данным из публикуемой отчетности кредитных организаций. 
+
+Имеется 
+набор объектов (кредитных организаций) с~признаковым описанием 
+(показатели отчетности\footnote{Отдельные показатели деятельности 
+кредитной организации, используемые для расчета обязательных нормативов 
+из разд.~2 отчетности банков по форме 0409135 <<Информация об 
+обязательных нормативах>>, составляемой в~соответствии с~Указанием 
+Банка России от 24.11.2016 №\,4212-У <<О~перечне, формах и~порядке 
+составления и~представления форм отчетности кредитных организаций 
+в~Центральный банк Российской Федерации>>.}, с~ежемесячной 
+периодичностью раз\-ме\-ща\-емые на сайте Банка России\footnote{\sf 
+www.cbr.ru.}), для которых\linebreak
+ известно значение бинарного признака~--- будет 
+ли негативное событие отзыва лицензии у~кредитной организации в~течение 
+ближайших 6~месяцев или нет (со\-став\-лен\-ное по информации  
+пресс-ре\-ли\-зов с~сайта Банка России). Задача заключается 
+в~прогнозировании значения функции, зависящей от признакового описания 
+объекта и~принимающей бинарное значений <<да>> или <<нет>> на 
+ана\-ли\-зи\-ру\-емую дату с~горизонтом прогнозирования 6~месяцев 
+в~зависимости от данных отчетности банка. 
+
+Важно отметить, что причиной 
+отзыва лицензии могут стать не только проблемы, связанные с~финансовым 
+состоянием кредитной организации, но и~нарушения в~об\-ласти ПОД/ФТ
+(противодействия отмыванию доходов и~финансированию
+терроризма). 
+В~связи с~этим из обучающей выборки были исключены кредитные 
+организации, у~которых лицензии были отозваны в~связи с~указанными 
+нарушениями.
+
+      Был проведен эксперимент по оценке возможности прогнозирования 
+отзыва лицензии, связанного с~финансовым состоянием банка. Прогноз 
+проводился на период с~января по июнь 2015~г. В~анализ были включены 
+24~банка, для которых отзыв лицензии был осуществлен в~указанный 
+период. При этом по экспертной оценке сотрудников Банка России отзыв 
+лицензии для этих банков определенно был связан с~их финансовым 
+со\-сто\-яни\-ем. Также в~анализ были включены 692~банка, которые продолжали 
+действовать без отзыва лицензии в~течение 2~лет с~декабря 2014~г. Для 
+прогнозирования использовались параметры банковской отчетности, 
+известные на момент времени, в~который производился прогноз. Всего 
+в~анализе использовался 31~уникальный показатель банковской отчетности. 
+Однако при прогнозировании применялись банковские показатели, 
+рассчитанные для месяца, предшествующего дате составления прогноза, 
+а~также для месяцев, отстоящих от даты прогноза на~1, 2 и~3 месячных 
+интервала. Таким образом, общее число используемых для прогноза 
+показателей составило~124.
+      
+      Задача прогнозирования, очевидно, может быть сведена к~задаче 
+распознавания с~двумя классами. При этом задача усложняется малым 
+размером целевого класса, а также высокой размерностью данных, связанной 
+с~необходимостью учета динамики показателей финансового состояния 
+банков.\linebreak Высокая эффективность в~этих условиях может достигать\-ся при 
+использовании коллективных решений. Существенным требованием является 
+необходимость анализа информативности различных показателей. Данная 
+задача осложняется тем, что информативность показателей проявляется 
+только в~рамках их взаимодействия. Можно предположить, что для 
+повышения достоверности могут быть использованы коллективные методы 
+оценивания информативности. Разработка таких методов также является 
+одной из целей представляемого исследования.
+      
+      Для вычисления оптимальных прогнозных решений был 
+протестирован ряд разнообразных технологий распознавания. Однако 
+возможность получе\-ния эффективного алгоритма прогнозирования удалось 
+показать только для следующих методов:
+      \begin{itemize}
+      \item логистическая регрессия (LogReg);
+      \item алгоритм вычисления оценок с~использованием всевозможных 
+наборов признаков в~качестве опорных множеств (АВО)~\cite{3-sen, 5-sen};
+      \item решающий лес, использующий бэггинг для генерации ансамблей 
+деревьев (RF)~\cite{4-sen};
+      \item решающий лес, основанный на процедуре адап\-тив\-но\-го бустинга 
+(АdaBoost)~\cite{4-sen, 7-sen};
+      \item решающий лес, основанный на процедуре градиентного 
+бустинга (GradBoost)~\cite{4-sen, 8-sen};
+      \item метод статистически взвешенных синдромов  
+(СВС)~\cite{3-sen, 6-sen}.
+      \end{itemize}
+      
+      Оценка точности прогноза проводилась с~использованием метода 
+кросс-валидации со 100~фолдами. Для оценивания результатов была 
+использована известная метрика ROC AUC. Результаты приведены в~табл.~1.
+
+  
+      
+%\begin{table*}
+{ %\small %tabl1
+\begin{center}
+
+\parbox{50mm}{{{\tablename~1}\ \ \small{Оценка точности прогноза различными методами}}
+
+}
+
+\vspace*{6pt}
+
+\small 
+\begin{tabular}{|l|c|c|}
+\hline
+\multicolumn{1}{|c|}{Метод}& ROC AUC & Ранг\\
+\hline
+LogReg& 0,626& 1\\
+RF& 0,707& 5\\
+GradBoost& 0,662& 2\\
+АdaBoost& 0,716& 6\\
+АВО& 0,679& 3\\
+СВС& 0,698& 4\\
+\hline
+\end{tabular}
+\end{center}
+}
+%\end{table*}
+      
+\section{Коллективное решение }
+
+      На основе полученных данных строилось коллективное решение. На 
+первом этапе проводился поиск оптимального порога~$b_*$в решающем 
+правиле для каждого из 6~алгоритмов. Подбор порога проводился из условия 
+минимальности различия между чувствительностью и~специфичностью. 
+Коллективная оценка объекта, описываемая вектором 
+признаков~$\mathbf{x}_j$, вычислялась в~два этапа. На первом этапе по 
+оценке $\gamma_*(\mathbf{x}_j)$, полученной с~помощью алгоритма~$A_*$, 
+вычислялось значение бинарного показателя~$\beta_*$, указывающего на 
+негативный прогноз для объекта~$\mathbf{x}_j$ при 
+$\beta_*(\mathbf{x}_j)\hm=1$ и~на положительный прогноз при 
+$\beta_*(\mathbf{x}_j)\hm=0$. Вычисление~$\beta_*$ проводилось по схеме: 
+$$
+\beta_*(\mathbf{x}_j)=
+\begin{cases}
+1 & \mbox{при } \gamma_*(\mathbf{x}_j)>b_*\,;\\
+0 & \mbox{в~противном~случае}.
+\end{cases}
+$$
+
+ Каждому из алгоритмов 
+сопоставлялся весовой коэффициент~$\theta_*$. Рассматривался следующий 
+способ задания весовых коэффициентов: алгоритмы ранжировались по 
+величине ROC AUC. Значение коэффициента~$\theta_*$ для 
+алгоритма~$A_*$ приравнивалось рангу~$A_*$ из табл.~1. Коллективная 
+оценка $\gamma_{\mathrm{int}}(\mathbf{x}_j)$ вычислялась по формуле:
+      \begin{multline*}
+      \gamma_{\mathrm{int}}(\mathbf{x}_j) =
+      \theta_{\mathrm{свс}} \beta_{\mathrm{свс}} 
+(\mathbf{x}_j) +\theta_{\mathrm{GB}}\beta_{\mathrm{GB}}(\mathbf{x}_j) +{}\\
+{}+\theta_{\mathrm{AB}}  \beta_{\mathrm{AB}} (\mathbf{x}_j) +
+\theta_{\mathrm{RF}}  \beta_{\mathrm{RF}} (\mathbf{x}_j) +
+\theta_{\mathrm{LR}}\beta_{\mathrm{LR}}(\mathbf{x}_j)+{}\\
+{}+
+\theta_{\mathrm{ABO}}\beta_{\mathrm{ABO}}  (\mathbf{x}_j)\,.
+      \end{multline*}
+      
+      %\begin{table*}
+{%tabl2
+\begin{center}
+%\vspace*{1pt}
+
+\parbox{70mm}{{{\tablename~2}\ \ \small{Уровень риска отзыва лицензии для различных интервалов балльных оценок}}
+
+}
+
+\vspace*{6pt}
+
+\small
+\begin{tabular}{|c|c|c|}
+\hline
+\multicolumn{1}{|c|}{\raisebox{-6pt}[0pt][0pt]{Баллы}}& \multicolumn{2}{c|}{Количество отозванных лицензий}\\
+\cline{2-3}
+&\hspace*{10mm}шт.\hspace*{10mm} &\%\\
+\hline
+$\geq 20$& 5 из 19\hphantom{9} & 26,3\hphantom{9}\\
+От 17 до 19& 12 из 63\hphantom{99} & 19\hphantom{99,}\\
+От 3 до 16 & 9 из 401& 2,2\\
+$<3$& 3 из 252 & 1,2\\
+\hline
+\end{tabular}
+\end{center}}
+%\end{table*}
+\vspace*{12pt}
+
+\noindent
+Величина ROC AUC для коллективного решения составила~0,74. 
+     
+     Коллективные оценки риска оценивались по шкале от~0 до~21~балла, 
+где 21~балл соответствовал негативному прогнозу, а~0~баллов 
+соответствовали позитивному прогнозу. Из табл.~2 видно, что из 19~банков 
+с~21 баллом лицензия была отозвана у~5, что составляет~26,3\%. В~группе 
+из 252~банков с~менее чем тремя баллами лицензия была отозвана только 
+у~трех банков (1,2\%). Таким образом, коллективное решение отчетливо 
+выделяет группы с~пониженным и~повышенным риском отзыва лицензии. 
+
+
+      
+      Для оценивания информативности признаков использовались 
+коллективные оценки ин\-фор\-ма\-тив\-ности, включающие оценки, полученные %\linebreak 
+с~помощью всех трех используемых вариантов ре\-ша\-ющих лесов, а~также 
+метода СВС. 
+
+В~методах {решающих} лесов информативность признаков 
+вычисляется как среднее значение показателей информативности, 
+рассчитанных для отдельных %\linebreak 
+деревьев и~характеризующих улучшение 
+аппроксимации данных после включения признака в~модель~\cite{9-sen}. 
+
+В~методе СВС показателем информативности служит значение 
+статистики~$\chi^2$ при сравнении распределения целевого класса в~группах 
+слева и~справа от рассчитанного для признака оптимального  
+порога~\cite{6-sen}.
+      
+      Таким образом, информативность признаков рассчитывалась отдельно 
+для решающих лесов, основанных на бэггинге, адаптивном или градиентном 
+бустинге, а также для СВС. Обозначим показатели информативности по этим 
+методам соответственно как $I_{\mathrm{RF}}$, $I_{\mathrm{AB}}$, $I_{\mathrm{GB}}$ 
+и~$I_{\mathrm{свс}}$. Далее проводилось ранжирование признаков по 
+величине каждого из четырех перечисленных показателей. Ранги 
+по~$I_{\mathrm{RF}}$, $I_{\mathrm{AB}}$, $I_{\mathrm{GB}}$ и~$I_{\mathrm{свс}}$ обозначим 
+как~$R_{\mathrm{RF}}$, $R_{\mathrm{AB}}$, $R_{\mathrm{GB}}$ и~$R_{\mathrm{свс}}$.
+      
+      Интегральный показатель информативности для $I_{\mathrm{int}}(X_j)$ 
+признака~$X_j$ вычислялся как сумма рангов по каждому из четырех 
+показателей информативности: 
+\begin{multline*}
+I_{\mathrm{int}}\left(X_i\right)= {}\\
+{}=
+R_{\mathrm{свс}}\left(X_i\right)+ R_{\mathrm{GB}}\left(X_i\right)+ 
+R_{\mathrm{AB}}\left(X_i\right)+R_{\mathrm{RF}}\left(X_i\right)\,.
+\end{multline*}
+      
+      Признаки, имеющие ранги от одного до пяти, приведены в~табл.~3.
+      
+\setcounter{table}{2}
+\begin{table*}\small %tabl3
+\begin{center}
+\Caption{Наиболее информативные показатели}
+\vspace*{2ex}
+
+\begin{tabular}{|c|c|p{115mm}|}
+\hline
+Ранг&\tabcolsep=0pt\begin{tabular}{c}Интегральный\\ 
+показатель\\ информативности\end{tabular}&\multicolumn{1}{c|}{Показатель 
+банковской отчетности}\\
+\hline
+1&\hphantom{9}4&Высоколиквидные активы за месяц, предшествующий моменту прогноза\\
+\hline
+2&18&Ликвидные активы за месяц, предшествующий моменту прогноза\\
+\hline
+\multicolumn{1}{|c|}{\raisebox{-6pt}[0pt][0pt]{3}} &
+\multicolumn{1}{c|}{\raisebox{-6pt}[0pt][0pt]{19}}&Активы II группы, взвешенные с~коэффициентом 20\% (мера риска), за месяц, 
+отстоящий на один месячный интервал от даты прогноза\\
+\hline
+\multicolumn{1}{|c|}{\raisebox{-6pt}[0pt][0pt]{4}}&
+\multicolumn{1}{c|}{\raisebox{-6pt}[0pt][0pt]{40}}&Активы, имеющие нулевой коэффициент риска за месяц, отстоящий на четыре 
+месячных интервала от даты прогноза\\
+\hline
+\multicolumn{1}{|c|}{\raisebox{-6pt}[0pt][0pt]{5}}&
+\multicolumn{1}{c|}{\raisebox{-6pt}[0pt][0pt]{49}}&Активы II группы, взвешенные с~коэффициентом 20\% (мера риска) за месяц, 
+отстоящий на три месячных интервала от даты прогноза\\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{-3pt}
+\end{table*}
+
+\vspace*{-6pt}
+      
+\section{Заключение}
+
+\vspace*{-2pt}
+
+      Как видно из полученных результатов, разработанная коллективная 
+модель по группе методов распознавания по данным отчетности позволяет 
+с~некоторой долей уверенности предсказать отзыв лицензии у кредитной 
+организации. Возможность эффективного прогнозирования можно связать 
+с~проводимой Банком России работой над достоверностью отчетности 
+участников финансового рынка. Разработанная методика может быть полезна 
+как для банковского надзора, так и~для участников финансового рынка. 
+Однако для повышения точности прогнозирования негативных событий, 
+безусловно, недостаточно следить только за значениями показателей 
+отчетности: важно использовать механизм риск-ана\-ли\-ти\-ки, а~также 
+формировать доверительную среду на финансовом рынке.
+
+\vspace*{-6pt}
+      
+   {\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+ 
+ \vspace*{-2pt}
+ 
+ 
+\bibitem{1-sen}
+\Au{Ясницкий Л.\,Н., Иванов~Д.\,В., Липатова~Е.\,В.} Нейросетевая система оценки 
+вероятности банкротства банков~// Биз\-нес-ин\-фор\-ма\-ти\-ка, 2014.  Т.~3. №\,29. 
+С.~49--56.
+{\looseness=1
+
+}
+\bibitem{2-sen}
+\Au{Синельникова-Мурылева Е.\,В., Горшкова~Т.\,Г., Ма\-ке\-ева~Н.\,В.} Прогнозирование 
+дефолтов в~российском банковском секторе~// Экономическая политика, 2018. Т.~2. 
+№\,13. С.~8--27.
+\bibitem{3-sen}
+\Au{Журавлев Ю.\,И., Рязанов~В.\,В., Сенько~О.\,В.} Распознавание: Математические 
+методы. Программная система. Применения.~--- M.: Фазис, 2006. 159~c.
+\bibitem{4-sen}
+\Au{Hastie T., Tibshirani~R., Friedman~J.} The elements of statistical learning: Data 
+mining, inference, and prediction.~--- Springer, 2009. 745~p.
+\bibitem{5-sen}
+\Au{Журавлев Ю.\,И.} Об алгебраическом подходе к~решению задач распознавания или 
+классификации~// Проб\-ле\-мы кибернетики, 1978. №\,33. С.~5--68.
+
+\bibitem{7-sen} %6
+\Au{Freund Y., Schapire~R.} A~decision-theoretic generalization of on-line learning and an 
+application to boosting~// J.~Comput. Syst. Sci., 1997. Vol.~55. P.~119--139.
+\bibitem{8-sen} %7
+\Au{Friedman J.} Greedy function approximation: A~gradient boosting machine~//  
+Ann. Stat., 2001. Vol.~5. Iss.~29. P.~1189--1232.
+
+\bibitem{6-sen} %8
+\Au{Кузнецов В.\,А., Сенько~О.\,В., Кузнецова~А.\,В. и~др.} Распознавание нечетких 
+систем по методу статистически взвешенных синдромов и~его применение для 
+иммуногематологической нормы и~хронической патологии~// Хим. физика, 
+1996. Т.~15. №\,1. С.~81--100.
+
+\bibitem{9-sen}
+\Au{Louppe G.} Understanding random forests: From theory to practice.~--- 
+Liege: University of Liege, 2014.  PhD Thesis. 223~p.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 04.02.19}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{RESEARCH OF~THE~POSSIBILITY TO~FORECAST CHANGES 
+IN~FINANCIAL STATE OF~A~CREDIT ORGANIZATION\\ ON~THE~BASIS 
+OF~PUBLIC FINANCIAL STATEMENTS}
+
+
+\def\titkol{Research of~the~possibility to~forecast changes in 
+financial state of a credit organization on~the~basis 
+of~public financial statements}
+
+\def\aut{Yu.\,I.~Zhuravlev$^{1,2}$, O.\,V.~Sen'ko$^1$, 
+N.\,N.~Bondarenko$^2$, V.\,V.~Ryazanov$^1$, A.\,A.~Dokukin$^1$, 
+and~A.\,P.~Vinogradov$^1$}
+
+\def\autkol{Yu.\,I.~Zhuravlev, O.\,V.~Sen'ko, 
+N.\,N.~Bondarenko, et al.}
+%V.\,V.~Ryazanov$^1$, A.\,A.~Dokukin$^1$, 
+%and~A.\,P.~Vinogradov$^1$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+
+       \noindent
+      $^1$Federal Research Center ``Computer Science and Control'' of the 
+Russian Academy of Sciences, 44-2~Vavilov\linebreak
+$\hphantom{^1}$Str., Moscow 119333, Russian 
+            Federation
+        
+        \noindent
+        $^2$M.\,V.~Lomonosov Moscow State University, 1-52~Leninskie Gory, GSP-1, 
+Moscow 119991, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+
+      
+      \Abste{The mathematical model for forecasting of license revocation of 
+a~credit organization in the 6-month period based on public financial statements 
+is considered. The model represents an ensemble of combinatorial and logical 
+methods and decision trees of different types. Its effectiveness estimated by ROC 
+AUC 
+(area under receiver operating characteristic curve)
+is~0.74. The model allows distinguishing groups of credit organizations with 
+higher and lower license revocation risks. Also, the ranking of different financial 
+statement indicators has been performed which marked the importance of liquid 
+and highly liquid assets.}
+      
+      \KWE{forecasting; algorithm ensembles; financial state; credit 
+organization}
+      
+      
+      
+       \DOI{10.14357/19922264190405} 
+
+%\vspace*{-14pt}
+
+ \Ack
+      \noindent
+       The research has been carried out with the partial financial support of the 
+Russian Foundation for Basic Research (project 18-29-03151).
+
+
+
+%\vspace*{-6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{1-sen-1}
+\Aue{Yasnitskiy, L.\,N., D.\,V.~Ivanov, and E.\,V.~Lipatova.} 2014. Neyrosetevaya  
+sistema otsenki veroyatnosti bankrotstva bankov [Neural network designed 
+to estimate probability of bank bankruptcies]. \textit{Biznes-informatika} [Business Informatics] 
+3(29):49--56.
+\bibitem{2-sen-1}
+\Aue{Sinel'nikova-Muryleva, E.\,V., T.\,G.~Gorshkova, and N.\,V.~Makeeva}. 2018. 
+Prognozirovanie defoltov v~rossiyskom bankovskom sektore [Default 
+forecasting in the Russian banking sector]. \textit{Ekonomicheskaya politika}
+[Economic Policy] 2(13):8--27.
+\bibitem{3-sen-1}
+\Aue{Zhuravlev, Yu.\,I., V.\,V.~Ryazanov, and O.\,V.~Sen'ko}. 2006. \textit{Raspoznavanie. 
+Matematicheskie metody. Programmnaya sistema. Primeneniya} 
+[Recognition. Mathematical methods. Software system. Applications].
+Moscow: Fazis. 159~p.
+\bibitem{4-sen-1}
+\Aue{Hastie, T., R.~Tibshirani, and J.~Friedman.} 2009. 
+\textit{The elements of statistical 
+learning: Data mining, inference, and prediction}. Springer. 745~p.
+\bibitem{5-sen-1}
+\Aue{Zhuravlev, Yu.\,I.} 1978. Ob algebraicheskom podkhode k~re\-she\-niyu zadach 
+raspoznavaniya ili klassifikatsii [On algebraic approach to recognition and 
+classification problems]. \textit{Problemy kibernetiki} [Cybernetic Problems] 
+33:5--68.
+
+\bibitem{7-sen-1} %6
+\Aue{Freund, Y., and R.~Schapire}. 1997. A~decision-theoretic generalization of 
+on-line learning and an application to boosting. \textit{J.~Comput. Syst. Sci.} 
+55:119--139.
+\bibitem{8-sen-1} %7
+\Aue{Friedman, J.} 2001. Greedy function approximation: A~gradient boosting 
+machine. \textit{Ann. Stat.} 5(29):1189--1232.
+
+\bibitem{6-sen-1} %8
+\Aue{Kuznetsov, V.\,A., O.\,V.~Sen'ko, A.\,V.~Kuznetsova, \textit{et al.}} 1996. 
+Recognition of fuzzy systems by the method of 
+statistically weighed syndromes and its application to immunohematological 
+characterization of the
+norm and chronical pathology]. \textit{Chem. Phys. Rep.} 
+15(1):87--107.
+
+\bibitem{9-sen-1}
+\Aue{Louppe, G.} 2014. Understanding random forests: From theory to 
+practice.  Liege: University of Liege.  PhD Thesis. 223~p.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+%\vspace*{-7pt}
+
+\hfill{\small\textit{Received February 4, 2019}}
+
+%\pagebreak
+
+%\vspace*{-22pt}
+
+\Contr
+
+
+\noindent
+\textbf{Zhuravlev Yuri  I.} (b.\ 1935)~--- Doctor of Science in physics and 
+mathematics, Academician of RAS, principal scientist, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences,  
+44-2~Vavilov Str., Moscow 119333, Russian Federation; honorary professor, head 
+of the Mathematical Methods of Forecasting Department, M.\,V.~Lomonosov 
+Moscow State University, 1-52~Leninskie Gory, GSP-1, Moscow 119991, 
+Russian Federation; \mbox{zhur@ccas.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Sen'ko Oleg V.} (b.\ 1957)~--- Doctor of Science in physics and 
+mathematics, leading scientist, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences,  
+44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{senkoov@mail.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Bondarenko Nikolaj N.} (b.\ 1990)~--- postgraduate student, 
+M.\,V.~Lomonosov Moscow State University, \mbox{1-52}~Leninskie Gory, GSP-1, 
+Moscow 119991, Russian Federation; \mbox{kolianmos1@gmail.com} 
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Ryazanov Vladimir V.} (b.\ 1950)~--- Doctor of Science in physics and 
+mathematics, principal scientist, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences,  
+44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{rvvccas@mail.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Dokukin Alexander A.} (b.\ 1980)~--- Candidate of Science (PhD) in 
+physics and mathematics, senior scientist, Federal Research Center ``Computer 
+Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., 
+Moscow 119333, Russian Federation; \mbox{dalex@ccas.ru}
+
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Vinogradov Alexander P.}  (b.\ 1951)~--- Candidate of Science (PhD) in 
+physics and mathematics, senior scientist, Federal Research Center ``Computer 
+Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., 
+Moscow 119333, Russian Federation; \mbox{vngrccas@mail.ru}
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}  
+
+      

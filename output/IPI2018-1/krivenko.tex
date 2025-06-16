@@ -1,0 +1,858 @@
+\def\stat{krivenko}
+
+\def\tit{РЕКОНСТРУКЦИЯ ОСЕЙ ГЛАВНЫХ КОМПОНЕНТ}
+
+\def\titkol{Реконструкция осей главных компонент}
+
+\def\aut{М.\,П.~Кривенко$^1$}
+
+\def\autkol{М.\,П.~Кривенко}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Кривенко М.\,П.}
+\index{Krivenko M.\,P.}
+
+
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнена при финансовой поддержке РФФИ (проект 17-01-00816).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского центра 
+<<Информатика и~управ\-ле\-ние>> Российской академии наук, 
+\mbox{mkrivenko@ipiran.ru}}
+
+%\vspace*{-6pt}
+
+
+
+\Abst{Анализ главных компонент (PCA~--- Principal Component Analysis) 
+широко используется при исследовании данных, их 
+сжатии и~визуализации. Новые возможности открывает вероятностный PCA (PPCA~---
+probabilistic PCA), 
+реализуемый в~рамках принципа максимального правдоподобия для гауссовской модели 
+с~латентными переменными. В~рамках PPCA появились алгоритмы обработки данных, 
+нацеленные на снижение размерности данных и~обеспечивающие переход в~пространство 
+главных компонент, но не да\-ющие в~явном виде характеристики главных компонент. Статья 
+посвящена деталям, углуб\-ля\-ющим понимание особенностей PPCA, ис\-прав\-ле\-ни\-ям 
+выявленных ошибок в~пуб\-ли\-ка\-ци\-ях. Предложены и~обоснованы два метода реконструкции 
+характеристик главных компонент. Один из них основывается на пересчете ковариационной 
+матрицы в~сформированном пространстве главных компонент. Другой метод заключается 
+в~последовательном повторении одинаковых шагов: выявления первой главной компоненты 
+и~исключения ее из анализа данных.}
+
+\KW{анализ главных компонент; EM-алгоритм; реконструкция осей и~дисперсий главных 
+компонент}
+
+\DOI{10.14357/19922264180109} 
+  
+%\vspace*{6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+     В сфере практического использования методов многомерного анализа 
+данных исследователь сталкивается с~трудностями описания сложных 
+взаимосвязей между признаками и~интерпретацией множества частных 
+результатов о~зависимостях. Эти трудности можно попытаться преодолеть, 
+если свес\-ти систему заданных величин к~совокупности независимых величин 
+и/или снизить размерность исходного признакового пространства. Один из 
+путей решения подобных задач заключается в~применении анализа главных 
+компонент (PCA); его суть заключается 
+в~следующем: с~помощью линейного преобразования исходных величин 
+осуществляется переход к~новой системе уже некоррелированных признаков, 
+которые называют главными компонентами. В~случае нормального 
+распределения данных подобное преобразование приведет к~сис\-те\-ме 
+независимых признаков. Вопрос снижения размерности будет решаться в~этой 
+новой системе признаков в~предположении, что информативность признака 
+напрямую связана с~его изменчивостью. Таким образом из совокупности 
+исходных характеристик для последующего анализа оставляются лишь те, 
+которым свойствен <<существенно>> больший разброс значений, чем 
+остальным.
+     
+     Популярность PCA определяется двумя важными свойствами.  
+Во-пер\-вых, это оптимальная (по средней квадратичной ошибке) линейная 
+схема для сжатия множества векторов высокой размерности в~множество 
+векторов более низкой размерности, а затем их восстановления. Во-вто\-рых, 
+параметры модели могут быть вычислены непосредственно из данных. 
+     
+     Однако, несмотря на эти привлекательные особенности, модель PCA 
+имеет несколько недостатков. Один из них заключается в~том, что прямые\linebreak 
+(стандартные, привычные) методы нахождения направле\-ний главных 
+компонент с~помощью раз\-ложения матрицы вторых моментов приводят 
+к~проб\-ле\-мам при большом объеме данных высокой размерности. Еще один 
+недостаток стандартных\linebreak подходов к~PCA заключается в~том, что неясно, как 
+правильно обращаться с~неполными данными. Обычно они либо 
+отбрасываются, либо восполняются на основании имеющихся значений. 
+Однако такой подход оказывается крайне неэффективным, когда доля 
+пропусков значительна. 
+
+Дополнительные трудности при применении 
+стандартных методов PCA доставляют отклонения от принимаемой модели 
+данных: в~частности, стандартный алгоритм PCA основан на предположении, 
+что данные не испорчены выбросами. 
+     
+     Для нейтрализации этих недостатков стандартного PCA было 
+предложено множество методов. Цель последующего материала~--- показать 
+варианты улучшенного PCA, которые могут нейтрализовать <<проклятие>> 
+размерности, допускают наличие пропусков и~выбросов. В~ходе изложения 
+выявляются ошибки известных результатов, представляются два новых метода, 
+обеспечивающих полноту применения PCA.
+     
+\section{Стандартный анализ главных~компонент}
+
+     Ввести главные компоненты можно различными способами. В~любом 
+случае исходной информацией для построения искомого линейного 
+преобра\-зо\-ва\-ния служит ковариационная (или корреляционная) матрица, 
+поэтому можно считать, что каждая компонента вектора данных центрирована 
+своим средним. Формировать главные компоненты можно как в~теоретическом 
+случае, когда мат\-ри\-ца вторых центральных моментов задана, так 
+и~в~выборочном случае, когда она оценивается по наблюденным значениям.
+     
+     Без потери общности ограничимся выборочным случаем центрированных 
+данных~--- $(d\times N)$-мат\-ри\-цы <<при\-знак--объ\-ект>>~$\mathbf{Y}$~--- 
+и~рассмотрением ковариационной $(d\times d)$-мат\-ри\-цы $\mathbf{S}\hm= 
+(1/N)\mathbf{Y}\mathbf{Y}^{\mathrm{T}}$. Для~$\mathbf{S}$ действует 
+спектральное разложение $\mathbf{S}\hm= 
+\mathbf{U}\mathbf{V}\mathbf{U}^{\mathrm{T}}$, где 
+$\mathbf{U}\mathbf{U}^{\mathrm{T}}\hm= 
+\mathbf{U}^{\mathrm{T}}\mathbf{U}\hm= \mathbf{I}$ 
+и~столбцы~$\mathbf{U}$ суть оси главных компонент; $\mathbf{V}\hm= 
+\mathrm{diag}\left( v_{11,},\ldots , v_{dd}\right)$ и~$v_{11}\geq \cdots \geq v_{dd}$.
+     
+     Тогда основные положения PCA следующие:
+     \begin{itemize}
+\item $(d\times k)$-мат\-ри\-ца преобразования данных~$\mathbf{W}_{\mathrm{PCA}}$ 
+состоит из столбцов, совпадающих с~осями первых главных компонент, причем 
+$\mathbf{W}^{\mathrm{T}}_{\mathrm{PCA}} \mathbf{W}_{\mathrm{PCA}}\hm=\mathbf{I}$;
+\item преобразование $\langle \mathbf{X}\rangle_{\mathrm{PCA}}$ исходных 
+данных~$\mathbf{Y}$ выражается как $\langle \mathbf{X}\rangle_{\mathrm{PCA}}\hm= 
+\mathbf{W}^{\mathrm{T}}_{\mathrm{PCA}} \mathbf{Y}$, для $k\hm<d$ имеет место 
+снижение размерности;
+\item восстановленные данные 
+$$
+\langle \mathbf{Y}\rangle_{\mathrm{PCA}}= 
+\mathbf{W}_{\mathrm{PCA}}\langle \mathbf{X}\rangle_{\mathrm{PCA}} = 
+\mathbf{W}_{\mathrm{PCA}}\mathbf{W}^{\mathrm{T}}_{\mathrm{PCA}} \mathbf{Y}\,;
+$$
+\item ошибка восстановления 
+$$
+e_R= \sum\limits^N_{n=1}\parallel 
+\mathbf{y}_n\hm- \langle \mathbf{y}_n\rangle_{\mathrm{PCA}}\parallel^2\hm= 
+\sum\nolimits^d_{j=k+1} v_{jj}\,,
+$$
+ $e_R\hm=0$ при $k\hm=d$; причем из всех 
+ортогональных линейных проекций проекция главных компонент 
+минимизирует квадратичную ошибку восстановления. 
+\end{itemize}
+
+     Общая теория PCA изложена в~[1]. Обзор отдельных результатов 
+и~доказательство обобщающей теоремы, служащие обоснованием 
+представления $e_R\hm= \sum\nolimits^d_{j=k+1} v_{jj}$, можно найти в~[2].
+     
+\section{Вероятностный анализ главных~компонент}
+
+     Описанный классический PCA основывается на идеях перехода 
+к~некоррелированным величинам и~линейной проекции исходных данных 
+в~пространство меньшей размерности. Можно рас\-смот\-реть PCA с~позиций 
+правдоподобия; такой подход открывает новые возможности и~дает ряд 
+преимуществ:
+     \begin{itemize}
+\item можно построить вариант EM (expectation-maximization) ал\-го\-рит\-ма для PCA, который является 
+вычислительно эффективным в~ситуации, когда тре\-бу\-ют\-ся лишь несколько 
+первых главных компонент, и~позволяет избежать оценивания ковариационной 
+мат\-ри\-цы исходных данных;
+\item вероятностный характер модели в~сочетании с~идеями EM-ал\-го\-рит\-ма 
+позволяют справляться с~обработкой пропущенных данных;
+\item модель может быть усложнена до смеси вероятностных моделей PCA, что 
+создает предпосылки для описания данных более сложной и~реалистичной 
+структуры;
+\item вероятностная модель PCA предоставляет возможность генерировать 
+выборки данных.
+\end{itemize}
+
+     \textbf{Вероятностная модель.} Анализ главных компонент можно рассматривать как вариант 
+обработки линейных гауссовских моделей. Целью таких моделей является 
+пред\-став\-ле\-ние ковариационной структуры наблюдаемой $d$-мер\-ной 
+переменной~$\mathbf{y}$ c~использованием меньшего чем $d(d\hm+1)/2$ 
+чис\-ла па\-ра\-мет\-ров, необходимого в~случае полной ковариационной мат\-ри\-цы. 
+Линейные гауссовские модели предполагают, что~$\mathbf{y}$ было получено 
+как линейное преобразование некоторой $k$-мер\-ной латентной 
+переменной~$\mathbf{x}$ плюс шум. Как и~прежде, $\mathbf{W}$~--- $(d\times 
+k)$-мат\-ри\-ца преобразования, $\boldsymbol{\varepsilon}$~--- $d$-мер\-ный 
+вектор шума (ошибки) с~ковариационной матрицей~$\boldsymbol{\Psi}$. Тогда 
+модель имеет вид:
+     \begin{equation}
+     \mathbf{y}=\mathbf{W x}+{\boldsymbol {\mu}} 
++{\boldsymbol{\varepsilon}}\,.
+     \label{e1-kri}
+     \end{equation}
+Принимается, что $\mathbf{x}\sim N(\mathbf{0}, \mathbf{I})$ 
+и~${\boldsymbol{\varepsilon}}\sim N(\mathbf{0}, {\boldsymbol{\Psi}})$. Тогда 
+$\mathbf{y}\sim N({\boldsymbol{\mu}}, \mathbf{W}\mathbf{W}^{\mathrm{T}} 
+\hm+ {\boldsymbol{\Psi}})$. Чтобы <<сэкономить>> параметры при 
+представлении исходных зависимостей в~пространстве~$d$, необходимо 
+принять $k\hm<d$, а также уточнить ковариационную структуру гауссовского 
+шума~$\boldsymbol{\varepsilon}$ путем ограничения 
+матрицы~$\boldsymbol{\Psi}$.
+     
+     Вероятностная модель PCA возникает в~случае, когда 
+${\boldsymbol{\Psi}}\hm= \sigma^2\mathbf{I}$ или 
+${\boldsymbol{\varepsilon}}\sim N(\mathbf{0},\sigma^2\mathbf{I})$. 
+Предполагается независимость отдельных наблюденных данных, поэтому 
+важными становятся выражения для распределений~$\mathbf{y}$ 
+и~$\mathbf{x}$:
+     $$
+     {\sf P}(\mathbf{y},\mathbf{x}) =N\left( \begin{pmatrix}
+     {\boldsymbol{\mu}}\\ \mathbf{0}\end{pmatrix}\,, \begin{pmatrix}
+     \mathbf{W}\mathbf{W}^{\mathrm{T}}+\sigma^2\mathbf{I}& \mathbf{W}\\
+     \mathbf{W}^{\mathrm{T}} & \mathbf{I}
+     \end{pmatrix} \right)\,.
+     $$
+Благодаря свойствам нормального многомерного распределения имеем:
+\begin{multline*}
+{\sf P}(\mathbf{y}\vert\mathbf{x}) ={}\\
+{}=\left( 2\pi \sigma^2\right)^{-d/2}\exp \left\{ -
+\fr{1}{2\sigma^2}\parallel \mathbf{y} -\mathbf{W x} -
+{\boldsymbol{\mu}}\parallel^2\right\}\,,
+\end{multline*}
+откуда с~использованием понятия ошибки восстановления становится понятна 
+связь с~PCA. Аналогично после упрощений можно получить, что
+\begin{multline}
+{\sf P}(\mathbf{x}\vert\mathbf{y})= N\left( \left( \mathbf{W}^{\mathrm{T}} 
+\mathbf{W}+\sigma^2\mathbf{I}\right)^{-1} 
+\mathbf{W}^{\mathrm{T}}(\mathbf{y}-{\boldsymbol{\mu}}),\right.\\ 
+\left.\sigma^2\left(\mathbf{W}^{\mathrm{T}}\mathbf{W}+\sigma^2\mathbf{I}\right)^{-
+1}\right)\,.
+\label{e2-kri}
+\end{multline}
+Для матрицы, входящей в~правую часть, обычно используется самостоятельное 
+обозначение 
+$\mathbf{W}^{\mathrm{T}}\mathbf{W}\hm+\sigma^2\mathbf{I}\hm= 
+\mathbf{M}$.
+     
+     \textbf{Прямое оценивание параметров.} Согласно~\cite{3-kri}, оценки 
+максимального правдоподобия для па\-ра\-мет\-ров модели следующие:
+     \begin{equation}
+     \left.
+     \begin{array}{rl}
+     {\boldsymbol{\mu}}_{\mathrm{ML}} &= \displaystyle \fr{1}{N}\sum\limits^N_{n=1} 
+\mathbf{y}_n\,;\\[6pt]
+     \sigma^2_{\mathrm{ML}}&= \displaystyle \fr{1}{d-k}\sum\limits^d_{j=k+1} 
+v_{jj}\,;\\[6pt]
+     \mathbf{W}_{\mathrm{ML}} &= \mathbf{U}_k \left(\mathbf{V}_k -
+\sigma^2_{\mathrm{ML}}\mathbf{I}\right)^{1/2}\mathbf{R}\,,
+     \end{array}
+     \right\}
+     \label{e3-kri}
+     \end{equation}
+где столбцы $(d\times k)$-мат\-ри\-цы~$\mathbf{U}_k$ суть оси 
+первых~$k$~главных компонент; $\mathbf{V}_k$~--- диагональная $(k\times 
+k)$-мат\-ри\-ца соответствующих дисперсий (собственные векторы 
+и~собственные значения мат\-ри\-цы~$\mathbf{S}$); $\mathbf{R}$~--- 
+произвольная $k\times k$ ортогональная мат\-ри\-ца поворота. Для реализации 
+рассмотренного варианта PPCA сначала необходимо факторизовать 
+мат\-ри\-цу~$\mathbf{S}$, после чего можно найти оценки максимального 
+правдоподобия. Без потери общ\-ности далее будем считать, что данные 
+центрированы и~${\boldsymbol{\mu}}\hm=\mathbf{0}$.
+     
+     \textbf{Редукция размерности и~оптимальное вос\-ста\-нов\-ле\-ние.} 
+В~обычном PCA снижение размерности\linebreak осуществля\-ется с~помощью 
+преобразования $\langle \mathbf{X}\rangle_{\mathrm{PCA}}\hm= 
+\mathbf{W}_{\mathrm{PCA}}^{\mathrm{T}}\mathbf{Y}$, а~восстановление данных~--- 
+$\langle \mathbf{Y}\rangle_{\mathrm{PCA}}\hm= \mathbf{W}_{\mathrm{PCA}} \langle 
+\mathbf{X}\rangle_{\mathrm{PCA}}$. Это может быть реализовано и~в~рамках PPCA. 
+Однако надо заметить, что в~рассматриваемой вероятностной  
+модели~(\ref{e1-kri}) осуществляется отображение из латентного пространства 
+значений~$\mathbf{x}$ меньшей размерности в~пространство 
+данных~$\mathbf{y}$ большей размерности. В~этом случае каж\-дой точке 
+данных~$\mathbf{y}_n$ соответствует в~латентном пространстве не один вектор, 
+а~множество точек с~гауссовским распределением вида~(\ref{e2-kri}). 
+В~качестве альтернативы стандартной проекции PCA может рассматриваться 
+удобная обобщающая характеристика этого распределения, например 
+представление~$\mathbf{y}_n$ с~по\-мощью апостериорного среднего
+     $$
+     \langle \mathbf{x}_n\rangle_{\mathrm{ML}} =\left(\mathbf{W}^{\mathrm{T}}_{\mathrm{ML}} 
+\mathbf{W}_{\mathrm{ML}} +\sigma^2\mathbf{I}\right)^{-1} 
+\mathbf{W}_{\mathrm{ML}}^{\mathrm{T}} \mathbf{y}_n\,,
+     $$
+являющегося одновременно и~модой апостериорного распределения. Отметим 
+при этом, что ко\-вариация условного распределения задается ве\-ли\-чиной 
+$\sigma^2(\mathbf{W}_{\mathrm{ML}}^{\mathrm{T}} \mathbf{W}_{\mathrm{ML}} \hm+ 
+\sigma^2\mathbf{I})^{-1}$, которая является\linebreak
+ постоянной для всех точек данных. 
+Теперь с~по\-мощью приложения~B~\cite{3-kri} получаем, что оптимальное 
+восстановление апостериорного среднего задается равенствами:
+\begin{multline*}
+\langle \mathbf{y}_n\rangle_{\mathrm{ML}} =\mathbf{W}_{\mathrm{ML}} 
+\left(\mathbf{W}_{\mathrm{ML}}^{\mathrm{T}} \mathbf{W}_{\mathrm{ML}}\right)^{-1} 
+\mathbf{M}\langle \mathbf{x}_n \rangle_{\mathrm{ML}}={}\\
+{}= \mathbf{W}_{\mathrm{ML}} \left(
+\mathbf{W}_{\mathrm{ML}}^{\mathrm{T}} 
+\mathbf{W}_{\mathrm{ML}}\right)^{-1} \mathbf{W}^{\mathrm{T}}_{\mathrm{ML}} \mathbf{y}_n\,.
+\end{multline*}
+     
+     \textbf{EM-алгоритм оценивания параметров.} Рас\-смот\-рим версию  
+EM-ал\-го\-рит\-ма, позволяющую получать для набора данных главные 
+компоненты. Данный алгоритм не требует вычисления выборочных 
+ковариаций, может обрабатывать данные высокой размерности более 
+эффективно, чем традиционные PCA. Следуя~\cite{4-kri}, получаем шаги  
+EM-ал\-го\-рит\-ма в~следующем виде:
+     \begin{align*}
+     \hspace*{-10mm}\mathbf{M} 
+&=\mathbf{W}^{\mathrm{T}}\mathbf{W}+\sigma^2\mathbf{I}\,;\\
+          \hspace*{-10mm}\widetilde{\mathbf{W}} &= \mathbf{S}\mathbf{W}\left(\sigma^2\mathbf{I} 
++\mathbf{M}^{-1} \mathbf{W}^{\mathrm{T}}\mathbf{SW}\right)^{-1} ={}\\
+&\hspace*{20mm}{}= 
+     \mathbf{SW} \left( \sigma^2 \mathbf{M}+\mathbf{W}^{\mathrm{T}} 
+\mathbf{SW}\right)^{-1}\mathbf{M}\,;\\
+          \hspace*{-10mm}\widetilde{\sigma}^2 &= \fr{1}{d}\,\mathrm{tr} 
+          \left(\mathbf{S}-\mathbf{SWM}^{-1}
+         \widetilde{\mathbf{W}}^{\mathrm{T}}\right)\,,
+     \end{align*}
+где $\mathbf{W}$ и~$\sigma^2$ суть старые значения параметров модели; 
+$\widetilde{\mathbf{W}}$ и~$\widetilde{\sigma}^2$~--- новые. Приведена 
+альтернативная форма для~$\widetilde{\mathbf{W}}$, более удобная с~точки 
+зрения обращения матриц ($\sigma^2\mathbf{M}\hm+ 
+\mathbf{W}^{\mathrm{T}}\mathbf{SW}$~--- симметричная матрица). 
+В~результате итерационного процесса получаются 
+значения~$\mathbf{W}_{\mathrm{EM}}$ и~$\sigma^2_{\mathrm{EM}}$.
+
+     Для реализации итерационного EM-ал\-го\-рит\-ма необходимо решить 
+вопросы выбора начальных приближений и~критерия завершения пересчета 
+оценок. Принимая во внимание, что никакой дополнительной информации 
+о~параметрах модели нет, приходится остановиться на произвольном выборе 
+матрицы факторных нагрузок: чтобы избежать <<неожиданностей>> при 
+матричных операциях, в~качестве~$k$~столб\-цов~$\mathbf{W}$ берутся 
+первые столбцы единичной $(d\times d)$-мат\-ри\-цы. Что касается 
+па\-ра\-мет\-ра~$\sigma^2$, то здесь можно учесть дисперсии исходных данных 
+и~принять $\sigma^2\hm= \mathrm{tr}\left(\mathbf{S}\right)/d$. 
+     
+     В~основу критерия завершения итерационного процесса можно положить 
+контроль изменений следующих характеристик: ошибки 
+восстановления~$e_R^{(t)}$, $\mathbf{W}^{(t)}$ и~$(\sigma^2)^{(t)}$, 
+где~$t$~--- шаг итерации. Первый показатель отражает поведение целевой 
+функции, два последних~--- параметров модели. 
+     
+     Особого внимания требует формализация сходимости 
+     в~случае~$\mathbf{W}$: при максимизации правдоподобия действует 
+представление~(\ref{e3-kri}), где конкретный вид~$\mathbf{R}$ зависит, 
+например, от начальных приближений для параметров модели~$\mathbf{W}$ 
+и~$\sigma^2$. По этой причине объектом внимания становится соотношение:
+     $$
+     \mathbf{W}^{(t)}\underset{t\to\infty}{\longrightarrow} \mathbf{U}_k 
+\left(\mathbf{V}_k-\sigma^2\mathbf{I}\right)^{1/2}\mathbf{R}\,,
+     $$
+которое эквивалентно
+$$
+\mathbf{B}\mathbf{W}^{(t)} \underset{t\to\infty}{\longrightarrow} \mathbf{R}\,,
+$$
+где $\mathbf{B}\hm= ((\mathbf{V}_k\hm- \sigma^2\mathbf{I})^{1/2})^{-1} 
+\mathbf{U}_k^{\mathrm{T}}$. Таким образом, необходимо следить за 
+сходимостью $(\mathbf{BW}^{(t)})^{\mathrm{T}} 
+\mathbf{BW}^{(t)}\underset{t\to\infty}{\longrightarrow} \mathbf{I}$, например 
+путем измерения точности аппроксимации единичной матрицы с~по\-мощью 
+$(\mathbf{BW}^{(t)})^{\mathrm{T}} \mathbf{BW}^{(t)}$.
+
+     Анализ поведения EM-ал\-го\-рит\-ма в~реальных ситуациях выявил, что 
+чувствительность указанных показателей различна. Это может приводить 
+к~ошибкам: согласно одному показателю процесс сошелся, но предельных 
+значений другими не достигнуто. 
+     
+     Ряд проведенных автором статьи экспериментов показал следующее: 
+если целью исследований является обработка данных в~пространстве 
+сниженной размерности, то надо использовать относительную погрешность для 
+оценок параметров~$\sigma^2$ и~$\mathbf{W}$; если же в~этом нет 
+необходимости (например, в~задачах снижения уровня шума или передачи 
+сжатых данных с~по\-сле\-ду\-ющим их восстановлением), то мож\-но ограничиться 
+только слежением за точ\-ностью восстановления.
+     
+     \textbf{Вращательная неоднозначность и~реконструкция осей.} Для 
+результатов рассмотренных методов, которые максимизируют правдоподобие, 
+действует представление~(\ref{e3-kri}). Если необходимо найти истинные оси 
+главных компонент~$\mathbf{U}_k$ (а~не только подпространство главных 
+компонент), наличие произвольной матрицы поворота~$\mathbf{R}$ создает 
+трудности. Однако в~PPCA определить~$\mathbf{R}$ можно, так как  
+соотношение
+     \begin{equation}
+     \mathbf{W}_{\mathrm{ML}}^{\mathrm{T}} \mathbf{W}_{\mathrm{ML}} 
+=\mathbf{R}^{\mathrm{T}}\left(\mathbf{V}_k-\sigma^2\mathbf{I}\right) 
+\mathbf{R}
+     \label{e4-kri}
+     \end{equation}
+означает, что $\mathbf{R}^{\mathrm{T}}$ можно вычислить как матрицу из 
+собственных векторов $(k\times k)$-мат\-ри\-цы~$\mathbf{W}_{\mathrm{ML}}^{\mathrm{T}} 
+\mathbf{W}_{\mathrm{ML}}$. Пусть найдены 
+матрица~$\mathbf{W}_{\mathrm{ML}}$ и~факторизация мат\-ри\-цы 
+$\mathbf{W}_{\mathrm{ML}}^{\mathrm{T}} \mathbf{W}_{\mathrm{ML}}\hm= \mathbf{L}_{\mathrm{ML}} 
+\mathbf{K}_{\mathrm{ML}}\mathbf{L}_{\mathrm{ML}}^{\mathrm{T}}$. С~учетом~(\ref{e4-kri}) 
+имеем: 
+$$
+\mathbf{R}= \mathbf{L}_{\mathrm{ML}}^{\mathrm{T}};\qquad
+(\mathbf{V}_k\hm- \sigma^2\mathbf{I})^{1/2}\hm= \mathbf{K}_{\mathrm{ML}}^{1/2}\,. 
+$$
+Отсюда $\mathbf{W}_{\mathrm{ML}}\hm= \mathbf{U}_k \mathbf{K}_{\mathrm{ML}}^{1/2} 
+\mathbf{L}_{\mathrm{ML}}^{\mathrm{T}}$. Следовательно, для PPCA имеем:
+\begin{align*}
+\mathbf{U}_k &= \mathbf{W}_{\mathrm{ML}} \mathbf{L}_{\mathrm{ML}}  
+\mathbf{K}_{\mathrm{ML}}^{-1/2}\,;\\
+\sigma^2 &= \sigma^2_{\mathrm{ML}}\,;\\
+\mathbf{V}_k &= \mathbf{K}_{\mathrm{ML}} +\sigma^2_{\mathrm{ML}} \mathbf{I}\,.
+\end{align*}
+
+     Однако оценка~$\mathbf{V}_k$ оказывается крайне неточной. Поэтому 
+если получение дисперсий главных компонент важно, то необходимо 
+реализовать следующие шаги:
+     \begin{itemize}
+\item получить $\widetilde{\mathbf{U}}_k\hm= \mathbf{W}_{\mathrm{ML}} 
+\mathbf{L}_{\mathrm{ML}}$;
+\item найти $\mathbf{U}_k$ с~помощью нормализации 
+$\widetilde{\mathbf{U}}_k$ по столбцам;
+\item сформировать проекцию $\widetilde{\mathbf{X}}\hm= 
+\mathbf{U}_k^{\mathrm{T}} \mathbf{Y}$;
+\item найти $\mathbf{V}_k$ путем оценивания дисперсий для отдельных 
+компонент~$\widetilde{\mathbf{X}}$.
+\end{itemize}
+
+     Подобный способ оценивания повышает точность 
+нахождения~$\mathbf{V}_k$ на несколько порядков.
+     
+\section{Развитие методов вероятностного анализа главных компонент}
+
+     Интересным развитием EM-под\-хо\-да в~оценивании параметров PCA 
+становится рассмотрение предель\-ного случая в~модели PPCA~\cite{5-kri}, когда 
+дис\-пер\-сии шума~${\boldsymbol{\varepsilon}}$ становятся бесконечно малыми и~равными во всех направлениях. Математически это означает, что 
+${\boldsymbol{\Psi}}\hm= \lim\nolimits_{\sigma^2\to 0} \sigma^2\mathbf{I}$. 
+Поскольку ошибка представления~$\mathbf{y}$ оказывается бесконечно малой, 
+распределение сжимается до одной точки и~с~использованием  
+$\delta$-функ\-ции принимает вид:
+     \begin{multline*}
+     {\sf P}\left(\mathbf{x}\vert \mathbf{y}\right) 
+=N\left(\left(\mathbf{W}^{\mathrm{T}}\mathbf{W}\right)^{-1} 
+\mathbf{W}^{\mathrm{T}} \mathbf{y},\mathbf{0}\right)={}\\
+{}=\delta
+     \left(\mathbf{x} -\left(\mathbf{W}^{\mathrm{T}} \mathbf{W}\right)^{-1} 
+\mathbf{W}^{\mathrm{T}} \mathbf{y}\right)\,.
+     \end{multline*}
+     
+     Это позволяет свести EM-ал\-го\-ритм в~предельном случае к~простым 
+действиям: с~по\-мощью \mbox{E-ша}\-га оценивание неизвестного 
+состояния~$\mathbf{x}$, а~затем на M-ша\-ге максимизация правдоподобия 
+при полученных~$\mathbf{x}$ и~наблюденных~$\mathbf{y}$. Таким образом 
+приходим к~необходимости повторения следующих шагов итерационного 
+процесса:
+     \begin{align*}
+     \mathbf{X} &= \left(\mathbf{W}^{\mathrm{T}} \mathbf{W}\right)^{-1} 
+\mathbf{W}^{\mathrm{T}} \mathbf{Y}\,;\\
+     \widetilde{\mathbf{W}} &= \mathbf{YX}^{\mathrm{T}} 
+\left(\mathbf{XX}^{\mathrm{T}}\right)^{-1}\,,
+     \end{align*}
+где $\mathbf{W}$~--- старое значение параметров модели, 
+а~$\widetilde{\mathbf{W}}$~--- новое. В~результате получаются оценка 
+факторных нагрузок~$\mathbf{W}_{a\mathrm{EM}}$, а~также соотношения:
+\begin{align*}
+\langle \mathbf{x}_n\rangle_{a\mathrm{EM}} &=\left(\mathbf{W}_{a\mathrm{EM}}^{\mathrm{T}} 
+\mathbf{W}_{a\mathrm{EM}}\right)^{-1} \mathbf{W}^{\mathrm{T}}_{a\mathrm{EM}} \mathbf{y}_n\,;
+\\
+\langle \mathbf{y}_n\rangle_{a\mathrm{EM}} &=\mathbf{W}_{a\mathrm{EM}} \langle 
+\mathbf{x}_n\rangle_{a\mathrm{EM}} = {}\\
+&\hspace*{2mm}{}=
+\mathbf{W}_{a\mathrm{EM}}\left(\mathbf{W}^{\mathrm{T}}_{a\mathrm{EM}} 
+\mathbf{W}_{a\mathrm{EM}}\right)^{-1} \mathbf{W}^{\mathrm{T}}_{a\mathrm{EM}} 
+\mathbf{y}_n\,.
+\end{align*}
+     
+     В~\cite{5-kri} декларировалась возможность получения характеристик 
+первых главных компонент и~давались расплывчатые рекомендации по тому, 
+как это сделать. Все это дословно повторялось в~ряде последующих работ, 
+никак не обосновывалось и~сразу же опровергалось проведенными автором 
+статьи экспериментами. 
+     
+     В результате на первый взгляд получается элегантное решение задачи 
+PPCA. Но оказывается, что оно существенно отличается от PPCA-ре\-ше\-ния: 
+формируемая в~результате работы численного EM-алгоритма 
+оценка~$\mathbf{W}$ явно через оси главных компонент не выражается. Более 
+того, в~случае предельного PPCA возможности выбора различных 
+оценок~$\mathbf{W}$ шире, чем в~PPCA. Действительно, пусть
+     \begin{equation}
+     \mathbf{W}=\mathbf{U}_k\mathbf{A}\,,
+     \label{e5-kri}
+     \end{equation}
+где $\mathbf{A}$~--- произвольная $k\times k$ невырожденная матрица. Тогда 
+последовательными подстановками~(\ref{e5-kri}) в~формулы для шагов 
+алгоритма получаем, что EM-ал\-го\-ритм для предельного PPCA завершит 
+свою работу после первого же шага. В~итоге он дает решение, лежащее 
+в~пространстве осей главных компонент и~принимающее достаточно 
+произвольный вид. Заметим, что в~преобразование~$\mathbf{A}$,  
+в~част\-ности, входит и~матрица перестановки, поэтому в~результате работы 
+алгоритма может получиться решение, просто не совпадающее 
+с~$\mathbf{W}_{\mathrm{ML}}$ по порядку следования осей главных компонент. 
+
+     Попытка построить алгоритм, позволяющий не только осуществить 
+переход в~пространство первых главных компонент, но и~сформировать оси 
+главных компонент, была представлена в~\cite{6-kri}. Идея состояла 
+в~последовательном применении ряда усложняющихся по числу главных 
+компонент моделей, в~результате чего решение~$\mathbf{W}_{c\mathrm{EM}}$ задачи 
+PPCA предлагалось искать с~по\-мощью последовательного выполнения 
+следующих шагов: 
+
+\noindent
+     \begin{align*}
+     \mathbf{X} &= \left\{ \cal{L} \left(\mathbf{W}^{\mathrm{T}} 
+\mathbf{W}\right)\right\}^{-1} \mathbf{W}^{\mathrm{T}} \mathbf{Y}\,;\\
+     \widetilde{\mathbf{W}} &= \mathbf{Y}\mathbf{X}^{\mathrm{T}}\left\{ 
+\cal{U}\left(\mathbf{X}\mathbf{X}^{\mathrm{T}}\right)\right\}^{-1}\,,
+     \end{align*}
+где для произвольной матрицы $\mathbf{A}\hm= (a_{ij})$ верно следующее:
+\begin{align*}
+\mathcal{L}(\mathbf{A}) &=\begin{cases}
+a_{ij}\,, &\ i\geq j\,;\\
+0\,, &\ i<j\,;
+\end{cases}
+\\
+     \mathcal{U}(\mathbf{A}) &= \begin{cases}
+     a_{ij}\,, & i\leq j\,;\\
+     0\,, &\ i>j\,.
+     \end{cases}
+     \end{align*}
+     
+     Заметим, что обоснование правомерности выводов о существовании 
+решения задачи PCA приводилось лишь для отдельной модели с~определенным 
+числом главных компонент. Во многих по\-сле\-ду\-ющих публикациях (см.\ 
+например,~\cite{7-kri}) со ссылкой на~\cite{6-kri} указывались необоснованные 
+или вообще несуществующие результаты. В~частности, бездоказательно 
+утверждалось, что при ис\-че\-за\-ющем уровне шума матрица~$\mathbf{W}$ 
+сходится к~оценке максимального правдоподобия $\mathbf{W}_{c\mathrm{EM}} \hm= 
+\mathbf{U}_k \mathbf{V}_k^{1/2}$ (в~обозначениях данной статьи). Таким 
+образом алгоритм с~выделением треугольных подматриц, по мысли его авторов 
+и~последователей, исключал вращательную неоднозначность. 
+     
+     Для построения контрпримеров автором статьи был проведен ряд 
+экспериментов: генерирование случайной ковариационной матрицы и~на ее 
+основе выборки из~100~наблюденных $d$-мер\-ных векторов, которые 
+участвовали в~PCA для различных значений~$k$. Оценивалась доля случаев 
+(общее число экспериментов~--- 100), когда 
+матрица~$\mathbf{U}_k^{\mathrm{T}} \mathbf{W}_{c\mathrm{EM}}$ не совпадала 
+с~диагональной, где $\mathbf{W}_{c\mathrm{EM}}$~--- результат работы описанного 
+EM-ал\-го\-рит\-ма с~ограничениями~\cite{6-kri}. Соответствующие результаты 
+сведены в~таблицу и~свидетельствуют об ошибочности  
+выводов~\cite{6-kri, 7-kri}. Также с~осторожностью надо подходить и~к~ряду 
+итерационных алгоритмов для PCA, включающих 
+оператор~$\cal{L}(\mathbf{A})$ (см., например,~\cite{8-kri}). 
+     
+     %\begin{table*}
+     {\small
+     \vspace*{6pt}
+     \begin{center}
+     \begin{tabular}{|c|c|c|c|c|c|}
+     \multicolumn{6}{p{40mm}}{Доля случаев (в~\%), когда $\mathbf{U}_k^{\mathrm{T}}\mathbf{W}$  не диагональная}\\
+     \multicolumn{6}{c}{\ }\\[-6pt]
+     \hline
+     \multicolumn{1}{|c|}{\raisebox{-6pt}[0pt][0pt]{$d$}}&\multicolumn{5}{c|}{$k$}\\
+     \cline{2-6}
+     & 1&2&3&4&5\\
+     \hline
+10&0&0&29&56&59\\
+50&0&0&28&36&54\\
+100\hphantom{9}&0&0&25&37&52\\
+\hline
+\end{tabular}
+\end{center}}
+%\end{table*}
+     
+\section{Реконструкция характеристик главных компонент}
+
+     Перепроверка утверждений, содержащихся в~ряде публикаций (часть из 
+них вошла в~приведенный ниже список литературы), и~выявление в~них ошибок 
+привели автора данной работы к~необходимости решать вопросы, можно ли 
+и~как построить оси и~дисперсии главных компонент, зная результат  
+EM-ал\-го\-рит\-ма для предельного PPCA. 
+     
+     Начнем с~выделения характеристик~$k$ главных компонент после того, 
+как найдено решение~$\mathbf{W}_{a\mathrm{EM}}$. Столбцы~$\mathbf{W}_{a\mathrm{EM}}$ 
+задают пространство главных\linebreak
+ компонент. После ортонормализации базиса 
+полученное преобразование поворота~$\hat{\mathbf{W}}$ определяет 
+пространство, содержащее такие же главные компоненты, что и~$\mathbf{y}$. 
+Таким образом, $\mathbf{X}\hm= \hat{\mathbf{W}}^{\mathrm{T}}\mathbf{Y}$ 
+есть оценка результата преобразования исходных данных для PCA. Тогда
+     \begin{align*}
+     \mathbf{X} \mathbf{X}^{\mathrm{T}} =\hat{\mathbf{W}}^{\mathrm{T}} 
+\mathbf{Y} \mathbf{Y}^{\mathrm{T}} \hat{\mathbf{W}} 
+&=\hat{\mathbf{W}}^{\mathrm{T}} \mathbf{U} \mathbf{V} 
+\mathbf{U}^{\mathrm{T}} \hat{\mathbf{W}}\,;
+     \\
+     \left( \hat{\mathbf{W}}^{\mathrm{T}} \mathbf{U}\right) \left( 
+\hat{\mathbf{W}}^{\mathrm{T}} \mathbf{U}\right)^{\mathrm{T}}& = 
+\hat{\mathbf{W}}^{\mathrm{T}} \mathbf{U} \mathbf{U}^{\mathrm{T}} 
+\hat{\mathbf{W}} =\mathbf{I}\,.
+     \end{align*}
+     
+     Но в~силу того, что векторы $\mathbf{u}_{k+1},\ldots, \mathbf{u}_d$ 
+ортогональны подпространству главных компонент, т.\,е.\ 
+столбцам~$\hat{\mathbf{W}}$, имеем:
+     \begin{gather*}
+     \mathbf{X} \mathbf{X}^{\mathrm{T}} =\left( 
+\hat{\mathbf{W}}^{\mathrm{T}} \mathbf{U}_k\right) \mathbf{V}_k \left( 
+\hat{\mathbf{W}}^{\mathrm{T}} \mathbf{U}_k\right)^{\mathrm{T}}\,;
+     \\
+\left( \hat{\mathbf{W}}^{\mathrm{T}} \mathbf{U}_k\right)^{\mathrm{T}} \left( 
+\hat{\mathbf{W}}^{\mathrm{T}} \mathbf{U}_k\right)= \mathbf{I}\,,
+\end{gather*}
+т.\,е.\ получено спектральное разложение симметричной 
+матрицы~$\mathbf{X}\mathbf{X}^{\mathrm{T}}$. Но если фактически найти 
+$\mathbf{X}\mathbf{X}^{\mathrm{T}}$ и~ее спектральное разложение
+     $\mathbf{X}\mathbf{X}^{\mathrm{T}} \hm= \mathbf{U}_{\mathbf{x}} 
+\mathbf{V}_{\mathbf{x}} \mathbf{U}_{\mathbf{x}}^{\mathrm{T}},$     
+то получаем равенства относительно искомых объектов:
+    $\hat{\mathbf{W}}^{\mathrm{T}} \mathbf{U}_k \hm= 
+\mathbf{U}_{\mathbf{x}}$ и,~следовательно, $\mathbf{U}_k\hm= 
+\hat{\mathbf{W}} \mathbf{U}_{\mathbf{x}}$;
+    $\mathbf{V}_k=\mathbf{V}_{\mathbf{x}}$.
+        
+     Предложенный метод основывается на двух важных моментах:  
+EM-ал\-го\-ритм для предельного PPCA формирует пространство главных 
+компонент и~переход к~любому ортонормальному базису в~этом пространстве 
+не изменяет оси главных компонент. Поэтому ценой вычисления 
+ковариационной мат\-ри\-цы данных в~пространстве меньшей раз\-мер\-ности 
+становится возможным реконструкция первых главных компонент.
+     
+     Иная идея использования результатов EM-ал\-го\-рит\-ма была 
+положена~в основу другого алгоритма. В~силу того что предельный PPCA 
+формирует пространство главных компонент, в~случае единственной главной 
+компоненты в~результате применения EM-ал\-го\-рит\-ма будет получена 
+именно она и, самое главное, будет доступна соответствующая ось. Раз так, то 
+ее надо зафиксировать, исключить изменения данных вдоль нее и~снова 
+приступить к~выявлению единственной главной компоненты (теперь уже 
+второй для исходных данных). Таким образом последовательно можно выявить 
+все нужные первые главные компоненты и~их оси. Соответствующий алгоритм 
+построения~$\mathbf{W}_{p\mathrm{EM}}$ и~дис\-пер\-сий первых главных компонент 
+приобретает вид:
+     \begin{enumerate}[1.]
+\item Положить $\tilde{\mathbf{Y}}^{(1)}= \mathbf{Y}$.
+\item Для $t=1,\ldots, k$ повторить последующие шаги:
+\begin{enumerate}[{2}.1.]
+\item Найти для $\tilde{\mathbf{Y}}^{(t)}$ ось единственной первой главной 
+компоненты~$\tilde{\mathbf{w}}$.
+\item Положить $t$-й столбец $\mathbf{W}_{p\mathrm{EM}}$ 
+равным~$\tilde{\mathbf{w}}$; спроецировать данные~$\mathbf{Y}$ 
+на~$\tilde{\mathbf{w}}$ и~найти дисперсию $t$-й главной компоненты.
+\item Сформировать базис~$\mathbf{B}^{(t)}$, в~качестве первого вектора 
+которого взять найденную ось главной компоненты~$\tilde{\mathbf{w}}$, 
+все остальные векторы заполнить произвольно (например, с~по\-мощью 
+базисных единичных векторов).
+\item Ортонормализовать~$\mathbf{B}^{(t)}$ с~по\-мощью алгоритма 
+ортогонализации Гра\-ма--Шмидта.
+\item Модифицировать 
+$$
+\tilde{\mathbf{Y}}^{(t+1})= \mathbf{B}^{(t)} 
+\mathbf{D}\left(\mathbf{B}^{(t)}\right)^{\mathrm{T}} 
+\tilde{\mathbf{Y}}^{(t)}\,.
+$$
+\end{enumerate}
+\end{enumerate}
+
+
+     В данной записи~$\mathbf{D}$~--- единичная матрица с~$d_{11}\hm=0$. 
+Использование классического алгоритма ортогонализации Гра\-ма--Шмид\-та 
+является принципиальным, так как важно при ортонормализации начинать 
+с~первого вектора.
+
+
+
+\section{Заключение}
+
+     В работе известные результаты дополнены деталями, углубляющими 
+понимание особенностей PPCA, имеющими прикладное значение, 
+ис\-прав\-ля\-ющи\-ми выявленные ошибки в~доступных пуб\-ли\-ка\-ци\-ях. Предложены 
+и~обоснованы два метода реконструкции характеристик главных компонент. 
+Они позволяют воспользоваться результатами предельного PPCA и~проводить 
+полный PCA, особо эффективный при малых значениях~$k$ и~больших 
+значениях~$d$.
+     
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{1-kri}
+\Au{Jolliffe I.\,T.} Principal component analysis.~--- New York, NY, USA: Springer, 2002. 487~p.
+\bibitem{2-kri}
+\Au{Gabriel K.\,R.} Least squares approximation of matrices by additive and multiplicative 
+models~// J.~Roy. Stat. Soc.~B, 1978. Vol.~40. No.\,2. P.~186--196.
+\bibitem{3-kri}
+\Au{Tipping M.\,E., Bishop~C.\,M.} Mixtures of probabilistic principal component analyzers~// 
+Neural Comput., 1999. Vol.~11. No.\,2. P.~443--482.
+\bibitem{4-kri}
+\Au{Rubin D.\,B., Thayer~D.\,T.} EM algorithms for ML factor analysis~// Psychometrika, 1982. 
+Vol.~47. No.\,1. P.~69--76.
+\bibitem{5-kri}
+\Au{Roweis S.} EM algorithm for PCA and SPCA~// 
+Advances in neural information processing systems~/
+Eds. M.\,I.~Jordan, M.\,J.~Kearns, S.\,A.~Solla.~--- MIT Press, 
+1997. Vol.~10. P.~626--632.
+\bibitem{6-kri}
+\Au{Ahn J.\,H., Oh~J.\,H.} A~constrained EM algorithm for principal component~// Neural 
+Comput., 2003. Vol.~15. P.~57--65.
+\bibitem{7-kri}
+\Au{Wang H., Hu~Z.} An unified EM algorithm for PCA and KPCA~// Neurocomputing, 2007. 
+Vol.~71. P.~459--462.
+\bibitem{8-kri}
+\Au{Choi S., Ahn~J.\,H., Cichocki~A.} Constrained projection approximation algorithms for 
+principal component analysis~// Neural Process. Lett., 2006. Vol.~24. P.~53--65.
+
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 21.11.17}}
+
+\vspace*{8pt}
+
+%\newpage
+
+%\vspace*{-24pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{8pt}
+
+
+\def\tit{PRINCIPAL AXES RECONSTRUCTION}
+
+\def\titkol{Principal axes reconstruction}
+
+\def\aut{M.\,P.~Krivenko}
+
+\def\autkol{M.\,P.~Krivenko}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+Institute of Informatics Problems, Federal Research Center ``Computer Science and 
+Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str.,Moscow 119333, 
+Russian Federation 
+
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+\Abste{Principal component analysis (PCA) is a widely used technique for processing, 
+compressing, and visualizing of data. New possibilities are opened by probabilistic PCA (PPCA), 
+realized within the maximum likelihood principle for a Gaussian model with latent variables. 
+Within the framework of PPCA, data processing algorithms have appeared, aimed at reducing the 
+dimensionality of data and providing the transition to the space of the main components, but not 
+explicitly giving the characteristics of the main components. The article is devoted to details that 
+deepen the understanding of the features of PPCA and corrections of the errors revealed in 
+publications. Two methods for reconstructing the characteristics of principal components are 
+proposed and substantiated. One of them is based on recalculation of the covariance matrix in the 
+formed space of main components. The other method consists in successively repeating the same 
+steps: identifying the first main component and excluding it from data analysis.}
+
+\KWE{principal component analysis; EM-algorithm; reconstruction of axes and dispersion}
+
+\DOI{10.14357/19922264180109} 
+
+%\vspace*{-12pt}
+
+%\Ack
+%\noindent
+
+
+
+%\vspace*{3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9} 
+\bibitem{1-kri-1}
+\Aue{Jolliffe, I.\,T.} 2002. \textit{Principal component analysis}. 
+New York, NY: Springer. 487~p.
+\bibitem{2-kri-1}
+\Aue{Gabriel, K.\,R.} 1978. Least squares approximation of matrices by additive and 
+multiplicative models. \textit{J.~Roy. Stat. Soc.~B} 40(2):186--196.
+\bibitem{3-kri-1}
+\Aue{Tipping, M.\,E., and C.\,M.~Bishop.} 1999. Mixtures of probabilistic principal 
+component analyzers. \textit{Neural Comput.} 11(2):443--482.
+\bibitem{4-kri-1}
+\Aue{Rubin, D.\,B., and D.\,T.~Thayer.} 1982. EM algorithms for ML factor 
+analysis. \textit{Psychometrika} 47(1):69--76.
+\bibitem{5-kri-1}
+\Aue{Roweis, S.} 1997. EM algorithm for PCA and SPCA. \textit{Advances in neural 
+information processing systems}.
+Eds. M.\,I.~Jordan, M.\,J.~Kearns, and
+S.\,A.~Solla. MIT Press. 10:626--632.
+\bibitem{6-kri-1}
+\Aue{Ahn, J.\,H., and J.\,H.~Oh.} 003. A constrained EM algorithm for principal 
+component. \textit{Neural Comput.} 15:57--65.
+\bibitem{7-kri-1}
+\Aue{Wang, H., and Z.~Hu.} 2007. An unified EM algorithm for PCA and KPCA. 
+\textit{Neurocomputing} 71:459--462.
+\bibitem{8-kri-1}
+\Aue{Choi, S., J.\,H.~Ahn, and A.~Cichocki.} 2006. Constrained projection 
+approximation algorithms for principal component analysis. \textit{Neural Process. 
+Lett.} 24:53--65.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received November 21, 2017}}
+
+%\vspace*{-10pt}
+
+\Contrl
+
+\noindent
+\textbf{Krivenko Michail P.} (b.\ 1946)~--- Doctor of Science in technology, 
+professor, leading scientist, Institute of Informatics Problems, Federal Research 
+Center ``Computer Science and Control'' of the Russian Academy of Sciences,  
+44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{mkrivenko@ipiran.ru}
+
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература} 

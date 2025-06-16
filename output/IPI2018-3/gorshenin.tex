@@ -1,0 +1,887 @@
+\def\stat{gorshenin}
+
+\def\tit{ЗАШУМЛЕНИЕ ДАННЫХ КОНЕЧНЫМИ СМЕСЯМИ НОРМАЛЬНЫХ 
+И~ГАММА-РАСПРЕДЕЛЕНИЙ\\ С~ПРИМЕНЕНИЕМ К~ЗАДАЧЕ ОКРУГЛЕНИЯ НАБЛЮДЕНИЙ$^*$}
+
+\def\titkol{Зашумление данных конечными смесями нормальных 
+и~гамма-распределений с~применением к~задаче округления} % наблюдений}
+
+\def\aut{А.\,К.~Горшенин$^1$}
+
+\def\autkol{А.\,К.~Горшенин}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Горшенин А.\,К.}
+\index{Gorshenin A.\,K.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при поддержке РНФ (проект 18-71-00156).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского центра 
+<<Информатика и~управление>> Российской академии наук, \mbox{agorshenin@frccsc.ru}}
+
+\vspace*{-12pt}
+
+
+
+
+\Abst{Во многих реальных задачах проводится статистический анализ данных, 
+содержащих дополнительные ошибки измерения, в~том числе в~виде округления, 
+что в~ряде ситуаций может приводить к~достаточно существенным искажениям. 
+В~настоящей статье для одной из возможных моделей округления получены оценки 
+для неизвестного математического ожидания наблюдений в~предположении, что 
+исходные данные дополнительно зашумлены с~по\-мощью случайных величин, 
+име\-ющих распределения типа конечных смесей нормальных и~гам\-ма-за\-ко\-нов. 
+Построены доверительные интервалы для неизвестного математического ожидания 
+с~использованием уточненной оценки для дисперсии целой части случайной величины. 
+Обсуждается алгоритм определения значения параметра для искусственного шума, 
+добавление которого к~исходным данным способствует повышению качества работы 
+метода скользящего разделения смесей.}
+
+\KW{зашумленные данные; округленные наблюдения; конечные смеси нормальных 
+распределений; конечные смеси гам\-ма-рас\-пре\-де\-ле\-ний; доверительные интервалы;  
+метод скользящего разделения смесей}
+
+\DOI{10.14357/19922264180304}
+  
+\vspace*{-4pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+\section{Введение}
+
+Во многих реальных задачах данные, являющиеся непрерывными по своей сути, 
+регистрируются с~помощью инструментов, вносящих дополнительные ошибки 
+измерения, в~том чис\-ле в~виде округления. Таким образом, статистический 
+анализ проводится не для исходных, а для преобразованных некоторым 
+случайным образом наблюдений, что в~ряде ситуаций может приводить к~достаточно
+ существенным искажениям.
+
+Для преодоления данной проблемы развивались различные подходы, в~том числе 
+на основе смешанных моделей (см., например, статью~\cite{Wright2003}, в~которой 
+различные компоненты  используются для пред\-став\-ле\-ния уровней округления). 
+В~работе~\cite{Bai2009} приводятся результаты для моделей авторегрессии и~скользящего 
+среднего для округленных данных, а~в~статье~\cite{Zhang2010} эти результаты 
+развиваются и~исследуются их асимптотические свойства. 
+В~статье~\cite{Zhao2012} исследован метод оценивания па\-ра\-мет\-ров конечных смесей 
+вероятностных распределений (в~том чис\-ле, и~многомерных) 
+на основе использования EM (expectation-maximization) 
+алгоритма~\cite{Korolev2011-i} с~\mbox{целью} получения состоятельных 
+и~асимптотически нормальных оценок.
+
+В настоящей статье развиваются результаты для моделей округления, 
+описанных в~работах~\cite{Ushakov2015,Ushakov2017a,Ushakov2017b}. 
+В~их рамках будут получены оценки для неизве\-ст\-ного математического ожидания 
+наблюдений в~предположении, что исходные данные зашумлены с~по\-мощью случайных 
+величин, имеющих распределения типа конечных смесей нормальных и~гам\-ма-за\-ко\-нов. 
+Это позволяет учесть большее количество случайных факторов, влия\-ющих на величину 
+<<дополнительной>> ошибки. Также будут построены доверительные интервалы для 
+неизвестного математического ожидания. Выражения для гам\-ма-рас\-пре\-де\-ле\-ний 
+получены впервые. Также обсуждается алгоритм определения значения па\-ра\-мет\-ра для 
+искусственного шума, добавление которого к~исходным данным способствует 
+повышению качества работы метода скользящего разделения смесей~\cite{Gorshenin2016}.
+
+\vspace*{-12pt}
+
+\section{Предположения и~базовые отношения}
+
+Для сокращения формулировок теорем в~сле\-ду\-ющих разделах сделаем ряд 
+предположений, на которые будем ссылаться в~дальнейшем. Итак, пусть:
+\begin{itemize}
+\item[(A)] $X_1,X_2,\ldots$~--- независимые одинаково распределенные 
+случайные величины с~неизвестным математическим ожиданием ${\sf E}_X\hm<+\infty$;
+\item[(B)] $\varepsilon_1,\varepsilon_2,\ldots$~--- независимые одинаково 
+распределенные случайные величины с~математическим ожиданием 
+${\sf E}_\varepsilon\hm<+\infty$; %\label{B}
+\item[(C)] $X_1,X_2,\ldots$ и~$\varepsilon_1,\varepsilon_2,\ldots$ 
+являются независимыми;
+\item[(D)] $Y_j=\left[X_j+\varepsilon_j+1/2\right]$ для всех $j\hm=1,2,\ldots$ 
+представляют собой округление значения суммы случайных величин $X_j\hm+\varepsilon_j$ 
+до ближайшего целого сверху (при этом запись~$[\cdot]$ соответствует целой 
+части выражения).
+\end{itemize}
+
+В рамках данных предположений в~статье будут рассмотрены вопросы качества 
+приближения неизвестного математического ожидания~${\sf E}_X$ для исходных данных 
+в~ситуации, когда наблюдения для анализа получены с~аддитивной ошибкой c известными 
+распределениями (см.\ предположение~(B)) и~дополнительно округляются до 
+ближайшего целого (см.\ предположение~(D)).
+
+Заметим, что в~силу усиленного закона больших чисел справедливы следующие выражения:
+\begin{multline}
+\fr{1}{n}\sum\limits_{j=1}^n Y_j\xrightarrow[n\to\infty]{\text{п.н.}}
+{\sf E}_Y\equiv\mathbb{E}\left[X_1+\varepsilon_1+\fr{1}{2}\right]={}\\
+{}=\mathbb{E}\left(X_j+\varepsilon_j+\fr{1}{2}\right)-\mathbb{E}
+\left\{X_j+\varepsilon_j+\fr{1}{2}\right\}={}\\
+{}={\sf E}_X+{\sf E}_\varepsilon+\fr{1}{2}-\mathbb{E}\left\{X_j+\varepsilon_j+\fr{1}{2}\right\}. 
+\label{Law}
+\end{multline}
+
+Запись $\{\cdot\}$ в~формуле~\eqref{Law} соответствует дробной 
+части выражения, а~п.н.\ обозначает сходимость в~смысле почти наверное.
+
+Для доказательства результатов в~дальнейшем потребуется следующее 
+представления для дробной части  абсолютно непрерывной случайной величины~$Z$ 
+с~абсолютно  интегрируемой характеристической функцией~$\varphi_Z(t)$
+ (см., например, Лемму~4 в~работе~\cite{Ushakov2017b}):
+\begin{equation}
+\label{Fract}
+\mathbb{E}\{Z\}=\fr{1}{2}-\sum\limits_{n=1}^\infty 
+\fr{\mathrm{Im}\left (\varphi_Z(2\pi n)\right)}{\pi n}\,.
+\end{equation}
+
+Через $\mathrm{Im}\,(\cdot)$ в~формуле~\eqref{Fract} обозначена мнимая часть 
+соответствующей функции.
+
+При построении доверительных интервалов в~дальнейшем будет 
+использована следующая оценка, справедливая для любой случайной величины~$Z$:
+\begin{equation}
+\mathbb{D}[Z]\leqslant \left(\sqrt{\mathbb{D} Z}+\fr{1}{2}\right)^2.
+\label{Var}
+\end{equation}
+Она может быть проверена непосредственно с~учетом представления 
+$\mathbb{D} [Z]\hm=\mathbb{D}\left(Z\hm-\{Z\}\right)$, неравенства 
+Ко\-ши--Бу\-ня\-ков\-ско\-го для ковариации и~соотношения 
+ $\mathbb{D}\{Z\}\hm\leqslant 1/4$, справедливого для любой случайной величины~$Z$ 
+ (см., например, статью~\cite{Ushakov2017b}). Отметим, что данная оценка 
+ является более точной по сравнению с~использованным для аналогичных 
+ целей в~работе~\cite{Ushakov2017b} соотношением 
+ $\mathbb{D} [Z]\hm\leqslant 2\mathbb{D} Z\hm+1/2$. Действительно,
+\begin{equation*}
+2\mathbb{D} Z+\fr{1}{2}-\left(\sqrt{\mathbb{D} Z}+\fr{1}{2}\right)^2=
+\left(\sqrt{\mathbb{D} Z}-\fr{1}{2}\right)^2\geqslant0\,,
+\end{equation*}
+причем для всех $\sqrt{\mathbb{D} Z}\hm\neq {1}/{2}$ 
+данное неравенство является строгим.
+
+\section{Конечные смеси нормальных законов}
+
+Для случайной величины~$X$, имеющей распределение типа 
+конечной смеси нормальных законов~\cite{Korolev2011-i} с~параметрами 
+${\bf a}\hm=(a_1,\ldots, a_k)$, $a_j\hm\in \mathbb{R}$, 
+$\boldsymbol{\sigma}\hm=(\sigma_1,\ldots, \sigma_k)$, 
+$\sigma_j\hm>0$, ${\bf p}\hm=(p_1,\ldots, p_k)$, $p_j\hm\geqslant 0$, 
+$\sum\nolimits_{j=1}^{k}p_j\hm=1$, плот\-ность которого задается выражением
+\begin{equation}
+f_X(x)=\sum\limits_{j=1}^{k}\fr{p_j}{\sigma_j\sqrt{2\pi}}\,e^{-(x-a_j)^2/(2\sigma_j^2)}\,,
+\label{FinNormMixt}
+\end{equation}
+характеристическая функция имеет вид:
+\begin{equation}
+\varphi_X(t)=\int\limits_{-\infty}^{+\infty}\!\!e^{itx} f_X(x)\, dx = 
+\sum\limits_{j=1}^{k}p_j e^{ita_j-\sigma_j^2 t^2/2}.
+\label{ChiFinNormMixt}
+\end{equation}
+
+Абсолютная интегрируемость  $\varphi_X(t)$ вытекает из свойств 
+характеристической функции нормального распределения. 
+Заметим, что в~точке $t\hm=2\pi n$ выражение~\eqref{ChiFinNormMixt} принимает 
+сле\-ду\-ющий вид:
+\begin{equation}
+\label{ChiFinNormMixt2npi}
+\varphi_X(2\pi n)= \sum\limits_{j=1}^{k}p_j e^{-2\pi^2 \sigma_j^2 n^2}\,.
+\end{equation}
+
+Рассмотрим вопрос точности оценивания неизвестного математического ожидания~${\sf E}_X$ 
+при до\-бав\-ле\-нии зашумления.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~1.}\ 
+\textit{Пусть выполнены предположения}~(A)--(D), 
+\textit{причем случайные величины~$\varepsilon_j$, $j\hm=1,2,\ldots$, 
+имеют распределение типа конечной $k$-ком\-по\-нент\-ной смеси нормальных законов 
+вида}~\eqref{FinNormMixt} \textit{с~па\-ра\-мет\-ра\-ми~${\bf a}$, $\boldsymbol{\sigma}$ 
+и~${\bf p}$. Тогда}
+\begin{equation}
+\label{Th1Eq}
+\left\lvert {\sf E}_Y-{\sf E}_X\right\rvert \leqslant 
+A+\fr{1}{\pi}\left(1+\fr{1}{4\pi^2\sigma^2}\right)e^{-2\pi^2\sigma^2}\,, 
+\end{equation}
+\textit{где} $A=\max(|a_1|,\ldots,|a_k|)$, $\sigma\hm=\min(\sigma_1,\ldots,\sigma_k)$.
+
+\smallskip
+
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \
+С~учетом пред\-став\-ле\-ний~\eqref{Law},~\eqref{Fract} и~\eqref{ChiFinNormMixt2npi}, 
+ограниченности модуля характеристической функции, а~также не\-за\-ви\-си\-мости 
+случайных величин~$X_j$ и~$\varepsilon_j$ имеем:
+\begin{multline*}
+\left\lvert {\sf E}_Y-{\sf E}_X\right\rvert =
+\left\lvert {\sf E}_\varepsilon+\fr{1}{2}-\mathbb{E}\left\{X_j+
+\varepsilon_j+\fr{1}{2}\right\}\right\rvert={}\\
+{}=\left\lvert {\sf E}_\varepsilon+\sum\limits_{n=1}^\infty
+\fr{\mathrm{Im} \left(\varphi_{X_j}(2\pi n)\varphi_{\varepsilon_j}(2\pi n)
+\varphi_{1/2}(2\pi n)\right)}{\pi n}\right\rvert={}\\
+=\left\lvert 
+\vphantom{\fr{(-1)^n\sum\nolimits_{j=1}^{k}p_j e^{-2\pi^2 \sigma_j^2 n^2} 
+\mathrm{Im} \left(\varphi_{X_j}(2\pi n)\right)}{\pi n}}
+{\sf E}_\varepsilon+{}\right.\\
+\left.{}+\sum\limits_{n=1}^\infty
+\fr{\mathrm{Im} \left(\varphi_{X_j}(2\pi n) 
+\sum\nolimits_{j=1}^{k}p_j e^{-2\pi^2 \sigma_j^2 n^2} 
+e^{\pi n}\right)}{\pi n}\right\rvert={}\\
+{}=\left\lvert 
+\vphantom{\fr{(-1)^n\sum\nolimits_{j=1}^{k}p_j e^{-2\pi^2 \sigma_j^2 n^2} 
+\mathrm{Im} \left(\varphi_{X_j}(2\pi n)\right)}{\pi n}}
+{\sf E}_\varepsilon+{}\right.\\
+\left.{}+\sum\limits_{n=1}^\infty
+\fr{(-1)^n\sum\nolimits_{j=1}^{k}p_j e^{-2\pi^2 \sigma_j^2 n^2} 
+\mathrm{Im} \left(\varphi_{X_j}(2\pi n)\right)}{\pi n}\right\rvert\leqslant{}\\
+{}\leqslant \left\lvert {\sf E}_\varepsilon\right\rvert+\left\lvert\
+\sum\limits_{j=1}^{k}p_j\sum\limits_{n=1}^\infty 
+\fr{1}{\pi n} e^{-2\pi^2 \sigma_j^2 n^2}\right\rvert\leqslant {}\\
+\\
+{}\leqslant
+\max\left(|a_1|,\ldots,|a_k|\right)+{}\\
+{}+\sum\limits_{j=1}^{k} 
+\fr{p_j}{\pi} \left(\!1+\fr{1}{4\pi^2\sigma_j^2}\!\right)\!e^{-2\pi^2\sigma_j^2}\leqslant{}\\
+{}\leqslant
+A+\fr{1}\pi\left(1+\fr{1}{4\pi^2\sigma^2}\right)e^{-2\pi^2\sigma^2}\,.
+\end{multline*}
+
+Справедливость использованной оценки 
+\begin{equation*}
+\sum\limits_{n=1}^\infty
+\fr{e^{-2\pi^2 \sigma_j^2 n^2}}{n}\leqslant 
+\left(1+\fr{1}{4\pi^2\sigma_j^2}\right)e^{-2\pi^2\sigma_j^2}
+\end{equation*}
+может быть проверена непосредственно (например, см.\ доказательство Теоремы~6 
+в~статье~\cite{Ushakov2017b}).~\hfill$\square$
+
+\smallskip
+
+\noindent
+\textbf{Замечание~1.}
+В~случае, если зашумление производится нормально распределенными случайными 
+величинами c нулевыми средними (т.\,е.\ в~формуле~\eqref{Th1Eq} необходимо считать 
+$A\hm=0$, $k\hm=1$), то Тео\-ре\-ма~1 совпадает с~результатом, 
+полученным в~работе~\cite{Ushakov2017b}.
+
+
+\smallskip
+
+Рассмотрим вопросы построения доверительного интервала для неизвестного 
+математического ожидания~${\sf E}_X$ в~предположении, что случайные величины~$X_j$ не 
+содержат ошибок измерения, а~все погрешности учтены исключительно в~за\-шум\-ля\-ющих 
+элементах~$\varepsilon_j$.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~2.}\ 
+\textit{Пусть выполнены предположения}~(A)--(D), 
+\textit{причем случайные величины~$\varepsilon_j$, $j\hm=1,2,\ldots$, имеют 
+распределение типа конечной $k$-ком\-по\-нент\-ной смеси нормальных законов 
+вида}~\eqref{FinNormMixt} \textit{с~параметрами~${\bf a}$, $\boldsymbol{\sigma}$ 
+и~${\bf p}$, а~случайные величины} $X_j\stackrel{\text{п.н.}}{=}{\sf E}_X$, $j\hm=1,2,\ldots$ 
+\textit{Тогда доверительный интервал для~${\sf E}_X$ при условии $0\hm<\alpha\hm<1$ имеет вид}:
+\begin{equation} 
+\label{Th2Eq}
+\hat{{\sf E}}_X - f({\bf a},\boldsymbol{\sigma},\alpha,n) 
+\leqslant {\sf E}_X \leqslant  \hat{{\sf E}}_X + f({\bf a},\boldsymbol{\sigma},\alpha,n),
+\end{equation}
+\textit{где}
+
+\vspace*{-2pt}
+
+\noindent
+\begin{align}
+\hat{{\sf E}}_X&=\fr{1}{n} \sum\limits_{j=1}^{n} Y_j\,; \label{Th2hatE}\\
+f({\bf a},\boldsymbol{\sigma},\alpha,n)&=
+\fr{z_{1-{\alpha}/2}}{\sqrt{n}} \left(\sqrt{A^2+\Sigma^2}+\fr{1}{2}\right) +{}\notag\\
+&{}+A+\fr{1}\pi\left(1+\fr{1}{4\pi^2\sigma^2}\right)e^{-2\pi^2\sigma^2}\,;
+  \label{Th2f}
+\end{align}
+\textit{$z_{1-{\alpha}/2}$~--- $\left(1-{\alpha}/2\right)$-кван\-тиль 
+стандартного нормального распределения; $A\hm=\max(|a_1|,\ldots,|a_k|)$; 
+$\Sigma\hm=\max(\sigma_1,\ldots,\sigma_k)$; $\sigma\hm=\min(\sigma_1,\ldots,\sigma_k)$}. 
+
+
+\smallskip
+
+\noindent
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \
+Из центральной предельной тео\-ре\-мы с~учетом условия~(A) следует, 
+что величина~$\hat{{\sf E}}_X$~\eqref{Th2hatE} асимптотически нормальна с~математическим 
+ожиданием 
+\begin{equation}
+{\sf E}_Y\equiv \mathbb{E}\left[{\sf E}_X+\varepsilon_1+\fr{1}{2}\right] \label{EY}
+\end{equation}
+и дисперсией
+\begin{equation}
+\fr{1}{n} {\sf D}_Y\equiv \fr{1}{n}\mathbb{D}\left[{\sf E}_X+\varepsilon_1+
+\fr{1}{2}\right]. \label{DY}
+\end{equation}
+
+Воспользовавшись оценкой~\eqref{Var}, получим:
+
+\vspace*{-2pt}
+
+\noindent
+\begin{multline*}
+{\sf D}_Y \leqslant  \left(\sqrt{\mathbb{D} \left({\sf E}_X+\varepsilon_1+\fr{1}{2}\right)}+
+\fr{1}{2}\right)^2={}\\
+{}=
+\left(\sqrt{\mathbb{D}\varepsilon_1}+\fr{1}{2}\right)^2= {}\\
+{}= \left(\sqrt{\sum\limits_{j=1}^{k}p_j\left(\left(a_j-\sum\limits_{t=1}^{k}
+p_t a_t\right)^2+\sigma_j^2\right)}+\fr{1}{2}\right)^2\leqslant {}\\ 
+{}\leqslant \left(\sqrt{A^2+\Sigma^2}+\fr{1}{2}\right)^2\,.
+\end{multline*}
+Тогда доверительный интервал уровня $1\hm-\alpha$ для математического ожидания~${\sf E}_Y$ 
+имеет вид:
+\begin{equation*}
+\mathbb{P}\left(\left\lvert \hat{{\sf E}}_X-{\sf E}_Y\right\rvert \leqslant 
+\fr{z_{1-{\alpha}/2}}{\sqrt{n}} 
+\left(\sqrt{A^2+\Sigma^2}+\fr{1}{2}\right)\right)\geqslant 1-\alpha\,.
+\end{equation*}
+
+\begin{table*}[b]\small
+\begin{center}
+
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\multicolumn{7}{p{100mm}}{Численные решения уравнений~\eqref{f1} и~\eqref{f2} относительно 
+параметра~$\sigma$ для некоторых значений~$n$ и~$\alpha$}\\
+\multicolumn{7}{c}{\ }\\[-6pt]
+\hline
+\multicolumn{1}{|c|}{Размер}  & \multicolumn{2}{c|}{Уровень $\alpha=0{,}1$}& 
+\multicolumn{2}{c|}{Уровень $\alpha=0{,}05$}& 
+\multicolumn{2}{c|}{Уровень $\alpha=0{,}01$}\\
+\cline{2-7}
+\multicolumn{1}{|c|}{выборки $n$}&$\sigma_1$&$\sigma_2$&$\sigma_1$&$\sigma_2$&$\sigma_1$&$\sigma_2$\\
+\hline
+$\hphantom{000}100$&$0{,}4302$&$0{,}435$&$0{,}419$&$0{,}425$&$0{,}4002$&$0{,}408$\\
+%\hline
+$\hphantom{000}200$&$0{,}452$&$0{,}455$ &$0{,}441$&$0{,}445$&$0{,}424$&$0{,}429$\\
+%\hline
+$\hphantom{00}1000$&$0{,}499$&$0{,}499$ &$0{,}489$&$0{,}489$&$0{,}473$&$0{,}475$\\
+%\hline
+$\hphantom{0}10000$&$0{,}558$&$0{,}556$ &$0{,}549$&$0{,}547$&$0{,}536$&$0{,}534$\\
+%\hline
+$100000$&$0{,}611$&$0{,}607$ &$0{,}603$&$0{,}599$&$0{,}591$&$0{,}588$\\
+\hline
+\end{tabular}
+\end{center}
+\end{table*}
+
+
+\noindent
+Откуда следует справедливость соотношения~\eqref{Th2Eq} c~уче\-том 
+очевидного неравенства
+
+\pagebreak
+
+\noindent
+\begin{equation*}
+\left\lvert \hat{{\sf E}}_X-{\sf E}_X\right\rvert \leqslant 
+\left\lvert \hat{{\sf E}}_X-{\sf E}_Y\right\rvert +\left\lvert {\sf E}_Y-{\sf E}_X\right\rvert 
+\end{equation*}
+и оценки~\eqref{Th1Eq} из Теоремы~1.~\hfill$\square$
+
+\smallskip
+
+\noindent
+\textbf{Замечание~2.}
+В~работе~\cite{Gorshenin2016} было продемонстрировано повышение точ\-ности 
+работы метода скользящего разделения конечных нормальных смесей за счет 
+введения дополнительной компоненты, имеющей нормальное 
+распределение $\mathcal{N}(0,\sigma^2)$ с~математическим ожиданием, равным~$0$, 
+и~стандартным отклонением~$\sigma$. При этом была отмечена сложность выбора 
+параметра~$\sigma$ для сохранения структуры выборки, близкой к~исходной. 
+Результат Теоремы~2 может быть использован с~данной целью, если положить $k\hm=1$, 
+$a_j\hm=0$ для всех $j\hm=1,2,\ldots$ и~выбирать величину~$\sigma$ как 
+минимизирующую длину доверительного интервала~\eqref{Th2Eq}. Для 
+этого необходимо найти производную функции $f(0,\sigma,\alpha,n)$~\eqref{Th2f} 
+и~численно решить уравнение
+\begin{multline}
+f_\sigma'(0,\sigma,\alpha,n)\equiv \fr{z_{1-{\alpha}/2}}{\sqrt{n}} - {}\\
+{}-
+e^{-2\pi^2\sigma^2}\left(4\pi\sigma+\fr{1}{2\pi^3\sigma^3}+
+\fr{1}{\pi\sigma}\right)=0
+\label{f1}
+\end{multline}
+относительно неизвестного параметра~$\sigma$ при выбранных значениях величин~$n$ 
+и~$\alpha$. В~качестве альтернативы можно использовать вид доверительного интервала 
+из статьи~\cite{Ushakov2017b}, полученный с~помощью неравенства $\mathbb{D} [Z]
+\hm\leqslant 2\mathbb{D} Z\hm+{1}/{2}$, и~искать решение уравнения вида:
+\begin{multline}
+\hspace*{-2.90578pt}\fr{2\sigma z_{1-{\alpha}/2}}{\sqrt{n (2\sigma^2+{1}/{2})}} -
+ e^{-2\pi^2\sigma^2}\left(4\pi\sigma+\fr{1}{2\pi^3\sigma^3}+
+ \fr{1}{\pi\sigma}\right)={}\\
+ {}=0\,.\label{f2}
+\end{multline}
+
+Примеры найденных значений~$\sigma$ для типичных размеров выборок в~методе 
+скользящего разделения смесей (учитываются как возможная ширина окна, 
+так и~общее количество наблюдений в~анализируемом ряде) приведены в~таблице 
+(использован метод оптимизации \verb"Trust-Region Dogleg" пакета \verb"MATLAB" 
+c~настройками по умолчанию), в~которой через~$\sigma_1$ обозначено приближенное  
+решение уравнения~\eqref{f1}, a~через $\sigma_2$~--- уравнения~\eqref{f2}.
+
+
+Проверка практической эффективности данного подхода в~качестве 
+критерия выбора параметров зашумляющего распределения для повышения 
+точности работы метода скользящего разделения смесей может быть отмечена 
+как задача для дальнейших исследований.
+
+
+\section{Конечные смеси гамма-распределений}
+
+Для случайной величины~$X$, имеющей распределение типа конечной смеси 
+гам\-ма-рас\-пре\-де\-ле\-ний с~параметрами ${\bf r}\hm=(r_1,\ldots, r_k)$,
+ $r_j\hm>0$, $\boldsymbol{\lambda}\hm=(\lambda_1,\ldots, \lambda_k)$, $\lambda_j\hm>0$, 
+ ${\bf p}\hm=(p_1,\ldots, p_k)$, $p_j\hm\geqslant 0$, $\sum\nolimits_{j=1}^{k}p_j\hm=1$, 
+ плот\-ность которого задается выражением
+\begin{equation}
+f_X(x)=\sum\limits_{j=1}^{k}p_j\fr{\lambda_j^{r_j} e^{-\lambda_j x}}
+{\Gamma(r_j)}\,x^{r_j-1}\,,
+\label{FinGammaMixt}
+\end{equation}
+характеристическая функция имеет следующий вид:
+%характеристическая функция задается следующим выражением:
+\begin{equation}
+\varphi_X(t)=\!\int\limits_{-\infty}^{+\infty}\!\!\!e^{itx} f_X(x)\, dx = \!
+\sum\limits_{j=1}^{k}p_j \left(\!1-\fr{it}{\lambda_j}\right)^{-r_j}\!.\!
+\label{ChiFinGammaMixt}
+\end{equation}
+
+Отметим, что подобные модели зашумления разумно использовать в~случае, 
+если известно, что данные сосредоточены на положительной полуоси, например 
+при анализе различных информационных потоков (см., в~част\-ности, 
+ работу~\cite{Gorshenin2013}). 
+
+Проверим абсолютную интегрируемость функции $\varphi_X(t)$~\eqref{ChiFinGammaMixt}. 
+Имеем:
+\begin{multline*}
+\int\limits_{-\infty}^{+\infty}\left\lvert\varphi_X(t)\right\rvert\, dt\leqslant 
+\sum\limits_{j=1}^{k}p_j \int\limits_{-\infty}^{+\infty}\left\lvert \left(
+1-\fr{it}{\lambda_j}\right)^{-r_j}\right\rvert \, dt={}\\
+{}=\sum\limits_{j=1}^{k}p_j \int\limits_{-\infty}^{+\infty} \left\lvert\left(
+\fr{\lambda_j(\lambda_j+it)}{\lambda_j^2+t^2}\right)^{r_j}\right\rvert\, dt \leqslant{}\\
+{}\leqslant\sum\limits_{j=1}^{k}p_j \lambda_j \int\limits_{-\infty}^{+\infty}\left(
+1+y^2\right)^{-{r_j}/{2}}\, dy\,.
+\end{multline*}
+
+Подынтегральное выражение при $r_j\hm\geqslant 2$ может быть оценено сверху 
+функцией $1/({1+y^2})$, при этом соответствующий интеграл равен~$\pi$, что влечет 
+абсолютную интегрируемость характеристической функции для конечной смеси 
+гам\-ма-рас\-пре\-де\-ле\-ний. Поэтому в~дальнейшем будем предполагать,
+ что $r_j\hm\geqslant 2$ для всех возможных значений $j\hm=1,2,\ldots$
+
+Рассмотрим вопрос точ\-ности оценивания неизвестного математического ожидания ${\sf E}_X\hm>0$ 
+при добавлении зашумления.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~3.}
+\textit{Пусть выполнены предположения}~(A)--(D), 
+\textit{причем случайные величины~$\varepsilon_j$, $j\hm=1,2,\ldots$, имеют 
+распределение типа конечной $k$-ком\-по\-нент\-ной смеси 
+гам\-ма-рас\-пре\-де\-ле\-ний вида}~\eqref{FinGammaMixt} 
+\textit{с~па\-ра\-мет\-ра\-ми~${\bf r}$, $\boldsymbol{\lambda}$ и~${\bf p}$. Тогда}
+\begin{equation}
+\label{Th3Eq}
+\left\lvert {\sf E}_Y-{\sf E}_X\right\rvert \leqslant \fr{R}{\lambda}+
+\fr{\Lambda^{R}}{2^{r}\pi^{r+1}}\left(1+\frac1{r}\right)\,,
+\end{equation}
+\textit{где} $r=\min(r_1, \ldots,r_k)$; $R\hm=\max(r_1, \ldots,r_k)$; 
+$\lambda\hm=\max(\lambda_1, \ldots,\lambda_k)$; 
+$\Lambda\hm=\max(\lambda_1, \ldots,\lambda_k)$.
+
+\smallskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \
+С~учетом пред\-став\-ле\-ний~\eqref{Law} и~\eqref{Fract}, ограниченности 
+модуля характеристической функции, перехода от тригонометрической к~показательной 
+записи комплексных чисел, а~также независимости случайных величин~$X_j$ 
+и~$\varepsilon_j$ \mbox{имеем}:
+\begin{multline*}
+\left\lvert {\sf E}_Y-{\sf E}_X\right\rvert
+\leqslant \left\lvert {\sf E}_\varepsilon\right\rvert+ {}\\
+{}+\left\lvert\sum\limits_{n=1}^\infty
+\left(
+(-1)^n\mathrm{Im} \left(\sum\limits_{j=1}^{k}p_j \varphi_{X_j}(2\pi n)\left(
+\vphantom{\fr{2\pi n}{\lambda_j}}
+1-{}\right.\right.\right.\right.\\
+\left.\left.\left.\left.{}-i\left(\fr{2\pi n}{\lambda_j}\right)\right)^{-r_j}\right)
+\Bigg/ ({\pi n})
+\vphantom{\sum\limits_{j=1}^{k}}
+\right)\right\rvert={}\\
+{}=\left\lvert {\sf E}_\varepsilon\right\rvert+ 
+\left\lvert\sum\limits_{n=1}^\infty
+\left(\!(-1)^n\mathrm{Im} \!\left(\sum\limits_{j=1}^{k}p_j \left(\!
+1+\fr{4\pi^2 n^2}{\lambda_j^2}\right)^{- {r_j}/2}\!\times{}\right.\right.\right.\hspace*{-2.8663pt}\\
+\left.\left.\left.{}\times \varphi_{X_j}(2\pi n)\,
+e^{-ir_j\mathrm{arctan}\,({{t}/{\lambda_j}})}\right)
+\Bigg/
+({\pi n})
+\vphantom{\left(
+1+\fr{4\pi^2 n^2}{\lambda_j^2}\right)^{- {r_j}/2}}
+\right)\right\rvert\leqslant{}\\
+{}\leqslant \left\lvert {\sf E}_\varepsilon\right\rvert+\sum\limits_{j=1}^{k}
+p_j\sum\limits_{n=1}^\infty\fr{1}{\pi n}\left(
+1+\fr{4\pi^2 n^2}{\lambda_j^2}\right)^{-{r_j}/2}\leqslant{}\\
+{}\leqslant  \fr{R}\lambda + \sum\limits_{j=1}^{k}p_j
+\sum\limits_{n=1}^\infty\left(\fr{1}{\pi n}\,
+\fr{\lambda_j^{r_j}}{(2\pi)^{r_j} n^{r_j}}\right)\leqslant {}
+\\
+{}\leqslant  \fr{R}{\lambda} + \sum\limits_{j=1}^{k}p_j 
+\fr{\lambda_j^{r_j}}{2^{r_j}\pi^{r_j+1}}\left(1+\int\limits_{1}^{\infty}
+\fr{1}{ x^{r_j+1}}\,dx\right)
+\leqslant{}\\
+{}\leqslant \fr{R}{\lambda}+\fr{\Lambda^{R}}{2^{r}\pi^{r+1}}\left(1+\fr{1}{r}\right).
+\end{multline*}
+
+При переходе от суммы к~интегралу используется факт убывания функции как переменной~$n$ 
+(или~$x$).~\hfill$\square$
+
+
+\smallskip
+
+\noindent
+\textbf{Замечание~3.}\
+Теорема~3 описывает соответ\-ст\-ву\-ющий результат для гам\-ма-рас\-пре\-де\-лен\-ных 
+за\-шум\-ля\-ющих случайных величин, если положить $k\hm=1$ в~выражении~\eqref{Th3Eq}. 
+При этом, очевидно, $r\hm\equiv R$ и~$\lambda\hm\equiv \Lambda$.
+
+
+\smallskip
+
+Рассмотрим вопросы построения доверительного интервала для неизвестного 
+математического ожидания ${\sf E}_X\hm>0$ в~предположении, что случайные величины~$X_j$ 
+не содержат ошибок измерения, а все погрешности учтены исключительно в~за\-шум\-ля\-ющих 
+элементах~$\varepsilon_j$.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~4.}
+\textit{Пусть выполнены предположения}~(A)--(D), 
+\textit{причем случайные величины~$\varepsilon_j$, $j\hm=1,2,\ldots$, имеют 
+распределение типа конечной $k$-ком\-по\-нент\-ной смеси 
+гам\-ма-рас\-пре\-де\-ле\-ний вида}~\eqref{FinGammaMixt} 
+\textit{с~па\-ра\-мет\-ра\-ми~${\bf r}$, $\boldsymbol{\lambda}$ и~${\bf p}$, 
+а~случайные величины} $X_j\stackrel{\text{п.н.}}{=}{\sf E}_X$, $j=1,2,\ldots$ 
+\textit{Тогда доверительный интервал для~${\sf E}_X$ при условии $0\hm<\alpha\hm<1$ имеет вид}:
+\begin{equation} 
+\label{Th4Eq}
+\left\lvert {\sf E}_X - \hat{{\sf E}}_X\right\rvert \leqslant  
+f({\bf r},\boldsymbol{\lambda},\alpha,n),
+\end{equation}
+\textit{где}
+
+\vspace*{-9pt}
+
+\noindent
+\begin{align}
+\hat{{\sf E}}_X&=\fr{1}{n} \sum\limits_{j=1}^{n} Y_j\,; \label{Th4hatE}\\[-4pt]
+f({\bf r}, \boldsymbol{\lambda},\alpha,n)&=\fr{z_{1-{\alpha}/2}}{\sqrt{n}} \left(
+\sqrt{\fr{R(R+1)}{\lambda^2}-\fr{r^2}{\Lambda^2}}+\fr{1}{2}\right) +{}\notag\\[-1pt]
+&\hspace*{20mm}{}+
+\fr{R}{\lambda}+\fr{\Lambda^{R}}{2^{r}\pi^{r+1}}\left(1+\fr{1}{r}\right); \notag
+\end{align}
+\textit{$z_{1-{\alpha}/2}$~--- $\left(1-{\alpha}/2\right)$-кван\-тиль 
+стандартного нормального распределения; $r\hm=\min(r_1, \ldots,r_k)$; 
+$R\hm=\max(r_1, \ldots,r_k)$; $\lambda\hm=\max(\lambda_1, \ldots,\lambda_k)$; 
+$\Lambda\hm=\max(\lambda_1, \ldots,\lambda_k)$}. 
+
+\smallskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \
+Из центральной предельной теоремы с~учетом условия~(A) 
+следует, что величина~$\hat{{\sf E}}_X$~\eqref{Th4hatE} асимптотически нормальна 
+с~математическим ожиданием~${\sf E}_Y$~\eqref{EY} и~дисперсией $(1/n){\sf D}_Y$~\eqref{DY}. 
+Пользуясь определением и~свойствами гам\-ма-функ\-ции, а~также оценкой~\eqref{Var} 
+получим:
+
+\noindent
+\begin{multline*}
+{\sf D}_Y \leqslant \left(\sqrt{\sum\limits_{j=1}^k p_j
+\fr{\lambda_j^{r_j}}{\Gamma(r_j)} \int\limits_{0}^{+\infty} 
+e^{\lambda_j x}x^{r_j+1}\, dx}+\fr{1}{2}\right)^2= {}\\[-0.5pt]
+= \left(\sqrt{\sum\limits_{j=1}^{k}p_j
+\fr{r_j(r_j+1)}{\lambda_j^2}-\left(\sum\limits_{j=1}^{k}p_j
+\fr{r_j}{\lambda_j}\right) ^2}+\fr{1}{2}\right)^2\leqslant {}\\[-1.5pt]
+{}\leqslant \left(\sqrt{\fr{R(R+1)}{\lambda^2}-\fr{r^2}{\Lambda^2}}+\fr{1}{2}\right)^2\,.
+\end{multline*}
+
+Аналогично доказательству Тео\-ре\-мы~2 с~учетом оценки~\eqref{Th3Eq} 
+отсюда следует справедливость соотношения~\eqref{Th4Eq}.~\hfill$\square$
+
+\vspace*{-12pt}
+
+\section{Заключение}
+
+Итак, в~работе получены оценки для математического ожидания наблюдений в~предположении 
+зашумления конечными смесями нормальных\linebreak (Тео\-ре\-ма~1) 
+и~гам\-ма-рас\-пре\-де\-ле\-ний (Тео\-ре\-ма~3). 
+%
+Построены доверительные интервалы 
+для неизвестного математического ожидания в~этих случаях с~использованием 
+уточненной оценки~\eqref{Var} 
+(Тео\-ре\-мы~2 и~4 соответственно). Отметим, что соответствующие соотношения 
+зависят только от <<экстремальных>> значений параметров смесей, но не от числа 
+компонент и~весов в~распределении зашумляющих наблюдений. 
+%
+Замечание~2 
+предлагает подход, который  может быть использован для определения неизвестного 
+параметра искусственно добавляемого к~исходным данным шума для улучшения качества 
+работы метода скользящего разделения смесей.
+
+\smallskip
+Автор выражает признательность доктору фи\-зи\-ко-ма\-те\-ма\-ти\-че\-ских наук, 
+профессору Виктору Юрьевичу Королеву за идею использования оценки 
+дисперсии вида~\eqref{Var} и~другие полезные обсуждения в~рамках 
+работы над данной статьей.
+
+\vspace*{-12pt}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{Wright2003} \Au{Wright~D.\,E., Bray~I.} 
+A~mixture model for rounded data~// J.~Roy. Stat. Soc.~D 
+Sta., 2003. Vol.~52. P.~3--13.
+
+\columnbreak
+
+\bibitem{Bai2009} \Au{Bai~Z., Zheng~S., Zhang~B., Hu~G.} 
+Statistical analysis for rounded data~// J.~Stat. Plan.  Infer., 2009. 
+Vol.~139. Iss.~8. P.~2526--2542.
+
+\bibitem{Zhang2010} \Au{Zhang~B., Liu~T., Bai~Z.\,D.} 
+Analysis of rounded data from dependent sequences~// 
+Ann. I.~Stat. Math., 2010. Vol.~62. Iss.~6. P.~1143--1173.
+
+\bibitem{Zhao2012} \Au{Zhao~N., Bai~Z.} 
+Analysis of rounded data in mixture normal model~// Stat. Pap., 2012. 
+Vol.~53. P.~895--914.
+
+\bibitem{Korolev2011-i} \Au{Королев~В.\,Ю.} 
+Ве\-ро\-ят\-но\-ст\-но-ста\-ти\-сти\-че\-ские методы декомпозиции волатильности 
+хаотических процессов.~--- М.: Изд-во Моск. ун-та, 2011. 512~с.
+
+\bibitem{Ushakov2015} \Au{Ушаков В.\,Г., Ушаков Н.\,Г.} 
+Об усреднении округленных данных~// Информатика и~её применения, 2015. Т.~9. 
+Вып.~4. С.~106--109.
+
+\bibitem{Ushakov2017a} \Au{Ушаков~В.\,Г., Ушаков~Н.\,Г.} 
+Границы точ\-ности восстановления информации, 
+теряемой при округлении результатов наблюдений~// 
+Вестник Московского университета. Серия~15: Вычислительная математика и~кибернетика, 
+2017. №\,2. С.~26--30.
+
+\bibitem{Ushakov2017b} \Au{Ushakov~N.\,G., Ushakov~V.\,G.} 
+Statistical analysis of rounded data: Recovering of information lost due to rounding~// 
+J.~Korean Stat. Soc., 2017.  Vol.~46. No.\,3. P.~426--437.
+
+\bibitem{Gorshenin2016} \Au{Gorshenin~A.\,K., Korolev~V.\,Yu.} 
+A~noising method for the identification of the stochastic structure of 
+information flows~// Comm. Com. Inf. Sc., 2017. 
+Vol.~678. P.~279--289.
+
+\bibitem{Gorshenin2013} 
+\Au{Gorshenin~A., Korolev~V.} Modelling of statistical
+fluctuations of information flows by mixtures of gamma distributions~// 
+27th European Conference on Modelling and Simulation Proceedings.~--- 
+Dudweiler, Germany: Digitaldruck Pirrot GmbHP, 2013. P.~569--572.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 03.08.18}}
+
+\vspace*{6pt}
+
+%\newpage
+
+%\vspace*{-24pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+\vspace*{-2pt}
+
+
+\def\tit{DATA NOISING BY FINITE NORMAL AND~GAMMA MIXTURES WITH~APPLICATION 
+TO~THE~PROBLEM OF~ROUNDED OBSERVATIONS}
+
+
+\def\titkol{Data noising by finite normal and~gamma mixtures with~application 
+to~the~problem of~rounded observations}
+
+
+
+\def\aut{A.\,K.~Gorshenin}
+
+\def\autkol{A.\,K.~Gorshenin}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+\noindent
+Institute of Informatics Problems, Federal Research Center ``Computer Science and
+Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333,
+Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+\Abste{In many real problems, statistical analysis of data containing additional 
+measurement errors, including rounding, is performed, which in some situations can 
+lead to sufficiently significant distortions. In this paper, estimates for an 
+unknown expectation of observations are obtained for one of the possible 
+rounding models under the assumption that the original data are additionally 
+noised with random variables having distributions of the type of finite 
+mixtures of normal and gamma laws. Confidence intervals for an 
+unknown expectation are constructed using the refined estimate for 
+the variance of the integer part of the random variable. An algorithm 
+for determining the value of the parameter of artificial noise, which 
+can be added to the initial data to improve the quality of the 
+method of moving separation of mixtures, is discussed.}
+
+
+\KWE{noisy data; rounded data; finite normal mixtures; finite gamma mixtures; 
+confidence intervals; moving separation of mixtures}
+
+
+
+\DOI{10.14357/19922264180304}
+
+%\vspace*{-14pt}
+
+\Ack
+\noindent
+The research was supported by the Russian Science Foundation (project 18-71-00156).
+
+
+
+%\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-gor-1}
+\Aue{Wright,~D.\,E., and I.~Bray.} 2003.
+A~mixture model for rounded data.  \textit{J.~Roy. Stat. Soc.~D Sta.} 52:3--13.
+
+\bibitem{2-gor-1}
+\Aue{Bai,~Z., S.~Zheng, B.~Zhang, and G.~Hu.} 2009. 
+Statistical analysis for rounded data. \textit{J.~Stat. Plan. 
+Infer.} 139(8):2526--2542.
+
+\bibitem{3-gor-1}
+\Aue{Zhang,~B., T.~Liu, and Z.\,D.~Bai.} 2010. 
+Analysis of rounded data from dependent sequences. 
+\textit{Ann. I.~Stat. Math.} 62(6):1143--1173.
+
+\bibitem{4-gor-1}
+\Aue{Zhao,~N., and Z.~Bai.} 2012. Analysis of rounded data in mixture normal model. 
+\textit{Stat. Pap.} 53:895--914.
+
+\bibitem{5-gor-1}
+\Aue{Korolev, V.\,Yu.} 2011. 
+\textit{Veroyatnostno-statisticheskie metody dekompozitsii volatil'nosti 
+khaoticheskikh protsessov} [Probabilistic and statistical methods of 
+decomposition of volatility of chaotic processes]. 
+Moscow: Moscow University Publishing House. 512~p.
+
+\bibitem{6-gor-1}
+\Aue{Ushakov, V.\,G., and N.\,G.~Ushakov.} 
+2015. Ob usrednenii okruglennykh dannykh [On averaging of rounded data].
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 9(4):106--109.
+
+\bibitem{7-gor-1}
+\Aue{Ushakov,~V.\,G., and N.\,G.~Ushakov.} 2017. 
+Boundaries of the precision of restoring information lost after rounding
+ the results from observations. 
+ \textit{Moscow University Computational Math. Cybernetics} 41(2):76--80.
+
+\bibitem{8-gor-1}
+\Aue{Ushakov,~N.\,G., and  V.\,G.~Ushakov.} 2017. 
+Statistical analysis of rounded data: Recovering of information lost due to rounding. 
+\textit{J.~Korean Stat. Soc.} 46(3):426--437.
+
+\bibitem{9-gor-1}
+\Aue{Gorshenin,~A.\,K., and V.\,Yu.~Korolev.} 2016. 
+A~noising method for the identification of the stochastic structure of information 
+flows. \textit{Comm. Com. Inf. Sc.} 678:279--289.
+
+\bibitem{10-gor-1}
+\Aue{Gorshenin,~A., and V.~Korolev.} 2013.  Modelling of statistical fluctuations of
+information flows by mixtures of gamma distributions. 
+\textit{27th European Conference on Modelling and Simulation Proceedings}. 
+Dudweiler, Germany: Digitaldruck Pirrot GmbHP. 569--572.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received August 3, 2018}}
+
+%\pagebreak
+
+%\vspace*{-18pt}
+
+\Contrl
+
+\noindent
+\textbf{Gorshenin Andrey K.} (b.\ 1986)~--- Candidate of Science (PhD) in physics and
+mathematics, associate professor, leading scientist, Institute of Informatics Problems,
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of
+Sciences, 44-2 Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{agorshenin@frccsc.ru}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}      

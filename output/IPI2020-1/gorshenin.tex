@@ -1,0 +1,924 @@
+
+%\newcommand*{\R}{\mathbb R}
+
+\def\stat{gorshenin}
+
+\def\tit{АНАЛИЗ КОНФИГУРАЦИЙ LSTM-СЕТЕЙ ДЛЯ~ПОСТРОЕНИЯ СРЕДНЕСРОЧНЫХ ВЕКТОРНЫХ 
+ПРОГНОЗОВ$^*$}
+
+\def\titkol{Анализ конфигураций LSTM-сетей для~построения среднесрочных векторных 
+прогнозов}
+
+\def\aut{А.\,К.~Горшенин$^1$, В.\,Ю.~Кузьмин$^2$}
+
+\def\autkol{А.\,К.~Горшенин, В.\,Ю.~Кузьмин}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Горшенин А.\,К.}
+\index{Кузьмин В.\,Ю.}
+\index{Gorshenin A.\,K.}
+\index{Kuzmin V.\,Yu.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при частичной поддержке РФФИ (проекты 19-07-00352 и~18-29-03100) и~Стипендии Президента Российской Федерации молодым ученым и~аспирантам (СП-538.2018.5). 
+Для ускорения обучения был использован гибридный высокопроизводительный вычислительный комплекс ЦКП <<Информатика>> ФИЦ ИУ РАН: 
+{\sf http://ckp.frccsc.ru}.}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского
+центра <<Информатика и~управление>> Российской академии наук; факультет
+вычислительной математики и~кибернетики Московского государственного 
+университета имени М.\,В.~Ломоносова, \mbox{agorshenin@frccsc.ru}}
+\footnotetext[2]{ООО <<Вай2Гео>>, \mbox{shadesilent@yandex.ru}}
+
+%\vspace*{-12pt}
+
+
+
+\Abst{Проанализированы~36~конфигураций архитектур LSTM-се\-тей 
+(Long Short-Term Memory, долгая краткосрочная память)
+для 
+построения прогнозов длительностью до~70~шагов по данным, размер 
+которых составляет~300--500~элементов. Для вероятностной 
+аппроксимации наблюдений применена модель на основе конечных смесей 
+нормальных распределений, поэтому в~качестве исходных данных для 
+прогнозирования использованы математическое ожидание, дисперсия, 
+коэффициенты асимметрии и~эксцесса этих смесей. Определены оптимальные 
+конфигурации нейронных сетей и~продемонстрирована практическая 
+возможность построения качественных среднесрочных прогнозов 
+при ограниченном времени обучения. Полученные результаты важны 
+для развития ве\-ро\-ят\-ност\-но-ста\-ти\-сти\-че\-ско\-го подхода к~описанию 
+эволюции турбулентных процессов в~магнитоактивной высокотемпературной плазме.}
+
+\KW{LSTM; прогнозирование; глубокое обучение; высокопроизводительные вычисления; CUDA}
+
+\DOI{10.14357/19922264200102} 
+  
+%\vspace*{-3pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+Традиционно при анализе турбулентного состояния плазмы исследователи 
+пытаются установить связь между скоростями роста неустойчивых режимов, 
+условиями их возбуждения и~спектрами флуктуаций, полученными с~по\-мощью 
+гирокинетического моделирования или в~реальных экспериментах. 
+При этом основное внимание уделяется стационарным режимам, необходимым 
+для работы в~устойчивом состоянии будущего управляемого термоядерного 
+реактора, а нелинейной стадией развития турбулентности, ее насыщения, 
+образования вихрей и~их хаотизации обычно пренебрегают. Поэтому исследования, 
+представленные в~статье~\cite{Gorshenin2019a}, ориентированы 
+на развитие статистического подхода к~описанию эволюции турбулентных
+ процессов в~магнитоактивной высокотемпературной \mbox{плазме}. 
+
+ В~качестве экспериментальных данных были использованы ансамбли 
+ диагностик, которые учитывают флуктуации плотности плазмы даже 
+ в~цент\-раль\-ных об\-ла\-стях плазменного столба (подробно физические 
+ эксперименты описаны в~статье~\cite{Batanov2017}). 
+ 
+ Для 
+ решения указанной задачи был использован математический аппарат 
+ на основе конечных нормальных смесей, методов их скользящего 
+ разделе-\linebreak\vspace*{-12pt}
+ 
+ \columnbreak
+ 
+ \noindent
+ ния~\cite{Korolev2011,Gorshenin2013} и~оценивания 
+ параметров с~помощью алгоритмов 
+ EM-ти\-па (expectation-maximization)~\cite{Lee2018,Cai2019,Hassen2019,Liu2019,Wu2019,Zeller2019}. 
+ С~учетом эволюции во времени характеристик предложенных моделей 
+ естественным выглядит вопрос о возможности их прогнозирования.
+
+Методы машинного обучения и~нейронные\linebreak сети в~исследованиях турбулентной 
+плазмы используются, возможно, не слишком часто, однако позволяют 
+добиваться достаточно заметных результатов как в~вопросах моделирования 
+наблюдаемых явлений~\cite{Meneghini2014,Raja2018,Mesbah2019,Narita2019},
+ так и~в~задачах анализа и~прогнозирования нестабильностей и~разрушительных
+  для стеллараторов и~токамаков эффектов~\cite{Parsons2017,Kates-Harbeck2019}.\linebreak
+Ранее авторами были предложены несколько архитектур нейронных 
+сетей~\cite{Gorshenin2019b,Gorshenin2019c}, в~том числе и~рекуррентных, 
+для эффективного краткосрочного прогнозирования (т.\,е.\ 
+от одного до трех наблюдений вперед), а~также разработаны инструменты 
+совместного (векторного) предсказания значений с~помощью сетей прямого 
+распространения~\cite{Gorshenin2020} математического ожидания, дисперсии, 
+коэффициентов асимметрии и~эксцесса конечных нормальных смесей в~задачах 
+обработки указанных экспериментальных данных.
+
+В данной статье рассматриваются вопросы среднесрочного прогнозирования, 
+т.\,е.\ предсказания значений на~10--70~шагов по входных векторам, размер 
+которых составляет 300--500~элементов, с~помощью LSTM-се\-тей~\cite{Greff2017} 
+и~их обучения и~валидации на современном высокопроизводительном 
+вы\-чис\-ли\-тель\-ном оборудовании.
+
+\section{Конфигурации LSTM-сетей для~среднесрочных прогнозов}
+
+В этом разделе рассмотрим набор базовых архитектур и~выбранные 
+настройки гиперпараметров нейронных сетей для построения среднесрочных 
+прогнозов моментов конечных смешанных вероятностных распределений. 
+Как показано в~статье~\cite{Gorshenin2020},\linebreak векторное прогнозирование 
+(т.\,е.\ совместное предсказание значений сразу для всех
+четырех рас\-смат\-ри\-ва\-емых 
+моментов) ведет к~уменьшению времени\linebreak обучения по сравнению с~последовательной 
+обработкой отдельных рядов, при этом общая точность прогнозов для каждого 
+ряда только увеличивается.
+{ %\looseness=1
+
+}
+
+Для построения среднесрочных векторных прогнозов были использованы 
+LSTM-ар\-хи\-тек\-ту\-ры~--- 
+разновидность рекуррентных нейронных сетей, успешно зарекомендовавшая себя 
+при решении задач обработки и~прогнозирования различных временн$\acute{\mbox{ы}}$х рядов. 
+Выбраны три базовые конфигурации архитектур.\\[-6pt]
+\begin{enumerate} [I.]%[label=\Roman{enumi}., ref=\Roman{enumi}]
+\item  Входной слой~--- скрытый слой из~100~нейронов~--- выходной слой.\\[-6pt]
+\item  Входной слой~--- два скрытых слоя из~150 и~100~нейронов~--- выходной слой.\\[-6pt]
+\item  Входной слой~--- три скрытых слоя из~200, 150 
+и~100~нейронов~--- выходной слой.\\[-6pt]
+\end{enumerate}
+
+Выбор такого количества нейронов связан с~тем, что 
+по результатам предварительного анализа различных возможных 
+конфигураций было установлено, что постепенное уменьшение числа 
+нейронов в~скрытых слоях приводит к~повышению скорости обучения 
+при сравнимой точности ре\-зуль\-татов.
+{ %\looseness=1
+
+}
+
+На вход каждой нейронной сети подается $4N$~наблюдений, где $N$~--- 
+ширина окна, на основе которого делается предсказание, на выходе~--- 
+$4M$~наблюдений, где $M$~--- выбранная длина прогноза. 
+В~данной работе рассмотрены следующие наборы значений: 
+$$
+N = \{300, 400, 500\};\enskip M = \{10, 30, 50, 70\}.
+$$
+
+Обучение проводится на протяжении~500~эпох, 
+при этом возможна досрочная остановка при отсутствии значимого убывания 
+функции потерь в~течение~35~эпох подряд. 
+В~качестве метода оптимизации выбран \verb"Adam", так как аналогично 
+случаю построения краткосрочных прогнозов~\cite{Gorshenin2019c,Gorshenin2020} 
+использование других функций (\verb"NAdam", \verb"AdaDelta", \verb"SGD", 
+\verb"AdaMax"~\cite{Buduma2017}) не приводит к~улучшению результатов. 
+Использована функция активации рациональная сигмоида, определяемая 
+выражением $x(1\hm + |x|)^{-1}$. Эффект переобучения при 
+таком выборе гиперпараметров для тестовых данных не наблюдается, 
+применение дроп\-аут-слоев~\cite{Srivastava2014} в~описанных 
+конфигурациях приводит к~ухудшению результатов, поэтому от их 
+использования в~итоговых вариантах было решено отказаться.
+
+
+\section{Алгоритм среднесрочного прогнозирования нестационарных данных 
+и~программные реализации}
+
+В данном разделе опишем алгоритм среднесрочного прогнозирования 
+нестационарных данных, которыми и~выступают анализируемые моменты смесей. 
+Ниже он представлен в~виде псевдокода.
+{ %\looseness=1
+
+}
+
+\renewcommand{\figurename}{\protect\bf Алгоритм}
+
+\begin{figure*}
+%\caption{Алгоритм среднесрочного прогнозирования нестационарных данных}
+%\label{Alg}
+%\begin{algorithmic} %[1]
+{\small \begin{center}
+\textbf{Алгоритм} среднесрочного прогнозирования нестационарных данных\\
+{\ }\\[-6pt]
+\begin{tabular}{l}
+\hline
+data = [exp, var, kurt, skew]; //  \textit{Четыре момента смесей}\\
+\textbf{Цикл} $i = 1:\mathrm{length(data)}$\\
+\hspace*{3mm}$\mathrm{NORMALIZE\mbox{\normalsize A}RRAY}(\mathrm{data}[i])$; // \textit{Нормализация каждого момента}\\
+\ \\
+
+\hspace*{3mm} // \textit{Формирование списка окон с последовательным сдвигом 
+на 1~шаг}\\
+$\mathrm{windows} = []$;\\
+\textbf{Цикл} $i = 1:\mathrm{length(data) - windowLength}$\\
+\hspace*{3mm}$\mathrm{window = data}[i, i + \mathrm{windowLength}]$;\\
+\hspace*{3mm}$\mathrm{windows.push(window)}$;\\
+\ \\
+$[\mathrm{train, test}] = \mathrm{DIVIDE\mbox{\normalsize T}RAIN\mbox{\normalsize T}EST\mbox{\normalsize D}ATA (windows, 0.7)}$;\\
+$nn = \mathrm{\mbox{\normalsize S}EQUENTIAL}()$;  // \textit{Создание объекта нейронной сети}\\
+\textbf{Цикл} $\mathrm{idx = 1:layerNumber}$\\
+\hspace{3mm}$\mathrm{NN.ADD\mbox{\normalsize L}AYER}(\mathrm{LSTM})$;\ // \textit{LSTM-слои}\\
+\ \\
+$\mathrm{NN.ADD\mbox{{\normalsize L}}AYER(Flatten)};$\ // \textit{Слой выравнивания}\\
+$\mathrm{NN.ADD\mbox{\normalsize L}AYER(Linear[4 * predictionLength])}$;\\
+\hspace*{5mm}// \textit{Обучение модели с~использованием Adam и~RMSE}\\
+$\mathrm{NN.COMPILE(optimizer=adam, loss=rmse, metrics=[accuracy, rmse, mae])}$;\\
+$\mathrm{NN.FIT(train,  validation=test, 
+callbacks=[EarlyStopping, ReduceLROnPlateau],  shuffle=False)}$\\
+\hline
+\end{tabular}
+\end{center}}
+\vspace*{-6pt}
+\end{figure*}
+
+\renewcommand{\figurename}{\protect\bf Рис.}
+
+Для сравнения скорости построения прогнозов данный алгоритм 
+тестировался на двух различных вычислительных системах. Первая из них~--- 
+персональный компьютер (ПК) с~процессором \verb"i7-8750H" и~видеокартой 
+\verb"NVIDIA GeForce RTX 2070"; вторая~--- гибридный высокопроизводительный 
+вычислительный кластер (ГВВК) с~двумя процессорами \verb"Power9" с~тактовой 
+частотой ~2{,}0~ГГц (20~ядер) и~4~видеокартами \verb"NVIDIA Volta V100" 
+(общий объем памяти~16~ГБ). Обучение нейронных сетей реализовано на 
+языке программирования \verb"Python" (версия~3.6 с~использованием библиотек
+ \verb"Keras-GPU 2.1" и~\verb"Tensorflow-GPU 1.2"). 
+ Для инициализации системы использована технология 
+ контейнеризации~\cite{Peinl2016}, что позволило существенно 
+ сократить время развертывания, накладные расходы на получение и~установку 
+ совместимых версий пакетов и~абстрагировать приложение от хоста. 
+ В~текущей версии время развертывания приложения на \mbox{ГВВК} составило около 
+ 3--5~с. Было установле-\linebreak но, что использование \mbox{ГВВК} повышает 
+ скорость\linebreak обучения 
+ в~12--27 раз для всех рассмотренных архитектур. Например, характерная 
+ продолжитель-\linebreak ность одной эпохи обучения для архитектуры~I при предсказании на~30~шагов 
+ вперед по известной выборке в~300~элементов на \mbox{ГВВК} составила~0{,}93~с, 
+ а~на ПК~--- 24{,}5~с. Поэтому все рассмотренные в~сле\-ду\-ющем разделе 
+ конфигурации тестировались именно на ресурсах \mbox{ГВВК}.
+ { %\looseness=1
+
+}
+
+
+\section{Выбор оптимальных конфигураций нейросетей для~векторных 
+прогнозов различной длины}
+
+Для анализа результатов прогнозирования использованы классические метрики~--- 
+сред\-не\-квад\-ра\-тич\-ная ошибка (\verb"RMSE", Root Mean Square Error) и~средняя 
+абсолютная ошибка (\verb"MAE", Mean Absolute Error). Исходные данные 
+преобразуются таким образом, чтобы обрабатываемые наблюдения принадлежали 
+отрезку $[0, 1]$. Соотношение между обуча\-ющи\-ми и~тестовыми наборами 
+составляет~70\% к~30\%.
+
+В таблице приведены данные по ошибкам и~скорости обсчета 
+данных на ГВВК для~36~различных конфигураций нейронных сетей. 
+Наибольший прирост точности получается в~результате перехода от 
+архитектуры типа~I с~одним скрытым слоем к~архитектуре типа~II 
+с~двумя скрытым слоями. В~среднем архитектура~II дает на~18\% 
+меньшую ошибку \verb"RMSE" и~на~20\% меньшую ошибку \verb"MAE". 
+Однако подобное увеличение точности ведет к~повышению длительности 
+обучения в~среднем на~42\%.
+
+
+
+Важную роль играет соотношение между размером прогноза и~известным окном.
+ Эмпирически (см.\ также таблицу) установлено, что если 
+ данное\linebreak отношение меньше~0{,}1, то эффект от использования архитектуры 
+ типа~{II} менее заметен. Так, пе\-реход от одного скрытого слоя 
+ к~двум скрытым\linebreak слоям при предсказании~70~наблюдений по~300 пред\-шест\-ву\-ющим 
+ значениям (упомянутое соотношение со\-став\-ля\-ет около~0{,}23) 
+ ведет к~уменьшению \verb"RMSE" на~37\% и~\verb"MAE" на~44\%, 
+ а~аналогичный переход при предсказании~10~наблюдений по окну в~500 
+ (т.\,е.~0{,}02)~--- 
+ всего лишь к~уменьшению на~7{,}2\% и~6\% соответственно. В~среднем 
+для всех архитектур время обучения 
+ увеличивается на~44\%, \verb"RMSE" уменьшается на~23\%, \verb"MAE"~--- на~28\%.
+
+Добавление еще одного скрытого слоя (т.\,е.\ переход к~архитектуре 
+типа~III) увеличивает время обучения, при этом точность 
+остается сопоставимой с~точностью архитектуры~{II}. 
+В~среднем использование третьего слоя уменьшает \verb"RMSE" на~3\% 
+и~\verb"MAE" на~2\%, при этом время обучения возрастает на~14\%. 
+Также стоит отметить, что при этом в~ряде случаев (см., например, 
+предсказание на~30~шагов для окна в~400~элементов, предсказание на~50~шагов 
+для окна в~500~элементов) ошибки могут несколько возрасти~--- 
+обучение моделей с~большим числом скрытых слоев требует менее 
+строгого ограничения по числу эпох. Дальнейшее наращивание числа слоев~--- 
+даже при условии изменения критериев останова обучения~--- 
+не дает значимого прироста точ\-ности.
+
+Была рассмотрена модификация архитектуры~II, в~которой 
+во втором скрытом слое вмес\-то~100~нейронов использованы~150. 
+На тестовых данных было установлено, что при увеличении времени обучения 
+на~5\%--10\% увеличение точности составляет 
+(в~терминах рассматриваемых метрик) около~1\%. 
+Поэтому использование такой конфигурации не представляется оптимальным.
+
+
+
+На рисунке представлены примеры графиков рассчитанных моментов 
+и~сделанных прогнозов\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\end{multicols}
+
+\begin{table*}\small 
+\begin{center}
+%\vspace*{2ex}
+
+\begin{tabular}{|c|c|c|c|c|c|}
+\multicolumn{6}{p{158mm}}{Сравнение точности прогнозирования в~метриках RMSE и~MAE, 
+а~также времени обучения для различных конфигураций}\\
+\multicolumn{6}{c}{\ }\\[-6pt]
+\hline
+{Размер окна}&{Длительность прогноза}&{Конфигурация архитектуры}&
+{RMSE}&{MAE}&{Время обучения, с}\\
+\hline
+\multicolumn{1}{|c|}{\raisebox{-60pt}[0pt][0pt]{300}} &  &I& 0{,}029 & 0{,}020 & 231{,}61 \\
+%\cline{3-6}
+&10&II& 0{,}025 & 0{,}017 & 391{,}87 \\
+%\cline{3-6}
+&&III& 0{,}025 & 0{,}017 & 445{,}22 \\
+\cline{2-6}
+& &I& 0{,}033 & 0{,}023 & 275{,}05 \\
+%\cline{3-6}
+&30&II& 0{,}028 & 0{,}019 & 401{,}55 \\
+%\cline{3-6}
+&&III& 0{,}026 & 0{,}018 & 456{,}62 \\
+\cline{2-6}
+&&I& 0{,}034 & 0{,}023 & 291{,}20 \\
+%\cline{3-6}
+&50 &II& 0{,}029 & 0{,}02 & 415{,}51 \\
+%\cline{3-6}
+&&III& 0{,}026 & 0{,}019 & 473{,}71 \\
+\cline{2-6}
+&  &I& 0{,}044 & 0{,}034 & 290{,}25 \\
+%\cline{3-6}
+&70&II& 0{,}028 & 0{,}019 & 420{,}83 \\
+%\cline{3-6}
+&&III& 0{,}025 & 0{,}017 & 486{,}46 \\
+\hline
+\multicolumn{1}{|c|}{\raisebox{-60pt}[0pt][0pt]{400}} & &I& 0{,}028 & 0{,}018 & 628{,}06 \\
+%\cline{3-6}
+&10&II& 0{,}023 & 0{,}015 & 529{,}25 \\
+%\cline{3-6}
+&&III& 0{,}023 & 0{,}015 & 534{,}85 \\
+\cline{2-6}
+& &I& 0{,}030 & 0{,}020 & 350{,}74 \\
+%\cline{3-6}
+&30&II& 0{,}025 & 0{,}017 & 519{,}58 \\
+%\cline{3-6}
+&&III& 0{,}026 & 0{,}02 & 509{,}92 \\
+\cline{2-6}
+& &I& 0{,}031 & 0{,}022 & 356{,}43 \\
+%\cline{3-6}
+&50&II& 0{,}024 & 0{,}016 & 528{,}15 \\
+%\cline{3-6}
+&&III& 0{,}022 & 0{,}014 & 615{,}32 \\
+\cline{2-6}
+& &I& 0{,}028 & 0{,}024 & 361{,}19 \\
+%\cline{3-6}
+&70&II& 0{,}024 & 0{,}018 & 534{,}51 \\
+%\cline{3-6}
+&&III& 0{,}025 & 0{,}017 & 629{,}95 \\
+\hline
+\multicolumn{1}{|c|}{\raisebox{-60pt}[0pt][0pt]{500}} &&I& 0{,}026 & 0{,}017 & 457{,}90 \\
+%\cline{3-6}
+&10&II& 0{,}024 & 0{,}016 & 667{,}49 \\
+%\cline{3-6}
+&&III& 0{,}022 & 0{,}014 & 804{,}82 \\
+\cline{2-6}
+& &I& 0{,}029 & 0{,}02 & 463{,}36 \\
+%\cline{3-6}
+&30&II& 0{,}023 & 0{,}016 & 683{,}53 \\
+%\cline{3-6}
+&&III& 0{,}022 & 0{,}015 & 824{,}50 \\
+\cline{2-6}
+&&I& 0{,}026 & 0{,}018 & 481{,}52 \\
+%\cline{3-6}
+&50&II& 0{,}022 & 0{,}014 & 696{,}62 \\
+%\cline{3-6}
+&&III& 0{,}023 & 0{,}016 & 842{,}29 \\
+\cline{2-6}
+& &I& 0{,}027 & 0{,}019 & 495{,}84 \\
+%\cline{3-6}
+&70&II& 0{,}024 & 0{,}017 & 714{,}66 \\
+%\cline{3-6}
+&&III& 0{,}024 & 0{,}017 & 840{,}07 \\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{-6pt}
+\end{table*}
+
+\begin{multicols}{2}
+
+\noindent
+ на~1 и~50~шагов для окна 
+в~500~наблюдений для архитектуры~{II}.
+
+ При рассмотрении наблюдения 
+с~номером~$n$ строится среднесрочный прогноз по окну, со\-став\-лен\-но\-му из 
+наблюдений с~номерами от $n \hm- 500\hm - l$ до $n\hm - l$, 
+где~$l$~соответствует длине прогноза (в~данном случае~--- 1 или~50). 
+Спрогнозированные ряды хорошо приближают исходные (даже с~учетом их 
+явной нестационарности), при этом существенные изменения локальных 
+трендов, выбросы, ведут к~естественному увеличению ошибки (например, см.\
+ наблюдения 820--900 для коэффициента эксцесса). Этот эффект может быть
+  частично скомпенсирован менее строгими ограничениями на обуче\-ние модели. 
+  Аналогично среднесрочный прогноз не всегда способен предсказать 
+  точную величину изменения поведения ряда, наиболее сильно это 
+  проявляется на наблюдениях 400--420, 430--460 
+  для дисперсии. При этом предсказания среднесрочных трендов (рост 
+  или падение ряда на протяжении десятков наблюдений) достаточно точны,
+   например номер наблюдения с~максимальной величиной 
+   у~крат\-ко\-сроч\-но\-го/сред\-не\-сроч\-но\-го прогноза и~исходных 
+   данных на наблюдениях 620--640 для коэффициента асимметрии совпадает.
+
+\vspace*{-12pt}
+
+\section{Заключение}
+
+В работе рассмотрено несколько типов ар\-хи\-тектур LSTM-се\-тей, 
+которые при различных кон\-фи\-гурациях позволяют с~достаточной 
+точностью
+ (в~терминах метрик RMSE и~MAE) и~за умеренное время 
+строить среднесрочные прогнозы существенно нестационарных рядов. 
+При этом удается доста-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\end{multicols}
+
+\begin{figure*}
+  \vspace*{1pt}
+    \begin{center}  
+  \mbox{%
+ \epsfxsize=163.054mm 
+ \epsfbox{gor-1.eps}
+ }
+
+%\vspace*{-10pt}
+{\small
+Сравнение значений исходных данных~(\textit{1}), прогноза на~1~шаг~(\textit{2}) 
+и~на~50~шагов~(\textit{3})  для четырех моментов}
+\end{center}
+\vspace*{-9pt}
+%\label{Fig}
+\end{figure*}
+
+
+\begin{multicols}{2}
+
+\noindent
+точно успешно учитывать среднесрочные тренды,
+ присутствующие в~данных. Установлено, что точность прогнозирования 
+ выбросов и~быстрой смены направлений локальных трендов может быть 
+ повышена за счет увеличения числа эпох обучения, например до~5000, 
+ однако это ведет к~су\-ще\-ст\-венному замедлению построения нейросетевых 
+ моделей и~практически не требуется для точного прогнозирования
+ большинства участков анализируемых 
+ рядов. 
+ %
+ Таким образом, создана методология обработки подобных данных, 
+ сформулированы прак\-ти\-че\-ские рекомендации по развертыванию реализующих 
+ ее программных решений на высокопроизводительном вычислительном 
+ оборудовании. Полученные результаты важны для развития 
+ ве\-ро\-ят\-ност\-но-ста\-ти\-сти\-че\-ско\-го 
+ подхода к~описанию эволюции турбулентных процессов в~магнитоактивной 
+ высокотемпературной плазме.
+ 
+ \vspace*{-14pt}
+
+
+{\small\frenchspacing
+ {\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+ \vspace*{-2pt}
+ 
+\bibitem{Gorshenin2019a} 
+\Au{Batanov~G.\,M., Borzosekov~V.\,D.,
+Gorshenin~A.\,K., Kharchev~N.\,K., Korolev~V.\,Yu., Sarskyan~K.\,A.}
+Evolution of statistical properties of microturbulence 
+during transient process under electron cyclotron resonance heating 
+of the L-2M stellarator plasma~// Plasma Phys. 
+Contr.~F., 2019. Vol.~61. Iss.~7. Art.~No.\,075006.
+
+\bibitem{Batanov2017} 
+\Au{Batanov~G.\,M., Berezhetskii~M.\,S., Borzosekov~V.\,D., \textit{et al.}} 
+Reaction of turbulence at the edge and in the center of the plasma column to 
+pulsed impurity injection caused by the sputtering of the wall coating 
+in L-2M stellarator~// Plasma Phys. Rep., 2017. Vol.~43. Iss.~8. P.~818--823.
+
+\bibitem{Korolev2011} 
+\Au{Королев~В.\,Ю.} 
+Ве\-ро\-ят\-ност\-но-ста\-ти\-сти\-че\-ские методы декомпозиции 
+волатильности хаотических процессов.~--- М.: Изд-во Моск. ун-та, 2011. 512~с.
+
+\bibitem{Gorshenin2013} 
+\Au{Gorshenin~A., Korolev~V., Kuzmin~V., Zeifman~A.} 
+Coordinate-wise versions of the grid method for the analysis 
+of intensities of non-stationary information flows by moving separation 
+of mixtures of gamma-distribution~//  27th European Conference on 
+Modelling and Simulation Proceedings.~--- Dudweiler, Germany: 
+Digitaldruck Pirrot GmbH, 2013. P.~565--568.
+
+\bibitem{Lee2018} 
+\Au{Lee~S.\,X., Leemaqz~K.\,L., McLachlan~G.\,J.} 
+A~block EM algorithm for multivariate skew normal and skew t-mixture
+models~// IEEE~T. Neur. Net. Lear., 2018. Vol.~29. Iss.~11. P.~5581--5591.
+
+\bibitem{Cai2019}  %6
+\Au{Cai~T.\,T., Ma~J., Zhang~L.} 
+CHIME: Clustering of high-dimensional Gaussian mixtures with EM 
+algorithm and its optimality~// Ann. Stat., 2019. Vol.~47. Iss.~3 P.~1234--1267.
+
+
+
+\bibitem{Liu2019} %7
+\Au{Liu~C., Li~H.-C., Fu~K., Zhang~F., Datcu~M., Emery~W.\,J.} 
+A~robust EM clustering algorithm for Gaussian mixture models~// 
+Pattern Recogn., 2019. Vol.~87. P.~269--284.
+
+\bibitem{Wu2019}  %8
+\Au{Wu~D., Ma~J.} An effective EM algorithm 
+for mixtures of Gaussian processes via the MCMC sampling and approximation~// 
+Neurocomputing, 2019. Vol.~331. P.~366--374.
+{ %\looseness=1
+
+}
+
+\bibitem{Hassen2019} %9
+\Au{Ben Hassen~H., Masmoudi~K., Masmoudi~A.} 
+Model selection in biological networks using a graphical EM algorithm~// 
+Neurocomputing, 2019. Vol.~349. P.~271--280.
+
+\bibitem{Zeller2019}  %10
+\Au{Zeller~C.\,B., Cabral~C.\,R.\,B., Lachos~V.\,H., Benites~L.} 
+Finite mixture of regression models for censored data based on scale 
+mixtures of normal distributions~// Adv. Data Anal. Classi., 2019. Vol.~13. Iss.~1. P.~89--116.
+
+\bibitem{Meneghini2014} 
+\Au{Meneghini~O., Luna~C.\,J., Smith~S.\,P., Lao~L.\,L.}
+Modeling of transport phenomena in tokamak plasmas with neural networks~// 
+Phys. Plasmas, 2014. Vol.~21. Iss.~6. Art.~No.\,060702. %10.1063/1.4885343
+
+\bibitem{Raja2018}
+\Au{Raja~M.\,A.\,Z., Shah~F.\,H., Tariq~M., Ahmad~I., Ahmad~S.\,U.} 
+Design of artificial neural network models optimized with sequential 
+quadratic programming to study the dynamics of nonlinear Troesch's 
+problem arising in plasma physics~// Neural Comput. 
+Appl., 2018. Vol.~29. Iss.~6. P.~83--109. %10.1007/s00521-016-2530-2
+
+\bibitem{Mesbah2019} 
+\Au{Mesbah~A., Graves~D.\,B.} 
+Machine learning for modeling, diagnostics, and control 
+of non-equilibrium plasmas~// J.~Phys.~D Appl. Phys., 2019. 
+Vol.~52. Iss.~30. Art.~No.\,30LT02. %10.1088/1361-6463/ab1f3f
+
+\bibitem{Narita2019} 
+\Au{Narita~E., Honda~M., Nakata~M., Yoshida~M., Hayashi~N., 
+Takenaga~H.} Neural-network-based semi-empirical turbulent particle 
+transport modelling founded on gyrokinetic analyses of JT-60U plasmas~// 
+Nucl. Fusion, 2019. Vol.~59. Iss.~10. Art.~No.\,106018. 
+%10.1088/1741-4326/ab2f43
+
+\bibitem{Parsons2017} 
+\Au{Parsons~M.\,S.} Interpretation of machine-learning-based 
+disruption models for plasma control~// Plasma Phys. Contr.~F., 
+2017. Vol.~59. Iss.~8. Art.~No.\,085001. %10.1088/1361-6587/aa72a3
+
+\bibitem{Kates-Harbeck2019}
+\Au{Kates-Harbeck~J., Svyatkovskiy~A., Tang~W.} 
+Predicting disruptive instabilities in controlled fusion 
+plasmas through deep learning~// Nature, 2019. Vol.~568. Iss.~7753. P.~526. 
+%10.1038/s41586-019-1116-4
+
+\bibitem{Gorshenin2019b} 
+\Au{Gorshenin~A.\,K., Kuzmin~V.\,Yu.} 
+Improved architecture of feedforward neural networks to increase accuracy 
+of  predictions for moments of finite normal mixtures~// 
+Pattern Recognition Image Analysis, 2019. Vol.~29. No.\,1. P.~79--88.
+
+\bibitem{Gorshenin2019c} 
+\Au{Горшенин~А.\,К., Кузьмин~В.\,Ю.} 
+Применение рекуррентных нейронных сетей для прогнозирования моментов 
+конечных нормальных смесей~// Информатика и~её применения, 2019. Т.~13. Вып.~3. C.~114--121.
+
+\bibitem{Gorshenin2020} 
+\Au{Gorshenin~A., Kuzmin~V.} A machine learning approach to the 
+vector prediction of moments of finite normal mixtures~// 
+Adv. Intell. Syst., 2020. Vol.~1127. P.~307--314. %10.1007/978-3-030-39216-1_27
+
+
+\bibitem{Greff2017} 
+\Au{Greff~K., Srivastava~R.\,K., Koutnik~J., Steunebrink~B.\,R., 
+Schmidhuber~J.} LSTM: A~search Space Odyssey~// IEEE~T.
+ Neur. Net. Lear., 2017. Vol.~28. Iss.~10. P.~2222--2232.
+
+
+\bibitem{Buduma2017} 
+\Au{Buduma~N.} Fundamentals of deep learning: Designing 
+next-generation machine intelligence algorithms.~--- 
+Sebastopol, CA, USA: O'Reilly Media, 2017. 298~p.
+
+\bibitem{Srivastava2014} 
+\Au{Srivastava~N., Hinton~G., Krizhevsky~A., Sutskever~I., Salakhutdinov~R.} 
+Dropout: A~simple way to prevent neural networks from overfitting~// 
+J.~Mach. Learn. Res., 2014. Vol.~15. P.~1929--1958.
+
+\bibitem{Peinl2016} 
+\Au{Peinl~R., Holzschuher~F., Pfitzer~F.} Docker 
+cluster management for the cloud~--- survey results and own solution~// 
+J.~Grid Comput., 2016. Vol.~14. Iss.~2. P.~265--282. %10.1007/s10723-016-9366-y
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Поступила в~редакцию 15.01.20}}
+
+\vspace*{6pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+\vspace*{-4pt}
+
+\def\tit{ANALYSIS OF CONFIGURATIONS OF~LSTM
+ NETWORKS FOR~MEDIUM-TERM VECTOR FORECASTING\\[-5pt]}
+
+
+\def\titkol{Analysis of configurations of~LSTM 
+networks for~medium-term vector forecasting}
+
+\def\aut{A.\,K.~Gorshenin$^{1,2}$ and~V.\,Yu.~Kuzmin$^3$}
+
+\def\autkol{A.\,K.~Gorshenin and~V.\,Yu.~Kuzmin}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-16pt}
+
+
+\noindent
+$^1$Institute of Informatics Problems, Federal Research Center ``Computer Science and
+Control'' of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 44-2~Vavilov Str., 
+Moscow 119333, Russian Federation
+
+\noindent
+$^2$Faculty of Computational Mathematics and Cybernetics, Lomonosov Moscow
+State University, GSP-1, Leninskie\linebreak
+$\hphantom{^1}$Gory, Moscow 119991, Russian Federation
+
+\noindent
+$^3$``Wi2Geo LLC,'' 3-1~Mira
+Ave., Moscow 129090, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{2pt} 
+
+
+
+\Abste{The paper analyzes~36~configurations of LSTM (long short-term memory)
+architectures for 
+forecasting with a duration up to~70~steps based on data whose size 
+is~300--500~elements. For probabilistic approximation of observations, 
+a~model based on finite normal mixtures is used; therefore, 
+the mathematical expectation, variance, skewness, and kurtosis of 
+these mixtures are used as initial data for forecasting. 
+The optimal configurations of neural networks were determined 
+and the practical possibility of constructing high-quality medium-term 
+forecasts with a~limited  training time was demonstrated. The results 
+obtained are important for the development of 
+a~probabilistic-statistical approach  to the description of the evolution 
+of turbulent processes in a~magnetically active high-temperature plasma.}
+
+
+\KWE{LSTM; forecasting; deep learning; high-performance computing; CUDA}
+
+
+\DOI{10.14357/19922264200102} 
+
+\vspace*{-24pt}
+
+\Ack
+
+\vspace*{-4pt}
+
+\noindent
+The research is partially supported by the Russian Foundation for Basic Research
+(projects 19-07-00352 and 18-29-03100) and the RF 
+Presidential scholarship program (project No.\,538.2018.5). 
+The calculations were performed using Hybrid high-performance computing 
+cluster of FRC CSC RAS ({\sf http://ckp.frccsc.ru/}).
+
+
+%\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-gor-1}
+\Aue{Batanov,~G.\,M., V.\,D.~Borzosekov, A.\,K.~Gorshenin,
+ N.\,K.~Kharchev, V.\,Yu.~Korolev, and K.\,A.~Sarskyan.} 
+ 2019. Evolution of statistical properties of microturbulence 
+ during transient process under electron cyclotron resonance 
+ heating of the L-2M stellarator plasma. \textit{Plasma Phys. 
+ Contr.~F.} 61(7):075006.
+
+\bibitem{2-gor-1}
+\Aue{Batanov,~G.\,M., M.\,S.~Berezhetskii, V.\,D.~Borzosekov, \textit{et al.}}
+ 2017. Reaction of turbulence at the edge and in the center of
+  the plasma column to pulsed impurity injection caused by the 
+  sputtering of the wall coating in L-2M stellarator. \textit{Plasma Phys. 
+  Rep.} 43(8):818--823.
+
+\bibitem{3-gor-1}
+\Aue{Korolev,~V.\,Yu.} 2011. \textit{Veroyatnostno-statisticheskie metody dekompozitsii
+volatil'nosti khaoticheskikh protsessov} 
+[Probabilistic and statistical methods of decomposition of volatility 
+of chaotic processes]. Moscow: Moscow University Publishing House. 512~p.
+
+\bibitem{4-gor-1}
+\Aue{Gorshenin,~A., V.~Korolev, V.~Kuzmin, and A.~Zeifman.} 2013.
+Coordinate-wise versions of the grid method for the analysis 
+of intensities of non-stationary information flows by moving separation
+ of mixtures of gamma-distribution. \textit{27th 
+ European Conference on Modelling and Simulation Proceedings}. 
+ Dudweiler, Germany: Digitaldruck Pirrot GmbH. 565--568.
+
+\bibitem{5-gor-1}
+\Aue{Lee,~S.\,X., K.\,L.~Leemaqz, and G.\,J.~McLachlan.} 2018. 
+A~block EM algorithm for multivariate skew normal and skew t-mixture models. 
+\textit{IEEE~T. Neur. Net. Lear.} 29(11):5581--5591.
+
+\bibitem{6-gor-1}
+\Aue{Cai,~T.\,T., J.~Ma, and L.~Zhang.} 2019. CHIME: Clustering of 
+high-dimensional Gaussian mixtures with EM algorithm and its optimality. 
+\textit{Ann. Stat.} 47(3):1234--1267.
+
+
+
+\bibitem{8-gor-1} %7
+\Aue{Liu,~C., H.-C.~Li, K.~Fu, F.~Zhang, M.~Datcu, and W.\,J.~Emery.} 2019. 
+A~robust EM clustering algorithm for Gaussian mixture models. 
+\textit{Pattern Recogn.} 87:269--284.
+
+\bibitem{9-gor-1} %8
+\Aue{Wu,~D., and J.~Ma.} 2019. An effective EM algorithm for mixtures of 
+Gaussian processes via the MCMC sampling and approximation. 
+\textit{Neurocomputing} 331:366--374.
+
+\bibitem{7-gor-1} %9
+\Aue{Ben Hassen,~H., K.~Masmoudi, and A.~Masmoudi.}
+ 2019. Model selection in biological networks using 
+ a~graphical EM algorithm. \textit{Neurocomputing} 349:271--280.
+
+\bibitem{10-gor-1}
+\Aue{Zeller,~C.\,B., C.\,R.\,B.~Cabral, V.\,H.~Lachos, and L.~Benites.}
+ 2019. Finite mixture of regression models for censored data based on 
+ scale mixtures of normal distributions. 
+ \textit{Adv. Data Anal. Classi.} 13(1):89--116.
+
+\bibitem{11-gor-1}
+\Aue{Meneghini,~O., C.\,J.~Luna, S.\,P.~Smith, and L.\,L.~Lao.}
+ 2014. Modeling of transport phenomena in tokamak plasmas with neural networks. 
+ \textit{Phys. Plasmas} 21(6):060702.
+
+\bibitem{12-gor-1}
+\Aue{Raja,~M.\,A.\,Z., F.\,H.~Shah, M.~Tariq, I.~Ahmad, and S.\,U.~Ahmad.} 
+2018. Design of artificial neural network models optimized with sequential
+ quadratic programming to study the dynamics of nonlinear Troesch's 
+ problem arising in plasma physics. 
+ \textit{Neural Comput. Appl.} 29(6):83--109.
+
+\bibitem{13-gor-1}
+\Aue{Mesbah,~A., and D.\,B.~Graves.}
+ 2019. Machine learning for modeling, diagnostics, and control 
+ of non-equilibrium plasmas. \textit{J.~Phys.~D Appl. Phys.} 52(30):30LT02.
+
+\bibitem{14-gor-1}
+\Aue{Narita,~E., M.~Honda, M.~Nakata, M.~Yoshida, N.~Hayashi, and H.~Takenaga.}
+ 2019. Neural-network-based semi-empirical turbulent particle transport 
+ modelling founded on gyrokinetic analyses of JT-60U plasmas. 
+ \textit{Nucl. Fusion} 59(10):106018.
+
+\bibitem{15-gor-1}
+\Aue{Parsons,~M.\,S.} 2017. Interpretation of machine-learning-based 
+disruption models for plasma control. \textit{Plasma Phys. 
+Contr.~F.} 59(8):085001.
+
+\bibitem{16-gor-1}
+\Aue{Kates-Harbeck,~J., A.~Svyatkovskiy, and W.~Tang.}
+ 2019. Predicting disruptive instabilities in 
+ controlled fusion plasmas through deep learning. \textit{Nature} 568(7753):526.
+
+\bibitem{17-gor-1}
+\Aue{Gorshenin,~A.\,K., and V.\,Yu.~Kuzmin.}
+ 2019. Improved architecture of feedforward neural networks 
+ to increase accuracy of predictions for moments of finite 
+ normal mixtures. \textit{Pattern Recognition Image Analysis} 29(1):79--88.
+
+\bibitem{18-gor-1}
+\Aue{Gorshenin,~A.\,K., and V.\,Yu.~Kuzmin.} 2019. 
+Primenenie rekurrentnykh neyronnykh setey dlya prognozirovaniya 
+momentov konechnykh normal'nykh smesey [Application of recurrent neural 
+networks to forecasting the moments of finite normal mixtures]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 13(3):114--121.
+
+\bibitem{19-gor-1}
+\Aue{Gorshenin,~A., and V.~Kuzmin.} 2020. 
+A~machine learning approach to the vector prediction of moments of 
+finite normal mixtures. \textit{Adv. Intell. Syst.} 
+1127:307--314.
+
+\bibitem{20-gor-1}
+\Aue{Greff,~K., R.\,K.~Srivastava, J.~Koutnik, B.\,R~Steunebrink, 
+and J.~Schmidhuber.}  2017. LSTM: A~search Space Odyssey. 
+\textit{IEEE~T. Neur. Net. Lear.} 28(10):2222--2232.
+
+\bibitem{21-gor-1}
+\Aue{Buduma,~N.} 2017. \textit{Fundamentals of deep learning: 
+Designing next-generation machine intelligence algorithms}. 
+Sebastopol, CA: O'Reilly Media. 298~p.
+
+\bibitem{22-gor-1}
+\Aue{Srivastava,~N., G.~Hinton, A.~Krizhevsky, I.~Sutskever, and 
+R.~Salakhutdinov.}
+ 2014. Dropout: A~simple way to prevent neural networks from overfitting.
+ \textit{J.~Mach. Learn. Res.} 15:1929--1958.
+
+\bibitem{23-gor-1}
+\Aue{Peinl,~R., F.~Holzschuher, and F.~Pfitzer.}
+ 2016. Docker cluster management for the cloud~--- 
+ survey results and own solution. \textit{J.~Grid Comput.} 14(2):265--282.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received January 15, 2020}}
+
+%\pagebreak
+
+\vspace*{-24pt}
+
+\Contr
+
+\vspace*{-2pt}
+
+\noindent
+\textbf{Gorshenin Andrey K.} (b.\ 1986)~--- 
+Candidate of Science (PhD) in physics and
+mathematics, associate professor, leading scientist, Institute of Informatics Problems,
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of
+Sciences, 44-2~Vavilova Str., Moscow 119333, Russian Federation;  
+leading scientist, Faculty of Computational Mathematics and Cybernetics, 
+M.\,V.~Lomonosov Moscow State University, GSP-1, Leninskie Gory,
+ Moscow 119991, Russian Federation; \mbox{agorshenin@frccsc.ru}
+
+%\vspace*{3pt}
+
+\noindent
+\textbf{Kuzmin Victor Yu.} (b.\ 1986)~--- 
+Head of Development, ``Wi2Geo LLC,'' 3-1~Mira
+Ave., Moscow 129090, Russian Federation; \mbox{shadesilent@yandex.ru}
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 
+      

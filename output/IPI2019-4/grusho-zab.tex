@@ -1,0 +1,510 @@
+\def\stat{gr+zab}
+
+\def\tit{ФОРМИРОВАНИЕ КОНЦЕПТОВ НА~ОСНОВЕ МАЛЫХ ВЫБОРОК$^*$}
+
+\def\titkol{Формирование концептов на основе малых выборок}
+
+\def\aut{А.\,А.~Грушо$^1$, М.\,И.~Забежайло$^2$, Н.\,А.~Грушо$^3$, 
+Е.\,Е.~Тимонина$^4$}
+
+\def\autkol{А.\,А.~Грушо, М.\,И. Забежайло, Н.\,А.~Грушо, 
+Е.\,Е.~Тимонина}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Грушо А.\,А.}
+\index{Забежайло М.\,И.}
+\index{Грушо Н.\,А.} 
+\index{Тимонина Е.\,Е.}
+\index{Grusho A.\,A.}
+\index{Zabezhailo M.\,I.}
+\index{Grusho N.\,A.}
+\index{Timonina E.\,E.}
+
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа частично поддержана РФФИ (проект 18-29-03081).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управление>> 
+Российской академии наук, \mbox{grusho@yandex.ru}}
+\footnotetext[2]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управление>> 
+Российской академии наук, m.zabezhailo@yandex.ru}
+\footnotetext[3]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управление>> 
+Российской академии наук, info@itake.ru}
+\footnotetext[4]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управление>> 
+Российской академии наук, eltimon@yandex.ru}
+
+\vspace*{-12pt}
+  
+  
+  \Abst{Системы мониторинга информационной безопасности ин\-фор\-ма\-ци\-он\-но-вы\-чис\-ли\-тель\-ных систем получают информацию в~виде цепочек коротких сообщений, которые 
+можно считать цепочками малых выборок. Часто в~силу инерционности информационных 
+систем эти цепочки отражают близкие состояния вычислительной системы или сети. 
+Предполагается, что работу системы можно представить в~виде конечного набора режимов, 
+которые называются концептами. Нарушения безопасности выявляются с~помощью аномалий, 
+которые ассоциируются с~появлением новых концептов. 
+  Известные технологии выявления аномалий основаны на построении модели нормального 
+поведения системы. Концепты соответствуют нормальным типам поведения системы. В~работе 
+рассмотрена задача построения концептов на основе машинного обучения, опирающегося на 
+цепочки малых выборок. Построен алгоритм формирования концептов и~доказана его 
+эффективность.}
+   
+  \KW{мониторинг информационной безопасности; малые выборки; обучение на малых 
+выборках; формирование концептов}
+
+\DOI{10.14357/19922264190413} 
+  
+%\vspace*{1pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+  
+  
+\section{Введение }
+
+  Многие системы мониторинга информационной безопасности~[1, 2] и~других 
+аспектов работы ин\-фор\-ма\-ци\-он\-но-вы\-чис\-ли\-тель\-ных систем получают 
+информацию в~виде коротких сообщений, которые можно считать малыми 
+выборками. В~силу инерционности информационных систем часто эти 
+сообщения поступают сериями, отражая близкие состояния вычислительной 
+системы или сети. 
+  
+  Целью работы мониторинговых систем ставится выявление аномалий в~работе 
+отслеживаемых объектов. Известны технологии выявления аномалий, основанные 
+на построении моделей нормального поведения~[3]. Однако поступающие 
+сообщения не всегда имеют простую структуру~[4]. Не всегда методы 
+регрессии~[3] можно применять: например, когда сеть изменяет свое поведение, 
+происходит изменение многих параметров функционирования сети. Если 
+устройство демонстрирует несколько режимов работы, их описание необходимо 
+строить на основе анализа поступающих малых выборок с~помощью процедур 
+машинного обучения. 
+  
+  В последнее время методы машинного обучения получили большое развитие 
+(см., например,~[5, 6]). Методы машинного обучения на основе малых выборок 
+также подробно изучались~[7]. Один из главных сценариев в~таком обучении 
+основан на Concept Learning. Цель этого подхода состоит в~распознавании 
+концептов по небольшому числу малых выборок на основе ранее наблюденных 
+концептов. Вторая цель этого подхода состоит в~формировании множества 
+концептов. В~дальнейшем будет использована терминология теории обучения на 
+малых выборках, где под концептами понимаются классы выборок, 
+принадлежность к~которым необходимо определять для вновь поступающих 
+малых выборок. 
+  
+  Далее будем предполагать, что данные поступают с~помощью цепочек малых 
+выборок. Каждая цепочка однозначно связана с~некоторым кон\-цеп\-том. При этом 
+чис\-ло кон\-цеп\-тов неизвестно, но оно конечно. Каждый концепт будет описываться 
+множеством выборок. Как отмечалось в~обзоре~[7], наиболее сложная задача 
+состоит в~формировании концептов. 
+  
+  В статье построен и~описан алгоритм формирования концептов и~доказана его 
+эффективность.
+
+\vspace*{-6pt}
+  
+  \section{Математическая модель}
+  
+  \vspace*{-2pt}
+  
+  Будем считать, что каждая малая выборка есть слово длины~$N$ в~алфавите 
+из~$m$~букв. Каждая цепочка малых выборок конечна, и~для простоты все 
+цепочки имеют одинаковую длину~$n$. Концепты формируются с~помощью 
+кластеров. 
+  
+  Цель работы~--- построение корректного алгоритма определения числа 
+концептов и~самих концептов. 
+  
+  Примем следующие условия.\\[-14pt]
+  \begin{enumerate}[1.]
+\item Каждая малая выборка относится к~одному и~только к~одному концепту.\\[-14pt]
+\item Концепты не пересекаются между собой.\\[-14pt]
+\item Любая цепочка малых выборок относится только к~одному концепту.\\[-14pt]
+  \end{enumerate}
+  
+  Поскольку концепты будут формироваться постепенно на основании текущей 
+кластерной структуры, то все изолированные кластеры будем называть 
+\textit{промежуточными концептами}. Каждый промежуточный концепт состоит из:\\[-14pt]
+  \begin{itemize}
+\item \textit{видимого концепта}, т.\,е.\ малых выборок, которые в~него 
+вошли;\\[-14pt] 
+\item \textit{невидимого концепта}, т.\,е.\ малых выборок, которые можно было 
+бы отнести к~данному промежуточному концепту, но они ранее не встретились;\\[-14pt] 
+\item \textit{запретов}, т.\,е.\ малых выборок, которые в~принципе не могут 
+входить в~данных концепт.\\[-14pt]
+\end{itemize}
+
+  Из сделанных ранее предположений вытекают следующие выводы.\\[-14pt] 
+  \begin{enumerate}[1.]
+\item Если в~цепочке есть хотя бы одна малая выборка из существующего 
+промежуточного концепта, то вся цепочка относится к~этому промежуточному 
+концепту, хотя почти все ее элементы могут быть невидимыми для данного 
+промежуточного концепта.\\[-14pt]
+\item Если в~цепочке встретились по крайней мере две малые выборки, 
+принадлежащие разным промежуточным концептам, то эти два промежуточных 
+концепта объединяются в~единый промежуточный концепт. При этом остальные 
+элементы цепочки принадлежат этому объединенному промежуточному 
+концепту.\\[-14pt]
+\item Если в~полученной цепочке нет ни одной малой выборки, принадлежащей 
+одному из существующих промежуточных концептов, то такая цепочка образует 
+новый промежуточный концепт. При этом надо помнить, что эта цепочка может 
+состоять из невидимых элементов какого-то существующего промежуточного 
+концепта.\\[-14pt] 
+\end{enumerate}
+  
+  Указанные шаги~1--3 фактически формируют алгоритм обработки цепочек 
+малых выборок и~преобразования промежуточных концептов. 
+  
+  Предположим, что существует некоторое семейство концептов $M_1,\ldots , 
+M_k$ такое, что каждая малая выборка из пространства возможных малых 
+выборок принадлежит одному из этих концептов. 
+  
+  Покажем, что предложенный алгоритм позволяет определить число концептов 
+и~определить их содержание. Для простоты будем считать, что $n\hm= 2$. Выбор 
+цепочек осуществляется случайно следующим образом. Сначала выбирается 
+концепт, из которого выбирается цепочка для простоты в~соответствии 
+с~равномерным распределением на множестве целых чисел $\{1,\ldots , k\}$. По 
+условию каждая цепочка выбирается из одного концепта. 
+  
+  Обозначим через $\vert M_i\vert \hm=s_i$, $i\hm=1,\ldots , k$. При равномерном 
+выборе малой выборки из кон\-цеп\-та~$M_i$ получим, что вероятность 
+$$
+{\sf P}\left(x_1,x_2\right)=\fr{1}{s_i(s_i-1)}\,,
+$$
+ где $x_, x_2\hm\in M_i$. Тогда $1\hm- 1/(s_i(s_i\hm-
+1))$~--- вероятность того, что данная цепочка не встретится на фиксированном 
+месте в~последовательности выбора цепочек из~$M_i$, $i\hm=1,\ldots , k$. 
+  
+  Пусть в~последовательности длины~$t$ выбранных из~$M_i$ цепочек ни разу 
+не встретится цепочка $(x_1,x_2)$. Вероятность такого события равна $(1-
+1/(s_i(s_i\hm-1)))^t$. 
+  
+  Из леммы Бореля--Кан\-тел\-ли и~полученных выше оценок следует, что 
+в~бесконечной последовательности выборок из множества~$M_i$ появление 
+цепочки $(x_1,x_2)$ произойдет бесконечное число раз. Кроме того, из той же 
+леммы следует, что с~вероятностью~1 существует бесконечная 
+последовательность появления концепта~$M_i$ в~указанной выше вероятностной 
+схеме. 
+  
+  Рассмотрим бесконечную схему преобразования данных в~кластеры с~целью 
+построения концептов. Пусть время дискретно и~в данный момент сформированы 
+кластеры $K_1,\ldots ,K_r$ промежуточных концептов. Пусть получена очередная 
+цепочка $(x_1,x_2)$. Тогда:
+  \begin{enumerate}[(1)]
+\item если~$x_1$ и~$x_2$ принадлежат некоторому клас\-те\-ру~$K_i$, то 
+кластерная структура не изменяется; 
+\item если один элемент $x_1$ или~$x_2$ ранее не встречался, а~второй 
+элемент принадлежит промежуточному концепту~$K_i$, то клас\-тер~$K_i$ 
+увеличивается на один ранее не встречавшийся элемент; 
+\item если элемент~$x_1$ принадлежит некоторому клас\-те\-ру~$K_i$, 
+а~элемент~$x_2$ принадлежит некоторому кластеру~$K_j$, $i\not= j$, то 
+в~новой клас\-тер\-ной структуре вместо кластеров~$K_i$ и~$K_j$ появляется 
+новый кластер $K_i\cup K_j$;
+\item если ни один из элементов цепочки $(x_1,x_2)$ ранее не встречался 
+и~не принадлежит ни одному кластеру, то элементы этой цепочки образуют 
+новый кластер. 
+\end{enumerate}
+  
+  Пусть первая цепочка, полученная для по\-стро\-ения концептов,~--- $(x_1, x_2)$, 
+где $x_1, x_2\hm\in M_1$. Тогда для каждого элемента $x_3\hm\in M_1$ пара 
+$(x_1, x_3)$ встречается с~ве\-ро\-ят\-н\-остью~1. Поскольку концепт~$M_1$ по 
+определению конечен, то элемент~$x_1$ встретится в~сочетании со всеми 
+элементами~$M_1$ с~ве\-ро\-ят\-ностью~1. Таким образом, концепт~$M_1$ будет 
+однозначно восстановлен. Так как каждый из концептов выбирается 
+в~бесконечной последовательности бесконечное число раз, то с~вероятностью~1 
+будут восстановлены все другие концепты. 
+  
+  Докажем, что полученная структура не может быть противоречивой. Пусть 
+цепочка $(x_1, x_2)$ такова, что $x_1\hm\in M_1$, а~$x_2\hm\in M_2$. Это 
+противоречит условию, что каждая цепочка выбирается из одного концепта. 
+  
+  Докажем, что ни одна выборка~$x_1$ не может быть пропущена в~результате 
+работы алгоритма. Пусть элемент~$x_2$ принадлежит тому же концепту, что 
+и~$x_1$. Тогда, как было показано выше, цепочка $(x_1, x_2)$ появляется 
+с~вероятностью~1 в~последовательности цепочек из~$M_1$. Если при этом 
+известно, что $x_2\hm\in M_1$, то и~$x_1\hm\in M_1$, т.\,е.~$x_1$ не может быть 
+пропущен.
+
+\vspace*{-6pt}
+  
+ \section{Эффективность алгоритма построения концептов}
+ 
+ \vspace*{-2pt}
+  
+  Рассмотрим задачу определения того, что клас\-тер\-ная структура соответствует 
+структуре концептов. Определим граф~$G$ с~ребрами $(x_i, x_j)$, которые 
+соответствуют появившимся цепочкам малых выборок. После того как все 
+концепты~$M_i$, $i\hm=1,\ldots ,k$, определены, граф~$G$ представляет 
+собой~$k$~компонентов связности, каждый их которых является полным графом. 
+Таким образом, появление полных графов в~кластерной структуре компонентов 
+связности служит признаком (недостаточным) того, что концепты построены. 
+Изоляция кластеров, которые являются полными графами,~--- признак 
+восстановления структуры концептов. 
+  
+  Число ребер в~графе, соответствующем концепту~$M_i$, равно 
+$\begin{pmatrix} s_i\\ 2\end{pmatrix}$. Минимальное число цепочек, которое 
+необходимо для появления признаков формирования концептов, равно 
+
+\noindent
+  $$
+  R= \sum\limits_{i=1}^k \begin{pmatrix} s_i\\ 2\end{pmatrix}\,. 
+  $$
+  
+  \vspace*{-2pt}
+  
+  Устойчивость структуры восстановленных концептов будет видна, когда число 
+цепочек станет равным~$rR$, где $r\hm>1$. Таким образом, получена нижняя 
+оценка сложности алгоритма восстановления концептов, и~она имеет 
+квадратичный порядок.
+
+\vspace*{-6pt}
+  
+  \section{Заключение }
+  
+  Построен алгоритм формирования концептов, не использующий семантический 
+анализ содержания малых выборок. Это делает алгоритм универсальным 
+в~подобных задачах. 
+  
+  Условие принадлежности малой выборки одному концепту можно заменить на 
+меру близости, связанной с~содержанием малой выборки. Тогда при построении 
+концептов возможны ошибки. Однако предложенный контроль при построении 
+полного графа может скомпенсировать эти ошибки.
+  
+  В данной работе не рассмотрена задача снижения сложности алгоритма 
+построения концептов. Возможно, что рассмотренную выше идею можно 
+реализовать с~меньшей сложностью.
+
+\vspace*{-6pt}
+  
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+\bibitem{2-gz}
+\Au{Грушо А., Грушо~Н., Тимонина~Е., Шоргин~С.} Возможности построения безопасной 
+архитектуры для динамически изменяющейся информационной системы~// Системы и~средства 
+информатики, 2015. Т.~25. №\,3. С.~78--93.
+\bibitem{1-gz}
+\Au{Grusho A., Grusho~N., Timonina~E.}
+ The bans in finite probability spaces and the problem of 
+small samples~// Distributed computer and communication networks~/ Eds. V.\,M.~Vishnevskiy, K.\,E.~Samouylov, 
+D.\,V.~Kozyrev.~--- Lecture notes in computer 
+science ser.~--- Springer,  2019. Vol.~11965. P.~578--590.
+
+\bibitem{3-gz}
+\Au{Тьюки Дж.} Анализ результатов наблюдений. Разведочный анализ приложения~/ Пер. 
+с~англ.~--- М.: Мир, 1981. 694~с. (\Au{Tukey~J.\,W.} Exploratory data analysis.~--- Addison 
+Wesley, 1977. 711~р.)
+\bibitem{4-gz}
+\Au{Grusho A., Grusho~N., Timonina~E.} Detection of anomalies in non-numerical data~// 8th 
+Congress (International) on Ultra Modern Telecommunications and Control Systems and Workshops 
+Proceedings.~--- Piscataway, NJ, USA: IEEE, 2016. P.~273--276.
+\bibitem{5-gz}
+\Au{Jordan M.\,I., Mitchell~T.\,M.} Machine learning: Trends, perspectives, and prospects~// Science, 
+2015. Vol.~349. Iss.~6245. P.~255--260.
+\bibitem{6-gz}
+\Au{Bramley N.\,R.} Constructing the world: Active causal learning in cognition.~--- 
+London: University College London, 2017.  PhD thesis. 361~p. 
+\bibitem{7-gz}
+\Au{Shu~J., Zongben~X., Deyu~M.} Small sample learning in big data era~// arXiv.org, 
+2018. 76~p. arXiv:1808.04572v3 [cs.LG].
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 30.09.19}}
+
+%\vspace*{8pt}
+
+\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{CONCEPTS FORMING ON~THE~BASIS OF~SMALL SAMPLES}
+
+
+\def\titkol{Concepts forming on~the~basis of~small samples}
+
+\def\aut{A.\,A.~Grusho, M.\,I.~Zabezhailo, N.\,A.~Grusho, and~E.\,E.~Timonina}
+
+\def\autkol{A.\,A.~Grusho, M.\,I.~Zabezhailo, N.\,A.~Grusho, and~E.\,E.~Timonina}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+ \noindent
+   Institute of Informatics Problems, Federal Research Center ``Computer Sciences and 
+Control'' of the Russian Academy of Sciences; 44-2~Vavilov Str., Moscow 119133, 
+Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}  
+
+
+      
+   
+   \Abste{Monitoring systems of information security of information systems obtain information in 
+the form of chains of short messages which can be considered as chains of small samples. Often, 
+owing to an inertance of information systems, these chains reflect close statuses of the computing 
+system or network. In the paper, it is supposed that work of the system can be presented in the form of 
+a finite set of modes which are called concepts. Violations of security are detected by means of 
+anomalies that are associated with emergence of new concepts. 
+   The known technologies of identification of anomalies are based on creation of a model of a 
+normal system's behavior. Concepts correspond to normal types of a~system's behavior. In the paper, 
+the problem of creation of concepts on the basis of machine learning based on chains of small samples 
+is considered. The algorithm of concepts forming is constructed and its efficiency is proved.} 
+   
+   \KWE{information security monitoring; small samples; small sample learning; concepts forming}
+   
+  
+
+\DOI{10.14357/19922264190413} 
+
+%\vspace*{-14pt}
+
+ \Ack
+   \noindent
+   The paper was partially supported by the Russian Foundation for Basic Research (project  
+18-29-03081).
+
+
+%\vspace*{-6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+\bibitem{2-gz-1}
+\Aue{Grusho, A., N.~Grusho, E.~Timonina, and S.~Shorgin.} 2015. Vozmozhnosti 
+postroeniya 
+bezopasnoy arkhitektury dlya dinamicheski izmenyayushcheysya informatsionnoy sistemy 
+[Possibilities of secure architecture creation for dynamically changing information systems]. 
+\textit{Sistemy i~Sredstva Informatiki~--- Systems and Means of Informatics} 25(3):78--93.
+
+\bibitem{1-gz-1}
+\Aue{Grusho, A., N.~Grusho, and E.~Timonina.} 2019. 
+The bans in finite probability spaces and 
+the problem of small samples. \textit{Distributed computer and communication networks}.
+Eds. V.\,M.~Vishnevskiy, 
+K.\,E.~Samouylov, and D.\,V.~Kozyrev. Lecture notes
+in computer science ser. Springer. 11965:578--590.
+
+
+
+\bibitem{3-gz-1}
+\Aue{Tukey, J.\,W.} 1977. \textit{Exploratory data analysis}. Addison Wesley. 
+711~р.
+\bibitem{4-gz-1}
+\Aue{Grusho, A., N.~Grusho, and E.~Timonina.} 2016. Detection of anomalies in non-numerical 
+data. \textit{8th  Congress (International) on Ultra Modern Telecommunications and Control 
+Systems and Workshops Proceedings}. Piscataway, NJ: IEEE. 273--276.
+
+\vspace*{2pt}
+
+\bibitem{5-gz-1}
+\Aue{Jordan, M.\,I., and T.\,M.~Mitchell.} 2015. 
+Machine learning: Trends, perspectives, 
+and prospects. \textit{Science} 349(6245):\linebreak 255--260.
+
+\vspace*{2pt}
+
+\bibitem{6-gz-1}
+\Aue{Bramley, N.\,R.} 2017. Constructing the world: 
+Active causal learning in cognition.  London: University College London. PhD  Thesis. 361~p.
+
+\vspace*{2pt}
+
+\bibitem{7-gz-1}
+\Aue{Shu, J., X.~Zongben, and M.~Deyu.} 2018. Small sample learning in big data era. Available 
+at: {\sf https://arxiv.org/ abs/1808.04572} (accessed October~9, 2019).
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received September 30, 2019}}
+
+%\pagebreak
+
+\vspace*{-22pt}
+
+\Contr
+
+
+\noindent
+\textbf{Grusho Alexander A.} (b.\ 1946)~--- Doctor of Science in physics and 
+mathematics, professor, principal scientist, Institute of Informatics Problems, Federal 
+Research Center ``Computer Sciences and Control'' of the Russian Academy of 
+Sciences; 44-2~Vavilov Str., Moscow 119133, Russian Federation; 
+\mbox{grusho@yandex.ru}
+
+\vspace*{3pt} 
+
+\noindent
+\textbf{Zabezhailo Michael I.} (b.\ 1956)~--- Doctor of Science in physics and 
+mathematics, principal scientist, Institute of Informatics Problems, Federal Research 
+Center ``Computer Sciences and Control'' of the Russian Academy of Sciences;  
+44-2~Vavilov Str., Moscow 119133, Russian Federation; 
+\mbox{m.zabezhailo@yandex.ru} 
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Grusho Nikolai A.} (b.\ 1982)~--- Candidate of Science (PhD) in physics 
+and mathematics, senior scientist, Institute of Informatics Problems, Federal 
+Research Center ``Computer Sciences and Control'' of the Russian Academy of 
+Sciences; 44-2~Vavilov Str., Moscow 119133, Russian Federation; 
+\mbox{info@itake.ru} 
+ 
+\vspace*{3pt}
+
+\noindent
+\textbf{Timonina Elena E.} (b.\ 1952)~--- Doctor of Science in technology, professor, 
+leading scientist, Institute of Informatics Problems, Federal Research Center 
+``Computer Sciences and Control'' of the Russian Academy of Sciences; 44-2~Vavilov 
+Str., Moscow 119133, Russian Federation; \mbox{eltimon@yandex.ru}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}  

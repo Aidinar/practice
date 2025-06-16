@@ -1,0 +1,844 @@
+\def\stat{agalarov}
+
+\def\tit{ОБ ОПТИМИЗАЦИИ РАБОТЫ РЕЗЕРВНОГО ПРИБОРА В~МНОГОЛИНЕЙНОЙ 
+СИСТЕМЕ МАССОВОГО ОБСЛУЖИВАНИЯ}
+
+\def\titkol{Об оптимизации работы резервного прибора в~многолинейной 
+системе массового обслуживания}
+
+\def\aut{Я.\,М.~Агаларов$^1$}
+
+\def\autkol{Я.\,М.~Агаларов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Агаларов Я.\,М.}
+\index{Agalarov Ya.\,M.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнена при поддержке Министерства науки и~высшего образования
+%Российской федерации, грант №\,075-15-2020-799.}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской 
+академии наук, \mbox{agglar@yandex.ru}}
+
+%\vspace*{-12pt}
+
+
+  
+  \Abst{Рассматривается задача оптимизации работы (подключения или отключения) 
+резервного прибора управляемой системы массового обслуживания (СМО) типа $G/M/s$. Она 
+сформулирована в~виде задачи нелинейного программирования со стоимостной целевой 
+функцией, учитывающей плату за обслуживание заявок, затраты на техническое 
+обслуживание резервного прибора, потери из-за задержки заявок в~очереди и~простоя 
+резервного прибора. Процесс работы системы описан управляемой цепью Маркова, где 
+состояние цепи определяется числом заявок в~сис\-те\-ме, а~последовательность решений, 
+принимаемых на каждом шаге цепи в~зависимости от его состояния, определяет процесс 
+управления резервным прибором. В~качестве допустимого множества управ\-ле\-ний 
+рассмотрено множество стационарных стратегий управ\-ле\-ния цепью, решение в~которой 
+в~каждом состоянии цепи о~подключении или отключении резервного прибора принимается 
+по длине очереди. Для случая пуассоновского входного потока доказана тео\-ре\-ма 
+о~необходимых и~достаточных условиях существования конечного оптимального 
+порогового значения длины очереди и~унимодальность целевой функции от порогового 
+значения, предложен простой алгоритм решения задачи.}
+  
+  \KW{многолинейная система массового обслуживания; оптимизация; резервный прибор}
+  
+ \DOI{10.14357/19922264230112} 
+  
+%\vspace*{-8pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+  
+\section{Введение}
+  
+  Одной из практических задач, при решении которой исследователи 
+в~качестве математической модели используют многолинейные СМО с~резервными приборами, является задача выбора 
+оптимального режима подключения (отключения) резервного элемента 
+системы с~целью обеспечения требуемого качества работы системы при 
+одновременном снижении затрат на ресурсы~[1--3]. Математические 
+постановки некоторых подобных задач и~результаты их исследования 
+приведены в~работах~[1--7]. Рассматриваемая в~данной работе задача 
+представляет собой обобщение задачи максимизации дохода СМО $G/M/1$ 
+с~резервным прибором, исследованной в~работе~\cite{7-al} с~по\-мощью метода 
+вложенных цепей Маркова, где переходы цепи определяются моментами 
+поступления заявок, а~со\-сто\-яние цепи~--- чис\-лом заявок, находящихся  
+в~сис\-те\-ме в~момент поступления. Подключение (отключение) резервного 
+прибора системы, рас\-смот\-рен\-ной в~работе~\cite{7-al}, происходит по 
+достижении длиной очереди порогового значения~$h_1$. 
+Доход представлен 
+функцией вида:
+  \begin{equation}
+  D(h_1)= \sum\limits^\infty_{i=0} \fr{d_i^{h_1} \pi_i^{h_1}}{\overline{v}}\,,
+  \label{e1-al}
+  \end{equation}
+  
+\columnbreak
+  
+  \noindent
+где $\left\{ \pi_i^{h_1},\ 0\hm \leq i\hm\leq \infty\right\}$~--- стационарное 
+распределение вероятностей цепи при пороге~$h_1$ ($\pi_i^{h_1}$~--- 
+стационарная вероятность того, что цепь находится в~со\-сто\-янии~$i$); 
+$\overline{v}$~--- среднее время нахождения в~со\-сто\-янии~~$i$, 
+$\overline{v}\hm < (\mu\hm+ \gamma)^{-1}$, $\mu\hm>0$~--- ин\-тен\-сив\-ность 
+обслуживания основным прибором, $\gamma\hm>0$~--- ин\-тен\-сив\-ность 
+обслуживания резервным прибором; $d_i^{h_1}$~--- средний доход, 
+получаемый системой в~со\-сто\-янии~$i$ при пороге~$h_1$.
+
+ Доход~$d_i^{h_1}$ 
+вы\-чис\-ля\-ет\-ся по формуле:
+
+\vspace*{-8pt}
+
+\noindent
+\begin{multline}
+d_i^{h_1} =C_0 -C_1 \overline{T}_i^{h_1} - C_2\left( \overline{v} -
+\overline{T}^{h_1}_{\mathrm{пр},i} \right) -C_3 
+\overline{T}^{h_1}_{\mathrm{пр},i}\,,\\
+0\leq i\,,
+\label{e2-al}
+\end{multline}
+
+\vspace*{-8pt}
+
+\noindent
+где $\overline{T}_i^{h_1}$~--- среднее суммарное время задержки заявок 
+в~очереди за время нахождения сис\-те\-мы в~со\-сто\-янии~$i$; 
+$\overline{T}^{h_1}_{\mathrm{пр},i}$~--- среднее время простоя резервного 
+прибора в~со\-сто\-янии~$i$; $C_0\hm\geq 0$~--- плата, по\-лу\-ча\-емая сис\-те\-мой, если 
+поступившая заявка обслужена сис\-те\-мой (принята в~накопитель); $C_1\hm\geq 
+0$~--- потери в~единицу времени за ожидание заявки в~сис\-те\-ме; $C_2\hm\geq 
+0$~---  потери на амортизацию резервного прибора в~единицу времени, когда он 
+подключен к~сис\-те\-ме и~занят заявкой; $C_3\hm\geq 0$~--- потери в~единицу 
+времени простоя ($C_3\hm\leq C_2$).
+  
+  Предполагается, что доход сис\-те\-мы в~единицу времени при любом значении 
+порога имеет некоторое конечное значение.
+
+\pagebreak
+  
+  Основные результаты работы~\cite{7-al}~--- доказательство уни\-мо\-даль\-ности 
+целевой функции~$D$ по~$h_1$ и~вывод условий существования конечного 
+оптимального порогового значения в~случае СМО $G/M/1$.
+{ %\looseness=-1
+
+}
+
+%\pagebreak
+  
+  В данной работе показано, что аналогичные результаты имеют место и~для 
+многолинейной СМО с~резервным прибором.
+
+%\vspace*{-4pt}
+  
+\section{Постановка задачи и~метод~решения}
+
+%\vspace*{-4pt}
+
+  Рассматривается СМО типа $G/M/s$ с~накопителем бесконечной ем\-кости, $s$ 
+основными однотипными приборами и~одним резервным прибором 
+обслуживания, на которую поступает рекуррентный поток заявок с~функцией 
+распределения вероятностей~$V(t)$. Время обслуживания заявки на основном 
+приборе распределено по экспоненциальному закону с~па\-ра\-мет\-ром $\mu\hm>0$, а~на 
+резервном~--- с~параметром $\gamma\hm> 0$. Резервный прибор подключается 
+к~сис\-те\-ме в~момент времени, когда в~сис\-те\-ме число заявок становится 
+равным пороговому значению~$h_1$, и~отключается от сис\-те\-мы, когда 
+число заявок становится равным $(h_1\hm-1)$, причем если это происходит 
+в~момент завершения обслуживания очередной заявки на основном приборе, то 
+заявка на резервном приборе перед его отключением переходит на 
+освободившийся прибор и~заново обслуживается. По завершении 
+обслуживания заявка уходит из сис\-те\-мы, освободив одновременно прибор 
+и~занимаемое мес\-то в~накопителе. Пусть, как и~в~\cite{7-al}, показатель 
+эффективности работы сис\-те\-мы представлен функцией дохода вида~(\ref{e1-al}). 
+Ставится задача целочисленного программирования сле\-ду\-юще\-го вида: найти 
+порог~$h^*$, такой что 
+$$
+\max\limits_{s<h_1} D\left(h_1\right) = D(h^*),
+$$ 
+где $D(h_1)$ определена в~(1).
+   
+  Подход, применяемый ниже к~решению данной задачи, аналогичен подходу, 
+изложенному в~\cite{7-al}, суть которого заключается в~проверке выполнения 
+условий тео\-ре\-мы~1 из~\cite{8-al} для целевой функции задачи для СМО 
+c~ограниченным накопителем. 
+  
+  Пусть данная задача рассматривается для сис\-те\-мы $G/M/s/h_2$ 
+c~ограниченным накопителем ем\-кости~$h_2$, $h_2\hm= h_1\hm+ a$, 
+$h_1\hm\geq s\hm+1$, $a\hm=const\hm\geq 0$. Пусть заявка, которая застает 
+накопитель пол\-ностью занятой, теряется и~в~этом случае сис\-те\-ма не получает 
+плату за обслуживание. Ставится задача: найти порог~$h^*$, такой что 
+  \begin{equation}
+  \max\limits_{s<h_1} D(h_1,a) =D\left( h^*,a\right).
+  \label{e3-al}
+  \end{equation}
+  
+  \noindent
+  Здесь
+ \begin{equation*}
+D(h_1,a) =\sum\limits_{i=0}^{h_2} d_i^{h_1} \pi_i^{h_1}\,,
+\end{equation*}
+где
+\begin{multline*}
+ d_i^{h_1}={}\\
+\!\!\!{}= \!\begin{cases} 
+C_0-C_1\overline{T}_i^{h_1} -C_2\left( \overline{v} - \overline{T}^{h_1}_{\mathrm{пр},i}\right) -C_3  \overline{T}^{h_1}_{\mathrm{пр},i}, &\\
+& \hspace*{-27mm} 0\leq i\leq h_2-1\,;\\
+d^{h_1}_{h_2-1} -C_0, & \hspace*{-21mm} i=h_2\,;
+\end{cases}\!\!
+%\label{e4-al}
+\end{multline*}
+
+
+\noindent
+  $d_i^{h_1}$, $\pi_i^{h_1}$, $C_0$, $C_1$, $C_2$, $C_3$, $\overline{v}$, 
+$\overline{T}_i^{h_1}$ и~$\overline{T}^{h_1}_{\mathrm{пр},i}$~--- обозначения, 
+использованные в~разд.~1.
+
+  Обозначим: 
+  $$
+  \mu_i^{h_1}= \begin{cases}
+  s\mu & \mbox{при } s-1\leq i\leq h_1-2\,;\\
+  s\mu +\gamma & \mbox{при } h_1\leq i\leq h_2\,;
+  \end{cases}
+  $$
+$r_{i,m}^{h_1}$~--- вероятность того, что в~со\-сто\-янии~$i$ будут обслужены 
+ров\-но $m$ заявок при условии, что в~этом со\-сто\-янии не произойдет отключение 
+резервного прибора; $a^{h_1}_{i,m}$~--- вероятность того, что в~состоянии~$i$ 
+будут обслужены ровно $m$ заявок при условии, что в~этом со\-сто\-янии 
+произойдет отключение резервного прибора; $q_{ij}$~--- ве\-ро\-ят\-ность того, что в~состоянии~$i$ будут обслужены ров\-но ($i\hm+1\hm-j$) заявок при условиях 
+$0\hm\leq i\hm\leq s\hm-1$ и~$0\hm\leq j\hm\leq i\hm+1$; $b_{ij}$~--- вероятность 
+того, что в~со\-сто\-янии~$i$ будут обслужены ров\-но ($i\hm+1\hm-j$) заявок при 
+условиях $h_1\hm- 1\hm\leq i\hm\leq h_2$ и~$0\hm\leq j\hm\leq s\hm-1$.
+  
+  Справедливы формулы:
+  \begin{multline}
+  r^{h_1}_{i,m} =\int\limits_0^\infty \fr{\left(\mu_i^{h_1} v\right)^m}{m!}\,e^{-\mu_i^{h_1}t}\,dV(v)\,,\\
+   h_1-1\leq i\leq h_2\,,\enskip
+  0 \leq m\leq i -h_1+1\\
+   \mbox{или}\ s-1\leq i\leq h_1-2\,,\enskip 0\leq m\leq h_1-s-1\,;
+   \label{e4-al}
+  \end{multline}
+   
+   \vspace*{-12pt}
+   
+   \noindent
+   \begin{multline}
+   a^{h_1}_{i,m} =\int\limits_0^\infty \int\limits_0^v \fr{\mu_i^{h_1}\left( \mu_i^{h_1} t\right)^{i-h_1+1}} 
+{(i-h_1+1)!}\,e^{-\mu_i^{h_1}t} \times{}\\
+{}\times \fr{[\mu_1(v-t)]^{m-i+h_1-2}} {(m-i+h_1-2)!}\,e^{\mu_1(v-t)} \,dtdV(v)\,,\\
+   h_1-1\leq i\leq h_2\,,\enskip s-1\leq j\leq h_1-1\,;
+   \label{e5-al}
+   \end{multline}
+   
+   \vspace*{-12pt}
+   
+   \noindent
+   \begin{multline}
+   q_{ij} =\int\limits_0^\infty \begin{pmatrix}
+   i+1\\ j\end{pmatrix} \left[ 1-e^{-\mu v}\right]^{i+1-j} e^{-j\mu v}\,dV(v)\,,\\
+   0\leq i\leq s-1\,,\enskip 0\leq j\leq i+1\,;
+   \end{multline}
+   
+   %\vspace*{-12pt}
+   
+   \noindent
+   \begin{multline}
+   p_{ij}^{h_1} =\int\limits_0^\infty \begin{pmatrix}
+   s\\ j\end{pmatrix} e^{-\mu v j} \Bigg[ \int\limits_0^v \fr{(s\mu t)^{i-s}} {(i-s)!}\left( e^{-\mu t}-{}\right.\\[3pt]
+\left.   {}-e^{-\mu v}\right)^{s-j} s\mu\,dt\Bigg] dV(v)\,,\enskip 
+   s\leq i\leq h_1-2\,,\\[3pt]
+    0\leq j\leq s-1\,;
+   \end{multline}
+   
+   \vspace*{-12pt}
+   
+   \noindent
+   \begin{multline}
+   b_{ij}^{h_1} =\int\limits_0^\infty \begin{pmatrix}
+   s\\ j\end{pmatrix}
+    \int\limits_0^v \int\limits_0^y \fr{\mu_i^{h_1}\left( \mu_i^{h_1}t\right)^{i-h_1+1}} 
+{(i-h_1+1)!}\,e^{-\mu_i^{h_1} t}\times{}\\[3pt]
+{}\times \fr{[s\mu(y-t)]^{h_1-s-2}}{(h_1-s-2)!} 
+   e^{-s\mu(y-t)} s\mu\, dt \,e^{-\mu(v-y)j} \times{}\\[3pt]
+   {}\times \left( 1-e^{-\mu(v-y)}\right)^{s-j} dydV(v)={}\\[3pt]
+   {}=
+   \int\limits_0^\infty \begin{pmatrix}
+   s\\ j\end{pmatrix} 
+   e^{-\mu v} \int\limits_0^v \int\limits_0^y \fr{\mu_i^{h_1}\left( \mu_i^{h_1} 
+t\right)^{i-h_1+1}} {(i-h_1+1)!}\,e^{\mu_2 t}\times{}\\[3pt]
+{}\times \fr{[s\mu(y-t)]^{h_1-s-2}} {(h_1-s-2)!}\left( e^{-\mu y} -e^{\mu v}\right)^{s-j} 
+s\mu \,dt dy dV(v)\,,\\[3pt]
+   h_1-1\leq i\leq h_2\,,\ 0\leq j\leq s-1\,.
+   \label{e5-1-al}
+   \end{multline}
+
+  Из системы уравнений равновесия для вложенной цепи Маркова 
+и~выражений~(\ref{e4-al})--(\ref{e5-1-al}) для па\-ра\-мет\-ров~$r_{i,m}^{h_1}$, $a_{i,m}^{h_1}$, 
+$q_{ij}$, $p_{ij}^{h_1}$ и~$b_{ij}^{h_1}$ следует спра\-вед\-ли\-вость сле\-ду\-ющих 
+рекуррентных формул для \mbox{стационарных} вероятностей 
+со\-сто\-яний~$\pi_j^{h_1}$, $0\hm\leq j\hm\leq h_2$:
+\begin{equation}
+  \pi_j^{h_1}=\fr{R_j^{h_1}}{\sum\nolimits_{i=0}^{h_2} R_i^{h_1}}\,,\enskip 
+0\leq j\leq h_2\,,
+\label{e6-al}
+  \end{equation}
+  где
+ \begin{equation*}
+   R_{h_2}^{h_1} =1\,;\enskip R_{h_2-1}^{h_1}= \fr{1-r^{h_1}_{h_2,0}}{r^{h_1}_{h_2,0}}\,;
+  \end{equation*}
+  
+  \vspace*{-12pt}
+  
+  \noindent
+  \begin{multline*}
+   R^{h_1}_{j-1}= \fr{R_j^{h_1} \left( 1-r^{h_1}_{j,1}\right)} {r^{h_1}_{j-1,0}}-{}\\
+   {}-
+\fr{\sum\nolimits_{i=j+1}^{h_2-1} R_i^{h_1} r^{h_1}_{j,i+1-j} +R^{h_1}_{h_2} r^{h_1}_{h_2, h_2-j}} {r^{h_1}_{j-1,0}}\,,\\
+   h_1\leq j\leq h_2-1\,;
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+   \begin{multline*}
+   R^{h_1}_{h_1-2}= \fr{R^{h_1}_{h_1-1} (1-r_{h_1-1,1})} {r^{h_1}_{h_1-2,0}} -{}\\
+   {}-\fr{\sum\nolimits^{h_2-1}_{i=h_1} R_i^{h_1} 
+   r_{i,i+2-h_1} +R^{h_1}_{h_2} r_{h_2, h_2-h_1+1}} {r^{h_1}_{h_1-2,0}}\,;
+  % \label{e6-al}
+   \end{multline*}
+   
+   %\vspace*{-12pt}
+   
+   \noindent
+   \begin{multline*}
+   R^{h_1}_{j-1}= \fr{R_j^{h_1}(1-r_{j,1})}{r^{h_1}_{j-1,0}} - {}\\
+   {}-
+   \fr{\sum\nolimits_{i=j+1}^{h_1-2} R_i^{h_1} r_{i,i+1-j} +
+\sum\nolimits_{i=h_1-1}^{h_2-1} R_i^{h_1} a_{i,i+1-j}} {r^{h_1}_{j-1,0}}-{}\\
+   {}- \fr{R^{h_1}_{h_2} a_{h_2,h_2-j}}{r^{h_1}_{j-1,0}}\,,\enskip s\leq j\leq h_1-2\,;
+   \end{multline*}
+   
+   \vspace*{-12pt}
+   
+   \noindent
+   \begin{multline*}
+  R_{j-1}^{h_1}= \fr{R_j^{h_1}(1-q_{ij}) } {q_{j-1,j}}-{}\\
+  {}-\fr{\sum\nolimits^{s-1}_{i=j+1} R_i^{h_1} q_{ij} + \sum\nolimits_{i=s}^{h_1-2} R_i^{h_1} p_{ij}^{h_1} }{q_{j-1,j}}-{}\\
+  {}- \fr{\sum\nolimits_{i=h_1-
+1}^{h_2-1} R_i^{h_1} b_{ij}^{h_1}}{q_{j-1,j}}- \fr{R_{h_2}^{h_1} b^{h_1}_{h_2\,j}}{q_{j-1,j}}\,,\enskip 1\leq j\leq s-1\,.
+  \end{multline*}
+  
+  Из~(\ref{e6-al}) следует равенство:
+  \begin{equation}
+  \pi_{i+1}^{k+1} =A_{k+1} \pi_i^k\,,\enskip i=s-1, \ldots , k\,.
+  \label{e7-al}
+  \end{equation}
+  Здесь
+  $$
+   A_{k+1}=\fr{1-Q^{k+1}_{s-1}}{1-Q_{s-2}^k}\,, 
+$$
+  где
+  \begin{equation*}
+   Q_{s-1}^{k+1} =\sum\limits_{i=0}^{s-1} \pi_i^{k+1}\,;\enskip 
+    Q^k_{s-2} =  \begin{cases}
+  0, & 1\leq s\leq 2\,;\\
+  \displaystyle\sum\limits_{i=0}^{s-2} \pi_i^k, & s\geq 2\,.
+  \end{cases}
+  \end{equation*}
+
+  В дальнейшем для крат\-кости изложения будем пользоваться обозначениями:
+  \begin{align*}
+  r^{h_1}_{i,m}(v)&= \fr{\left(\mu_i^{h_1} v\right)^m}{m!}\,e^{-\mu_i^{h_1} t}\,;
+  \\
+     z_i^{h_1}(v,t,m) &=\fr{\mu_i^{h_1}\left(\mu_i^{h_1}t\right)^{i-h_1+1}}{(i-h_1+1)!}\,e^{-\mu_i^{h_1}t}\times{}\\
+   &\hspace*{7mm}{}\times \fr{[\mu_1(v-t)]^{m-i+h_1-2}} {(m-i+h_1-2)!}\,e^{-\mu_1(v-t)}.
+\end{align*}
+  
+  Ниже приведем ряд формул, доказательства справедливости которых для 
+крат\-кости изложения не приводим (они аналогичны доказательствам, 
+приведенным в~работе~\cite{7-al} для подобных формул).
+  
+  Среднее значение дохода~(\ref{e2-al}), по\-лу\-ча\-емо\-го сис\-те\-мой с~ограниченным 
+накопителем при пороге~$h_1$ в~со\-сто\-янии~$i$, равно
+  \begin{multline}
+  d_i^{h_1} ={}\\
+\!\!  {}=\!\begin{cases}
+  C_0 -C_1 \overline{T}_i^{h_1} -C_2 \left(\overline{v} -
+\overline{T}^{h_1}_{\mathrm{пр},i}\right) -C_3\overline{T}^{h_1}_{\mathrm{пр},i}\,, & \\
+&\hspace*{-27mm}0\leq i\leq h_2-1\,;\\
+  d^{h_1}_{h_2-1} -C_0\,,& \hspace*{-20.5mm}i=h_2\,,
+  \end{cases}\!\!\!\!
+  \label{e8-al}
+  \end{multline}
+где $\overline{T}_i^{h_1}$ и~$\overline{T}^{h_1}_{\mathrm{пр},i}$ определены 
+в~(2) и~в~данном случае для них справедливы формулы:
+
+\vspace*{-6pt}
+
+\noindent
+\begin{multline}
+\overline{T}_i^{h_1} ={}\\
+\!{}=\!
+\begin{cases}
+\fr{1}{\mu_i^{h_1}} \left[ (i+1-s) \displaystyle\sum\limits_{m=1}^{i+2-s} 
+mr^{h_1}_{i,m} -{}\right.\\
+\hspace*{15mm}{}-\fr{1}{2} \sum\limits_{m=1}^{i+2-s} (m-1) 
+mr^{h_1}_{i,m}+{}\\
+\left.{}+ \fr{1}{2}\left( i+1-s\right) (i+2-s) \!\!\sum\limits^\infty_{m=i+3-s} \!\!\!\!
+r_{i,m}^{h_1}\right]
+&\\
+&\hspace*{-45mm}
+  \mbox{при}\ s\leq i\leq h_1-2\\
+  &\hspace*{-45mm}\mbox{и}\ \overline{T}_i^{h_1}=0\  \mbox{при }\ 
+i\leq s-1;\\
+\fr{1}{\mu_i^{h_1}} \left[ (i+1-s) \sum\limits_{m=1}^{i-h_1+3} mr^{h_1}_{i,m} -{}\right.\\
+\left.  \hspace*{5mm}{}-\fr{1}{2} \sum\limits_{m=1}^{i-h_1+3} (m-1) 
+mr^{h_1}_{i,m}\right]+{}\\
+  \hspace*{5mm}{}+
+  \displaystyle\sum\limits_{m=i-h_1+3}^{i+1-s} \int\limits_0^\infty \int\limits_0^v \left[ \fr{i-
+h_1+1}{2}\,t +{}\right.\\
+{}+(m\!-\!i\!+\!h_1\!-\!1)t+ \fr{1}{2}(m\!-\!i\!+\!h_1\!-\!2)\times{}\\
+\left.{}\times(v-t)\right] z_i^{h_1}(v,t,m) \,dtdV(v)+{}\\
+  {}+
+ \displaystyle \!\!\! \sum\limits^{i-s}_{m=i-h_1+3} \int\limits_0^\infty \int\limits_0^v (i+1-m-s)v \times{}\\
+ {}\times
+z_i^{h_1}(v,t,m) \,dt dV(v)+{}\\
+ \displaystyle {}+ \!\!\!\!\sum\limits^\infty_{m=i+2-s} \int\limits_0^\infty \int\limits_0^v \!\left[ \fr{i\!-\!h_1\!+\!1}{2}\,t +(h_1\!-\!1)t +{}\right.\\
+\left.{}+\fr{(h_1-2)(h_1-1)(v-t)}{2(m-i+h_1-1)}\right]\times{}\\
+{}\times   z_i^{h_1}(v,t,m)\,dtdV(v)  &\hspace*{-30mm}\mbox{при}\  i\geq h_1-1;\!
+  \end{cases}\!\!
+  \label{e9-al}
+  \end{multline}
+  
+  \vspace*{-12pt}
+  
+  \noindent
+  \begin{multline}
+  \overline{T}^{h_1}_{\mathrm{пр}, i} ={}\\
+ \!\!\!\! {}=\!\begin{cases}
+  \overline{v} -\displaystyle \!\!\int\limits_0^\infty\! \!\int\limits_0^v t 
+\fr{\mu_i^{h_1}\left( \mu_i^{h_1} t\right)^{i-h_1+1}}{(i-h_1+1)!}\, 
+e^{-\mu_i^{h_1 t}} dtdV(v)\,, &\\
+&\hspace*{-28mm}i\geq h_1-1\,;\\
+  \overline{v}\,, & \hspace*{-34.5mm}0\leq i\leq h_1-2\,.
+  \end{cases}\!\!\!\!\!\!
+  \label{e10-al}
+  \end{multline}
+  
+  \vspace*{-4pt}
+  
+  Среднее время отсутствия очереди при пороге~$h_1$ в~со\-сто\-янии~$i$ равно 
+  
+  \vspace*{-6pt}
+  
+  \noindent
+  \begin{multline*}
+  \overline{T}^{h_1}_{\mathrm{оч},i} ={}\\
+  {}=\begin{cases}
+  \displaystyle \sum\limits^\infty_{m=i+1} \int\limits_0^\infty \int\limits_0^v \left[ 
+v-t-\fr{(h_1-1)(v-t)}{m-i+h_1-1}\right]\times{}\\
+\hspace*{6mm}{}\times z_i^{h_1}(v,t,m)\,dtdV(v)\,, & \hspace*{-20mm}i\geq h_1-1\,;\\
+  \displaystyle \fr{1}{\mu_1}\sum\limits^\infty_{m=i+2} (m-i-1) r^{h_1}_{i,m}\,, 
+& \hspace*{-20mm} i\leq h_1-2\,.
+  \end{cases}
+  %\label{e11-al}
+  \end{multline*}
+  
+  
+  Из~(\ref{e8-al})--(\ref{e10-al}) после несложных преобразований получаем 
+равенства:
+
+\noindent
+  \begin{multline}
+  d^{h_1+1}_{i+1} -d_i^{h_1}= {}\\
+\!\!\!  {}=\!
+  \begin{cases}
+  \displaystyle -\fr{C_1}{\mu_i^{h_1}} \sum\limits_{m=1}^{i-s+2} 
+mr^{h_1}_{i,m} -{}&\\
+\displaystyle {}-\fr{C_1(i+2-s)}{\mu_i^{h_1}} \sum\limits^\infty_{m=i-s+3} 
+r^{h_1}_{i,m}   &\\
+&\hspace*{-44mm} \mbox{при}\  s-1\leq i\leq h_1-2\,;\\
+  \displaystyle -C_1\int\limits_0^\infty v \left[
+  \vphantom{\int\limits_0^\infty}
+   \sum\limits_{m=0}^{i-h_1+2} 
+r^{h_1}_{i,m}(v) +{}\right.\\
+\displaystyle \left.{}+\sum\limits_{m=i-h_1+3}^{i-s+1} \int\limits_0^v 
+z_i^{h_1}(v,t,m)\,dt\right] dV(v)- {}&\\ 
+\displaystyle {}-C_1 \!\!\!\!\!\sum\limits^\infty_{m=i-s+2} \int\limits_0^\infty \!\!\int\limits_0^v \left[ 
+t+\fr{(h_1-1)(v-t)}{m-i+h_1-1}\right]\times{}&\\
+{}\times z_i^{h_1}(v,t,m) \,dtdV(v) &\hspace*{-29mm}
+\mbox{при}\  i\geq h_1-1\,.
+\end{cases}\!\!\!\!
+\label{e12-al}
+\end{multline}
+     
+Введем обозначения:
+\begin{multline}
+w(h_1,a)=\sum\limits_{i=0}^{h_1-2} \pi_i^{h_1} \fr{1}{\mu_i^{h_1}} 
+\sum\limits^\infty_{m=i-s+3} (m-i-1) r^{h_1}_{i,m} +{}\\
+{}+
+\sum\limits_{i=h_1-1}^{h_2-1}\! \!\!\pi_i^{h_1} \!\!\!\sum\limits^\infty_{m=i-s+2} 
+\int\limits_0^\infty \left[ v -\!\!\int\limits_0^v \!\left[ t+\fr{(h_1-1) (v-t)}{m - i +h_1 -
+1}\right]\times{}\right.\\
+\left.{}\times z_i^{h_1}(v,t,m)\,dt\right] dV(v)+{}\\
+{}+\pi_{h_2}^{h_1} \sum\limits^\infty_{m=h_2} \int\limits_0^\infty \left[ v- \!
+\int\limits_0^v\! \left[ t+\fr{(h_1-1)(v-t)}{m-h_2+h_1}\right]\times{}\right.\\
+\left.{}\times z_i^{h_1}(v,t,m)\,dt
+\vphantom{\int\limits_0^\infty}
+\right] 
+dV(v)\,;
+\label{e13-al}
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+f(h_1,a) =C_0-C_3\overline{v} -{}\\
+{}-C_1\fr{A_{h_1+1}}{1-A_{h_1+1}} \left[ 
+\overline{v} -w(h_1,a)\right].
+\label{e14-al}
+\end{multline}
+
+
+Для разности доходов при порогах~$h_1$ и~$h_1\hm+1$ выполняются 
+равенства (следуют из формул~(\ref{e1-al}), (\ref{e3-al}), (\ref{e7-al}),  
+(\ref{e12-al})--(\ref{e14-al})):
+\begin{multline*}
+D\left(h_1,a\right) -D\left(h_1+1,a\right)={}\\
+{}=\sum\limits_{i=0}^{h_2} \pi_i^{h_1} d_i^{h_1} -
+\sum\limits_{i=0}^{h_2+1} \pi_i^{h_1+1} d_i^{h_1+1} ={}\\
+{}= \left( C_0-C_3\overline{v}\right) \left( Q^{h_1}_{s-2} -Q_{s-1}^{h_1+1}\right) 
++ {}\\
+{}+ \sum\limits^{h_2}_{i=s-1} \pi_i^{h_1} d_i^{h_1} -\sum\limits_{i=s}^{h_2+1} 
+\pi_i^{h_1+1} d_i^{h_1+1}={}\\
+\end{multline*}
+
+\noindent
+\begin{multline*}
+{}=
+     \left( C_0-C_3\overline{v}\right) \left( Q^{h_1}_{s-2} -Q_{s-1}^{h_1+1}\right)+ {}\\
+     {}+
+\fr{Q_{s-1}^{h_1+1} -Q_{s-2}^{h_1}}{1-Q^{h_1}_{s-2}}\left[ 
+\sum\limits_{i=0}^{h_2} \pi_i^{h_1} d_i^{h_1} -\left( C_0-C_3\overline{v}\right) 
+Q^{h_1}_{s-2}\right]-{}\\
+  {}- 
+  \fr{1-Q_{s-1}^{h_1+1}}{1-Q^{h_1}_{s-2}} \sum\limits^{h_2}_{i=s-1} 
+\pi_i^{h_1}\left( d_{i+1}^{h_1+1} -d_i^{h_1}\right) ={}\\
+{}= \left( 1-A_{h_1+1}\right) 
+\left[ 
+\vphantom{\sum\limits_{h_2}^{h_2}}
+D(h_1,a) -\left( C_0 -C_3\overline{v}\right) -{}\right.\\
+{}- \fr{A_{h_1+1}}{1-A_{h_1+1}} 
+\left( \sum\limits_{i=s-1}^{h_2-1}  \pi_i^{h_1}\left( d_{i+1}^{h_1+1} -
+d_i^{h_1}\right) +{}\right.\\
+\left.\left.{}+\pi_{h_2}^{h_1} \left( d_{h_2}^{h_1+1} -d^{h_1}_{h_2-1}\right)\!
+\vphantom{\sum\limits_{h_2}^{h_2}}
+\right)\right]={}\\
+  {}=
+  \left(1-A_{h_1+1}\right) \left[ D(h_1,a) -f(h_1,a)\right].
+  \end{multline*}
+  
+Как показывают многочисленные вы\-чис\-ли\-тель\-ные эксперименты, проведенные 
+при различных значениях па\-ра\-мет\-ров СМО, величина $A_{h_1+1}$ воз\-рас\-та\-ет 
+по~$h_1$. Ниже приведем доказательство этого положения для случая 
+пуассоновского входного потока. Отметим, что доказательство спра\-вед\-ли\-вости 
+такого свойства~$A_{h_1+1}$ в~случае произвольного рекуррентного 
+входного потока остается открытым.
+
+  Для случая пуассоновского входного потока процесс работы сис\-те\-мы 
+описывается случайным процессом рож\-де\-ния и~гибели, для стационарных 
+вероятностей со\-сто\-яний (чис\-ла заявок в~сис\-те\-ме) которого справедлива 
+формула:
+  $$
+  \pi_i^{h_1} =\begin{cases}
+  \fr{\rho^i}{i!}\,\pi_0^{h_1}, & \hspace*{-30mm}0\leq i\leq s\,;\\
+  \fr{\rho^s}{s!} \left( \fr{\rho}{s}\right)^{i-s} \pi_0^{h_1}, & \hspace*{-30mm}s<i\leq h_1-1\,;\\
+  \fr{\rho^s}{s!}\left(\fr{\rho}{s}\right)^{h_1-s-1} \left( 
+\fr{\rho}{s+\alpha}\right)^{i-h_1+1} \pi_0^{h_1}, &\\
+& \hspace*{-30mm}h_1\leq i\leq h_2,
+  \end{cases}
+  $$
+где 
+\begin{multline*}
+\pi_0^{h_1} =\left[ \sum\limits^s_{j=0} \fr{\rho^j}{j!} +\fr{\rho^s}{s!} 
+\sum\limits_{j=1}^{h_1-s-1} \left( \fr{\rho}{s}\right)^j +{}\right.\\
+\left.{}+ \fr{\rho^s}{s!} \left( \fr{\rho}{s}\right)^{h_1-s-1} 
+\sum\limits_{j=1}^{h_2-h_1-1} \left( \fr{\rho}{s+\alpha}\right)^j \right]^{-1}\!\!,\enskip
+\alpha=\fr{\gamma}{\mu}\,.
+\end{multline*}
+  
+  Рассмотрим раз\-ность $\left( A_{h_1+2}\hm- A_{h_1+1}\right)$, пред\-ста\-ви\-мую 
+в~виде:
+
+\noindent
+  \begin{multline}
+  \fr{\pi_0^{h_1+2} \left( \pi_0^{h_1+2}\right)^{-1} \left( 1-Q_{s-1}^{h_1+2}\right)} 
+  {\pi_0^{h_1+1} \left( \pi_0^{h_1+1}\right)^{-1} \left( 1-Q_{s-2}^{h_1+1}\right)} -{}\\
+  {}-
+\fr{\pi_0^{h_1+1} \left( \pi_0^{h_1+1}\right)^{-1} \left(1- Q_{s-1}^{h_1+1}\right) } 
+{\pi_0^{h_1}\left( \pi_0^{h_1}\right)^{-1} \left( 1-Q^{h_1}_{s-2}\right)}\,.
+  \label{e15-al}
+  \end{multline}
+  %
+  Выполняется равенство:
+  \begin{multline*}
+  \left(\pi_0^{h_1+2}\right)^{-1} \left( 1-Q_{s-1}^{h_1+2}\right) 
+\left(\pi_0^{h_1}\right)^{-1} \left( 1-Q_{s-2}^{h_1}\right)={}\\
+  {}= \left(\pi_0^{h_1+1}\right)^{-1} \left( 1-Q_{s-1}^{h_1+1}\right) 
+\pi_0^{h_1+1} \times{}\\
+{}\times \left(\pi_0^{h_1+1}\right)^{-1} \left( 1- Q_{s-2}^{h_1+1}\right).
+  \end{multline*}
+  %
+  Отсюда следует, что знак выражения~(\ref{e15-al}) такой же, что 
+и~у~раз\-ности $\pi_0^{h_1+2} \pi_0^{h_1}\hm-\left(\pi_0^{h_1+1}\right)^{2}$. 
+Находим знак выражения $\left( \pi_0^{h_1+2} \pi_0^{h_1}\right)^{-1} \hm- \left( 
+\pi_0^{h_1+1}\right)^{-2}$, противоположный знаку выражения $\pi_0^{h_1+2} 
+\pi_0^{h_1} \hm- \left( \pi_0^{h_1+1}\right)^2$. Проведя упро\-ща\-ющие 
+преобразования, находим:
+  \begin{multline*}
+  \left( \pi_0^{h_1+2} \pi_0^{h_1}\right)^{-1} -\left( \pi_0^{h_1+1}\right)^{-2} 
+={}\\
+  {}= \left( \sum\limits_{j=0}^s \fr{\rho^j}{(j-1)!s} -\sum\limits_{j=0}^s 
+\fr{\rho^j}{j!} \right) \left( E_{h_1+1}- E_{h_1}\right),
+  \end{multline*}
+где 
+\begin{multline*}
+E_{h_1}= \fr{\rho^s}{s!} \sum\limits_{j=1}^{h_1-s-1} \left(\fr{\rho}{s}\right)^j +{}\\
+{}+ \fr{\rho^s}{s!}  
+\left(\fr{\rho}{s}\right)^{h_1-s-1} \sum\limits_{j=1}^{h_2-h_1-1} \left(\fr{\rho}{s+\alpha}\right)^j.
+\end{multline*}
+%
+Как видим, первая скобка в~правой час\-ти имеет отрицательный знак. Для 
+второй скоб\-ки имеем:
+\begin{multline*}
+E_{h_1+1} -E_{h_1} = \fr{\rho^{s+1}}{s!s}\left( \fr{\rho}{s}\right)^{h_1-s-1}\times{}\\
+{}\times \left[
+\left(\fr{\rho}{s}\right)^{h_2-h_1-1} +\fr{\rho/s+\rho/(s+\alpha)}{1+\rho/s}\right] 
+>0\,.
+\end{multline*}
+Следовательно, $A_{h_1+2}\hm- A_{h_1+1}\hm>0$, так как $\left( 
+\pi_0^{h_1+2} \pi_0^{h_1}\right)^{-1} \hm- \left( \pi_0^{h_1+1}
+\right)^{-2}\hm<0$ (или $\pi_0^{h_1+2} \pi_0^{h_1} \hm- 
+(\pi_0^{h_1+1})^2\hm>0$), т.\,е.\ $A_{h_1+1}$ возрастает по~$h_1$.
+   
+   Из этого свойства~$A_{h_1+1}$ и~из того, что сред\-нее время отсутствия 
+очереди также убывает по~$h_1$, следует, что $f(h_1,a)$ убывает по~$h_1$. 
+Следовательно, функция $D(h_1,a)$ удовлетворяет всем условиям тео\-ре\-мы~1 
+из~\cite{8-al}. Далее, рас\-суж\-дая точ\-но так же, как и~в~работе~\cite{7-al}, 
+находим, что условия тео\-ре\-мы~1 из~\cite{8-al} выполняются и~в случае 
+бесконечного накопителя и~функция $D(h_1)$ унимодальна по пороговому 
+значению $h_1\hm>s$.
+    
+  В заключение отметим также сле\-ду\-ющий результат, вытекающий из свойства 
+уни\-мо\-даль\-ности функции $D(h_1)$: если существует конечный оптимальный 
+порог, то для его поиска (решения исходной задачи) достаточно применить 
+сле\-ду\-ющий прос\-той алгоритм.
+  \begin{enumerate}[1.]
+\item Положить $h_1\hm= s\hm+1$. 
+\item До тех пор пока выполняется условие 
+$$
+D\left(h_1+1\right)> D\left(h_1\right),
+$$ 
+полагать $h_1 \hm= h_1\hm+1$.
+\item Положить $h_1^*\hm=h_1$. 
+\end{enumerate}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{1-al}
+\Au{Горцев А.\,М.} Система массового обслуживания с~произвольным чис\-лом резервных 
+каналов и~гистерезисным управ\-ле\-ни\-ем вклю\-че\-ни\-ем и~вы\-клю\-че\-ни\-ем резервных 
+каналов~// Автоматика и~телемеханика, 1977. Вып.~10. С.~30--37.
+\bibitem{2-al}
+\Au{Крылова Д.\,С., Головко~Н.\,И., Жук~Т.\,А.} Анализ СМО с~резервным прибором 
+и~скачкообразной интенсивностью вход\-но\-го потока~// Вестник ВГУ. Сер. Физика. 
+Математика, 2017. №\,4. С.~109--123.
+\bibitem{3-al}
+\Au{Клименок~В.\,И.} Многолинейная сис\-те\-ма массового обслуживания с~резервными 
+приборами~// Ж.~Белорусского государственного университета. Математика. 
+Информатика, 2019. №\,3. С.~57--70.
+\bibitem{4-al}
+\Au{Дудин А.\,Н.} О~задаче оптимального управ\-ле\-ния многоскоростной сис\-те\-мой 
+массового обслуживания~// Автоматика и~телемеханика, 1980. Вып.~9. С.~43--51 
+\bibitem{5-al}
+\Au{Самочернова Е.\,С., Петров~Л.\,И.} Оптимизация сис\-те\-мы массового обслуживания 
+с~однотипным резервным прибором~// Известия Томского политехнического университета, 
+2010. Т.~317. №\,5. С.~28--31.
+\bibitem{6-al}
+\Au{Агаларов Я.\,М.} Оптимизация порогового управ\-ле\-ния переключением скорости 
+обслуживания в~сис\-те\-ме массового обслуживания $G/M/1$~// Информатика и~её 
+применения, 2022. Т.~16. Вып.~1. С.~73--81.
+\bibitem{7-al}
+\Au{ Агаларов Я.\,М.} Оптимальное управ\-ле\-ние подключением резервного прибора  
+в~сис\-те\-ме массового обслуживания $G/M/1$~// Информатика и~её применения, 2022. 
+Т.~16. Вып.~4. С.~34--41.
+\bibitem{8-al}
+\Au{Агаларов Я.\,М.} Признак унимодальности це\-ло\-чис\-лен\-ной функции одной переменной~// 
+Обозрение при\-клад\-ной и~промышленной математики, 2019. Т.~26. Вып.~1. С.~65--66.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Поступила в~редакцию 05.09.22}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{OPTIMIZATION OF A~QUEUE-LENGTH DEPENDENT ADDITIONAL SERVER 
+IN~THE~MULTISERVER QUEUE}
+
+
+\def\titkol{Optimization of a~queue-length dependent additional server 
+in~the~multiserver queue}
+
+
+\def\aut{Ya.\,M.~Agalarov}
+
+\def\autkol{Ya.\,M.~Agalarov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-15pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy 
+of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+  
+  
+  
+  \Abste{The problem of optimal control of an additional server in a~stationary $G/M/s$ queue is 
+considered. The additional server can be turned on and off at instants when the queue length is 
+changed. It is formulated as the nonlinear optimization problem, in which the objective function 
+accounts for amounts for service, losses due to the waiting of customers, maintenance, and 
+downtime of the additional server. The functioning of the system is described as a~controlled 
+Markov chain. Only stationary control policies are considered. For Poisson arrivals, necessary and 
+sufficient conditions are given for the existence of the optimal decision point (threshold) and it is 
+proved that the objective function is unimodal. A~simple algorithm for the computation of the 
+threshold is provided.}
+  
+  \KWE{multiserver queuing system; optimization; additional server}
+  
+ \DOI{10.14357/19922264230112} 
+
+%\vspace*{-16pt}
+
+%\Ack
+%\noindent
+
+  
+
+%\vspace*{4pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9} 
+\bibitem{1-al-1}
+  \Aue{Gortsev, A.\,M.} 1978. A~queueing system with an arbitrary number of stand-by channels 
+and hysteresis control of their connection and disconnection. \textit{Automat. Rem. Contr.} 
+38(10):1451--1457.
+\bibitem{2-al-1}
+  \Aue{Krylova, D.\,S., N.\,I.~Golovko, and T.\,A.~Zhuk.} 2017. Ana\-liz SMO s~re\-zerv\-nym 
+pri\-bo\-rom i~skach\-ko\-ob\-raz\-noy in\-ten\-siv\-nost'yu vkhod\-no\-go po\-to\-ka [Analysis of SMO
+ backup device and the abrupt intensity of the input stream]. \textit{Vestnik VGU. Ser. Fizika. 
+Matematika} [Proceedings of Voronezh State University. Ser. Physics. Mathematics] 4:109--123.
+\bibitem{3-al-1}
+  \Aue{Klimenok, V.\,I.} 2019. Mno\-go\-li\-ney\-naya sis\-te\-ma mas\-so\-vo\-go ob\-slu\-zhi\-van\-iya s~re\-zerv\-ny\-mi 
+pri\-bo\-ra\-mi [Multi-server queueing system with reserve servers]. \textit{J.~Belarusian State 
+University. Mathematics Informatics} 3:57--70.
+\bibitem{4-al-1}
+  \Aue{Dudin, A.\,N.} 1981. On optimal control of a~multi-rate service system. \textit{Automat. 
+Rem. Contr.} 41(9):1221--1228.
+\bibitem{5-al-1}
+  \Aue{Samochernova, E.\,S., and L.\,I.~Petrov.} 2010. Op\-ti\-mi\-za\-tsiya sis\-te\-my mas\-so\-vo\-go 
+ob\-slu\-zhi\-van\-iya s~od\-no\-tip\-nym re\-zerv\-nym pri\-bo\-rom [Optimization of the queuing system with the 
+same type of backup device]. \textit{Bulletin Tomsk Polytechnic University} 317(5):28--31.
+\bibitem{6-al-1}
+  \Aue{Agalarov, Ya.\,M.} 2022. Op\-ti\-mi\-za\-tsiya po\-ro\-go\-vo\-go uprav\-le\-niya pe\-reklyu\-che\-niem 
+sko\-rosti ob\-slu\-zhi\-va\-niya v~sis\-te\-me mas\-so\-vo\-go ob\-slu\-zhi\-va\-niya $G/M/1$ [Optimization of the 
+threshold service speed control in the $G/M/1$ queue]. \textit{Informatika i~ee Primeneniya~--- 
+Inform. Appl.} 16(1):\linebreak 73--81.
+\bibitem{7-al-1}
+  \Aue{Agalarov Ya.\,M.} 2022. Op\-ti\-mal'\-noe uprav\-le\-nie pod\-klyu\-che\-niem re\-zerv\-no\-go pri\-bo\-ra 
+v~sis\-te\-me mas\-so\-vo\-go ob\-slu\-zhi\-va\-niya $G/M/1$ [Optimal control of a~queue-length dependent 
+additional server in $\mathrm{GI}/M/1$ queue]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 
+16(4):34--41.
+\bibitem{8-al-1}
+  \Aue{Agalarov, Ya.\,M.} 2019. Pri\-znak uni\-mo\-dal'\-nosti tse\-lo\-chis\-len\-noy funk\-tsii od\-noy 
+pe\-re\-men\-noy [A~sign of unimodality of an integer function of one variable]. \textit{Obozrenie 
+prikladnoy i~promyshlennoy matematiki} [Surveys on Applied and Industrial Mathematics]  
+26(1):65--66.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received September 5, 2022}} 
+  
+  \Contrl
+  
+  \noindent
+  \textbf{Agalarov Yaver M.} (b.\ 1952)~--- Candidate of Science (PhD) in technology, associate 
+professor, leading scientist, Institute of Informatics Problems, Federal Research Center ``Computer 
+Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, 
+Russian Federation; \mbox{agglar@yandex.ru}
+  
+  
+
+   
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 
+   

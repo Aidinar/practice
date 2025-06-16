@@ -1,0 +1,2060 @@
+\renewcommand{\figurename}{\protect\bf Figure}
+
+\def\stat{belyaev}
+
+
+\def\tit{ANALYSIS OF SURVEY DATA CONTAINING  ROUNDED CENSORING INTERVALS}
+
+\def\titkol{Analysis of survey data containing  rounded censoring intervals}
+
+\def\autkol{Yu.\,K.~Belyaev and  B.~Kristr$\ddot{\mbox{o}}$m}
+
+\def\aut{Yu.\,K.~Belyaev$^1$ and  B.~Kristr$\ddot{\mbox{o}}$m$^2$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+%\footnotetext[1] {The work of first and second  authors is partially supported by the
+%Program of Strategy development of Petrozavodsk State University in
+%the framework of the research activity. The third author is a
+%postdoctoral fellow with the Research Foundation-Flanders
+%(FWO-Vlaanderen).}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Department of Mathematics and Mathematical Statistics,
+\mbox{Ume{\!\!\fontsize{9pt}{9pt}\selectfont\ptb{\!{\r{\hspace*{-2pt}a}}}}}
+University,  
+\mbox{Ume{\!\!\fontsize{9pt}{9pt}\selectfont\ptb{\!{\r{\hspace*{-2pt}a}}}}} SE-901 87, 
+Sweden, yuri.belyaev@umu.se}
+\footnotetext[2]{Center for Environmental and Resource Economics (CERE),
+Swedish University of Agricultural Sciences,  
+\mbox{Ume{\!\!\fontsize{9pt}{9pt}\selectfont\ptb{\!{\r{\hspace*{-2pt}a}}}}} SE-901 83, 
+Sweden, bengt.kristrom@umu.se}
+
+
+\vspace*{-9pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2015\ \ \ volume~9\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2015\ \ \ volume~9\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+
+
+\Abste{This paper makes a~contribution towards the statistical analysis of data sets containing intervals,
+that naturally arises in survey contexts. The suggested approach is sufficiently general to cover
+most cases where interval data are used. Interval data appear in many contexts, such as in reliability
+studies and survival analysis, in medicine and economics, in opinion elicit surveys,
+etc. There are
+several reasons for the extensive use of interval data, perhaps,
+the most common being one of necessity;
+exact values of the underlying observations are censored. 
+The nature of the intervals analyzed
+here is somewhat unusual. The self-selected intervals (SeSeI)
+are (freely) chosen by the subjects.
+A~generalization of the influential approach has been suggested
+to the statistical analysis of general
+censoring introduced by B.\,W.~Turnbull. A~key independence assumption
+in Turnbull's analysis has been explained and generalized. 
+A~sampling stopping rule based on the coverage probability has been suggested
+and the properties of a~two-step estimator, based on the idea of asking two questions,
+where the second involves a~way of fine-graining the information,
+has been discussed. This paper provides several
+informatics methods for SeSeI, targeting the problem of partial nonparametric
+identification. The properties of the suggested statistical models are stated, including a~recursion for
+easy numerical calculations. An extensive simulation study, displaying, inter alia,
+the usefulness
+of the proposed resampling methods for the situation under study, completes the paper.}
+
+\KWE{elicitation surveys; random sampling;  rounding; anchoring; coverage probability;
+likelihood; recursion; maximization; resampling}
+
+
+\DOI{10.14357/19922264150301} 
+
+%\vspace*{6pt}
+
+
+\vskip 12pt plus 9pt minus 6pt
+
+      \thispagestyle{myheadings}
+
+      \begin{multicols}{2}
+
+                  \label{st\stat}
+
+
+\section{Introduction}
+
+\noindent
+ Interval data appear in many contexts, such as in reliability studies, survival analysis in medicine,
+ and in opinion surveys. There are several reasons for the extensive use of interval data, perhaps,
+ the most common being one of necessity; exact values of the underlying observations are not observable.
+ In many survey studies, missing information is a~problem. Having an interval rather than a~missing
+ observation is valuable. It is known that the SeSeIs studied here, or,
+ as they are also known, unfolding brackets, increase response-rates and help reducing a~number
+ of well-known problem as described in detail below.
+The authors focus on a~case where the exact values are, in principle, observable; yet, for reasons just stated,
+ the individual has difficulty pinning down an exact value.
+
+ Because an individual is asked to select any interval he or she finds most suitable, the data obtained
+ is necessarily richer and, we argue, provide additional insights relative to points data. The SeSeIs
+ studied here are just natural generalizations of a~certain type of open ended survey questions.
+ In some ways, the SeSeIs respond to a~point made by  Manski~\cite{BK:MA99} who notes:
+
+\hangindent=3mm\hangafter=0\noindent
+\textit{One problem is the fixation in the social sciences on point identification of parameters\ldots
+  Weaker and more plausible assumptions often suffice to bound parameters in informative ways}.
+
+\noindent
+The idea of SeSeIs is, certainly, not new; the basic idea goes back to at least 
+Morgan and
+Henrion~\cite{BK:MH90}, who suggested SeSeIs as a~way of overcoming 
+``overconfidence'' and also to attack the
+anchoring problem (as discussed further below). There is also a~connection to 
+symbolic data analysis~\cite{BK:BD06}, in which intervals play an important role. Recent
+applications of SeSeIs include Manski and Molinari~\cite{BK:MM10} and 
+Johansson and Kristr$\ddot{\mbox{o}}$m~\cite{BK:JK12}.
+
+
+The present authors' previous research on SeSeIs is reported in~\cite{BK:BK10, BK:BK12},
+in which new statistical methods have been developed that cover SeSeIs in some detail. In particular,
+consistency of certain parametric models and measures of accuracy (using resampling methods)
+has been proved.
+In addition, a~sampling stopping rule has been proposed
+and the properties of a~2-step estimator have been discussed
+based on the idea of asking two questions, where the second involves a~way of fine-graining the information.
+This paper provides additional statistical results targeting the problem of nonparametric identification.
+A~simple example might be useful to see more clearly what the underlying identification problem is.
+Assume that half of the respondents in a~population state the interval $(0, 2]$ 
+and that
+the other half $(1, 3]$ as their SeSeIs. Clearly, even if one
+ knows the SeSeIs for all members of
+the population, there cannot be identified the 3~probabilities that the (unknown) exact value is in
+either of the three sets $\{(0, 1],(1,2],(2,3])$ without further information (which 
+is proposed
+then to be obtained in the second step of data collection). A~main contribution in this paper is
+to show how the nonparametric estimator generalizes Turnbull~\cite{BK:TU74, BK:TU76} on nonparametric
+estimation in  general cases of censoring. In particular, Turnbull's estimator is based on a
+particular independency assumption not needed in the considered case. 
+The obtained data also suggest that the
+independency assumption might be quite stringent. The authors introduce an assumption, of which
+Turnbull's independence assumption can be viewed as a~special case. The
+ real world example
+data illustrate this idea in some detail. Finally, the authors note that the analysis of SeSeIs is
+closely related to the econometrics literature on partial identification~\cite{BK:MA03}.
+
+To get some intuition and feel for the theoretical results, in particular,
+for Turnbull's assumption,
+a~pilot analysis of an illustrative data set is made in section~2.
+While the paper focuses on statistical modeling, section~3 discusses
+salient assumption  made about the response process used by respondents in the survey
+situation studied. Section~4 introduces the basic statistical model,
+along with a~discussion about the size  of sampling and the properties of the likelihood in the simplest case.
+The present authors propose a~solution  to the identification problem that arises if one
+is  interested in nonparametric models in this context in section~5. Here,
+a~more general assumption about the response process has been also introduced, 
+which has the Turnbull assumption as
+a~special case. The properties of statistical models are stated, including a~recursion for easy
+numerical calculations. A~final section concludes.
+
+\section{Preliminary Analysis Using Real Data-Set} %\label{sec:pilot}
+
+\noindent
+It will be useful before introducing the theoretical details to fix ideas by scrutinizing in some
+detail a~real world data-set, where the SeSeIs have been used. 
+The authors use contingent valuation,
+a widely used survey method to shed light on the value respondent attach to,
+for example, environmental
+improvements and other nonmarket goods (see~\cite{BK:CA12}). While 
+the present approach can be used
+in many settings, contingent valuation is a~natural application, not the least because individuals are
+typically uncertain about how much they want to pay, say, for nonmarket priced quality improvements.
+The interval questions were used within a~study of  the costs and
+benefits of changing instead flow for wild salmon at the
+Stornorrfors hydropower plant on the Vindel River, in northern
+Sweden~\cite{BK:HA08}. 
+The respondents were asked about their Willingness-To-Pay (WTP)
+for increasing the number of salmon that reach their spawning
+grounds in the river each year. The respondents were randomly sampled  from a
+general register of the Swedish subpopulation (SPAR) older than~18~years. 
+The sample was split into three subsets, each with a~different formulation 
+of the valuation question.
+
+
+
+In the first sample, denoted $S_1$, a~standard open-ended question was used to
+obtain points, i.\,e., the WTP value for each respondent. In the second sample, 
+$S_2$, the authors asked for
+WTP-intervals, and in the third sample, $S_3$, individuals were free to select either a~point or any interval of choice.
+The data are summarized in the table and in Figs.~1 and~\ref{FG-33}.
+
+
+These figures reveal, inter alia,  that the survival distribution functions (s.d.f.s), of sta\-ted
+points in~$S_1$ and the right ends intervals stated 
+in~$S_2,$ are nearly the same (see Fig.~1). This (unexpected) coincidence is hardly  related to
+an underlying assumption in the Turnbull approach~\cite{BK:TU74, BK:TU76}; the censored value is independent
+of the interval ends. In the present case, it appears as if respondents censored values are 
+``to the right'' in any given stated interval.  Furthermore,  Fig.~\ref{FG-33} 
+suggests that the union
+$S_2 \cup S_3$ can be considered as the basic interval-data set. 
+This gives~241~intervals in the data collected by\linebreak
+\mbox{H{\hspace*{-1.1mm}\fontsize{12pt}{12pt}\selectfont\ptb{\!{\r{\hspace*{-3pt}a}}}}kansson}~\cite{BK:HA08}. 
+There are~46~different intervals in $S_2 \cup S_3$ and it is useful to consider
+the choice respondents have made in further detail.
+%\begin{table*}
+{\small
+\begin{center}
+
+\tabcolsep=1.4pt
+\begin{tabular}{cccccc}
+\multicolumn{6}{c}{The results of the study of costs and benefits}\\
+\multicolumn{6}{c}{\ }\\[-6pt]
+%\multicolumn{5}{c}{\ }\\[6pt]
+  \hline
+ \multicolumn{1}{c}{\raisebox{-6pt}[0pt][0pt]{Sample}} & \# not  & \# of stated 0 & \# of stated &
+   \# of stated &  \multicolumn{1}{c}{\raisebox{-6pt}[0pt][0pt]{Total \#}}  \\
+    & answered & & intervals & points &      \\ 
+    \hline
+  $S_1$ & 97 & 76 & \hphantom{9}0 & 72 & 245 \\ 
+%  \hline
+  $S_2$ & 97 & 88 & 58 & \hphantom{9}0 & 243 \\ 
+%  \hline
+  $S_3$ & 527\hphantom{9} & 334\hphantom{9} & 183\hphantom{9} & 148\hphantom{9} & 1192\hphantom{9} \\ 
+  \hline
+  \end{tabular}
+  \end{center}}
+%\end{table*}
+
+\begin{center}  %fig1
+\vspace*{9pt}
+\mbox{%
+ \epsfxsize=77.93mm
+ \epsfbox{bel-1.eps}
+ }
+
+\end{center}
+
+%\vspace*{3pt}
+
+\noindent
+{{\figurename~1}\ \ \small{Two empirical distributions corresponding to the stated points in the sample~$S_1$ and
+the stated right ends of  WTP-intervals in sample~$S_2$. 
+Both distributions are trimmed at 1000~SEK}}
+
+\addtocounter{figure}{1}
+
+\begin{figure*} %fig2
+       \vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=158.849mm
+ \epsfbox{bel-2.eps}
+ }
+ \end{center}
+ \vspace*{-9pt}
+ \Caption{Two empirical distributions describing the right ends of the 
+ intervals~(\textit{a}) and
+the interval lengths~(\textit{b}) in~$S_2$ and~$S_3$.
+Both distributions are trimmed at 950~SEK
+\label{FG-33}}
+\end{figure*}
+
+
+
+
+
+
+First notice that  there is considerable heaping on a~certain set of intervals.
+Thus, 142 out of~241~respondents stated the following four WTP-in\-ter\-vals: 
+$(20, 50]$, $(20, 100]$, $(50, 100]$, and $(100, 200]$. 
+These intervals were chosen by~39, 11, 69, and 23~individuals, respectively. Consequently,
+there are four ``popular'' intervals that together make up an important part of the data. Of the four
+``popular'' intervals, three of them correspond to the face value of money bills in Sweden (the fourth
+has a~multiple of a~100~SEK bill). Consequently, even though an individual can state any value
+(that he or she can afford), it is clearly the case that rounding is prevalent in the data.
+The~21~unique intervals in the data-set are also all possible to obtain by combining existing
+coin and bills in Sweden. In short, respondent invariably round their answers, seemingly using
+the existing bills and coins nominations in Sweden when reporting their valuations. Let now turn
+to some economic and statistical modeling details.
+
+\section{The Economic Model} %\label{sec:economics}
+
+\noindent
+Here, a~detailed microeconomic model of the response process
+is not presented, because the focus is on
+the statistical issues. There are, however, a~number of different existing models that 
+can be reinterpreted to fit this particular case. For example, in the McFadden/Manski random utility
+maximization (RUM) mo\-del, the essential assumption is that the individual knows 
+his/her utility function,
+but the analyst cannot observe it completely; hence,
+a~random error term is added to the utility function.
+It is possible to reinterpret the SeSeIs in terms of the RUM, in the sense that one can assume that
+the individual considers the value $Y=\mu + \epsilon$, where $Y$ is the point value 
+and $\mu >0$ is the constant and $\epsilon$ is the random errors. In this interpretation, the individual is unable to pin
+down the exact value but reports instead a~support of the distribution of~$Y$. 
+At any rate,
+ this model will not be pursued further, given the focus of the
+ present analysis. However, it is important
+ to state key assumptions about the response process, to which let now turn.
+
+\subsection*{Basic assumptions}
+
+\noindent
+The authors base their statistical models on three basic assumptions 
+(implicitly, that the person is also assumed to reveal his/her WTP truthfully):
+
+\smallskip
+
+\noindent
+\textbf{Assumption~1.} \textit{Each respondent might not be aware of the exact location of the
+true WTP-point. The respondents may freely choose SeSeIs
+containing their true WTP-points. The ends of stated intervals may
+be rounded, e.\,g., to simple sums of coins or paper values of money.}
+
+\smallskip
+
+\noindent
+\textbf{Assumption~2.}
+\textit{The true WTP-points are independent of question mode, i.\,e., the
+structure of the valuation question does not change the true WTP-points in the
+SeSeI.}
+
+
+\smallskip
+
+\noindent
+\textbf{Assumption~3.}
+\textit{The pairs of true WTP-points and the stated SeSeIs, corresponding to different sampled
+individuals, are the values of independent identically distributed
+(i.i.d.)\ random variables (r.v.s).}
+
+
+The first part of Assumption~1 has ample support in the contingent
+valuation literature. For example, the standard approach in this literature is to use a~payment
+card (with given brackets), where the individual is to state (for each interval) how certain he
+or she is about his/her WTP being in any of the brackets displayed in the card 
+(see~\cite{BK:BB08},
+a~recent survey of~76~papers is in~\cite{BK:MRKB14}). This is another way to
+cater for respondent uncertainty compared to what is suggested here.
+
+ In the second part of Assumption~1, the authors naturally assume (but
+do not explicitly state) that the individual chooses an interval
+such that WTP does not exceed his or her income. The authors explicitly
+allow for rounding in the final part of Assumption~1.
+
+ Assumption 2 is important. From some perspectives,
+this assumption is strong, given the evidence that exists on
+the differing results between types of valuation questions. 
+For example, it has been demonstrated
+(e.\,g., in the research by the Nobel Laureate Daniel Kahnemann) that anchoring is prevalent under uncertainty.
+Anchoring here means that an individual, in a~situation of uncertainty, uses any information, whether
+relevant or not, to form his/her answer. In particular, it is apparent that the actual brackets
+being displayed in a~payment card may affect the answers; if so, the answers become ``anchored'' around
+the numbers suggested. If we are just asking a~SeSeI question this issue is moot, in the sense that no
+numbers are suggested that may be used as anchors. However, as it will be seen, for (partial) nonparametric
+identification, it is necessary to ask the second question that does involve suggesting numbers. Fortunately,
+if anchoring exists in the suggested two-step approach, it is likely to be less of a~problem, since 
+one has
+information about the ``undistorted'' interval, elicited in the first stage.
+
+ Assumption 3 is, typically innocuous, in
+that most contingent valuation applications are based on large
+significant national samples.
+
+Let now turn to the statistical modeling in more detail. It is useful to begin with addressing
+the sampling issue first; how many individuals it is necessary to sample 
+in order to be sure that
+we have, in a~loose sense, ``enough'' information? The proposed solution is based on an estimator obtained
+by Good~\cite{BK:GO54}. The estimation which is used in the derivation of a~sample stopping rule, is related to what
+is called here a~coverage probability. The end-result is a~stochastic difference equation, which 
+will be now derived.
+
+\section{Statistical Modeling of~Self-Selected Intervals: 
+Basic~Ideas} %\label{sec:statistics}
+
+\noindent
+Let begin the discussion of the statistical modeling with analyzing the sampling problem under SeSeIs,
+then turn to a~basic building block called division intervals. Let then introduce similar Turnbull's basic assumption,
+derive the likelihood and its properties, and select a~convenient numerical scheme for the implied numerical
+maximization problem. The discussion of the basic statistical model 
+will be ended by introducing an alternative
+to Turnbull's assumption, essentially an assumption suggested by the data. This will lead one naturally to
+the two-step extension, introduced in subsequent section~5.
+{\looseness=1
+
+}
+
+\subsection{Sampling stopping rule}
+
+\vspace*{-2pt}
+
+\noindent
+Consider $n,$ randomly sampled respondents, from  
+a~population $\mathfrak{P}$ of interest,
+  that have stated SeSeIs $\mathbf{y}_1^n =\{ \mathbf{y}_1, \ldots , \mathbf{y}_n\}$, 
+  $ \mathbf{y}_i =(y_{Li}, y_{Ri}].$
+  The intervals need not to be unique, because of rounding we do expect to see quite many repeated intervals.
+  Yet, an important question is when to stop the sampling process;   which~$n$~may be considered sufficiently
+  large? The problem is related to the problem of estimating, e.\,g., the number of species in a~certain area,
+  or the number of words in a~given language. It will be addressed using an idea by 
+  Good (1954), which   will be generalized
+  to a~stochastic difference equation and to a~``coverage probability.'' 
+Let first introduce some notation.
+
+    Let  consider $\mathbf{y}_1^n =\{ \mathbf{y}_1,
+   \ldots , \mathbf{y}_n \}$ as a~realization of a~multinomial random
+   process  $\{ \mathbf{Y}_i\}_{i\ge 1}$ with ``time'' parameter
+   $i=1, 2,\ldots$ The r.v.s $\{ \mathbf{Y}_i\}_{i\ge 1}$ are (as noted) i.i.d.\
+   and the set of    their values is  all SeSeIs $\mathcal{U}_{\mathrm{all}} =\{ \mathbf{
+   u}_\alpha : p_\alpha =P[\mathbf{Y}_i =\mathbf{u}_\alpha ]>0$, $\alpha\in A\}.$
+   The set  $\mathcal{U}_{\mathrm{all}}$ and the  discrete distribution $\{ p_\alpha,
+   \alpha\in A\} $ are not known.  $\alpha$ is an integer index identifying $\mathbf{
+    u}_\alpha, $ i.\,e., $ \mathbf{u}_{\alpha'}\not= \mathbf{u}_{\alpha''}$
+    if $ \alpha'\not=\alpha''.$   All $m(n)\le n$ different intervals 
+    in~$\mathbf{y}_1^n$ can be ordered
+    by their endpoints. Let write $\mathbf{y}_{i_1}\prec  \mathbf{
+    y}_{i_2}$ if either $ y_{L i_1}< y_{L i_2},$ or $ y_{L i_1}=
+    y_{L i_2}$ but $ y_{R i_1}<  y_{R i_2}.$ Then different intervals 
+    $ \mathbf{y}_{i_1'} \prec \mathbf{y}_{i_2'}\prec \cdots 
+    \prec \mathbf{y}_{i_{m(n)}'}$ and let $\mathbf{u}_{h n}
+    =\mathbf{y}_{i_h'} $ for all $\mathbf{y}_i$ identical with $\mathbf{y}_{i'_h}$ 
+    and $\mathbf{t}(n) =\{ t_{1, n}, \ldots, t_{m(n), n}\},$  
+    $t_{h, n} =\sum_{i=1}^n I [ \mathbf{y}_i =\mathbf{u}_{h, n}].$
+   The collected data    can be written as the following list:
+   $$
+ \mathbf{d1}_n =\{ \ldots, \{ h, \{  u_{Lh, n} , u_{Rh, n}\}
+ , t_{h, n} \} , \ldots \} 
+   $$
+   where ordering indexes $h=1, \ldots, m(n)$ of different intervals $\mathbf{u}_{h,
+   n}=( u_{Lh, n}, u_{Rh, n}]$ depend on the collected data $\mathbf{y}_1^n.$ 
+   Finally,  let $\mathcal{U}_{m(n), n}=\{ \mathbf{u}_{1, n} , \ldots , \mathbf{u}_{m(n), n}\}$\linebreak
+$\subseteq\mathcal{U}_{\mathrm{all}}$ be the set of all different
+SeSeIs stated in~$\mathbf{y}_1^n.$
+
+Consider now the sampling stopping problem. It is 
+interesting to estimate the fraction of individuals 
+(in~$\mathfrak P$) that will state  WTP-intervals already observed to be in $\mathcal{U}_{m(n), n}.$
+  Let $p_c (n)$ be probability of the event that the last
+  WTP-interval, $\mathbf{y}_n =\mathbf{u}_{h_n, n},$ in~$\mathbf{y}_1^n$,
+$t_{h_n, n} \ge 2.$ Let~$H_n$ denote the
+  r.v.\ that the $n$th individual states a~WTP-interval $\mathbf{u}_{H_n, n}$ 
+  containing his/her WTP-value~$x_n$.
+   Since $E [ I[t_{H_n, n}\ge 2]] =p_c(n)$, one can consider  
+   $I[t_{h_n, n} \ge 2]$ as a~value of an unbiased
+   estimator of $p_c(n).$ After averaging $I[t_{H_n, n}\ge 2]$ given the 
+   sufficient statistic $\mathbf{t}(n)$, one obtains an unbiased
+    estimate of $ p_c(n)$:
+$$
+ \hat p_c (n) =\fr{r(n)}{n} 
+ $$
+where $r(n) =\sum_{h=1}^{m(n)} t_{h, n} I[t_{h, n}\ge 2],$ and
+    cap $\, \hat{\,}\,$ over $p_c(n)$ denotes an estimate~\cite{BK:BK13}.
+
+To proceed, let reduce the problem to a~classical urn problem with $r(i)$
+white and $i-r(i)$ black balls.
+   Let 
+   \pagebreak
+   
+   \noindent
+   $$
+   \mathcal{U}_{m(i), i} (1) =
+   \{ \mathbf{u}_h :\, \mathbf{u}_h    \in\mathcal{U}_{m(i), i}, t_{hi} =1\}\,; 
+$$
+$$
+\mathcal{U}_{m(i), i} (2) =\{ {\bf u}_h :\, {\bf u}_h
+   \in\mathcal{U}_{m(i), i},\enskip t_{hi} \ge 2\}\,;
+   $$
+$$
+\mathcal{U}_{m(i), i} =\mathcal{U}_{m(i), i} (1)\cup\mathcal{U}_{m(i), i}
+   (2)\,.
+   $$  
+    Then
+   $$
+   \Delta_c(i) = 
+   \begin{cases}
+   \hat p_c(i+1) -\hat p_c (i) =\fr{i-r(i)}{i(i+1)}&\\[2pt]
+&\hspace*{-20mm}     \mbox{ if }
+   \mathbf{y}_{i+1} \in \mathcal{U}_{m(i), i}(2)\,;\\[6pt]
+\fr{2i-r(i)}{i(i+1)} &\hspace*{-20mm}\mbox{ if } 
+\mathbf{y}_{i+1} \in \mathcal{U}_{m(i), i}(1)\,;\\[6pt]
+-\fr{r(i)}{i(i+1)} &   \hspace*{-20mm}\mbox{ if } 
+ \mathbf{y}_{i+1} \not\in \mathcal{U}_{m(i), i}\,.
+ \end{cases}
+ $$
+
+   The probability $p_c(n)$ is increasing in~$n.$ Hence, one can use $\hat p_c(n)$ as
+an approximation of a~lower bound estimate for $p_c(n')$ for any 
+  $n'> n.$ Then, one may   interpret $\hat p_c(n)$ 100\% as a~lower bound estimate of the
+  percentage of all individuals in $\mathfrak P_c \subset \mathfrak P$
+  who  would claim an interval ${\bf u}_h\in\mathcal{U}_{m(n), n}.$ As indicated above,
+  $p_c(n)$ is called here a~\textit{coverage probability.}
+
+    By calculating $\hat p_c(i)$ for each $i\le n$, one can observe
+the  evolution of $\hat p_c(i)$ for some empirical data (Fig.~3).
+
+\begin{center}  %fig3
+\vspace*{12pt}
+\mbox{%
+ \epsfxsize=78.234mm
+ \epsfbox{bel-3.eps}
+ }
+
+\end{center}
+
+%\vspace*{3pt}
+
+\noindent
+{{\figurename~3}\ \ \small{The dynamics of the coverage probability
+estimates $\hat p_c[i]$ as a~function of~$i$}}
+
+\vspace*{9pt}
+
+\addtocounter{figure}{1}
+
+
+
+The decision to stop  collecting data on the first step can be determined by the value of 
+$\hat {p}_c(n).$ If this value is not sufficiently close to~1 and if it is
+  possible to extend data collection, then sampling continues.  Note that if
+  the collection of data  has stopped with $ n_1\ge n$ and 
+  $\hat {p}_c(n_1)= r(n_1) /n_1$, then inference about the WTP-distribution
+  will correspond to the subset of individuals~$\mathfrak{P}_c$ with
+  WTP-intervals already collected in $\mathcal{U}_{m(n_1), n_1}.$
+
+The next step is to introduce the basic building block of the statistical model,
+the so-called \textit{division intervals.} The basic idea is to divide each 
+interval into smaller pieces
+where those pieces are obtained from the responses of the respondents.
+
+\subsection{Division intervals}
+
+\noindent
+  Henceforth, the number~$n_1$ of randomly sampled respondents is fixed and 
+  it is suppressed
+  it in the sequel;  let write $\mathcal{U}_m =\{ \mathbf{u}_1, \ldots, {\mathbf
+  u}_m \}$ instead of $\mathcal{U}_{m(n_1), n_1}$\linebreak
+  $= \{ \mathbf{u}_{1, n_1}, \ldots, {\mathbf
+  u}_{m(n_1), n_1} \}$ and~$t_h$~instead of $ t_{h, n_1}.$
+Let simplify and use
+ $ \mathcal{U}_m$, $\mathbf{u}_h$,  $\mathbf{v}_j$, $\mathcal{C}_h$,
+  and $\mathcal{D}_j$ instead of
+  $ \mathcal{U}_{m_{n}, n_1}, \mathbf{u}_{h n_1}, \mathbf{v}_{j n_1}, 
+  \mathcal{C}_{h n_1}$, and $\mathcal{D}_{j n_1}.$
+
+  Let $v_0 < v_1 < \cdots < v_{k-1} < v_k$ be ordered values of the end
+  points of all intervals $\mathbf{u}_h\in\mathcal{U}_m.$
+Let $v_{L j} = v_{j-1} $ and $  v_{Rj}=v_j.$
+  Then, the intervals   in the following collection
+  $ \mathcal{V}_k =\{ \mathbf{v}_1, \ldots, \mathbf{v}_j, \ldots , \mathbf{v}_k \}$, 
+  $\mathbf{v}_j=(v_{Lj}, v_{Rj}]$,   
+  $j=1, \ldots, k,$ are called \textit{division intervals}.
+
+    Each interval ${\bf u}_h \in
+  \mathcal{U}_m$ is,  thus, the union of disjoint division intervals
+ % \begin{equation}\label{FR-XX1}
+ $$
+   \mathbf{u}_h = \bigcup_{j\in\mathcal{C}_h} \mathbf{v}_j\,;
+    \quad \mathcal{C}_h =\left\{ j:\; {\bf v}_j \subseteq \mathbf{u}_h\right\} \,.
+    $$
+%\end{equation}
+Below,  the following sets of indices~$h$ will be also used:
+%\begin{equation}\label{FR-XX2}
+$$
+\mathcal{D}_j= \left\{ h:\; \mathbf{v}_j \subseteq \mathbf{u}_h \right\}\,, \enskip j=1,
+    \ldots, k\,. 
+    $$
+For example, if there are used the data in $S_2\cup S_3$, then
+$v1 = (0, 5]$; $v2 = (5, 10]$; $v3 = (10, 15];$  
+$ v4$\linebreak $ = (15, 20]$; $v5 = (20, 25]$; $v6 = (25, 30];$ 
+$ v7$\linebreak $ = (30, 40]$; $v8 = (40, 50]$;  $v9 = (50, 60];$ 
+$  v10 = (60, 70]$; $v11 = (70, 75]$;  $v12 = (75, 80];$ 
+$  v13 = (80, 100]$; $v14 = (100, 150];$ 
+$  v15 = (150, 170]$; $v16 = (170, 200]$; 
+$ v17 = (200, 250]$;  $v18 = (250, 300];$ 
+$v19 = (300, 400]$;     $v20 = (400, 500]$;
+$ v21 = (500, 600]$;   $v22 = (600, 1000];$ 
+$v23 = (1000, 1000]$. 
+For $j=21$, $\mathbf{v}_{21} =(500, 600]$.
+ Then,
+$\mathcal{D}_{21} =\{ 38, 43, 45, 46 \}$; $\mathbf{u}_{38} =( 100, 1000];$ 
+$ \mathbf{u}_{43} =( 300, 600]$;
+$\mathbf{u}_{45} =( 500, 1000]$; 
+$\mathbf{u}_{46} =( 500, 2000]$.
+An informative picture of the data was obtained
+by considering how each stated interval can be
+constructed via properly selecting division intervals (Fig.~4).
+
+
+
+Respondents' WTP-points $\{ x_i\}$   by Assumption~3
+are values of $\{ X_i\}$ i.i.d.\ r.v.s.   Let define even
+$ \{ H_i =h\} \subset\{ X_i\in \mathbf{u}_h\}, \, w_h= P[\{
+H_i=h\}\le p_h$\linebreak $= P[X_i \in \mathbf{u}_h]$, $h=1, \ldots, m.$ 
+Note that events\linebreak $\{ H_i =h\} $ are
+ observable, but not all of  $\{ X_i \in \mathbf{u}_{h'}\}$, $h'\not= h,$
+ $\mathbf{u}_{h'}\cap{\bf u}_h \not= \emptyset$ are
+observable. The probability, of the number of times $ t_{1 n_1}, \ldots, t_{m n_1}$
+that $\mathbf{u}_1, \ldots , \mathbf{u}_m$ had appeared in~$\mathbf{y}_1^n$ 
+is proportional to $\prod_{h=1}^m w_h^{t_{h n_1}},$  i.\,e.,
+one has a~multinomial distribution. The corresponding
+(normed by~$n_1$) log likelihood (llik) is
+\begin{align*}
+  \mathrm{llik} \left[ w_1, \ldots, w_m \vert t_1, \ldots, t_m \right]&= \sum\limits_{h=1}^m
+  \fr{t_{h n_1}}{n_1}\,\mathrm{Log} \left[w_h\right]\,;\\
+  \sum\limits_{h=1}^m t_{h n_1} &=n_1\,.
+\end{align*}
+The maximum of llik over $w_h\ge 0$, $\sum_{h=1}^m w_h =1$,
+is attained at $ \check w_h =t_{h n_1}/n_1$, $h=1, \ldots, m.$
+ Note that $e[\hat{\mathbf{w}}_1^m ]= -\sum_{h=1}^m \hat{w}_h \mathrm{Log} 
+ [\hat w_h]$ is the empirical en-\linebreak\vspace*{-12pt}
+ 
+ \pagebreak
+ 
+ \begin{center}  %fig4
+\vspace*{1pt}
+\mbox{%
+ \epsfxsize=74.792mm
+ \epsfbox{bel-4.eps}
+ }
+
+\end{center}
+
+%\vspace*{3pt}
+
+\noindent
+{{\figurename~4}\ \ \small{The set of all compatible indexes $h, j,$ 
+ $ \mathbf{v}_j \subseteq {\bf u}_h, $ $h=1, \ldots , 46$, $j=1,
+\ldots , 23$ in the empirical data. The sets $\mathcal{C}_h =
+\{ j, \mathbf{v}_j \subseteq \mathbf{u}_h \}$ and $ \mathcal{D}_j=\{ h, 
+\mathbf{v}_j \subseteq \mathbf{u}_h \}$ are the $h$-cuts and $j$-cuts of the
+shown set, e.\,g., $\mathcal{C}_{10} =\{ 3, 4, 5, 6, 7\}$ and $\mathbf{u}_{10} =
+\cup_{j=3}^7 \mathbf{v}_j$}}
+
+\vspace*{9pt}
+
+\addtocounter{figure}{1}
+ 
+
+\noindent
+tropy of the multinomial
+distribution with probabilities $ \hat{\mathbf{w}}_1^m=\{ \hat w_1, \ldots, 
+\hat w_m \}.$
+
+
+\subsection{The Turnbull assumption}
+
+\noindent
+Let consider statistical models where there are  finite numbers~$m$
+of different SeSeIs~$\mathbf{y}_i$, $i=1, \ldots, n_1$, each
+contains one unobserved point $X_i=x_i.$ 
+The target is nonparametric estimation of the underlying
+distribution function. As it is common in the survival analysis, let assume a~kind of
+independence. Here, it means that an interval containing value~$x_i$ has been stated
+independently of the position of~$x_i$ in the interval.  In statistical models with
+exogenously given intervals, these assumptions are called  the \textit{noninformative condition}
+(see, e.\,g.,~\cite{BK:GCO04, BK:GCOL09}).
+ In the considered context, this  restrictive assumption  on independence of positions (AIP) WTP-points
+ included in SeSeIs can be stated as  follows.
+ 
+ \noindent
+ \textbf{Assumption~4}.\
+\textit{$AIP: $ For each  pair of $\{ h, j\} ,$ $ h=1, ..., m $ and}
+$ j\in\mathcal{C}_h$ for events $\{ H_i =h\}$ and $\{ X_i \in {\bf v}_j\}$,
+\begin{multline*}
+P_o \left[ \left\{ X_i \in {\bf v}_j\right\} \cap \{ H_i =h\}\right] =
+q_{oj}w_{oh} I [j\in \mathcal{C}_h ]\,,\\
+j\in\mathcal{C}_h, h=1, \ldots, m.
+\end{multline*}
+
+
+  From this assumption, it follows that
+  \begin{equation*}
+ P_o [ \{ H_i=h, X_i \in \mathbf{y}_i =  \mathbf{u}_h =
+ \cup_{j\in\mathcal{C}_h} \mathbf{v}_j\}] =   w_{oh} p_{oh}
+ \end{equation*}
+  where $ P_o$ is the~true probability; $w_{oh}=P_o[H_i= h]$;
+$p_{oh} =\sum_{j\in\mathcal{C}_h} q_{oj}$ with
+$q_{oj} =P_o [X_i \in \mathbf{v}_{j'}]$; $\mathbf{v}_j  \subseteq \mathbf{u}_h$.
+
+  This assumption is basic to Turnbull~\cite{BK:TU74, BK:TU76} and corresponds to the case where all end points
+  of censoring intervals  are known before realizations of r.v.s~$X_i$, and the conditional
+  distribution of~$X_i$, $i=1, 2,\ldots,$ given these points, does not depend
+   on the ends of these intervals. Turnbull's assumption
+    on conditional probabilities of $ X_i \in u_h, $ given 
+    $ \{ \mathbf{Y}_i=(u_{Lh},  u_{Rh}] \} ,$
+    implies that $ p_{o h}=P_o\{ X_i \in \mathbf{u}_h \}$. This assumption is
+    enough for obtaining a~simplified  version of the llik 
+    (see~\cite{BK:GCO04}).
+
+  By AIP,  additional
+probabilities~$ w_{oh}$, $h=1$,\linebreak $2, \ldots, m,$ have been
+introduced which are the true probabilities that the $i$th respondent selects
+$ \mathbf{u}_h \in U_m $ such that $ X_i \in \mathbf{u}_h $. Note that since  
+$ I[X_i \in \mathbf{u}_h]=1 $
+and due to presence $ \mathbf{u}_h \in \mathbf{y}_1^n$,  the probabilities~$ w_{oh} $ 
+should be positive, $h=1, \ldots , m.$
+ In addition, all probabilities $p_{oh} =P_o [X_i \in \mathbf{u}_h ]>0$, 
+ $h=1, \ldots , m,$ are positive.
+
+We do not know $w_{oh}$ and  parameters~$q_{0j}$ where $ \{ h, j\}$
+are the compatible pairs. The natural consistent estimates of~$w_{oh}$ are the
+frequencies
+
+\noindent
+$$
+\hat w_{h}(n_1) = \fr{t_{hn_1}}{n_1}\,, \quad t_{hn_1} =\sum\limits_{i=1}^{n_1} I\left[h_i=h\right]\,.
+$$
+Such probabilities are the basic ingredients of the likelihood, to which let now turn.
+
+\vspace*{-9pt}
+
+\subsection{The likelihood}
+
+\noindent
+The current problem is to find consistent estimates for
+points of the true s.d.f.\  $S_{ot} [\cdot ].$
+ One has the following normed log likelihood
+ $(\mathrm{llik}_{\mathrm{AIP}})$  with parameters $\mathbf{q}_1^k$ and~$\mathbf{w}_1^m$:
+ 
+ \vspace*{-2pt}
+ 
+ \noindent
+  \begin{multline*}
+ \mathrm{llik}_{\mathrm{AIP}}\! \left[\mathbf{q}_1^k, 
+ \mathbf{w}_1^m\mid \mathbf{y}_1^{n_1} \right] =  
+ \fr{1}{n_1} \mathrm{Log}\! \left [ \prod\limits_{i=1}^{n_1} \!\left ( \!w_{h_i} \hspace*{-1mm}
+ \sum\limits_{j\in\mathcal{C}_{h_i}}\hspace*{-1mm}q_j\!\right )\! \right ] \\
+{} = \fr{1}{n_1} \sum\limits_{i=1}^{n_1} \mathrm{Log} \left [
+ w_{h_i} \sum\limits_{j\in\mathcal{C}_{h_i}}q_j \right ]= f_{ll} 
+ \left[\mathbf{q}_1^k\right] +  \hat{e}\left[\mathbf{w}_1^m\right]
+ \end{multline*}
+where
+
+\vspace*{-1pt}
+
+\noindent
+\begin{multline*}
+ f_{ll}  \left[\mathbf{q}_1^k\right]= \sum\limits_{h=1}^m \hat{w}_h (n_1) 
+ \mathrm{Log}  \left [ \sum\limits_{j\in\mathcal{C}_h} q_j\right ]\,, \\
+\mathbf{q}_1^k =\left\{ q_1, \ldots, q_k\right\}; 
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{equation*}
+\hat{e}\left[\mathbf{w}_1^m \right]= \sum\limits_{h=1}^m \hat w_h (n_1) \mathrm{Log}
+ \left[ w_h \right]\,,
+\enskip  \mathbf{w}_1^m =\left\{ w_1, \ldots,  w_m \right\}\,.
+\end{equation*}
+To save on notation,  let write $ \mathrm{llik}_{\mathrm{AIP}}$ instead 
+of $\mathrm{llik}_{\mathrm{AIP}}[ \mathbf{q}_1^k , \mathbf{w}_1^m\mid \mathbf{y}_1^n ].$
+Note that llik$_{\mathrm{AIP}}$ depends on~$\mathbf{q}_1^k$ only thro\-ugh 
+ $\mathbf{p}_1^m =\{ p_1, \ldots, p_m \}$.
+ Hence, let consider llik$_{\mathrm{AIP}}$ as a~function of~$\mathbf{p}_1^m$ 
+ and write it 
+ as llik$_{\mathrm{AIP}}[\mathbf{p}_1^m].$
+Due to presence of all $\mathbf{u}_h \in\mathcal{U}_m$ in the data~$\mathbf{y}_1^n$, 
+there is a~small positive number $\varepsilon >0$ such that  the global maximum of
+llik$_{\mathrm{AIP}}$ is contained in the following compact convex multidimensional polyhedron:
+
+\vspace*{-4pt}
+
+\noindent
+\begin{multline*}
+\mathcal{S}_{k-1} =
+\left\{ \mathbf{q}_1^k: 0\le q_j <1,\ \sum\limits_{j=1}^k q_j =1,\right.\\[-3pt] 
+p_h =\sum\limits_{j\in\mathcal{C}_h} q_j \ge \varepsilon >0,\  
+\left.
+h=1, \ldots, 
+\vphantom{\sum\limits_{j=1}^k}
+m\right\}\,.
+  \end{multline*}
+
+ If $k=4$, then   $\mathcal{S}_3 \subseteq \mathbb R^3$ is the~main part of an equiedged pyramid with $k=4$ vertices.
+ The case when ${\bf q}_1^k \in \mathcal{S}_{k-1}$ have zero components is not excluded, 
+  i.\,e., $q_j =0$ for some of~$j$.
+
+Let now state an important property by means of the following  
+lemma and then obtain the concavity of the llik.
+
+\smallskip
+
+\noindent
+\textbf{Lemma~4.1.}\ 
+\textit{$f_{ll} [{\bf q}_1^k]$ is concave on $\mathcal{S}_{k-1}$}.
+
+\smallskip
+
+\noindent
+{P\,r\,o\,o\,f\,.}\ \
+For any pair of points $\mathbf{q}_1^k (i)\in \mathcal{S}_{k-1}$, $i=1, 2,$
+ $\mathbf{q}_1^k(1) \not= \mathbf{q}_1^k(2), \mathbf{q}_1^k [t] =(1-t) \mathbf{q}_1^k (1) +
+ t \mathbf{q}_1^k (2) \in\mathcal{S}_{k-1}$,
+ $0\le t\le 1.$ Then, for $p_h [t] =\sum_{j\in\mathcal{C}_h} q_j [t] \ge \varepsilon >0$, 
+ $h=1, 2,\ldots, m$, one has:
+\begin{align*}
+ \fr{ d^2 \mathrm{Log} \left[p_h[t]\right]}{dt^2} &=- \sum\limits_{j\in \mathcal{C}_h}
+ \left (\fr{q_j(2)-q_j(1)}{p_h[t]}\right )^2<0\,;
+\\
+ \fr{d^2 \mathrm{llik} \left[\mathbf{q}_1^k[t]\right]}{dt^2}& = 
+ \sum\limits_{h=1}^m \hat{w}_h (n_1) \fr{d^2 \mathrm{Log} \left[p_h[t]\right]}{dt^2}< 0
+\end{align*}
+ because $\hat w_h(n_1) >0$, $h=1,2,\ldots, m$.
+
+It follows that for any~$\mathbf{q}_1^k(i)$, 
+$i=1, 2,\ldots$, on interval $I[q_1^k (1), q_1^k (2)]$
+connecting these points, $f_{ll} [q_1^k ]$ is concave.
+
+\smallskip
+
+\noindent
+\textbf{Theorem~4.2.}\
+\begin{itemize}
+\item[$(i)$] \textit{The $\mathrm{llik}_{\mathrm{AIP}} 
+[\mathbf{q}_1^k]$ is concave on the}
+  $\mathcal{S}_{k-1}.$
+\item[$(ii)$] \textit{The $ \mathrm{llik}_{\mathrm{AIP}}$  has a~stationary point 
+$\check{\mathbf{q}}_1^k =\{ \check q_1, \ldots$\linebreak $\ldots,
+  \check q_k\} \in \mathcal{S}_{k-1}$ where it attains its global
+  maximum of  $\mathrm{llik}_{\mathrm{AIP}} [\mathbf{q}_1^k]$ on $\mathcal{S}_{k-1}$
+  and
+  $\check{\mathbf{p}}_1^m= \{ \check p_1, \ldots, \check p_m\}$, 
+  $\check p_h =\sum_{j\in \mathcal{C}_h} \check q_j$,
+   is the maximum likelihood (ML) estimate of the true parameters 
+   $ \mathbf{p}_{o1}^m$ given $\hat{\mathbf{w}}_1^{m} (n_1)$.}
+\end{itemize}
+
+%\smallskip
+
+\noindent
+{P\,r\,o\,o\,f\,.}\ \
+ The part $e(\mathbf{w}_1^m)$ does not depend on $\mathbf{q}_1^k$; 
+ hence, from Lemma~4.1, it follows
+ that llik$_{\mathrm{AIP}}$ is concave on $\mathcal{S}_{k-1}.$
+At a~stationary point $s\in\mathcal{S}_{k-1}$, all first-order partial derivatives
+have to be zero and there are some negative second order derivatives.
+To include constrains  $q_j (s)\ge 0$, $\sum_{j=1}^k q_j(s) =1$, 
+the method with the following Lagrange function is used:
+$$
+\varphi \left[\mathbf{q}_1^k (s)\right] =\mathrm{llik}
+\left [\mathbf{q}_1^k(s)\right] +\sum_{j=1}^k q_j(s) \left(\mu_j -\mu_o\right)\,.
+$$
+Here, $\mu_j$ and $\mu_o$ are the
+multipliers satisfying the Kuhn--Tucker conditions $\mu_jq_j (s)=0$, 
+$\mu_j\ge 0$, $j=1, \ldots , k$~\cite{BK:GG94, BK:BT05}. Then,
+one has~$k$~equations, $j=1, \ldots, k$:
+\begin{equation*}
+ \fr{\partial \varphi [q_1^k(s)]}{\partial q_j(s)} =
+\sum\limits_{h=1}^m \hat w_h (n_1) \fr{I[j\in \mathcal{C}_h]}
+{\sum\limits_{j'\in \mathcal{C}_h} q_{j'}(s)}
++ (\mu_j -\mu_o) =0\,.
+\end{equation*}
+By multiplying each of these equations by $q_j(s)$ and sum them using 
+$\mu_j q_j (s)=0$, $j=1, \ldots, k,$ one has $\mu_o =1$.
+Then, for each~$j$ after multiplying both sides of these equations by $q_j(s)$,
+one has
+$$
+\sum\limits_{h=1}^m \hat{w}_h (n_1) \fr{I[j\subset \mathcal{C}_h] q_j(s)}
+{\sum\nolimits_{j'\in\mathcal{C}_h} q_j(s)} -q_j (s) =0\,,\ 
+j=1, \ldots, k.
+$$
+
+If some of $q_j(s)=0$, $j\in J_o=\{ j':\ q_{j'} (s)=0\}$\linebreak $\not= \varnothing$, then,
+ to guarantee that the stationary point $\mathbf{q}_1^k(s)\in\mathcal{S}_{k-1}$,
+ it is necessary to check that all
+$p_h(s) =\sum_{j\in\mathcal{C}_h} q_j(s) >0$, $h=1, \ldots, m.$
+If so, then $\mathbf{q}_1^k(s)$ is placed in the side 
+of~$\mathcal{S}_{k-1}$ where $q_j =q_j (s)\equiv 0$, $j\in J_o,$
+and $q_j(s)>0, j\in J_p=\{ j':\; q_{j'} (s) >0\}.$
+Due to concavity, the stationary point $q_1^k (s)$ is unique and it attains 
+the global maximum of the llik.
+
+\smallskip
+
+  This likelihood can be calculated by a~recursion next described.
+
+\subsection{Numerical recursive method}
+
+  
+
+
+\noindent
+The authors suggest a~method efficient  for numerical  calculation of a~sequence
+ of $\mathbf{q}_1^{(r)k}$, $r=1, 2, \ldots,$ converging to the point 
+ $\mathbf{q}_1^k (s)$ of the global maximum
+llik$_{\mathrm{AIP}}[\mathbf{q}_1^k (s)]$
+ where $\mathbf{q}_1^k(s)$ is a~stationary point of the llik.
+Henceforth, let write $q_j^{(r)}(n_1)$ and $q_j(s, n_1)$ instead of 
+$q_j^{(r)}$ and $q_j(s)$ 
+to underline  dependence on~$n_1.$
+One can consider the following operator, sequentially transforming points
+ $\{ q_1^{(r)} (n_1), \ldots, q_k^{(r)}(n_1) \} $ into points 
+ $\{ q_1^{(r+1)}(n_1), \ldots, q_k^{(r+1)}(n_1)\} ,$ $k=1, 2,\ldots$
+in~$\mathcal{S}_{k-1}$:
+$$
+q_j^{(r+1)}(n_1) =\sum\limits_{h=1}^m \hat{w}_h (n_1) \fr{q_j^{(r)}(n_1)I[j\in
+\mathcal{C}_h]}{\sum\nolimits_{j'\in\mathcal{C}_h} q_{j'}^{(r)}(n_1)}\,.
+$$
+The set $\mathcal{S}_{k-1}$ is  compact and  
+$\sum_{j=1}^k q_j^{(r)}(n_1) =1$ for any~$r$. Hence, by the Banach theorem,
+ $\mathcal{S}_{k-1}$ contains at least one limit point of the sequence 
+ $\mathbf{q}_1^{(r)k}(n_1) =\{ q_1^{(r)}(n_1), \ldots, q_k^{(r)}(n_1)\}$,
+ $r=1, 2, \ldots$ Due to concavity
+ of the llik, there  is only one limit point $\mathbf{q}_1^{k(\infty )}(n_1)=
+ \{ q_1^{(\infty )}(n_1) , \ldots , q_k^{(\infty )}(n_1) \}$.
+ The above equations are satisfied for this stationary point, i.\,e.,
+$$
+\mathbf{q}_1^{k(\infty )}(n_1) =\mathbf{q}_1^k (s, n_1)\,.
+$$
+
+The corresponding recursive method of sequential convergent calculation
+   coordinates of the stationary point can be based on this relation. The
+   calculation started with~$k$~initial values, e.\,g., $q_j^{(0)} =1/k$,
+   $j=1, \ldots, k,$ then next $k$ values $q_j^{(1)}(n_1)$ will be
+   calculated and so on after $k$ values $q_j^{(r)}(n_1),$ next~$k$~values 
+   $q_j^{(r+1)}(n_1)$ can be calculated. The process is stopped when maximal
+   variation of $q_j^{(k+1)}(n_1) - q_j^{(k)}(n_1)$ is negligibly  small.
+   The plot in Fig.~5 illustrates convergence of the llik values at
+   points  $\mathbf{q}_1^{(r)k}$ to the global maximum.
+   
+    \begin{center}  %fig5
+\vspace*{1pt}
+\mbox{%
+ \epsfxsize=77.989mm
+ \epsfbox{bel-5.eps}
+ }
+ 
+\end{center}
+
+%\vspace*{3pt}
+
+\noindent
+{{\figurename~5}\ \ \small{Dynamics of llik$_{\mathrm{AIP}}$ values as functions of  recursion's iterations~$rc$
+  with two different starting points. The two starting points have~$q_j$ equal~1/23~(\textit{1}), and $ j/276$~(\textit{2}), $1\le j\le k = 23.$ Time needed for 2000~iterations is near
+   20~s (Intel processor 3.2~GHz)}}
+
+\vspace*{9pt}
+
+\addtocounter{figure}{1}
+ 
+   
+      
+
+ All frequencies $\hat{w}_h(n_1)\to w_{oh}$, $h=1, \ldots, m,$ a.s.\ 
+ as $n_1\to\infty.$ Hence,
+ at any point $\mathbf{q}_1^k \in\mathcal{S}_{k-1}$, the llik$_{\mathrm{AIP}} 
+ [\mathbf{q}_1^k, \hat{w}_1^m (n_1) ]$
+ converges a.s.\ to the \textit{limit llik}:
+ 
+ \noindent
+$$ 
+\mathrm{llik}_{\infty } \left[\mathbf{q}_1^k\right] =
+\sum\limits_{h=1}^m  w_{oh} \mathrm{Log} \left [ \sum\limits_{j\in\mathcal{C}_h} q_j\right ]
+ +e\left[\mathbf{w}_{o1}^m \right]\,.
+ $$
+ Due to compactness of $\mathcal{S}_{k-1}$, one has a.s.\ convergence in the uniform metric, i.\,e.,
+ 
+ \noindent
+$$
+\max\limits_{\mathbf{q}_1^k\in\mathcal{S}_{k-1}} \mid 
+\mathrm{llik}_{\mathrm{AIP}} \left[\mathbf{q}_1^k, \hat{\mathbf{w}}_1^m (n_1)\right] - 
+\mathrm{llik}_{\infty } [{\bf q}_1^k ] \mid \to 0
+$$
+ a.s.\ as $ n_1\to\infty$.
+
+   The concavity of the llik$_{\mathrm{AIP}}$  implies that
+   
+   \noindent
+\begin{multline*}
+\mathrm{llik}_{\mathrm{AIP}} \left[
+{\bf q}_1^{k(\infty )}(n_1)\mid  \hat{\bf w}_1^m (n_1), {\bf y}_1^{n_1}\right]\\
+{}=
+\max\limits_{\mathbf{q}_1^k\in\mathcal{S}_{k-1}} \mathrm{llik}_{\mathrm{AIP}} 
+\left[\mathbf{q}_1^{k}(n_1)\mid  \hat{\mathbf{w}}_1^m (n_1), \mathbf{y}_1^{n_1}\right]\,.
+\end{multline*}
+   If together with $r\to\infty $ also $n_1\to\infty$, 
+   then, from the uniform  convergence, one has:
+   
+   \noindent
+\begin{gather*}
+   \mathrm{llik}_{\mathrm{AIP}}\left[
+   \mathbf{q}_1^{k}\mid  \hat{\mathbf{w}}_1^m (n_1) \mathbf{y}_1^{n_1}\right]\to 
+   \max\limits_{\mathbf{q}_1^k} \mathrm{llik}_\infty \left[\mathbf{q}_1^k \right]\,;\\
+\  \sum\limits_{j\in\mathcal{C}_h} q_j^{(r)}(n_1)\to p_{o h} =
+     \sum\limits_{j\in\mathcal{C}_h} q_{oj}, 
+\mbox{ a.s.\ } r\to\infty,\  n_1\to\infty .
+\end{gather*}
+ Note that here, it is not stated that  $ q_j^{(r)}(n_1) \to q_{oj}$ as~$r$ 
+ and~$n_1$ are growing unboundedly but
+ the sums $\sum_{j\in\mathcal{C}_h} q_{oj}$ are consistently estimable if AIP is valid.
+Note that the present proof of consistently is different from that
+suggested in~\cite{BK:JM03}.
+
+ One may consider $\hat a_{hj}=\hat w_h/\sum_{h'\in\mathcal{D}_j} \hat w_{h'}$ as an 
+ \textit{empirical index of
+attractiveness} of interval~$\mathbf{u}_h$ with rounded ends. In the data discussed 
+in section~2 for $h=27$,
+this index is~0.740638;  for $h=32$, it is~0.203977; and for $h=2$, it is~0.015431.
+ $a_{ohj}= w_{oh}/p_{oh}$  denote  the \textit{true index} of 
+ \textit{attractiveness} of~$\mathbf{u}_h$, $h=1, \ldots, m.$
+
+It is possible to simulate data with~$n$~SeSeIs when AIP is valid. It is necessary to define
+ a~c.d.f.\ $F_o[x]$, $x >0$, of i.i.d.\ WTP r.v.s $X_1, \ldots, X_n,$ and to define a~collection
+ $\mathcal{U}_m =\{ \mathbf{u}_1, \ldots, \mathbf{u}_m\} $ with SeSeIs. 
+ Then, it is possible to find all
+ division intervals $V_k =\{ \mathbf{v}_1 , \ldots, \mathbf{v}_k \} $ and 
+ all corresponding subsets of indices~$\mathcal{C}_h$, $h=1, \ldots, m,$ 
+ and~$\mathcal{D}_j$, $j=1, \ldots, k.$ For each~$i$, $i=1, \ldots, n,$ 
+ a~value $X_i=x_i$ is simulated.
+ If $X_i =x_i\in \mathbf{v}_{j_i}$, then an index $H_i =h_i$ is sampled randomly 
+ from $\mathcal{D}_{j_i}$ with probability proportional to  $w_{h_i}, h_i\in\mathcal{D}_j.$
+ The indices $H_i, \ldots, H_n$ are sampled independently and the simulated data,
+ $\mathbf{y}_1^n = \{ \mathbf{y}_1, \ldots, \mathbf{y}_n \}$,  
+ $\mathbf{y}_i =\mathbf{u}_{h_i},$ are obtained.
+
+It is seen that at least for  data in section~2, the AIP may not necessarily hold. 
+Before turning to the more general assumption,
+let introduce an assumption on the response process which seems to fit  data better.
+
+\vspace*{-9pt}
+
+\subsection{Another behavioral assumption~--- on preference of~the~right division interval}
+
+\noindent
+The pilot statistical analysis (see Fig.~1) 
+ suggests that the last division intervals contain most
+ of the values of interest~$x_i$, $i=1, \ldots, 46.$ In this case, both 
+ rounded ends and positions of~$x_i$ are
+ essential for the individual's choice of SeSeI.  If so, the AIP is not valid and another assumption
+ is needed.
+  To  sharply outline this case, let introduce the following assumption on preference of the right division interval (ARDI).
+
+\smallskip
+
+\noindent
+\textbf{Assumption~5.}
+\textit{ARDI: In each stated SeSeI 
+$\mathbf{y}_i$\linebreak $ =(u_{Lh_i} , u_{Rh_i}] \in \mathcal{U}_m$,
+ the value of interest~$x_i$
+   is in the right division interval $ \mathbf{v}_{j_{h_i} \mathrm{RD} }
+   =(v_{Lj_{h_i}}, v_{Rh_i}]$, $v_{Rj_{h_i}} = u_{Rh_i}$, $i=1, \ldots, n_1$.
+}
+
+\smallskip
+
+    Here, one has
+    $\{ H_i =h\} \cap \{ X_i \in \mathbf{u}_h\} =\{ H_i$\linebreak $ =h\} \cap\{ X_i \in 
+    \mathbf{v} _{j_h \mathrm{RD}} \}$.
+
+    Then, $ P [ \{ H_i =h\} \cap \{ X_i \in \mathbf{v} _{j_h \mathrm{RD}} \} ]= 
+    w_h q_{j_h \mathrm{RD}}$, $j_h\in\mathcal{C}_h$.
+
+
+Note that in the empirical data, there are no intervals 
+$\mathbf{u}_h \in\mathcal{U}_m(n_1)$ where~$\mathbf{v}_1$ or~$\mathbf{v}_5$ are 
+the last division intervals.
+In~Fig.~4, it is seen that there are no pairs $\{ h, 1\}$ and $\{ h, 5\}$ 
+where~$\mathbf{v}_1$ and~$\mathbf{v}_5$
+ are the end intervals in~$\mathbf{u}_h$, $h=1, \ldots, 46.$
+ Here,  the ML-estimates of $q_{oj}, j\not=1, 5,$ have been found.
+
+  Thus, the assumptions AIP and ARDI imply essentially different ML-estimates of several points
+  in the estimated s.d.f. Due to consistency of these estimators, if both assumptions
+  are true, one should expect that the estimators have to be  similar. But the positions of points on s.d.f.s
+ differ essentially.
+   One may suspect that either at least one or even both assumptions are erroneous because
+  the data correspond to the same sampled respondents.  One possible way to eliminate this
+  contradiction is an extension of the used questionnaire; more collected empirical information 
+  is needed to overcome the identification problem.
+  
+  \vspace*{-6pt}
+
+\section{Two-Step Intervals} %\label{sec:two-step}
+
+\noindent
+To address the identification problem in a~nonparametric setting,
+the authors propose the second-step approach. In addition,
+let introduce a~more general assumption that has the Turnbull assumption as a~special case. The data collected with
+a questionnaire extended in this way can be applied in
+obtaining consistent estimates of points on the s.d.f.\ of interest. The following
+assumption on the selection of a~division interval (ASDI) containing our value of interest is proposed.
+
+\smallskip
+
+\noindent
+\textbf{Assumption~6.}
+\textit{ASDI: Probabilities $w_{hj}, j=1, \ldots, k$, $h\in\mathcal{D}_j$, 
+to state an SeSeI~$\mathbf{u}_h,$
+ given $X_i \in \mathbf{v}_j\subseteq \mathbf{u}_h$, do not depend on the exact position 
+ $X_i \in \mathbf{v}_j\subseteq \mathbf{u}_h$}.
+
+\smallskip
+
+
+Note that AIP and ARDI are the special cases of \mbox{ASDI}. In the case 
+AIP, $w_{h} = w_{h_j}$, $h\in\mathcal{D}_j,$ and in the case \mbox{ARDI},
+$w_{h} = w_{h_j\mathrm{RD}}$  
+where~$h_{j \mathrm{RD}}$ corresponds to the last right division
+interval $\mathbf{v}_{j\mathrm{RD}}$
+in the stated SeSeI~$\mathbf{u}_h$. 
+In the next subsection, mbox{ASDI} is supposed to be valid.
+
+\vspace*{-6pt}
+
+\subsection{The second step}
+
+\vspace*{-1pt}
+
+\noindent
+  Let now introduce the \textit{extended second step\/} of data collection. The authors
+  prolong  random sampling of new (not yet sampled) individuals from the population 
+  $\mathfrak {P}$. First, each individual is to announce  an
+interval containing his/her  WTP-point.
+  If the interval does not belong to~$\mathcal{U}_m$, then it is not
+  included in the collected data. If the interval~$\mathbf{u}_h$ belongs to~$\mathcal{U}_m$, then
+ this respondent is asked to select  from the division
+  $\mathcal{V}$  an interval $ \mathbf{v}_j\in\mathcal{V}_k, \mathbf{v}_j\subseteq 
+  \mathbf{u}_h$,   containing his/her true  WTP-point.
+ The respondents may well abstain from answering this second question, it is 
+ just recorded this in the data.
+   The collected data will be the list of triples
+   
+   \vspace*{2pt}
+   
+   \noindent
+$$
+%\label{FR-511}
+ {\bf z}_i = \{i, {\bf u}_{h_i}, \mathrm{NA}\}\,;
+ $$
+ 
+ \vspace*{-2pt}
+ 
+ \noindent
+ or
+ 
+ \vspace*{2pt}
+ 
+ \noindent
+ $$
+\{ i, {\bf u}_{h_i}, {\bf v}_{j_i} \} ,\;\; {\bf d2}_{n_{\cdot 2}}=\{ {\bf z}_1, ...,
+{\bf z}_{n_{\cdot 2}}\}
+$$
+
+\vspace*{-2pt}
+
+\noindent
+where NA is  ``no answer'' to the additional question. For each individual, we thus have an interval and, potentially,
+a~selected division interval. These triples have been called
+ \textit{singles} and 
+\textit{pairs.}, depending on whether the individual reported or do not reported 
+a~division interval.
+
+The following notations have been used:
+
+\noindent
+\begin{align*}
+c_{pj} &=\sum\limits_{i=1}^{n_{\cdot 2}} I [ \mathbf{z}_{i} = \{ i, \mathbf{u}_{h_i},
+ \mathbf{v}_j\}]\,;\\ 
+c_{phj}&=  \sum\limits_{i=1}^{n_{\cdot 2}} I [ \mathbf{z}_{i} =\{ i,
+ \mathbf{u}_{h},  \mathbf{v}_{j} \}]\,;
+ \end{align*}
+  \begin{align*}
+n_{s2} &=\sum\limits_{h=1}^m t_{sh}\,;\enskip n_{p 2} =\sum_{j=1}^k c_{p  j}\,;\\
+  t_{sh}&= \sum\limits_{i=1}^{n_{\cdot 2}} I [\mathbf{z}_i =\{ i, \mathbf{u}_{h}, NA\}]\,;
+\enskip
+n_{\cdot 2}  =n_{s2}+  n_{p2}\,.
+\end{align*}
+
+\noindent
+  The subindexes $s$ and~$p$ correspond to \textit{singles} and
+  \textit{pairs}.
+  Henceforth, it is supposed that all $q_j>0$, $j=1, \ldots, k,$ then for all sufficiently 
+  large~$n_{\cdot 2}$,
+  $c_{pj}>0$ for all $j=1, \ldots, k$.
+
+  The strongly consistent estimates of~$q_{o j}$ and~$w_{hj}$  in pairs
+are:
+\begin{gather*}
+ \check q_{pj}=\fr{c_{pj}}{n_{p2}}\to q_{o j}\,;\\
+ \left\{ \hat{w}_{hj}=\fr{c_{phj}}{c_{pj}} \to w_{o hj}\,,  \enskip
+ h\in\mathcal{D}_j\,,\enskip    j=1, \ldots, k\right\} \,,
+\end{gather*}
+  a.s.\ $j=1, \ldots , k,$  as $ n_{\cdot 2}\to\infty$.
+
+\subsection{The likelihood}
+
+\noindent
+Let use estimates $\hat{w}_{hj}$ instead of~$w_{hj}$, $h\in\mathcal{D}_j$, 
+  $j=1, \ldots, k.$
+ The $i$th respondent contributes to  the estimated llik in two different ways
+ depending on whether or not the follow-up question was answered:
+\begin{multline*}
+%\label{FR-521}
+\mathrm{ll}_i \left[\mathbf{q}_1^k \mid  {\bf d2}_{n_{\cdot 2}}\right]\\
+{} =  I\left[z_i =\left\{  i, \mathbf{u}_{h_i}, \mathrm{NA}\right\}\right] \mathrm{Log} 
+\left [ \sum\limits_{j\in\mathcal{C}_{h_i}} \hat{ w}_{h_ij}q_j \right ] \\
+{} +  I\left[z_i =\{ i, {\bf u}_{h_i}, {\bf v}_{j_i}\}\right]
+      \mathrm{Log} \left[ \hat{w}_{h_i j_i}q_{j_i} \right]\,.
+\end{multline*}
+Let write the following, normed by $n_{\cdot 2}=n_{s 2}+n_{p 2},$
+llik function corresponding to the data $\mathbf{d2}_{n_{\cdot 2}}$  containing both singles and pairs:
+\begin{multline}
+\label{FR-522}
+\mathrm{llik}\left[ \mathbf{q}_1^k \mid  \mathbf{d2}_{n_{\cdot 2}}\right]
+    = \fr{1}{n_{\cdot 2}} \sum\limits_{i=1}^{n_{\cdot 2}} \mathrm{ll}_i
+    \left[\mathbf{q}_1^k \mid \mathbf{d2}_{n_{\cdot 2}}\right]
+    \\
+ {}=   \fr{n_{s2}}{n_{\cdot 2}}\sum\limits_{h=1}^m \fr{t_{sh}}{n_{s2}} \,\mathrm{
+    Log}  \left [ \sum\limits_{j\in\mathcal{C}_h} \hat{w}_{hj} q_j \right ]\\
+{} +
+  \fr{n_{p2}}{n_{\cdot 2}} \sum\limits_{j=1}^k \fr{c_{pj}}{n_{p2}}\,\mathrm{Log}
+  \left[q_j\right]  \\
+{}+ \fr{1}{n_{\cdot 2}}
+    \sum\limits_{i=1}^{n_2} \mathrm{Log} 
+    \left[ \hat{w}_{h_i j_i}\right] I\left[ \mathbf{z}_i =\left\{ i, \mathbf{u}_{h_i},
+    \mathbf{v}_{j_i}\right\} \right]\,.
+\end{multline}
+This llik
+ function of $\mathbf{q}_1^k=\{q_1, \ldots, q_k\}$  corresponds to the all data, 
+ with pairs and singles, collected on the second step.
+
+The following properties of this llik are collected in 
+the following theorem and corollary:
+
+\pagebreak
+
+\noindent
+\textbf{Theorem~5.1.}\
+\textit{For every sufficiently large $n_{\cdot 2}$,
+ the llik  is concave on $\mathcal{S}_{k-1}.$}
+ 
+ \smallskip
+ 
+ \noindent
+ \textbf{Corollary~5.1.}\
+ The llik  attains its maximum at  a~point $\check{\mathbf{q}}_{M} =
+ \{ \check q_{1M}, \ldots, \check q_{kM}\}\in \mathcal{S}_{k-1}$ and 
+ $\check{\mathbf{q}}_{M}$  is its unique stationary point in~$\mathcal{S}_{k-1}.$
+
+\smallskip
+
+It is interesting to find  the  stationary point~$\check{\mathbf{q}}_{M}$
+    corresponding to  the maximum value of the llik
+      in the multidimensional set
+     $\breve{\mathcal{S}}_{k-1}.$
+Let suppose that $n_{\cdot 2}$ so large that all $c_{pj}>0$, $j=1, \ldots, k.$
+       Then, Lagrange  method with one  multiplier~$\lambda$ can be applied.
+ Let consider the following {Lagrange function}
+ 
+ \vspace*{4pt}
+ 
+ \noindent
+ $$
+    \varphi_L \left[\mathbf{q}_1^k, \lambda \right] =\mathrm{llik} \left[\mathbf{q}_k
+   \mid    \mathbf{d2}_{n_{\cdot 2}}\right] +\lambda (q_1+ \cdots + q_1^k)\,.
+$$
+
+\vspace*{-2pt}
+
+Components of a~stationary point $q_1, \ldots, q_k$ are the solutions of
+the following equations:
+
+\vspace*{-3pt}
+
+\noindent
+\begin{multline}
+\label{FR-525}
+ q_j = \fr{n_{p 2}}{n_{\cdot 2}}\,\fr{t_{pj}}{n_{p 2}}
+\\
+{} +  \fr{n_{s 2}}{n_{\cdot 2}}  \sum\limits_{h\in\mathcal{D}_j}
+   \fr{t_{s h}}{n_{s 2}} \,\fr{\hat w_{hj} q_j}
+ {\sum\nolimits_{j'\in\mathcal{C}_h}\hat w_{hj'}q_{j'}}\,,\  j=1, \ldots, k\,.
+\end{multline}
+Then, all first-order partial derivatives 
+${\partial \mathrm{llik} [\mathbf{q}_k]}/{\partial q_j}$\linebreak $=0$, 
+$j=1, \ldots, k,$ and $\mathbf{q}_k=\{ q_1, \ldots, q_k\}$ 
+together represent a~stationary point. From Corollary~5.1,
+one has $\mathbf{q}_1^k=\check{\mathbf{q}}_{M}.$
+
+The proofs of Theorem~5.1 and Corollary~5.1 
+are based on ideas similar to that used in Subsection~4.4.
+
+\vspace*{-3pt}
+
+\subsection{Recursive method for numerical analysis}
+
+\noindent
+From~(\ref{FR-525}), one may find the following recursion:
+\begin{multline}
+\label{FR-531}
+   q_j^{(r+1)} (n_{\cdot 2}) =\fr{n_{p 2}}{n_{\cdot 2}}\,q_j^{(1)}\\
+{}+  \fr{n_{s 2}}{n_{\cdot 2}}  \sum\limits_{h\in\mathcal{D}_j}
+  \fr{t_{s h}}{n_{s 2}} \, \fr{\hat{w}_{hj} q_j^{(r)}(n_{\cdot 2})}
+ {\sum\nolimits_{j'\in\mathcal{C}_h}\hat{w}_{hj'}q_{j'}^{(r)}(n_{\cdot 2})}\,,\\
+r=  1, 2, \ldots ;
+\end{multline}
+ \begin{equation}\label{FR-56a}
+  q_j^{(1)}(n_{\cdot 2}) =\check q_{pj}\,;
+  \end{equation}
+$$
+\hat {w}_{sh}(n_{\cdot 2})=\fr{1}{n_{s2}}
+   \sum\limits_{i=1}^{n_{\cdot 2}} I \left[z_i =\left\{  i,
+   \mathbf{u}_{h}, \mathrm{NA}\right\}\right]\,.
+$$
+   As in section~4.5, one has $\sum_{j=1}^k q_j^{(r)} (n_{\cdot 2})=1$ which
+   implies the following Corollary.
+   
+   \smallskip
+   
+   \noindent
+   \textbf{Corollary~5.2.}\
+   For any sufficiently large $n_{\cdot 2}$, this
+recursion  generates the sequence of points $\mathbf{q}_1^{(r)k}$\linebreak $=\{
+q_1^{(r)}, \ldots, q_k^{(r)} \} \in \mathcal{S}_{k-1}$, $r= 1, 2, \ldots, $ which
+converge to the unique  stationary point $\check{\mathbf{q}}_{M}= \{
+\check{q}_{1M}, \ldots, \check{q}_{kM}\}$.
+
+
+\smallskip
+
+
+\noindent
+\textbf{Note.} For any $r\ge 1$, $ q_j^{(r)} \ge ({n_{p2}}/{n_{\cdot 2}})q_j^{(1)}$
+if $n_{\cdot 2}$ is sufficiently large.
+
+If $n_{\cdot 2}\to\infty$, then all below following estimates a.s.\
+ converge to their limits:
+ 
+ \noindent
+\begin{gather*}
+ \fr{n_{p2}}{n_{\cdot 2}}\to \alpha_{p2}>0\,; \enskip
+  \fr{n_{s2}}{n_{\cdot 2}}\to \alpha_{s2}>0\,; \\
+ \alpha_{p2}+\alpha_{s2}=1\,;\enskip
+\fr{t_{sh}}{n_{s 2}}\to w_{h}\,; \\
+\fr{t_{pj}}{n_{p 2}}\to q_{j}; \
+ \fr{t_{phj}}{n_{p 2}}\to w_{hj} q_{j},\enskip
+ j=1, \ldots,\ k, h \in\mathcal{D}_j\,.
+\end{gather*}
+ Then, the llik
+ on the compact set $\mathcal{S}_{k-1}$ uniformly converges, as
+  $n_{\cdot 2}\to\infty ,$ to the nonrandom
+ function of~$\mathbf{q}_1^k$:
+ 
+ \noindent
+\begin{multline*}
+\mathrm{llik}^{(\infty )} \left[\mathbf{q}_1^k\right] = 
+\alpha_{p2} \sum\limits_{j=1}^k q_{j} \mathrm{Log} \left[q_j\right]\\
+{} + \alpha_{s2} \sum\limits_{h=1}^m w_{h} \mathrm{Log}\left [
+\sum\limits_{j\in\mathcal{C}_h} w_{hj}q_j \right ]+ C_p
+\end{multline*}
+where the constant  $C_p =\alpha_{p2} \sum_{j=1}^k
+\sum_{j\in\mathcal{D}_j}q_{j} \mathrm{Log}\,[w_{hj}].$
+ Let call the concave function $\mathrm{llik}^{(\infty )}[\mathrm{q}_1^k]$  
+ a~\textit{limit llik.}
+ Let summarize these results in the following theorem.
+
+\smallskip
+
+\noindent
+\textbf{Theorem~5.2.}
+\textit{Suppose that   Assumptions~$1$--$3$ and~$6$
+ are valid and  the sizes~$n_{p2}$ and~$n_{s2}$ of collected pairs and singles are
+growing unboundedly as $n_{\cdot 2}\to\infty$.
+  Then, for any sufficiently large~$n_{p2}$ and~$n_{s2}$, the 
+  ML-estimator $\check{\bf q}_1^{k} = \{ \check q_{1},
+\ldots, \check q_{k}\}$ of $ \check{q}_M$ (based on the data $\mathbf{d2}_{n_{\cdot 2}}$
+with singles and pairs) of the llik 
+$\mathrm{llik}\,[\mathbf{q}_1^k \mid \mathbf{2}_{n_{\cdot 2}}]$
+exists, is strongly consistent, and can be found as the stationary
+point of recursion}~(\ref{FR-531}).
+
+
+\smallskip
+
+      Note  that this inference can  only be applied to the respondents
+  in $\mathfrak{P}_c$ who will choose $\mathbf{u}_h \in \mathcal{U}_m$.
+  
+  \vspace*{-6pt}
+
+
+\section{Numerical Experiments}
+
+\noindent
+To get some insights into the  properties of these estimators, 
+some numerical experiments have been carried out.
+ In these experiments, simulated data have been used with
+  the same set~$\mathcal{U}_m$, $m=46,$ of SeSeI intervals and the set $\mathcal{V}_k$, 
+  $k=23$, of division intervals. The authors decided to take the
+WTP-distribution to be a~$p_{\mathrm{WE}}$-mixture WE of the Weibull
+distribution $W(a, b)$ and the Exponential distribution $ E(m_1)$
+with parameters $ p_{\mathrm{WE}}=0.8160$, $a=74.8992$, $b=1.8374$,
+and $m1=254.7344$:
+\begin{equation}
+\label{FR-61}
+\mathrm{sf}_{\mathrm{WTP}} [x]= p_{\mathrm{WE}} e^{-(x/a)^b} + (1-p_{\mathrm{WE}})e^{-x/m_1} \,.
+\end{equation}
+ The motivation for this choice is further explained in~\cite{BK:BK12} 
+ where  five  ``behavioral models'' have been also introduced. 
+ Each of these provides one possible model of how individuals choose the intervals,
+ a~process which is essentially unknown. The authors have decided to use a~behavior model described by the array
+$\mathbb W_{ m k} =(w_{hj}),$ for any $j=1, \ldots, k,$ and $h\in
+\mathcal{D}_j, w_{hj} =t_h/\left ( \sum_{h'\in \mathcal{D}_j} t_h \right )$
+ where~$t_h$ are the numbers of repetitions $\mathbf{u}_h\in\mathcal{U}_m$ 
+ in the first step of data collection, $k=1, \ldots, m.$
+$t_h$ were taken as they were in the real data.
+
+ Let $\omega_1, \omega_2, \ldots, \omega_{4i-3}, \omega_{4i-2}, 
+ \omega_{4i-1}, \omega_{4i}, \ldots$
+ be a~sequence of real values generated by a~random number generator. Let use these values as follows.
+If  $\omega_{4i-3} \le p_{\mathrm{WE}}$, then~$\omega_{4i-2}$ is transformed to~$x_i$ 
+which is a~value of an r.v.~$X_i$ with the Weibull s.d.f.~$e^{-(x/a)b}$. 
+Otherwise, if $\omega_{4i-3}> p_{\mathrm{WE}}$, then~$\omega_{4i-3}$
+is transformed to r.v.~$X_i$ with the exponential s.d.f.~$e^{-x/m_1}$. 
+Further, it will be found which of divisions intervals contains~$x_i.$
+ Let $\mathbf{v}_j \ni x_i$, then $\mathcal{D}_j =\{ h_1(j), h_2 (j), \ldots, h_{d_j}(j)\}$ 
+ where index $h_d(j)$
+ corresponds to probability $w_{hj}$, and~$d_j$ is the number of all indexes 
+ in~$\mathcal{D}_j.$
+ Remind that $\sum_{h\in\mathcal{D}_j} w_{hj}  =1$. 
+ Interval $(0, 1]$ is the union of disjoint intervals
+$\left( 0, w_{h_1(j)}, j \right], \left (w_{h_1(j),j}, 
+\sum\nolimits_{c=1}^2  w_{h_c (j), j} \right ] , \ldots$\linebreak $\ldots,  \left ( 
+\sum\nolimits_{c=1}^{d_j-1}  w_{h_c (j), j} , 1 \right ]$.
+ The event $\left\{ \vphantom{\sum_{c=1}^{d_j-1}}\omega_{4i-1}\right.$\linebreak 
+ $\left. \in \left ( \sum_{c=1}^{d_j-1}  w_{h_c (j), j} ,
+\sum_{c=1}^{d_j}  w_{h_c (j), j} \right]
+\right\}$
+  means that $\mathbf{u}_{h_c (j)} \supseteq \mathbf{v}_j$ has been stated as SeSeI interval, 
+  $h_c(j)\in\mathcal{D}_j.$
+  At last, the event $\omega_{4i} \le 2/3$ implies that the $i$th element in the data ${\bf 2}_{t n_{\cdot 2}}$
+  is the triplet $\{ i, {\bf u}_h, \mathrm{NA}\}$, i.\,e.,
+  the single triplet. If $\omega_{4i} > 2/3$,  the $i$th
+  data element  is the triplet $\{ i, \mathbf{u}_h, \mathbf{v}_j\} $ with the pair 
+  $\{ \mathbf{u}_h, \mathbf{v}_j\}$, $h=h_c(j)$.
+
+ To illustrate consistency of the suggested estimates, the size of simulated data 
+ $\mathbf{d2}_{t n_{\cdot 2}}$
+ was selected rather large with $n_{\cdot 2} = 9000$ triplets. There were $n_{s 2} =5856$ singles 
+ and $n_{p 2}=3144$  pairs. Let add index~$t$ to underline that data are considered as 
+ ``true'' data. By using triplets with pairs
+ $\{ i, \mathbf{u}_{h_i}, \mathbf{v}_{j_i}\}$ in $\mathbf{d2}_{t n_{\cdot 2}}$,  
+let find estimates $\check q_{tj}>0$ for  the true probabilities 
+ $\check q_{oj}=P_o [X_i \in \mathbf{v}_j]$, $j=1, \ldots, 23$. 
+ To improve accuracy, one can find,
+ by using all data set $\mathbf{d2}_{t n_{\cdot 2}}$ and by applying~$r$ 
+ ($r\le 10$) iterations, ML-estimates
+ $\check{\mathbf{q}}_t^{(10)} =\{ \check q_{t1}^{(10)}, \ldots, 
+ \check q_{tk}^{(10)}\}$, $k=23$, corresponding the
+ llik~(\ref{FR-522}). Let use these estimates to illustrate consistency estimates of true points
+ $\{ v_{R j}, s_{oj}^k \}$ on s.d.f.~(\ref{FR-61}). 
+ Here, true and  estimated points are 
+$\left\{ v_{Rj}; s_o^k \right\}$,
+$\left\{ v_{R j}, \hat s_{t j}^k \right\}$
+$s_o^k =\sum\nolimits_{j'=j}^k q_{oj}$; 
+and $\check s_{tj}^k =\sum\nolimits_{j'=j}^k \check q_{tj}^{(10)}$.
+Here, the s.d.f.~(\ref{FR-61}) can be used, because  only stated
+  $\mathbf{u}_h\in\mathcal{U}_m$ are considered.  It means that
+ only intervals in~$\mathcal{U}_m$ will be stated by any respondent in the investigated 
+ population~$\mathfrak {P}$. In Fig.~6, it is seen 
+ that ML-estimates based on both pairs and singles are rather accurate.
+The usage of estimates based only on pairs is less accurate. 
+To illustrate utility of usage of both pairs
+and singles,  $C=2000$ i.i.d.\ copies of data 
+$\mathbf{d2}_{t n_{\cdot 2}}^c$ have been simulated, each such copy had size
+$n_{\cdot 2}=9000.$ The same values of parameters $p_w$, $a$, $b$, $m_1$, 
+and~$p_{\mathrm{NA}}$ were used.
+{\looseness=1
+
+}
+
+The mean value is of central interest in  contingent valuation surveys.
+If a~particular parametric distribution is used, one can, of course, derive the estimate of
+ the\linebreak\vspace*{-12pt}
+
+    \begin{center}  %fig5
+\vspace*{1pt}
+\mbox{%
+ \epsfxsize=77.817mm
+ \epsfbox{bel-6.eps}
+ }
+ 
+\end{center}
+
+%\vspace*{-3pt}
+
+\noindent
+{{\figurename~6}\ \ \small{The true WTP-survival function is
+shown over interval $[ 0, 200]$  together with its true points
+  $\{ v_{Rj}^k, q_{j}^k \}$ and the approximated ML-estimated
+  points  $\{ v_{Rj}^k,\check q_j^{(10)k}  \}$, 
+  $1\le j\le 16$, $n_{\cdot 2}= 9000$}}
+
+\vspace*{14pt}
+
+\addtocounter{figure}{1}
+ 
+
+\noindent
+ mean by estimating parameters.
+In a~nonparametric setting, let propose
+
+\noindent
+$$
+\mathrm{mm}_{o1} =v_{L1} +\sum\limits_{j=1}^k (q_{o j+1}^k +\fr{1}{2}\,q_{0j}) (v_{Rj}-v_{Lj})
+$$
+ and call it as \textit{medium mean value}.
+  The medium mean value~mm$_{o1}$ can be considered as acceptable approximation to the mean value
+  $m_{o1} =E [X_i]$ of the WTP-e.d.f.
+
+One has the following strongly consistent and asymptotically unbiased ML-estimate of~mm$_{o1}$:
+
+\vspace*{-6pt}
+
+\noindent
+  \begin{multline}
+  \label{FR-57a}
+\check{\mathrm{mm}}_{1 ps}\\ = v_{L1} 
++ \sum\limits_{j=1}^k \left(\check s_{j+1, ps}^k
+ +\fr{1}{2}\,\check q_{j ps} \right ) \left(v_{Rj}-v_{Lj}\right)
+\end{multline}
+where $\check s_{j+1, ps}^k=\sum_{i=j+1}^k \check q_{i ps},$ $ j=1, \ldots, k$, and
+$\check q_{k+1, ps}=0$.
+ Note that~$\check{\mathrm{mm}}_{1 ps} $ is the area below the
+ broken line, connected by intervals with end points $\{ v_{R j}, s_{j+1, ps}^k \}$, 
+ $j=1, \ldots, k-1$,
+ and $\{ v_{Ro, 1} \} ,$ $\{ v_{Rk}, 0\}$ on the estimated  WTP-survival function.
+
+\begin{figure*} %fig7
+       \vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=164.073mm
+ \epsfbox{bel-7.eps}
+ }
+ \end{center}
+ \vspace*{-9pt}
+ \Caption{Two pairs of histograms,
+corresponding to $C= 2000$ deviations dev$_{1ps}^c \hm=
+\check{\mathrm{mm}}_{1ps}^c -\mathrm{mm}_{o1}$~(\textit{1}) and
+ dev$_{1p}^c$\protect\linebreak $ =
+\check{\mathrm{mm}}_{1p}^c -\mathrm{mm}_{o1}$~(\textit{2})~(\textit{a})
+ and dev$_{1ps}^{\star c} = \check{\mathrm{mm}}_{1ps}^{\star c} - 
+ \check{\mathrm{mm}}_{1ps}^c$~(\textit{1}) and
+  dev$_{1p}^{\star c}  = \check{\mathrm{mm}}_{1p}^{\star c}  - \check{\mathrm{mm}}_{1p}^c$~(\textit{2})~(\textit{b}):
+\textit{1}~--- triples with both pairs and singles; and 
+\textit{2}~--- triples with only pairs, $n_{\cdot 2}= 9000$, $C=C^\star    =2000$} 
+   \label{FG-N07}
+\end{figure*}
+
+For each copy of data $\mathbf{d2}_{t n_{\cdot 2}}^c$, the authors apply~$r$
+iterations of recursion~(\ref{FR-531}) and obtain sufficiently
+accurate approximation $\check{\mathbf{q}}_k^{c(r)}$ of the ML-estimate
+$\check{\mathbf{q}}_{kM}^{ c}.$ Here, all copies of data have been used, i.\,e.,
+both pairs and singles. One can also find the ML-estimates
+$\check{\mathbf{q}}_{pk}^c$ of $\mathbf{q}_{k}$ by using~(\ref{FR-56a})
+and the part of data $\mathbf{d2}_{n_{\cdot 2}}^c$ with triples
+containing pairs~(\ref{FR-531}).
+ By substituting $\check{\mathbf{q}}_{pk}^c$
+and $\check{\mathbf{q}}_k^{c(r)}$ in~(\ref{FR-57a}), one obtains estimates
+of WTP-medium mean values $\check{\mathrm{mm}}_{1p}^c$ and
+$\check{\mathrm{mm}}_{1ps}^{c(r)}$, $c=1, \ldots, R.$ To underline the gain of usage
+of the whole data $\mathbf{d2}_{n_{\cdot 2}}^c$ compared with only the
+part of all pairs,  two lists with  deviations have been calculated:
+\begin{equation}
+\left.
+\begin{array}{c}
+    \check{\mathrm{dev}}_{1ps}^{c(r)}= \check{\mathrm{mm}}_{1ps}^{c(r)} - \mathrm{mm}_{o 1}\,;\\[6pt]
+     \check{\mathrm{dev}}_{1p}^c= \check{\mathrm{mm}}_{1p}^c - \mathrm{mm}_{o1},\;
+    c=1, \ldots, C\,.
+    \end{array}
+    \right\}
+    \label{FR-44}
+\end{equation}
+The deviations~(\ref{FR-44})   can be considered
+as  values  of i.i.d.\ r.v.s. Then, their standard deviation
+estimates are:
+$$
+\check{\mathrm{std}}_{1 ps}^{(r)} =1.780; \quad
+\check{\mathrm{std}}_{1p} =2.507\,. 
+$$
+ Hence, the estimates of~mm$_{o1}$ based on both pairs and singles are more exact
+ than based only on pairs.
+
+ It is useful to know the following empirical distribution
+ functions  (e.d.f.s)\ of deviations:
+\begin{equation}
+\left.
+\begin{array}{rl}
+ \check{\mathrm{edf}}_{1sp}^{(r)}[x] &=\fr{1}{C} \sum\limits_{c=1}^C
+I\left[\check{\mathrm{dev}}_{1 sp}^{c(r)}\le x\right]\,;\\[6pt]
+  \check{\mathrm{edf}}_{1p}[x] &=\fr{1}{C} \sum\limits_{c=1}^C
+I\left[\check{\mathrm{dev}}_{1p}^c\le x\right]\,.
+\end{array}
+\right\}
+\label{FR-46}
+\end{equation}
+The lists with deviations~(\ref{FR-46}) can be presented as a~paired histograms,
+composed from rectangles with low edges intervals $I_{r'} =(2r', 2(r'+1)]$, 
+$r'=0, 1,\ldots$ on the $x$-axis. The length of $I_{r'}$ is 
+2~SEK. The rectangles side intervals are proportional to the
+numbers of $\check{\mathrm{mm}}_{1ps}^{c(r)}\in I_{r'}$ and $\check{\mathrm{mm}}_{1p}^c\in
+I_{r'}$, $c=1, \ldots, C.$ Two corresponding components of paired histograms are
+shown with the
+dashed and solid contour lines, respectively, in Fig.~\ref{FG-N07}\textit{a}.
+
+Note that total size of 2000 samples with size $n_{\dot 2}=9000$ is rather large. Nearly the same
+accuracy of pairs histogram one can obtain by using 2000 independently resampled copies from only one
+sample~(!) with the same size~9000. Such resampled copies of $\mathbf{d2}_{n_{\cdot 2}}^c$ is denoted
+$\mathbf{d2}_{n_{\cdot 2}}^{\star c}$, $c=1, \ldots, 2000,$ and use them farther similarly as if they are common samples
+from  a~population~$\mathfrak{P}$. Let apply recursion~(\ref{FR-531}) with~$r$ sufficient  iterations and 
+find~$\mathbf{q}_k^{\star c(r)}.$ By substituting~$\check{\mathbf{q}}_{kps}^{\star c}$ 
+and~$\check{\bf q}_{kps}^{\star c(r)}$
+in relation similar to~(\ref{FR-57a}), one obtains~$\check{\mathrm{mm}}_{1ps}^{\star c(r)}$ 
+and~$\check{\mathrm{mm}}_{1p}^c.$
+Their deviations are similar to that given in~(\ref{FR-44}):
+
+\noindent
+\begin{align*}
+\mathrm{dev}_{1 ps}^{\star c(r)}&= \check{\mathrm{mm}}_{1ps}^{\star c(r)}- \check{\mathrm{mm}}_{1ps}^c\,; 
+\\
+\mathrm{dev}_{1 p}^{\star c}&= \check{\mathrm{mm}}_{1p}^{\star c}- \check{\mathrm{mm}}_{1p}^c\,.
+\end{align*}
+The pairs histogram obtained by resampled copies of data
+  $\mathbf{d2}_{n_{\cdot 2}}$ are shown in Fig.~\ref{FG-N07}\textit{b}. 
+  Both paired histograms are similar which reflects consistency of the resamplings  method.
+Sufficient and necessary assumptions for consistency the  resampling method were 
+given in~\cite{BK:BN97, BK:BE03}.
+
+
+
+\vspace*{-6pt}
+
+\section{Concluding Remarks}
+
+\noindent
+The present authors have provided an approach to the theory of SeSeIs obtained
+in surveys. These SeSeIs should have wide application, not the least in survey research, where
+they are already being used.
+The drawbacks of alternative elicitation mechanisms are well-documented in the literature and
+the SeSeIs can overcome some of them.   Or so, the authors have argued. The new 2-step approach suggested
+has not been tested empirically. The present simulation exercise provides some indications that merit
+trying this approach in the field. A~key assumption in the 2-step approach (an assumption
+currently always made when using any other elicitation mechanisms) is that the suggested
+interval/information in the second step does not have any impact on the censored variable.
+In other words, the authors assume that anchoring is not a~problem in this context. While anchoring
+is less of a~problem in the context compared to, say,  standard bracketing approaches
+(because one has information from the ``undistorted by anchoring'' intervals), it is
+still an assumption that needs to be scrutinized. In future research,
+this assumption will be studied in lab and field experiments.
+
+
+
+ A recent bibliography on surveys targeting
+contingent valuation has about
+7.500 studies from 130~countries~\cite{BK:CA12}. Big data sets are also collected in
+surveys health status of individuals, during aging and retirement.
+ censoring intervals are common in diversity of biomedical data sets~\cite{BK:KM03}.
+ Hopefully, interval data can also be useful in
+expert assessments of economic data, in durations of individuals' unemployment, in
+usage of futures contracts at bourses, and in psychometrics evaluation of individuals'
+relation to different risks.
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+
+\vspace*{-6pt}
+
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\begin{thebibliography}{99}
+
+\bibitem{BK:MA99}
+\Aue{Manski, C.\,F.} 1999.
+\textit{Identification problems in the social sciences.} Harvard University
+Press. 194~p.
+\bibitem{BK:MH90}
+\Aue{Morgan, M.\,G., and M.~Henrion}. 1990. 
+\textit{Uncertainty: A~guide to dealing with uncertainty in
+quantitative risk and policy analysis}. Cambridge University Press. 
+ 325~p.
+\bibitem{BK:BD06}
+\Aue{Billard, L., and E. Diday}. 2006. 
+\textit{Symbolic data analysis: Conceptual statistics
+and data mining}. Wiley ser. in computational statistics. Wiley. Vol.~636.
+330~p.
+\bibitem{BK:MM10}
+\Aue{Manski, C.\,F., and F. Molinari}.  2010.
+Rounding probabilistic expectations in surveys. 
+\textit{J.~Bus. Econ. Stat.} 28:219--231.
+\bibitem{BK:JK12}
+\Aue{Johansson, P.-O., and B. Kristr$\ddot{\mbox{o}}$m}. 2012. 
+\textit{The economics of evaluating water projects.
+Hydroelectricity versus other uses.} Heidelberg: Springer. 135~p.
+\bibitem{BK:BK10} %6
+\Aue{Belyaev, Y., and B. Kristr$\ddot{\mbox{o}}$m}. 2010. 
+Approach to analysis of self-selected interval data.
+\mbox{Ume\!{\fontsize{10pt}{10pt}\selectfont\ptb{\!{\r{\!\!a}}}}}: CERE.
+Working Paper 2010:2. 1--34. 
+Available at: {\sf  http:// www.cere.se/se/forskning/publikationer/155-approach-to-analysis-of-self-selected-interval-data.html}
+(accessed September~8, 2015).
+\bibitem{BK:BK12}
+\Aue{Belyaev, Y.,  and B. Kristr$\ddot{\mbox{o}}$m}. 2012. 
+Two-step approach to self-selected interval
+data in elicitation surveys. 
+\mbox{Ume\!{\fontsize{10pt}{10pt}\selectfont\ptb{\!{\r{\!\!a}}}}}:
+CERE. Working Paper 2012:10. 1--46.
+Available at: {\sf  http://www.cere.se/se/forskning/publikationer/386-two-step-approach-to-self-selected-interval-data-in-elicitation-surveys.html}
+(accessed September~8, 2015).
+\bibitem{BK:TU74}
+\Aue{Turnbull, B.\,W.}  1974. 
+Nonparametric estimation of a~survivorship function with doubly censored data.
+\textit{J.~Am. Stat. Assoc.} 69:169--173.
+\bibitem{BK:TU76}
+\Aue{Turnbull, B.\,W.} 1976. 
+The empirical distribution function with arbitrarily grouped,
+censored and truncated data. \textit{J.~Roy. Stat. Soc. B} 38:290--295.
+\bibitem{BK:MA03}
+\Aue{Manski, C.\,F.} 2003.
+\textit{Partial identification of probability distributions.} Springer ser.
+in statistics. Springer. 196~p.
+\bibitem{BK:CA12}
+\Aue{Carson, R.} 2012. \textit{Contingent valuation: A~comprehensive bibliography and history}.
+Edward Elgar Publishing. 464~p.
+\bibitem{BK:HA08}
+\Aue{H\!\!{\fontsize{10pt}{10pt}\selectfont\ptb{\!{\r{\!\!a}}}}kansson, C}. 2008. 
+A~new valuation question~--- analysis of and insights from interval
+ open ended data in contingent valuation. 
+ \textit{Environ. Resour. Econ.} 39(2):175--188.
+\bibitem{BK:BB08}
+\Aue{Broberg, T., and R. Br$\ddot{\mbox{a}}$nnlund}.  2008.
+An alternative interpretation of multiple
+bounded WTP data-certainty dependent payment card intervals.
+\textit{Energy Resour. Econ.} 30:555--567.
+\bibitem{BK:MRKB14}
+\Aue{Mahieu, P.,  P.~Riera, B.~Kristr$\ddot{\mbox{o}}$m, R.~Br$\ddot{\mbox{a}}$nnlund, 
+and  M.~Giergiczny}. 2014.
+Exploring the determinants of uncertainty in contingent valuation surveys. 
+\textit{J.~Environ. Econ. Policy} 3(2):186--200.  
+Available at: {\sf http://dx.doi.org/10.1080/21606544.2013.876941}
+(accessed  September~3, 2015).
+\bibitem{BK:GO54} %15
+\Aue{Good, I.\,J.} 1953.
+The population frequencies of species and the estimation of population
+parameters. \textit{Biometrika} 40(3-4):237--264.
+\bibitem{BK:BK13}
+\Aue{Belyaev, Y., and B.~Kristr$\ddot{\mbox{o}}$m}. 2013.  
+Analysis of contingent valuation data
+with self-selected rounded WTP-intervals collected by two-steps sampling plans.
+\textit{9th Tartu Conference on Multivariate Statistics and 20th IWMS Proceedings}.
+Tartu: World Scientific. 48--60.
+\bibitem{BK:GCO04}
+\Aue{Gomez, J., M. Calle, and R.~Oller}. 2004. Frequentist and Bayesian approaches for
+interval-censored data. \textit{Stat. Pap.} 45:139--173.
+ \bibitem{BK:GCOL09}
+\Aue{Gomez, J., M. Calle, R.~Oller, and K.~Langhor}. 2009. 
+Tutorial on methods for interval-censored
+data and their implementations in $R$. \textit{Stat. Model.} 9(4):259--297.
+
+\bibitem{BK:GG94} %19
+\Aue{Gentleman, R., and C.\,J.~Geyer}. 1994. 
+Maximum likelihood for interval censored data:
+Consistency and computation. \textit{Biometrika}  81(3):618--623.
+
+\bibitem{BK:BT05} %20
+\Aue{Brinkhuis, J., and V. Tihomirov}. 2005.  
+\textit{Optimization: Insights and applications.}
+Princeton--Oxford: Princeton University Press. 680~p.
+\bibitem{BK:JM03} %21
+\Aue{Jammalamadaka, S.\,R., and V.~Mangalam}. 2003. 
+Non-parametric estimation for middle-censored data.
+\textit{J.~Nonparametr. Stat.} 15:253--265.
+\bibitem{BK:BN97} %22
+\Aue{Belyaev, Y.\,K., and L.~Nilsson}. 1997. Parametric maximum likelihood estimators.
+Department of Mathematical Statistics,
+\mbox{Ume\!{\fontsize{10pt}{10pt}\selectfont\ptb{\!{\r{\!\!a}}}}} University. 
+Research Report 1997-15. 1--28.
+
+\bibitem{BK:BE03} %23
+\Aue{Belyaev, Y.\,K.} 2003. 
+Necessary and sufficient conditions for consistency of resampling. Sweden:
+Centre of Biostochastics, Swedish University of Agricultural
+Sciences. Research Report 2003-1. 1--26.
+Available at: 
+{\sf http://biostochastics.slu.se/publikationer/ dokument/Report2003\_1.pdf}
+(accessed September~3, 2015).
+\bibitem{BK:KM03} %24
+\Aue{ Klein, J.\,P., and M.\,L.~Moeschberger}.  
+2003. \textit{Survival analysis: Techniques for censored
+ and truncated data}.  New York, N.Y.: Springer-Verlag. 536~p.
+
+\end{thebibliography} } }
+
+\end{multicols}
+
+\vspace*{-10pt}
+
+\hfill{\small\textit{Received June 30, 2015}}
+
+\vspace*{-18pt}
+
+\Contr
+
+\vspace*{-3pt}
+
+\noindent
+\textbf{Belyaev Yuri K.} (b.\ 1932)~--- Doctor of Science in physics and mathematics,
+professor, 
+\mbox{Ume{\!\!\fontsize{12pt}{12pt}\selectfont\ptb{\!{\r{\hspace*{-3pt}a}}}}} 
+University,  Petrus Laestadius v$\ddot{\mbox{a}}$g,
+\mbox{Ume{\!\!\fontsize{12pt}{12pt}\selectfont\ptb{\!{\r{\hspace*{-3pt}a}}}}} SE-901 87, 
+Sweden;  yuri.belyaev@umu.se
+
+%\vspace*{3pt}
+
+\noindent
+\textbf{Kristr$\ddot{\mbox{o}}$m Bengt} (b.\ 1960)~--- 
+PhD in economics, Director, Department of Forest Economics, Center for Environmental and 
+Resource Economics (CERE), Swedish University of Agricultural Sciences,
+\mbox{Ume\!\!{\fontsize{12pt}{12pt}\selectfont\ptb{\!{\r{\hspace*{-3pt}a}}}}} SE-901 83, 
+Sweden;  bengt.kristrom@umu.se
+
+
+%\vspace*{8pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+\newpage
+
+\vspace*{-24pt}
+
+
+
+
+\def\tit{АНАЛИЗ ОБЗОРНЫХ ОБСЛЕДОВАНИЙ, СОДЕРЖАЩИХ ЦЕНЗУРИРОВАННЫЕ ДАННЫЕ В~ОКРУГЛЕННЫХ ИНТЕРВАЛАХ}
+
+\def\aut{Ю.\,К.~Беляев$^1$, Б.~Кристрём$^2$}
+
+
+\def\titkol{Анализ обзорных обследований, содержащих цензурированные данные 
+в округленных интервалах}
+
+\def\autkol{Ю.\,К.~Беляев, Б.~Кристрём}
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+%\footnotetext[1]{Работа проводится при финансовой поддержке Программы
+%стратегического развития Петрозаводского государственного университета в рамках
+%на\-уч\-но-ис\-сле\-до\-ва\-тель\-ской деятельности.}}
+
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-12pt}
+
+\noindent
+$^1$Университет Умеа, Умеа, Швеция
+
+\noindent
+$^2$Центр экономики природных ресурсов и окружающей среды Шведского университета
+сельскохозяй-\linebreak
+$\hphantom{^1}$ственных наук, Умеа, Швеция
+
+\vspace*{6pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 9\ \ \ выпуск\ 3\ \ \ 2015}
+}%
+ \def\rightfootline{\small{ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 9\ \ \ выпуск\ 3\ \ \ 2015
+\hfill \textbf{\thepage}}}
+
+
+
+
+\Abst{Предложены методы статистического анализа данных, собираемых 
+в~обзорных обследованиях. Предложенный подход общий и~применим в~большинстве случаев, 
+когда в~собранных данных содержатся интервалы. Такие данные типичны во многих 
+исследованиях: в~анализе на\-деж\-ности изделий и~систем, продолжительности жизни 
+в~демографии, в~медицине и~экономике, в~обзорных обследованиях мнения населения и~др. 
+Имеются серьезные причины для интенсивного использования данных с~интервалами. 
+Наиболее общей причиной является невозможность наблюдения точных значений. 
+Природа исследуемых интервалов необычна. Так называемые самовыбираемые 
+интервалы без ка\-ких-ли\-бо ограничений свободно выбираются субьектами обследований. 
+Концы таких интервалов могут быть округлены. Предлагается обобщение продуктивного 
+подхода к~статистическому анализу в~общей схеме цензурирования, предложенной 
+Б.\,В.~Турнбуллом. Объяснено и~обобщено основное условие независимости 
+в~анализе Турнбулла. Предложено правило остановки выборочного процесса на 
+основе достигнутого значения вероятности покрытия. Введение дополнительного 
+(второго) вопроса всем выбранным респондентам дает возможность получения более 
+точной оценки характеристик искомого распределения. 
+Дано обоснование методов информатики, применяемых для анализа статистических
+данных, содержащих самовыбира\-емые интервалы. Эти методы дают возможность частичной 
+идентификации искомых непараметрических распределений. Дано описание статистических 
+моделей данных, допускающих зависимость выбора интервалов от положения 
+в~них точных значений. Получены рекурсии быстрого вычисления оценок 
+максимального правдоподобия для характеристик искомых распределений. 
+Приведены результаты применения предлагаемых методов, 
+подтверждающие их полезность в~анализе смоделированных данных, содержащих 
+самовыбираемые интервалы.}
+
+
+
+\KW{выявляющие выборочные обследования; случайный выбор; округление; якорность;  
+вероятность покрытия; правдоподобие; рекурсия; максимизация; случайный перевыбор}
+
+
+\DOI{10.14357/19922264150301}
+
+\vspace*{-6pt}
+
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily Литература}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\begin{thebibliography}{99}
+
+\bibitem{BK:MA99-1}
+\Au{Manski C.\,F.} 
+{Identification problems in the social sciences.}~--- Harvard University
+Press, 1999. 194~p.
+\bibitem{BK:MH90-1}
+\Au{Morgan M.\,G., Henrion M.} 
+{Uncertainty: A~guide to dealing with uncertainty in
+quantitative risk and policy analysis}.~--- Cambridge University Press, 1990. 
+ 325~p.
+\bibitem{BK:BD06-1}
+\Au{Billard L.,  Diday E.} 
+{Symbolic data analysis: Conceptual statistics
+and data mining}. Wiley ser. in computational statistics.~--- Wiley, 2006.  Vol.~636.
+330~p.
+\bibitem{BK:MM10-1}
+\Au{Manski C.\,F.,  Molinari F.}  
+Rounding probabilistic expectations in surveys~//
+{J.~Bus. Econ. Stat.}, 2010. Vol.~28. P.~219--231.
+\bibitem{BK:JK12-1}
+\Aue{Johansson P.-O.,  Kristr$\ddot{\mbox{o}}$m~B.} 
+{The economics of evaluating water projects.
+Hydroelectricity versus other uses.}~--- Heidelberg: Springer, 2012.  135~p.
+\bibitem{BK:BK10-1}
+\Aue{Belyaev Y., Kristr$\ddot{\mbox{o}}$m B.} 
+Approach to analysis of self-selected interval data.
+\mbox{Ume\!{\fontsize{10pt}{10pt}\selectfont\ptb{\!{\r{\!\!a}}}}}: CERE,  2010.
+Working Paper 2010:2. P.~1--34. 
+ {\sf  
+http://www.cere.se/se/ forskning/publikationer/155-approach-to-analysis-of-self-selected-interval-data.html}.
+\bibitem{BK:BK12-1}
+\Au{Belyaev Y.,  Kristr$\ddot{\mbox{o}}$m B.} 
+Two-step approach to self-selected interval
+data in elicitation surveys. 
+\mbox{Ume\!{\fontsize{10pt}{10pt}\selectfont\ptb{\!{\r{\!\!a}}}}}:
+CERE, 2012. 
+Working Paper 2012:10. P.~1--46.
+{\sf  http:// www.cere.se/se/forskning/publikationer/386-two-step-approach-to-self-selected-interval-data-in-elicitation-surveys.html}.
+\bibitem{BK:TU74-1}
+\Au{Turnbull B.\,W.} 
+Nonparametric estimation of a~survivorship function with doubly censored data~//
+J.~Am. Stat. Assoc., 1974.  Vol.~69. P.~169--173.
+\bibitem{BK:TU76-1}
+\Au{Turnbull B.\,W.} 
+The empirical distribution function with arbitrarily grouped,
+censored and truncated data~// J.~Roy. Stat. Soc. B, 1976. Vol.~38. P.~290--295.
+\bibitem{BK:MA03-1}
+\Au{Manski C.\,F.} 
+{Partial identification of probability distributions.} Springer ser.
+in statistics.~--- Springer, 2003. 196~p.
+\bibitem{BK:CA12-1}
+\Au{Carson, R.} 
+{Contingent valuation: A~comprehensive bibliography and history}.~---
+Edward Elgar Publishing, 2012.  464~p.
+\bibitem{BK:HA08-1}
+\Au{H\!\!\!\!{\fontsize{10pt}{10pt}\selectfont\ptb{\!{\r{\!a}}}}kansson C}. 
+A~new valuation question~--- analysis of and insights from interval
+ open ended data in contingent valuation~// 
+{Environ. Resour. Econ.}, 2008.  Vol.~39. No.\,2. P.~175--188.
+\bibitem{BK:BB08-1}
+\Au{Broberg T., Br$\ddot{\mbox{a}}$nnlund R.}
+An alternative interpretation of multiple
+bounded WTP data-certainty dependent payment card intervals~//
+{Energy Resour. Econ.},   2008. Vol.~30. P.~555--567.
+\bibitem{BK:MRKB14-1}
+\Au{Mahieu P.,  Riera P., Kristr$\ddot{\mbox{o}}$m~B., Br$\ddot{\mbox{a}}$nnlund~R., 
+Giergiczny~M.} 
+Exploring the determinants of uncertainty in contingent valuation surveys~//
+{J.~Environ. Econ. Policy}, 2014.  
+{\sf http://dx.doi.org/10.1080/ 21606544.2013.876941}.
+\bibitem{BK:GO54-1}
+\Au{Good I.\,J.} 
+The population frequencies of species and the estimation of population
+parameters~// {Biometrika}, 1953. Vol.~40. Iss.\,3-4. P.~237--264.
+\bibitem{BK:BK13-1}
+\Au{Belyaev Y., Kristr$\ddot{\mbox{o}}$m~B.} 
+Analysis of contingent valuation data
+with self-selected rounded WTP-intervals collected by two-steps sampling plans~//
+9th Tartu Conference on Multivariate Statistics and 20th IWMS Proceedings.~--- 
+Tartu: World Scientific, 2013. P.~48--60.
+\bibitem{BK:GCO04-1}
+\Au{Gomez J.,  Calle M., Oller~R.}  Frequentist and Bayesian approaches for
+interval-censored data~// {Stat. Pap.}, 2004. Vol.~45. P.~139--173.
+ \bibitem{BK:GCOL09-1}
+\Au{Gomez J., Calle M., Oller R., Langhor K.} 
+Tutorial on methods for interval-censored
+data and their implementations in~$R$~// {Stat. Model.}, 2009. 
+Vol.~9. No.\,4. P.~259--297.
+
+\bibitem{BK:GG94-1} %19
+\Au{Gentleman R., Geyer C.\,J.} 
+Maximum likelihood for interval censored data:
+Consistency and computation~// {Biometrika}, 1994.  Vol.~81. No.\,3. P.~618--623.
+
+\bibitem{BK:BT05-1} %20
+\Au{Brinkhuis J., Tihomirov V.} 
+{Optimization: Insights and applications.}~---
+Princeton--Oxford: Princeton University Press,
+2005.  680~p.
+
+\bibitem{BK:JM03-1} %21
+\Au{Jammalamadaka S.\,R., Mangalam V.} 
+Non-parametric estimation for middle-censored data~//
+{J.~Nonparametr. Stat.}, 2003.  Vol.~15. P.~253--265.
+
+\bibitem{BK:BN97-1} %22
+\Au{Belyaev Y.\,K., Nilsson L.} Parametric maximum likelihood estimators.
+Department of Mathematical Statistics,
+\mbox{Ume\!{\fontsize{10pt}{10pt}\selectfont\ptb{\!{\r{\!\!a}}}}} University,
+1997. Research Report 1997-15. P.~1--28.
+
+
+\bibitem{BK:BE03-1}
+\Au{Belyaev Y.\,K.} %23 
+Necessary and sufficient conditions for consistency of resampling.
+Sweden: Centre of Biostochastics,  Swedish University of Agricultural
+Sciences,  2003. Research Report 2003-1. P.~1--26.
+{\sf http://biostochastics. slu.se/publikationer/dokument/Report2003\_1.pdf}.
+
+\bibitem{BK:KM03-1} %24
+\Au{Klein, J.\,P., M.\,L.~Moeschberger}.  
+2003. {Survival analysis: Techniques for censored
+ and truncated data}.~---  New York, N.Y., USA: Springer-Verlag. 536~p.
+
+
+\end{thebibliography}
+} }
+
+\end{multicols}
+
+ \label{end\stat}
+
+ \vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в редакцию  30.06.2015}}
+%\renewcommand{\bibname}{\protect\rm Литература}
+\renewcommand{\figurename}{\protect\bf Рис.}

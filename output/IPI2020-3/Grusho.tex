@@ -1,0 +1,575 @@
+\def\stat{grusho}
+
+\def\tit{МЕТОДЫ МАТЕМАТИЧЕСКОЙ СТАТИСТИКИ\\ В~ЗАДАЧЕ ПОИСКА ИНСАЙДЕРА$^*$}
+
+\def\titkol{Методы математической статистики в~задаче поиска инсайдера}
+
+\def\aut{А.\,А.~Грушо$^1$, М.\,И.~Забежайло$^2$, Д.\,В.~Смирнов$^3$, 
+Е.\,Е.~Тимонина$^4$, С.\,Я.~Шоргин$^5$}
+
+\def\autkol{А.\,А.~Грушо, М.\,И.~Забежайло, Д.\,В.~Смирнов и~др.}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Грушо А.\,А.}
+\index{Забежайло М.\,И.}
+\index{Смирнов Д.\,В.}
+\index{Тимонина Е.\,Е.}
+\index{Шоргин С.\,Я.}
+\index{Grusho N.\,A.}
+\index{Zabezhailo M.\,I.}
+\index{Smirnov D.\,V.}
+\index{Timonina E.\,E.}
+\index{Shorgin S.\,Ya.}
+ 
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа частично поддержана РФФИ (проект 18-29-03081).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управ\-ле\-ние>> 
+Российской академии наук, \mbox{grusho@yandex.ru}}
+\footnotetext[2]{Вычислительный центр им.\ А.\,А.~Дородницына Федерального исследовательского центра <<Информатика 
+и~управ\-ле\-ние>> Российской академии наук, \mbox{m.zabezhailo@yandex.ru}}
+\footnotetext[3]{ПАО Сбербанк России, Департамент кибербезопасности,
+\mbox{dvlsmirnov@sberbank.ru}}
+\footnotetext[4]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управ\-ле\-ние>> 
+Российской академии наук, \mbox{eltimon@yandex.ru}}
+\footnotetext[5]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управ\-ле\-ние>> 
+Российской академии наук, \mbox{sshorgin@ipiran.ru}}
+
+\vspace*{-9pt}
+
+  
+  
+  \Abst{Исследованы подходы к~выявлению враждебных инсайдеров организации, 
+использующих сговор. Проблема выявления организованной группы нарушителей 
+информационной безопас\-ности~--- одна из самых сложных задач обеспечения 
+безопас\-ности  организации. 
+  Исходное множество данных для анализа состоит из множества малых выборок, 
+описывающих функционал информационных технологий 
+(ИТ) организации. Это множество можно 
+считать большими данными. Для сокращения объема исходных данных использован метод 
+кластеризации.  Это позволило эффективно использовать методы математической статистики, 
+т.\,е.\ выявить малые выборки, несущие информацию о враждебных инсайдерах. Сложность 
+задачи заключалась в~том, чтобы как можно меньше потерять искомых малых выборок. 
+Найдены условия, когда в~схеме серий вероятность выявления инсайдеров, использующих 
+сговор, стремится к~1.  }
+  
+  \KW{выявление организованной группы враждебных инсайдеров; малые выборки; большие 
+данные; математическая статистика}
+
+\DOI{10.14357/19922264200310} 
+ 
+\vspace*{-5pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+  
+\section{Введение }
+
+  Сбор ценной информации сотрудниками, использующими личные связи,~--- 
+серьезная проблема информационной безопасности в~государственных 
+и~коммерческих организациях. При этом часто нарушитель информационной 
+безопасности сам имеет доступ к~части ценной информации
+(ЦИ), но не имеет права 
+получать ее целиком. Примером такой ситуации может служить разделение общей 
+проблемы для ее решения в~разных подразделениях организации. Тогда 
+враждебный инсайдер (далее~--- инсайдер) попытается узнать недостающую 
+ЦИ от своих друзей в~других подразделениях или войти в~сговор 
+о~сборе и~продаже~ЦИ. 
+  
+  Исследованию проблемы выявления инсайдеров посвящено множество 
+научных работ. 
+  
+  В работе~[1] приведен ряд вызовов, исследование которых авторы данного 
+обзора считают важными, но трудными проблемами. Вызов~4 (см.~[1]) связан 
+с~проб\-ле\-мой выявления инсайдеров, организованных с~помощью преступного 
+сговора. 
+  
+  Выявление инсайдеров в~течение ряда лет финансировалось американским 
+управлением исследованиями Министерства обороны США (DARPA, Defence Advanced Research
+Projects Agency). Основное 
+направление этих исследований связано с~выявлением аномалий в~больших 
+данных. В~част\-ности, в~работе~[2] разработан язык описания\linebreak аномалий 
+и~представлена информация по его использованию. 
+  
+  В работах~[3, 4] для выявления слабо выраженных аномалий, порожденных 
+инсайдерами, предложено использование информации из нескольких 
+информационных пространств. 
+  
+  Важной проблемой остается определение условий, при которых выявление 
+инсайдера возможно. Все методы в~данной области строятся на основе некоторых 
+предположений, выполнение которых необходимо для их работоспособности.  
+Далее рассматривается проблема выявления инсайдера в~банковской сфере.
+  
+  В статье предполагается, что цели инсайдера состоят в~сборе и~продаже ЦИ
+   о~клиентах банка. Как правило, такой информацией выступают 
+персональные данные вместе с~ЦИ о~счетах и~движении 
+денежных средств. Для того чтобы эти данные могли дать постоянный доход 
+инсайдеру, они должны собираться в~достаточно большом объеме. 
+{\looseness=1
+
+}
+  
+  Для защиты от таких инсайдеров можно разделить информацию, например на 
+персональные данные и~ЦИ на счетах. При этом работать 
+с~каж\-дым из этих блоков данных могут только разные менеджеры (сотрудники 
+банка). Отсюда возникает задача выявления возможного сговора ка\-ких-то 
+менеджеров, занимающихся либо персональными данными, либо информацией 
+о~счетах.  Статья посвящена анализу условий выявления такого сго\-вора.
+  
+  \section{Формальная модель сговора инсайдеров}
+  
+  Для исследования задачи выявления инсайдеров, использующих сговор, 
+рассмотрим сле\-ду\-ющую модель. Обозначим через~$V$ множество\linebreak клиентов, 
+использующих сервисы банка, через~$U$~--- множество менеджеров 
+(пользователей банковской сис\-те\-мы и~реализующих ИТ). Хранилище данных, 
+которое используют менеджеры, устроено сле\-ду\-ющим 
+образом. Все данные заносятся в~прямоугольную таб\-ли\-цу, столб\-цы которой 
+нумеруются атрибутами $A_0, A_1,\ldots$\,, а~строки содержат записи данных 
+и~результатов действий с~ними. Строки не изменяются, но при изменениях 
+данных появляются новые строки с~новыми данными. В~отличие от 
+традиционных реляционных баз данных записи не обязательно содержат 
+значения всех атрибутов и~поиск по таб\-ли\-це осуществляется по сложному 
+ключу, зависящему от типа данных в~строке. Однако каждая строка содержит 
+данные о~ме\-нед\-же\-ре, осуществляющем обращение, идентификаторе экземпляра 
+ИТ, которая связана с~обращением, и~санкционированием текущей транзакции от 
+предыдущих шагов ИТ. Часть атрибутов~$\vec{A}_1$ соответствует содержанию 
+персональных данных, нужных для авторизации транзакций, часть 
+атрибутов~$\vec{A}_2$ соответствует ЦИ (данные счетов, 
+переводы и~др.).  
+  
+  Политика безопасности запрещает одному менеджеру иметь доступ 
+одновременно к~$\vec{A}_1$ и~к~$\vec{A}_2$. Поэтому строки, 
+соответствующие использованию атрибутов~$\vec{A}_2$, обладают индексами, 
+скрывающими данные, соответствующие атрибутам~$\vec{A}_1$. Кроме того, 
+выделены пользователи~$U_1$, которые могут иметь доступ к~информации 
+с~атрибутами~$\vec{A}_1$, и~пользователи~$U_2$, не имеющие доступа 
+к~данным с~атрибутами~$\vec{A}_1$, но работающие с~данными, 
+соответствующими атрибутам~$\vec{A}_2$.
+  
+  Интересная для инсайдеров ЦИ может быть\linebreak получена тогда и~только тогда, 
+когда известны значения атрибутов~$\vec{A}_1$ и~соответствующие им значения 
+атрибутов~$\vec{A}_2$. Для получения такой информации необходим сговор 
+какого-либо пользователя из множества~$U_1$ с~каким-либо пользователем из 
+множества~$U_2$. Задача состоит в~выявлении таких инсайдеров. 
+  
+  Пусть $u_1\hm\in U_1$  и~$u_2\hm\in U_2$ образуют такую пару $(u_1, u_2)$ 
+инсайдеров, использующих сговор. 
+  
+  Сделаем дополнительные предположения о том, что пара  $(u_1, u_2)$ может 
+так управлять потоком заявок клиентов на сервисы, что пара $(u_1, u_2)$ 
+появляется чаще, чем все остальные пары из множества $U_1\times U_2$. Тогда 
+можно пытаться использовать методы математической статистики для выявления 
+пары $(u_1, u_2)$. 
+  
+  Однако для большого значения числа элементов в~множестве $U_1\times U_2$ 
+выявление пары $(u_1, u_2)$ упирается в~проблему многих малых выборок~[5, 6]. 
+  
+  Пусть статистические критерии выявления $(u_1, u_2)$ имеют ошибки 
+$\alpha\hm>0$, $\beta\hm>0$ где~$\alpha$~---  вероятность <<ложной>> тревоги; 
+$\beta$~--- вероятность пропуска $(u_1, u_2)$.  Тогда при многих малых выборках 
+анализ <<ложных>> тревог становится трудоемкой задачей, а вероятность 
+выявления пары $(u_1, u_2)$ ограничена снизу константой (приблизительно~1/3). 
+Поэтому для эффективного применения статистических методов необходимо 
+снижать объем множества малых выборок. Иными словами, необходимо 
+применять статистические методы в~рамках некоторых кластеров ограниченного 
+набора малых выборок. 
+  
+  В~данной статье используется параметр, управ\-ля\-ющий объемом множества 
+малых выборок и~поз\-во\-ля\-ющий повышать эффективность статистического 
+анализа. Этим параметром служит объем множества клиентов, в~интересах 
+которых проводятся транзакции, интересные для $(u_1, u_2)$, т.\,е.\ вмес\-те 
+с~каждой парой $(u, u^\prime)$, $u\hm\in U_1$, $u^\prime\hm\in U_2$, необходимо 
+рассматривать параметр~$v$ со значениями в~$V$, идентифицирующий клиента, 
+который инициирует транзакцию. Обозначим эту тройку $(u,u^\prime)\vert v$. 
+  
+  Инсайдеров $(u_1, u_2)$ интересуют клиенты из множества~$V$, продажа 
+информации о которых имеет высокую стоимость. Вместе с~тем если инсайдеров 
+интересуют только такие клиенты (обозначим множество таких клиентов 
+через~$V_1$) и~их транзакции, то количество троек $(u, u^\prime)\vert v$, где 
+$v\hm\in V_1$, для анализа сокращается, что позволяет повысить эффективность 
+статистических методов.
+
+  \vspace*{-4pt}
+  
+  \section{Анализ выявляемости сговора инсайдеров}
+  
+  \vspace*{-3pt}
+  
+  Пусть транзакция обрабатывается случайной парой менеджеров $(u, u^\prime)$, 
+$u\hm\in U_1$, $u^\prime\hm\in U_2$. Положим $\vert U_1\vert \hm= n_1$, $\vert 
+U_2 \vert \hm= n_2$, $\vert U_1\times U_2 \vert \hm= n_1  n_2 \hm= n$. Тогда 
+вероятность появления пары $(u, u^\prime)$ равна~$1/n$. 
+  
+  Если $(u_1, u_2)$~--- инсайдеры, использующие сговор, и~клиент~$v$ 
+представляет для них интерес, то вероятность того, что эта пара будет 
+обслуживать этого клиента равна 
+  $$
+  {\sf P}\left(\left(u_1,u_2\right)\vert v\right)=p\,,
+  $$
+  а в~случае любой другой пары $(u, u^\prime) \not= (u_1, u_2)$ эта вероятность 
+равна
+  $$
+  {\sf P}\left( \left( u, u^\prime\right) v\right)= (1-p)\fr{1}{n-1}\,.
+  $$
+  
+  С помощью методов кластеризации можно выделить множество~$V_1$ тех 
+клиентов, которые представляют интерес для инсайдеров, использующих сговор. 
+Ясно, что мощность множества~$V_1$ много меньше, чем мощность 
+множества~$V$. Как было отмечено выше, это позволяет избежать эффекта малых 
+выборок~\cite{6-gr}. 
+  
+  Пусть $C_1$~--- среднее число транзакций у клиентов из множества~$V_1$. 
+Тогда средний объем данных для клиентов из множества~$V_1$ равен $\vert 
+V_1\vert  C_1\hm=m$. Далее считаем~$m$ известным параметром схемы. 
+Тогда соотношение параметров~$m$, $n$ и~$p$ определяет возможность выявления 
+инсайдеров, использующих сговор. Инсайдеры $(u_1, u_2)$ не могут переключить 
+на себя весь поток клиентов из множества~$V_1$. Поэтому для данных~$\xi$, 
+которые они получили, можно предложить модель биномиального распределения: 
+  $$
+ {\sf P}\left( \xi\left ( u_1, u_2\right)=k\right) =
+  \begin{pmatrix}
+  m\\ k
+  \end{pmatrix} p^k (1-p)^{m-k}\,.
+  $$
+  
+  Тогда для любой пары $(u, u^\prime) \not= (u_1, u_2)$ распределение числа 
+случаев предоставления сервисов описывается следующим образом:
+ \begin{multline*}
+{\sf P}\left(\xi\left( u,u^\prime\right)=r\right) =\sum\limits^m_{k=0} \begin{pmatrix}
+  m\\ k\end{pmatrix} p^k (1-p)^{m-k}\times{}\\
+  {}\times \begin{pmatrix}
+  m-k\\ r\end{pmatrix}
+  \left(\fr{1}{n-1}\right)^r \left( 1-\fr{1}{n-1}\right)^{m-k-r}\,.
+  \end{multline*}
+  
+  Поскольку числа~$m$ и~$n$ являются большими, то рассмотрение задачи 
+выявляемости инсайдеров $(u_1, u_2)$ в~множестве~$V_1$ будет вестись 
+в~терминах асимптотических распределений вероятностей в~схеме серий, т.\,е.\ 
+в~предположении, что $m\hm\to \infty$, $n\hm\to \infty$ и~$p\hm\to 0$. Задача 
+состоит в~поиске значений вероятности~$p$, при которых вероятность выявления 
+инсайдеров $(u_1, u_2)$ стремится к~1. 
+  
+  В практическом плане интересен случай, когда $m\hm\to \infty$, $n\hm\to \infty$ 
+и~$\alpha\hm= m/n$ удовлетворяет условию $\alpha/\ln(n) \hm\to 0$. Это условие 
+соответствует преобладанию числа предоставления сервисов для клиентов из 
+множества~$V_1$ над числом пар менеджеров $n_1 n_2\hm=n$, которые 
+проводят это обслуживание. В~каком-то смысле множитель~$\ln n$ можно 
+интерпретировать как число обслуживаний на одну пару менеджеров, не 
+являющихся инсайдерами $(u_1, u_2)$, использующими сговор. 
+  
+  Рассмотрим случайную величину~$\eta_{(n)}$, равную максимальному числу 
+обслуживаний клиентов из множества~$V_1$  по всем парам менеджеров $(u, 
+u^\prime)$. Обозначим 
+  $$
+  \alpha=\fr{m}{n}\,;\quad p_k=\fr{\alpha^k}{k!}\,,\enskip k=0,1,\ldots
+  $$
+  
+  В~работе~\cite{7-gr} приведена следующая теорема.
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Теорема}~\cite{7-gr}. \textit{Если $m, n \hm\to \infty$, $\alpha/ \ln(n)\hm\to 0$ и~$r\hm= 
+r(\alpha, n)$ выбрано так, что $r\hm> \alpha$ и~$np_r\hm\to \lambda$, где~$\lambda$~--- 
+положительная постоянная, то} 
+  $$
+  {\sf P}\left\{ \eta_{(n)} = r-1\right\}\to e^{-\lambda}\,;\enskip 
+  {\sf P}\left\{ \eta_{(n)}=r\right\} \to 1 -  
+e^{-\lambda}\,.
+  $$
+  
+  Рассмотрим простой пример применения этой теоремы. Пусть
+  $$
+  n\fr{\alpha^3}{6}\,e^{-\alpha} \to \lambda >0\,,
+  $$
+т.\,е.\ $r\hm= r(\alpha, n)\hm=3$. Тогда максимальное число обслуживаний 
+клиентов из множества~$V_1$  по всем парам менеджеров $(u, u^\prime)\not= 
+(u_1, u_2)$ равно~3 с~вероятностью, стремящейся к~1. 
+
+  Превышение числа появлений пары $(u_1, u_2)$, начиная с~4, однозначно 
+идентифицирует эту пару инсайдеров с~вероятностью, стремящейся к~1. 
+Вероятность того, что пара $(u_1, u_2)$ в~определенной выше схеме появится не 
+больше трех раз, равна
+  \begin{multline*}
+  (1-p)^m+mp(1-p)^{m-1}+\fr{m(m-1)}{2}\,p^2 (1-p)^{m-2}+{}\\
+  {}+ \fr{m(m-1)(m-2)}{6}\,p^3(1-p)^{m-3}\,.
+  \end{multline*}
+  
+  Отсюда следует, что при  $p\hm\leq \ln (m)/m$ пара инсайдеров $(u_1, u_2)$, 
+использующих сговор, выявляется с~вероятностью, стремящейся к~1. 
+  
+  \section{Заключение }
+  
+  В статье показано, как сочетать методы клас\-те\-ри\-за\-ции и~методы 
+математической статистики для выявления инсайдеров, использующих сговор, 
+а~именно: для эффективного применения математической статистики на 
+множестве разнородных данных, которые состоят из множества малых выборок, 
+необходимо приближенное выполнение соотношения между параметрами схемы. 
+  
+  Однако согласование параметров возможно, когда существует возможность 
+управления объемами данных. Для такого управления можно использовать методы 
+кластеризации.
+  
+  В рассмотренной задаче можно выделить сис\-те\-му вложенных кластеров 
+данных, повышающих\linebreak шансы выявления инсайдеров, использующих сговор. 
+Выделение таких кластеров позволило доказать пренебрежимо малую 
+вероятность превышения построенного порога для числа случайных\linebreak повторений 
+встречаемости пар менеджеров, не являющихся инсайдерами, использующими 
+сговор. 
+  
+  Вместе с~тем при полученной отсюда оценке вероятности встречаемости 
+инсайдеров, использующих сговор, их идентификация происходит 
+с~вероятностью, стремящейся к~1. 
+  
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{1-gr}
+\Au{Gheyas I., Abdallah~A.} Detection and prediction of insider threats to cyber security: 
+A~systematic literature review and meta-analysis~// Big Data Anal., 2016. 
+Vol.~1. P.~1--29. doi:  10.1186/s41044-016-0006-0.
+\bibitem{2-gr}
+\Au{Memory A., Goldberg H.\,G., Senator~T.\,E.} 
+Context-aware insider threat detection~// 
+Workshops at 27th AAAI Conference on Artificial Intelligence, 2013. 
+P.~44--47. {\sf 
+https:// pdfs.semanticscholar.org/04aa/e6d97900ba62e90b07ac6\linebreak 82fb7bd8c2e1029.pdf}.
+
+
+\bibitem{4-gr} %3
+\Au{Грушо А.\,А., Забежайло~М.\,И., Смирнов~Д.\,В., Тимонина~Е.\,Е.} Модель множества 
+информационных пространств в~задаче поиска инсайдера~// Информатика и~её применения, 
+2017. Т.~11. Вып.~4. С.~65--69.
+
+\bibitem{3-gr} %4
+\Au{Grusho A., Grusho~N., Timonina~E.} Method of several information spaces for identification of 
+anomalies~// Intelligent distributed computing~XIII~/ Eds. I.~Kotenko, C.~Badica, V.~Desnitsky, 
+D.~El Baz, M.~Ivanovic.~--- Studies in computational intelligence ser.~---   
+Springer, 2020.  Vol.~868. P.~515--520. doi: 10.1007/978-3-030-32258-8\_60.
+
+\bibitem{5-gr}
+\Au{Axelsson S.} The base-rate fallacy and 
+the difficulty of intrusion detection~// ACM~T. 
+Inform. Syst. Se., 2000. Vol.~3. Iss.~3. P.~186--205.
+\bibitem{6-gr}
+\Au{Grusho A., Grusho~N., Timonina~E.} The bans in finite probability spaces and the problem of 
+small samples~// Distributed computer and communication networks~/ Eds. V.~Vishnevskiy, 
+K.~Samouylov, D.~Kozyrev.~--- Lecture notes in computer science ser.~--- Springer, 2019.  
+Vol.~11965. P.~578--590.
+\bibitem{7-gr}
+\Au{Колчин В.\,Ф., Севастьянов~Б.\,А., Чистяков~В.\,П.} Случайные размещения.~--- М.: Наука, 
+1976. 224~с.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 02.06.20}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{MATHEMATICAL STATISTICS IN~THE~TASK OF~IDENTIFYING HOSTILE INSIDERS}
+
+
+\def\titkol{Mathematical statistics in~the~task of~identifying hostile insiders}
+
+\def\aut{N.\,A.~Grusho$^1$, M.\,I.~Zabezhailo$^2$, D.\,V.~Smirnov$^3$, E.\,E.~Timonina$^1$, 
+and~S.\,Ya.~Shorgin$^1$}
+
+\def\autkol{N.\,A.~Grusho, M.\,I.~Zabezhailo, D.\,V.~Smirnov, et al.}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+$^1$Institute of Informatics Problems, Federal Research Center ``Computer Sciences and Control'' of 
+the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 44-2~Vavilov Str., Moscow 119133, Russian Federation
+
+\noindent
+$^2$A.\,A.~Dorodnicyn Computing Center, Federal Research Center ``Computer Science and Control'' 
+of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 40~Vavilov Str., Moscow 119333, Russian Federation
+
+\noindent
+$^3$Sberbank of Russia, 19~Vavilov Str., Moscow 117999, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+
+\Abste{The paper explores approaches to identifying hostile insiders
+ of the organization using collusion. The problem of identifying the 
+ organized group of information security violators is one of the most 
+ complex tasks of ensuring the security of organization. The set 
+ of source data for analysis consists of many small samples describing 
+ the functionality of the organization's information technologies. 
+ This set can be considered as big data. The clustering method is 
+ used to reduce the amount of source data that made it possible to 
+ use mathematical statistics efficiently, i.\,e., to identify small 
+ samples carrying information about hostile insiders. The difficulty 
+ of the task was to lose as little as possible the needed small samples. 
+The conditions have been found where in the series scheme, the probability of 
+identifying insiders using collusion tends to~1.}
+
+\KWE{identification of the organized group of hostile insiders; 
+small samples; big data; mathematical statistics}
+
+
+
+\DOI{10.14357/19922264200310} 
+
+%\vspace*{-20pt}
+
+\Ack
+\noindent
+The work was partially supported by the Russian Foundation 
+for Basic Research (project 18-29-03081).
+
+%\vspace*{6pt}
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{1-gr-1}
+\Aue{Gheyas, I., and A.~Abdallah.} 2016. Detection and prediction of insider threats to cyber security: 
+A~systematic literature review and meta-analysis. 
+\textit{Big Data Anal.} 1:1--29.
+doi: 10.1186/s41044-016-0006-0.
+\bibitem{2-gr-1}
+\Aue{Memory, A., H.\,G.~Goldberg, and T.\,E.~Senator.} 2013. Context-aware insider threat detection. 
+\textit{Workshops at 27th Conference on Artificial Intelligence}. 44--47.
+Available at:
+ {\sf 
+https://pdfs.semanticscholar.org/04aa/e6d97900ba62e9\linebreak 0b07ac682fb7bd8c2e1029.pdf}
+(accessed August~13, 2020).
+
+\bibitem{4-gr-1}
+\Aue{Grusho, A.\,A., M.\,I.~Zabezhailo, D.\,V.~Smirnov, and E.\,E.~Timonina.} 2017. Model' 
+mnozhestva informatsionnykh prostranstv v~zadache poiska insaydera [The model of the set of 
+information spaces in the problem of insider detection]. \textit{Informatika i~ee Primeneniya~--- 
+Inform. Appl.} 11(4):65--69.
+
+\bibitem{3-gr-1}
+\Aue{Grusho, A., N.~Grusho, and E.~Timonina.} 2020. Method of several information spaces for 
+identification of anomalies. \textit{Intelligent distributed computing XIII}. Eds. I.~Kotenko, 
+C.~Badica, V.~Desnitsky, D.~El Baz, and M.~Ivanovic. Studies in computational intelligence ser. 
+Springer. 868:515--520.
+
+\bibitem{5-g-1r}
+\Aue{Axelsson, S.} 2000. The base-rate fallacy and its implications for the difficulty of intrusion 
+detection. \textit{ACM~T. Inform. Syst. Se.} 3(3):186--205.
+\bibitem{6-gr-1}
+\Aue{Grusho, A., N.~Grusho, and E.~Timonina.} 2019. The bans in finite probability spaces and the 
+problem of small samples. \textit{Distributed computer and communication networks}. Eds. 
+V.\,M.~Vishnevskiy, K.\,E.~Samouylov, and D.\,V.~Kozyrev. Lecture notes in computer science ser. 
+Springer. 11965:578--590.
+\bibitem{7-gr-1}
+\Aue{Kolchin, V.\,F., B.\,A.~Sevastyanov, and V.\,P.~Chistyakov.} 1976. 
+\textit{Sluchaynye 
+razmeshcheniya} [Random allocations]. Moscow: Nauka. 224~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received June 2, 2020}}
+
+%\pagebreak
+
+%\vspace*{-24pt}
+
+\Contr
+
+\noindent
+\textbf{Grusho Alexander A.} (b.\ 1946)~--- Doctor of Science in physics and mathematics, professor, 
+principal scientist, Institute of Informatics Problems, Federal Research Center ``Computer Sciences 
+and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119133, Russian 
+Federation;  \mbox{grusho@yandex.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Zabezhailo Michael I.} (b.\ 1956)~--- Doctor of Science in physics and mathematics, principal 
+scientist, A.\,A.~Dorodnicyn Computing Center, Federal Research Center ``Computer Science and 
+Control'' of the Russian Academy of Sciences, 40~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{m.zabezhailo@yandex.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Smirnov Dmitry V.} (b.\ 1984)~--- business partner
+ for IT security department, Sberbank of 
+Russia, 19~Vavilov Str., Moscow 117999, Russian Federation; \mbox{dvlsmirnov@sberbank.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Timonina Elena E.} (b.\ 1952)~--- Doctor of Science in technology, professor, leading scientist, 
+Institute of Informatics Problems, Federal Research Center ``Computer Sciences and Control'' of the 
+Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119133, Russian Federation; 
+\mbox{eltimon@yandex.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Shorgin Sergey Ya.} (b.\ 1952)~--- Doctor of Science in physics and mathematics, professor, 
+principal scientist, Institute of Informatics Problems, Federal Research Center ``Computer Sciences 
+and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119133, Russian 
+Federation; \mbox{sshorgin@ipiran.ru}
+
+
+
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

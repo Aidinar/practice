@@ -1,0 +1,701 @@
+\newcommand {\ebd}{\triangleq}
+\newcommand {\ppp}{{\mathcal P}}
+\newcommand {\qqq}{{\mathcal Q}}
+\newcommand{\me}[2]{\mathsf{E}_{ #1 }\left\{ \mathop{#2} \right\} }
+
+
+
+\def\stat{borisov}
+
+\def\tit{РЫНОК С~МАРКОВСКОЙ СКАЧКООБРАЗНОЙ ВОЛАТИЛЬНОСТЬЮ I: МОНИТОРИНГ ЦЕНЫ РИСКА\\
+ КАК ЗАДАЧА ОПТИМАЛЬНОЙ ФИЛЬТРАЦИИ$^*$}
+
+\def\titkol{Рынок с~марковской скачкообразной волатильностью I: мониторинг цены риска как задача оптимальной фильтрации}
+
+\def\aut{А.\,В.~Борисов$^1$}
+
+\def\autkol{А.\,В.~Борисов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Борисов А.\,В.}
+\index{Borisov A.\,V.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена с~использованием инфраструктуры Центра коллективного пользования <<Высокопроизводительные вы\-чис\-ле\-ния и~большие данные>> 
+(ЦКП <<Информатика>>) ФИЦ ИУ РАН (г.~Москва).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук;
+\mbox{aborisov@frccsc.ru}}
+
+\vspace*{-8pt}
+
+
+
+\Abst{Первая часть цикла посвящена исследованию задачи определения рыночной цены риска 
+в~финансовой системе, содержащей безрисковый актив~--- банковский вклад, базовые рисковые инструменты и~их деривативы. 
+Модель эволюции базовых активов, описываемая стохастической дифференциальной системой (СДС), содержит стохастическую волатильность, 
+порожденную скрытым марковским скачкообразным процессом (МСП). Исследуемый рынок предполагается неполным с~отсутствием возможности арбитража. 
+Рыночная цена риска, соответствующая преобладающей мартингальной мере, выражается через скрытый марковский процесс и~не может быть восстановлена точно. 
+Тем не менее она может быть оценена оптимальным образом по наблюдениям цен активов. Исходя из наличия преобладающей мартингальной меры в~статье 
+получена СДС в~частных производных, описывающая эволюцию во времени цены деривативов и~являющаяся аналогом
+ классического уравнения Блэ\-ка--Шоул\-за. Задача оценки рыночной цены риска сформулирована в~терминах оптимальной фильт\-ра\-ции 
+ состояния СДС наблюдения. Также обсуждаются вопросы численной реализации решения данной задачи оценивания.}
+
+
+\KW{марковский скачкообразный процесс; оптимальная фильтрация; стохастическая волатильность; рыночная цена риска; преобладающая мартингальная мера}
+
+  \DOI{10.14357/19922264230204}{GAXCHQ}
+  
+\vspace*{-2pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+ \section{Введение}
+
+ Одна из практических проблем, привлекающих  решение задачи фильтрации состояний стохастических систем,~--- 
+ мониторинг внутренней волатильности базовых финансовых инструментов по разнородным наблюдениям их цен~\cite{EMT_02, GKL_05, CLR_06}. 
+ Помимо цен основных инструментов в~качестве доступной статистической информации присутствует богатейший объем данных 
+ о~торгах производными инструментами (деривативами). В~работе~\cite{R_04} предложен один из способов использования такого массива данных.
+  Для этого была выбрана концепция неполных безарбитражных рынков~\cite{B_98, D_01}. Зависимость\linebreak цены деривативов от текущих цен базовых активов 
+  и~времени до погашения определялась относительно преобладающей мартингальной меры с~по\-мощью формулы Фейн\-ма\-на--Ка\-ца. 
+  Эта мера\linebreak \mbox{определялась} в~терминах рыночной цены риска (Market Price of Risk, MPR)~--- некоторого <<внеш\-не\-го>> ненаблюдаемого процесса, 
+  связывающего\linebreak мгновенную процентную ставку и~внутреннюю волатильность. Таким образом, решение задачи\linebreak оценивания MPR в~реальном масштабе 
+  времени поз\-во\-ля\-ет получить и~оценки внутренней во\-ла\-тиль\-ности.
+  { %\looseness=1
+  
+  }
+
+ Автор~\cite{R_04} распространяет концепцию MPR, ранее использовавшуюся преимущественно для описания колебаний процентных ставок 
+ по бескупонным облигациям, ставок по кредитам и~пр.\ (см., например,~\cite{DS_00} и~ссылки внутри), на класс базовых рисковых активов. 
+ В~качестве возможных моделей MPR были выбраны диффузионные процессы~--- решения СДС с~винеровскими процессами в~правой 
+ части. Основной результат~\cite{R_04} заключается в~формулировке задачи оценивания MPR по наблюдениям базовых активов и~деривативов в~виде 
+ задачи фильт\-ра\-ции состояний СДС в~самом общем виде. Эта проб\-ле\-ма весьма сложна для ее как аналитического, так и~численного решения.
+
+ Представляемая работа посвящена исследованию упомянутой задачи в~случае, когда MPR определяется поведением внешнего 
+ ненаблюдаемого МСП с~конечным числом состояний. Цель статьи заключается в~исследовании задачи 
+ мониторинга MPR по имеющимся наблюдениям цен базовых активов и~деривативов в~рамках математического аппарата стохастического анализа. 
+ Статья имеет следующую структуру. В~разд.~2 представлено описание исследуемого класса финансовых систем, включающего банковский депозит, 
+ базовые рисковые активы и~их деривативы. Ставка по депозиту является детерминированной, а~цены базовых активов и~деривативов описываются 
+ наблюдаемыми случайными процессами. Мгновенные ставки и~внутренние волатильности базовых активов зависят от скрытого МСП. 
+ Уравнения динамики деривативов отсутствуют.
+
+ Относительно исследуемого класса сис\-тем известно, что он соответствует неполному без\-ар\-бит\-раж\-но\-му рынку.
+  Данные условия гарантируют \mbox{существование} некоторой преобладающей мартингальной меры, относительно которой 
+  все базовые активы имеют одинаковую процентную ставку, совпадающую с~депозитной. Существование такой меры позволило характеризовать 
+  временн$\acute{\mbox{у}}$ю эволюцию деривативов в~форме решения системы линейных дифференциальных уравнений в~частных производных~--- 
+  некоторого обобщения уравнения Блэ\-ка--Шоул\-за~\cite{Sh_98}. Таким образом, корректно построена стохастическая дифференциальная модель наблюдения, 
+  в~которой в~качестве ненаблюдаемого состояния выступает скрытый фак\-тор-про\-цесс и~модели наблюдаемых цен базовых активов и~их деривативов 
+  пол\-ностью определены. Оценивание MPR в~реальном масштабе времени эквивалентно фильтрации состояний скрытого МСП. Эти выкладки содержатся в~разд.~3.
+
+ Полученная система наблюдения обладает некоторыми свойствами, препятствующими непосредственному применению известных методов 
+ оптимальной нелинейной фильтрации для построения оценок МСП: поток $\sigma$-под\-ал\-гебр, порожденный наблюдениями, не является непрерывным справа,
+  шумы в~наблюдениях вырождены и~пр. Раздел~4 статьи посвящен перспективам теоретических исследований и~численной реализации полученной задачи фильт\-ра\-ции.
+  
+  \vspace*{-6pt}
+  
+  \section{Описание модели финансовой системы}
+  
+  На отрезке времени $[0,T]$ рассматривается финансовая сис\-те\-ма, со\-сто\-ящая из
+  банковского вклада,
+$N$ базовых финансовых инструментов~$S$ и~$M$ деривативов~$F$.
+
+  Ставка~$r_t$ банковского вклада известна и~неслучайна.
+  Эволюция цен базовых активов определяется на базисе с~фильтрацией $(\Omega, \F, \ppp, \{\F_t\}_{t \in [0,T]})$ 
+  как наблюдаемый случайный процесс $S_t \hm\ebd \mathrm{col}\left(S_t^1,\ldots,S_t^N\right)$~--- единственное сильное решение СДС:
+  \begin{multline}
+  dS_t = \mathrm{diag}\, S_t a\left(t,Z_t\right)dt + \mathrm{diag}\, S_t \sigma(t,Z_t)\,dw_t,\\ t \in (0,T], \enskip S_0 \sim \pi_0(s),
+  \label{eq:S_sys_P}
+  \end{multline}
+  где
+  \begin{itemize}
+  \item   $S_0$~--- $\F_0$-из\-ме\-ри\-мое начальное условие;
+  \item
+  $w_t = \mathrm{col}\left(w_t^1,\ldots,w_t^K\right)\hm \in \mathbb{R}^K$~--- $\F_t$-со\-гла\-со\-ван\-ный стандартный винеровский процесс ($K \hm\geqslant N$);
+  \item
+  $a(\cdot,\cdot)$, $\sigma(\cdot,\cdot)$~--- $(N \times 1)$- и~$(N \times K)$-мер\-ные 
+  функции мгновенной процентной ставки  и~внутренней волатильности базовых инструментов~$S$; 
+  $\sigma(\cdot,\cdot)$ имеет полный строчный ранг $\ppp$-п.~н.\ почти везде по мере Лебега на $[0,T]$;
+  \item
+  $Z_t$~--- $\F_t$-со\-гла\-со\-ван\-ный ненаблюдаемый (скрытый) процесс, описывающий действие на финансовую систему неконтролируемых внешних факторов.
+  \end{itemize}
+ 
+ В~(\ref{eq:S_sys_P}) $Z_t \hm= \mathrm{col}\left(Z_t^1, \ldots, Z_t^{\ell}\right) \hm\in \mathbb{S}^L\hm = \{e_1,\ldots, e_{\ell}\}$ 
+ представляет собой неоднородный МСП с~конечным множеством состояний~--- набором координатных ортов евклидова пространства~$\mathbb{R}^L$, 
+ известной мат\-рич\-но\-знач\-ной функцией интенсивностей переходов~$\Lambda(\cdot)$ и~начальным распределением~$\pi_0^Z$. 
+ Дополнительно о~$Z$ предполагается, что все компоненты его распределения строго положительны на $[0,T]$. Известно~\cite{EAM_10}, что
+  МСП $Z_t$~--- единственное сильное решение СДС
+  \begin{equation}
+  dZ_t = \Lambda^{\top}(t)Z_t\,dt + dM_t,\enskip t \in (0,T], \enskip Z_0 \sim \pi_0^Z,
+  \label{eq:Z_sys}
+  \end{equation}
+  где
+  $M_t = \mathrm{col}\,(M_t^1,\ldots,M_t^L) \hm\in \mathbb{R}^L$~--- некоторый $\F_t$-со\-гла\-со\-ван\-ный мартингал.
+  
+
+  Для исследуемой финансовой сис\-те\-мы предполагается отсутствие арбитража~\cite{Criens_20} 
+  и~существование на измеримом пространстве $(\Omega, \F)$ преобладающей мартингальной меры $\qqq$, $\qqq \hm\sim \ppp$,
+   для которой выполнены следующие условия.
+  \begin{enumerate}[1.]
+  \item
+  Процесс $M_t$ является мартингалом относительно меры~$\qqq$.
+  \item
+  Относительно $\qqq$ процесс $S_t$~--- единственное сильное решение СДС
+  \begin{multline}
+  dS_t =r_t S_t \,dt + \mathrm{diag}\,S_t \sigma(t,Z_t)\,dw_t^{\qqq},\\
+   t \in (0,T], \enskip S_0 \sim \pi_0(s),
+  \label{eq:S_sys_Q}
+  \end{multline}
+  в~которой $w_t^{\qqq} \hm\in \mathbb{R}^K$~--- $\F_t$-со\-гла\-со\-ван\-ный стандартный винеровский процесс.
+  \end{enumerate}
+  Согласно обобщенной теореме Гирсанова~\cite{KE_15} винеровский процесс~$w_t^{\qqq}$ связан с~исходным~$w_t$ равенством
+   \begin{equation}
+  dw_t^{\qqq} = \theta_t\,dt + dw_t,
+  \label{eq:w_con}
+  \end{equation}
+  где $\theta_t \in \mathbb{R}^K$~--- недоступный наблюдению $\F_t$-со\-гла\-со\-ван\-ный процесс MPR.
+
+Момент погашения всех деривативов совпадает с~$T$ и~соответствует
+платежному требованию 
+$$
+H(S_T) = \mathrm{col}\,(H^1(S_T),\ldots, H^M(S_T)),
+$$
+ где $H(s) \hm= \mathrm{col}\,(H^1(s),\ldots, H^M(s))$~--- 
+известная детерминированная век\-тор-функ\-ция.
+Эволюция цен производных финансовых инструментов является наблюдаемым $\F_t$-со\-гла\-со\-ван\-ным специальным семимартингалом 
+$F_t \hm= \mathrm{col}\,(F_t^1, \ldots, F_t^M)$,  таким что $F_T \hm= H(S_T))$ $\ppp$-п.~н.
+
+Данный рынок является неполным и~означает неединственность мартингальной вероятностной меры. 
+Точное знание MPR~$\theta_t$ эквивалентно знанию преобладающей вероятностной меры~$\qqq$ и~позволяет решить ряд актуальных финансовых задач, 
+в~том числе задачу построения хеджирующего портфеля~\cite{B_98, Sh_98}. В~рас\-смат\-ри\-ва\-емой задаче MPR 
+недоступна прямому безошибочному наблюдению. Все данные, доступные на момент времени~$t$, описываются $\sigma$-ал\-геб\-рой 
+наблюдений 
+$$
+\mathcal{O}_t \ebd \sigma\{S_u, F_u: \enskip 0  \leqslant u \hm\leqslant t\},
+$$ 
+поэтому при наличии этой информации очевидным представляется поиск условного среднего MPR относительно имеющихся наблюдений: 
+$$
+\widehat{\theta}_t \ebd \me{\ppp}{\theta_t | \mathcal{O}_t}.
+$$
+
+\section{Сведение задачи определения цены риска к~задаче оптимальной фильтрации}
+
+Из уравнений~(\ref{eq:S_sys_P}), (\ref{eq:S_sys_Q}) и~(\ref{eq:w_con}) можно определить связь между функциями~$r$, $a$ и~$\sigma$, 
+с~одной стороны, и~MPR $\theta$~--- с~другой. Подстановкой~(\ref{eq:w_con}) в~(\ref{eq:S_sys_Q}) можно получить СДС~(\ref{eq:S_sys_P}) 
+в~виде представления специального семимартингала. В~силу единственности этого представления равенство
+$$
+\mathrm{diag}\, S_t a(t,Z_t) = r_t S_t +\mathrm{diag}\, S_t a(t,Z_t) \sigma (t,Z_t)\theta_t
+$$
+верно $\ppp$-п.~н. почти везде по мере Лебега на $[0,T]$. Так как 
+все компоненты вектора $S_t$ $\ppp$-п.~н. строго положительны, последнее равенство преобразуется к~виду
+   \begin{equation}
+  \sigma (t,Z_t)\theta_t = a(t,Z_t) - r_t \mathbf{1} ,
+  \label{eq:theta_1}
+  \end{equation}
+  где $\mathbf{1}$~--- век\-тор-стол\-бец подходящей раз\-мер\-ности, со\-став\-лен\-ный из единиц.
+
+  Далее, в~силу того что $Z_t \hm\in \mathbb{S}^L$,  функции~$a$ и~$\sigma$ представимы в~виде
+  $$
+  a(t,Z_t) = \sum\limits_{\ell=1}^L Z_t^{\ell} a^{\ell}(t); \enskip  \sigma(t,Z_t) = \sum\limits_{\ell=1}^L Z_t^{\ell}  \sigma^{\ell}(t),
+$$
+  где 
+  $\{a^{\ell}(t)\}_{\ell= \overline{1,L}}$ и~$\{\sigma^{\ell}(t)\}_{\ell= \overline{1,L}}$~--- наборы известных
+  неслучайных функций~--- <<алфавиты>> мгновенных ставок и~внут\-рен\-них волатильностей: 
+  $$
+  a^{\ell}(t) \hm\ebd a(t,e_{\ell});\enskip \sigma^{\ell}(t) \hm\ebd \sigma(t,e_{\ell}).
+  $$ 
+  
+  В~этом случае сис\-те\-ма~(\ref{eq:theta_1}) принимает вид:
+ \begin{equation*}
+ \sum\limits_{\ell=1}^L Z_t^{\ell} \sigma^{\ell}(t)\theta_t = \sum\limits_{\ell=1}^L Z_t^{\ell} a^{\ell}(t) - r_t \mathbf{1}\,,
+% \label{eq:theta_2}
+ \end{equation*}
+ откуда в~силу условий $\pi^Z(t)\hm>0$ и~$\mathrm{rk}\left(\sigma(\cdot)\right) \hm\equiv K$ следует, что MPR $\theta$ имеет вид:
+ \begin{multline}
+\theta_t = \sum\limits_{\ell=1}^L Z_t^{\ell} \left(\sigma^{\ell}(t)\right)^+ \left( a^{\ell}(t) - r_t \mathbf{1} \right) +{}\\
+{}+
+\sum\limits_{\ell=1}^L Z_t^{\ell}
+\left(I-
+\left(\sigma^{\ell}(t)\right)^+\sigma^{\ell}(t) \right)\xi_t,
+ \label{eq:theta_3}
+ \end{multline}
+ где $I$~--- единичная матрица подходящей размерности; $A^+$~--- мат\-ри\-ца, псев\-до\-об\-рат\-ная мат\-ри\-це~$A$; 
+ $\xi_t \hm\in \mathbb{R}^L$~--- произвольный $\F_t$-со\-гла\-со\-ван\-ный случайный процесс.
+ Второе слагаемое в~(\ref{eq:theta_3}) аннулируется умножением справа на~$\sigma(t,Z_t)$ и~не влияет на превалирующую меру~$\qqq$, 
+ поэтому ниже в~работе считается, что оно в~(\ref{eq:theta_3}) отсутствует. Таким образом, MPR $\theta_t$  является линейным преобразованием МСП~$Z_t$.
+
+Вид функций $F^m(t, S_t, Z_t)$ ($m\hm=\overline{1,M}$) цен деривативов определяется, исходя из отсутствия\linebreak в~исследуемой 
+финансовой сис\-те\-ме арбитража и~наличия мартингальных вероятностных мер, как 
+\mbox{дисконтированное} условное среднее платежного требования~$H$ на момент погашения~$T$, 
+вычисленное относительно преобладающей меры~$\qqq$:
+\begin{equation*}
+F^m\left(t, S_t, Z_t\right) = e^{-\int\nolimits_t^T r_s\,ds}\me{\qqq}{H^m(S_T)|\F_t}.
+%\label{eq:F_m_1}
+\end{equation*}
+Заметим, что $\Pi_t^m \ebd \me{\qqq}{H^m(S_T)|\F_t}$~--- мартингал относительно~$\qqq$~--- представим в~виде
+$$
+\Pi^m = e^{\int\nolimits_t^T r_sds}\sum\limits_{\ell=1}^L Z_t^{\ell} F^{m\ell}(t, S_t),
+$$
+где $F^{m\ell}(t, S_t) \ebd F^m(t, S_t, e_{\ell})$.
+
+Предположим, что $F^{m\ell}$ обладает достаточной степенью гладкости по своим переменным, тогда~$\Pi_t^m$ 
+допускает следующий стохастический дифференциал (ниже в~выкладках зависимость функций от своих аргументов для краткости опущена):
+\begin{multline*}
+d\Pi^m = e^{\int_t^T r\,ds} \left( -r \sum\limits_{\ell=1}^L Z^{\ell} F^{m\ell} \,dt +{}\right.\\
+\left.{}+\sum\limits_{\ell=1}^L dZ^{\ell} F^{m\ell} +  \sum\limits_{\ell=1}^L Z^{\ell} \,dF^{m\ell} \right).
+\end{multline*}
+Рассмотрим отдельно второе и~третье слагаемое в~скобках последнего выражения:
+
+\vspace*{-3pt}
+\noindent
+\begin{multline*}
+\sum\limits_{\ell=1}^L dZ^{\ell} F^{m\ell} = \sum\limits_{\ell=1}^L e_{\ell}^{\top}\left( \Lambda^{\top}Z\,dt + dM\right) F^{m\ell} ={}\\
+{}=
+\sum\limits_{i,j,\ell=1}^L e_{\ell}^i  \Lambda^{ji}Z^{j} F^{m\ell} \,dt + \sum\limits_{\ell=1}^L F^{m\ell} \,dM^{\ell} ={} \\
+{} =
+\sum\limits_{\ell=1}^L Z^{\ell} \sum\limits_{j=1}^L \Lambda^{\ell j}F^{mj}\,dt + \sum\limits_{\ell=1}^L F^{m\ell} \,dM^{\ell};
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+\sum\limits_{\ell=1}^L Z^{\ell}\, dF^{m\ell} = \sum\limits_{\ell=1}^L Z^{\ell}
+\Bigg(
+F_t^{m\ell}\,dt + \sum\limits_{n=1}^N F_{s^n}^{m\ell} \,dS^n +{}\\
+{}+ \fr{1}{2}  \sum\limits_{i,j=1}^N F_{s^i,s^j}^{m\ell}\, d\langle S^i,S^j \rangle \Bigg)
+= 
+\sum\limits_{\ell=1}^L Z^{\ell}\Bigg(
+F_t^{m\ell}\,dt +{}\\
+{}+ \sum\limits_{n=1}^NF_{s^n}^{m\ell}\left(
+S^n a^{\ell}_n \,dt + S^n \sum\limits_{k=1}^K \sigma_{nk}^{\ell}\,dw^k
+\right)
++{}\\
+{}+
+\fr{1}{2}  \sum\limits_{i,j=1}^N F_{s^i,s^j}^{m\ell}\,d \langle S^i,S^j \rangle
+\Bigg),
+\end{multline*}
+где
+
+\vspace*{-3pt}
+
+\noindent
+\begin{align*}
+F_t^{m\ell} &\ebd \fr{\partial F^{m\ell}(t,s)}{\partial t}\Bigl|_{(t,S_t)};\\
+F_{s^n}^{m\ell} &\ebd \fr{\partial F^{m\ell}(t,s)}{\partial s^n}\Bigl|_{(t,S_t)}; \\
+F_{s^i,s^j}^{m\ell}& \ebd \fr{\partial^2 F^{m\ell}(t,s)}{\partial s^i \partial s^j}\Bigl|_{(t,S_t)}.
+\end{align*}
+Используем в~третьем слагаемом формулы~(\ref{eq:w_con}), (\ref{eq:theta_3}) и~обозначение
+$\nabla_s F^{m\ell} \ebd \mathrm{col} \left(
+F_{s^1}^{m\ell},\ldots, F_{s^N}^{m\ell}
+\right)$:
+\begin{multline*}
+\sum\limits_{\ell=1}^L Z^{\ell} \sum\limits_{n=1}^N \sum\limits_{k=1}^K
+F_{s^n}^{m\ell} S^n \sigma_{nk}^{\ell}\, dw^k ={}\\
+{}= \sum\limits_{\ell=1}^L Z^{\ell}
+\left( \nabla_s F^{m\ell} \right)^{\top} \mathrm{diag}\, (S) \sigma^{\ell}\,dw = {}\\ 
+{}=
+\sum\limits_{\ell=1}^L Z^{\ell}
+\left( \nabla_s F^{m\ell} \right)^{\top} \mathrm{diag}\,(S) \sigma^{\ell}(dw^{\qqq}-\theta \,dt) ={} \\
+{} =
+\sum\limits_{\ell=1}^L Z^{\ell}
+\left( \nabla_s F^{m\ell} \right)^{\top} \mathrm{diag}\, (S)(r \mathbf{1} - a^{\ell})\,dt+{}\\
+{}+
+\sum\limits_{\ell=1}^L Z^{\ell}
+\left( \nabla_s F^{m\ell} \right)^{\top} \mathrm{diag}\, (S) \sigma^{\ell}\,dw^{\qqq}.
+\end{multline*}
+Если 
+$$
+B^{\ell}(t) \ebd \sigma^{\ell}(t)\left(\sigma^{\ell}(t)\right)^{\top}\hm=\|B_{ij}^{\ell}(t)\|_{i,j=\overline{1,K}},
+$$
+то~$\Pi^m$ допускает дифференциал:
+
+\columnbreak
+
+\noindent
+\begin{multline*}
+d\Pi^m = e^{\int_t^T r\,ds}
+\Bigg(
+\sum\limits_{\ell=1}^L
+F^{m\ell}\,dM^{\ell} +{}\\
+{}+ \sum\limits_{\ell=1}^L Z^{\ell}
+\left( \nabla_s F^{m\ell} \right)^{\top} \mathrm{diag}\,(S) \sigma^{\ell}\,dw^{\qqq}
+\Bigg) + {}\\
+{}+
+e^{\int\nolimits_t^T r\,ds}
+\sum\limits_{\ell=1}^L Z^{\ell}
+\Bigg[ -rF^{m\ell} + \sum\limits_{j=1}^L \Lambda^{\ell j}F^{mj} + F_t^{m\ell}+{}\\
+{}+
+\left(\nabla_s F^{m\ell} \right)^{\top} \mathrm{diag}\, (S)(r \mathbf{1} - a^{\ell})
++{}\\
+{}+\fr{1}{2} \sum\limits_{i,j=1}^N F_{s^i,s^j}^{m\ell}S^iS^jB_{ij}^{\ell}
+\Bigg]dt.
+\end{multline*}
+Первое слагаемое в~нем представляет собой дифференциал мартингала относительно меры~$\qqq$, второе~--- 
+дифференциал процесса с~ограниченной вариацией. Мартингальное свойство процессов~$\{\Pi^m\}$ относительно~$\qqq$, 
+а~также поэлементное выполнение неравенств $\pi^Z(t)\hm > 0$ на отрезке $[0,T]$ позволяют определить функции цены~$\{F^{m\ell}(t,s)\}$ 
+как решение сис\-те\-мы уравнений Колмогорова~\cite{GS_3_75}:
+\begin{equation}
+\left.
+\begin{array}{l}
+F_t^{m\ell} = rF^{m\ell} - \displaystyle\sum\limits_{j=1}^L \Lambda^{\ell j}F^{mj} - {}\\[6pt]
+{}-\displaystyle \sum\limits_{n=1}^N F_{s^n}^{m\ell}s^n(r - a_n^{\ell}) - 
+ \fr{1}{2}  \sum\limits_{i,j=1}^N s^is^j F_{s^i,s^j}^{m\ell}B_{ij}^{\ell},\\[6pt]
+ \hspace*{18.5mm}  \ell=\overline{1,M}, \enskip m=\overline{1,M}, \enskip
+t \in [0,T];\\[6pt]
+F^{m\ell}(T,s) = H^m(s).
+\label{eq:F_m_eq}
+\end{array}
+\right\}
+\end{equation}
+Таким образом, деривативы~$F$ допускают стохастический дифференциал
+\begin{multline}
+dF^{m} =
+ \sum\limits_{\ell=1}^L Z^{\ell}
+ \left[
+ r F^{m\ell} + \sum\limits_{n=1}^N F_{s^n}^{m\ell} S^n(a_n^{\ell} - r)
+\right]dt + {}\\
+{}+ \sum\limits_{\ell=1}^L F^{m\ell}\,dM^{\ell} +
+ \sum\limits_{\ell=1}^L Z^{\ell} \sum\limits_{n=1}^N \sum\limits_{k=1}^K F_{s^n}^{m\ell} S^n \sigma_{nk}^{\ell}\,dw^k,\\
+ m=\overline{1,M},\enskip \ell=\overline{1,L}, \enskip F^{m\ell}= F^{m\ell}(t,S_t).
+\label{eq:F_m_obs}
+\end{multline}
+Итак, определение MPR $\theta_t$ в~описанной финансовой системе сводится к~решению задачи оптимальной фильтрации состояний МСП~$Z$~(\ref{eq:Z_sys}) 
+по совокупности наблюдений~$S$~(\ref{eq:S_sys_P}) и~$F$~(\ref{eq:F_m_obs}).
+
+\vspace*{-6pt}
+
+ \section{Заключение}
+ 
+ \vspace*{-2pt}
+ 
+Формулы (\ref{eq:Z_sys}), (\ref{eq:S_sys_P}) и~(\ref{eq:F_m_obs}) задают СДС наблюдения 
+с~МСП в~качестве состояния и~мультипликативными шумами в~наблюдениях. Несмотря на то что теоретическое решение похожей задачи фильтра-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+ции представлено 
+в~\cite{BS_20}, а комплекс алгоритмов численного решения~--- в~\cite{B_20_2_ARC_, B_20_2_ARC}, при решении поставленной в~данной статье задачи возникает
+ ряд теоретических и~реализационных проб\-лем. Прежде всего, обратимся к~теоретическим вопросам.
+
+\textbf{Первое:} поток $\sigma$-ал\-гебр $\{\mathcal{O}_t\}_{t \in [0,T]}$, порожденный наблюдениями~(\ref{eq:S_sys_P}) и~(\ref{eq:F_m_obs}), 
+не является непрерывным справа. Для корректного использования аппарата стохастического анализа можно <<сгладить cправа>> исходные
+ $\sigma$-ал\-геб\-ры наблюдений, т.\,е.\ рас\-смат\-ри\-вать~$\mathcal{O}_{t+}$ вмес\-то~$\mathcal{O}_t$, 
+ и~трансформировать задачу фильтрации в~задачу прогнозирования на малый фиксированный шаг $\delta\hm>0$, т.\,е.\ 
+ в~задачу поиска $\me{\ppp}{Z_t|\mathcal{O}_{(t-\delta)+}}$.
+
+\textbf{Второе:} система наблюдения (\ref{eq:Z_sys}), (\ref{eq:S_sys_P}) и~(\ref{eq:F_m_obs})\linebreak формально не принадлежит классу систем наблюдения, 
+для которых задача фильтрации состояния МСП решена. Уравнение~(\ref{eq:F_m_obs}) цен деривативов нелинейно: коэффициенты сноса 
+и~диффузии зависят от случайного процесса~$S_t$. Тем не менее результат~\cite{BS_20} может быть распространен и~на данную систему: процесс~$S_t$ имеет 
+$\ppp$-п.~н.\ траектории и~доступен наблюдению, поэтому вместо детерминированных коэффициентов можно использовать их наблюдаемые случайные аналоги. 
+Уместна аналогия с~услов\-но-гаус\-сов\-ски\-ми процессами~\cite{LSh_74}, оптимальная фильт\-ра\-ция со\-сто\-яний 
+которых может быть выполнена с~помощью фильтра Кал\-ма\-на--Бью\-си со случайными, но наблюдаемыми па\-ра\-мет\-рами.
+
+\textbf{Третье:} из уравнений~(\ref{eq:S_sys_P}) и~(\ref{eq:F_m_obs}) следует, что шумы в~этих наблюдениях  вырожденные, и~путем 
+линейных преобразований из них можно выделить наблюдаемые компоненты, не содержащие шумов. 
+В~\cite{BS_20} предложен прием, преобразующий подобные наблюдения в~совокупность считающих процессов и~косвенных наблюдений МСП,
+ полученных в~известные детерминированные моменты времени.
+
+Следующие вопросы относятся к~области чис\-лен\-ной реализации решения поставленной задачи фильтрации. 
+Продолжим <<сквозную>> нумерацию проблем.
+
+\textbf{Четвертое:} численные алгоритмы фильтрации~\cite{B_20_2_ARC} разработаны для систем наблюдения, в~которых параметры динамики и~наблюдений 
+не зависят от времени. В~рас\-смот\-рен\-ной финансовой задаче это принципиально не так: с~приближением к~моменту погашения деривативов
+ их цена изменяется даже при условии постоянства цены базовых активов. Предложенные 
+ в~\cite{B_20_2_ARC} численные алгоритмы применимы и~в этом случае, однако из-за нестационарности сис\-те\-мы наблюдения они будут порождать 
+ дополнительные ошибки, наличие которых следует принимать во внимание.
+ 
+ \columnbreak
+
+\textbf{Пятое:} определение функции $F$ цены деривативов как решение сис\-те\-мы~(\ref{eq:F_m_eq}) представляется самостоятельной нетривиальной задачей.
+Аналитическое решение ее отсутствует, а~применяемые\linebreak чис\-лен\-ные методы должны обеспечивать достаточную точ\-ность аппроксимации 
+не только самих функций~$F^{m\ell}$, но и~их частных производных~$F^{m\ell}_{s^n}$, так как они входят в~мат\-ри\-цу наблюдений~(\ref{eq:F_m_obs}).
+
+\textbf{Шестое:} наблюдения $F$ (\ref{eq:F_m_obs})~--- это сумма непрерывных и~скачкообразных процессов, которую тео\-ре\-ти\-че\-ски легко разделить. Однако
+непрерывные наблюдения являются идеализацией. В~действительности доступны наблюдения, дискретизованные по времени, либо результаты высокочастотных 
+измерений в~случайные моменты времени~\cite{KCKG_13}. В~таких наблюдениях выделить скачки не пред\-став\-ля\-ет\-ся возможным, нужны новые 
+варианты алгоритмов чис\-лен\-ной фильт\-ра\-ции со\-сто\-яний МСП.
+
+Перечисленные проблемы не представляются непреодолимыми, основа их решения заложена в~работе~\cite{BS_20}.
+По\-сле\-ду\-ющие час\-ти цик\-ла будут посвящены вопросам чис\-лен\-ной реализации решения задачи мониторинга MPR, 
+начиная с~моделирования цен соответствующих активов, эво\-лю\-цио\-ни\-ру\-ющих в~соответствии со скачкообразным изменением MPR, и~заканчивая 
+алгоритмами фильт\-ра\-ции скрытой MPR по име\-ющим\-ся разнородным наблюдениям цен базовых бумаг и~деривативов.
+
+
+{\small\frenchspacing
+ {\baselineskip=12pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{EMT_02} %1
+\Au{Elliott R., Malcolm~W., Tsoi~A.} HMM volatility estimation~// 
+41st IEEE Conference on Decision and Control Proceedings, 2002.~--- Piscataway, NJ, USA: IEEE, 2003. Vol.~1. P.~398--404.
+doi: 10.1109/CDC.2002.1184527.
+
+\bibitem{GKL_05}
+\Au{Голдентаер~Л., Клебанер~Ф., Липцер~Р.} Слежение за функцией волатильности~// Проб\-ле\-мы передачи информации, 2005. Т.~41. Вып.~3. С.~32--50.
+
+\bibitem{CLR_06} %3
+\Au{Cvitani$\acute{\mbox{c}}$~J., Liptser~R., Rozovskii~B.} A~filtering approach to tracking volatility from prices observed at random times~// 
+Ann. Appl. Probab.,  2006. Vol.~16. No.\,3. P.~1633--1652. doi: 10.1214/105051606000000222.
+
+\bibitem{R_04} %4
+\Au{Runggaldier W.} Estimation via stochastic filtering in financial market models~// Contemp. Math., 2004. Vol.~351.  P.~309--318.
+doi: 10.1090/conm/351/06412.
+
+\bibitem{B_98} %5
+\Au{Bj$\ddot{\mbox{o}}$rk T.} Arbitrage theory in continuous time.~--- New York, NY, USA: Oxford University Press, 1998. 324~p.
+
+\bibitem{D_01} %6
+\Au{Duffie D.} Dynamic asset pricing theory.~--- Princeton, NJ, USA: Princeton University Press, 2001. 472~p.
+
+\bibitem{DS_00} %7
+\Au{Dai Q., Singleton~K.} Specification analysis of affine term structure models~//
+J.~Financ., 2000. Vol.~55. No.\,5. P.~1943--1978. doi: 10.1111/0022-1082.00278.
+
+ \bibitem{Sh_98} %8
+ \Au{Shiryayev A.} Essentials of stochastic finance: Facts, models, theory.~--- New Jersey, NJ, USA: World Scientific, 1999. 834~p.
+
+ 
+
+ \bibitem{EAM_10} %9
+ \Au{Elliott R., Moore~J., Aggoun~L.} Hidden Markov models: Estimation and control.~--- New York, NY, USA: Springer, 2010. 382~p.
+ 
+  \bibitem{Criens_20} %10
+\Au{Criens D.} No arbitrage in continuous financial markets~// Math. Financ. Econ., 2020. Vol.~14. P.~461--506.
+
+
+ \bibitem{KE_15}
+ \Au{Cohen S., Elliott~R.} Stochastic calculus and applications.~--- New York,~NY, USA:~Birkh$\ddot{\mbox{a}}$user, 2015. 666~p.
+
+ \bibitem{GS_3_75}
+ \Au{Gihman I., Skorohod~A.} The theory of stochastic processes III.~--- New York, NY, USA: Springer, 1979.~388~p.
+
+   \bibitem{BS_20}
+ \Au{Borisov A., Sokolov~I.} Optimal filtering of Markov jump processes given observations with state-dependent noises: Exact 
+ solution and stable numerical schemes~// Mathematics, 2020. Vol.~8. No.\,4. Art. No.\,506.
+
+%   \bibitem{B_20_3_ARC}
+%{\it Борисов A.} Алгоритм робастной фильтрации марковских скачкообразных процессов по высокочастотным считающим наблюдениям~// Автоматика и~телемеханика,~2020.~Вып.~4.~С.~3--20.
+
+%\bibitem{S_55}
+%{\it Smith W.}  Regenerative stochastic processes // Proc. Royal Society of London. Ser. A. Mathematical and Physical Sciences. 1955. V. 232. No. 1188. P.~\mbox{6--31}.
+
+   \bibitem{B_20_2_ARC_}
+\Au{Борисов A.} Численные схемы фильтрации марковских скачкообразных процессов по дискретизованным наблюдениям II: случай аддитивных шумов~// 
+Информатика и~её применения, 2020. Т.~14. Вып.~1. С.~17--23.
+
+  \bibitem{B_20_2_ARC}
+\Au{Борисов A.} Численные схемы фильт\-ра\-ции марковских скачкообразных процессов по дискретизованным наблюдениям III: случай мультипликативных шумов~// 
+Информатика и~её применения, 2020. Т.~14. Вып.~2. С.~10--18.
+
+     \bibitem{LSh_74}
+ \Au{Liptser R., Shiryaev~A.} Statistics of random processes II: Applications.~--- Berlin/Heidelberg: Springer, 2001. 402~p.
+
+  \bibitem{KCKG_13}
+\Au{Королев В., Черток~А., Корчагин~А., Горшенин~А.} 
+Ве\-ро\-ят\-ност\-но-ста\-ти\-сти\-че\-ское моделирование информационных потоков в~слож\-ных финансовых сис\-те\-мах 
+на основе высокочастотных данных~// Информатика и~её применения, 2013. Т.~7. Вып.~1. С.~12--21.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 05.10.22}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{MARKET WITH MARKOV JUMP VOLATILITY I: PRICE OF~RISK MONITORING AS~AN~OPTIMAL FILTERING PROBLEM}
+
+
+\def\titkol{Market with Markov jump volatility I: Price of~risk monitoring as~an~optimal filtering problem}
+
+
+\def\aut{A.\,V.~Borisov}
+
+\def\autkol{A.\,V.~Borisov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-10pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy 
+of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+
+\Abste{The first part of series is devoted to investigating the market price of risk in a~financial system. 
+It contains riskless bank deposits, risky base assets, and their derivatives. The model of the underlying price evolution represents 
+a~stochastic differential system with stochastic volatility which is a~hidden Markov jump process. The investigated market is incomplete and has no 
+arbitrage possibilities. The market price of risk, which corresponds to a~prevailing martingale measure, can be characterized via the 
+hidden Markov jump process but can not be restored precisely. However, it can be estimated optimally using the observations of 
+both the derivative and underlying prices. Using the concept of the prevailing martingale measure existence, one can derive 
+a~system of the partial differential equations which describes an evolution of the derivative prices and represents some analog of the classic Black--Sholes 
+equation. Then, one can convert the calculation problem for the market price of risk to the optimal state filtering in 
+a~differential stochastic observation system. The paper also discusses various aspects of the numerical realization for the stated estimation problem.}
+
+\KWE{Markov jump process; optimal filtering; diffusion and counting observations; multiplicative observation noise; numerical approximation accuracy}
+
+
+
+
+  \DOI{10.14357/19922264230204}{GAXCHQ}
+
+\vspace*{-18pt}
+
+\Ack
+\noindent
+The research was carried out using the infrastructure of the Shared Research Facilities 
+``High Performance Computing and Big Data'' (CKP ``Informatics'') of FRC CSC RAS (Moscow).
+  
+
+\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99} 
+  \bibitem{EMT_02-1} %1
+\Aue{Elliott, R., W.~Malcolm, and A.~Tsoi.} 2002. 
+HMM volatility estimation. \textit{41st IEEE Conference on Decision and Control Proceedings}. Piscataway, NJ: IEEE.
+1:398--404. doi: 10.1109/CDC.2002.1184527.
+
+\bibitem{GKL_05-1}
+\Aue{Goldentayer, L., F.\,K.~Klebaner, and R.\,Sh.~Liptser.} 2005. Tracking volatility.
+\textit{Probl. Inf. Transm.} 41(3):212--229. doi: 10.1007/s11122-005-0026-2.
+
+\bibitem{CLR_06-1}
+\Aue{Cvitani$\acute{\mbox{c}}$,~J., R.~Liptser, and B.~Rozovskii.} 2006. A~filtering approach to tracking volatility from prices observed at random times. 
+\textit{Ann. Appl. Probab.} 16:1633--1652. doi: 10.1214/105051606000000222.
+
+\bibitem{R_04-1}
+\Aue{Runggaldier, W.} 2004. Estimation via stochastic filtering in financial market models. \textit{Contemp. Math.} 351:309--318. 
+doi: 10.1090/conm/351/06412.
+
+\bibitem{B_98-1}
+\Aue{Bj$\ddot{\mbox{o}}$rk, T.} 1998. \textit{Arbitrage theory in continuous time}. New York, NY: Oxford University Press. 324~p.
+
+\bibitem{D_01-1}
+\Aue{Duffie, D.} 2001. \textit{Dynamic asset pricing theory}. Princeton, NJ: Princeton University Press. 472~p.
+
+\bibitem{DS_00-1} %7
+\Aue{Dai, Q., and K.~Singleton.} 2000. Specification analysis of affine term structure models.  \textit{J.~Financ.} 55(5):1943--1978.
+doi: 10.1111/0022-1082.00278.
+
+\bibitem{Sh_98-1} %8
+\Aue{Shiryayev, A.} 1999. \textit{Essentials of stochastic finance: Facts, models, theory}. New Jersey, NJ: World Scientific. 834~p.
+
+
+
+\bibitem{EAM_10-1} %9
+\Aue{Elliott, R., J.~Moore, and L.~Aggoun.} 2010. \textit{Hidden Markov models: Estimation and control}. New York, NY:~Springer. 382~p.
+
+\bibitem{Criens_20-1} %10
+\Aue{Criens, D.} 2020. No arbitrage in continuous financial markets. \textit{Math. Financ. Econ.} 14:461--506.
+doi: 10.1007/ s11579-020-00262-1.
+ 
+\bibitem{KE_15-1}
+\Aue{Cohen, S., and R.~Elliott.} 2015. \textit{Stochastic calculus and applications}. New York, NY: Birkh$\ddot{\mbox{a}}$user. 666~p.
+ 
+\bibitem{GS_3_75-1}
+\Aue{Gihman, I., and A.~Skorohod.} 1979. \textit{The theory of stochastic processes III}. New York, NY: Springer.~388~p.
+  
+\bibitem{BS_20-1} %13
+\Aue{Borisov, A., and I.~Sokolov.}
+ 2020. Optimal filtering of Markov jump processes given observations with state-dependent noises: Exact solution and stable numerical schemes. 
+ \textit{Mathematics} 8(4):506.  doi: 10.3390/ math8040506.
+ 
+\bibitem{B_20_1_ARC-1}
+\Aue{Borisov, A.} 2020. Chislennye skhemy fil'tratsii markovskikh skachkoobraznykh protsessov po diskretizovannym nablyudeniyam II: sluchay additivnykh shumov  
+[Numerical schemes of Markov jump process filtering given discretized observations II: Additive noise case].
+\textit{Informatika i~ee primeneniya~--- Informatics and Applications} 14(1): 117--23. doi: 10.14357/19922264200103.
+
+
+\bibitem{B_20_1_ARC-2}
+\Aue{Borisov, A.} 2020. Chislennye skhemy fil'tratsii mar\-kov\-skikh skachkoobraznykh protsessov po dis\-kre\-ti\-zo\-van\-nym nablyudeniyam III: 
+sluchay mul'tiplikativnykh shu\-mov [Numerical schemes of Markov jump process filtering given discretized observations III: Multiplicative noises case]
+\textit{Informatika i~ee primeneniya~--- Informatics and Applications} 14(2)10--18. doi: 10.14357/19922264200202.
+
+\bibitem{LSh_74-1}
+\Aue{Liptser, R., and A.~Shiryaev.} 2001. \textit{Statistics of random processes II: Applications}. Berlin/Heidelberg: Springer.~402~p.
+ 
+\bibitem{KCKG_13-1}
+\Aue{Korolev, V., A.~Chertok, A.~Korchagin, and A.~Gorshenin.} 2013. 
+Veroyatnostno-statisticheskoe modelirovanie informatsionnykh potokov v~slozhnykh finansovykh sistemakh na osnove vysokochastotnykh dannykh
+[Probability and statistical modeling of information flows in complex financial systems based on high-frequency data].
+\textit{Informatika i~ee primeneniya~--- Informatics and Applications} 7(1)12--21. 
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received October 5, 2022}} 
+
+
+\Contrl
+
+\noindent
+\textbf{Borisov Andrey V.} (b.\ 1965)~--- 
+Doctor of Science in physics and mathematics, principal scientist, Federal Research Center ``Computer Science and Control''
+ of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{aborisov@frccsc.ru}
+
+
+ 
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 
+    

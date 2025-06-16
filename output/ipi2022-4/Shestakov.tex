@@ -1,0 +1,696 @@
+\def\stat{shestakov}
+
+\def\tit{НЕСМЕЩЕННАЯ ОЦЕНКА РИСКА ПОРОГОВОЙ ОБРАБОТКИ
+С~ДВУМЯ ПОРОГОВЫМИ ЗНАЧЕНИЯМИ}
+
+\def\titkol{Несмещенная оценка риска пороговой обработки
+с~двумя пороговыми значениями}
+
+\def\aut{О.\,В.~Шестаков$^1$}
+
+\def\autkol{О.\,В.~Шестаков}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Шестаков О.\,В.}
+\index{Shestakov O.\,V.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{@@@@@@@@@@@@@@Работа выполнена при поддержке РФФИ (проект 20-07-00804).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет 
+имени М.\,В.~Ломоносова, факультет вычислительной математики и~кибернетики; 
+Федеральный исследовательский центр <<Информатика и~управ\-ле\-ние>> Российской 
+академии наук; Московский центр фундаментальной и~при\-клад\-ной математики, 
+\mbox{oshestakov@cs.msu.ru}}
+
+
+%\vspace*{-12pt}
+
+
+
+
+\Abst{Задачи уменьшения уровня шума в~сигналах возникают во многих 
+прикладных областях. В~случаях когда сигналы не являются стационарными, хорошо 
+зарекомендовали себя методы подавления шума, основанные на вейв\-лет-пре\-об\-ра\-зо\-ва\-нии и~процедурах пороговой обработки. Эти методы вычислительно 
+эффективны и~хорошо адаптируются к~локальным особенностям сигналов. Наиболее 
+распространенными видами пороговой обработки стали жесткая и~мягкая пороговая 
+обработка. Однако при использовании жесткой пороговой обработки получаются 
+оценки с~большой дисперсией, а~мягкая пороговая обработка приводит к~появлению 
+дополнительного смещения. В~попытке избавиться от этих недостатков в~последние 
+годы были предложены различные альтернативные виды пороговой обработки. В~данной 
+работе рассматривается процедура пороговой обработки с~двумя порогами, которая 
+ведет себя как мягкая пороговая обработка при малых значениях вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов и~как жесткая при больших. Для данного вида пороговой обработки 
+строится несмещенная оценка среднеквадратичного риска и~анализируются ее 
+статистические свойства. Также описывается алгоритм вычисления пороговых 
+значений, минимизирующих эту оценку.}
+
+\KW{вейвлеты; пороговая обработка; несмещенная оценка риска}
+
+ \DOI{10.14357/19922264220403} 
+  
+%\vspace*{-3pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+В процессе генерации и~передачи сигналы часто загрязняются аддитивным 
+шумом, который в~большинстве случаев предполагается гауссовым. Одной из основных 
+задач ставится уменьшение уровня шума с~сохранением характерных особенностей 
+сигнала. Кратномасштабный анализ, осуществляемый с~по\-мощью вейв\-лет-раз\-ло\-же\-ний, 
+доказал свою эффективность при решении подобных задач. 
+
+При использовании 
+вейвлет-разложения шум\linebreak равномерно распределяется по всем коэффициентам, в~то 
+время как основная часть полезного сигнала сосредоточивается в~нескольких самых 
+больших коэффициентах, т.\,е.\ вейв\-лет-раз\-ло\-же\-ние обеспечива\-ет разреженное 
+(экономное) пред\-став\-ле\-ние сигнала. 
+
+Самым распространенным методом удаления шума 
+из сигнала в~пространстве вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов стала пороговая обработка, 
+в~результате которой коэффициенты, величина которых меньше определенного порога, 
+обнуляются. Наиболее популярны методы жесткой и~мягкой пороговой обработки. 
+Асимптотически оба этих метода оптимальны в~смыс\-ле среднеквадратичного риска 
+с~точ\-ностью до множителя, пропорционального логарифму числа отсчетов сигнала~\cite{DonJ94}. 
+
+Как жест\-кая, так и~мягкая пороговая обработка имеют свои 
+достоинства и~недостатки. Оценки, полученные с~помощью мягкой пороговой 
+обработки, имеют большее смещение, поскольку обработке подвергаются все 
+коэффициенты, в~том числе и~большие. При жесткой пороговой обработке 
+используется разрывная пороговая функция, что приводит к~увеличению дисперсии 
+оценок и~отсутствию устойчивости, т.\,е.\ чувствительности к~незначительным 
+изменениям в~данных. 
+Для устранения этих недостатков предложено множество 
+альтернативных видов пороговой функции, которые представляют собой компромисс 
+между жесткой и~мягкой пороговой обработкой~\cite{BG97,G98, CK05, PK05, LC10, HL10, ZC15, HX15, PR16, HT18}. 
+В~част\-ности, в~работе~\cite{BG97} предлагается 
+использовать пороговую функцию с~двумя пороговыми значениями, которая для малых 
+значений коэффициентов ведет себя как мягкая пороговая обработка, а~для больших~--- как жесткая. 
+
+В~данной работе с~помощью метода Стейна~\cite{S81} строится 
+несмещенная оценка среднеквадратичного риска при такой пороговой обработке. 
+Показывается, что при определенных условиях данная оценка является сильно 
+состоятельной и~асимптотически нормальной. Также обсуждается метод вычисления 
+адаптивного порога, минимизирующего оценку среднеквадратичного риска.
+
+\section{Удаление шума с~помощью пороговой обработки эмпирических вейвлет-коэффициентов}
+
+Предположим, что наблюдается загрязненный шумом дискретный сигнал
+$$
+X_i=f_i+z_i,\enskip i=1,\ldots,N,
+$$
+где $f_i$~--- чистые значения функции сигнала~$f$; $z_i$~--- независимые 
+случайные величины, имеющие нормальное распределение с~нулевым средним 
+и~дисперсией~$\sigma^2$. Требуется оценить вектор <<полезного>> сигнала 
+$f_1,\ldots,f_N$.
+
+Донохо и~Джонстнон~\cite{DonJ94} разработали методику WaveShrink для оценивания 
+данного вектора с~по\-мощью дискретного вейв\-лет-пре\-об\-ра\-зо\-ва\-ния и~пороговой 
+обработки. Данная методика в~определенном смысле <<почти>> оптимальная. 
+В~част\-ности, для широкого класса функций сигналов она с~точностью до множителя~$\log N$ 
+обеспечивает минимаксный порядок среднеквадратичного риска построенной 
+оценки. При этом вейв\-лет-функ\-ция, используемая для дискретного вейв\-лет-пре\-об\-ра\-зо\-ва\-ния, 
+долж\-на удовле\-тво\-рять определенным условиям (подробнее см.~\cite{Mall99}). В~дальнейшем будем полагать, что эти условия выполнены.
+
+Методика WaveShrink основана на принципе обнуления малых по значению вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов для удаления шума. 
+Ее суть заключается в~следующем: к~вектору 
+$X_1,\ldots,X_N$ применяется дискретное вейв\-лет-пре\-об\-ра\-зо\-ва\-ние с~по\-мощью 
+умножения на ортогональную мат\-ри\-цу~$W$, определяемую типом выбранных вейвлетов.
+В результате получаются эмпирические вейв\-лет-ко\-эф\-фи\-ци\-енты
+\begin{equation*}
+Y_{j,k}=\mu_{j,k}+\epsilon_{j,k},\quad j=0,\ldots,J-1,\;k=0,\ldots,2^{j}-1,
+\end{equation*}
+где $\epsilon_{j,k}$ также независимы и~нормально распределены с~нулевым средним
+ и~дисперсией~$\sigma^2$. Затем к~получившимся эмпирическим вейв\-лет-ко\-эф\-фи\-ци\-ен\-там 
+применяется пороговая функция, смысл которой заключается в~обнулении достаточно 
+маленьких коэффициентов, которые считаются шумом.
+После пороговой обработки осуществляется\linebreak
+ обратное вейв\-лет-пре\-об\-ра\-зо\-ва\-ние, 
+которое в~\mbox{силу} ортогональности мат\-ри\-цы~$W$ заключается прос\-то в~умножении 
+вектора обработанных эмпирических вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов на транспонированную 
+мат\-ри\-цу~$W^{*}$.
+
+Донохо и~Джонстон предложили два вида функции пороговой функции. Это функция 
+жесткой пороговой обработки
+
+\noindent
+\begin{equation*}
+\rho_{H}(y,T)=
+\begin{cases}
+y &\mbox{при } \abs{y}>T\,; \\
+ 0 &\mbox{при } \abs{y}\leq T
+\end{cases}
+\end{equation*}
+
+
+\vspace*{-2pt}
+
+\noindent
+и функция мягкой пороговой обработки
+\begin{equation*}
+\rho_{S}(y,T)=
+\begin{cases}
+y-T &\mbox{при } y>T\,; \\
+ y+T &\mbox{при } y<-T\,; \\
+  0 &\mbox{при } \abs{y}\leq T.
+\end{cases}
+\end{equation*}
+
+\vspace*{-2pt}
+
+\noindent
+Здесь $T$~--- некоторое пороговое значение. Жесткая пороговая обработка приводит к~оценкам,\linebreak
+ име\-ющим большую дисперсию (из-за разрывности пороговой функции), 
+а~мягкая пороговая обработка вызывает дополнительное смещение в~оценках (поскольку 
+обработке подвергаются все коэффициенты)~\cite{BG96}. Один из способов 
+справиться с~недостатками жесткой и~мягкой пороговой обработки -- использовать 
+предложенную в~работе~\cite{BG97} пороговую функцию с~двумя пороговыми 
+значениями~$T_1$ и~$T_2$:
+
+\vspace*{-5pt}
+
+\noindent
+\begin{multline}
+\label{FirmShrink}
+\rho_{F}\left(y,T_1,T_2\right)={}\\
+{}=
+\begin{cases}
+y &\mbox{при } \abs{y}\geq T_2\,; \\ 
+\mathrm{sgn}\,(y)\fr{T_2(\abs{y}-T_1)}{T_2-T_1} 
+&\mbox{при } T_1<\abs{y}<T_2\,; \\
+ 0 &\mbox{при } \abs{y}\leq T_1.
+\end{cases}
+\end{multline}
+
+\vspace*{-2pt}
+
+\noindent
+Для абсолютных значений~$y$ вблизи нижнего порога $\rho_{F}(y,T_1,T_2)$ ведет 
+себя как $\rho_{S}(y,T_1)$. Для абсолютных значений $y$ больше верхнего порога 
+$\rho_{F}(y,T_1,T_2)\hm=y$. Отметим, что жесткая пороговая обработка при $T_1 \hm= 
+T_2$ и~мягкая пороговая обработка  при $T_2 \hm= \infty$ являются предельными 
+случаями~\eqref{FirmShrink}.
+
+
+\section{Статистические свойства оценки среднеквадратичного риска}
+
+Целью пороговой обработки, как правило, ставится уменьшение среднеквадратичного 
+риска, который для пороговой функции~$\rho_{F}$ определяется как
+\begin{equation}
+\label{Risk}
+R_J\left(T_1,T_2\right)=\sum\limits_{j=0}^{J-1}\sum\limits_{k=0}^{2^j-1}{\sf E}\left(\hat{Y}_{j,k}-
+\mu_{j,k}\right)^2,
+\end{equation}
+
+\vspace*{-2pt}
+
+\noindent
+где $\hat{Y}_{j,k}=\rho_{F}(Y_{j,k},T_1,T_2)$, и~методы выбора пороговых 
+значений ориентированы на минимизацию~\eqref{Risk}. В~работе~\cite{BG97} 
+рассматривается минимаксный подход. Обозначим через~$\mu$ вектор вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов~$\{\mu_{j,k}\}$. 
+Вводится в~рассмотрение величина
+$$
+\Lambda_J\!=\!\inf\limits_{T_1\leq T_2}\!\sup\limits_{\mu}\left\{\fr{R_J(T_1,T_2)}{\sigma^2\!+\!\sum\nolimits_{j=0}^{J-1}\sum\nolimits_{k=0}^{2^j-1}
+\min\left(\mu_{j,k}^2,\sigma^2\right)}
+\right\}\!.\hspace*{-1.2534pt}
+$$
+
+\noindent
+Величина $\min(\mu_{j,k}^2,\sigma^2)$ служит идеальным среднеквадратичным риском 
+обработки одного коэффициента, при которой коэффициент обнуляется или остается 
+неизменным~\cite{DonJ94}. Таким образом, при минимаксных значениях~$T_1$ и~$T_2$
+\begin{equation*}
+R_J\left(T_1,T_2\right)\leq\Lambda_J\left(\sigma^2+\sum\limits_{j=0}^{J-1}\sum\limits_{k=0}^{2^j-1}\min\left(\mu_{j,k}^2,\sigma^2\right)\right).
+\end{equation*}
+Для жесткой и~мягкой пороговой обработки $\Lambda_J\hm\sim 2\log 2^J$, а~минимаксный 
+порог имеет значение $T\sim\sigma\sqrt{2 \log 2^J}$~\cite{DonJ98}. Для пороговой 
+функции~$\rho_{F}$ в~\cite{BG97} численно исследуются минимаксные значения~$T_1$ и~$T_2$ 
+и~показывается, что удается построить более точные границы для 
+минимаксного риска, чем в~случае жесткой или мягкой пороговой обработки.
+% исследуются пороги вида $T_1=c_1\sigma\sqrt{2 \log 2^J}$, 
+%$T_2=c_2\sigma\sqrt{2 \log 2^J}$ ($c_1<c_2$) и~вычисляются границы для и~минимаксного риска, которые оказываются более точными, чем в~случае жесткой и~
+%мягкой пороговой обработки.
+
+Заметим, что в~выражении \eqref{Risk} присутствуют неизвестные величины 
+$\mu_{j,k}$, поэтому вычислить значение $R_J(T_1,T_2)$ для конкретного вектора 
+$\mu$ на практике нельзя. Однако с~по\-мощью метода Стейна для $R_J(T_1,T_2)$ 
+можно вычислить несмещенную оценку. Пусть $g(Y_{j,k})\hm=Y_{j,k}\hm-\hat{Y}_{j,k}$. 
+Тогда~\cite{S81}
+$$
+{\sf E}\left(\hat{Y}_{j,k}-\mu_{j,k}\right)^2=\sigma^2+{\sf E} g^2(Y_{j,k})-
+2\sigma^2{\sf E} g'(Y_{j,k})\,,
+$$
+и, следовательно, величина $\sigma^2\hm+ g^2(Y_{j,k})\hm-2\sigma^2 g'(Y_{j,k})$ 
+является несмещенной оценкой для ${\sf E}\left(\hat{Y}_{j,k}\hm- \mu_{j,k}\right)^2$.
+Из вида функции $\rho_{F}$ следует, что
+\begin{multline*}
+g(Y_{j,k})=Y_{j,k}\mathbf{1}(\abs{Y_{j,k}}\leq T_1)+{}\\[3pt]
+{}+\fr{T_1(T_2\,\mathrm{sgn}\left(Y_{j,k}\right)-Y_{j,k})}{T_2-T_1}\mathbf{1}\left(T_1<\abs{Y_{j,k}}<T_2\right);
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+g'\left(Y_{j,k}\right)=\mathbf{1}\left(\abs{Y_{j,k}}\leq T_1\right)-{}\\
+{}- \fr{T_1}{T_2-T_1}\,\mathbf{1}\left(T_1<\abs{Y_{j,k}}< T_2\right).
+\end{multline*}
+Таким образом,
+\begin{equation}
+\label{Risk_Estimate}
+\widehat{R}_J(T_1,T_2)=\sum\limits_{j=0}^{J-1}\sum\limits_{k=0}^{2^j-1}H\left(Y_{j,k},T_1,T_2\right),
+\end{equation}
+где
+
+\vspace*{-6pt}
+
+\noindent
+\begin{multline*}
+H\left(Y_{j,k},T_1,T_2\right)={}\\
+{}=
+\begin{cases}
+\sigma^2 &\hspace*{-30mm}\mbox{при } \abs{Y_{j,k}}\geq T_2; \\[6pt] 
+\sigma^2+\fr{T^2_1(T_2\,\mathrm{sgn}\left(Y_{j,k}\right)-Y_{j,k})^2}{(T_2-T_1)^2}+\fr{2\sigma^2T_1}{T_2-T_1} &\\[6pt]
+&\hspace*{-30mm}\mbox{при } T_1<\abs{Y_{j,k}}< T_2; \\[6pt] 
+Y^2_{j,k}-\sigma^2 &\hspace*{-30mm}\mbox{при } \abs{Y_{j,k}}\leq T_1
+\end{cases}
+\end{multline*}
+является несмещенной оценкой для $R_J(T_1,T_2)$.
+
+\columnbreak
+
+Исследования пороговых значений показывают, что пороги, обеспечивающие величину 
+сред\-не\-квад\-ра\-тич\-но\-го риска, близкую к~минимальному, разумно выбирать растущими со 
+ско\-ростью порядка $\sqrt{2 \log 2^J}$~\cite{MAJ98, Jan01}. В~этом случае, 
+повторяя рас\-суж\-де\-ния из работы~\cite{PS19}, можно показать, что при условии 
+принадлежности функции сигнала определенному классу Липшица оценка 
+$\widehat{R}_J(T_1,T_2)$ является сильно состоятельной и~асимптотически 
+нормальной.
+
+\vspace*{2pt}
+
+\noindent
+\textbf{Теорема~1.}\
+\textit{Пусть $f$ задана на отрезке $[a,b]$ и~равномерно регулярна по Липшицу 
+с~показателем $\gamma\hm>1/2$, $T_1\hm=c_1\sigma\sqrt{2 \log 2^J}$ 
+и~$T_2\hm=c_2\sigma\sqrt{2 \log 2^J}$} ($c_1\hm\leq c_2$). \textit{Тогда}
+
+\vspace*{-7pt}
+
+\noindent
+\begin{multline*}
+\mathsf{P}\left(\fr{\widehat{R}_J(T_1,T_2)-
+R_J(T_1,T_2)}{\sigma^2\sqrt{2^{J+1}}}<x\right)\to\Phi(x) \\
+\mbox{ \textit{при} } 
+J\rightarrow\infty\,,
+\end{multline*}
+
+\vspace*{-5pt}
+
+\noindent
+\textit{где $\Phi(x)$~--- функция распределения стандартного нормального закона.}
+
+\vspace*{2pt}
+
+\noindent
+\textbf{Теорема~2.}\
+\textit{Пусть $f$ задана на отрезке $[a,b]$, $f\hm\in  L^2([a,b])$, 
+$T_1\hm=c_1\sigma\sqrt{2 \log 2^J}$ и~$T_2\hm=c_2\sigma\sqrt{2 \log 2^J}$} ($c_1\hm\leq c_2$).
+\textit{Тогда при любом $\lambda\hm>0$}
+\begin{equation*}
+\fr{\widehat{R}_J(T_1,T_2)-R_J(T_1,T_2)}{2^{J(1/2+\lambda)}}\to 0 \;\mbox{\textit{п.в.\ при }} J\rightarrow\infty\,.
+\end{equation*}
+
+\vspace*{-3pt}
+
+
+
+Эти утверждения служат основанием использования величины~\eqref{Risk_Estimate} 
+для оценивания качества при практической обработке сигналов, поскольку для ее 
+вычисления используются только наблюдаемые данные.
+
+\vspace*{-4pt}
+
+\section{Минимизация оценки риска}
+
+\vspace*{-4pt}
+
+Еще одним подходом к~выбору пороговых значений~$T_1$ и~$T_2$ может служить 
+минимизация оценки~\eqref{Risk_Estimate}, т.\,е.\ в~качестве порогов выбираются 
+такие~$T^*_1$ и~$T^*_2$, что
+
+\vspace*{1pt}
+
+\noindent
+$$
+\widehat{R}_J\left(T^*_1,T^*_2\right)=\min\limits_{T_1>0,T_2>0}\widehat{R}_J\left(T_1,T_2\right).
+$$ 
+
+\vspace*{-3pt}
+
+\noindent
+Для поиска этих значений можно использовать следующий алгоритм.
+
+Упорядочим эмпирические коэффициенты $Y_{j,k}$ по убыванию абсолютных значений 
+и~обозначим через~$Y_{(i)}$ $i$-ю координату полученного упорядоченного вектора 
+(без ограничения общности можно полагать, что среди этих значений нет 
+совпа\-да\-ющих).
+Пусть $l$ и~$m$ ($l\hm\leq m$)~--- такие индексы,~что
+\begin{equation}
+\label{restrictions}
+\left\vert Y_{(m)}\right\vert \leq T_1<\left\vert Y_{(m-1)}\right\vert;\enskip \left\vert Y_{(l)}\right\vert < T_2\leq\left\vert Y_{(l-1)}\right\vert.
+\end{equation}
+Если $l=m$, то функция~$\rho_{F}(y,T_1,T_2)$ фактически сводится к~функции 
+жесткой пороговой обработки\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+ с~порогом~$T_2$, поэтому сначала рассмотрим случай 
+$l\hm<m$.
+% Если $l=m$, то выражение $\widehat{R}_J(T_1,T_2)$ фактически сводится к~оценке 
+%риска для жесткой пороговой обработки, поэтому будем полагать, что $l<m$. 
+%Вообще, если $l=m$ то все сводится к~жесткой пороговой обработке с~порогом 
+%$T_2$.
+Имеем
+
+\vspace*{-3pt}
+
+\noindent
+\begin{multline}
+\widehat{R}_J(T_1,T_2)=\sum_{i=1}^{N-1}H(Y_{(i)},T_1,T_2)={}\\
+{}=\sum\limits_{i=1}^{l-1}H\left(Y_{(i)},T_1,T_2\right)+\sum_{i=l}^{m-1}H(Y_{(i)},T_1,T_2)+{}\\
+{}+
+\sum\limits_{i=m}^{N-1}H\left(Y_{(i)},T_1,T_2\right)=\sum\limits_{i=1}^{l-1}\sigma^2+{}\\
+{}+
+\sum\limits_{i=l}^{m-1}\!\left(\sigma^2+\fr{T^2_1\left(T_2\,\mathrm{sgn}\left(Y_{(i)}\right)-Y_{(i)}\right)^2}{(T_2-T_1)^2}+
+\fr{2\sigma^2T_1}{T_2-T_1}\right)+{}\\
+{}+ \sum\limits_{i=m}^{N-1}\left(Y^2_{(i)}-\sigma^2\right)=
+\sum\limits_{i=l}^{m-1}\Bigg(\fr{T^2_1(T_2- \abs{Y_{(i)}})^2}{(T_2-T_1)^2}+{}\\
+{}+\fr{2\sigma^2T_1}{T_2-T_1}\Bigg)+
+\sum\limits_{i=m}^{N-1}Y^2_{(i)}+(2m-1-N)\sigma^2.
+\label{Thresh}
+\end{multline}
+
+\vspace*{-3pt}
+
+\noindent
+При ограничениях~\eqref{restrictions} для любого значения~$T_2$ слагаемые 
+в~первой сумме могут достигать минимального значения только при $T_1\hm=|Y_{(m)}|$. 
+Далее,
+для всех слагаемых в~первой сумме  выполнено $T_1<\abs{Y_{(i)}}<T_2$. 
+Следовательно, выражение
+$$
+\fr{\left(T_2- \abs{Y_{(i)}}\right)^2}{(T_2-T_1)^2}=1+\fr{2\left(\abs{Y_{(i)}}-T_1\right)}{\left(T_2-T_1\right)}+
+\fr{\left(T_1-\abs{Y_{(i)}}\right)^2}{(T_2-T_1)^2}
+$$
+убывает по $T_2$, т.\,е.\ минимальное значение сла\-га\-емых в~первой сумме 
+достигается при $T_2\hm=|Y_{(l-1)}|$.  Если $l\hm=m$, то выражение~\eqref{Thresh} не 
+содержит первой суммы и~при ограничениях~\eqref{restrictions} не зависит от~$T_1$ 
+и~$T_2$. Следовательно, можно также положить $T_1\hm=|Y_{(m)}|$ и~$T_2\hm=|Y_{(l\hm-1)}|$. Таким образом, 
+пороги~$T^*_1$ и~$T^*_2$ следует искать, сравнивая значения~\eqref{Thresh} в~точках 
+$T_1\hm=|Y_{(s)}|$ и~$T_2\hm=|Y_{(t)}|$ при $1\hm\leq t\hm<s\hm\leq N\hm-1$. Те значения, на которых достигается минимум, принимаются за~$T^*_1$ 
+и~$T^*_2$.
+
+Описанный алгоритм обобщает алгоритм поиска порога, минимизирующего оценку риска в~случае мягкой пороговой обработки~\cite{Mall99}.
+
+\vspace*{-5pt}
+
+{\small\frenchspacing
+ {\baselineskip=10.9pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{DonJ94}
+\Au{Donoho D., Johnstone I.\,M.} Ideal spatial adaptation via wavelet 
+shrinkage~// Biometri\-ka, 1994. Vol.~81. No.\,3.
+P.~425--455.
+
+\bibitem{BG97}
+\Au{Bruce A.\,G., Gao~H.-Y.} WaveShrink with firm shrinkage~// Stat. 
+Sinica, 1997. Vol.~7. P.~855--874.
+
+\bibitem{G98}
+\Au{Gao H.-Y.} Wavelet shrinkage denoising using the non-negative garrote~// 
+J. Comput. Graph. Stat., 1998. Vol.~7. No.\,4. P.~469--488.
+
+\bibitem{CK05}
+\Au{Chmelka L., Kozumplik~J.} Wavelet-based wiener filter for 
+electrocardiogram signal denoising~// Comput. Cardiol., 2005. Vol.~32. P.~771--774.
+
+\bibitem{PK05} %5
+\Au{Poornachandra S., Kumaravel~N., Saravanan~T.\,K., Somaskandan~R.} 
+WaveShrink using modified hyper-shrinkage function~// 27th Annual Conference (International) of the IEEE Engineering in Medicine and Biology Society Proceedings.~--- 
+Piscataway, NJ, USA: IEEE, 2005. 
+P.~30--32.
+
+\bibitem{LC10} %6
+\Au{Lin Y., Cai J.} A~new threshold function for signal denoising based on 
+wavelet transform // \textit{Conference (International) on Measuring Technology and Mechatronics Automation Proceedings}.~--- 
+Piscataway, NJ, USA: IEEE, 2010. P.~200--203.
+
+\bibitem{HL10} %7
+\Au{Huang H.-C., Lee T.\,C.\,M.} Stabilized thresholding with generalized sure 
+for image denoising~// 17th Conference (International) on Image Processing Proceedings.~--- 
+Piscataway, NJ, USA: IEEE, 2010. P.~1881--1884.
+
+\bibitem{ZC15} %8
+\Au{Zhao R.-M., Cui H.-M.} Improved threshold denoising method based on 
+wavelet transform~// 7th Conference (International) on Modelling, Identification and Control Proceedings.~--- Piscataway, NJ, USA: IEEE, 2015. Art.~7409352.
+4~p.
+
+\bibitem{HX15} %9
+\Au{He C., Xing J., Li~J., Yang~Q., Wang~R.} A~new wavelet thresholding 
+function based on hyperbolic tangent function~// Math. Probl. Eng., 2015. Vol.~2015. Art.~528656. 10~p.
+
+\bibitem{PR16}
+\Au{Priya K.\,D., Rao G.\,S., Rao~P.\,S.} Comparative analysis of wavelet 
+thresholding techniques with wavelet-wiener filter on ECG signal~// Procedia 
+Comput. Sci., 2016. Vol.~87. P.~178--183.
+
+\bibitem{HT18}
+\Au{He H., Tan Y.} A novel adaptive wavelet thresholding with identical 
+correlation shrinkage function for ECG noise removal // Chinese J. Electron., 
+2018. Vol.~27. No.~3. P.~507--513.
+
+\bibitem{S81}
+\Au{Stein C.} Estimation of the mean of a multivariate normal distribution~// Ann. Stat., 1981. Vol.~9. No.\,6. P.~1135--1151.
+
+\bibitem{Mall99}
+\Au{Mallat S.} A Wavelet tour of signal processing.~--- New York, NY, 
+USA: Academic Press, 1999. 857~p.
+
+\bibitem{BG96}
+\Au{Bruce A.\,G., Gao~H.-Y.} Understanding WaveShrink: Variance and bias 
+estimation~// Biometrika, 1996. Vol.~83. P.~727--745.
+
+\bibitem{DonJ98}
+\Au{Donoho D., Johnstone I.\,M.} Minimax estimation via wavelet shrinkage~// 
+Ann. Stat., 1998. Vol.~26. No.\,3. P.~879--921.
+
+\bibitem{MAJ98}
+\Au{Marron J.\,S., Adak~S., Johnstone~I.\,M., Neumann~M.\,H., Patil~P.} 
+Exact risk analysis of wavelet regression~// J.~Comput. Graph. Stat., 1998. 
+Vol.~7. P.~278--309.
+
+\bibitem{Jan01}
+\Au{Jansen M.} Noise reduction by wavelet thresholding.~--- Lecture notes in 
+statistics ser.~--- Springer, 2001. Vol.~161. 217~p.
+
+\bibitem{PS19}
+\Au{Попенова П.\,С., Шестаков~О.\,В.} Анализ статистических свойств метода 
+гибридной пороговой обработки~// Вестник ТвГУ. Сер.: Прикладная математика, 
+2019. №\,1. С.~15--22.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-8pt}
+
+\hfill{\small\textit{Поступила в~редакцию 05.08.22}}
+
+%\vspace*{8pt}
+
+\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{UNBIASED THRESHOLDING RISK ESTIMATE WITH~TWO~THRESHOLD~VALUES}
+
+
+\def\titkol{Unbiased thresholding risk estimate with~two threshold values}
+
+
+\def\aut{O.\,V.~Shestakov$^{1,2,3}$}
+
+\def\autkol{O.\,V.~Shestakov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-8pt}
+
+
+\noindent
+$^1$Department of Mathematical Statistics, Faculty of Computational Mathematics and Cybernetics, M.\,V.~Lomo-\linebreak
+$\hphantom{^1}$nosov Moscow State University, 
+1-52~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation
+
+
+
+\noindent
+$^2$Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov\linebreak
+$\hphantom{^1}$Str., Moscow 119333, Russian Federation
+
+\noindent
+$^3$Moscow Center for Fundamental and Applied Mathematics, M.\,V.~Lomonosov Moscow State University,\linebreak
+$\hphantom{^1}$1~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+
+
+
+\Abste{The problems of noise reduction in signals arise in many application areas. In cases where the signals are not stationary, 
+noise suppression methods based on wavelet transform and thresholding procedures have proven themselves well. 
+These methods are computationally efficient and adapt well to the local features of the signals.
+ The most common types of thresholding are hard and soft thresholding. 
+ However, when using hard thresholding, estimates with large variance are obtained, and soft thresholding leads to additional bias. 
+ In an attempt to get rid of these shortcomings, various alternative types of thresholding have been proposed in recent years. 
+ This paper considers a~thresholding procedure with two thresholds which behaves as soft thresholding for small values of wavelet coefficients 
+ and as hard thresholding for the large ones. For this type of thresholding, an unbiased estimate of the mean-square risk is constructed and 
+ its statistical properties are analyzed. 
+An algorithm for calculating the threshold values that minimizes this estimate is described.}
+
+
+\KWE{wavelets; thresholding; unbiased risk estimate}
+
+
+
+
+ \DOI{10.14357/19922264220403} 
+
+%\vspace*{-16pt}
+
+
+%\Ack
+%\noindent
+%@@@@@@@@The paper was published with the financial support of the Ministry of Education and Science of the Russian Federation as part of the program of the
+% Moscow Center for Fundamental and Applied Mathematics under the agreement No.\,075-15-2022-284.
+
+\vspace*{5pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.5pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-she}
+\Aue{Donoho, D., and I.\,M.~Johnstone.} 1994. Ideal spatial adaptation via wavelet shrinkage. \textit{Biometrika} 81(3):425--455.
+\bibitem{2-she}
+\Aue{Bruce, A.\,G., and H.-Y.~Gao.} 1997. WaveShrink with firm shrinkage. \textit{Stat. Sinica} 7:855--874.
+\bibitem{3-she}
+\Aue{Gao, H.-Y.} 1998. Wavelet shrinkage denoising using the non-negative garrote. \textit{J.~Comput. Graph. Stat.} 7(4):469--488.
+\bibitem{4-she}
+\Aue{Chmelka, L., and J.~Kozumplik.} 2005. Wavelet-based wiener filter for electrocardiogram signal denoising. \textit{Comput. Cardiol.} 32:771--774.
+\bibitem{5-she}
+\Aue{Poornachandra, S., N.~Kumaravel, T.\,K.~Saravanan, and R.~Somaskandan.} 2005. 
+WaveShrink using modified hyper-shrinkage function. 
+\textit{27th Annual Conference (International) of the IEEE Engineering in Medicine and Biology Society Proceedings}. Piscataway, NJ: IEEE. 30--32.
+\bibitem{6-she}
+\Aue{Lin, Y., and J.~Cai.} 2010. A~new threshold function for signal denoising based on wavelet transform. 
+\textit{Conference (International) on Measuring Technology and Mechatronics Automation Proceedings}. Piscataway, NJ: IEEE. 200--203.
+\bibitem{7-she}
+\Aue{Huang, H.-C., and T.\,C.\,M.~Lee.} 2010. Stabilized thresholding with generalized sure for image denoising. 
+\textit{17th Conference (International) on Image Processing Proceedings}. Piscataway, NJ: IEEE. 1881--1884.
+\bibitem{8-she}
+\Aue{Zhao, R.-M., and H.-M.~Cui.} 2015. Improved threshold denoising method based on wavelet transform. 
+\textit{7th Conference (International) on Modelling, Identification and Control Proceedings}. Piscataway, NJ: IEEE. Art. 7409352. 4~p.
+\bibitem{9-she}
+\Aue{He, C., J.~Xing, J.~Li, Q.~Yang, and R.~Wang.} 2015. A~new wavelet thresholding function based on hyperbolic tangent function. 
+\textit{Math. Probl. Eng.} 2015:528656. 10~p.
+\bibitem{10-she}
+\Aue{Priya, K.\,D., G.\,S.~Rao, and P.\,S.~Rao.} 2016. Comparative analysis of wavelet thresholding techniques with wavelet-wiener filter on ECG signal. 
+\textit{Procedia Comput. Sci.} 87:178--183.
+\bibitem{11-she}
+\Aue{He, H., and Y.~Tan.} 2018. A~novel adaptive wavelet thresholding with identical correlation shrinkage function for ECG noise removal. 
+\textit{Chinese J.~Electron.} 27(3):507--513.
+\bibitem{12-she}
+\Aue{Stein, C.} 1981. Estimation of the mean of a multivariate normal distribution. \textit{Ann. Stat.} 9(6):1135--1151.
+\bibitem{13-she}
+\Aue{Mallat, S.} 1999. \textit{A~wavelet tour of signal processing}. New York, NY: Academic Press. 857~p.
+\bibitem{14-she}
+\Aue{Bruce, A.\,G., and Gao~H.-Y.} 1996. Understanding WaveShrink: Variance and bias estimation. \textit{Biometrika} 83:727--745.
+\bibitem{15-she}
+\Aue{Donoho, D., and I.\,M.~Johnstone.} 1998. Minimax estimation via wavelet shrinkage. \textit{Ann. Stat.} 26(3):879--921.
+\bibitem{16-she}
+\Aue{Marron, J.\,S., S.~Adak, I.\,M.~Johnstone, M.\,H.~Neumann, and P.~Patil.} 1998. Exact risk analysis of wavelet regression. 
+\textit{J.~Comput. Graph. Stat.} 7:278--309.
+\bibitem{17-she}
+\Aue{Jansen, M.} 2001. \textit{Noise reduction by wavelet thresholding}. Lecture notes in statistics ser. New York, NY: Springer Verlag. Vol.~161. 217~p.
+\bibitem{18-she}
+\Aue{Popenova, P.\,S., and O.\,V.~Shestakov.} 2019. 
+Analiz sta\-ti\-sti\-che\-skikh svoystv metoda gibridnoy porogovoy ob\-ra\-bot\-ki [Analysis of statistical properties of the hybrid threshold-ing technique]. 
+\textit{Vestnik Tverskogo gosudarstvennogo un-ta. Ser. Prikladnaya matematika} [Herald of Tver State University. Ser. Applied Mathematics] 1:15--22.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received August 5, 2022}}
+
+\Contrl
+
+\noindent
+\textbf{Shestakov Oleg V.} (b.\ 1976)~--- 
+Doctor of Science in physics and mathematics, professor, Department of Mathematical Statistics, Faculty of Computational Mathematics and Cybernetics, 
+M.\,V.~Lomonosov Moscow State University, 1-52~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation; 
+senior scientist, Institute of Informatics Problems, Federal Research Center ``Computer Science and Control''
+ of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation;
+  leading scientist, Moscow Center for Fundamental and Applied Mathematics, M.\,V.~Lomonosov Moscow State University, 
+  1~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation; \mbox{oshestakov@cs.msu.su}
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}    
+   

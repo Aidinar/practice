@@ -1,0 +1,1081 @@
+\def\stat{sinits}
+
+\def\tit{АНАЛИТИЧЕСКОЕ МОДЕЛИРОВАНИЕ  РАСПРЕДЕЛЕНИЙ С~ИНВАРИАНТНОЙ
+МЕРОЙ В~СТОХАСТИЧЕСКИХ СИСТЕМАХ С~РАЗРЫВНЫМИ ХАРАКТЕРИСТИКАМИ$^*$}
+
+\def\titkol{Аналитическое моделирование  распределений с~инвариантной
+мерой в~стохастических системах} % с~разрывными характеристиками}
+
+\def\autkol{И.\,Н.~Синицын}
+
+\def\aut{И.\,Н.~Синицын$^1$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}}\footnotetext[1]
+{Работа выполнена при финансовой поддержке РФФИ
+(проект №\,13-07-00036) и программой <<Интеллектуальные информационные 
+технологии, системный анализ и автоматизация>> (проект~1.7).}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Российской академии наук, sinitsin@dol.ru}
+
+
+
+\Abst{На базе методов нормальной аппроксимации и статистической линеаризации разработаны 
+точные и приближенные алгоритмы аналитического моделирования плотностей стохастических 
+режимов с инвариантной мерой в гауссовых и негауссовых стохастических системах (СтС)
+с разрывными 
+характеристиками. Рассмотрены особенности моделирования в СтС с 
+пуассоновскими шумами. На тестовых примерах показана достаточная для многих приложений 
+точность алгоритмов.}
+
+\KW{автокоррелированная помеха; аналитическое моделирование;
+интегродифференциальные уравнения Пугачёва; метод нормальной аппроксимации;
+метод статистической линеаризации; нелинейная гауссовская и негауссовская стохастическая система в смысле Ито;
+пуассоновская стохастическая сис\-те\-ма; распределение с инвариантной мерой;
+стохастический режим}
+
+\vskip 14pt plus 9pt minus 6pt
+
+      \thispagestyle{headings}
+
+      \begin{multicols}{2}
+
+            \label{st\stat}
+
+
+
+\section{Введение}
+
+Следуя [1, 2], будем рассматривать нестационарный стохастических режим $Z\hm=Z(t)$ 
+в нелинейной дифференциальной СтС, понимаемой в смысле Ито:
+    \begin{equation}
+    \dot Z = a(Z,t) + b (Z,t) V\,, \enskip Z(t_0) = Z_0\,.
+    \label{e1.1-sin}
+    \end{equation}
+Здесь $Z$~--- $k$-мер\-ный вектор состояния СтС, $Z\hm\in \Delta$ ($\Delta$~--- 
+многообразие состояний); $a\hm=a(Z,t)$ и $b\hm= b(Z,t)$~--- детерминированные  
+$(k\times 1)$- и $(k\times m)$-мер\-ные  функции  отмеченных аргументов; 
+$V\hm=V(t)$~--- $m$-мер\-ный вектор негауссовских (в общем случае) белых шумов 
+с нулевыми математическими ожиданиями и представляющий собой среднеквадратичную 
+(с.к.)\ производную процесса с независимыми приращениями  $W\hm=W(t)$, 
+$V\hm=\dot W$. Обозначим через $\chi\hm=\chi(\mu;t)$ логарифмическую производную 
+одномерной характеристической функции $h_1\hm=h_1(\mu;t)$ процесса $W\hm=W(t)$, определяемую формулой
+    \begin{equation}
+    \chi(\mu;t)=\fr{\prt \ln h_1 (\mu;t)}{\prt t}=
+    \fr{1}{h_1(\mu;t)}\,\fr{\prt h_1(\mu;t)}{\prt t}\,.
+    \label{e1.2-sin}
+    \end{equation}
+
+Начальное состояние $Z_0$ будем считать случайной величиной (СВ), не зависящей 
+от $W(t)$ для $t\hm>t_0$. Предположим, что стохастический режим $Z(t)$ является 
+сильным решением~(\ref{e1.1-sin}), а функции $a,b$ и $\chi$ удовлетворяют известным 
+условиям существования и единственности~[1, 2].
+
+Пусть существуют одно- и $n$-мерные плот\-ности\linebreak $f_1\hm=f_1(z;t)$ и 
+$f_n\hm= f_n(z_1\tr z_n; t_1 \tr t_n)$ и характеристические функции $g_1\hm=g_1(\la;t)$ и 
+$g_n\hm=g_n(\la_1\tr \la_n; t_1\tr t_n)$ $(n\hm\ge 2)$, удовлетворяющие 
+интегродифференциальным уравнениям\linebreak Пугачева~[1, 2]:
+    \begin{multline}
+    \fr{\prt f_1(z;t)}{\prt t}+\fr{\prt^{\mathrm{T}}}{\prt z}\lk a(z,t)f_1(z;t)\rk = 
+\fr{1}{(2 \pi)^k} \times{}\\
+{}\times \iin\iin \chi(b(\xi,t)^{\mathrm{T}}\la;t) e^{i\la^{\mathrm{T}}(\xi-z)} f_1(z;t) \,
+    d\xi d\la\,;
+    \label{e1.3-sin}
+    \end{multline}
+   \begin{equation}
+    f_1(z;t_0)=f_0(z)\,;\label{e1.4-sin}
+    \end{equation}
+    
+    \vspace*{-12pt}
+    
+    \begin{multline*}
+\fr{\prt f_n(z_1\tr z_n;t_1\tr t_n)}{\prt t_n}+{}\\
+{}+\fr{\prt^{\mathrm{T}}}{\prt z_n}\left[
+a(z_n, t_n) f_n (z_1\tr z_n; t_1\tr t_n)\right]={}\\
+{}= \fr{1}{(2\pi)^{kn}} \iin\iin \chi(b(\xi_n, t_n)^{\mathrm{T}} \la_n;t_n) \times{}\\
+{}\times \exp\lf i \sss_{l=1}^n \la_l^{\mathrm{T}} (\xi_l-z_l)\rf \times{}\\
+{}\times
+f_n (\xi_1\tr \xi_n; t_1\tr t_n)\,d\xi_1\cdots d\xi_n d\la_1\cdots d\la_n\,;
+%\label{e1.5-sin}
+\end{multline*}
+
+\vspace*{-12pt}
+
+\begin{multline*}
+f_n(z_1\tr z_{n-1},z_n;t_1\tr t_{n-1},t_{n})={}\\
+{}= f_{n-1} (z_1\tr z_{n-1};t_1\tr t_{n-1})\delta (z_n - z_{n-1})\,;
+%\label{e1.6-sin}
+\end{multline*}
+       
+        
+\noindent        
+\begin{multline}
+\fr{\prt g_1 (\la;t)}{\prt t} -{}\\
+{}-\fr{1}{(2\pi)^k} \iin \iin i\la^{\mathrm{T}} a (z,t) 
+e^{i(\la^{\mathrm{T}} -\mu^{\mathrm{T}})z} g_1 (\mu;t)\, d\mu dz={}\\
+{}=\fr{1}{(2\pi)^k} \iin \iin \chi(b(z,t)^{\mathrm{T}} \la^{\mathrm{T}};t) 
+e^{i(\la^{\mathrm{T}} -\mu^{\mathrm{T}})z} \times{}\\
+{}\times
+g_1 (\mu;t)\, d\mu dz\,;
+\label{e1.7-sin}
+\end{multline}
+\begin{equation}
+g_1(\la;t_0) = g_0(\la)\,\,; \label{e1.8-sin}
+\end{equation}
+
+\vspace*{-12pt}
+
+\begin{multline*}
+\fr{\prt g_n (\la_1\tr \la_n; t_1\tr t_n)}{\prt t_n} -{}\\
+{}-
+\fr{1}{(2\pi)^{kn}} \iin \cdots \iin i\la^{\mathrm{T}} a (z_n,t_n) \times{}\\
+{}\times \exp \lk i \sss\limits_{k=1}^n (\la_k^{\mathrm{T}} - \mu_k^{\mathrm{T}}) z_k\rk \times{}\\
+{}\times g_n 
+(\mu_1\tr \mu_n; t_1\tr t_n)\, d\mu_1 \cdots d \mu_n dz_1\cdots dz_n={}\\
+{}= \fr{1}{(2\pi)^{kn}} \iin\cdots \iin \chi (b(z_n;t)^{\mathrm{T}} \la_n;t_n)\times{}\\
+{}\times\exp \lk i \sss_{k=1}^n (\la_k^{\mathrm{T}} - \mu_k^{\mathrm{T}}) z_k\rk \times{}\\
+{}\times g_n 
+(\mu_1\tr \mu_n; t_1\tr t_n) \,d\mu_1 \cdots d \mu_n dz_1\cdots dz_n;
+%\label{e1.9-sin}
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+g_n (\la_1\tr \la_n; t_1\tr t_{n-1},t_{n-1})= {}\\
+{}=
+g_{n-1} (\la_1\tr \la_{n-2},\la_{n-1}+\la_n; t_1\tr t_{n-1})\,, %\label{e1.10-sin}
+\end{multline*}
+ $$
+        t_1\le t_2 \le \cdots \le t_n,\enskip n=2,3,\ldots
+        $$
+
+При этом одно- и $n$-мер\-ные плотности и характеристические функции связаны 
+между собой известными соотношениями:
+\begin{equation*}
+f_1(z;t) = \fr{1}{(2\pi)^{k}} \iin e^{-i\mu^{\mathrm{T}} z} g_1(\mu;t) d\mu\,; %\label{e1.11-sin}
+    \end{equation*}
+      \begin{equation*}
+   g_1(\la;t) = \iin e^{i\la^{\mathrm{T}} z} f_1(z;t)\, dz\,; %\label{e1.12-sin}
+   \end{equation*}
+   
+   \vspace*{-12pt}
+
+\noindent
+\begin{multline}
+f_n( z_1\tr z_n; t_1\tr t_n) ={}\\
+{}=
+\fr{1}{(2\pi)^{kn}} 
+\iin\cdots \iin \exp \lf - i \sss_{l=1}^n \la_l^{\mathrm{T}} z_l\rf \times{}\\
+{}\times g_n (\la_1\tr \la_n; t_1\tr t_n)\, d\la_1\cdots d\la_n\,;\label{e1.13-sin}
+\end{multline}
+
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+g_n (\la_1\tr \la_n; t_1\tr t_n) ={}\\
+{}=\iin\cdots \iin \exp\lf i \sss_{l=1}^n \la_l^{\mathrm{T}} z_l\rf \times{}\\
+{}\times f_n (z_1\tr z_n; t_1\tr t_n)\, dz_1\cdots dz_n\,. %\label{e1.14-sin}
+\end{multline*}
+
+Для нахождения одномерных плотностей $f_1(z,t) \hm= f_1^* (z)$ и характеристических функций 
+$g_1(\la;t) \hm= g_1^* (\la)$ стохастических режимов в стационарных СтС~(\ref{e1.1-sin}) при
+    \begin{equation}
+    a(z,t) = a^*(z)\,;\ b(z,t)=b^*(z)\,;\ \chi(\mu;t)= \chi^*(\mu)
+    \label{e1.15-sin}
+    \end{equation}
+следует в~(\ref{e1.3-sin}) и~(\ref{e1.7-sin}) положить 
+$\prt f_1/\prt t \hm= 0$ и $\prt g_1/ \prt t \hm=0$. В~результате получим соответственно
+\begin{multline*}
+\fr{\prt^{\mathrm{T}}}{\prt z}\lk a^* (z) f_1^* (z)\rk = {}\\
+{}=
+\fr{1}{(2\pi)^k} \iin \iin \chi^* (b^*(\xi)^{\mathrm{T}} \la) e^{i\la^{\mathrm{T}}(\xi-z)} f_1^* (\xi)\, d\xi d\la\,;
+%\label{e1.16-sin}
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+-\fr{1}{(2\pi)^k} \iin  \iin i\la^{\mathrm{T}} a^*(z) e^{i(\la^{\mathrm{T}}-\mu^{\mathrm{T}})z} g_1^*(\mu)\, d\mu dz={}\\
+{}=\fr{1}{(2\pi)^k} \iin  \iin \chi^*(b^*(z)^{\mathrm{T}}\la) e^{i(\la^{\mathrm{T}}-\mu^{\mathrm{T}})z} g_1^*(\mu)\, d\mu dz.
+%\label{e1.17-sin}
+\end{multline*}
+Поставим задачу разработки точных и приближенных  алгоритмов
+аналитического моделирования распределений (плотностей и
+характеристических функций) стохастических режимов  $Z\hm=Z(t)$ в
+нелинейных гауссовских и негауссовских СтС~(\ref{e1.1-sin})  с разрывными
+характеристиками $a\hm=a(z,t)$ и $b\hm=b(z,t)$, обладающих свойством
+сохранения инвариантной меры, т.\,е.\ удовлетворяющих уравнениям~(\ref{e1.3-sin})
+и~(\ref{e1.7-sin}) при $\chi\hm=0$.
+
+Условия сохранения инвариантной меры можно представить в следующем развернутом виде:
+\begin{equation}
+\left.
+\begin{array}{c}
+\displaystyle\fr{\prt f_1 (z;t)}{\prt t} + A_a f_1 (z;t) =0\,;\\[9pt] 
+\hspace*{-4.5mm}\displaystyle A_a f_1(z;t) = 
+    \fr{\prt^{\mathrm{T}}}{\prt z} \lk a(z,t) f_1(z;t)\rk = \mathrm{div}\, \pi(z;t)\,;
+    \end{array}
+    \right\}
+    \label{e1.18-sin}
+    \end{equation}
+\begin{equation}
+\left.
+\begin{array}{c}
+A_a^* f_1^*(z) =0\,;\\[9pt]
+\displaystyle A_a^* f_1^* (z) = \fr{\prt^{\mathrm{T}}}{ \prt z} \lk a^* 
+(z) f_1^* (z)\rk =\mathrm{div}\, \pi^* (z)\,;
+\end{array}
+\right\}
+\label{e1.19-sin}
+\end{equation}
+$$
+\fr{\prt g_1 (\la;t)}{\prt t} - B_a g_1(\la;t) =0\,;
+$$
+
+\vspace*{-14pt}
+
+\noindent
+\begin{multline}
+B_a g_1(\la;t) ={}\\[2pt]
+{}=\fr{1}{(2\pi)^k} \iin\iin i\la^{\mathrm{T}} a(z,t) e^{i(\la^{\mathrm{T}}-\mu^{\mathrm{T}})z}
+ g_1(\mu;t)\, d\mu dz={}\\[2pt]
+{}= \iin i\la^{\mathrm{T}} a(z,t) e^{i\la^{\mathrm{T}}z} f_1(z;t)\, dz={}\\[2pt]
+{}= \iin e^{i\la^{\mathrm{T}} z} i\la^{\mathrm{T}} \pi(z;t)\, dz\,;
+\label{e1.20-sin}
+\end{multline}
+
+\vspace*{-9pt}
+
+\noindent
+\begin{equation}
+\left.
+\begin{array}{c}
+\hspace*{-45mm}B_a^* g_1^* (\la)=0\,;\\[12pt]
+\hspace*{-48mm}B_a^* g_1^* (\la) = {}\\[10pt]
+\hspace*{-3mm}{}=\fr{1}{(2\pi)^k} \iin\! i\la^{\mathrm{T}} a^* (z) e^{i(\la^{\mathrm{T}} -\mu^{\mathrm{T}})z} g_1^* (\mu)\, d\mu dz={}\\[10pt]
+{}=\displaystyle\iin\! i\la^{\mathrm{T}} a^*(z) e^{i\la^{\mathrm{T}}z} f_1^* (z)\, dz = {}\\[10pt]
+\displaystyle{}=
+\iin e^{i\la^{\mathrm{T}} z} i\la^{\mathrm{T}} \pi^* (z)\, dz\,.
+\end{array}
+\right\}
+\label{e1.21-sin}
+\end{equation}
+Для гауссовских (нормальных) СтС с гладкими характери\-стиками точные и приближенные 
+методы  и алгоритмы аналитического моделирования рассмотрены в~[1--15]. 
+
+Особое внимание 
+уделим приближенным методам, основанным на методах нор\-маль\-ной аппроксимации и статистической 
+линеаризации. Подробно рассмотрим их применение к пуассоновским СтС.
+
+
+
+\section{Точные методы и~алгоритмы аналитического моделирования распределений 
+с~инвариантной мерой}
+
+Пусть функция~$a$ в СтС~(\ref{e1.1-sin}) допускает пред\-став\-ле\-ние
+\begin{equation}
+a= a(z,t) = a_1(z,t) +a_2 (z,t) \label{e2.1-sin}
+\end{equation}
+такое, что функция  $f_1\hm=f_1(z;t)$ является плот\-ностью инвариантной меры 
+невозмущенной шумами системы, описываемой векторным обыкновенным дифференциальным 
+уравнением вида
+   \begin{equation}
+   \dot z = a_1 (z,t)\,,\label{e2.2-sin}
+   \end{equation}
+т.\,е.\ удовлетворяет условию~(\ref{e1.18-sin}):
+\begin{equation}
+\fr{\prt f_1 (z;t)}{\prt t}+ \fr{\prt^{\mathrm{T}}}{\prt z} \lk a_1 (z,t) f_1(z;t)\rk =0\,.
+\label{e2.3-sin}
+\end{equation}
+
+Для гладких функций $a_1\hm=a_1(z,t)$ вопросы существования и основные свойства 
+интегральных 
+ инвариантов изучены в~\cite{16-sin, 17-sin}. При этом в~(\ref{e2.1-sin}) 
+функция $a_2 \hm= a_2(z,t)$ определяется путем решения следующего интегродифференциального 
+уравнения:
+\begin{multline}
+\fr{\prt^{\mathrm{T}}}{\prt z}\lk a_2 (z,t) f_1(z;t) \rk 
+=
+\fr{1}{(2\pi)^k}\times{}\\
+{}\times \iin\iin \chi(b(\xi,t)^{\mathrm{T}} \la;t) 
+e^{i\la^{\mathrm{T}}(\xi-z)} f_1(\xi;t)\, d\xi d\la\,.\label{e2.4-sin}
+\end{multline}
+В общем случае нахождение функций $a_1$ и~$a_2$ в~(\ref{e2.1-sin})~--- такая же
+трудная задача, как решение уравнений~(\ref{e1.3-sin}) и~(\ref{e1.4-sin}).
+
+Для стационарных СтС, когда выполнены условия~(\ref{e1.15-sin}), 
+уравнения~(\ref{e2.1-sin})--(\ref{e2.4-sin}) имеют вид:
+\begin{align}
+a(z)&= a_1(z) + a_2(z)\,;\label{e2.5-sin}
+\\
+\dot z &= a_1(z)\,,\label{e2.6-sin}
+\\
+\fr{\prt^{\mathrm{T}}}{\prt z}\lk a_2^*(z) f_1^*(z)\rk &= {}\notag\\
+&\hspace*{-28mm}{}=
+\fr{1}{(2\pi)^k} \!\!\iin \iin\!\! \chi^* (b^*(\xi)^{\mathrm{T}} \la) 
+e^{i\la^{\mathrm{T}}(\xi-z)} f_1^*(\xi)\, d\xi d\la\,.\!\!\!\label{e2.7-sin}
+\end{align}
+В этом случае можно выбирать невозмущенную сис\-те\-му~(\ref{e2.6-sin}) так, чтобы
+она имела первые интегралы.
+
+В терминах характеристических функций соотношения~(\ref{e2.3-sin}), (\ref{e2.4-sin})
+и~(\ref{e2.7-sin}) могут быть записаны следующим образом:
+
+\noindent
+\begin{equation}
+\fr{\prt g_1 (\la;t)}{\prt t} - B_{a_1} g_1(\la;t) =0\,;\label{e2.8-sin}
+\end{equation}
+\begin{equation*}
+B_{a_1}^* g_1^*(\la) =0\,. %\label{e2.9-sin}
+\end{equation*}
+Для составляющих $a_2(z,t)$ и $a_2^*(z)$ имеют место уравнения
+\begin{multline}
+B_{a_2} g_1(\la;t) 
+= \fr{1}{(2\pi)^k} \times{}\\
+\hspace*{-2.5mm}{}\times\iin\iin \!\chi(b(z,t)^{\mathrm{T}} \la;t) 
+e^{i(\la^{\mathrm{T}}-\mu^{\mathrm{T}})z} g_1(\mu;t) \,d\mu dz;\label{e2.10-sin}
+\end{multline}
+
+\vspace*{-16pt}
+
+\noindent
+\begin{multline}
+B_{a_2}^* g_1^*(\la) 
+= \fr{1}{(2\pi)^k} \times{}\\
+{}\times\iin\iin 
+\chi^*(b^*(z)^{\mathrm{T}} \la) e^{i(\la^{\mathrm{T}}-\mu^{\mathrm{T}})z} g_1^*(\mu)\, d\mu dz\,.
+\label{e2.11-sin}
+\end{multline}
+
+Отсюда вытекают конструктивные точные алгоритмы аналитического
+моделирования распределений с инвариантной мерой. В~их основе лежат
+следующие теоремы.
+
+%\pagebreak
+
+\medskip
+
+\noindent
+\textbf{Теорема~2.1.} \textit{Функция $f_1\hm=f_1(z;t)$ будет решением}~(\ref{e1.3-sin})
+\textit{и}~(\ref{e1.4-sin}) \textit{тогда и только тогда, когда $a\hm=a(z,t)$ допускает
+представление}~(\ref{e2.1-sin}) \textit{такое, что $f_1\hm=f_1(z;t)$ является плотностью
+инвариантной меры обыкновенного дифференциального уравнения}~(\ref{e2.2-sin}),
+\textit{т.\,е.\ удовле\-тво\-ря\-ет условию}~(\ref{e2.3-sin}). \textit{При этом со\-став\-ля\-ющая $a_2$
+определяется из решения интегродифференциального уравнения}~(\ref{e2.4-sin}).
+
+\medskip
+
+\noindent
+\textbf{Теорема~2.2.} \textit{Функция $f_1^*\hm=f_1^*(z)$ будет решением}~(\ref{e1.3-sin}) 
+\textit{тогда и только тогда, когда $a^*\hm=a^*(z)$ допускает
+представление}~(\ref{e2.5-sin}) \textit{такое, что $f_1^*\hm=f_1^*(z)$ является плотностью
+инвариантной меры}~(\ref{e2.6-sin}). \textit{При этом составляющая $a_2^{*}$
+определяется из решения  уравнения}~(\ref{e2.7-sin}).
+
+\medskip
+
+\noindent
+\textbf{Теорема~2.3.} \textit{Функция $g_1\hm=g_1(\la;t)$ будет ре\-ше\-нием}~(\ref{e1.7-sin}), 
+(\ref{e1.8-sin}) \textit{тогда и только тогда, когда недиф\-фе\-ренцируемая функция
+$a\hm=a(z,t)$  допускает пред\-став\-ление}~(\ref{e2.1-sin}) \textit{такое, что
+$g_1\hm=g_1(\la;t)$ является ха\-рак\-теристической функцией инвариантной
+меры \mbox{уравнения}}~(\ref{e2.2-sin}), \textit{т.\,е.\ удовлетворяет условию}~(\ref{e2.8-sin}). 
+\textit{При этом составляющая $a_2$ определяется из уравнения}~(\ref{e2.10-sin}).
+
+\medskip
+
+\noindent
+\textbf{Теорема 2.4.} \textit{Функция $g_1^*\hm=g_1^*(\la)$  будет решением}~(\ref{e1.13-sin}) 
+\textit{тогда и только тогда, когда недифференцируемая функция $a^*\hm=a^*(z)$  
+допускает представление}~(\ref{e2.5-sin}) \textit{такое, что $g_1^*$ является  
+характеристической функцией инвариантной меры}~(\ref{e2.2-sin}). 
+\textit{При этом $a_2^*$ определяется из решения}~(\ref{e2.11-sin}).
+
+\smallskip
+
+Теоремы~2.1--2.4 легко обобщаются на случай многомерных распределений с инвариантной мерой.
+
+\section{Приближенные методы и~алгоритмы аналитического моделирования распределений 
+с~инвариантной мерой, основанные на~нормальной аппроксимации и статистической линеаризации}
+
+Пусть нелинейная СтС~(\ref{e1.1-sin}) допускает применение метода нормальной аппроксимации 
+(МНА)~[1, 2]. Тогда одно- и двумерные нормальные плот\-ности $f_1^{\mathrm{МНА}}$,
+ $f_2^{\mathrm{МНА}}$ и характеристические функции  $g_1^{\mathrm{МНА}}$,  
+ $g_2^{\mathrm{МНА}}$, а также вектор математического ожидания $m_t = M^{\mathrm{МНА}} Z(t)$, 
+ ковариационная мат\-ри\-ца $K_t \hm= M^{\mathrm{МНА}} Z^{0\mathrm{T}} Z^0 (t)$ 
+ $(Z^0 (t) \hm= Z(t) \hm- m_t)$ и матрица ковариационных функций 
+ $K(t_1, t_2) \hm= M^{\mathrm{МНА}} Z^{0\mathrm{T}} (t_1) Z^0 (t_2)$ $(t_1\hm< t_2)$ определяются 
+ следующими уравнениями:
+    \begin{multline}
+    f_1^{\mathrm{МНА}} = f_1^{\mathrm{МНА}} (z;t, m_t, K_t) =
+    \lk (2\pi)^k |K_t|\rk^{-1/2}\times{}\\
+    {}\times \exp \lf -  \fr{1}{ 2} 
+    \left(z^{\mathrm{T}} - m_t^{\mathrm{T}}\right) K_t^{-1}(z-m_t)\rf\,;\label{e3.1-sin}
+    \end{multline}
+    
+    \vspace*{-12pt}
+    
+    \noindent
+\begin{multline}
+f_2^{\mathrm{МНА}} ={}\\
+= f_2^{\mathrm{МНА}} (z_1, z_2;t_1, t_2, m_{t_1}, m_{t_2}, K_{t_1}, K_{t_2}, K(t_1, t_2))=\\
+{}=\lk (2\pi)^k |\bar K_2|\rk^{-1/2}\times{}\\
+\hspace*{-2mm}{}\times \exp \lf - 
+([z_1^{\mathrm{T}} z_2^{\mathrm{T}}] - \bar m_2^{\mathrm{T}}) 
+\bar K_2^{-1}([z_1^{\mathrm{T}} z_2^{\mathrm{T}}]^{\mathrm{T}}-\bar m_2)\rf;
+\!\!\label{e3.2-sin}
+\end{multline}
+\begin{equation}
+g_1^{\mathrm{МНА}} (\la;t)=
+\exp\lf i\la^{\mathrm{T}} m- \fr{1}{2}\,\la^{\mathrm{T}} K_t \la\rf\,;\label{e3.3-sin}
+\end{equation}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+g_2^{\mathrm{МНА}} (\la_1, \la_2; t_1,t_2) ={}\\
+{}= \exp \lf i \bar \la^{\mathrm{T}} \bar m_2 - 
+    \fr{1}{2} \,\bar \la^{\mathrm{T}} \bar K_2 \bar \la\rf\,;\label{e3.4-sin}
+    \end{multline}
+$$
+    \bar \la =\lk \la_1^{\mathrm{T}} \la_2^{\mathrm{T}}\rk^{\mathrm{T}}\,;\enskip 
+    \bar m_2 =\lk m_{t_1}^{\mathrm{T}} m_{t_2}^{\mathrm{T}}\rk^{\mathrm{T}}\,;
+    $$
+    $$
+    \bar K_2 =\begin{bmatrix}
+        K(t_1, t_1)&K(t_1, t_2)\\[3pt]
+        K(t_2, t_1)& K(t_2, t_2)
+        \end{bmatrix}\,;
+        $$
+  \begin{multline}
+  \dot m_t = a_1 (t, m_t, K_t) ={}\\
+  {}=\iin a(z,t) f_1^{\mathrm{МНА}} (z; t, m_t, K_t) \,dz\,;
+  \label{e3.5-sin}
+  \end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\dot K_t = a_2(t, m_t, K_t) = a_{21} + a_{12}+a_{22}={}\\
+{}=\left[ \iin a(z,t) (z^{\mathrm{T}}-m_t^{\mathrm{T}}) + (z-m_t) a^{\mathrm{T}} (z,t) +{}\right.\\
+\left.{}+ \sigma (z,t)
+\vphantom{\iin}\right] f_1^{\mathrm{МНА}} (z;t, m_t, K_t)\, dz\,;
+\label{e3.6-sin}
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\fr{\prt K(t_1, t_2)}{\prt t_2} ={}\\
+{}= a_3 (t_1, t_2, m_{t_1},m_{t_2}, K_{t_1}, K_{t_2}, K(t_1,t_2))={}\\
+{}=\lk (2\pi)^{2k} |\bar K_2|\rk^{-1/2}\times{}\\
+{} \times\iin\iin (z_1-m_{t_1}) a(z_2, t_2)
+\exp\left\{ - ([z_1^{\mathrm{T}} z_2^{\mathrm{T}}]-\bar m_2^{\mathrm{T}})\times{}\right.\\
+\left.{}\times\bar K_2^{-1} 
+([z_1^{\mathrm{T}} z_2^{\mathrm{T}}]-\bar m_2)\right\} dz_1 dz_2\,.
+\label{e3.7-sin}
+\end{multline}
+Здесь введены следующие обозначения:
+\begin{equation}
+\left.
+\begin{array}{c}
+z_1=z_{t_1}\,;\enskip  z_2=z_{t_2}\,;\enskip \bar m_2 =\lk m_{t_1}^{\mathrm{T}} m_{t_2}^{\mathrm{T}}\rk^{\mathrm{T}}\,;\\[9pt]
+\displaystyle \bar K_2 =\begin{bmatrix}
+        K(t_1,t_1)&K(t_1, t_2)\\[3pt]
+        K(t_2, t_1)& K(t_2, t_2)
+        \end{bmatrix}\,,
+        \end{array}
+        \right\}
+        \label{e3.8-sin}
+        \end{equation}
+\begin{equation}
+\sigma(z,t) = b(z,t) \nu(t) b(z,t)^{\mathrm{T}}\,,\label{e3.9-sin}
+\end{equation}
+где $\nu=\nu(t)$~--- интенсивность негауссовского белого шума $V\hm=V(t)$.
+
+Для стационарных СтС  при $\dot m^* \hm=0$, $\dot K^* \hm=0$, 
+$K(t_1, t_2)\hm= k(\tau)$ $(\tau\hm=t_1-t_2)$  соотношения~(\ref{e3.5-sin})--(\ref{e3.9-sin}) 
+принимают вид:
+\begin{equation}
+a_1^* (m^*, K^*) =0\,;\label{e3.10-sin}
+\end{equation}
+\begin{equation}
+    a_2^*(m^*, K^*) =0\,;\label{e3.11-sin}
+    \end{equation}
+    \begin{equation}
+    \fr{dk(\tau) }{d\tau} = a_{11}^{\mathrm{МНА}} (m^*, K^*) k(\tau)\,;\label{e3.12-sin}
+    \end{equation}
+$$
+k(\tau) = k(-\tau^{\mathrm{T}})\,;\enskip k(0)=K\,.
+$$
+Из уравнения~(\ref{e3.12-sin}) следует, что алгоритм МНА будет устойчивым, если матрица 
+$a_{11}^{\mathrm{МНА}} (m_t, K_t, t)$ будет асимптотически устойчива.
+
+Для $m$ и $K$ уравнения метода статистической линеаризации (МСЛ) в 
+нелинейных СтС  при аддитивных шумах, когда $b(z,t) \hm= b_0(t)$, $b^*(z)\hm=b_0^*$ 
+получаются из~(\ref{e3.5-sin})--(\ref{e3.7-sin}) и (\ref{e3.10-sin})--(\ref{e3.12-sin}) 
+как частный случай.
+
+Условия наличия нормального распределения с инвариантной мерой~(\ref{e1.18-sin}) 
+и~(\ref{e1.19-sin}), если заменить $a(z,t)$ статистически
+линеаризованным выраже\-нием
+\begin{equation*}
+    a(Z,t)\approx a_{10}^{\mathrm{МНА}} (t, m_t, K_t) + a_{11}^{\mathrm{МНА}} (t, m_t, K_t) 
+    (Z-m_t)\,, %\label{e3.13-sin}
+    \end{equation*}
+где
+\begin{equation*}
+a_{10}^{\mathrm{МНА}} =a_{10}^{\mathrm{МНА}} (t, m_t, K_t)\equiv a_1\,; %\label{e3.14-sin}
+\end{equation*}
+    
+    
+   
+    \noindent
+    \begin{multline*}
+    a_{11}^{\mathrm{МНА}}=a_{11}^{\mathrm{МНА}} (t, m_t, K_t) = {}\\
+    {}=\lk \iin a(z,t) (z^{\mathrm{T}}-m_t^{\mathrm{T}}) 
+        f_1^{\mathrm{МНА}} (z; t , m_t, K_t)\, dz\rk\times{}\\
+        {}\times K_t^{-1} 
+=\left(\fr{\prt}{\prt m_t} a_1^{\mathrm{T}}\right)^{\mathrm{T}}\,, %\label{e3.15-sin}
+\end{multline*}
+приводят к следующим соотношениям:
+        \begin{multline}
+\fr{\prt f_1^{\mathrm{МНА}} (z; t, m_t, K_t)}{\prt t} +\fr{\prt^{\mathrm{T}}}{ \prt z} 
+\left\{ \left[ a_{10}^{\mathrm{МНА}} (t, m_t, K_t) 
++{}\right.\right.\\
+\left.{}+ a_{11}^{\mathrm{МНА}} (t, m_t, K_t) (z-m_t) \vphantom{a_{10}^{\mathrm{МНА}}}
+\right]\times{}\\
+\left.{}\times 
+     f_1^{\mathrm{МНА}} ( z; t , m_t, K_t)\right\} =0\,;
+     \label{e3.16-sin}
+     \end{multline}
+     
+     
+     \noindent
+\begin{multline}
+\hspace*{-9.81628pt}\fr{\prt^{\mathrm{T}}}{\prt z} \left\{ \left[ a_{10}^{*{\mathrm{МНА}}}(m^*, K^*) + 
+ a_{11}^{*{\mathrm{МНА}}}(m^*, K^*) (z-m^*)\right] \times{}\right.\\
+\left.{}\times f_1^{*{\mathrm{МНА}}}(z; m^*, K^*)\right\} =0\,,\label{e3.17-sin}
+ \end{multline}
+где
+\begin{multline*}
+f_1^{*{\mathrm{МНА}}} (z; m^*, K^*) = \lk (2\pi)^k |K^*|\rk^{-1/2}\times{}\\
+{}\times \exp \lf -
+    \fr{1}{2} (z^{\mathrm{T}}-m^{*\mathrm{T}})(K^*)^{-1} (z-m^*)\rf\,.
+    \end{multline*}
+
+Аналогично в развернутом виде выписываются условия~(\ref{e1.20-sin}) и~(\ref{e1.21-sin}):
+\begin{multline}
+\fr{\prt g_1^{\mathrm{МНА}} (\la;t)}{\prt t} -\iin i\la^{\mathrm{T}} \left[ a_{10}^{\mathrm{МНА}} 
+    (m_t, K_t, t) +{}\right.\\[2pt]
+\left.    {}+ a_{11}^{\mathrm{МНА}} (m_t, K_t, t) (z- m_t) \right]\times{}\\[2pt]
+{}\times e^{i\la^{\mathrm{T}} z} f_1^{\mathrm{МНА}} (z; m_t, K_t, t)\, dz=0\,;\label{e3.18-sin}
+\end{multline}
+
+
+\noindent
+\begin{multline}
+\iin i\la^{\mathrm{T}} \left[ a_{10}^{*{\mathrm{МНА}} } (m^*, K^*) 
++{}\right.\\[2pt]
+\left.{}+a_{11}^{*{\mathrm{МНА}} } 
+    (m^*, K^*) (z-m^*)\right]\times{}\\[2pt]
+    {}\times
+     e^{i\la^{\mathrm{T}}z} f_1^{*{\mathrm{МНА}} } (z; m^*, K^*)\, dz =0\,.
+    \label{e3.19-sin}
+    \end{multline}
+
+Отсюда вытекают следующие теоремы.
+
+\bigskip
+
+\noindent
+\textbf{Теорема~3.1.}\ \textit{Если существуют одно- и двумерные  плотности
+стохастического режима, а  матрица $a_{11}^{\mathrm{МНА}}$ коэффициентов
+статистической (нормальной) линеаризации асимптотически устойчива,
+то приближенный алгоритм аналитического моделирования МНА
+нестационарных стохастических режимов в СтС}~(\ref{e1.1-sin}) \textit{с инвариантной
+мерой определяется выражениями}~(\ref{e3.1-sin})--(\ref{e3.7-sin}) и~(\ref{e3.16-sin}).
+
+\bigskip
+
+\noindent
+\textbf{Теорема 3.2.}\ \textit{Если существуют стационарные одно- и
+двумерные плотности стохастического режима, а матрица
+$a_{11}^{*{\mathrm{МНА}}}$  коэффициентов статистической (нормальной)
+линеаризации асимптотически устойчива, то приближенный алгоритм
+аналитического моделирования стационарных стохастических режимов с
+инвариантной мерой в стационарной СтС}~(\ref{e1.1-sin}) \textit{определяется 
+выражениями}~(\ref{e3.10-sin})--(\ref{e3.12-sin}) и~(\ref{e3.17-sin}).
+
+\bigskip
+
+Как известно~[1, 2], одно- и двумерные нормальные распределения
+определяют и все  $n$-мер\-ные распределения $(n\hm\ge 3)$, поэтому МНА и
+МСЛ дают приближенные алгоритмы для любых многомерных плотностей
+стохастических режимов, если они существуют. Аналогично
+формулируются теоремы~3.3 и~3.4 на основе условий~(\ref{e3.18-sin}) и~(\ref{e3.19-sin}).
+
+
+\section{О других приближенных методах и~алгоритмах аналитического моделирования 
+распределений с~инвариантной мерой}
+
+\vspace*{-2pt}
+
+ Обобщением МНА являются различные
+приближенные методы, основанные на параметризации распределений~[1, 2].
+Аппроксимируя одномерную характеристическую функцию $g_1 (\la;t)$
+и соответствующую плотность $f_1 (z,t)$ известными функциями
+ $g_1^* (\la;\theta)$, $f_1^* (z;\theta)$,  зависящими от
+конечномерного векторного параметра~$\theta$, можно свести задачу
+приближенного определения одномерного распределения к выводу из
+уравнения для характеристических функций обыкновенных
+дифференциальных уравнений, определяющих~$\theta$ как функцию
+времени. Это относится и к остальным многомерным распределениям.
+При аппроксимации многомерных распределений целесообразно выбирать
+последовательности функций $\{ f_n^* (z_1,\ldots,z_n;\theta_n)\}$ и 
+$\{g_n^* (\la_1\tr \la_n;\theta_n)\}$, каждая пара
+которых находилась бы в такой  зависимости от векторного параметра~$\theta_n$, 
+чтобы при любом~$n$ множество параметров, образующих
+вектор~$\theta_n$, включало в качестве подмножества множество
+параметров, образующих вектор~$\theta_{n-1}$. Тогда при
+аппроксимации $n$-мер\-но\-го распределения придется определять только
+те координаты вектора~$\theta_n$, которые не были определены ранее
+при аппроксимации функций $f_1, g_1\tr f_{n-1}$, $g_{n-1}$.
+
+В зависимости от того, что представляют собой параметры, от
+которых зависят функции $f_n^* (z_1\tr z_n;\theta_n)$ и 
+$g_n^* (\la_1\tr \la_n;\theta_n)$, аппрок-\linebreak симирующие неизвестные
+многомерные плотности $f_n (z_1,  \ldots,z_n; t_1 \tr t_n)$ и
+характеристические функции $g_n (\la_1\tr \la_n; t_1,\ldots,t_n)$,
+используются различные приближенные методы решения
+ уравнений при условиях~(9)--(12), определяющих\linebreak многомерные
+распределения вектора состояния сис\-те\-мы~$X_t$, в частности методы
+моментов (ММ), семиинвариантов (МСИ), ортогональных разложений
+(МОР), квазимоментов (МКМ) и~др.~[1, 2].
+
+\vspace*{-6pt}
+
+
+\section{Обобщение на~случай стохастических систем с~автокоррелированными шумами}
+
+\vspace*{-2pt}
+
+Пусть  СтС описывается нелинейным, в общем случае векторным дифференциальным 
+стохастическим уравнением Ито~\cite{1-sin, 2-sin, 15-sin, 18-sin}
+
+\noindent
+\begin{equation}
+\left.
+\begin{array}{c}
+    \dot Z = a(Z,t) + b_U(Z,t) U\,;\\[6pt] 
+\displaystyle    \sss_{i=0}^l \alpha_i U^{(i)} =
+\displaystyle\sss_{j=0}^h \beta_j V^{(j)}\enskip (h<l)\,.
+\end{array}
+\right\}
+    \label{e5.1-sin}
+    \end{equation}
+    Здесь $U=U(t)$~--- векторная помеха размерности  $m\times 1$; $V\hm=V(t)$~--- 
+    негауссовский белый шум с нулевым математическим ожиданием и известной функцией  
+    $\chi\hm=\chi(\mu;t)$. В~таком случае в за\-ви\-си\-мости от степени <<гладкости>> 
+    стохастического режима $Z\hm=Z(t)$ и помехи $U\hm=U(t)$ уравнения~(\ref{e5.1-sin})  
+    путем расширения вектора состояния согласно~[1, 2] приводятся к виду~(\ref{e1.1-sin}) 
+    для расширенного вектора состояния~$\bar Z$. Тогда, но уже для расширенного вектора 
+    состояния СтС, при решении уравнений~(\ref{e5.1-sin}) могут быть использованы точные 
+    (разд.~2) и приближенные (разд.~3) методы и алгоритмы аналитического моделирования 
+    нестационарных и стационарных распределений с инвариантной мерой.
+
+\section{Особенности аналитического моделирования распределений с~инвариантной мерой 
+в~пуассоновских стохастических системах}
+
+Рассмотрим СтС~(\ref{e1.1-sin}) при $b(z,t) \hm=I_m$ для обобщенного пуассоновского 
+белого шума  $V^{\mathrm{OP}}\hm=  V^{\mathrm{OP}}(t)$, когда функция~(\ref{e1.2-sin}) 
+определяется формулой
+\begin{equation*}
+\chi^{\mathrm{OP}} (\mu;t) =\lk g_c^{\mathrm{OP}} (\mu) -
+1\rk \nu^{\mathrm{OP}} (t)\,, %\label{e6.1-sin}
+\end{equation*}
+где $g_c^{\mathrm{OP}} \hm=g_c^{\mathrm{OP}} (\mu)$~--- характеристическая 
+функция скачков; $\nu^{\mathrm{OP}} \hm= \nu^{\mathrm{OP}} (t)$~--- 
+интенсивность пуассоновского белого шума 
+$V^{\mathrm{OP}}\hm=V^{\mathrm{OP}} (t)$. Обозначим через $f_c^{\mathrm{OP}} \hm=
+ f_c^{\mathrm{OP}} (z)$ плотность скачков обобщенного пуассоновского процесса. 
+ Тогда~(\ref{e1.3-sin}) будет представлять собой известное уравнение Фел\-ле\-ра--Кол\-мо\-го\-ро\-ва
+\begin{multline}
+\fr{\prt f_1(z;t)}{\prt t} + \fr{\prt^{\mathrm{T}}}{\prt z} 
+    \lk a(z,t) f_1(z;t)\rk ={}\\
+    \hspace*{-3mm}{}= \nu^{\mathrm{OP}} (t) \lk \iin f_c^{\mathrm{OP}} (z-\xi) f_1 (\xi;t)\, d\xi - f_1(z;t)\rk
+    \label{e6.2-sin}
+    \end{multline}
+с начальным условием~(\ref{e1.4-sin}). В~случае простого пуассоновского белого шума 
+с единичными скачками $g_c (\mu) \hm= e^{i\mu}$.
+
+Для  стационарной пуассоновской СтС~(\ref{e1.1-sin}) уравнение~(\ref{e6.2-sin}) имеет следующий вид:
+\begin{multline}
+\fr{\prt^{\mathrm{T}}}{\prt z} \lk a^* (z) f_1^* (z)\rk = {}\\
+{}=
+\nu^{\mathrm{OP} *} \lk \iin f_c^{\mathrm{OP}} (z-\xi) f_1^* (\xi)\, d\xi- 
+f_1^* (z)\rk\,.\label{e6.3-sin}
+\end{multline}
+
+Пользуясь уравнениями~(\ref{e6.2-sin}), (\ref{e6.3-sin})  
+и результатами разд.~1 и~2, нетрудно сформулировать следующие утверждения.
+
+\medskip
+
+\noindent
+\textbf{Теорема 6.1.}\ \textit{Функция $f_1 \hm= f_1(z;t)$ будет
+нестационарным решением}~(\ref{e6.2-sin}), (\ref{e1.4-sin}) \textit{тогда и только тогда, 
+когда $a$ допускает представление}~(\ref{e2.1-sin}) \textit{такое, что $f_1$ является плот\-ностью
+инвариантной меры обыкновенного дифференциального уравнения}~(\ref{e2.2-sin}),
+\textit{т.\,е.\ удовле\-тво\-ря\-ет условию}~(\ref{e2.3-sin}), \textit{а составляющая $a_2$ определяется
+из решения следующего уравнения}:
+\begin{multline*}
+    \fr{\prt^{\mathrm{T}}}{\prt z} \lk a_2 (z,t) f_1 (z;t)\rk =
+     \fr{1}{(2\pi)^k}\times{}\\
+     {}\times \iin\iin \chi^{\mathrm{OP}} 
+    \left(b(\xi,t)^{\mathrm{T}} \la;t\right) e^{i\la^{\mathrm{T}}(\xi-z)} f_1(\xi,t)\,d\xi d\la\,.
+%    \label{e6.4-sin}
+    \end{multline*}
+
+%\smallskip
+
+\noindent
+\textbf{Теорема 6.2.}\ \textit{Функция $f_1^* \hm= f_1^* (z)$ будет стационарным 
+решением}~(\ref{e6.3-sin}) \textit{тогда и только тогда, когда $a_2^*$ допускает 
+представление}~(\ref{e2.5-sin}) \textit{такое, что  $f_1^*$ является плот\-ностью 
+инвариантной меры}~(\ref{e2.6-sin}), \textit{а составляющая $a_2^{*}$ определяется 
+из решения следующего уравнения}:
+\begin{multline*}
+\fr{\prt^{\mathrm{T}} }{\prt z} \lk a_2^{*} (z) f_1^* (z)\rk ={}\\
+{}=
+    \fr{1}{(2\pi)^k} \iin\iin \chi^{\mathrm{OP} *} (b(\xi)^{\mathrm{T}} \la) 
+    e^{i\la^{\mathrm{T}}(\xi-z)} f_1^*(\xi)\,d\xi d\la\,.
+%    \label{e6.5-sin}
+    \end{multline*}
+
+При использовании МНА и МСЛ для пуассоновских СтС непосредственно применяются теоремы~3.1--3.4, 
+причем в формулу~(\ref{e3.9-sin}) для  
+$\sigma(z,t)$ входит интенсивность 
+$\nu^{\mathrm{OP}} (t)$ обобщенного пуассоновского белого шума.
+
+\section{Тестовые примеры}
+
+\noindent
+\textbf{Пример~1}. Рассмотрим осциллятор Дуффинга в обобщенной пуассоновской 
+стохастической среде:
+\begin{equation}
+\ddot X +\w^2 X -\mu X^3 =-\delta^{\mathrm{OP}} \dot X + V^{\mathrm{OP}} (t)\,.\label{e7.1-sin}
+\end{equation}
+Уравнения МСЛ для~(\ref{e7.1-sin}) имеют следующий вид:
+\begin{equation}
+\dot m_X = m_{\dot X}\,;\enskip 
+\dot m_{\dot X} =- \w_{\mathrm{э}}^2 m_X -\delta^{\mathrm{OP}} m_{\dot X}\,;
+\label{e7.2-sin}
+\end{equation}
+    \begin{equation}
+    \left.
+    \begin{array}{rl}
+    \dot D_{X} &= 2 K_{X\dot X}\,;\\[6pt] 
+    \dot D_{\dot X} &=\nu^{\mathrm{OP}} - 2 (\w_{1 \mathrm{э}}^2 K_{X\dot X} + 
+    \delta^{\mathrm{OP}} D_{\dot X})\,;\\[6pt]
+\dot K_{X\dot X} &= D_{\dot X} -\w_{1 \mathrm{э}}^2 D_X - 
+\delta^{\mathrm{OP}} K_{X\dot X}\,.
+\end{array}
+\right\}
+ \label{e7.3-sin}
+\end{equation}
+Здесь кубическая функция $X^3$ была заменена на статистически линеаризованную при 
+гауссовом распределении с дисперсией  $D_X$ согласно~[1, 2]:
+\begin{equation*}
+X^3 \approx k_0 (m_X, D_X) m_X + k_1 (m_X, D_X) X^0\,,\label{e7.4-sin}
+\end{equation*}
+где
+\begin{align*}
+k_0 (m_X, D_X) &= m_X^2 + 3 D_X\,;\\ 
+k_1 (m_X, D_X) &= 3 (m_X^2 + D_X)\,;\\
+%\label{e7.5-sin}
+\w_{\mathrm{э}}^2 &=\w^2 \lk 1- \fr{\mu (m_X^2 + 3D_X)}{\w^2}\rk\,;\\
+\w_{1 \mathrm{э}}^2 &=\w^2 \lk 1-  \fr{3\mu (m_X^2 + D_X)}{\w^2}\rk \enskip 
+(\w_{\mathrm{э}}>\w_{1 \mathrm{э}})\,.
+\end{align*}
+%\label{e7.6-sin}
+Из~(\ref{e7.2-sin}) и~(\ref{e7.3-sin}) в стационарном режиме имеем:
+\begin{gather*}
+m_X^* =0\,;\enskip 
+m_{\dot X}^* =0\,;\enskip 
+K_{X\dot X}^* =0\,;\\
+D_{\dot X}^* =\vartheta\,;\enskip 
+\vartheta =  \fr{\nu^{\mathrm{OP}}}{ 2\delta^{\mathrm{OP}}}\,,
+\end{gather*}
+%\label{e7.7-sin}
+а $D_X^*$ определяется из уравнения:
+    \begin{equation*}
+    \w_{1 \mathrm{э}}^2 (D_X^*) D_X^* =\vartheta\,. %\label{e7.8-sin}
+    \end{equation*}
+Условие наличия стационарного распределения с инвариантной мерой~(\ref{e3.17-sin}) 
+требует консерватизма линеаризованной левой части~(\ref{e7.1-sin}). 
+Процесс установления стационарных стохастических колебаний происходит 
+в два этапа: сначала устанавливается $D_{\dot X}^*$, а затем $D_X^*$.
+
+Интересно отметить, что уравнения МСЛ~(\ref{e7.2-sin}) и~(\ref{e7.3-sin}) сохраняют свой
+вид и для любого белого шума интенсивности  $\nu(t)$,
+представляющего собой с.к., производную от произвольного процесса с
+независимыми приращениями~$W(t)$. Для гауссовского белого шума
+$\nu\hm=\nu^G$ соответствующие результаты получены в~\cite{1-sin, 2-sin, 15-sin}. Как
+показали вычислительные эксперименты для значений~$\mu$, отвечающих
+стохастическим колебаниям, точность составляет около 10\%~\cite{15-sin}.
+
+\medskip
+
+\noindent
+\textbf{Пример~2}.\  Для осциллятора Дуффинга в автокоррелированной  пуассоновской среде, когда
+\begin{equation*}
+\ddot X+ \w^2 X -\mu X^3 =-\delta^{\mathrm{OP}} \dot X + U\,;\enskip 
+\dot U +\gamma U =V^{\mathrm{OP}} (t)\,, %\label{e7.9-sin}
+\end{equation*}
+уравнения МСЛ для  $Z\hm= [X\dot X U]^{\mathrm{T}}$ имеют вид~(\ref{e3.5-sin}) и~(\ref{e3.6-sin}) при
+    \begin{gather*}
+   a_1 = \begin{bmatrix}
+        m_{\dot X}\\
+        -\w_{ \mathrm{э}}^2 m_X-\delta^{\mathrm{OP}} m_{\dot X}\\
+        -m_U\end{bmatrix}\,;\\
+    \alpha=  \begin{bmatrix}
+            0&1&0\\
+            -\w_{1 \mathrm{э}}^2&-\delta^{\mathrm{OP}}&0\\
+            0&0&-\gamma\end{bmatrix}\,;\enskip
+    \beta= \begin{bmatrix}
+        0&0&0\\
+        0&0&0\\
+        0&0&1\end{bmatrix}\,;
+%        \label{e7.10-sin}
+\\
+a_2 =\alpha K_t+ K_t \alpha^{\mathrm{T}} +\beta \nu^{\mathrm{OP}} \beta^{\mathrm{T}}\,.
+        \end{gather*}
+Здесь $\nu^{\mathrm{OP}} =\nu^{\mathrm{OP}}(t)$~--- интенсивность белого шума 
+$V^{\mathrm{OP}}(t)$. 
+Отсюда аналитическим мо\-де\-ли\-ро\-ванием определяются стационарные
+режимы, а также режимы их установления. Так же, как в\linebreak случае
+автокоррелированных гауссовских белых шумов~\cite{1-sin, 2-sin, 15-sin}, точность МСЛ
+за счет <<профильтрованности>> помех значительно повышается и
+достигает 2\%--4\%. Результат справедлив и для произвольных
+негауссовских белых шумов.
+
+\medskip
+
+\noindent
+\textbf{Пример 3}.\  Для релейного осциллятора в гауссовской стохастической среде
+\begin{equation}
+\ddot X + \w^2 {\mathrm{sgn}} X = -\delta^G \dot X + V^G + U_0\label{e7.11-sin}
+\end{equation}
+плотность распределения стационарного режима стохастических колебаний при $U_0\hm=0$ 
+определяется формулой Гиббса~[1, 2]:
+\begin{equation}
+f^* (x,\dot x) = c \exp \lf - 
+    \fr{H(x,\dot x)}{\vartheta^G}\rf\,,\enskip \vartheta^G = 
+    \fr{\nu^G}{ 2\delta^G}\,.\label{e7.12-sin}
+    \end{equation}
+Здесь через
+\begin{equation*}
+H(x,\dot x) = \fr{\dot x^2}{2} +\Pi(x)\,,\enskip \Pi (x) =\w^2 |x|\,, %\label{e7.13-sin}
+\end{equation*}
+обозначена полная энергия осциллятора.
+
+Для~(\ref{e7.11-sin}) при  $U_0\hm\ne 0$, если заменить релейную характеристику 
+статистически линеаризованной, согласно~[1, 2]
+\begin{equation*}
+\mathrm{sgn}\, X = k_0 (m_X, D_X) m_X + k_1 (m_X, D_X) (X^0 - m_X)\,; %\label{e7.14-sin}
+\end{equation*}
+    $$
+    k_0(m_X, D_X) =\fr{2}{ m_X} \Phi \left( \fr{m_X}{\sqrt{D_X}}\right)\,;
+    $$
+    $$ 
+    k_1 (m_X,D_X) = \fr{1}{\sqrt{D_X}} \sqrt{\fr{2}{\pi}}\, \exp \left( -\fr{m_X^2}{2D_X}\right)\,;
+    $$
+\begin{equation}
+\Phi (\tau) = \fr{1}{2\pi} \int\limits_0^\tau e^{-t^2/2} dt\,.\label{e7.15-sin}
+\end{equation}
+Тогда уравнения МСЛ будут иметь вид:
+\begin{equation}
+\left.
+\begin{array}{rl}
+\dot m_X &= m_{\dot X}\,;\\[9pt]
+\dot m_X &= U_0 - \w^2 k_0 (m_X, D_X) m_X -\delta m_{\dot X}\,;
+\end{array}
+\right\}
+\label{e7.16-sin}
+\end{equation}
+    \begin{equation}
+\left.
+\hspace*{-3.5mm}\begin{array}{c}
+    \dot D_X = 2 K_{X\dot X}\,;
+\\
+    \dot D_{\dot X} = \nu^G - 2\lk \delta D_{\dot X} + \w^2 k_1(m_X,D_X) K_{X\dot X}\rk\,;\\[9pt]
+    \dot K_{X\dot X} = D_{\dot X} - \w^2 k_1 (m_X, D_X) D_X - \delta K_{X\dot X}\,,
+    \end{array}
+    \right\}\!\!
+    \label{e7.17-sin}
+    \end{equation}
+где $\delta \hm= \delta^G$, $\nu\hm=\nu^G$.
+Отсюда для стационарных стохастических колебаний имеем связанную систему уравнений:
+\begin{equation}
+m_{\dot X}^* =0\,;\enskip \w^2 k_0 (m_X^*, D_X^*) = U_0\,;\label{e7.18-sin}
+\end{equation}
+\begin{equation}
+\left.
+\begin{array}{c}
+K_{X\dot X}^* =0\,;\enskip 
+D_X^* =\vartheta=\displaystyle \fr{\nu}{ 2\delta}\,;\\[9pt]
+k_1(m_X^*, D_X^*) D_X^* =\rho= \displaystyle \fr{\vartheta}{\w^2} =\fr{\nu}{ 2\delta \w^2}\,.
+\end{array}
+\right\}
+\label{e7.19-sin}
+\end{equation}
+
+При $U_0 =0$ из~(\ref{e7.15-sin}), (\ref{e7.18-sin}) и~(\ref{e7.19-sin}) находим:
+\begin{equation*}
+m_X^* =0\,;\enskip 
+m_{\dot X}^* =0\,; \enskip 
+D_{\dot X}^* =\vartheta\,;\enskip 
+D_X^* =  \fr{\pi}{2}\,\rho^2\,. %\label{e7.20-sin}
+\end{equation*}
+Отсюда видно, что стационарная дисперсия скорости совпадает с точным
+решением~(\ref{e7.12-sin}). Стационарная дисперсия координаты, найденная
+согласно МСЛ, отличается от следующего точного решения, полученного
+согласно~(\ref{e7.12-sin}). При $\rho\hm \le 1$ относительная ошибка составляет
+10\%. Стационарные колебания по~$X$ и $\dot X$ не коррелированы.
+
+Уравнения~(\ref{e7.16-sin}) и~(\ref{e7.17-sin}) показывают, что процесс установления 
+режима стохастических колебаний происходит в две стадии: сначала устанавливается 
+стационарное распределение по ско\-рости~$\dot X$, а затем по координате~$X$.
+
+\medskip
+
+\noindent
+\textbf{Пример 4}.  В~условиях примера~3, но для пуассоновской среды, когда
+    \begin{equation*}
+    \ddot X +\w^2 {\mathrm{sgn}} X =-\delta^{\mathrm{OP}} \dot X + 
+    V^{\mathrm{OP}} + U_0\,,
+%    \label{e7.21-sin}
+    \end{equation*}
+уравнения МСЛ имеют вид~(\ref{e7.16-sin}), (\ref{e7.17-sin}), если принять 
+$\delta\hm= \delta^{\mathrm{OP}}$, $ \nu\hm=\nu^{\mathrm{OP}}$, 
+$\vartheta\hm=\vartheta^{\mathrm{OP}}\hm=\nu^{\mathrm{OP}}/(2\delta^{\mathrm{OP}})$, 
+$\rho \hm=\vartheta^{\mathrm{OP}}/\w^2$. Точного аналитического уравнения 
+Фел\-ле\-ра--Кол\-мо\-го\-ро\-ва не обнаружено.
+
+Другие тестовые примеры можно найти в~[10, 12--14].
+
+\section{Заключение}
+
+Дано обобщение точных и приближенных (основанных на параметризации распределений)\linebreak 
+методов и алгоритмов теории распределений с инвари\-антной мерой на случай нелинейных 
+дифференциальных гауссовых и негауссовых стохастических систем с гладкими и разрывными 
+характеристиками.
+
+Особое внимание уделено пуассоновским стохастическим системам с разрывными характеристиками.
+
+На тестовых примерах показана достаточная точность для практических приложений в стохастической 
+информатике.
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\addcontentsline{toc}{section}{Литература}
+\begin{thebibliography}{99}
+\bibitem{1-sin}
+\Au{Пугачёв В.\,С., Синицын И.\,Н.} Стохастические дифференциальные системы. 
+Анализ и фильтрация.~--- 2-е изд., доп.~--- М.: Наука, 1990.
+
+\bibitem{2-sin}
+\Au{Пугачёв В.\,С., Синицын И.\,Н.} Теория стохастических систем.~--- 2-е изд.~--- М.: Логос,  2004.
+
+\bibitem{3-sin}
+\Au{Moshchuk N.\,K., Sinitsyn I.\,N.} On stationary distributions in nonlinear 
+stochastic differential systems: Preprint.~--- Coventry, UK: 
+University of Warwick, Mathematics Institute, 1989. 15~p.
+
+\bibitem{4-sin}
+\Au{Moshchuk N.\,K., Sinitsyn I.\,N.} On stochastic nonholonomic systems: Preprint.~--- 
+Coventry, UK: University of Warwick, Mathematics Institute, 1989. 32~p.
+
+\bibitem{5-sin}
+\Au{Мощук Н.\,К., Синицын И.\,Н.} О~стохастических неголономных системах~// 
+Прикладная механика и математика, 1990. Т.~54. Вып.~2. С.~213--223.
+
+\bibitem{6-sin}
+\Au{Moshchuk N.\,K., Sinitsyn I.\,N.} On stationary distributions in 
+nonlinear stochastic differential systems~// Quart. J. Mech. Appl. Math., 1991. Vol.~44.  
+Pt.~4.  P.~571--579.
+
+\bibitem{7-sin}
+\Au{Мощук Н.\,К., Синицын И.\,Н.} О~стационарных и приводимых к стационарным 
+режимах в нормальных стохастических системах~// 
+Прикладная механика и математика, 1991. Т.~55. Вып.~6. С.~895--903.
+
+\bibitem{8-sin}
+\Au{Мощук Н.\,К., Синицын И.\,Н.} Распределения с инвариантной мерой в механических 
+стохастических нормальных сис\-те\-мах~// Докл. АН СССР, 1992. Т.~322. №\,4. С.~662--667.
+
+\bibitem{9-sin}
+\Au{Синицын И.\,Н.} Конечномерные распределения с инвариантной мерой в стохастических 
+механических сис\-те\-мах~// Докл. РАН, 1993. Т.~328. №\,3. С.~308--310.
+
+\bibitem{13-sin} %10
+\Au{Soize C.} The Fokker--Plank equation for stochastic dynamical systems 
+and its explicit steady state solutions.~--- Singapore: World Scientific,  1994.
+
+\bibitem{10-sin} %11
+\Au{Синицын И.\,Н.} Конечномерные распределения с инвариантной мерой в 
+стохастических нелинейных дифференциальных системах.~--- М.: Диалог--МГУ, 1997. С.~129--140.
+
+\bibitem{11-sin} %12
+\Au{Синицын И.\,Н., Корепанов Э.\,Р., Белоусов~В.\,В.} 
+Точные методы расчета стационарных режимов с инвариантной мерой в стохастических 
+сис\-те\-мах управ\-ле\-ния~// Кибернетика и технологии XXI~ве\-ка: Тр.\ II Междунар. 
+науч.-техн. конф. C\&T'2002.~--- Воронеж: Саквое, 2002. С.~124--131.
+
+\bibitem{12-sin} %13
+\Au{Синицын И.\,Н., Корепанов Э.\,Р., Белоусов~В.\,В.} 
+Точные аналитические методы в статистической динамике нелинейных 
+ин\-фор\-ма\-ци\-он\-но-управ\-ля\-ющих сис\-тем~// Сис\-те\-мы и средства информатики. 
+Спец. вып. Математическое и алгоритмическое обеспечение 
+ин\-фор\-ма\-ци\-он\-но-те\-ле\-ком\-му\-ни\-ка\-ци\-он\-ных сис\-тем.~--- М.: Наука, 2002. С.~112--121.
+
+\bibitem{14-sin}
+\Au{Синицын И.\,Н.} Развитие методов аналитического моделирования распределений с 
+инвариантной мерой в стохастических сис\-те\-мах~// Современные проб\-ле\-мы 
+прикладной математики, информатики и автоматизации: Тр. Междунар. науч.-техн. семинара.~--- 
+Севастополь, 2012. С.~24--35.
+
+\bibitem{15-sin}
+\Au{Синицын И.\,Н.} Аналитическое моделирование распределений с инвариантной мерой 
+в стохастических сис\-те\-мах с автокоррелированными шумами~// 
+Информатика и её применения, 2012. Т.~6. Вып.~4. С.~4--8.
+
+\bibitem{16-sin}
+\Au{Немыцкий В.\,В., Степанов В.\,В.} Качественная теория дифференциальных уравнений.~--- 
+М.--Л.: Гостехиздат, 1949.
+
+
+\bibitem{17-sin}
+\Au{Козлов В.\,В.} О~существовании интегрального инварианта гладких динамических систем~// 
+ПММ, 1987. №\,1. С.~538--545.
+
+\label{end\stat}
+
+\bibitem{18-sin}
+\Au{Синицын И.\,Н.} Фильтры Калмана и Пугачёва.~--- 2-е изд.~--- М.: Логос, 2007.
+\end{thebibliography}
+}
+}
+
+\end{multicols}

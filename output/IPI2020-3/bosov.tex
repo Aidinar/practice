@@ -1,0 +1,881 @@
+\def\stat{bosov}
+
+\def\tit{БАЙЕСОВСКИЙ ПОДХОД К ПОСТРОЕНИЮ ИНДИВИДУАЛЬНОЙ ТРАЕКТОРИИ 
+ПОЛЬЗОВАТЕЛЯ В~СИСТЕМЕ ДИСТАНЦИОННОГО ОБУЧЕНИЯ$^*$}
+
+\def\titkol{Байесовский подход к~построению индивидуальной траектории 
+пользователя в~системе дистанционного обучения}
+
+\def\aut{А.\,В.~Босов$^1$, Я.\,Г.~Мартюшова$^2$, А.\,В.~Наумов$^3$, А.\,П.~Сапунова$^4$}
+
+\def\autkol{А.\,В.~Босов, Я.\,Г.~Мартюшова, А.\,В.~Наумов, А.\,П.~Сапунова}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Босов А.\,В.}
+\index{Мартюшова Я.\,Г.}
+\index{Наумов А.\,В.}
+\index{Сапунова А.\,П.}
+\index{Bosov A.\,V.}
+\index{Martyushova Ya.\,G.}
+\index{Naumov A.\,V.}
+\index{Sapunova A.\,P.}
+ 
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Исследование выполнено при частичной финансовой
+поддержке РФФИ в~рамках научного проекта 18-07-00617.}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского центра 
+<<Информатика и~управ\-ле\-ние>> Российской академии наук; Московский 
+авиационный институт, \mbox{avbosov@ipiran.ru}}
+\footnotetext[2]{Московский авиационный институт, ma1554@mail.ru}
+\footnotetext[3]{Московский авиационный институт, naumovav@mail.ru}
+\footnotetext[4]{Московский авиационный институт, sap2603@mail.ru}
+
+%\vspace*{-6pt}
+
+
+\Abst{Рассмотрена задача формирования индивидуальной траектории 
+пользователя системы дистанционного обучения (СДО) при смешанной 
+форме ведения образовательной деятельности с~организацией 
+самостоятельной работы обучаемых с~помощью СДО. По окончании 
+каждого раздела курса обучения происходит разделение пользователей 
+СДО на категории, определяемые решением задачи байесовской 
+классификации. Для каждой категории предлагается индивидуальное 
+задание разного уровня слож\-ности на следующий раздел курса, и~таким 
+образом формируется индивидуальная траектория обуча\-емо\-го. Настройка 
+байесовского классификатора проводится на основе статистики работы 
+пользователей СДО. Приводятся экспериментальные результаты решения 
+задачи на одном из этапов обучения.}
+
+\KW{система дистанционного обучения; байесовский классификатор; 
+адаптивные системы; индивидуальная траектория обучения}
+
+\DOI{10.14357/19922264200313} 
+ 
+%\vspace*{-6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+  
+
+\section{Введение}
+
+      Современный тренд в~обучающих системах, в~том числе в~СДО,~--- 
+      разработка методов построения индивидуальных 
+траекторий пользователей, учитывающих статистику их работы в~системе. Современная 
+тео\-рия тестирования (item response theory, IRT) часто использует вероятностные модели 
+для адаптации процесса тестирования под уровень знаний пользователей, учитывая 
+специфику обуча\-емых~[1--8]. В~качестве случайных параметров в~таких моделях 
+выступают обычно уровень знаний пользователей и~уровень сложности  
+заданий~\cite{2-bos, 6-bos} или время ответа пользователя на задание~\cite{7-bos, 8-bos}. 
+Оценивая эти параметры, система проводит самонастройку контента, адаптируя его под 
+контингент пользователей.
+      
+      Формирование индивидуальных траекторий тес\-ти\-ро\-ва\-ния или обучения 
+в~СДО~\cite{3-bos, 4-bos, 5-bos} под\-ра\-зумевает решение в~определенные моменты 
+функционирования системы задачи классификации пользователей~--- отнесение их 
+к~различным категориям (классам) на основе статистики работы в~сис\-те\-ме. По 
+результатам проведенной классификации разным категориям пользователей предлагаются 
+разные траектории дальнейшего тестирования или обучения. Решение задачи 
+классификации осуществляется, например, с~использованием нейросетевых 
+технологий~\cite{9-bos, 10-bos, 11-bos} или байесовского подхода~\cite{12-bos, 13-bos}.
+      
+      В данной работе в~модели, учитывающей смешанную форму обучения 
+с~проведением нескольких объективных очных рубежных контролей в~тече\-ние курса, 
+решается задача построения индивидуальной траектории пользователя в~ис\-поль\-зу\-емой 
+для организации его самостоятельной работы СДО. Индивидуальная траектория 
+корректируется после прохождения пользователем каждого раздела предложенного 
+в~СДО курса с~по\-мощью по\-стро\-ения байесовского классификатора. Для определения 
+соответствующих вероятностей используются классические частотные оценки, 
+построенные на основе статистики работы пользователей СДО. 
+
+\vspace*{-6pt}
+
+\section{Задача построения индивидуальной траектории как~задача байесовской 
+классификации}
+
+\vspace*{-2pt}
+
+      В рамках рассматриваемой модели предполагается, что дистанционное обучение 
+проводится совместно с~очной формой обучения в~виде организации самостоятельной 
+работы студентов посредством использования электронного учебника для выполнения 
+домашнего задания и~организации тестирования.
+      
+      Предлагаемый пользователю курс дистанционного обучения разбит на несколько 
+разделов, которые он должен изучить для освоения данной дис\-циплины. После каждого 
+раздела пользователю\linebreak нужно решить тест определенного уровня слож\-ности. Сложность 
+заданий теста определяется экспертом или с~по\-мощью специальных алгоритмов, 
+основанных на модели Раша~\cite{2-bos}. Для формирования теста из существующих 
+заданий необходимо решить задачу математического программирования, описанную 
+в~\cite{14-bos}, параметром которой служит суммарный уровень сложности теста.  
+Необходимо определить, какого уровня сложности тест выдавать пользователю в~конце 
+каждого раздела, чтобы он соответствовал уровню его подготовки и~формировал 
+индивидуальную траекторию обучения.
+      
+      Решение о том, какой должна быть сложность выдаваемого в~конце каждого 
+раздела теста, предлагается принимать экспертно на основе того, к~какой объективной 
+категории принадлежит пользователь, например: <<отличник>>, <<хорошист>> и~т.\,д. 
+Таким образом, на каждом этапе обучения предлагается решать задачу классификации 
+пользователя: отнесение его к~одной из категорий. Определяются категории пользователя 
+дискретно в~процессе обуче\-ния по окончании каждого раздела курса дис\-тан\-ци\-он\-но\-го 
+обучения. Обозначим моменты времени, когда значение категории может меняться, через 
+$t\hm= 0, \ldots ,T$.
+      
+      В начальный момент времени $t\hm=0$  объ\-ек\-тивной  категории пользователя 
+присваивается\linebreak
+ некоторая априорная оценка, опре\-де\-ля\-емая на основе предыду\-щей 
+траектории обучения. Пусть $t\hm= \{t_1, t_2, t_3\}$~--- моменты времени, 
+в~которые\linebreak 
+проводятся очные контрольные мероприятия, на основании которых происходит 
+объективная клас\-си\-фикация пользователей СДО с~последующей адап\-та\-ци\-ей их 
+индивидуальных траекторий обучения.
+      
+      Пусть~$X$~--- множество, содержащее~$m$ до\-пус\-ти\-мых категорий пользователя, 
+например $X\hm= \{2, 3, 4, 5\}$, где $m\hm=4$~--- число категорий.
+      
+      В моменты времени $t_1$, $t_2$ и~$t_3$ объективная категория пользователя~$y_{t_i}$ 
+определяется на основе результата очной контрольной работы с~помощью традиционной 
+оценки $k_{t_i}\hm\in Y$, $i\hm= 1,2,3$, т.\,е.\ $y_{t_i}\hm=k_{t_i}$, $i\hm= 1,2,3$,  где 
+$k_{t_i}\hm\in Y\hm= \{0,2,3,4,5\}$. Случай $k_{t_i}\hm=0$ означает, что пользователь не 
+писал контрольную работу в~момент времени~$t_i$. В~другие моменты времени 
+объективная категория пользователя не определена. Однако согласно формуле текущего 
+рейтинга пользователя, предложенной в~работе~\cite{15-bos} и~модифицированной под 
+условия рассматриваемой задачи, можно определить текущую категорию рейтинга 
+$x_t\hm\in X$ пользователя согласно следующей методике.
+      
+      Пусть $B_t$~--- текущий (субъективный) рейтинг пользователя в~момент времени 
+$t\hm= 1,\ldots , T$, вы\-чис\-ля\-емый по формуле:
+      \begin{equation*}
+      B_t=\fr{\omega_k}{5} \sum\limits_{t_i\leq t} k_{t_i} +\omega_E 
+\fr{\sum\nolimits_{\tau=1}^t E_\tau^+ }{\sum\nolimits^t_{\tau=1} E_\tau} -
+\omega_\delta \left( 1-
+\fr{\delta_t}{\Delta_t}\right)\,,
+   %   \label{e1-bos}
+      \end{equation*}
+где $E_\tau$~--- суммарная сложность теста, выполненного в~момент~$\tau$;  
+$E_\tau^+$~--- суммарная сложность правильно решенных заданий теста, выполненного 
+в~момент~$\tau$; $\Delta_t$~--- общее число очных занятий, прошедших к~моменту 
+времени~$t$; $\delta_t$~--- число посещений пользователем очных занятий, прошедших 
+к~моменту времени~$t$.
+
+      Величины $\omega_k$, $\omega_E$ и~$\omega_\delta$~--- это весовые 
+коэффициенты, которые выбраны так, чтобы максимальное значение текущего рейтинга 
+пользователя в~момент времени~$T$ было равно~100. Эти величины отражают 
+важность каждого слагаемого в~формуле рейтинга. Например, в~\cite{15-bos} выбраны 
+следующие значения: $\omega_k\hm=\omega_E\hm=25$ и~$\omega_\delta\hm=15$. Если при 
+вычислении текущего рейтинга требуется учитывать лишь успехи пользователя в~СДО 
+и~посещение очных занятий, можно пересчитать коэффициенты, положив 
+$\omega_k\hm=0$.
+      
+      Пусть $B_t^{\max}$~--- максимальный рейтинг, который может быть набран 
+пользователем к~моменту времени~$t$. Например, для $t_1\hm\leq t \hm< t_2$ справедливо 
+$B_t^{\max}\hm=50$. Траектория этой верхней границы, а также несколько примеров 
+траекторий текущего рейтинга~$B_t$  для случая $T\hm=17$, $t_1\hm=6$, $t_2\hm=11$ 
+и~$t_3\hm=15$ приведены на рис.~1.
+
+\begin{figure*} %fig1
+\vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=117.816mm 
+ \epsfbox{bos-1.eps}
+ }
+ \end{center}
+   \vspace*{-9pt}
+\Caption{Траектории текущего рейтинга: 
+\textit{1}~--- максимальный рейтинг; 
+\textit{2}~--- рейтинг хорошо успевающего студента; 
+\textit{3}~--- рейтинг студента, успевающего удовлетворительно}
+\end{figure*}
+
+      Текущая категория рейтинга~$x_t$ для заданного множества $X\hm= \{2,3,4,5\}$ 
+определяется текущим рейтингом~$B_t$, например согласно табл.~1, предложенной 
+в~\cite{15-bos}. При этом границы изменения рейтинга в~каждой из категорий 
+определяются экспертами.
+      
+      
+
+      Таким образом, в~каждый момент времени~$t$ необходимо по текущей категории 
+рейтинга~$x_t$ принять решение об отнесении пользователя к~одной из объективных 
+категорий по результатам сле\-ду\-ющей\linebreak
+ за~$t$ контрольной работы, т.\,е.\ требуется 
+прогнозировать оценку, которую получит пользователь на следующей контрольной 
+работе, имея текущую категорию рейтинга~$x_t$. Этот прогноз позволит \mbox{наилучшим} 
+образом подобрать сложность предлагаемого в~текущий момент времени
+теста, чтобы\linebreak\vspace*{-12pt}
+
+{   %tabl1
+ \begin{center}
+ \vspace*{1pt}
+ 
+\noindent
+\parbox{40mm}{{{\tablename~1}\ \ \small{
+Соответствие между категорией и~рейтингом
+}}}
+
+\vspace*{6pt}
+
+
+
+
+{\small    
+      
+      \tabcolsep=15pt
+      \begin{tabular}{|c|l|}
+      \hline
+$x_t$&\multicolumn{1}{|c|}{$\displaystyle b_t=\fr{B_t}{B_t^{\max}}$}\\
+&\\[-10pt]
+\hline
+&\\[-10pt]
+2&$[0; 0{,}6]$\\
+3&$[0{,}6; 0{,}75]$\\
+4&$[0{,}75; 0{,}91]$\\
+5&$[0{,}91; 1]$\\
+\hline
+\end{tabular}
+}
+\end{center}
+}
+
+\vspace*{11pt}
+%\end{table*}
+
+\noindent
+  максимально способствовать повышению успеваемости пользователя. Для подбора 
+слож\-ности теста в~этой 
+ситуации используются различные педагогические приемы, описание 
+которых выходит за рамки данной статьи. В~данной работе для прогнозирования 
+предлагается использовать метод байесовской классификации. Пусть ${\sf P}(y_{t_k})$~--- 
+вероятность того, что наугад выбранный пользователь в~момент времени~$t_k$ 
+проведения контрольной работы, следующей за моментом времени~$t$, будет иметь 
+объективную категорию рейтинга $y_{t_k}\hm\in Y$; ${\sf P}(x_t\vert y_{t_k})$~--- условная 
+вероятность того, что на\-угад выбранный пользователь в~момент времени~$t$ имеет 
+текущую категорию рейтинга, равную $x_t\hm\in X$, при условии что в~момент 
+времени~$t_k$ проведения контрольной работы, следующей за моментом времени~$t$, он 
+будет иметь объективную категорию рейтинга $y_{t_k}\hm\in Y$.
+      
+      Рассмотрим алгоритм классификации $a(\cdot): X\hm\to Y$. Он ставит 
+в~соответствие пользователю с~текущей категорией рейтинга~$x_t$ объективную 
+категорию~$s$ на момент~$t_k$ следующей контрольной работы. Рассмотрим множество 
+$A_s\hm= \{x_t\hm\in X\vert a(x_t)\hm=s, s\hm\in Y\}$. Вероятность того, что пользователь 
+имеет текущую категорию рейтинга $x_t\hm\in X$ и~алгоритм~$a(\cdot)$ отнесет его 
+к~объективной категории~$s$, равна ${\sf P}(y_{t_k}){\sf P}(A_s\vert y_{t_k})$, 
+где ${\sf P}(A_s\vert 
+y_{t_k})$~--- условная вероятность событий $x_t\hm\in A_s$ при условии что в~момент 
+времени~$t_k$ пользователь будет иметь объективную категорию рейтинга~$y_{t_k}$. 
+Каждой паре $(y_{t_k},s)\hm\in Y\times Y$ поставим в~соответствие величину 
+потери~$\lambda_{y_{t_k}s}$ при отнесении пользователя к~объективной категории 
+вместо~$y_{t_k}$. Тогда функционал среднего риска~--- ожидаемая величина потери при 
+классификации алгоритмом $a(\cdot)$~--- будет иметь вид:
+      $$
+      R(a(\cdot))=
+      \sum\limits_{s\in Y} \sum\limits_{y_{t_k}\in Y} \lambda_{y_{t_k}s} {\sf P}\left( 
+y_{t_k}\right) {\sf P}\left( A_s\vert y_{t_k}\right)\,.
+      $$
+      
+      Согласно теории байесовской классификации, если известны вероятности 
+${\sf P}(y_{t_k})$ и~${\sf P}(x_t\vert y_{t_k})$, то минимум среднего риска $R(a(\cdot))$ 
+достигается алгоритмом~\cite{12-bos}:
+      \begin{equation}
+      a(x_t)=\argmin\limits_{s\in Y} \sum\limits_{y_{t_k}\in Y} \lambda_{y_{t_k}s} 
+      {\sf P}\left(  y_{t_k}\right) {\sf P}\left( x_t\vert y_{t_k}\right)\,.
+      \label{e2-bos}
+      \end{equation}
+      
+      Решать задачу оптимизации~(\ref{e2-bos}) не представляется возможным, 
+поскольку вероятности ${\sf P}(y_{t_k})$ и~${\sf P}(x_t\vert y_{t_k})$ неизвестны. Вместо этого для 
+классификации можно использовать эмпирические оценки вероятностей 
+$\hat{{\sf P}}(y_{t_k})$ и~$\hat{{\sf P}}(x_t\vert y_{t_k})$, найденные по обуча\-ющей выборке. Под 
+обучающей выборкой понимается статистика работы пользователей СДО, обучающихся 
+по аналогичной программе за определенный промежуток времени. Эта информация 
+становится доступной после выполнения СДО первого курса обучения. Таким образом, 
+указанные оценки можно найти как относительные частоты:
+      $$
+      \hat{{\sf P}}\left(y_{t_k}\right) = 
+      \fr{l(y_{t_k})}{l}\,,\enskip i=2,3,4,5;\enskip
+      \hat{{\sf P}}\left( x_t\vert y_{t_k}\right) =\fr{l^{x_t}_{y_{t_k}}} {l(y_{t_k})}\,,
+      $$ 
+где $ l(y_{t_k})$~--- число пользователей, имевших по результатам теста в~СДО 
+в~момент~$t_k$ объективную категорию рейтинга~$y_{t_k}$; $l$~--- общее число 
+пользователей СДО, обучавшихся по данной программе, по результатам обучающей 
+выборки; $ l^{x_t}_{y_{t_k}}$~--- число пользователей СДО, имевших к~моменту 
+времени текущую категорию~$x_t$, у~которых объективная категория рейтинга на 
+момент времени~$t_k$ была равна~$y_{t_k}$.
+%; $l(y_{t_k})$~--- общее число пользователей 
+%СДО, имевших объективную категорию рейтинга на момент времени~$t_k$, 
+%равную~$y_{t_k}$.
+
+\setcounter{table}{2}
+\begin{table*}[b]\small %tabl3
+\vspace*{-6pt}
+\hspace*{7mm}\begin{minipage}[t]{70mm}
+\begin{center}
+\Caption{Оценки условного относительно~$x_8$ распределения категории~$y_{t_{10}}$}
+\vspace*{2ex}
+
+\tabcolsep=8.3pt
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\multicolumn{1}{|c|}{\raisebox{-6pt}[0pt][0pt]{$x_8$}}&\multicolumn{5}{c|}{$y_{t_{10}}$}\\
+\cline{2-6}
+&0&2&3&4&5\\
+\hline
+1&0,30&0,42&0,22&0,05&0,01\\
+2&0,18&0,54&0,23&0,04&0,01\\
+3&0,33&0,36&0,27&0,03&0,01\\
+4&0,11&0,34&0,47&0,06&0,02\\
+5&0,05&0,28&0,42&0,17&0,08\\
+6&0,06&0,24&0,41&0,19&0,10\\
+7&0,05&0,09&0,33&0,32&0,21\\
+8&0,04&0,05&0,31&0,41&0,19\\
+9&0,02&0,06&0,17&0,34&0,41\\
+10\hphantom{9}&0,01&0,02&0,09&0,39&0,49\\
+\hline
+\end{tabular}
+\end{center}
+\end{minipage}
+%\end{table*}
+\hfill
+%\begin{table*}
+%{\small %tabl4
+\vspace*{-6pt}
+\begin{minipage}[t]{70mm}
+\begin{center}
+\Caption{Оценки условного относительно $y_{t_{10}}$ распределения категории~$x_8$}
+\vspace*{2ex}
+
+\tabcolsep=8pt
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\multicolumn{1}{|c|}{\raisebox{-6pt}[0pt][0pt]{$y_{t_{10}}$}}&\multicolumn{5}{c|}{$x_8$}\\
+\cline{2-6}
+&0&2&3&4&5\\
+\hline
+1&0,11&0,23&0,01&0,01&0\hphantom{,99}\\
+2&0,15&0,09&0,03&0,01&0\hphantom{,99}\\
+3&0,14&0,17&0,02&0,03&0\hphantom{,99}\\
+4&0,09&0,13&0,02&0,02&0,01\\
+5&0,11&0,09&0,10&0,10&0,01\\
+6&0,12&0,05&0,13&0,09&0,01\\
+7&0,09&0,03&0,23&0,14&0,13\\
+8&0,06&0,05&0,24&0,26&0,24\\
+9&0,07&0,09&0,13&0,21&0,31\\
+10\hphantom{9}&0,06&0,07&0,09&0,13&0,29\\
+\hline
+\end{tabular}
+\end{center}
+\end{minipage}\hspace*{7mm}
+%\vspace*{pt}
+\end{table*}
+
+
+      В силу малого числа элементов множеств~$X$ и~$Y$ задача~(\ref{e2-bos}) может 
+быть решена в~каждый момент времени~$t$ простым перебором. Результат решения 
+сильно зависит от выбора величины потерь~$\lambda_{y_{t_k}s}$. Традиционно 
+в~качестве~$\lambda_{y_{t_k}s}$ выбирается модуль разности~$y_{t_k}$ и~$s$ или его 
+квадрат. Этот выбор приводит к~формированию классификатора на основе условного 
+математического ожидания $\sum\nolimits_{y_{t_k}\in Y} y_{t_k} 
+{\sf P}(y_{t_k}\vert x_t)$, 
+симметрично усред\-ня\-юще\-го ошибки как с~завышением, так и~с занижением объективного 
+рейтинга пользователя. Однако с~точки зрения процесса обучения и~построения 
+индивидуальной траектории пользователя представляется, что заметно хуже ошибочно 
+занизить категорию пользователя, чем ошибочно ее завысить. Поэтому предлагается 
+использовать разные штрафы для неположительных $y_{t_k}\hm-s$, когда рейтинг 
+ошибочно завышается (например, использовать модуль разности или корень), и~для 
+положительных, когда рейтинг ошибочно занижается (можно предложить
+      $\lambda_{y_{t_k}s} \hm= 2^{y_{t_k}-s}$, т.\,е.\ кратно увеличивать штраф за 
+занижение рейтинга).
+      
+      Представленный в~табл.~1 способ формирования текущей категории рейтинга 
+пользователя отражает его текущую успеваемость по классической\linebreak
+ пятибалльной шкале. 
+Для более тонкой настройки процесса адаптации индивидуальной траектории 
+пользователя с~применением описанного\linebreak
+ классификатора можно расширить множество 
+возможных значений текущего рейтинга пользователя~$x_t$ до~$K$~элементов, 
+дискретизировав со\-от\-вет\-ст\-ву\-ющим образом величину $b_t\hm\in [0,1]$. Например, для 
+$K\hm=20$ текущей категории рейтинга мож\-но присваивать значение~$k$, т.\,е.\ $x_t\hm= 
+k$, если~$b_t$  будет удовлетворять условию $(k\hm-1)0{,}05\hm< b_t\hm\leq 0{,}05k$, 
+$k\hm=1,\ldots , 20$.
+      
+      В качестве альтернативы предложенному классификатору можно рассматривать 
+вариант
+      \begin{equation}
+      a(x_t)=\argmax\limits_{y_{t_k}\in Y} {\sf P}\left( y_{t_k}\vert x_t\right)\,,
+      \label{e3-bos}
+      \end{equation}
+т.\,е.\ оценку, обеспечивающую максимум апостериорной вероятности ${\sf P}(y_{t_k}\vert 
+x_t)$ объективной категории относительно текущего рейтинга~$x_t$. В~реализации эта 
+вероятность также может быть оценена соответствующей частотой по обучающей 
+выборке. Это метод, так же как и~метод условного среднего, имеет недостаток 
+симметричного учета штрафа за ошибки за\-вы\-ше\-ния/за\-ни\-же\-ния рейтинга, что 
+и~демонстрирует представленный далее численный эксперимент.
+
+\begin{figure*} %fig2
+\vspace*{6pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=122.528mm 
+ \epsfbox{bos-2.eps}
+ }
+ \end{center}
+   \vspace*{-9pt}
+\Caption{Результаты несимметричной байесовской классификации~(\textit{а}) 
+и~классификации по максимуму апостериорной вероятности~(\textit{б})}
+\end{figure*}
+
+\vspace*{-4pt}
+
+\section{Результаты численного эксперимента}
+
+\vspace*{-2pt}
+
+      Представленная в~статье методика формирования индивидуальной траектории 
+обучения была опробована на примере использования электронного учебника по курсу 
+<<Теория вероятностей и~математическая статистика>> в~системе дистанционного 
+обучения CLASS.NET~\cite{16-bos} МАИ при очной форме преподавания этой 
+дисциплины студентам инженерных факультетов и~наличии трех контрольных работ 
+в~процессе обучения. Использовались оба приведенных выше классификатора для числа 
+дискретных значений текущей категории рейтинга $K\hm=10$. Электронный учебник 
+содержит~14~разделов. Очные контрольные работы проводятся после 5-го, 10-го и~14-го 
+разделов. Таким образом, $T\hm=17$. Рассмотрим решение задачи классификации перед 
+8-м разделом учебника. Соответствующие оценки вероятностей, необходимые для 
+решения задач классификации, отражены в~табл.~2--4.
+      
+
+%\linebreak\vspace*{-12pt}
+
+{   %tabl2
+ \begin{center}
+ \vspace*{6pt}
+ 
+\noindent
+\parbox{40mm}{{{\tablename~2}\ \ \small{
+Оценки распределения объективной категории~$y_{t_{10}}$
+}}}
+
+\vspace*{6pt}
+
+
+
+
+{\small    
+      
+      \tabcolsep=17pt
+      \begin{tabular}{|c|c|}
+\hline
+&\\[-9pt]
+$y_{t_{10}}$&$\hat{P}(y_{t_{10}})$\\ 
+\hline 
+0&0,09\\ 
+2&0,11\\ 
+3&0,38\\ 
+4&0,28\\ 
+5&0,14\\ 
+\hline
+\end{tabular} 
+}
+%\vspace*{3pt}
+\end{center}
+
+}
+
+%\vspace*{11pt}
+%\end{table*}
+
+
+      Эти оценки получены по обучающей выборке объемом 1500 элементов, 
+составленной из наблюдений за схожим контингентом пользователей СДО, обучавшихся 
+по аналогичной программе в~предыду\-щем семестре.
+
+
+
+       Результаты классификации с~использованием формулы~(\ref{e2-bos}) для случая
+      $$
+      \lambda_{y_{t_k}s}= \begin{cases}
+      s-y_{t_k}, & y_{t_k}-s\leq 0\,,\\
+      2^{y_{t_k}-s}, & y_{t_k}-s> 0\,,
+      \end{cases}
+      $$
+      отражены на диаграмме рис.~2,\,\textit{а}, а~с~использованием формулы~(\ref{e3-bos})~--- на 
+диаграмме рис.~2,\,\textit{б}. По горизонтальной оси расположены значения текущей категории 
+рейтинга~$x_8$, а по вертикальной оси~--- объективная категория рейтинга по 
+результатам классификации. Для приведенных исходных данных задачи~(\ref{e2-bos}) 
+и~(\ref{e3-bos}) имеют единственные решения для каждого значения~$x_8$.
+
+
+
+      
+      Результаты использования байесовского классификатора 
+      (см.\ рис.~2,\,\textit{а}) выглядят более 
+сбалансированно и~в среднем завышенно по сравнению\linebreak с~использованием 
+классификатора, максими\-зи\-рующего условные вероятности 
+(см.\ рис.~2,\,\textit{б}).\linebreak 
+Использование 
+весовых коэффициентов~$\lambda_{y_{t_k}s}$ добавляет гибкости инструменту 
+байесовской классификации.
+
+      Предложенный байесовский классификатор был использован для построения 
+индивидуальных траекторий обучения и~адаптации функционирования СДО в~осеннем 
+семестре 2019~г.\ в~педагогическом эксперименте 
+с~использованием~5~экспериментальных групп и~12~контрольных. 
+
+
+ 
+
+Успеваемость в~экспериментальных 
+группах по итогам семестра оказалась выше, чем в~контрольных группах, в~среднем  
+на~10\%--15\%. При этом наблюдался рост успеваемости в~экспериментальных группах 
+по сравнению с~итогами их обучения в~предыдущем семестре.
+
+\vspace*{-6pt}
+
+      
+\section{Заключение}
+
+      В работе предложен адаптивный способ формирования индивидуальной 
+траектории пользователя СДО, используемой при очной форме ведения занятий. 
+Индивидуальность траектории достигается последовательным изменением суммарной 
+сложности теста в~СДО в~дискретные моменты времени на основе решения задачи 
+классификации пользователя~--- оценки категории, соответствующей уровню знаний. 
+Адаптивность процесса происходит за счет проведения в~некоторые из указанных 
+дискретных моментов времени, соответствующих разделам курса дистанционного 
+обучения, очных контрольных работ, которые позволяют оценить объективную категорию 
+пользователя с~последующим использованием этой информации в~процессе поэтапной 
+классификации. Результаты проведенного численного эксперимента на примере 
+использования СДО МАИ CLASS.NET в~процессе преподавания физико-математических 
+дисциплин показали эффективность предложенной методики построения индивидуальной 
+траектории обучения.
+      
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+\bibitem{2-bos} %1
+\Au{Rasch G.} Probabilistic models for some intelligence and attainment
+ tests.~--- Chicago, IL, USA: The 
+University of Chicago Press,1980. 224~p. 
+
+\bibitem{1-bos} %2
+\Au{Van der Linden W.\,J., Scrams~D.\,J., Schnipke~D.\,L.,  \textit{et al.}} Using  
+response-time constraints to control for differential speededness in computerized adaptive 
+testing~// Appl. Psych. Meas., 1999. Vol.~23. Iss.~3. P.~195--210.
+
+\bibitem{3-bos} %3
+\Au{Куравский Л.\,С., Мармалюк~П.\,А., Алхимов~В.\,И., Юрьев~Г.\,А.} Новый подход 
+к~построению интеллектуальных и~компетентностных тестов~// Моделирование и~анализ 
+данных, 2013. №\,1. С.~4--28.
+
+\bibitem{6-bos} %4
+\Au{Кибзун А.\,И., Иноземцев~А.\,О.} Оценивание уровней сложности тестов на основе 
+метода максимального правдоподобия~// Автоматика и~телемеханика, 2014. №\,4.  
+С.~20--37.
+
+\bibitem{4-bos} %5
+\Au{Куравский Л.\,С., Мармалюк~П.\,А., Юрьев~Г.\,А., Думин~П.\,Н., Панфилова~А.\,С.} 
+Вероятностное моделирование процесса выполнения тестовых заданий на основе 
+модифицированной функции Раша~// Вопросы психологии, 2015. №\,4. С.~109--118.
+\bibitem{5-bos} %6
+\Au{Kuravsky L.\,S., Margolis~A.\,A., Marmalyuk~P.\,A., Panfilova~A.\,S., Yuryev~G.\,A., 
+Dumin~P.\,N.} A~probabilistic model of adaptive training~// Applied Mathematical Sciences, 
+2016. Vol.~10. Iss.~48. P.~2369--2380.
+
+\bibitem{7-bos}
+\Au{Наумов~А.\,В., Мхитарян~Г.\,А.} О~задаче вероятностной оптимизации для 
+ограниченного по времени тестирования~// Автоматика и~телемеханика, 2016. №\,9. 
+С.~124--135.
+\bibitem{8-bos}
+\Au{Наумов А.\,В., Мхитарян~Г.\,А., Черыгова~Е.\,Е.} Стохастическая постановка задачи 
+формирования теста заданного уровня сложности с~минимизацией квантили времени 
+выполнения~// Вестник компьютерных и~информационных технологий, 2019. №\,2.  
+С.~37--46.
+\bibitem{9-bos}
+\Au{Каллан Р.} Основные концепции нейронных сетей~/ Пер. с~англ.~--- М.: Вильямс, 
+2001. 287~с. (\Au{Callan~R.} The essence of neural networks.~--- Prentice Hall Europe, 1999. 
+232~p.)
+\bibitem{10-bos}
+\Au{Воробьев Е.\,В., Пучков~Е.\,В.} Классификация текстов с~помощью сверточных 
+нейронных сетей~// Молодой исследователь Дона, 2017. №\,6(9). С.~2--7. 
+{\sf 
+http://mid-journal.ru/upload/iblock/8ed/1.-vorobev\_-puchkov.pdf}.
+\bibitem{11-bos}
+\Au{Микрюков А.\,А., Бабаш~А.\,В., Сизов~В.\,А.} Классификация событий в~системах 
+обеспечения информационной безопасности на основе нейросетевых технологий~// 
+Открытое образование, 2019. Т.~23. №\,1. С.~57--63.
+
+\bibitem{13-bos} %12
+\Au{Дьяконов А.\,Г.} Методы решения задач классификации с~категориальными 
+признаками~// Прикладная математика и~информатика. Труды факультета 
+Вы\-чис\-ли\-тель\-ной математики и~кибернетики МГУ имени М.\,В.~Ломоносова, 2014. №\,46. 
+С.~103--127.
+\bibitem{12-bos} %13
+\Au{Воронцов К.\,В.} Лекции по алгоритмическим композициям, 2015. 45~с. {\sf 
+http://www.ccas.ru/voron/download/ Composition.pdf}.
+\bibitem{14-bos}
+\Au{Наумов А.\,В., Иноземцев~А.\,О.} Алгоритм формирования индивидуальных заданий 
+в~сис\-те\-мах дистанционного обучения~// Вестник компьютерных и~информационных 
+технологий, 2013. №\,6. С.~46--51.
+\bibitem{15-bos}
+\Au{Мартюшова Я.\,Г., Лыкова~Н.\,М.} Организация реф\-лек\-сив\-но-оце\-ноч\-ной 
+деятельности студентов университетов средствами электронного учебника~//  
+Пси\-хо\-ло\-го-пе\-да\-го\-ги\-че\-ские исследования, 2018. Т.~10. №\,2. 
+С.~125--134. doi:  10.17759/psyedu.2018100211.
+\bibitem{16-bos}
+\Au{Наумов А.\,В., Джумурат~А.\,С., Иноземцев~А.\,О.} Система дистанционного 
+обучения математическим дисциплинам CLASS.NET~// Вестник компьютерных 
+и~информационных технологий, 2014. №\,10. С.~36--44. 
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 01.06.20}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{BAYESIAN APPROACH TO~THE~CONSTRUCTION OF~AN~INDIVIDUAL USER 
+TRAJECTORY\\ IN~THE SYSTEM OF~DISTANCE LEARNING}
+
+
+\def\titkol{Bayesian approach to~the~construction of~an~individual user 
+trajectory in~the system of~distance learning}
+
+\def\aut{A.\,V.~Bosov$^{1,2}$, Ya.\,G.~Martyushova$^2$, A.\,V.~Naumov$^2$, and~A.\,P.~Sapunova$^2$}
+
+\def\autkol{A.\,V.~Bosov, Ya.\,G.~Martyushova, A.\,V.~Naumov, and~A.\,P.~Sapunova}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+$^1$Institute of Informatics Problems, Federal Research Center ``Computer Sciences and Control'' of 
+the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences; 44-2~Vavilov Str., Moscow 119133, Russian Federation
+
+\noindent
+$^2$Moscow State Aviation Institute (National Research University), 
+4~Volokolamskoe Shosse, 
+Moscow 125933,\linebreak
+ $\hphantom{^1}$Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+
+\Abste{The paper considers the task of forming an individual user 
+path for a~distance learning system (LMS) with a~mixed form of 
+conducting educational activities with organization of independent 
+work of students using LMS. At the end of each section of the 
+training course, the LMS users are divided into categories 
+determined by\linebreak\vspace*{-12pt}}
+
+\Abstend{the solution of the Bayesian classification problem. 
+For each category, an individual task of a~different level of 
+complexity is proposed for the next section of the course, thus 
+forming the individual trajectory of the student. The Bayesian 
+classifier is set up based on statistics of work of the users of LMS. 
+The experimental results of solving the problem at one of the 
+stages of training are presented.}
+
+\KWE{distance learning system; Bayesian classifier; adaptive systems; 
+individual learning path}
+
+\DOI{10.14357/19922264200313} 
+
+\vspace*{-16pt}
+
+\Ack
+
+\vspace*{-3pt}
+
+
+\noindent
+The reported study was partially funded by RFBR, 
+project No.\,18-07-00617.
+
+%\vspace*{6pt}
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+\bibitem{2-bos-1}
+\Aue{Rasch, G.} 1980. \textit{Probabilistic models for some intelligence and attainment tests}. 
+Chicago, IL: University of Chicago Press. 224~p.
+
+\bibitem{1-bos-1} %2
+\Aue{Van der Linden, W.\,J., D.\,J.~Scrams, and D.\,L.~Schnipke.} 1999. Using response-time 
+constraints to control for differential speededness in computerized adaptive testing. \textit{Appl. 
+Psych. Meas.} 23(3):195--210.
+
+\bibitem{3-bos-1}
+\Aue{Kuravsky, L.\,S., P.\,A.~Marmalyuk, V.\,I.~Alkhimov, and G.\,A.~Yuryev.} 2013. Novyy 
+podkhod k~postroeniyu intellektual'nykh i~kompetentnostnykh testov 
+[A~new approach to constructing intellectual and competence-based tests]. 
+\textit{Modelling Data Analysis} 1:4--28.
+
+\bibitem{6-bos-1} %4
+\Aue{Kibzun, A.\,I., and A.\,O.~Inozemtsev.} 2014. Using the maximum likelihood method to 
+estimate test complexity levels. \textit{Automat. Rem. Contr.} 75(4):607--621.
+
+\bibitem{4-bos-1} %5
+\Aue{Kuravsky, L.\,S., P.\,A.~Marmalyuk, G.\,A.~Yuryev, P.\,N.~Dumin, and 
+A.\,S.~Panfilova.} 2015. Veroyatnostnoe mo\-de\-li\-ro\-va\-nie protsessa vypolneniya testovykh 
+zadaniy na osnove modifitsirovannoy funktsii Rasha [Probabilistic modeling of the test tasks 
+based on the modified Rasch function]. \textit{Voprosy psikhologii} [Psychology Issues]  
+4:109--118.
+\bibitem{5-bos-1} %6
+\Aue{Kuravsky, L.\,S., A.\,A.~Margolis, P.\,A.~Marmalyuk, A.\,S.~Panfilova, G.\,A.~Yuryev, 
+and P.\,N.~Dumin.} 2016. A~probabilistic model of adaptive training. 
+\textit{Applied Mathematical Sciences}  10(48):2369--2380.
+
+\bibitem{7-bos-1}
+\Aue{Naumov, A.\,V., and G.\,A.~Mkhitaryan.} 2016. On the problem of probabilistic 
+optimization of time-limited testing. \textit{Automat. Rem. Contr.} 77(9):1612--1621.
+\bibitem{8-bos-1}
+\Aue{Naumov, A.\,V., G.\,A.~Mkhitaryan, and E.\,E.~Cherygova.} 2019. Stokhasticheskaya 
+postanovka zadachi formirovaniya testa zadannogo urovnya slozhnosti 
+s~mi\-ni\-mi\-za\-tsi\-ey kvantili 
+vremeni vypolneniya [Stochastic statement of the problem of generating tests
+with defined complexity with the minimization of quantile of 
+test passing time]. \textit{Vestnik komp'yuternykh 
+i~informatsionnykh tekhnologiy} [Herald of Computer and Information Technologies] 2:37--46.
+\bibitem{9-bos-1}
+\Aue{Callan, R.} 1999. \textit{The essence of neural networks}. Prentice Hall Europe. 232~p.
+\bibitem{10-bos-1}
+\Aue{Vorob'ev, E.\,V., and E.\,V.~Puchkov.} 2017. Klassifikatsiya tekstov s pomoshch'yu 
+svertochnykh neyronnykh setey [Classification of texts using convolutional neural networks]. 
+\textit{Molodoy issledovatel' Dona} [Young Researcher of the Don] 
+6(9):2--7. Available at: {\sf 
+http://mid-journal.ru/upload/iblock/8ed/1.-vorobev\_-puchkov.pdf} (accessed July~23, 2020).
+\bibitem{11-bos-1}
+\Aue{Mikryukov, A.\,A., A.\,V.~Babash, and V.\,A.~Sizov.} 2019. Klassifikatsiya sobytiy 
+v~sistemakh obespecheniya informatsionnoy bezopasnosti na osnove neyrosetevykh tekhnologiy 
+[Classification of events in information security systems based on neural networks]. 
+\textit{Otkrytoe obrazovanie} [Open Education] 23(1):57--63.
+
+\bibitem{13-bos-1}
+\Aue{D'yakonov, A.\,G.} 2015. Solution methods for classification problems with categorical 
+attributes. \textit{Computational Mathematics Modeling} 26(3):408--428.
+
+\bibitem{12-bos-1} %13
+\Aue{Vorontsov, K.\,V.} 2015. Lektsii po algoritmicheskim kompozitsiyam [Lectures on 
+algorithmic compositions]. Available at: {\sf  
+http://www.ccas.ru/voron/download/\linebreak Composition.pdf} (accessed July~23, 2020).
+
+\bibitem{14-bos-1}
+\Aue{Naumov, A.\,V., and A.\,O.~Inozemtsev.} 2013. Algoritm formirovaniya individual'nykh 
+zadaniy v sistemakh distantsionnogo obucheniya [The
+algorithm for generating the individual tasks in distance 
+learning]. \textit{Vestnik komp'yuternykh i~informatsionnykh tekhnologiy} 
+[Herald of Computer and Information Technologies] 6:46--51.
+\bibitem{15-bos-1}
+\Aue{Martyushova, Ya.\,G., and N.\,M.~Lykova.} 2018. Organizatsiya 
+refleksivno-otsenochnoy 
+deyatel'nosti studentov universitetov sredstvami elektronnogo uchebnika [Organization of 
+reflexive-evaluative activity of university students by using
+the learning management system]. 
+\textit{Psikhologo-pedagogicheskie issledovaniya} 
+[Psychological-Educational Studies] 
+10(2):125--134.  doi:  10.17759/\linebreak psyedu.2018100211.
+\bibitem{16-bos-1}
+\Aue{Naumov, A.\,V., A.\,S.~Dzhumurat, and A.\,O.~Inozemtsev.} 2014. Sistema 
+distantsionnogo obucheniya ma\-te\-ma\-ti\-che\-skim distsiplinam CLASS.NET [Distance learning 
+system for mathematical disciplines CLASS.NET]. \textit{Vestnik komp'yuternykh 
+i~informatsionnykh tekhnologiy} [Herald of Computer and Information Technologies] 10:36--44.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received June 1, 2020}}
+
+%\pagebreak
+
+\vspace*{-10pt}
+
+\Contr
+
+\vspace*{-3pt}
+
+\noindent
+\textbf{Bosov Alexey V.} (b.\ 1969)~--- Doctor of Science in technology, principal scientist, 
+Institute of Informatics Problems, Federal Research Center ``Computer Science and Control'' of 
+the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+Moscow State Aviation Institute (National Research University), 4~Volokolamskoe Shosse, 
+Moscow 125933, Russian Federation; \mbox{AVBosov@ipiran.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Martyushova Yanina G.} (b.\ 1970)~--- Candidate of Science in pedagogy, senior 
+lecturer, Department of Probability Theory and Computer Simulations, Moscow 
+Aviation Institute (National Research University), 4~Volokolamskoe Shosse, Moscow 125933, 
+Russian Federation; \mbox{ma1554@mail.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Naumov Andrey V.} (b.\ 1966)~--- Doctor of Science in physics and mathematics, 
+professor, Moscow Aviation Institute (National Research University), 4~Volokolamskoe Shosse, 
+Moscow 125933, Russian Federation; \mbox{naumovav@mail.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Sapunova Anastasia P.} (b.\ 1998)~--- Master student, Moscow Aviation Institute 
+(National Research University), 4~Volokolamskoe Shosse, Moscow 125933, Russian 
+Federation; \mbox{sap2603@mail.ru}
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

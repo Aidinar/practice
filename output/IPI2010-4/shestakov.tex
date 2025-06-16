@@ -1,0 +1,756 @@
+
+\def\stat{shestakov}
+
+\def\tit{АППРОКСИМАЦИЯ РАСПРЕДЕЛЕНИЯ ОЦЕНКИ РИСКА ПОРОГОВОЙ
+ОБРАБОТКИ ВЕЙВЛЕТ-КОЭФФИЦИЕНТОВ НОРМАЛЬНЫМ
+РАСПРЕДЕЛЕНИЕМ ПРИ~ИСПОЛЬЗОВАНИИ ВЫБОРОЧНОЙ ДИСПЕРСИИ$^*$}
+
+\def\titkol{Аппроксимация распределения оценки риска пороговой
+обработки вейвлет-коэффициентов} 
+%нормальным распределением при~использовании выборочной дисперсии
+
+
+\def\autkol{О.\,В.~Шестаков}
+\def\aut{О.\,В.~Шестаков$^1$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}}\footnotetext[1]
+{Работа выполнена при финансовой поддержке РФФИ (грант 08-01-00567).}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет им.\ М.\,В.~Ломоносова, 
+кафедра математической статистики факультета вычислительной математики и кибернетики, oshestakov@cs.msu.su}
+
+\vspace*{6pt}
+
+\Abst{Исследуются асимптотические свойства оценки риска при
+пороговой обработке коэффициентов вейвлет-разложения функции сигнала. 
+Получены некоторые оценки скорости сходимости распределения оценки риска к нормальному закону.}
+
+\vspace*{3pt}
+
+\KW{вейвлеты; пороговая обработка; оценка риска; нормальное распределение; оценка скорости сходимости
+}
+
+\vspace*{12pt}
+
+       \vskip 14pt plus 9pt minus 6pt
+
+      \thispagestyle{headings}
+
+      \begin{multicols}{2}
+
+      \label{st\stat}
+
+
+\section{Введение}
+
+Популярность методов вейвлет-обработки сигналов и изображений значительно возросла за последние десятилетия. 
+Объясняется это тем, что вейв\-лет-разложение представляет собой удобный математический аппарат, способный решать 
+те задачи, в которых применение традиционного Фурье-ана\-ли\-за оказывается неэффективным. В настоящее время вейвлеты 
+применяются в самых разнообразных областях, включая геофизику, оптику, физику плазмы, вычислительную томографию, 
+компьютерную графику и~т.\,д. 
+
+Основные задачи, для решения которых используются вейвлеты,~--- 
+это сжатие сигналов/изображений и удаление шума. При этом чаще всего используется пороговая 
+обработка вейвлет-коэффициентов, которая обнуляет коэффициенты, не превышающие заданного порога. 
+Наличие шума и процедуры пороговой обработки неизбежно приводят к погрешностям в оце\-ни\-ва\-емом 
+сигнале/изображении. Свойства оценки таких погрешностей (риска) исследовались во многих работах 
+(см., например,~[1--7]). При определенных условиях оценка риска является асимптотически нормальной (см.~\cite{7she}). 
+
+В~данной работе исследуется вопрос о скорости сходимости распределения оценки риска к нормальному закону в одномерном 
+случае (т.\,е.\ при обработке одномерных сигналов).
+
+\section{Свойства коэффициентов вейвлет-разложения}
+
+При использовании вейвлет-разложения функция $f\in L^2(\mathbf{R})$, описывающая сигнал, 
+представляется в виде ряда из сдвигов и растяжений некоторой вейвлет-функ\-ции~$\psi$:
+\begin{equation}
+f=\sum_{j,k\in Z}\langle f,\psi_{j,k}\rangle\psi_{j,k}\,,
+\label{e1she}
+\end{equation}
+где $\psi_{j,k}(x)=2^{j/2}\psi(2^jx-k)$, а семейство $\{\psi_{j,k}\}_{j,k\in Z}$ образует ортонормированный 
+базис в $L^2(\mathbf{R})$. Индекс~$j$ в~(\ref{e1she}) называется масштабом, а индекс~$k$~--- сдвигом. 
+Функция~$\psi$ должна удовлетворять определенным требованиям~\cite{8she}, 
+однако ее можно выбрать таким образом, чтобы она обладала некоторыми полезными свойствами, 
+например была дифференцируемой нужное число раз и имела заданное число $M$ нулевых моментов (см.~\cite{8she}):
+$$
+\int\limits_{-\infty}^{\infty}x^k\psi(x)\,dx=0\,,\enskip k=0,\ldots,M-1\,.
+$$
+
+В дальнейшем будут рассматриваться функции сигнала $f\in L^2(\mathbf{R})$ на конечном отрезке $[a,b]$, 
+равномерно регулярные по Липшицу с некоторым параметром $\gamma>0$, т.\,е.\ 
+такие функции, для которых существует константа $L>0$ и полином $P_y$ степени 
+$n=\lfloor\gamma\rfloor$ такой, что для любого $y\in[a,b]$ и любого $x\in\mathbf{R}$
+$$
+\left\vert f(x)-P_y(x)\right\vert\leqslant L\left\vert x-y\right\vert^\gamma\,.
+$$
+
+Для таких функций~$f$ известно~\cite{9she}, что если вейвлет-функция $M$ раз непрерывно 
+дифференцируема ($M\geqslant\gamma$), имеет $M$ нулевых моментов и быстро убывает на бесконечности 
+вместе со своими производными, т.\,е.\ для всех $0\leqslant k \leqslant M$ и любого $m\in N$ найдется константа~$C_m$, 
+что при всех $x\in\mathbf{R}$
+$$
+\left\vert\psi^{(k)}(x)\right\vert\leqslant\fr{C_m}{1+\left\vert x\right\vert^m}\,,
+$$
+то найдется такая константа $A>0$, что
+\begin{equation}
+\langle f,\psi_{j,k}\rangle\leqslant\fr{A}{2^{j\left(\gamma+{1}/{2}\right)}}\,.
+\label{e2she}
+\end{equation}
+
+На практике функции сигнала всегда заданы в дискретных отсчетах на конечном отрезке. 
+Не ограничивая общности, будем считать, что это отрезок $[0,1]$ и функция~$f$ задана в 
+точках ${i}/{N}$ ($i=1,\ldots N$, где $N=2^J$ для некоторого~$J$): $f_i=f\left({i}/{N}\right)$.
+Дискретное вейвлет-преобразование представляет собой умножение вектора значений функции~$f$ 
+(обозначим его через~$\overline{f}$) на ортогональную матрицу~$W$, определяемую вейвлет-функцией~$\psi$: 
+$\overline{f}^{W}=W\overline{f}$ (см.~\cite{9she}). При этом если перейти к двойному индексу~$(j,k)$, 
+как в непрерывном случае, то дискретные вейвлет-коэффициенты будут связаны с непрерывными следующим образом: 
+$f^{W}_{j,k}\approx \sqrt{N}\langle f,\psi_{j,k}\rangle$ (см., например,~\cite{1she} или~\cite{10she}). 
+Это приближение тем точнее, чем больше~$N$. Не будем обсуждать методы борьбы с краевыми эффектами, 
+связанными с использованием вейвлет-разложения на конечном отрезке. Познакомиться с этими методами можно, 
+например, в~\cite{11she}. В~дальнейшем для удобства будем нумеровать дискретные вейвлет-коэффициенты так же, 
+как отсчеты функции~$f$, одним индексом~$i$ вместо двойного индекса~$(j,k)$.
+
+В реальных наблюдениях всегда присутствует шум. Будем рассматривать следующую модель:
+$$
+Y_i=f_i+z_i\,,\quad i=1,\ldots,N\,,
+$$
+где $z_i$~--- независимые случайные величины,\linebreak име\-ющие нормальное распределение с нулевым средним и 
+дисперсией~$\sigma^2$. Тогда в силу ортогональности матрицы~$W$ для дискретных вейвлет-коэффициентов 
+примем следующую модель:
+$$
+Y^W_i=f^{W}_{i}+z^W_i\,,\quad i=1,\ldots,N\,,
+$$
+где $z^W_i$ так\-же независимы и нормально распределены с нулевым средним и дисперсией~$\sigma^2$, а $f^{W}_{i}$ равны 
+соответствующим непрерывным вейвлет-ко\-эф\-фи\-ци\-ен\-там, умноженным на~$\sqrt{N}$.
+
+\section{Пороговая обработка и оценка риска}
+
+Смысл пороговой обработки вейвлет-ко\-эф\-фи\-ци\-ен\-тов заключается в удалении достаточно маленьких 
+коэффициентов, которые считаются шумом. Будем использовать так называемую\linebreak мягкую пороговую обработку с порогом~$T$. 
+К~каждому вейвлет-коэффи\-циен\-ту применяется функция $\rho_T(x)=sgn(x)\left(|x|-T\right)_{+}$, 
+т.\,е.\ при такой пороговой обработке коэффициенты, которые по модулю меньше порога~$T$, обнуляются, 
+а абсолютные величины остальных коэффициентов уменьшаются на величину порога.
+Погрешность (или риск) мягкой пороговой обработки определяется следующим образом:
+\begin{equation}
+R_N(f)=\sum_{i=1}^{N}\mbox{E}\left(f^{W}_{i}-\rho_T(Y^W_i)\right)^2\,.
+\label{e3she}
+\end{equation}
+В выражении~(\ref{e3she}) присутствуют неизвестные величины~$f^{W}_{i}$, поэтому вычислить значение~$R_N(f)$ нельзя. 
+Однако его можно оценить. В каж\-дом слагаемом если $|Y^W_i|>T$, то вклад этого слагаемого в риск составляет 
+$\sigma^2+T^2$, а если $|Y^W_i|\leqslant T$, то вклад составляет~$(f_i^W)^2$. 
+Поскольку $\mbox{E}(Y_i^W)^2=\sigma^2+(f_i^W)^2$, величину $(f_i^W)^2$ можно оценить разностью $(Y_i^W)^2-\sigma^2$.
+
+Таким образом, в качестве оценки риска можно использовать следующую величину:
+\begin{equation}
+\widetilde{R}_N(f)=\sum_{i=1}^{N}F[(Y_i^W)^2]\,,
+\label{e4she}
+\end{equation}
+где 
+$$
+F[x]=(x-\sigma^2)\Ik_{|x|\leqslant T}+(\sigma^2+T^2)\mathbb{1}_{|x|>T}\,.
+$$
+Для так определенной оценки риска справедливо следующее утверждение (см.~\cite{9she}).
+
+\medskip
+
+\noindent
+\textbf{Теорема 1.} $\mbox{E}\widetilde{R}_N(f)=R_N(f)$, \textit{т.\,е.\ $\widetilde{R}_N(f)$ является 
+несмещенной оценкой для $R_N(f)$}.
+
+\medskip
+
+В работах~\cite{2she} и~\cite{3she} было предложено использовать порог $T=\sigma\sqrt{2\ln N}$. 
+Было показано, что при таком пороге риск близок к минимальному (см.~\cite{2she}). 
+Этот порог получил название <<универсальный>>. В~дальнейшем будем ориентироваться именно на такой вид порога.
+
+Зачастую дисперсия~$\sigma^2$ не известна и ее также необходимо оценивать, при этом выражения~(\ref{e4she}) 
+принимают вид
+\begin{equation}
+\widehat{R}_N(f)=\sum_{i=1}^{N}\widehat{F}[(Y_i^W)^2]\,,
+\label{e5she}
+\end{equation}
+где
+$$
+\widehat{F}[x]=(x-\hat{\sigma}^2)\Ik_{|x|\leqslant\hat{T}}+(\hat{\sigma}^2+\hat{T}^2)\Ik_{|x|>\hat{T}}\,,
+$$
+а
+$$
+\hat{T}=\hat{\sigma}\sqrt{2\ln N}\,.
+$$
+
+Обычно дисперсия~$\sigma^2$ оценивается по выборке сигнала, однако ее можно оценить и по независимой выборке. 
+Для этого следует произвести измерение пустого сигнала, тогда наблюдения будут представлять собой чистый шум, 
+по которому и оценивается~$\sigma^2$. В~следующих разделах будут рассмотрены оба случая.
+
+\section{Оценка скорости сходимости распределения оценки риска к~нормальному закону}
+
+В работах~\cite{7she, 6she} исследуется поведение оценки риска~$\widehat{R}_N(f)$ при 
+использовании различных оценок дисперсии~$\hat{\sigma}^2$. В~частности, показано, что при достаточно 
+общих требованиях к~$\hat{\sigma}^2$ оценка риска является асимптотически нормальной. 
+В~этом разделе будут получены некоторые оценки скорости сходимости распределения~$\widetilde{R}_N(f)$ 
+к нормальному закону при использовании в качестве~$\hat{\sigma}^2$ выборочной дисперсии, которая строится 
+по независимой выборке $(Y'_1,\ldots,Y'_N)$:
+$$
+\hat{\sigma}^2=\fr{1}{N-1}\sum\limits_{i=1}^{N}(Y'_i-\overline{Y'})^2\,,\ \mbox{где}\ 
+\overline{Y'}=\fr{1}{N}\sum_{i=1}^{N}Y'_i\,.
+$$
+
+Далее для удобства будем обозначать~$Y_i^W$ через~$X_i$, а~$f_i^W$~--- через~$a_i$.
+
+\medskip
+
+\noindent
+
+\textbf{Теорема 2.} \textit{Пусть $f\in L^2(\mathbf{R})$ задана на отрезке $[0,1]$ и является равномерно 
+регулярной по Липшицу с параметром $\gamma=\fr{1}{2}+\alpha$ ($\alpha>0$) и пусть выборочная дисперсия~$\hat{\sigma}^2$ 
+не зависит от наблюдений~$X_i$, тогда существует такая константа~$C_0$ (зависящая от~$\alpha$, $A$ и~$\sigma$), что
+\begin{multline}
+\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(\fr{\widehat{R}_N(f)-R_N(f)}{\sigma^2\sqrt{2N}}<x\right)-\Phi_2(x)\right\vert\leqslant{}\\
+{}\leqslant\fr{C_0(\ln N)^{{1}/{2}}}{N^{{1}/{4}-{1}/(4(\alpha+1))}}\,,
+\label{e6she}
+\end{multline}
+где $\Phi_2(x)$~--- функция распределения нормального закона с нулевым средним и дисперсией, равной~2.
+}
+
+\medskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ Пользуясь теоремой~1, запишем разность $\widehat{R}_N(f)-R_N(f)$ в виде
+$$
+\widehat{R}_N(f)-R_N(f)=S_N+V_N\,,
+$$
+где
+\begin{multline*}
+S_N=\sum_{i=1}^{N}\left(X_i^2\Ik_{|X_i|\leqslant \hat{T}}-\mbox{E}X_i^2\Ik_{|X_i|\leqslant T}\right)+{}\\
+{}+2\sum_{i=1}^{N}\left(\hat{\sigma}^2\Ik_{|X_i|> \hat{T}}-\mbox{E}\sigma^2\Ik_{|X_i|> T}\right)+{}\\
+{}+\sum_{i=1}^{N}\left(\hat{T}^2\Ik_{|X_i|> \hat{T}}-\mbox{E}T^2\Ik_{|X_i|> T}\right)\,,
+\end{multline*}
+а
+$$V_N=N\left(\sigma^2-\hat{\sigma}^2\right)\,.
+$$
+Рассмотрим $S_N$. Разобьем это слагаемое на три суммы~$U_N$, $W_N$ и~$Z_N$:
+\begin{align*}
+U_N&=\sum_{i\in I_1}\left(X_i^2-\mbox{E}X_i^2\right)\,;\\
+W_N&=-\sum_{i\in I_1}\left(X_i^2\Ik_{|X_i|> \hat{T}}-\mbox{E}X_i^2\Ik_{|X_i|>T}\right)+{}\\
+&{}+2\sum_{i\in I_1}\left(\hat{\sigma}^2\Ik_{|X_i|> \hat{T}}-\mbox{E}\sigma^2\Ik_{|X_i|> T}\right)+{}\\
+&{}+ \sum_{i\in I_1}\left(\hat{T}^2\Ik_{|X_i|> \hat{T}}-\mbox{E}T^2\Ik_{|X_i|> T}\right)\,;\\
+Z_N&=\sum_{i\in I_2}\left(X_i^2\Ik_{|X_i|\leqslant \hat{T}}-\mbox{E}X_i^2\Ik_{|X_i|\leqslant T}\right)+{}\\
+&{}+2\sum_{i\in I_2}\left(\hat{\sigma}^2\Ik_{|X_i|> \hat{T}}-\mbox{E}\sigma^2\Ik_{|X_i|> T}\right)+{}\\
+&{}+\sum_{i\in I_2}\left(\hat{T}^2\Ik_{|X_i|> \hat{T}}-\mbox{E}T^2\Ik_{|X_i|> T}\right)\,,
+\end{align*}
+где $I_1$~--- множество тех~$i$, для которых в силу~(\ref{e2she}) выполнено $|a_i|\leqslant{A}/{N^\alpha}$, а 
+$I_2$~--- множество остальных~$i$. Оценим сумму $W_N+Z_N$.
+
+При произвольном $\varepsilon>0$, используя неравенство Чебышева, имеем
+$$
+\mbox{P}\left(\left\vert W_N+Z_N\right\vert>\varepsilon\right)\leqslant\fr{\mbox{E}\left\vert W_N\right\vert+
+\mbox{E}\left\vert Z_N\right\vert}{\varepsilon}\,.
+$$
+Рассмотрим $\mbox{E}\left\vert Z_N\right\vert$.
+\begin{multline*}
+\mbox{E}\left\vert Z_N\right\vert\leqslant\sum_{i\in I_2}\mbox{E}
+\left\vert X_i^2\Ik_{|X_i|\leqslant \hat{T}}-\mbox{E}X_i^2\Ik_{|X_i|\leqslant T}\right\vert+{}\\
+{}+2\sum_{i\in I_2}\mbox{E}\left\vert\hat{\sigma}^2
+\Ik_{|X_i|>\hat{T}}-\mbox{E}\sigma^2\Ik_{|X_i|>T}\right\vert+{}\\
+{}+\sum_{i\in I_2}\mbox{E}\left\vert\hat{T}^2\Ik_{|X_i|>\hat{T}}-\mbox{E}T^2\Ik_{|X_i|> T}\right\vert\,.
+\end{multline*}
+Поскольку $f$ регулярна по Липшицу с $\gamma={1}/{2}+\alpha$, число слагаемых в каждой из этих трех сумм не 
+превосходит $B_1 N^{{1}/(2(\alpha+1))}$, где $B_1$~--- некоторая константа, зависящая от~$\alpha$. 
+Слагаемые в первой и третьей суммах не превосходят $\sigma^2\ln N$, а слагаемые во второй сумме не превосходят~$\sigma^2$. 
+Следовательно, $\mbox{E}|Z_N|$ не превосходит $B_2N^{{1}/(2(\alpha+1))}\ln N$ для некоторой константы~$B_2$.
+
+Оценим теперь $\mbox{E}|W_N|$.
+\begin{multline}
+\mbox{E}\left\vert W_N\right\vert\leqslant\sum_{i\in I_1}\mbox{E}
+\left\vert X_i^2\Ik_{|X_i|> \hat{T}}-\mbox{E}X_i^2\Ik_{|X_i|> T}\right\vert+{}\\
+{}+2\sum_{i\in I_1}\mbox{E}
+\left\vert\hat{\sigma}^2\Ik_{|X_i|> \hat{T}}-\mbox{E}\sigma^2\Ik_{|X_i|> T}\right\vert+{}\\
+{}+\sum_{i\in I_1}\mbox{E}
+\left\vert\hat{T}^2\Ik_{|X_i|> \hat{T}}-\mbox{E}T^2\Ik_{|X_i|> T}\right\vert\,.
+\label{e7she}
+\end{multline}
+Оценим первую сумму. Имеем
+\begin{multline}
+\mbox{E}\left\vert X_i^2\Ik_{|X_i|> \hat{T}}-\mbox{E}X_i^2\Ik_{|X_i|> T}\right\vert\leqslant{}\\
+{}\leqslant
+\mbox{E}\left\vert X_i^2\Ik_{|X_i|> \hat{T}}-X_i^2\Ik_{|X_i|> T}\right\vert+{}\\
+{}+\mbox{E}\left\vert X_i^2\Ik_{|X_i|> T}-\mbox{E}X_i^2\Ik_{|X_i|> T}\right\vert\,.
+\label{e8she}
+\end{multline}
+Рассмотрим первое слагаемое. В~силу незави\-си\-мости~$X_i$ и~$\hat{T}$ при достаточно больших~$N$ (таких, что $T-a_i>0$)
+\begin{multline*}
+\mbox{E}\left\vert X_i^2\Ik_{|X_i|> \hat{T}}-X_i^2\Ik_{|X_i|> T}\right\vert={}\\[1pt]
+{}=
+\mbox{E}X_i^2\left\vert\Ik_{\hat{T}\geqslant|X_i|> T}+\Ik_{T\geqslant|X_i|> \hat{T}}\right\vert\leqslant{}\\[1pt]
+{}\leqslant \mbox{E}\hat{T}^2\Ik_{\hat{T}\geqslant|X_i|> T}+\mbox{E}T^2\Ik_{T\geqslant|X_i|> \hat{T}}\leqslant{}\\[1pt]
+{}\leqslant\fr{1}{\sqrt{2\pi\sigma^2}}\left(
+\mbox{E}\hat{T}^2 e^{-{(T-a_i)^2}/(2\sigma^2)}|\hat{T}-T|+{}\right.\\[1pt]
+\left.{}+
+\mbox{E}T^2|\hat{T}-T|\Ik_{\hat{T}\leqslant a_i}+{}\right.\\[1pt]
+\left.{}+\mbox{E}T^2e^{-{(\hat{T}-a_i)^2}/(2\sigma^2)}
+|\hat{T}-T|\Ik_{\hat{T}>a_i}\right)\,.
+\end{multline*}
+Обозначим $\beta_{i,N}={a_i}/(\sigma\sqrt{2\ln N}).$ Тогда начиная с некоторого~$N$
+\begin{multline*}
+\mbox{E}T^2e^{-{(\hat{T}-a_i)^2}/({2\sigma^2})}|\hat{T}-T|\Ik_{\hat{T}>a_i}={}\\[1pt]
+{}=2\sqrt{2}\sigma^2(\ln N)^{{3}/{2}}\mbox{E}|\hat{\sigma}-\sigma|e^{-\ln N\left({\hat{\sigma}}/{\sigma}-\beta_{i,N}\right)^2}\Ik_{\hat{T}>a_i}={}\\[1pt]
+{}=2\sqrt{2}\sigma^2(\ln N)^{{3}/{2}}\mbox{E}|\hat{\sigma}-\sigma|
+e^{-\ln N\left({\hat{\sigma}}/{\sigma}-\beta_{i,N}\right)^2}\times{}\\[1pt]
+{}\times
+\left(\Ik_{\hat{\sigma}/{\sigma}\geqslant{1}/{\sqrt{2}}+\beta_{i,N}}+
+\Ik_{\beta_{i,N}<{\hat{\sigma}}/{\sigma}< 1/\sqrt{2}+\beta_{i,N}}\right)\leqslant{}\\[1pt]
+{}\leqslant2\sqrt{2}\sigma^2(\ln N)^{{3}/{2}}\left(e^{-\ln N/2}\mbox{E}|\hat{\sigma}-\sigma|+{}\right.\\[1pt]
+\left.{}+
+\mbox{E}|\hat{\sigma}-\sigma|\Ik_{\beta_{i,N}<{\hat{\sigma}}/\sigma<1/\sqrt{2}+\beta_{i,N}}\right)\leqslant{}
+\end{multline*}
+\begin{multline*}
+{}\leqslant2\sqrt{2}\sigma(\ln N)^{3/2}\left(\fr{\sqrt{\mbox{D}\hat{\sigma}^2}}{N^{1/2}}+{}\right.\\
+\left.{}+
+\sqrt{\mbox{D}\hat{\sigma}^2\mbox{P}\left(\beta_{i,N}<
+\fr{\hat{\sigma}}{\sigma}<\fr{1}{\sqrt{2}}+\beta_{i,N}\right)}\right)\,.
+\end{multline*}
+При переходе к последнему неравенству использовалось то, что
+
+\noindent
+$$
+\mbox{E}|\hat{\sigma}-\sigma|^2=\mbox{E}\fr{(\hat{\sigma}^2-\sigma^2)^2}{(\hat{\sigma}+\sigma)^2}\leqslant
+\mbox{E}\fr{(\hat{\sigma}^2-\sigma^2)^2}{\sigma^2}=\fr{\mbox{D}\hat{\sigma}^2}{\sigma^2}\,.
+$$
+Оценим вероятность, входящую в подкоренное выражение.
+
+\noindent
+\begin{multline*}
+\mbox{P}\left(\beta_{i,N}<\frac{\hat{\sigma}}{\sigma}<\fr{1}{\sqrt{2}}+\beta_{i,N}\right)\leqslant{}\\
+{}\leqslant
+\mbox{P}\left(\fr{\hat{\sigma}}{\sigma}<\fr{1}{\sqrt{2}}+\beta_{i,N}\right)={}\\
+{}=\mbox{P}\left(\fr{\hat{\sigma}^2}{\sigma^2}<\left(\fr{1}{\sqrt{2}}+\beta_{i,N}\right)^2\right)={}\\
+{}=\mbox{P}\left(\sigma^2-\hat{\sigma}^2>\sigma^2\left(1-\left(\frac{1}{\sqrt{2}}+\beta_{i,N}\right)^2\right)\right)\leqslant{}\\
+{}\leqslant\mbox{P}\left(\left\vert\sigma^2-\hat{\sigma}^2\right\vert>\sigma^2
+\left(1-\left(\fr{1}{\sqrt{2}}+\beta_{i,N}\right)^2\right)\right)\leqslant{}\\
+{}\leqslant\fr{\mbox{D}\hat{\sigma}^2}{\sigma^4\left(1-\left(\frac{1}{\sqrt{2}}+\beta_{i,N}\right)^2\right)^2}\,.
+\end{multline*}
+Последнее неравенство справедливо, поскольку $1-\left({1}/{\sqrt{2}}+\beta_{i,N}\right)^2>0$ начиная с некоторого~$N$.
+В~результате, учитывая порядок дисперсии оценки~$\hat{\sigma}^2$~\cite{12she}, 
+имеем, что для некоторой константы~$C_1$ справедливо
+\begin{equation}
+\mbox{E}T^2e^{-{(\hat{T}-a_i)^2}/(2\sigma^2)}|\hat{T}-T|\Ik_{\hat{T}>a_i}\leqslant\fr{C_1(\ln N)^{\frac{3}{2}}}{N}\,.
+\label{e9she}
+\end{equation}
+Далее, начиная с некоторого~$N$
+\begin{multline}
+\mbox{E}T^2|\hat{T}-T|\Ik_{\hat{T}\leqslant a_i}={}\\[1pt]
+{}=
+2\sqrt{2}\sigma^3(\ln N)^{{3}/{2}}\mbox{E}\left\vert\fr{\hat{\sigma}}{\sigma}-1\right\vert
+\Ik_{{\hat{\sigma}}/\sigma\leqslant\beta_{i,N}}\leqslant{}\\[1pt]
+{}\leqslant 2\sqrt{2}\sigma^3(\ln N)^{{3}/{2}}\mbox{E}
+\Ik_{{\hat{\sigma}}/\sigma\leqslant\beta_{i,N}}={}\\[1pt]
+{}=2\sqrt{2}\sigma^3(\ln N)^{3/2}\mbox{P}\left(\sigma^2-\hat{\sigma}^2\geqslant\sigma^2(1-\beta^2_{i,N})\right)\leqslant {}\\[1pt]
+{}\leqslant
+2\sqrt{2}(\ln N)^{3/2}\fr{\mbox{D}\hat{\sigma}^2}{\sigma(1-\beta^2_{i,N})^2}\leqslant
+\fr{C_2(\ln N)^{3/2}}{N}
+\label{e10she}
+\end{multline}
+для некоторой константы~$C_2$.
+\pagebreak
+
+Наконец, для некоторых констант~$C_3$ и~$C_4$
+\begin{multline}
+\mbox{E}\hat{T}^2 e^{-{(T-a_i)^2}/(2\sigma^2)}|\hat{T}-T|\leqslant{}\\
+{}\leqslant\fr{C_3(\ln N)^{3/2}}{N}\mbox{E}\hat{\sigma}^2|\hat{\sigma}-\sigma|\leqslant{}\\
+{}\leqslant \fr{C_3(\ln N)^{3/2}}{N\sigma}\sqrt{\mbox{D}\hat{\sigma}^2\mbox{E}\hat{\sigma}^4}\leqslant
+\fr{C_4(\ln N)^{3/2}}{N^{3/2}}\,.
+\label{e11she}
+\end{multline}
+Рассмотрим теперь второе слагаемое в~(\ref{e8she}). Если в разности оба члена положительны, 
+то модуль раз\-ности не превосходит максимума из модулей каж\-до\-го из них, поэтому
+\begin{multline*}
+\mbox{E}\left\vert X_i^2\Ik_{|X_i|> T}-\mbox{E}X_i^2\Ik_{|X_i|> T}\right\vert\leqslant\mbox{E}
+\left\vert X_i^2\Ik_{|X_i|> T}\right\vert\leqslant{}\\
+{}\leqslant\fr{2}{\sqrt{2\pi\sigma^2}}\int\limits_{T}^{\infty}u^2e^{-{(u-|a_i|)^2}/(2\sigma^2)}\,du={}\\
+{}=\fr{2}{\sqrt{2\pi\sigma^2}}\int\limits_{T-|a_i|}^{\infty}(v+|a_i|)^2e^{-{v^2}/(2\sigma^2)}\,dv={}\\
+{}=
+\fr{2}{\sqrt{2\pi\sigma^2}}\int\limits_{T-|a_i|}^{\infty}(v^2+2v|a_i|+a_i^2)e^{-{v^2}/(2\sigma^2)}\,dv\,;
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+\int\limits_{T-|a_i|}^{\infty}v^2e^{-{v^2}/(2\sigma^2)}\,dv=
+-\sigma^2ve^{-{v^2}/(2\sigma^2)}\vert^{\infty}_{T-|a_i|}+{}\\
+{}+\;\sigma^2\!\!\int\limits_{T-|a_i|}^{\infty}\!\!
+e^{-{v^2}/(2\sigma^2)}\,dv
+\leqslant\fr{C_5(\ln N)^{1/2}}{N}+\fr{C_6}{N(\ln N)^{1/2}}
+\end{multline*}
+для некоторых констант~$C_5$ и~$C_6$. Далее, учитывая, что $|a_i|<A/N^{\alpha}$ для $i\in I_1$, имеем
+\begin{align*}
+\left\vert a_i\right\vert \int\limits_{T-|a_i|}^{\infty} ve^{-{v^2}/(2\sigma^2)}\,dv
+&=\\
+& \hspace*{-20mm}{}=\sigma^2|a_i|e^{-{(T-|a_i|)^2}/(2\sigma^2)}%\\&
+\leqslant \fr{C_7}{N^{1+\alpha}}\,;\\
+a_i^2\int\limits_{T-|a_i|}^{\infty}\!e^{-{v^2}/(2\sigma^2)}\,dv&\leqslant\fr{C_8}{N^{1+2\alpha}(\ln N)^{1/2}}\,.
+\end{align*}
+Следовательно, существует такая константа~$C_9$, что
+\begin{equation}
+\mbox{E}\left\vert X_i^2\Ik_{|X_i|> T}-\mbox{E}X_i^2\Ik_{|X_i|> T}\right\vert\leqslant
+\fr{C_9(\ln N)^{1/2}}{N}\,.
+\label{e12she}
+\end{equation}
+Объединяя~(\ref{e8she})--(\ref{e12she}), получаем, что существует такая константа~$C^*$, что первая сумма 
+в~(\ref{e7she}) не превосходит $C^*(\ln N)^{3/2}$. Вторая и третья сумма в~(\ref{e7she}) 
+оцениваются аналогично. Таким образом, существует такая константа~$C^{**}$, что
+\begin{equation}
+\mbox{E}|W_N|\leqslant C^{**}(\ln N)^{3/2}\,.
+\label{e13she}
+\end{equation}
+Далее, для произвольного $\varepsilon>0$ справедливо
+\begin{multline*}
+\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(\fr{\widehat{R}_N(f)-R_N(f)}{\sigma^2\sqrt{2N}}<x\right)-
+\Phi_2(x)\right\vert={}\\
+{}=
+\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(\fr{V_N+U_N+W_N+Z_N}{\sigma^2\sqrt{2N}}<x\right)-\Phi_2(x)\right\vert\leqslant{}\\
+{}\leqslant\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(\fr{V_N+U_N}{\sigma^2\sqrt{2N}}<x\right)-\Phi_2(x)\right\vert+{}\\
+{}+
+\fr{\varepsilon}{2\sqrt{\pi}}+\mbox{P}\left(\left\vert W_N+Z_N\right\vert>\varepsilon\sigma^2\sqrt{2N}\right)\,.
+\end{multline*}
+Выберем $\varepsilon=(\ln N)^{1/2}N^{1/(4(\alpha+1))-1/4}$, тогда, учитывая оценку для~$\mbox{E}|Z_N|$ 
+и~(\ref{e13she}), получаем, что для некоторой константы~$B_3$ справедливо
+\begin{multline}
+\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(\fr{\widehat{R}_N(f)-R_N(f)}{\sigma^2\sqrt{2N}}<x\right)-
+-\Phi_2(x)\right\vert\leqslant{}\\
+{}\leqslant \sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(\fr{V_N+U_N}{\sigma^2\sqrt{2N}}<x\right)-\Phi_2(x)\right\vert+{}\\
+{}+
+\fr{B_3(\ln N)^{1/2}}{N^{1/4-1/(4(\alpha+1))}}\,.
+\label{e14she}
+\end{multline}
+Так как $V_N$ и~$U_N$ независимы, имеем~\cite{13she}
+\begin{multline}
+\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(\fr{V_N+U_N}{\sigma^2\sqrt{2N}}<x\right)-\Phi_2(x)\right\vert\leqslant{}\\
+{}\leqslant\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(\fr{V_N}{\sigma^2\sqrt{2N}}<x\right)-
+\Phi(x)\right\vert+{}\\
+{}+\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(\fr{U_N}{\sigma^2\sqrt{2N}}<x\right)-\Phi(x)\right\vert\,,
+\label{e15she}
+\end{multline}
+где $\Phi(x)$~--- функция распределения стандартного нормального закона.
+Величина $\hat{\sigma}^2(N-1)/\sigma^2$ имеет распределение~$\chi^2$ с $N-1$ степенью свободы (см.~\cite{12she}). 
+Учитывая результаты работы~\cite{14she}, можно показать, что
+\begin{equation}
+\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(\fr{V_N}{\sigma^2\sqrt{2N}}<x\right)-\Phi(x)\right\vert
+\leqslant\fr{B_4}{\sqrt{N}}
+\label{e16she}
+\end{equation}
+для некоторой константы~$B_4$.
+
+\pagebreak
+
+Для второго слагаемого, учитывая, что $\mbox{D}X_i^2=$\linebreak $=2\sigma^4+4\sigma^2a_i^2$, имеем
+\begin{multline*}
+\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(\fr{U_N}{\sigma^2\sqrt{2N}}<x\right)-\Phi(x)\right\vert={}\\
+{}=
+\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(H_N\delta_N<x\right)-\Phi(x)\right\vert\,,
+\end{multline*}
+где
+$$
+H_N=\fr{U_N}{\sigma^2\sqrt{2N_1+\left(4/\sigma^{2}\right)\sum\limits_{i\in I_1}a_i^2}}\,,
+$$
+а
+$$  
+\delta_N=\fr{\sqrt{N_1+\left (2/\sigma^{2}\right)\sum\limits_{i\in I_1}a_i^2}}{\sqrt{N}}\,.
+$$
+Здесь  $N_1$~--- число индексов в~$I_1$ ($N\geqslant N_1\geqslant$\linebreak $\geqslant N-B_1 N^{1/(2(\alpha+1))}$).
+Далее,
+\begin{multline}
+\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(H_N\delta_N<x\right)-\Phi(x)\right\vert\leqslant{}\\
+{}\leqslant
+\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(H_N<x\right)-\Phi(x)\right\vert+{}\\
+{}+
+\sup\limits_{x\in\mathbf{R}}\left\vert\Phi\left(\fr{x}{\delta_N}\right)-\Phi(x)\right\vert\leqslant{}\\
+{}\leqslant\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(H_N<x\right)-\Phi(x)\right\vert+{}\\
+{}+
+\fr{1}{\sqrt{2\pi e}}\max\left(\fr{1}{\delta_N}-1,\delta_N-1\right)\,.
+\label{e17she}
+\end{multline}
+Используя тот факт, что сумма $\sum\limits_{i\in I_1}a_i^2$ при $N\rightarrow\infty$ 
+фактически представляет из себя остаток ряда из квадратов вейвлет-коэффициентов функции~$f$, 
+умноженного на~$N$, а $f$ принадлежит $L^2(\mathbf{R})$ и регулярна по Липшицу с 
+$\gamma=1/2+\alpha$, можно показать, что существует такая константа~$B_5$, что
+\begin{equation}
+\max\left(\fr{1}{\delta_N}-1,\delta_N-1\right)\leqslant\fr{B_5}{N^{1/2-1/(2(\alpha+1))}}\,.
+\label{e18she}
+\end{equation}
+Далее, поскольку $\mbox{D}X_i^2=2\sigma^4+4\sigma^2a_i^2\geqslant2\sigma^4$ и величины 
+$\mbox{E}|X_i^2-\mbox{E}X_i^2|^3$ ограничены некоторой константой~$B_6$ для $i\in I_1$, то в силу неравенства 
+Берри--Эс\-се\-ена для сумм разнораспределенных независимых случайных величин~\cite{15she}, получаем
+
+\noindent
+\begin{equation}
+\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(H_N<x\right)-\Phi(x)\right\vert\leqslant\fr{B_7}{\sqrt{N}}
+\label{e19she}
+\end{equation}
+для некоторой константы~$B_7$.
+Объединяя~(\ref{e14she})--(\ref{e19she}), получаем~(\ref{e6she}). Теорема доказана.
+\smallskip
+
+В~(\ref{e6she}) разность $\widehat{R}_N(f)-R_N(f)$ нормируется величиной, зависящей от~$\sigma^2$. 
+Однако, поскольку в~(\ref{e5she}) в $\widehat{R}_N(f)$ вместо~$\sigma^2$ подставляется~$\hat{\sigma}^2$, 
+естественнее подставить~$\hat{\sigma}^2$ и в эту нормировку. При этом из доказанной теоремы можно получить 
+следующее следствие.
+
+\smallskip
+
+\noindent
+\textbf{Следствие}. \textit{Если при выполнении условий теоремы~2 вместо~$\sigma^2$ в~(\ref{e6she}) 
+подставить~$\hat{\sigma}^2$, то для константы~$C_0$ из теоремы~2 и некоторой константы~$B_0$ справедливо}
+
+\noindent
+\begin{multline}
+\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(\fr{\widehat{R}_N(f)-R_N(f)}{\hat{\sigma}^2\sqrt{2N}}<x\right)-
+\Phi_2(x)\right\vert\leqslant{}\\
+{}\leqslant \fr{C_0(\ln N)^{1/2}}{N^{1/4-1/(4(\alpha+1))}}+\fr{B_0}{N^{1/4}}\,.
+\label{e20she}
+\end{multline}
+
+\medskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ 
+\begin{multline*}
+\sup\limits_{x\in\mathbf{R}}
+\left\vert\mbox{P}\left(\fr{\widehat{R}_N(f)-R_N(f)}{\hat{\sigma}^2\sqrt{2N}}<x\right)-\Phi_2(x)\right\vert={}\\
+{}=\sup\limits_{x\in\mathbf{R}}
+\left\vert\mbox{P}\left(\frac{\widehat{R}_N(f)-R_N(f)}{\sigma^{2}\sqrt{2N}}\frac{\sigma^{2}}{\hat{\sigma}^2}<x\right)-\Phi_2(x)\right\vert\,.
+\end{multline*}
+Для произвольного $0<\varepsilon<1$
+\begin{multline}
+\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(\fr{\widehat{R}_N(f)-R_N(f)}{\sigma^{2}\sqrt{2N}}\,
+\fr{\sigma^{2}}{\hat{\sigma}^2}<x\right)-\Phi_2(x)\right\vert\leqslant{}\\
+{}\leqslant\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(\fr{\widehat{R}_N(f)-R_N(f)}{\sigma^{2}\sqrt{2N}}<x\right)-\Phi_2(x)\right\vert+{}\\
+{}+\mbox{P}\left(\left\vert\fr{\sigma^{2}}{\hat{\sigma}^2}-1\right\vert>\varepsilon\right)+
+\fr{\varepsilon}{(1-\varepsilon)\sqrt{2\pi e}}\,.
+\label{e21she}
+\end{multline}
+Далее,
+\begin{multline*}
+\mbox{P}\left(\left\vert\fr{\sigma^{2}}{\hat{\sigma}^2}-1\right\vert>\varepsilon\right)\leqslant
+\fr{\mbox{E}\left\vert\hat{\sigma}^2-\sigma^{2}\right\vert(1+\varepsilon)}{\varepsilon\sigma^2}\leqslant{}\\
+{}\leqslant
+\fr{\sqrt{\mbox{D}\hat{\sigma}^2}(1+\varepsilon)}{\varepsilon\sigma^2}\,.
+\end{multline*}
+Выберем $\varepsilon=N^{-1/4}$. Тогда найдется такая константа~$B_0$, что
+\begin{equation}
+\mbox{P}\left(\left\vert\fr{\sigma^{2}}{\hat{\sigma}^2}-1\right\vert>\varepsilon\right)+
+\fr{\varepsilon}{(1-\varepsilon)\sqrt{2\pi e}}\leqslant\fr{B_0}{N^{1/4}}\,.
+\label{e22she}
+\end{equation}
+Объединяя~(\ref{e21she}), (\ref{e22she}) и~(\ref{e6she}), получаем~(\ref{e20she}).
+
+\medskip
+
+\noindent
+\textbf{Замечание~1.} Хотя в утверждениях этого раздела требуется равномерная регулярность по 
+Липшицу, когда дисперсия оценивается по независимой выборке, это требование можно ослабить, 
+позволив функции быть разрывной в конечном числе точек, если потребовать, чтобы вейвлет-функция 
+имела компактный носитель. При этом порядок оценок в теореме~2 и ее следствии не изменится.
+
+\section{Оценивание дисперсии по~выборке сигнала}
+
+Если дисперсия оценивается по выборке сигнала и функция~$f$ удовлетворяет требуемым условиям регулярности, то в 
+силу~(\ref{e2she}) обычно ее оценивают по половине всех вейвлет-коэффициентов для $j=J-1$ 
+(напомним, что $N=2^J$), так как эти коэффициенты фактически содержат только шум. 
+Для доказательства утверждений этого пункта будем использовать две оценки дисперсии, 
+каж\-дая из которых построена по половине вейвлет-коэффициентов из указанного множества, т.\,е.\
+по четверти всех вейвлет-коэффициентов. Если перейти к одному индексу~$i$, то эти оценки будут 
+выглядеть следующим образом:
+\begin{equation}
+\hat{\sigma}_1^2=\fr{1}{N/4-1}\sum_{i=N/2+1}^{3N/4}(X_i-\overline{X}_1)^2\,,
+\label{e23she}
+\end{equation}
+где
+$$ \overline{X}_1=\fr{4}{N}\sum_{i=N/2+1}^{3N/4}X_i\,;$$
+\begin{equation}
+\hat{\sigma}_2^2=\fr{1}{N/4-1}\sum_{i=3N/4+1}^{N}(X_i-\overline{X}_2)^2\,,
+\label{e24she}
+\end{equation}
+где
+$$\overline{X}_2=\fr{4}{N}\sum_{i=3N/4+1}^{N}X_i\,.
+$$
+При пороговой обработке для построения порога~$\hat{T}$ будем использовать~$\hat{\sigma}_1^2$ для тех наблюдений~$X_i$, 
+которые не зависят от~$\hat{\sigma}_1^2$, и~$\hat{\sigma}_2^2$~--- для тех наблюдений~$X_i$, которые не зависят 
+от~$\hat{\sigma}_2^2$. Для наблюдений, не зависящих ни от~$\hat{\sigma}_1^2$, ни от~$\hat{\sigma}_2^2$, 
+будем использовать одну из этих оценок так, чтобы каждая из них использовалась одинаковое число раз. 
+Таким образом, многие рассуждения, изложенные в теореме~2, останутся справедливыми.
+
+Можно показать, что если~$f$ регулярна по Липшицу с параметром 
+$\gamma=1/2+\alpha$, то
+\begin{equation}
+\left.
+\begin{array}{rl}
+\mbox{E}\hat{\sigma}_k^2&=\sigma^2+O\left(\fr{1}{N^{1+2\alpha}}\right)\,;\\
+\mbox{D}\hat{\sigma}_k^2&=O\left(\fr{1}{N}\right)\,,\enskip k=1,2\,.
+\end{array}
+\right \}
+\label{e25she}
+\end{equation}
+
+Справедлив аналог теоремы~2.
+
+\medskip
+
+\noindent
+\textbf{Теорема 3.} \textit{Пусть $f\in L^2(\mathbf{R})$ задана на отрезке $[0,1]$ и является 
+равномерно регулярной по Липшицу с параметром $\gamma=1/2+\alpha$ ($\alpha>0$) и пусть оценка~$\sigma^2$ 
+задается соотношениями}~(\ref{e23she}) \textit{и}~(\ref{e24she}), 
+\textit{тогда существует такая константа~$\tilde{C}_0$ (зависящая от~$\alpha$, $A$ и~$\sigma$), что
+\begin{multline}
+\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(\fr{\widehat{R}_N(f)-R_N(f)}{\sigma^2\sqrt{2N}}<x\right)-
+\Phi(x)\right\vert\leqslant{}\\
+{}\leqslant \fr{\tilde{C}_0(\ln N)^{1/2}}{N^{1/4-1/(4(\alpha+1))}}\,.
+\label{e26she}
+\end{multline}}
+\textbf{Замечание~2.} В отличие от теоремы~2, предельный закон в~(\ref{e26she}) имеет дисперсию, равную~1.
+
+\medskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ Так же, как в теореме~2, запишем разность $\widehat{R}_N(f)-R_N(f)$ в виде
+$\widehat{R}_N(f)-R_N(f)=V_N+U_N+W_N+Z_N$. Рассмотрим сумму $V_N+U_N$:
+\begin{multline*}
+V_N+U_N=\sum_{i\in I_1}\left(X_i^2-\mbox{E}X_i^2\right)+{}\\
+{}+N\left(\sigma^2-
+\fr{1}{2}\left(\hat{\sigma_1^2}+\hat{\sigma_2^2}\right)\right)\,.
+\end{multline*}
+Заметим, что индексы всех слагаемых в суммах~(\ref{e23she}) и~(\ref{e24she}) содержатся в~$I_1$. 
+Обозначим множество этих индексов через~$I'_1$. Таким образом, имеем
+\begin{multline*}
+V_N+U_N=\sum_{i\in I_1\backslash I'_1}\left(X_i^2-\mbox{E}X_i^2\right)-
+\sum_{i\in I'_1}\left(X_i^2-\mbox{E}X_i^2\right)-{}\\
+{}-2\sum_{i\in I'_1}a_i^2-\fr{8}{N-4}\sum_{i\in I'_1}X_i^2+\fr{N^2}{2(N-4)}\left(\overline{X}_1^2+\overline{X}_2^2\right)\,.
+\end{multline*}
+Пусть
+$$
+U'_N=\sum_{i\in I_1\backslash I'_1}\left(X_i^2-\mbox{E}X_i^2\right)-\sum_{i\in I'_1}\left(X_i^2-\mbox{E}X_i^2\right)\,;
+$$
+\begin{multline*}
+\Delta_N=-2\sum_{i\in I'_1}a_i^2-\fr{8}{N-4}\sum_{i\in I'_1}X_i^2+{}\\
+{}+\fr{N^2}{2(N-4)}(\overline{X}_1^2+\overline{X}_2^2)\,.
+\end{multline*}
+Так же, как в теореме~2, убеждаемся, что для некоторой константы~$\tilde{C}_1$
+\begin{multline}
+\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(\fr{U'_N}{\sigma^2\sqrt{2N}}<x\right)-\Phi(x)\right\vert\leqslant{}\\
+{}\leqslant\fr{\tilde{C}_1}{\sqrt{N}}+\fr{\tilde{C}_2}{N^{1/2-1/(2(\alpha+1))}}\,.
+\label{e27she}
+\end{multline}
+Далее, учитывая соотношения~(\ref{e25she}), можно оценить сумму 
+$\mbox{E}|\Delta_N|+\mbox{E}|W_N|+\mbox{E}|Z_N|$ аналогично тому, как это было сделано в теореме~2 
+для $\mbox{E}|W_N|+\mbox{E}|Z_N|$. Используя неравенство, аналогичное~(\ref{e14she}), 
+и учитывая~(\ref{e27she}), получаем~(\ref{e26she}). Теорема доказана.
+
+\medskip
+
+ Из теоремы~3 можно сделать такое же следствие, как и из теоремы~2.
+ 
+ \medskip
+ 
+ \noindent
+\textbf{Следствие}. \textit{Если при выполнении условий теоремы~3 вместо $\sigma^2$ в}~(\ref{e26she}) 
+\textit{подставить $\hat{\sigma}^2=(\hat{\sigma}_1^2+\hat{\sigma}_2^2)/2$, то для константы~$\tilde{C}_0$ из теоремы}~3 
+\textit{и некоторой константы~$\tilde{B}_0$ справедливо}
+\begin{multline}
+\sup\limits_{x\in\mathbf{R}}\left\vert\mbox{P}\left(\fr{\widehat{R}_N(f)-R_N(f)}{\hat{\sigma}^2\sqrt{2N}}<x\right)-
+\Phi(x)\right\vert\leqslant{}\\
+{}\leqslant\fr{\tilde{C}_0(\ln N)^{1/2}}{N^{1/4-1/(4(\alpha+1))}}+\fr{\tilde{B}_0}{N^{1/4}}\,.
+\label{e28she}
+\end{multline}
+Доказательство неравенства~(\ref{e28she}) аналогично доказательству следствия из теоремы~2.
+
+\medskip
+
+\noindent
+\textbf{Замечание~3.} Из доказательств приведенных утверждений следует, 
+что оценки на самом деле имеют более сложную структуру. Можно заметить, что если уточнить структуру
+оценок, то константа при главном члене не будет зависеть от~$\sigma^2$.
+\smallskip
+
+\noindent
+\textbf{Замечание~4.} Метод разложения суммы на две компоненты, одна из которых ведет себя 
+как сумма независимых случайных величин, а другая стремится к нулю по вероятности, как правило, 
+приводит к оценкам, не являющимся оптимальными по порядку. Следовательно, можно ожидать, что 
+порядок оценок в приведенных утверждениях может быть улучшен.
+
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\addcontentsline{toc}{section}{Литература}
+\begin{thebibliography}{99}
+
+\bibitem{2she} %1
+\Au{Donoho D., Johnstone I.\,M.} 
+Ideal spatial adaptation via wavelet shrinkage~// Biometrika, 1994. Vol.~81. No.\,3. P.~425--455.
+
+\bibitem{1she} %2
+\Au{Donoho D., Johnstone I.\,M.} 
+Adapting to unknown smoothness via wavelet shrinkage~// J. Amer. Stat. Assoc., 1995. Vol.~90. P.~1200--1224.
+
+
+\bibitem{3she} %3
+\Au{Donoho D.\,L., Johnstone I.\,M., Kerkyacharian G., Picard~D.} 
+Wavelet shrinkage: Asymp\-to\-pia?~// J.~R.~Statist. Soc. Ser. B., 1995. Vol.~57. No.\,2. P.~301--369.
+
+\bibitem{4she}
+\Au{Marron J.\,S., Adak S., Johnstone I.\,M., Neumann~M.\,H., Patil~P.} 
+Exact risk analysis of wavelet regression~// J.~Comput. Graph. Stat., 1998. Vol.~7. P.~278--309.
+
+\bibitem{5she} %
+\Au{Antoniadis A., Fan J.} 
+Regularization of wavelet approximations~// J. Amer. Statist. Assoc., 2001. Vol.~96. No.\,455. P.~939--967.
+
+\bibitem{7she}
+\Au{Маркин А.\,В.} 
+Предельное распределение оценки риска при пороговой обработке вейвлет-коэффициентов~// 
+Информатика и её применения, 2009. Т.~3. №\,4. С.~57--63.
+
+\bibitem{6she} %6
+\Au{Маркин А.\,В., Шестаков О.\,В.} 
+О состоятельности оценки риска при пороговой обработке вейвлет-ко\-эф\-фи\-ци\-ен\-тов~// 
+Вестн. Моск. ун-та. Сер.~15. Вычисл. матем. и киберн., 2010. №\,1. C.~26--34.
+
+
+\bibitem{8she}
+\Au{Добеши И.} Десять лекций по вейвлетам.~--- Ижевск: НИЦ Регулярная и хаотическая динамика, 2001.
+
+\bibitem{9she}
+\Au{Mallat S.} 
+A wavelet tour of signal processing.~--- Academic Press, 1999.
+
+\bibitem{10she}
+\Au{Abramovich F., Silverman B.\,W.} 
+Wavelet decomposition approaches to statistical inverse problems~// Biometrika, 1998. Vol.~85. No.\,1. P.~115--129.
+
+\bibitem{11she}
+\Au{Boggess A., Narkowich F.} 
+A first course in wavelets with Fourier analysis.~--- Prentice Hall, 2001.
+
+\bibitem{12she}
+\Au{Крамер Г.} Математические методы статистики.~--- М: Мир, 1975.
+
+\bibitem{13she}
+\Au{Senatov V.\,V.} Normal approximation: New results, methods, and problems.~--- VSP, 1998.
+
+\bibitem{14she}
+\Au{Ульянов В.\,В., Кристоф Г., Фуджикоши~Я.} 
+О~приближениях преобразований хи-квадрат распределений в статистических приложениях~// Сиб. матем. журн., 2006. 
+Т.~47. №\,6. С.~1401--1413.
+
+ \label{end\stat}
+
+\bibitem{15she}
+\Au{Петров В.\,В.} Предельные теоремы для сумм независимых случайных величин.~--- М: Наука, 1987.
+ \end{thebibliography}
+}
+}
+
+
+\end{multicols}

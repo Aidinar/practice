@@ -1,0 +1,893 @@
+
+
+%\newcommand{\set}[1]{\left\{#1\right\}}
+%\newcommand{\Real}{\mathbb R}
+%\newcommand{\To}{\longrightarrow}
+%\newcommand{\BX}{\mathbf{B}(X)}
+%\newcommand{\A}{\mathcal{A}}
+%\newcommand{\I}{\mathbb{1}}
+
+\def\stat{shestakov}
+
+\def\tit{ЦЕНТРАЛЬНАЯ ПРЕДЕЛЬНАЯ ТЕОРЕМА ДЛЯ ФУНКЦИИ
+ОБОБЩЕННОЙ КРОСС-ВАЛИДАЦИИ ПРИ ПОРОГОВОЙ ОБРАБОТКЕ
+ВЕЙВЛЕТ-КОЭФФИЦИЕНТОВ$^*$}
+
+\def\titkol{Центральная предельная теорема для функции обобщенной кросс-валидации при %пороговой 
+обработке вейвлет-коэффициентов}
+
+\def\autkol{О.\,В.~Шестаков}
+
+\def\aut{О.\,В.~Шестаков$^1$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}}\footnotetext[1]
+{Работа выполнена при финансовой поддержке РФФИ (гранты 11-01-00515 и 11-01-12026-офи-м).}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет им.\ М.\,В.~Ломоносова; 
+Институт проблем информатики Российской академии наук, oshestakov@cs.msu.su}
+
+
+\Abst{Исследуются асимптотические свойства функции обобщенной кросс-ва\-ли\-да\-ции при
+пороговой обработке коэффициентов вейв\-лет-раз\-ло\-же\-ния функции, удовлетворяющей некоторым 
+условиям гладкости. Рассматривается процедура выбора порога, минимизирующего функцию 
+обобщенной кросс-ва\-ли\-да\-ции. Доказывается асимптотическая нормальность функции обобщенной 
+кросс-ва\-ли\-да\-ции при таком выборе порога.}
+
+\KW{вейвлеты; пороговая обработка; обобщенная кросс-ва\-ли\-да\-ция; адаптивный порог; 
+несмещенная оценка риска; асимптотическая нормальность}
+
+\vskip 14pt plus 9pt minus 6pt
+
+      \thispagestyle{headings}
+
+      \begin{multicols}{2}
+
+            \label{st\stat}
+
+
+\section{Введение}
+
+Вейвлет-разложение применяется для обработки сигналов и изображений в самых разнообразных областях, 
+включая геофизику, физику плазмы, вычислительную томографию, компьютерную графику и~т.\,д. 
+Одна из основных задач, для решения которой используется вейв\-лет-раз\-ло\-же\-ние,~--- это подавление шума. 
+При этом наиболее популярным методом является пороговая обработка вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов, которая 
+обнуляет коэффициенты, не превышающие заданного порога. Порог можно выбирать различными способами, исходя из 
+постановки задачи и целей обработки (см., например,~[1--4]). Наличие шума неизбежно приводит к погрешностям в 
+оцениваемом сиг\-на\-ле/изоб\-ра\-же\-нии. Свойства оценки таких погрешностей (риска) исследовались в работах~[1--10]. 
+В~частности, в работах~[7--10] показано, что при выполнении некоторых условий гладкости и выборе  <<универсального>> порога 
+или адаптивного порога, минимизирующего несмещенную оценку риска, оценка риска является состоятельной и асимптотически нормальной. 
+Пороги, используемые в указанных работах, пропорциональны дисперсии шума. Однако во многих практических ситуациях уровень шума 
+неизвестен. В~работах~[7--10] исследуется ситуация, в которой вместо дисперсии шума подставляется ее оценка. 
+В~качестве альтернативы в работах~\cite{11-she, 12-she} предложено использовать для выбора порога процедуру минимизации 
+функции обобщенной кросс-ва\-ли\-да\-ции. В~\cite{11-she} показывается, что порог, выбранный на основе этой процедуры, 
+является в некотором смыс\-ле асимптотически оптимальным. В~данной работе доказывается асимптотическая нормальность функции 
+обобщенной кросс-ва\-ли\-да\-ции при выборе такого порога. Этот факт служит дополнительным обоснованием для выбора порога, 
+минимизирующего указанную функцию.
+
+\section{Пороговая обработка вейвлет-коэффициентов и~оценка риска}
+
+При использовании вейв\-лет-раз\-ло\-же\-ния функция $f\hm\in L^2(\mathbf{R})$, описывающая сигнал, 
+представляется в виде ряда из сдвигов и растяжений некоторой вейв\-лет-функ\-ции~$\psi$:
+\begin{equation}
+f=\sum\limits_{j,k\in Z}\langle f,\psi_{j,k}\rangle\psi_{j,k}\,,\label{e1-she}
+\end{equation}
+где $\psi_{j,k}(x)\hm=2^{j/2}\psi(2^jx-k)$ (семейство $\{\psi_{j,k}\}_{j,k\in Z}$ образует ортонормированный 
+базис в $L^2(\mathbf{R})$). Индекс~$j$ в~(\ref{e1-she}) называется масштабом, а индекс~$k$~--- сдвигом. 
+Функция~$\psi$ должна удовлетворять определенным требованиям~\cite{13-she}, однако ее можно выбрать таким образом, 
+чтобы она обладала некоторыми полезными свойствами, например была дифференцируемой нужное число раз и имела заданное 
+число~$M$ нулевых моментов~\cite{13-she}, т.\,е.\
+$$
+\int\limits_{-\infty}^{\infty}x^k\psi(x)\,dx=0\,,\enskip k=0,\ldots,M-1\,.
+$$
+
+В дальнейшем будут рассматриваться функции сигнала $f\hm\in L^2(\mathbf{R})$ на конечном отрезке $[a,b]$, 
+равномерно регулярные по Липшицу с некоторым параметром $\gamma\hm>0$, т.\,е.\ такие 
+функции, для которых существует константа $L\hm>0$ и полином $P_y$ степени $n\hm=\lfloor\gamma\rfloor$ такой, 
+что для любого $y\hm\in[a,b]$ и любого $x\hm\in\mathbf{R}$
+$$
+\abs{f(x)-P_y(x)}\leqslant L\abs{x-y}^\gamma\,.
+$$
+
+Для таких функций $f$ известно~\cite{14-she}, что если вейв\-лет-функ\-ция $M$~раз непрерывно дифференцируема ($M\hm\geqslant\gamma$), 
+имеет $M$~нулевых моментов и быст\-ро убывает на бесконечности вместе со своими производными, т.\,е.\
+для всех $0\hm\leqslant k \hm\leqslant M$ и любого $m\hm\in N$ найдется константа~$C_m$ такая, что при всех $x\hm\in\mathbf{R}$
+$$
+\abs{\psi^{(k)}(x)}\leqslant\fr{C_m}{1+\abs{x}^m}\,,
+$$
+то найдется такая константа $A\hm>0$, что
+\begin{equation}
+\langle f,\psi_{j,k}\rangle\leqslant\fr{A}{2^{j\left(\gamma+{1}/{2}\right)}}\,.\label{e2-she}
+\end{equation}
+
+На практике функции сигнала всегда заданы в дискретных отсчетах на конечном отрезке. 
+Не ограничивая общности, будем считать, что это отрезок $[0,1]$ и функция~$f$ задана в точках ${i}/{N}$ ($i\hm=1,\ldots N$, где 
+$N\hm=2^J$ для некоторого~$J$): $f_i\hm=f\left({i}/{N}\right)$.
+Дискретное вейв\-лет-пре\-образо\-ва\-ние представляет собой умножение вектора значений функции~$f$ 
+(обозначим его через~$\overline{f}$) на ортогональную матрицу~$W$, определяемую вейв\-лет-функ\-ци\-ей~$\psi$: 
+$\overline{f}^{W}\hm=W\overline{f}$~\cite{14-she}. При этом если перейти к двойному индексу~$(j,k)$, 
+как в непрерывном случае, то дискретные вейв\-лет-ко\-эф\-фи\-ци\-ен\-ты будут связаны с непрерывными 
+следующим образом: $f^{W}_{j,k}\hm\approx \sqrt{N}\langle f,\psi_{j,k}\rangle$ (см., например,~\cite{1-she} или~\cite{15-she}). 
+Это приближение тем точнее, чем больше~$N$. Не будем обсуждать методы борьбы с краевыми эффектами, связанными с 
+использованием вейв\-лет-раз\-ло\-же\-ния на конечном отрезке. Познакомиться с этими методами можно, например, в~\cite{16-she}. 
+В~дальнейшем для удобства будем нумеровать дискретные вейв\-лет-ко\-эф\-фи\-ци\-ен\-ты так же, как отсчеты функции~$f$, 
+одним индексом~$i$ вместо двойного индекса~$(j,k)$.
+
+В реальных наблюдениях всегда присутствует шум. Будем рассматривать следующую модель:
+$$
+Y_i=f_i+z_i\,,\quad i=1,\ldots,N\,,
+$$
+где $z_i$~--- независимые случайные величины, име\-ющие нормальное распределение с нулевым средним и дисперсией~$\sigma^2$. 
+Тогда в силу ортогональности мат\-ри\-цы~$W$ для дискретных вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов примем следующую модель:
+$$
+Y^W_i=f^{W}_{i}+z^W_i\,,\quad i=1,\ldots,N\,,
+$$
+где $z^W_i$ также независимы и нормально распределены с нулевым средним и дисперсией~$\sigma^2$, 
+а $f^{W}_{i}$ равны соответствующим непрерывным вейв\-лет-ко\-эф\-фи\-ци\-ен\-там, умноженным на~$\sqrt{N}$.
+
+Для подавления шума часто используется процедура пороговой обработки вейв\-лет-коэффициен\-тов. 
+Смысл ее заключается в удалении достаточно маленьких коэффициентов, которые считаются\linebreak шумом. Если функция 
+сигнала достаточно гладкая, то используется так называемая мягкая пороговая обработка с порогом~$T$. 
+К~каждому вейв\-лет-ко\-эф\-фи\-ци\-ен\-ту применяется функция 
+$$
+\rho_T(x)\hm=\mathrm{sgn}\left(x\right)\left(\abs{x}\hm-T\right)_{+}\,,
+$$
+т.\,е.\
+при такой пороговой обработ\-ке коэффициенты, которые по модулю меньше порога~$T$, обнуляются, а абсолютные величины остальных 
+коэффициентов уменьшаются на величину порога.
+Погрешность (или риск) мягкой пороговой обработки определяется следующим образом:
+\begin{equation}
+R_N(f,T)=\sum\limits_{i=1}^{N}{\sf E}\left(f^{W}_{i}-\rho_T(Y^W_i)\right)^2\,.\label{e3-she}
+\end{equation}
+В выражении~(\ref{e3-she}) присутствуют неизвестные величины $f^{W}_{i}$, поэтому вычислить значение $R_N(f,T)$ нельзя. 
+Однако его можно оценить. В~каждом сла\-га\-емом если $\abs{Y^W_i}\hm>T$, то вклад этого сла\-га\-емо\-го в риск составляет $\sigma^2+T^2$, 
+а если $\abs{Y^W_i}\hm\leqslant T$, то вклад составляет $(f_i^W)^2$. Поскольку ${\sf E}(Y_i^W)^2\hm=\sigma^2+(f_i^W)^2$, то
+величину $(f_i^W)^2$ можно оценить разностью $(Y_i^W)^2\hm-\sigma^2$.
+
+Таким образом, в качестве оценки риска можно использовать следующую величину:
+\begin{equation}
+\widehat{R}_N(f,T)=\sum\limits_{i=1}^{N}F[(Y_i^W)^2,T]\,, \label{e4-she}
+\end{equation}
+где  
+$$
+F[x,T]=(x-\sigma^2)\Ik(|x|\leqslant T^2)+
+(\sigma^2+T^2)\Ik(|x|>T^2)\,.
+$$
+Если дисперсия шума известна, то оценка риска оказывается несмещенной~\cite{14-she}.
+
+В работах~\cite{2-she, 3-she} было предложено использовать порог $T_U\hm=\sigma\sqrt{2\ln N}$. Было показано, 
+что при таком пороге риск близок к минимальному~\cite{2-she}. Этот порог получил название <<универсальный>>. 
+В~работе~\cite{1-she} рассматривается метод пороговой обработки с названием SureShrink (от Stein Unbiased Risk Estimate~--- 
+несмещенная оценка риска Стейна), заключающийся в минимизации оценки риска~(\ref{e4-she}) на множестве $T\hm\in[0,T_U]$ 
+(исследования, проведенные в работах~\cite{1-she, 4-she}, показывают, что можно не рас\-смат\-ри\-вать $T\hm>T_U$), т.\,е.\
+ порог выбирается следующим образом:
+\begin{equation*}
+\widehat{R}_N(f,T_{SURE})=\min\limits_{T\in[0,T_U]}\widehat{R}_N(f,T)\,. %\label{e5-she}
+\end{equation*}
+Этот порог имитирует теоретический <<идеальный>> порог $T_{\min}$, минимизирующий риск:
+\begin{equation}
+R_N(f,T_{\min})=\min\limits_{T\in[0,T_U]}R_N(f,T)\,.\label{e6-she}
+\end{equation}
+В то время как значение порога $T_{\min}$ найти нельзя, если неизвестны незашумленные значения~$f_i$ (можно лишь 
+в некоторых случаях выяснить его асимптотическое поведение), алгоритм поиска порога $T_{\mathrm{SURE}}$ очень прост и его 
+описание можно найти в~\cite{14-she} или~\cite{17-she}. Порог $T_{\mathrm{SURE}}$ является адаптивным, поскольку использует 
+только наблюдаемые данные и <<автоматически адаптируется>> к гладкости сиг\-нала.
+
+В работе~\cite{9-she} доказываются следующие утверж\-де\-ния об асимптотической нормальности оценки риска.
+
+\smallskip
+
+\noindent 
+\textbf{Теорема 1.} \textit{Пусть $f\hm\in L^2(\mathbf{R})$ задана на отрезке $[0,1]$ и является равномерно 
+регулярной по Липшицу с параметром $\gamma\hm={1}/{2}+\alpha$ $(\alpha\hm>0)$. Тогда имеет место сходимость по распределению
+\begin{equation*}
+{\sf P}\left(\fr{\widehat{R}_N(f,T_{\min})-R_N(f,T_{\min})}{\sigma^2\sqrt{2N}}<x\right)\Rightarrow\Phi(x)\,, %\label{e7-she}
+\end{equation*}
+где $\Phi(x)$~--- функция распределения стандартного нормального закона.}
+
+\smallskip
+
+\noindent
+\textbf{Теорема 2.} \textit{Пусть $f\hm\in L^2(\mathbf{R})$ задана на отрезке $[0,1]$ и является равномерно 
+регулярной по Липшицу с параметром $\gamma\hm={1}/{2}+\alpha$ $(\alpha\hm>0)$. Тогда имеет место сходимость по распределению
+\begin{equation*}
+{\sf P}\left(\fr{\widehat{R}_N(f,T_{\mathrm{SURE}})-R_N(f,T_{\min})}{\sigma^2\sqrt{2N}}<x\right)\Rightarrow\Phi(x)\,, %\label{e8-she}
+\end{equation*}
+где $\Phi(x)$~--- функция распределения стандартного нормального закона.}
+
+\section{Обобщенная кросс-валидация}
+
+Далее для удобства будем обозначать $Y_i^W$ через $X_i$, а $f_i^W$~--- через~$a_i$.
+
+Цель процедуры обобщенной кросс-ва\-ли\-да\-ции заключается в минимизации ошибки без использования 
+ненаблюдаемых истинных значений функции сигнала и точного значения дисперсии шума. Для этого строится 
+следующая функция обобщенной кросс-валидации, которая зависит только от наблюдаемых данных и порога~$T$~\cite{11-she}:
+\begin{equation*}
+\widehat{G}_N(f,T)=\fr{\sum\nolimits_{i=1}^{N}\left(X_i-\rho_{T}(X_i)\right)^2}{\mu_{T}^2}\,,\label{e9-she}
+\end{equation*}
+где
+$$
+\mu_{T}=\fr{1}{N}\sum\limits_{i=1}^{N}\Ik\left(\abs{X_i}\leqslant T\right)\,.
+$$
+Для того чтобы $\widehat{G}_N(f,T)$ не принимала бесконечного значения, при $\mu_{T}\hm=0$ полагают $\widehat{G}_N(f,T)\hm=0$. 
+Выбор порога, основанного на процедуре обобщенной кросс-ва\-ли\-да\-ции, заключается в минимизации функции $\widehat{G}_N(f,T)$ 
+на некотором множестве $T\hm\in[T_0,T_U]$:
+\begin{equation*}
+\widehat{G}_N(f,T_{GCV})=\min\limits_{T\in[T_0,T_U]}\widehat{G}_N(f,T)\,, %\label{e10-she}
+\end{equation*}
+где $T_0$~--- достаточно большое, но не зависящее от~$N$ число. %%??? надо ли писать про независимость от $N$???
+Выбор $T_0$ обусловлен тем, что при стремлении~$T$ к нулю $\widehat{G}_N(f,T)$ также может стремиться к нулю~[6, 11, 12], т.\,е.\
+к своему абсолютному минимуму. В~то же время в~\cite{10-she} показывается, что <<разумный>> порог должен возрастать с увеличением~$N$ 
+(далее будет показано, что величина границы $T_0$ не имеет большого значения). При этом, как уже отмечалось выше, можно не 
+рассматривать $T\hm>T_U$ (подробнее с методом поиска $T_{GCV}$ и поведением функций $\widehat{G}_N(f,T)$ и ${\sf E}\widehat{G}_N(f,T)$ 
+при значениях~$T$, близких к нулю, можно познакомиться в~\cite{10-she}).
+Порог $T_{GCV}$ имитирует теоретический порог $T^{*}$:
+\begin{equation*}
+{\sf E}\widehat{G}_N(f,T^{*})=\min\limits_{T\in[T_0,T_U]}{\sf E}\widehat{G}_N(f,T)\,. %\label{e11-she}
+\end{equation*}
+
+В работе~\cite{11-she} показано, что
+$$
+\fr{R_N(f,T^{*})}{R_N(f,T_{\min})}\downarrow1\ \mbox{при}\ N\rightarrow\infty\,.
+$$
+Это утверждение служит некоторым обоснованием для выбора порога $T_{GCV}$ (особенно в случаях, когда дисперсия шума неизвестна). 
+В~следующем разделе будет доказана асимптотическая нормальность функции $\widehat{G}_N(f,T_{GCV})$, что является дополнительным 
+доводом для выбора такого порога.
+
+\section{Асимптотическая нормальность функции обобщенной кросс-валидации}
+
+Сначала докажем вспомогательную теорему об асимптотической нормальности функции $\widehat{G}_N(f,T_{\min})$ при выборе по 
+критерию~(\ref{e6-she}) <<идеального>> порога $T_{\min}$.
+
+\smallskip
+
+\noindent
+\textbf{Теорема 3.} \textit{Пусть $f\hm\in L^2(\mathbf{R})$ задана на отрезке $[0,1]$ и является равномерно 
+регулярной по Липшицу с параметром $\gamma={1}/{2}+\alpha$ $(\alpha\hm>0)$. Тогда имеет место сходимость по распределению
+\begin{multline}
+{\sf P}\left(\fr{\widehat{G}_N(f,T_{\min})-N\sigma^2-R_N(f,T_{\min})}{\sigma^2\sqrt{2N}}<x\right)\Rightarrow{}\\
+{}\Rightarrow\Phi(x)\,,\label{e12-she}
+\end{multline}
+где $\Phi(x)$~--- функция распределения стандартного нормального закона.}
+
+\smallskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \  Для $\widehat{G}_N(f,T_{\min})$ справедливо следующее представление~\cite{12-she}:
+\begin{multline}
+\widehat{G}_N(f,T_{\min})-N\sigma^2={}\\
+{}=\fr{1}{\mu_{T_{\min}}^2}\left[\widehat{R}_N(f,T_{\min})-N\sigma^2(1-\mu_{T_{\min}})^2\right]
+\label{e13-she}
+\end{multline}
+(верное не только для $T_{\min}$, но и для любого $T\hm>0$), из которого в силу теоремы~1 и следует утверждение~(\ref{e12-she}), 
+поскольку $\mu_{T_{\min}}{\stackrel{{\sf P}}{\rightarrow}}1$ и $\sqrt{N}(1\hm-\mu_{T_{\min}})^2{\stackrel{{\sf P}}{\rightarrow}}0$ при 
+$N\hm\rightarrow\infty$. Теорема доказана.
+
+\smallskip
+
+Докажем теперь асимптотическую нормальность $\widehat{G}_N(f,T_{GCV})$ при выборе адаптивного порога $T_{GCV}$ по критерию~\cite{10-she}.
+
+
+\smallskip
+
+\noindent
+\textbf{Теорема 4.} \textit{Пусть $f\hm\in L^2(\mathbf{R})$ задана на отрезке $[0,1]$ и является равномерно 
+регулярной по Липшицу с параметром $\gamma\hm={1}/{2}+\alpha$ ($\alpha\hm>0$). Тогда имеет место сходимость по распределению
+\begin{multline}
+{\sf P}\left(\fr{\widehat{G}_N(f,T_{GCV})-N\sigma^2-R_N(f,T_{\min})}{\sigma^2\sqrt{2N}}<x\right)\Rightarrow{}\\
+{}\Rightarrow\Phi(x)\,,\label{e14-she}
+\end{multline}
+где $\Phi(x)$~--- функция распределения стандартного нормального закона.}
+
+\medskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \  Запишем выражение из левой части~(\ref{e14-she}) в виде
+\begin{multline*}
+\fr{\widehat{G}_N(f,T_{GCV})-N\sigma^2-R_N(f,T_{\min})}{\sigma^2\sqrt{2N}}={}\\
+{}=
+\fr{\widehat{G}_N(f,T_{\min})-N\sigma^2-R_N(f,T_{\min})}{\sigma^2\sqrt{2N}}+{}\\
+{}+\fr{\widehat{G}_N(f,T_{GCV})-\widehat{G}_N(f,T_{\min})}{\sigma^2\sqrt{2N}}=S_1+S_2\,.
+\end{multline*}
+В силу предыдущей теоремы первое слагаемое сходится по распределению к стандартному нормальному закону. 
+Покажем, что второе слагаемое стремится по вероятности к нулю.
+
+Выберем $T_1\hm=\sigma\sqrt{\lambda\ln N}$ с некоторым $0\hm<\lambda\hm<1$ и $T_2\hm=\sigma\sqrt{\beta\ln N}$ с 
+$1\hm<\beta\hm<\min\left({3}/{2},4\gamma/(2\gamma+1)\right)$. Для некоторого $\varkappa\hm>0$ (ограничения на которое 
+будут наложены ниже) справедливо
+\begin{multline*}
+{\sf P}(S_2>N^{-\varkappa/2})\leqslant{\sf P}(T_{GCV}\in[T_0,T_1])+{}\\
+{}+{\sf P}(T_{GCV}\in[T_1,T_2])+{}\\{}+
+{\sf P}(S_2>N^{-\varkappa/2},T_{GCV}\in[T_2,T_U])=P_1+P_2+P_3\,.
+\end{multline*}
+Обозначим
+$$
+\widehat{H}_N(f,T)=\widehat{G}_N(f,T_{\min})-\widehat{G}_N(f,T)\,;
+$$
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+\widehat{H}^{*}_N(f,T)=\fr{\sum\nolimits_{i=1}^{N}\left(X_i-\rho_{T_{\min}}(X_i)\right)^2}
+{({\sf E}\mu_{T_{\min}})^2}-{}\\
+{}-\fr{\sum\nolimits_{i=1}^{N}\left(X_i-\rho_T(X_i)\right)^2}{({\sf E}\mu_T)^2}\,.
+\end{multline*}
+Поскольку $\widehat{G}_N(f,T_{GCV})\hm=\min\limits_{T\in[T_0,T_U]}\widehat{G}_N(f,T)$, для $P_1$ имеем
+\begin{multline}
+P_1={\sf P}(T_{GCV}\in[T_0,T_1])\leqslant{}\\{}\leqslant {\sf P}
+\left(\sup\limits_{T\in[T_0,T_1]}\widehat{H}_N(f,T)\geqslant 0\right)\leqslant{}\\
+{}\leqslant{\sf P}\left(\sup\limits_{T\in[T_0,T_1]}\abs{\widehat{H}^{*}_N(f,T)-{\sf E}\widehat{H}^{*}_N(f,T)}
+\geqslant{}\right.\\
+{}\geqslant\inf\limits_{T\in[T_0,T_1]}-{\sf E}\widehat{H}^{*}_N(f,T)-{}\\
+\left.{}-\sup\limits_{T\in[T_0,T_1]} \abs{\widehat{H}_N(f,T)-\widehat{H}^{*}_N(f,T)}\right)\leqslant{}\\
+{}\leqslant{\sf P}\left(\sup\limits_{T\in[T_0,T_1]}\abs{\widehat{H}^{*}_N(f,T)-{\sf E}\widehat{H}^{*}_N(f,T)}
+\geqslant{}\right.\\
+\left.{}\geqslant\inf\limits_{T\in[T_0,T_1]}-{\sf E}\widehat{H}^{*}_N(f,T)-r'_N
+\vphantom{\sup\limits_{T\in[T_0,T_1]}\abs{\widehat{H}^{*}_N(f,T)-{\sf E}\widehat{H}^{*}_N(f,T)}}\right)+{}\\
+{}+\mathrm{P}\left(\sup\limits_{T\in[T_0,T_1]} \abs{\widehat{H}_N(f,T)-\widehat{H}^{*}_N(f,T)}>r'_N\right)\,.
+\label{e15-she}
+\end{multline}
+Заметим, что $\left(X_i\hm-\rho_{T}(X_i)\right)^2\hm\leqslant T^2$. Следовательно,
+\begin{multline}
+{\sf P}\left(\sup\limits_{T\in[T_0,T_1]} \abs{\widehat{H}_N(f,T)-\widehat{H}^{*}_N(f,T)}>r'_N\right)\leqslant{}\\
+{}\leqslant{\sf P}\left(T_1N\sup\limits_{T\in[T_0,T_1]}\abs{\fr{1}{\mu^2_T}-\fr{1}{({\sf E}\mu_T)^2}}>
+\fr{r'_N}{2}\right)+{}\\
+{}+{\sf P}\left(T_{\min}N\abs{\fr{1}{\mu^2_{T_{\min}}}-\fr{1}{({\sf E}\mu_{T_{\min}})^2}}>
+\fr{r'_N}{2}\right)\,.\label{e16-she}
+\end{multline}
+Для первого слагаемого начиная с некоторого~$N$
+\begin{multline}
+{\sf P}\left(T_1N\sup\limits_{T\in[T_0,T_1]}\abs{\fr{1}{\mu^2_T}-\fr{1}{({\sf E}\mu_T)^2}}>
+\fr{r'_N}{2}\right)\leqslant{}\\{}\leqslant
+{\sf P}\left(\mu_{T_0}=0\right)+{}\\
+{}+{\sf P}\left(T_1N\sup\limits_{T\in[T_0,T_1]}\abs{\mu_T-
+{\sf E}\mu_T}>C_r' r'_N\right)\label{e17-she}
+\end{multline}
+для некоторой положительной константы $C_r'$. Выберем $r'_N\hm=N^{1-\lambda/2}/(\ln N)^2$. 
+Применяя экспоненциальное неравенство для эмпирических случайных процессов из работы~\cite{18-she}, 
+для некоторых положи\-тель\-ных констант $K^{*}_1$ и $C^{*}_1$ имеем:
+\begin{multline*}
+{\sf P}\left(T_1N\sup\limits_{T\in[T_0,T_1]}\abs{\mu_T-{\sf E}\mu_T}>C_r' r'_N\right)\leqslant {}\\
+{}\leqslant
+K^{*}_1\exp\left[-\fr{C^{*}_1 N^{1-\lambda}}{(\ln N)^{5}}\right]\,.
+\end{multline*}
+Событие $\{\mu_{T_0}=0\}$ означает, что ни одна величина $X_i$ не оказалась меньше порога~$T_0$. Следовательно, начиная с некоторого~$N$
+$$
+{\sf P}\left(\mu_{T_0}=0\right)\leqslant \fr{N^{-C_{\mu_{T_0}}N}}{(\ln N)^{C_{\mu_{T_0}}N}}
+$$
+с некоторой константой $C_{\mu_{T_0}}\hm>0$. Таким образом, начиная с некоторого~$N$ для некоторых положительных 
+констант $\tilde{K}_1$ и $\tilde{C}_1$,
+\begin{multline}
+{\sf P}\left(T_1N\sup\limits_{T\in[T_0,T_1]}\abs{\fr{1}{\mu^2_T}-\fr{1}{({\sf E}\mu_T)^2}}>
+\fr{r'_N}{2}\right)\leqslant{}\\
+{}\leqslant \tilde{K}_1\exp\left[-\fr{\tilde{C}_1 N^{1-\lambda}}{(\ln N)^{5}}\right]\,.\label{e18-she}
+\end{multline}
+Второе слагаемое в~(\ref{e16-she}) оценивается аналогично с применением неравенства Бернштейна~\cite{19-she} 
+и учетом того, что  при выполнении условий теоремы ${2\gamma}/(2\gamma+1)\hm>1/2$ и $T_{\min}$ ведет себя асимптотически как~\cite{10-she}
+\begin{equation}
+T_{\min}\sim\sigma\sqrt{\fr{2\gamma}{2\gamma+1}}\sqrt{2\ln N}\,.\label{e19-she}
+\end{equation}
+
+Оценим теперь первое слагаемое в~(\ref{e15-she}). В~работах~\cite{10-she, 11-she} показано, что
+\begin{multline}
+\left(X_i-\rho_{T}(X_i)\right)^2=\sigma^2+{\sf E}\left(a_{i}-\rho_T(X_i)\right)^2-{}\\
+{}-2\sigma^2
+\left[1-\Phi_\sigma(T-a_i)+\Phi_\sigma(-T-a_i)\right]\,;\label{e20-she}
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+{\sf E}\left(a_{i}-\rho_T(X_i)\right)^2=
+\sigma^2+T^2+{}\\
+{}+(a_i^2-T^2-\sigma^2)\left[\Phi_\sigma(T-a_i)-\Phi_\sigma(-T-a_i)\right]-{}\\
+\hspace*{-3mm}{}-\sigma^2[(T-a_i)\phi_\sigma(T+a_i)+(T+a_i)\phi_\sigma(T-a_i)],\!\!\label{e21-she}
+\end{multline}
+где $\phi_\sigma(y)$ и $\Phi_\sigma(y)$~--- плот\-ность и функция распределения нормального закона с нулевым средним 
+и дисперсией~$\sigma^2$.
+Поскольку выполнено~(\ref{e2-she}) и для плотности $\phi(y)$ и функции распределения $\Phi(y)$ стандартного 
+нормального закона справедливо~\cite{20-she}
+$$
+\fr{\phi(y)}{y}>1-\Phi(y)>\phi(y)\left(\fr{1}{y}-\fr{1}{y^3}+\fr{3}{y^5}-\fr{15}{y^7}\right)
+$$
+при $y>0$, используя в~(\ref{e20-she}) и~(\ref{e21-she}) формулу Лагранжа и учитывая~(\ref{e19-she}), можно показать, 
+что если $T_0$ достаточно велико,
+то найдется такая константа $C'_h\hm>0$, что
+\begin{equation}
+\inf\limits_{T\in[T_0,T_1]}-{\sf E}\widehat{H}^{*}_N(f,T)\geqslant C'_h\fr{N^{1-\lambda/2}}{(\ln N)^{3/2}}\,.\label{e22-she}
+\end{equation}
+
+Пусть
+$$
+h^*(x,T)=\fr{\left(x-\rho_{T_{\min}}(x)\right)^2}{({\sf E}\mu_{T_{\min}})^2}-
+\fr{\left(x-\rho_T(x)\right)^2}{({\sf E}\mu_T)^2}\,.
+$$
+Таким образом,
+$$
+\widehat{H}^{*}_N(f,T)=\sum\limits_{i=1}^{N}h^*(X_i,T)\,.
+$$
+Обозначим через $\mathbf{H}$ класс функций $h^*(x,T)$, индексированный параметром $T\hm\in[T_0,T_U]$. Далее определим
+\begin{multline*}
+N(\mathbf{H},\eps,L^2({\sf P}))=\min\{k:\mbox{ существуют }\\
+ h_1,\ldots,h_k\in L^2(R)\mbox{ такие, что }\\
+ \min\limits_{i\leqslant k}\norm{h-h_i}_{L^2(P)}\leqslant\eps \mbox{ для всех } h\in\mathbf{H}\}\,;
+ \end{multline*}
+ 
+ \vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+N_{[]}(\mathbf{H},\eps,L^2({\sf P}))=\min\{k:\mbox{ существуют }\\
+ h^{u}_1,h^{l}_1\ldots,h^{u}_k,h^{l}_k\in L^2(R)\mbox{ такие, что }\\
+ \mbox{ для любой } h\in\mathbf{H} \mbox{ найдется } i \mbox{ такое, что }\\
+  h^{l}_i\leqslant h\leqslant h^{u}_i  \mbox{ и }
+\norm{h^{u}_i-h^{l}_i}_{L^2({\sf P})}\leqslant\eps \}.
+\end{multline*}
+Функции $H(\mathbf{H},\eps,L^2({\sf P}))\hm=\ln N(\mathbf{H},\eps,L^2({\sf P}))$ и $H_{[]}(\mathbf{H},\eps,L^2({\sf P}))\hm=
+\ln N_{[]}(\mathbf{H},\eps,L^2({\sf P}))$ называются энтропией и энтропией с брэкетами пространства~$\mathbf{H}$~\cite{21-she}.
+
+Для всех $T\in[T_0,T_U]$ выполнены неравенства $\sup\limits_{x\in\mathbb{R}}\abs{h^*(x,T)}\hm\leqslant T^2_U/{\sf E}(\mu_{T_0})^2$ 
+и $\mbox{D}h^*(Z,T)\hm\leqslant T^4_U/({\sf E}\mu_{T_0})^4$ для произвольной случайной величины~$Z$. 
+Можно показать~\cite{22-she}, что для некоторых констант $K$ и $K_{[]}$
+\begin{align}
+\sup\limits_{\sf P}H(\mathbf{H},\eps,L^2({\sf P}))&\leqslant K\ln\left(\fr{T_{U}}{\eps}\right)\,;\label{e23-she}
+\\
+\sup\limits_{\sf P}H_{[]}(\mathbf{H},\eps,L^2({\sf P}))&\leqslant K_{[]}\ln\left(\fr{T_{U}}{\eps}\right)\,,\label{e23-1-she}
+\end{align}
+где супремум берется по всем вероятностным распределениям ${\sf P}$.
+
+Применяя неравенство для вероятности уклонения эмпирического процесса (см., например,~\cite{18-she, 21-she, 23-she}) с 
+учетом~(\ref{e22-she})--(\ref{e23-1-she}), можно показать, что для некоторых положительных констант $K_1$ и $C_1$ выполнено
+\begin{multline}
+{\sf P}\left(\sup\limits_{T\in[T_0,T_1]}\abs{\widehat{H}^{*}_N(f,T)-
+{\sf E}\widehat{H}^{*}_N(f,T)}\geqslant{}\right.\\
+\left.{}\geqslant\inf\limits_{T\in[T_0,T_1]}-{\sf E}\widehat{H}^{*}_N(f,T)-r'_N
+\vphantom{\sup\limits_{T\in[T_0,T_1]}}\right)\leqslant{}\\
+{}\leqslant K_1\exp\left[-\fr{C_1 N^{1-\lambda}}{(\ln N)^{5}}\right].\label{e24-she}
+\end{multline}
+Оценим теперь $P_2$. Поступая так же, как при оценке $P_1$, имеем:
+\begin{multline}
+P_2={\sf P}(T_{GCV}\in[T_1,T_2])\leqslant{}\\
+{}\leqslant {\sf P}\left(\sup\limits_{T\in[T_1,T_2]}\widehat{H}_N(f,T)\geqslant 0\right)\leqslant{}\\
+{}\leqslant{\sf P}\left(\sup\limits_{T\in[T_1,T_2]}\abs{\widehat{H}^{*}_N(f,T)-
+{\sf E}\widehat{H}^{*}_N(f,T)}\geqslant{}\right.\\
+\left.{}\geqslant\inf\limits_{T\in[T_1,T_2]}-{\sf E}\widehat{H}^{*}_N(f,T)-r''_N
+\vphantom{\sup\limits_{T\in[T_0,T_1]}}\right)+{}\\
+\hspace*{-3mm}{}+{\sf P}\left(\sup\limits_{T\in[T_1,T_2]} \abs{\widehat{H}_N(f,T)-\widehat{H}^{*}_N(f,T)}>r''_N\right)\,. \label{e25-she}
+\end{multline}
+Далее
+\begin{multline}
+{\sf P}\left(\sup\limits_{T\in[T_1,T_2]} \abs{\widehat{H}_N(f,T)-\widehat{H}^{*}_N(f,T)}>r''_N\right)\leqslant{}\\
+{}\leqslant{\sf P}\left(T_2N\sup\limits_{T\in[T_1,T_2]}\abs{\fr{1}{\mu^2_T}-\fr{1}{({\sf E}\mu_T)^2}}>
+\fr{r''_N}{2}\right)+{}\\
+{}+{\sf P}\left(T_{\min}N\abs{\fr{1}{\mu^2_{T_{\min}}}-\fr{1}{({\sf E}\mu_{T_{\min}})^2}}>
+\fr{r''_N}{2}\right)\,.\label{e26-she}
+\end{multline}
+Для первого слагаемого начиная с некоторого~$N$
+\begin{multline}
+{\sf P}\left(T_2N\sup\limits_{T\in[T_1,T_2]}\abs{\fr{1}{\mu^2_T}-\fr{1}{({\sf E}\mu_T)^2}}>
+\fr{r''_N}{2}\right)\leqslant{}\\
+{}\leqslant{\sf P}\left(\mu_{T_1}=0\right)+{}\\
+{}+{\sf P}\left(T_2N\sup\limits_{T\in[T_1,T_2]}
+\abs{\mu_T-{\sf E}\mu_T}>C_r'' r''_N\right)\label{e27-she}
+\end{multline}
+для некоторой положительной константы~$C_r''$. Далее
+
+\noindent
+\begin{multline}
+d_N=\sup\limits_{T\in[T_1,T_2]}\fr{1}{N}\sum\limits_{i=1}^{N}\mathrm{D}\Ik(\abs{X_i}\leqslant T)
+\leqslant{}\\
+{}\leqslant C_d\sup\limits_{T\in[T_1,T_2]}\fr{\phi(T)}{T}\leqslant C_d\fr{N^{-\lambda/2}}{(\ln N)^{1/2}}\,,\label{e28-she}
+\end{multline}
+где $\phi(y)$~--- плотность стандартного нормального закона. Выберем $r''_N\hm=N^{1-\beta/2}/(\ln N)^2$. 
+Применяя экспоненциальное неравенство для эмпирических случайных процессов из работы~\cite{18-she}
+с учетом~(\ref{e28-she}), для некоторых положительных констант $K^{*}_2$ и $C^{*}_2$ имеем:
+
+\noindent
+\begin{multline*}
+{\sf P}\left(T_2N\sup\limits_{T\in[T_1,T_2]}\abs{\mu_T-{\sf E}\mu_T}>C_r'' r''_N\right)\leqslant {}\\
+{}\leqslant
+K^{*}_2\exp\left[-\fr{C^{*}_2 N^{1-\beta+\lambda/2}}{(\ln N)^{9/2}}\right]\,.
+\end{multline*}
+Первое слагаемое в~(\ref{e27-she}) оценивается аналогично первому слагаемому в~(\ref{e17-she}):
+
+\noindent
+$$
+{\sf P}\left(\mu_{T_1}=0\right)\leqslant \fr{N^{-C_{\mu_{T_1}}N}}{(\ln N)^{C_{\mu_{T_1}}N}}
+$$
+с некоторой константой $C_{\mu_{T_1}}\hm>0$. Таким образом, начиная с некоторого~$N$ для 
+некоторых положительных констант $\tilde{K}_2$ и $\tilde{C}_2$,
+
+\noindent
+\begin{multline}
+{\sf P}\left(T_2N\sup\limits_{T\in[T_1,T_2]}\abs{\fr{1}{\mu^2_T}-\fr{1}{({\sf E}\mu_T)^2}}>
+\fr{r''_N}{2}\right)\leqslant{}\\
+{}\leqslant \tilde{K}_2\exp\left[-\fr{\tilde{C}_2 N^{1-\beta+\lambda/2}}{(\ln N)^{9/2}}\right]\,.
+\label{e29-she}
+\end{multline}
+Второе слагаемое в~(\ref{e26-she}) оценивается аналогично второму слагаемому в~(\ref{e16-she}).
+
+Для оценки первого слагаемого в~(\ref{e25-she}), так же как для~(\ref{e22-she}), 
+можно показать, что найдется такая константа $C''_h\hm>0$, что
+\begin{equation}
+\inf\limits_{T\in[T_1,T_2]}-{\sf E}\widehat{H}^{*}_N(f,T)\geqslant C''_h\fr{N^{1-\beta/2}}{(\ln N)^{3/2}}\,.\label{e30-she}
+\end{equation}
+Кроме того,
+
+
+\noindent
+\begin{multline}
+v_N=\sup\limits_{T\in[T_1,T_2]}\fr{1}{N}\sum\limits_{i=1}^{N}\mathrm{D}h^*(X_i,T)
+\leqslant\sup\limits_{T\in[T_1,T_2]}\fr{2}{N}\times{}\\
+{}\times\sum\limits_{i=1}^{N}\left[ 
+\vphantom{\fr{({\sf E}\mu_{T_{\min}}+{\sf E}\mu_{T})^2({\sf E}\mu_{T_{\min}}-{\sf E}\mu_{T})^2}
+{({\sf E}\mu_{T_{\min}}{\sf E}\mu_{T})^4}}
+\left\{ \vphantom{\left(T^2-T_{\min}^2\right)^2{\sf E}\Ik\left(\abs{X_i}>T_{\min}\right)}
+{\sf E}\left[(T^2-X_i^2)^2\Ik(T<\abs{X_i}
+\leqslant T_{\min})\right]+{}\right.\right.\\
+\left.\left.{}+\left(T^2-T_{\min}^2\right)^2{\sf E}\Ik\left(\abs{X_i}>T_{\min}\right)\right\}\Big /
+({\sf E}\mu_{T_{\min}})^4\right.+{}\\
+{}+\left.T_{\min}^{4}\fr{({\sf E}\mu_{T_{\min}}+{\sf E}\mu_{T})^2({\sf E}\mu_{T_{\min}}-{\sf E}\mu_{T})^2}
+{({\sf E}\mu_{T_{\min}}{\sf E}\mu_{T})^4}\right]\leqslant{}\\
+{}\leqslant\widetilde{C}_v T_{\min}^{4}\sup\limits_{T\in[T_1,T_2]}
+\fr{\phi(T)}{T}\leqslant C_v N^{-\lambda/2}(\ln N)^{3/2}\label{e31-she}
+\end{multline}
+для некоторых положительных констант $\widetilde{C}_v$\linebreak и $C_v$.
+
+
+Применяя неравенство для вероятности уклонения эмпирического процесса (см., например,~\cite{18-she, 21-she, 23-she}) 
+с учетом~(\ref{e23-she}), (\ref{e23-1-she}), (\ref{e30-she}) и~(\ref{e31-she}), можно показать, что для некоторых положительных 
+констант~$K_2$ и~$C_2$ выполнено
+\begin{multline}
+{\sf P}\left(\sup\limits_{T\in[T_1,T_2]}\abs{\widehat{H}^{*}_N(f,T)-{\sf E}\widehat{H}^{*}_N(f,T)}
+\geqslant{}\right.\\
+\left.{}\geqslant\inf\limits_{T\in[T_1,T_2]}-{\sf E}\widehat{H}^{*}_N(f,T)-r''_N
+\vphantom{\sup\limits_{T\in[T_1,T_2]}}\right)\leqslant{}\\
+{}\leqslant K_2\exp\left[-\fr{C_2 N^{1-\beta+\lambda/2}}{(\ln N)^{9/2}}\right]\,.\label{e32-she}
+\end{multline}
+Можно выбрать $0<\lambda\hm<1$ и $1\hm<\beta\hm<\min\left({3}/{2},{4\gamma}/(2\gamma+1)\right)$ такими, что $1\hm-\beta\hm+\lambda/2\hm>0$. 
+Тогда правая часть~(\ref{e32-she}) будет стремиться к нулю.
+
+Наконец, оценим~$P_3$. Обозначим
+$$
+h(x,T)=\fr{\left(x-\rho_{T_{\min}}(x)\right)^2}{\mu_{T_{\min}}^2}-\fr{\left(x-\rho_T(x)\right)^2}{\mu_T^2}\,.
+$$
+Имеем
+\begin{multline}
+P_3\leqslant{\sf P}\left(\sup\limits_{T\in[T_2,T_U]}\abs{\sum\limits_{i=1}^N[h^*(X_i,T)-{\sf E}h^*(X_i,T)]}+{}\right.\\
+{}+\sup\limits_{T\in[T_2,T_U]}\abs{\sum\limits_{i=1}^N[h^*(X_i,T)-h(X_i,T)]}+{}\\{}+
+\left.\sup\limits_{T\in[T_2,T_U]}\sum\limits_{i=1}^N{\sf E}h^*(X_i,T)\geqslant \sigma^2\sqrt{2}N^{1/2-\varkappa/2}\right)\leqslant{}\\
+{}\leqslant{\sf P}\left(\sup\limits_{T\in[T_2,T_U]}\abs{\sum\limits_{i=1}^N[h^*(X_i,T)-
+{\sf E}h^*(X_i,T)]}\geqslant{}\right.\\
+\left.{}\geqslant \fr{\sigma^2\sqrt{2}}{3}N^{1/2-\varkappa/2}\right)+{}\\
+{}+{\sf P}\left(\sup\limits_{T\in[T_2,T_U]}\abs{\sum\limits_{i=1}^N[h^*(X_i,T)-h(X_i,T)]}\geqslant{}\right.\\
+\left.{}\geqslant 
+\fr{\sigma^2\sqrt{2}}{3}N^{1/2-\varkappa/2}\right)+{}\\
+{}+{\sf P}\left(\sup\limits_{T\in[T_2,T_U]}\sum\limits_{i=1}^N{\sf E}h^*(X_i,T)\geqslant {}\right.\\
+\left.{}\geqslant
+\fr{\sigma^2\sqrt{2}}{3}N^{1/2-\varkappa/2}\right)\,.\label{e33-she}
+\end{multline}
+Поскольку найдется такая константа $C_E\hm>0$, что
+$$
+\sup\limits_{T\in[T_2,T_U]}\sum\limits_{i=1}^N{\sf E}h^*(X_i,T)\leqslant C_E \fr{N^{1-\beta/2}}{(\ln N)^{1/2}}\,,
+$$
+начиная с некоторого~$N$ третья вероятность в~(\ref{e33-she}) равна нулю, если $\varkappa\hm<\beta\hm-1$. 
+Для второго слагаемого найдется такая положительная константа $C^*_r$, что
+
+\noindent
+\begin{multline*}
+{\sf P}\left(\sup\limits_{T\in[T_2,T_U]}\abs{\sum\limits_{i=1}^N[h^*(X_i,T)-h(X_i,T)]}\geqslant {}\right.\\
+\left.{}\geqslant
+\fr{\sigma^2\sqrt{2}}{3}N^{1/2-\varkappa/2}\right)\leqslant{}\\
+{}\leqslant{\sf P}\left(T_U N\sup\limits_{T\in[T_2,T_U]}\abs{\fr{1}{\mu^2_T}-
+\fr{1}{({\sf E}\mu_T)^2}}>{}\right.\\
+\left.{}>C^*_r N^{-1/2-\varkappa/2}
+\vphantom{T_U N\sup\limits_{T\in[T_2,T_U]}\abs{\fr{1}{\mu^2_T}-
+\fr{1}{({\sf E}\mu_T)^2}}}
+\right)+{}\\
+{}+\;{\sf P}\left(\!T_{\min}N\abs{\fr{1}{\mu^2_{T_{\min}}}-\fr{1}{({\sf E}\mu_{T_{\min}})^2}}>C^*_r N^{-1/2-\varkappa/2}\!\right)\!.\hspace*{-6pt}
+\end{multline*}
+Поступая так же, как при оценке вероятностей в~(\ref{e26-she}), имеем:
+
+\noindent
+\begin{multline}
+{\sf P}\left(\sup\limits_{T\in[T_2,T_U]}\abs{\sum\limits_{i=1}^N[h^*(X_i,T)-h(X_i,T)]}\geqslant {}\right.\\
+\hspace*{-2mm}\left.{}\geqslant
+\fr{\sigma^2\sqrt{2}}{3}N^{1/2-\varkappa/2}\right)\leqslant\tilde{K}_3\exp
+\left[-\fr{\tilde{C}_3 N^{\beta/2-\varkappa}}{(\ln N)^{1/2}}\right]\!\label{e34-she}
+\end{multline}
+с некоторыми положительными константами $\tilde{K}_3$ и $\tilde{C}_3$.
+Применяя к первому слагаемому в~(\ref{e33-she}) неравенство для вероятности уклонения эмпирического процесса с 
+учетом того, что для некоторой константы $C_{\widetilde{v}}$
+
+\noindent
+\begin{multline*}
+\widetilde{v}_N=\sup\limits_{T\in[T_2,T_U]}\fr{1}{N}\sum\limits_{i=1}^N\mathrm{D}h^*(X_i,T)\leqslant {}\\
+{}\leqslant
+C_{\widetilde{v}} N^{-\beta/2}(\ln N)^{3/2}\,,
+\end{multline*}
+имеем
+
+\noindent
+\begin{multline}
+{\sf P}\left(\sup\limits_{T\in[T_2,T_U]}\abs{\sum\limits_{i=1}^N[h^*(X_i,T)-
+{\sf E}h^*(X_i,T)]}\geqslant{}\right.\\
+\left.{}\geqslant \fr{\sigma^2\sqrt{2}}{3}N^{1/2-\varkappa/2}\right)\leqslant{}\\
+{}\leqslant{\sf P}\left(\sup\limits_{T\in[T_2,T_U]}\abs{\sum\limits_{i=1}^N[h^*(X_i,T)-{\sf E}h^*(X_i,T)]}
+\geqslant{}\right.\\
+\hspace*{-2mm}\left.{}\geqslant \fr{\sigma^2\sqrt{2}}{3}N^{1/2-\varkappa'/2}\!\right)\leqslant
+K_3\exp\left[-\fr{C_3 N^{\beta/2-\varkappa'}}{(\ln N)^{3/2}}\right]\!\!\!\label{e35-she}
+\end{multline}
+для некоторых констант $K_3\hm>0$ и $C_3\hm>0$ и $\beta\hm-1\hm<\varkappa'\hm<\beta/2$ (поскольку $\varkappa\hm<\beta\hm-1$).
+
+\pagebreak
+
+Объединяя~(\ref{e16-she}), (\ref{e18-she}), (\ref{e24-she}), 
+(\ref{e26-she}), (\ref{e29-she}) и~(\ref{e32-she})--(\ref{e35-she}), получаем, что 
+$S_2$ стремится к нулю по вероятности.
+Теорема доказана.
+
+\medskip
+\noindent
+\textbf{Замечание 1.} Из доказательства теоремы видно, что вероятность попадания порога $T_{GCV}$ в 
+множество $[T_0,T_2]$ мала. Поэтому в практических ситуациях можно искать минимум функции $\widehat{G}_N(f,T)$ сразу на множестве 
+$[T_2,T_U]$. Следовательно, величина~$T_0$ не имеет большого значения.
+
+\smallskip
+
+\noindent
+\textbf{Следствие.} \textit{При выполнении условий теоремы~$4$ справедливо}
+\begin{equation}
+\!\!\!{\sf P}\left(\fr{\widehat{R}_N(f,T_{GCV})-R_N(f,T_{\min})}{\sigma^2\sqrt{2N}}<x\right)\Rightarrow\Phi(x).\!\label{e36-she}
+\end{equation}
+
+\smallskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ Утверждение~(\ref{e36-she}) следует из представления~(\ref{e13-she}) и теоремы~4.
+
+\smallskip
+Таким образом, доказанные утверждения обосно\-вы\-ва\-ют 
+разумность выбора порога $T_{GCV}$, поскольку риск в этом случае оказывается 
+близким к минимальному.
+
+\section{Оценки скорости сходимости к~нормальному закону}
+
+В процессе доказательства теоремы~4 используются методы, позволяющие оценить скорость сходимости 
+распределения оценки риска к нормальному закону.
+
+\smallskip
+
+\noindent
+\textbf{Теорема 5.} \textit{Пусть выполнены условия теоремы~4, тогда существуют такие константы $\tilde{C}_0$ и $\tilde{C}_1$, что}
+\begin{multline}
+\hspace*{-3.8mm}\sup\limits_{x\in\mathbf{R}}\left\vert {\sf P}\left(\!\fr{\widehat{G}_N(f,T_{GCV})-N\sigma^2-R_N(f,T_{\min})}
+{\sigma^2\sqrt{2N}}<x\!\right)-{}\right.\hspace*{-1.7pt}\\
+\left.{}-\Phi(x)\right\vert\leqslant \fr{\tilde{C}_0(\ln N)^{1+{1}/({2(\alpha+1)})}}{N^{{1}/{2}-{1}/({2(\alpha+1)})}}\,,\label{e37-she}
+\end{multline}
+\textit{если $0<\alpha\leqslant1$, и}
+\begin{multline}
+\hspace*{-3.8mm}\sup\limits_{x\in\mathbf{R}}\left\vert{\sf P}\left(\!\fr{\widehat{G}_N(f,T_{GCV})-N\sigma^2-R_N(f,T_{\min})}
+{\sigma^2\sqrt{2N}}<x\!\right)-{}\right.\hspace*{-1.6102pt}\\
+\left.{}-\Phi(x)\right\vert
+\leqslant\fr{\tilde{C}_1(\ln N)^{-{1}/{2}}}{N^{{1}/{4}}}\,,\label{e38-she}
+\end{multline}
+\textit{если} $\alpha\hm>1$.
+
+\smallskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ Как и в предыдущей теореме, обозначим
+$$
+\fr{\widehat{G}_N(f,T_{GCV})-N\sigma^2-R_N(f,T_{\min})}{\sigma^2\sqrt{2N}}=S_1+S_2\,,
+$$
+где
+
+\noindent
+\begin{align*}
+S_1&=\fr{\widehat{G}_N(f,T_{\min})-N\sigma^2-R_N(f,T_{\min})}{\sigma^2\sqrt{2N}}\,;\\
+S_2&=\fr{\widehat{G}_N(f,T_{GCV})-\widehat{G}_N(f,T_{\min})}{\sigma^2\sqrt{2N}}\,.
+\end{align*}
+Имеем
+
+\noindent
+\begin{multline}
+\hspace*{-3.8mm}\sup\limits_{x\in\mathbf{R}}\left\vert{\sf P}\left(\!\fr{\widehat{G}_N(f,T_{GCV})-N\sigma^2-R_N(f,T_{\min})}
+{\sigma^2\sqrt{2N}}<x\!\right)-{}\right.\hspace*{-1.6102pt}\\
+\left.{}-\Phi(x)\right\vert=
+\sup\limits_{x\in\mathbf{R}}\abs{{\sf P}\left(S_1+S_2<x\right)-\Phi(x)}\leqslant{}\\
+{}\leqslant\sup\limits_{x\in\mathbf{R}}\abs
+{{\sf P}\left(S_1<x\right)-\Phi(x)}+\fr{\eps_N}{\sqrt{2\pi}}+{}\\
+{}+{\sf P}\left(S_2>\eps_N\right)\,.\label{e39-she}
+\end{multline}
+Поступая так же, как в работе~\cite{8-she}, и используя представление~(\ref{e13-she}), 
+можно показать, что для некоторой константы $\tilde{C}'_0$ справедливо
+
+\noindent
+\begin{multline}
+\sup\limits_{x\in\mathbf{R}}\abs{{\sf P}\left(S_1<x\right)-\Phi(x)}\leqslant{}\\{}\leqslant
+\fr{\tilde{C}'_0(\ln N)^{{3}/{2}+{1}/(4(\alpha+1))}}{N^{{1}/{2}-{1}/(4(\alpha+1))}}\,.\label{e40-she}
+\end{multline}
+
+Для оценки третьего слагаемого в~(\ref{e39-she}) нужно более точно оценить вероятности $P_1$, $P_2$ и~$P_3$ в теореме~4. 
+Возьмем $r'_N\hm=C^*_r N^{1/2}\ln N$ и $T_1\hm=\sigma\sqrt{\ln N}\hm-d_1\sigma\ln\ln N/\sqrt{\ln N}$. Константы $C^*_r\hm>0$ 
+и $d_1\hm>0$ можно выбрать таким способом, чтобы в~(\ref{e18-she}) было справедливо
+\begin{equation}
+\hspace*{-2mm}{\sf P}\!\left(\!T_1N\!\!\sup\limits_{T\in[T_0,T_1]}\abs{\fr{1}{\mu^2_T}-\fr{1}{({\sf E}\mu_T)^2}}>
+\fr{r'_N}{2}\!\right)\leqslant \fr{C_{r'}}{N^{{1}/{2}}},\!\!\label{e41-she}
+\end{equation}
+а в~(\ref{e24-she}) было справедливо
+
+\noindent
+\begin{multline}
+{\sf P}\left(\sup\limits_{T\in[T_0,T_1]}\abs{\widehat{H}^{*}_N(f,T)-{\sf E}\widehat{H}^{*}_N(f,T)}
+\geqslant{}\right.\\
+\left.{}\geqslant\inf\limits_{T\in[T_0,T_1]}-{\sf E}\widehat{H}^{*}_N(f,T)-r'_N\right)\leqslant 
+\fr{C_{d_1}}{N^{{1}/{2}}}\label{e42-she}
+\end{multline}
+с некоторыми константами $C_{r'}$ и~$C_{d_1}$. Далее возьмем $r''_N\hm=C^{**}_r N^{1-\beta/2}(\ln N)^{3/4}$ и 
+$T_2\hm=\sigma\sqrt{\beta\ln N}\hm-d_2\sigma\ln\ln N/\sqrt{\ln N}$, где $\beta\hm=\min\left({3}/{2},{4\gamma}/({2\gamma+1})\right)$.
+ Константы $C^{**}_r\hm>0$ и $d_2\hm>0$ можно выбрать таким способом, чтобы в~(\ref{e29-she}) было справедливо
+ 
+ \noindent
+\begin{multline}
+{\sf P}\left(T_2N\sup\limits_{T\in[T_1,T_2]}\abs{\fr{1}{\mu^2_T}-\fr{1}{({\sf E}\mu_T)^2}}>
+\fr{r''_N}{2}\right)\leqslant {}\\
+{}\leqslant\fr{C_{r''}}{N^{{1}/{2}}}\,,\label{e43-she}
+\end{multline}
+а в~(\ref{e32-she}) было справедливо
+
+\pagebreak
+
+\noindent
+\begin{multline}
+{\sf P}\left(\sup\limits_{T\in[T_1,T_2]}\abs{\widehat{H}^{*}_N(f,T)-{\sf E}\widehat{H}^{*}_N(f,T)}
+\geqslant{}\right.\\
+\left.{}\geqslant
+\inf\limits_{T\in[T_1,T_2]}-{\sf E}\widehat{H}^{*}_N(f,T)-r''_N\right)\leqslant\fr{C_{d_2}}{N^{{1}/{2}}}\,.\label{e44-she}
+\end{multline}
+с некоторыми положительными константами $C_{r''}$ и $C_{d_2}$. Наконец, для оценки $P_3$ при таком выборе~$\beta$ вместо 
+$N^{-\varkappa/2}$ возьмем 
+$$
+\eps_N=
+\begin{cases}
+C_\eps N^{(1-\beta)/2}(\ln N)^{-1/2}\,, &\hspace*{-13mm} \mbox{ если } \fr{4\gamma}{2\gamma+1}>\fr{3}{2}\,,\\ 
+C_\eps N^{(1-\beta)/2}(\ln N)^{1+{1}/({2(\alpha+1)})}\,, &\\
+&\hspace*{-13mm}\mbox{ если } \fr{4\gamma}{2\gamma+1}\leqslant\fr{3}{2}\,, 
+\end{cases}
+$$
+с некоторой положительной константой~$C_\eps$. Найдется такая константа $\widetilde{C}_E\hm>0$, что
+$$
+\sup\limits_{T\in[T_2,T_U]}\sum\limits_{i=1}^N{\sf E}h^*(X_i,T)\leqslant \widetilde{C}_E N^{1-\beta/2}(\ln N)^{-1/2}\,,
+$$
+если ${4\gamma}/({2\gamma+1})>3/2$, и
+\begin{multline*}
+\sup\limits_{T\in[T_2,T_U]}\sum\limits_{i=1}^N{\sf E}h^*(X_i,T)\leqslant {}\\
+\leqslant
+\widetilde{C}_E N^{1-\beta/2}(\ln N)^{1+{1}/({2(\alpha+1)})}\,,
+\end{multline*}
+если ${4\gamma}/({2\gamma+1})\hm\leqslant3/2$. Следовательно, рассуждая как при выводе 
+соотношений~(\ref{e33-she})--(\ref{e35-she}), можно показать, что при 
+$C_\eps\sigma^2\sqrt{2}/3>\widetilde{C}_E$ найдется такая константа $C_{P_3}$, что
+\begin{equation}
+P_3\leqslant\fr{C_{P_3}}{N^{{1}/{2}}}\,.\label{e45-she}
+\end{equation}
+Объединяя (\ref{e39-she})--(\ref{e45-she}) и учитывая выбор $r'_N$, $r''_N$, $\eps_N$ и~$\beta$, 
+получаем~(\ref{e37-she}) и~(\ref{e38-she}). Теорема доказана.
+
+\smallskip
+
+\noindent
+\textbf{Замечание 2.} В следствии из теоремы~4 можно получить такие же оценки скорости сходимости к нормальному закону, 
+быть может, с другими константами.
+
+
+\smallskip
+
+\noindent
+\textbf{Замечание 3.} В работе~\cite{1-she} отмечается, что порог $T_{\mathrm{SURE}}$ 
+в случае, когда больших вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов 
+слишком мало, несколько недооценивает порог $T_{\min}$. Как видно из доказательства теорем~4 и~5, если 
+$\alpha\hm\leqslant1$, т.\,е.\ регулярность функции сигнала относительно невелика, то вероятность события $\{T_{GCV}\hm<T_{\min}\}$
+ стремится к нулю и порог $T_{GCV}$ может, скорее, переоценивать $T_{\min}$, что справедливо и для порога $T_{\mathrm{SURE}}$. 
+ Если же $\alpha\hm>1$, то $T_{\min}\hm>\sqrt{(3/2)\ln N}$, но можно лишь утверждать, что вероятность события 
+ $\{T_{GCV}\hm<\sqrt{(3/2)\ln N}\}$ стремится к нулю, и в этом случае $T_{GCV}$ может недооценивать $T_{\min}$ 
+ так же, как порог $T_{\mathrm{SURE}}$. Таким образом, доказанные теоремы дают количественную характеристику регулярности, 
+ влияющую на свойства порога~$T_{GCV}$.
+ 
+ {\small\frenchspacing
+{%\baselineskip=10.8pt
+\addcontentsline{toc}{section}{Литература}
+\begin{thebibliography}{99}
+
+
+\bibitem{2-she} %1
+\Au{Donoho D., Johnstone I.\,M.} Ideal spatial adaptation via wavelet shrinkage~// Biometrika, 1994. Vol.~81. No.\,3. P.~425--455.
+
+\bibitem{1-she} %2
+\Au{Donoho D., Johnstone I.\,M.} Adapting to unknown smoothness via wavelet shrinkage~// J.~Amer. Stat. Assoc., 1995. Vol.~90. P.~1200--1224.
+
+\bibitem{3-she}
+\Au{Donoho D.\,L., Johnstone I.\,M., Kerkyacharian~G., Picard~D.} Wavelet shrinkage: Asymptopia?~// J.~R.~Statist. Soc. Ser. B., 1995. 
+Vol.~57. No.\,2. P.~301--369.
+
+\bibitem{4-she}
+\Au{Marron J.\,S., Adak S., Johnstone~I.\,M., Neumann~M.\,H., Patil~P.} Exact risk analysis of wavelet regression~// 
+J.~Comput. Graph. Stat., 1998. Vol.~7. P.~278--309.
+
+\bibitem{5-she}
+\Au{Antoniadis A., Fan~J.} Regularization of wavelet approximations~// 
+J.~Amer. Statist. Assoc., 2001. Vol.~96. No.\,455. P.~939--967.
+
+\bibitem{10-she}  %6
+\Au{Jansen M.} Noise reduction by wavelet thresholding~//
+Lecture notes in Statistics. Vol.~161.~--- Springer Verlag, 2001.
+
+\bibitem{6-she} %8
+\Au{Маркин А.\,В., Шестаков О.\,В.} О~со\-сто\-я\-тель\-ности оценки риска при пороговой обработке вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов~// 
+Вестн. Моск. ун-та. Сер.~15. Вычисл. матем. и киберн., 2010. №\,1. C.~26--34.
+
+\bibitem{7-she} %7
+\Au{Маркин А.\,В.} Предельное распределение оценки риска при пороговой обработке вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов~// 
+Информатика и её применения, 2009. Т.~3. Вып.~4. С.~57--63.
+
+\bibitem{8-she} %9
+\Au{Шестаков О.\,В.} Аппроксимация распределения оценки риска пороговой обработки вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов 
+нормальным распределением при использовании выборочной дисперсии~// Информатика и её применения, 2010. Т.~4. Вып.~4. С.~73--81.
+
+\bibitem{9-she} %10
+\Au{Шестаков О.\,В.} Асимптотическая нормальность оценки риска пороговой обработки вейв\-лет-ко\-эф\-фи\-ци\-ентов при 
+выборе адаптивного порога~// Докл. РАН, 2012. Т.~445. №\,5. С.~513--515.
+
+
+
+\bibitem{11-she} %11
+\Au{Jansen M., Malfait M., Bultheel~A.} Generalized cross validation for wavelet thre\-sholding~// Signal 
+Processing, 1997. Vol.~56. No.\,1. P.~33--44.
+
+\bibitem{12-she}
+\Au{Jansen M.} Minimum risk methods in the estimation of unknown sparsity. Technical Report, 2010. U.L.B.
+
+\bibitem{13-she}
+\Au{Добеши И.} Десять лекций по вейвлетам.~--- Ижевск: НИЦ Регулярная и хаотическая динамика, 2001.
+
+\bibitem{14-she}
+\Au{Mallat S.} A~wavelet tour of signal processing.~--- N.Y.:~Academic Press, 1999.
+
+\bibitem{15-she}
+\Au{Abramovich F., Silverman~B.\,W.} Wavelet decomposition approaches to statistical inverse problems~// 
+Biometrika, 1998. Vol.~85. No.\,1. P.~115--129.
+
+\bibitem{16-she} \Au{Boggess A., Narkowich F.} A~first course in wavelets with Fourier analysis.~--- Upper Saddle River: Prentice Hall, 2001.
+
+\bibitem{17-she}
+\Au{Захарова Т.\,В., Шестаков О.\,В.} Вейв\-лет-ана\-лиз и его приложения: Учебное пособие.~--- М.: МАКС Пресс, 2009.
+
+\bibitem{18-she}
+\Au{Alexander K.} Probability inequalities for empirical processes and a law of the iterated logarithm~// 
+Ann. Probab., 1984. Vol.~12. No.\,4. P.~1041--1067.
+
+\bibitem{19-she} \Au{Bennett G.} Probability inequalities for sums of independent random variables~// 
+J.~Amer. Statist. Assoc., 1962. Vol.~57. P.~33--45.
+
+\bibitem{20-she} \Au{Феллер В.} Введение в теорию вероятностей и ее приложения.~--- М.:~Мир, 1984.
+
+\bibitem{21-she} 
+\Au{Vaart A. W., Wellner J. A.} Weak convergence and empirical processes.~--- N.Y.:~Springer Verlag, 1996.
+
+\bibitem{22-she} 
+\Au{Колмогоров А.\,Н., Тихомиров В.\,М.} $\eps$-энтро\-пия и $\eps$-ем\-кость множеств в функциональных пространствах~// 
+УМН, 1959. Т.~14. №~2(86). С.~3--86.
+
+\label{end\stat}
+
+\bibitem{23-she} \Au{Shen X., Wong W.\,H.} Convergence rate of sieve estimates~// Ann. Statist., 1994. Vol.~22. No.\,2. P.~580--615.
+\end{thebibliography}
+}
+}
+
+\end{multicols}

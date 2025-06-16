@@ -1,0 +1,1060 @@
+\newcommand {\col}{\mathop{\mathrm{col}}}
+\newcommand{\me}[2]{\mathbf{E}_{ #1 }\left\{ \mathop{#2} \right\} }
+
+%\newcommand {\s}{^{(s)}}
+
+
+
+\def\stat{borisov}
+
+\def\tit{ЧИСЛЕННЫЕ СХЕМЫ ФИЛЬТРАЦИИ МАРКОВСКИХ СКАЧКООБРАЗНЫХ ПРОЦЕССОВ 
+ПО~ДИСКРЕТИЗОВАННЫМ НАБЛЮДЕНИЯМ I:~ХАРАКТЕРИСТИКИ ТОЧНОСТИ$^*$}
+
+\def\titkol{Численные схемы фильтрации МСП %марковских скачкообразных процессов 
+по~дискретизованным наблюдениям I:~характеристики точности}
+
+\def\aut{А.\,В.~Борисов$^1$}
+
+\def\autkol{А.\,В.~Борисов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Борисов А.\,В.}
+\index{Borisov A.\,V.}
+
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при частичной поддержке РФФИ (проект 19-07-00187~А).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского центра 
+<<Информатика и~управление>> Российской академии наук,
+\mbox{aborisov@frccsc.ru}}
+
+%\vspace*{-2pt}
+
+
+
+\Abst{Статья является первой частью цикла, посвященного проблеме численного 
+решения задачи оптимальной фильтрации состояний марковских скачкообразных 
+процессов (МСП) по наблюдениям в~присутствии аддитивных и~мультипликативных 
+винеровских шумов. Данная задача решается путем временной 
+дискретизации наблюдений и~их последующей обработки. Как оптимальные,
+ так и~субоптимальные оценки в~этом случае выражаются через многомерные 
+ интегралы гауссовских плотностей по некоторым смешивающим распределениям. 
+ В~данной работе исследуется влияние точности схем численного интегрирования 
+ на качество получаемых приближенных оценок.  Задача сводится к~характеризации 
+ близости случайных последовательностей, по\-рож\-да\-емых некоторыми рекуррентными 
+ соотношениями. В~статье представлена псевдометрика, описывающая это 
+ расстояние, а также доказано утверждение о ее влиянии на локальную и~глобальную 
+ точность аппроксимации решения исходной задачи фильтрации.} 
+
+
+\KW{марковский скачкообразный процесс; оптимальная фильтрация; 
+аддитивные и~мультипликативные шумы в~наблюдениях; стохастическое 
+дифференциальное уравнение; аналитическая и~численная аппроксимация}
+
+\DOI{10.14357/19922264190411} 
+  
+%\vspace*{1pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+
+
+ \section{Введение}
+ 
+ Задача фильтрации состояний \textit{марковского скачкообразного процесса}  
+ по косвенным непрерывным зашумленным наблюдениям была решена в~\cite{Wonham_65} для 
+ класса систем наблюдения с~аддитивными винеровскими шумами. Это означает, 
+ что интенсивность шумов в~наблюдениях является лишь детерминированной функцией 
+ времени. В~\cite{B_18} представле\-но обобщение этого результата на наблюдения 
+ с~мультипликативными шумами: их интенсивность теперь является функцией оцениваемого 
+ состояния системы. В~обоих случаях системы стохастических дифференциальных уравнений, 
+ опи\-сы\-ва\-ющих фильтр, относятся к~классу уравнений Куш\-не\-ра--Стра\-то\-но\-ви\-ча, 
+ проблемному с~точки зрения их численного решения. Дело в~том, что эти 
+ нелинейные уравнения описывают эволюцию во времени условного распределения 
+ состояния сис\-те\-мы по имеющимся наблюдениям. Стандартные чис\-лен\-ные схемы их 
+ решения~\cite{KP_92} могут терять свойства нормировки и~неотрицательности. 
+ В~статье \cite{B_18_IA} была предложена концепция построения 
+ численных методов путем перехода к~дискретизованным по времени 
+ наблюдениям и~последующему решению на их основе задачи оптимальной фильтрации. 
+  Предложенные оценки вычисляются рекурсивно как некоторая дробь, 
+  числитель и~знаменатель которой представляют собой бесконечные суммы 
+  интегралов от гауссовских плотностей по некоторым смешивающим распределениям. 
+  Было предложено ограничить суммирование в~числителе и~знаменателе некоторым 
+  порогом, назвав такие приближения \textit{аналитическими} аппроксимациями. 
+  Для них в~\cite{B_18_IA} были получены показатели локальной и~глобальной точности,
+   т.\,е.\ определена величина расхождения оптимальной оценки и~ее аппроксимации 
+   за один или несколько шагов рекурсии.
+К~сожалению, для аналитических аппроксимаций не существует явных формул,
+ определяющих значение интегралов~--- слагаемых в~числителе и~знаменателе.
+
+Целью данного цикла является исследование влияния замены интегралов 
+их приближениями  в~виде конечных сумм на общую точность аппроксимации, 
+а~также сравнительный  анализ различных численных схем, используемых при 
+решении задачи фильтрации по наблюдениям как с~аддитивными, так 
+и~с~мультипликативными шумами. 
+Первая статья посвящена определению влияния точности схем численного 
+интегрирования на итоговую точность приближения задачи оптимальной 
+фильтрации состояний МСП по дискретизованным наблюдениям. Статья 
+организована сле\-ду\-ющим образом. В~разд.~2 дана постановка задачи 
+оптимальной фильтрации. Совокупность определений и~результатов работы~\cite{B_18_IA}, 
+используемых в~данной статье, представлена в~разд.~3. В~разд.~4 
+предлагается аппроксимировать интегралы в~аналитических аппроксимациях 
+с~по\-мощью интегральных сумм общего вида. Подобные аппроксимации названы 
+\textit{численными}. Предложены локальный и~глобальный показатели близости 
+аналитических и~численных аппроксимаций: они определяют величину 
+расхождения аналитической и~численной аппроксимации за один или несколько шагов. 
+Основное утверждение статьи позволяет оценить эти показатели с~помощью 
+аналитической характеристики~--- интегральной ошибки. Эта же оценка дает
+ возможность определить точность решения исходной задачи фильтрации с~учетом ошибок, вносимых аналитической аппроксимацией и~ее численным приближением
+с помощью той или иной численной схемы. Заключительные замечания 
+представлены в~разд.~5.
+
+ \section{Постановка задачи фильтрации}
+ 
+ На вероятностном базисе с~фильтрацией\linebreak 
+ $(\Omega^X \times \Omega^W,\mathcal{F}^X \times \mathcal{F}^W,
+ \mathcal{P}^X \times \mathcal{P}^W, \{\mathcal{F}^X_t 
+ \times \mathcal{F}^W_t\}_{t \geqslant 0})$ рас\-смат\-ри\-ва\-ет\-ся система наблюдения
+\begin{align*}
+ \displaystyle X_t &=X_0 + \int\limits_0^t \Lambda^{\top}X_{s}\,ds + \mu_t;  \\
+ \displaystyle Y_r &= \int\limits_{(r-1)h}^{rh} \!\! fX_s\,ds+\!
+ \int\limits_{(r-1)h}^{rh} \sum\limits_{n=1}^NX_s^ng_n^{1/2}\, dW_s,\enskip 
+ r \in \mathbb{N},
+ % \label{eq:obsys_1}
+ \end{align*}
+ где
+  \begin{itemize}
+  \item
+  $X_t  \eqd \col\left(X_t^1,\ldots,X_t^N\right) \hm\in \mathbb{S}^N$~--- 
+  не\-на\-блю\-да\-емое состояние системы~--- однородный МСП с~конечным множеством 
+  состояний $ \mathbb{S}^N \hm \eqd \{e_1,\ldots,e_N\}$ ($\mathbb{S}^N$~--- 
+  множество единичных векторов евклидова пространства~$\mathbb{R}^N$), 
+  матрицей интенсивностей переходов~$\Lambda$ и~начальным распределением~$\pi$;
+  \item
+  $\mu_t \eqd \col\left(
+  \mu_t^1,\ldots,\mu_t^N\right)\hm\in \mathbb{R}^N$~--- $\mathcal{F}_t$-со\-гла\-со\-ван\-ный 
+  мартингал;
+  \item
+  $\{Y_r\}_{r \in \mathbb{N}}:\;  Y_r \eqd \col\left(Y_r^1,\ldots,Y_r^M\right) 
+  \hm\in \mathbb{R}^M$~--- последовательность дискретизованных наблюдений, 
+  доступных в~известные равноотстоящие моменты времени~$\{rh\}_{r \in \mathbb{N}}$;
+ \item
+ $W_t \eqd \col\left(W_t^1,\ldots,W_t^M\right) \hm\in \mathbb{R}^M$ является 
+ $\mathcal{F}_t$-со\-гла\-со\-ван\-ным стандартным винеровским процессом,  $f$~--- 
+ $(M \times N)$-мер\-ная матрица, 
+ а~$\{g_n\}_{n=\overline{1,N}}$~--- симметрические положительно определенные 
+ матрицы; процессы~$X$ и~$W$ независимы.
+  \end{itemize}
+  
+   \textit{Задача оптимальной фильтрации состояния~$X$ 
+   по дискретизованным наблюдениям~$Y$} заключается в~нахождении 
+   \textit{условного математического ожидания} (УМО)
+  \begin{equation}
+  \widehat{X}_r \eqd \me{}{X_{t_r}|\mathcal{O}_{r} },
+  \label{eq:fest_1}
+  \end{equation}
+  где $\mathcal{O}_r \eqd \sigma\{ Y_{\ell}: \; 1 \leqslant \ell \leqslant r\}$~--- 
+  $\sigma$-ал\-геб\-ра, по\-рож\-ден\-ная наблюдениями, полученными до момента времени~$rh$ 
+  включительно; $\mathcal{O}_0 \eqd \{\varnothing,\; \Omega\}$.
+  
+Необходимость нахождения оценки~(\ref{eq:fest_1}) очевидным образом возникает 
+при численной реализации оптимальной фильтрации состояний МСП по непрерывным 
+наблюдениям в~присутствии винеровских шумов. 
+С одной стороны, измерительная информация практически во всех реальных 
+системах формируется в~дискретные моменты времени, а~модели с~непрерывными 
+наблюдениями являются лишь удобной, хотя и~адекватной, идеализацией. 
+С~другой стороны, средства вычислительной техники также способны обрабатывать 
+только сигналы, дискретизованные по времени. Поэтому можно считать, что в~процесс 
+фильтрации состояний МСП по непрерывным наблюдениям в~качестве первого необходимого 
+шага включена процедура временн$\acute{\mbox{о}}$й 
+дискретизации наблюдений, или изначально наблюдения поступают в~дискретизованном виде.
+
+%\vspace*{-4pt}
+
+ \section{Необходимые сведения об~оптимальном решении и~аналитических аппроксимациях}
+ 
+ %\vspace*{-3pt}
+ 
+ Рекуррентные соотношения, определяющие оценку~(\ref{eq:fest_1}), были 
+ получены в~статье~\cite{B_18_IA}. В~данном разделе представлены те ее 
+ термины и~результаты, которые будут использованы в~настоящей статье 
+ для определения точности предлагаемых численных аппроксимаций. 
+ Эти обстоятельства объясняют появление рассматриваемой задачи оце\-ни\-вания.
+ {\looseness=1
+ 
+ }
+ 
+  
+   Пусть $N_r^X(\omega)$~--- число скачков процесса~$X$, произошедших на отрезке 
+   $[(r-1)h,rh]$, а $\tau_r \eqd \int\nolimits_0^t X_sds$~--- 
+   случайный вектор времени пребывания процесса~$X$ в~различных состояниях на 
+   отрезке $[(r-1)h,rh]$.
+  
+  Оптимальная оценка~$\widehat{X}_r$~(\ref{eq:fest_1}) 
+  определяется рекуррентной процедурой~\cite{B_18_IA}
+  \begin{equation*}
+  \widehat{X}_0 = \pi\,;
+  %\label{eq:init}
+  \end{equation*}
+  
+% \vspace*{-12pt}
+ 
+  \noindent
+  \begin{multline} 
+  \widehat{X}_r^{j} = \left(
+\sum\limits_{m=0}^{\infty}
+    \sum\limits_{n=1}^N \int\limits_{\mathcal{D}} 
+ \mathcal{N}\left(Y_{r},f u,\sum\limits_{p=1}^N u^p g_p\right)
+  \widehat{X}_{r-1}^n\times{}\right.\\[3pt]
+\left. {}\times  
+ \rho^{n,j,m}(du)\right)\!\!\Bigg/ \!\!
+ \left( 
+ \sum\limits_{\ell=0}^{\infty}\sum\limits_{k,i=1}^N \int\limits_{\mathcal{D}} 
+ \!\mathcal{N}\!\left(\!Y_{r},f v,\sum\limits_{q=1}^N v^q g_q\right)\times{}\right.\hspace*{-1.15286pt}\\[3pt]
+ \left.{}\times  \widehat{X}_{r-1}^k
+ \rho^{k,i,\ell}(dv)
+  \vphantom{\int\limits_{\mathcal{D}}}
+ \right), \enskip j=\overline{1,N}\,,
+  \label{eq:filt_1}
+ \end{multline}
+
+ 
+ \noindent
+ где 
+ \begin{itemize}
+ \item
+ $\mathcal{D} \eqd \{t=\col\left(t^1,\ldots,t^N\right) \hm\in 
+ \mathbb{R}^N: t^n \hm\geqslant 0, \; n\hm=\overline{1,N}, \;\sum\nolimits_{n=1}^N t^n \hm= h\}$~--- 
+ носитель распределения вектора $\tau_r$;
+ \item
+ $ \mathcal{N}(y,m,K) \eqd (2\pi)^{-M/2} \mathrm{det}^{-1/2} K \times{}$\linebreak
+ $\times
+ \exp\left\{ -\|y-m)\|^2_{K^{-1}}/2\right\}$~--- 
+ $M$-мер\-ная плот\-ность гауссовского распределения с~математическим ожиданием~$m$ 
+ и~не\-вы\-рож\-ден\-ной ковариационной матрицей~$K$;
+ \item
+ $\rho^{n,j,m}(\cdot)$~--- распределение вектора 
+ $\tau_{r}X_{t_{r}}^{j}\mathbf{I}_{\{m\}}(N_{r}^X)$ при условии $X_{t_{r-1}}\hm=e_k$, 
+ т.\,е.\ 
+ для любого $\mathcal{G}\hm \in \mathcal{B}(\mathbb{R}^M)$ верно равенство:
+\begin{multline*}
+\me{}{\mathbf{I}_{\mathcal{G}}
+\left(\tau_r\right)X_{t_r}^j\mathbf{I}_{\{m\}}\left(N_r^X\right)|X_{t_{r-1}}=e_k}
+={}\\[3pt]
+{}=
+  \int\limits_{\mathcal{G}} \rho^{k,j,m}(du).
+\end{multline*}
+ \end{itemize}
+Формула~(\ref{eq:filt_1}) вычисления оптимальной оценки на каждом шаге
+представляет собой обобщенный вариант формулы Байеса со счетным набором 
+гипотез $H_r^m \hm= \{\omega \in \Omega: \; N^X_r(\omega)\hm=m\}$.
+Она содержит в~числителе и~знаменателе бесконечные суммы, 
+которые не могут быть вычислены аналитически. Поэтому были предложены 
+\textit{аналитические} аппроксимации $\overline{X}_r(s,Y_1,\ldots,Y_r)$ 
+порядка~$s$ (далее в~тексте зависимость оценок и~их аппроксимаций от порядка~$s$ 
+и~наблюдений~$Y$ будет опущена в~тех местах, где это не мешает изложению материала):
+  \begin{align}
+  \overline{X}_0 &=\pi\,; \notag\\[3pt]
+\overline{X}_r^{j} &= \left(\sum\limits_{m=0}^{s}\sum\limits_{n=1}^N 
+\int\limits_{\mathcal{D}} 
+ \mathcal{N}\left(Y_{r},f u,\sum\limits_{p=1}^N u^p g_p\right) \overline{X}_{r-1}^n\times{}\right.\notag\\[3pt]
+&\hspace*{-15pt}\left.{}\times    \rho^{n,j,m}(du)\right)\!\!\Bigg /\!\!
+\left(
+\sum\limits_{\ell=0}^{s}\sum\limits_{k,i=1}^N \int\limits_{\mathcal{D}} 
+ \!\mathcal{N}\!\left(\!Y_{r},f v,\sum\limits_{q=1}^N v^q g_q\right)\times{}\right.\notag\\[3pt]
+&\hspace*{15mm}\left. {}\times  \overline{X}_{r-1}^k
+ \rho^{k,i,\ell}(dv)
+  \vphantom{\int\limits_{\mathcal{D}}}
+  \right), \enskip j=\overline{1,N}.
+  \label{eq:filt_1_1}
+ \end{align}
+ 
+ 
+ Оценки, обладающие п.~н.\ неотрицательными компонентами и~удовлетворяющие 
+ условиям нормировки, называются \textit{устойчивыми}. Легко видеть, что 
+ оценка~$\overline{X}_r$~(\ref{eq:filt_1_1}) относится к~этому классу.
+ 
+ Далее в~статье предполагается, что шаг~$h$ и~порядок аппроксимации~$s$ 
+ выбраны таким образом, что 
+ $$
+ \fr{(\overline{\lambda}h)^{s+1}}{(s+1)!} < 
+\fr{1}{2}\,,
+$$ 
+где $\overline{\lambda} \eqd \max\nolimits_{1 \leqslant n 
+ \leqslant N}|\lambda_{n n}|$.
+ 
+ Для предложенных аппроксимаций верны неравенства, характеризующие 
+ локальный (одношаговый) и~глобальный (многошаговый) показатели точности:
+ \begin{equation}
+ \sigma(s) \eqd \sup\limits_{\pi \in \Pi}\me{}{\|\widehat{X}_{1} - \overline{X}_{1}\|_{1}} 
+ \leqslant
+ 2 \fr{(\overline{\lambda}h)^{s+1}}{(s+1)!}\,;
+ \label{eq:analyt_loc}
+ \end{equation}
+ 
+ \vspace*{-12pt}
+ 
+ \noindent
+  \begin{multline}
+\Sigma_r(s) \eqd \sup\limits_{\pi \in \Pi}\me{}{\|\widehat{X}_{r} - \overline{X}_{r}\|_{1}} 
+\leqslant{}\\
+{}\leqslant
+ 2-2\left(1-\fr{(\overline{\lambda}h)^{s+1}}{(s+1)!}\right)^r ,
+ \label{eq:analyt_glob}
+ \end{multline}
+где $\Pi \eqd \{\col(\pi^1, \ldots , \pi^N): \; \pi^n \geqslant 0,\; 
+n=\overline{1,N},\;\sum\nolimits_{n=1}^N \pi^n =1 \}$~--- вероятностный симплекс.
+
+Аналитическая аппроксимация~$\overline{X}_r$ может быть записана в~явном виде:
+\begin{equation}
+\overline{X}_r = (\mathbf{1}\Xi_{1,r}^{\top}\pi)^{-1} \Xi_{1,r}^{\top}\pi
+ \label{eq:filt_2}
+ \end{equation}
+ и~в виде рекурсии:
+ \begin{equation}
+\overline{X}_r = (\mathbf{1}\xi_{r}^{\top}\overline{X}_{r-1})^{-1} \xi_{r}^{\top}\overline{X}_{r-1},
+ \label{eq:filt_3}
+ \end{equation}
+ где $\mathbf{1} = \mathrm{row} (1,\ldots,1)$~--- век\-тор-стро\-ка подходящей размерности,
+$$
+ \Xi_{q,p} =  
+\begin{cases}
+ \xi_{q}\xi_{q+1}\ldots \xi_p, & \mbox{если }  q \leqslant p\,; \\
+ I &  \mbox{в противном случае,}
+\end{cases}
+$$
+  а $\xi_q \eqd \|\xi^{ij}(Y_q)\|_{i,j=\overline{1,N}}$~--- $(N \times N)$-мер\-ные 
+  случайные матрицы~--- функции наблюдений~$Y_q$: 
+ \begin{equation}
+ \xi^{ij}(y)\eqd 
+\sum\limits_{m=0}^s \int\limits_{\mathcal{D}}\!\! 
+ \mathcal{N}\!\left(\!y,f u,\sum_{p=1}^N u^p g_p\right)\!
+ \rho^{i,j,m}(du).\!\!
+ \label{eq:xi_def}
+ \end{equation}
+
+ \section{Точность численных аппроксимаций}
+ 
+ Предложенная рекуррентная схема приближенного оценивания~(\ref{eq:filt_3}) 
+ предполагает вычисление интегралов~$\xi^{ij}_r$~(\ref{eq:xi_def}), 
+ для которых не существует явного аналитического представления. 
+ Это обстоятельство влечет за собой необходимость использования схем 
+ численного интегрирования, а значит, появление дополнительных методических 
+ ошибок, которые необходимо учитывать. Исследуем в~общем случае аппроксимации 
+ этих интегралов и~представим утверждение о~влиянии точности их вычисления 
+ на итоговую точность аппроксимации оценок оптимальной фильтрации.
+  
+  Обычно значения интегралов~$\xi^{ij}(y)$ приближенно вычисляются 
+  в~виде интегральных сумм:
+  \begin{equation}
+  \left.
+  \begin{array}{rl}
+  \hspace*{-2mm}\xi^{ij}(y) & \displaystyle \approx \psi^{ij}(y) \eqd 
+ \sum\limits_{\ell=1}^{L} \mathcal{N}\!\left(\!y,f w_{\ell},
+ \sum\limits_{p=1}^N w^p_{\ell} g_p\!\right)\!\varrho_{\ell}^{ij}; \\[6pt] 
+   \hspace*{-2mm}\psi(y) &\eqd \|\psi^{ij}(y)\|_{i,j=\overline{1,N}},
+ \end{array}
+\! \right\}\!\!
+  \label{eq:int_sum}
+  \end{equation}
+  определяемых набором пар $\{(w_{\ell},\varrho_{\ell}^{ij})\}_{\ell=\overline{1,L}}$.
+   Здесь $\varrho_{\ell}^{ij} \hm\geqslant 0$ ($\ell\hm=\overline{1,L}$)~--- 
+   веса, $\sum\nolimits_{\ell=1}^L\varrho_{\ell}^{ij} \hm\leqslant 1$, 
+   а~$w_{\ell}\hm\eqd \col(w^1_{\ell},\ldots,w^N_{\ell}) \hm\in \mathcal{D}$~--- точки. 
+  Аналогично мат\-ри\-цам~$\Xi_{q,r}$ строятся их аппроксимации:
+  $$
+ \Psi_{q,p} =  
+ \begin{cases}
+ \psi_{q}\psi_{q+1}\ldots \psi_p, & \mbox{если }  q \leqslant p\,; \\
+ I &  \mbox{в противном случае}
+\end{cases}
+$$
+  и~$\psi_q \eqd \|\psi^{ij}(Y_q)\|_{ij=\overline{1,N}}$.
+  
+  По построению~$\psi^{ij}_q$ являются положительными случайными величинами,
+   поэтому приближенная оценка~$\widetilde{X}_r$, вычисляемая рекурсивно
+  \begin{equation}
+   \hspace*{-2mm} \widetilde{X}_r \eqd \left(\mathbf{1}\psi_r^{\top} \widetilde{X}_{r-1}\right)^{-1}\!\!
+  \psi_r^{\top} \widetilde{X}_{r-1}, \enskip 
+  r\geqslant 1\,, \ \widetilde{X}_{0} = \pi,
+  \label{eq:pp_est}
+  \end{equation}
+  обладает свойством устойчивости.
+  
+  Обозначим ошибки аппроксимации интегралов и~их абсолютные значения
+  сле\-ду\-ющим образом:
+    \begin{alignat*}{2}
+  \gamma^{kj} &\eqd \psi^{kj} - \xi^{kj}, & \enskip
+ \gamma_r &\eqd \|\gamma^{kj}(Y_r)\|_{k,j=\overline{1,N}};
+ %\label{eq:matr_err}
+\\
+  \overline{\gamma}^{kj} &\eqd |\gamma^{kj}|, &\enskip
+ \overline{\gamma}_r &\eqd \left\||\gamma^{kj}(Y_r)|\right\|_{k,j=\overline{1,N}}.
+  %\label{eq:matr_abs}
+  \end{alignat*}
+ 
+  
+  Рекуррентная схема вычисления~$\overline{X}_r$~(\ref{eq:filt_2}) 
+  заменяется на схему~(\ref{eq:pp_est}), при этом обе рекурсии стартуют из 
+  одного и~того же начального условия~$\pi$.
+  
+  Рассмотрим случайные события $a_q \eqd \{\omega \in \Omega:\; N^X_q(\omega) \leqslant s \}$, заключающиеся в~том, что на $[t_{q-1},t_q]$ произошло не более $s$ скачков состояния $X$, а также $A_r \eqd \prod_{q=1}^r a_q$. Обе рекурсии, (\ref{eq:filt_2}) и~(\ref{eq:pp_est}), строились в~расчете на выполнение события $A_r$, поэтому точность аппроксимации схемы (\ref{eq:filt_2}) схемой (\ref{eq:pp_est}) следует определять с~учетом ограничения на число скачков состояния.
+  
+  \columnbreak
+  
+  В качестве локального показателя близости оценок~$\overline{X}$ и~$\widetilde{X}$ 
+  будем рассматривать псевдометрику  
+  
+\noindent
+  \begin{multline}
+ \varepsilon(s) \eqd \sup\limits_{\pi \in \Pi}\me{}{\mathbf{I}_{a_1}(\omega)\|
+ \widetilde{X}_{1} - \overline{X}_{1}\|_{1}} = {}\\
+ {}=\sup\limits_{\pi \in \Pi}\sum\limits_{j=1}^N\me{}{\mathbf{I}_{a_1}
+ (\omega)|\widetilde{X}^j_1 - \overline{X}^j_{1}|}.
+ \label{eq:num_loc}
+ \end{multline}
+ Глобальный показатель близости определяется аналогично:
+ \begin{multline}
+\mathcal{E}_r(s) \eqd \sup\limits_{\pi \in \Pi}\me{}{\mathbf{I}_{A_r}
+(\omega)\|\widetilde{X}_{r} - \overline{X}_{1}\|_{1}} ={}\\
+{}= \sup\limits_{\pi \in \Pi}\sum\limits_{n=1}^N\me{}{\mathbf{I}_{A_r}(\omega)|\widetilde{X}^n_r - \overline{X}^n_{r}|}.
+ \label{eq:num_glob}
+ \end{multline}
+ Он характеризует расхождение алгоритмов~(\ref{eq:filt_3}) и~(\ref{eq:pp_est}) 
+ за один и~$r$~шагов при отсутствии превышения чис\-лом скачков состояния 
+ фиксированного порога~$s$ на одном или на каждом из~$r$~шагов. 
+ 
+ Для оценивания $\varepsilon(s)$ и~$\mathcal{E}_r(s)$ потребуются 
+ некоторые вспомогательные результаты.
+ 
+ Рассмотрим неотрицательную интегрируемую функцию $\phi_1\hm=\phi_1(y): 
+ \mathbb{R}^M \hm\to \mathbb{R}_+$ и~$\mathcal{O}_1$-из\-ме\-ри\-мую случайную величину
+ \begin{multline*}
+ \Phi_1 \eqd \fr{\phi_1(Y_1)}{\mathbf{1}\xi_1^{\top}(Y_1)\pi}={}\\
+ {}=
+ \phi_1(Y_1)\Bigg/
+ \left(\sum\limits_{i,j=1}^{N}\sum\limits_{m=0}^{s}\int\limits_{\mathcal{D}}
+  \mathcal{N}\left(Y_1,fu,\sum\limits_{p=1}^Nu^p g_p\right)\times{}\right.\\
+\left.  {}\times{}\rho^{i,j,m}(du)\pi_i
+\vphantom{\int\limits_{\mathcal{D}}}
+  \right)
+% \label{eq:phi_1}
+ \end{multline*}
+ и~найдем $\me{}{\mathbf{I}_{a_1}\Phi_1}$:
+ \begin{multline*}
+ \me{}{\mathbf{I}_{a_1}\Phi_1} =
+ \int\limits_{\mathbb{R}^M}\int\limits_{\mathcal{D}}
+ %\fr{
+ \phi_1(y)\times{}\\
+ {}\times
+ \sum\limits_{k,\ell=1}^{N}
+ \sum\limits_{m=0}^{s}\mathcal{N}
+ \left(y,fv,\sum\nolimits_{q=1}^Nv^q g_q\right)\rho^{k,\ell,n}(dv)\pi_k\Bigg/\\
+  \left(
+ \sum\limits_{i,j=1}^{N}\sum\limits_{m=0}^{s}\int\limits_{\mathcal{D}}
+  \mathcal{N}\left(y,fu,\sum\limits_{p=1}^Nu^p g_p\right)\times{}\right.\\
+\left.  {}\times{}\rho^{i,j,m}(du)\pi_i
+ \vphantom{\int\limits_{\mathcal{D}}}
+  \right)dy
+  ={} \\ 
+ {}=\!\!
+ \int\limits_{\mathbb{R}^M}\!\!\phi_1(y)\!
+ %\fr{
+ \sum\limits_{k,\ell=1}^{N}
+ \sum\limits_{m=0}^{s}\int\limits_{\mathcal{D}}\!\mathcal{N}\!
+ \left(\!y,fv,\sum\limits_{q=1}^Nv^q g_q\!\right)\rho^{k,\ell,n}(dv)\times{}\hspace*{-7.17207pt}
+\end{multline*}
+
+\noindent
+ \begin{multline}
+ {}\times
+ \pi_k\,\Bigg/\!
+ %}
+ \left(
+ \sum\limits_{i,j=1}^{N}\sum\limits_{m=0}^{s}\int\limits_{\mathcal{D}}
+  \mathcal{N}\left(y,fu,\sum\limits_{p=1}^Nu^p g_p\right)\times{}\right.\\
+\left.  {}\times{}\rho^{i,j,m}(du)\pi_i
+\vphantom{\int\limits_{\mathcal{D}}}
+ \right) dy = \int\limits_{\mathbb{R}^M}\phi_1(y)\,dy.
+ \label{eq:me_phi_1}
+ \end{multline}
+ 
+ Рассмотрим неотрицательную интегрируемую функцию $\phi_2\hm=\phi_1(y_1,y_2): 
+ \mathbb{R}^{2M}\hm \to \mathbb{R}_+$ и~$\mathcal{O}_2$-из\-ме\-ри\-мую случайную величину
+  \begin{multline*}
+ \Phi_2 \eqd \fr{\phi_1(Y_1,Y_2)}{\mathbf{1}\Xi_{1,2}^{\top}(Y_1,Y_2)\pi}= {}
+   \\
+    \left(
+  \sum\limits_{i,i_2,j=1}^{N}\sum\limits_{m_1,m_2=0}^{s}
+  \int\limits_{\mathcal{D}}\int\limits_{\mathcal{D}}
+  \mathcal{N}\left(Y_1,fu_1,\sum\limits_{p_1=1}^Nu^{p_1}g_{p_1}\right)\times{}\right.\\
+{}\times
+  \mathcal{N}\left(Y_2,fu_2,\sum\limits_{p_2=1}^Nu^{p_2}g_{p_2}\right)\times{}\\
+    \left.{}\times{}
+  \rho^{i,i_2,m_1}(du_1)\rho^{i_2,j,m_2}(du_2)
+  \pi_i
+  \vphantom{\int\limits_{\mathcal{D}}}
+  \right)^{-1} \phi_2\left(Y_1,Y_2\right)
+ \label{eq:phi_2}
+ \end{multline*}
+ и~найдем $\me{}{\mathbf{I}_{A_2}\Phi_2}$:
+ \begin{multline*}
+ \me{}{\mathbf{I}_{A_2}\Phi_2} =
+ \int\limits_{\mathbb{R}^M}
+ \int\limits_{\mathbb{R}^M}
+ \phi_2(y_1,y_2)\times{}\\
+{} \times
+  \sum\limits_{k,k_2,\ell=1}^{N}\sum\limits_{n_1,n_2=0}^{s}
+  \int\limits_{\mathcal{D}}\int\limits_{\mathcal{D}}
+  \mathcal{N}\left(y_1,fv_1,\sum\limits_{q_1=1}^Nv^{q_1} g_{q_1}\right)\times{}\\
+  {}\times
+  \mathcal{N}\left(y_2,fv_2,\sum\limits_{q_2=1}^Nv^{q_2} g_{q_2}\right)
+  \rho^{k,k_2,n_1}(dv_1)\times{}\\
+  {}\times \rho^{k_2,\ell,n_2}(dv_2)
+  \pi_i 
+\Bigg/ \\
+\left( 
+\sum\limits_{i,i_2,j=1}^{N}\sum\limits_{m_1,m_2=0}^{s}
+ \int\limits_{\mathcal{D}}\int\limits_{\mathcal{D}}
+  \mathcal{N}\left(y_1,fu_1,\sum\limits_{p_1=1}^Nu^{p_1} g_{p_1}\right)\times{}\right.\\
+{}\times  \mathcal{N}\left(y_2,fu_2,\sum\limits_{p_2=1}^Nu^{p_2} g_{p_2}\right)
+  \rho^{i,i_2,m_1}(du_1)\times{}\\
+ \! \left.{}\times\rho^{i_2,j,m_2}(du_2)
+  \pi_i
+  \vphantom{\int\limits_{\mathcal{D}}}
+  \!\right) dy_2 dy_1
+=  \!\int\limits_{\mathbb{R}^M}
+ \int\limits_{\mathbb{R}^M}\!
+ \phi_2(y_1,y_2)\,
+ dy_2 dy_1.\hspace*{-7.28978pt}
+ \end{multline*}
+ 
+ 
+ 
+ Рассмотрим неотрицательную интегрируемую функцию $\phi_r\hm=\phi_1
+ (y_1,y_2,\ldots,y_r): \mathbb{R}^{rM} \hm\to \mathbb{R}_+$ и~$\mathcal{O}_r$-из\-ме\-ри\-мую 
+ случайную величину
+  \begin{equation*}
+ \Phi_r \eqd \fr{\phi_r(Y_1,Y_2,\ldots,Y_r)}
+ {\mathbf{1}\Xi_{1,r}^{\top}(Y_1,Y_2,\ldots,Y_r)\pi}\,.
+ %\label{eq:phi_r}
+ \end{equation*}
+ Выполняя выкладки, аналогичные предыдущим, можно получить 
+ выражение для математического ожидания
+  \begin{multline}
+ \me{}{\mathbf{I}_{A_r}\Phi_r} ={}\\
+ {}=
+ \int\limits_{\mathbb{R}^M}\cdots
+ \int\limits_{\mathbb{R}^M}
+ \phi_r\left(y_1,y_2, \ldots,y_r\right)\,
+ dy_r\cdots dy_2 dy_1,
+ \label{eq:me_phi_r}
+ \end{multline}
+ позволяющее доказать следующую теорему~--- основной результат данной статьи.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~1.}
+\textit{Если для схемы}~(\ref{eq:int_sum}) 
+\textit{приближенного вы\-чис\-ле\-ния интеграла}~(\ref{eq:xi_def}) 
+\textit{выполняется неравенство}
+  \begin{equation}
+ \max\limits_{i=\overline{1,N}}\sum\limits_{j=1}^N \, \int\limits_{\mathbb{R}^M}
+ \left\vert \psi^{ij}(y) - \xi^{ij}(y)\right\vert dy < \delta\,,
+ \label{eq:cond}
+ \end{equation}
+\textit{то локальный показатель близости ограничен следующим образом}: 
+ \begin{equation}
+ \varepsilon(s) \leqslant 2 \delta,
+ \label{eq:num_prec_loc}
+ \end{equation} 
+ \textit{а для глобального показателя верно неравенство}
+ \begin{equation}
+ \mathcal{E}_r(s) \leqslant 2 r\delta\,.
+ \label{eq:num_prec_glob}
+ \end{equation} 
+ Доказательство теоремы~1 приведено в~приложении.
+ 
+ Примечательно, что условие~(\ref{eq:cond}) касается только аналитических 
+ свойств схемы интегрирования~(\ref{eq:int_sum}), и~этого оказывается достаточно, 
+ чтобы оценивать вероятностные характеристики расстояния между 
+ стохастическими последовательностями, порожденными рекурсивными 
+ схемами~(\ref{eq:xi_def}), (\ref{eq:filt_3}) и~(\ref{eq:pp_est}), 
+ (\ref{eq:int_sum}) соответственно. Также важно, что с~рос\-том числа 
+ шагов схемы глобальная ошибка растет линейно.
+  
+ Следует подчеркнуть, что рекурсия~(\ref{eq:pp_est}) совместно с~алгоритмом 
+ приближенного интегрирования~(\ref{eq:int_sum}) может быть непосредственно 
+ численно реализована.
+ Неравенства (\ref{eq:analyt_loc}), (\ref{eq:analyt_glob}), (\ref{eq:num_loc}) 
+и~(\ref{eq:num_glob}), а~также 
+ $\mathbf{P}\left\{\overline{a}_1\right\}
+ \hm\leqslant 2 ({(\overline{\lambda}h)^{s+1}})/((s+1)!)$
+ позволяют оценить сверху локальный показатель близости оптимальной 
+ оценки~$\widehat{X}_1$ и~ее аппроксимации~$\widetilde{X}_1$. 
+ Если выполняются условия теоремы~1, то
+ \begin{multline*}
+ \overline{\tau}(s) \eqd \sup\limits_{\pi \in \Pi}
+ \mathbf{E}\left\{\|\widehat{X}_1 - \widetilde{X}_1\|_1\right\} \leqslant  {}\\ 
+{} \leqslant \sup\limits_{\pi \in \Pi}
+\mathbf{E}\left\{\mathbf{I}_{a_1}(\omega)\| 
+ \widetilde{X}_1-\overline{X}_{1}+\overline{X}_{1}-\widehat{X}_1
+ \|_1+{}\right.\\
+\left. {}+\mathbf{I}_{\overline{a}_1}(\omega)\|\widetilde{X}_1- \overline{X}_{1}\|_1\right\} 
+ \leqslant {} \\ 
+ {}\leqslant
+ 2\mathbf{P}\{\overline{a}_1\}+
+ \sup\limits_{\pi \in \Pi}\me{}{\|\overline{X}_{1}-
+ \widehat{X}_1\|_1}+{}\\
+ {}+\sup_{\pi \in \Pi}
+ \me{}{\mathbf{I}_{a_1}(\omega)\|\widetilde{X}_1-\overline{X}_{1}\|_1} ={} \\
+ {} =
+ 2\mathbf{P}\{\overline{a}_1\}+\sigma(s)+\varepsilon(s) \leqslant 4
+ \fr{(\overline{\lambda}h)^{s+1}}{(s+1)!} + 2\delta\,.
+ %\label{eq:tot_loc}
+ \end{multline*}
+ Итоговый глобальный показатель близости оценок 
+ $\widehat{X}_r \eqd \me{}{X_r|\mathcal{O}_r}$ и~$\widetilde{X}_r$ 
+ может быть ограничен сверху аналогичным образом:
+
+ \vspace*{-4pt}
+ 
+ \noindent
+ \begin{multline*}
+ \overline{\mathcal{T}}(s) \eqd \sup\limits_{\pi \in \Pi}
+ \me{}{\|\widehat{X}_r - \widetilde{X}_r\|_1} \leqslant {}\\
+ {}\leqslant  
+ 4
+\left[ 1-\left(1-\fr{(\overline{\lambda}h)^{s+1}}{(s+1)!}\right)^r
+\right] + 2r\delta\,.
+% \label{eq:tot_glob}
+ \end{multline*}
+ 
+ \vspace*{-2pt}
+ 
+ \noindent
+ В общем случае шаг дискретизации по времени~$h$, 
+ порядок аналитической аппроксимации~$s$ и~показатель точности численного 
+ интегрирования~$\delta$  не связаны между собой. Тем не менее при 
+ разработке эффективных алгоритмов численного решения задачи фильтрации 
+ состояний МСП по непрерывным наблюдениям эти параметры нуждаются в~совместном 
+ оптимальном выборе. Зафиксируем некоторый момент времени~$T$ и~порядок 
+ аналитической аппроксимации~$s$. Будем увеличивать число шагов $r \hm\to \infty$, 
+ а~значит  уменьшать шаг дискретизации $h\hm = {T}/{r} \hm\to 0$.  
+ В~этом случае в~силу неравенства Бернулли
+ 
+ \vspace*{-4pt}
+ 
+ \noindent
+\begin{multline}
+\sup\limits_{\pi \in \Pi}\me{}{\|\widetilde{X}_{T/h} - \widehat{X}_{T/h}\|_1} 
+\leqslant {}  \\ 
+{}\leqslant  
+ 4
+\left[ 1-\left(1-\fr{(\overline{\lambda}h)^{s+1}}{(s+1)!}\right)^r
+\right] + 2r\delta
+\leqslant{}\\
+{}\leqslant
+4r\fr{(\overline{\lambda}h)^{s+1}}{(s+1)!}+2r\delta=
+4\overline{\lambda}T \fr{(\overline{\lambda}h)^{s}}{(s+1)!}+2r\delta = \\ =
+2T\left(2\overline{\lambda} \fr{(\overline{\lambda}h)^s}{(s+1)!}+
+ \fr{\delta}{h}\right).
+ \label{eq:asympt_glob}
+\end{multline}
+
+\vspace*{-2pt}
+
+\noindent
+Из этого неравенства можно легко заключить, что при фиксированных порядке~$s$ и~шаге 
+дискретизации~$h$ схема численного интегрирования должна обеспечивать такую точность, 
+чтобы $\delta \sim {(\overline{\lambda}h)^{s+1}}/{\overline{\lambda}}$. 
+В~случае, если~$\delta$ будет больше, ошибка численного интегрирования 
+будет снижать точность аналитической аппроксимации, определенную парой~$(s,h)$. 
+Это означает, что добавление дополнительных слагаемых в~рекуррентную схему и~учет 
+большего чис\-ла возможных скачков состояния на интервале дискретизации оказываются 
+бесполезными.\linebreak В~то же время если~$\delta$ будет меньше, то высокая точность 
+чис\-лен\-но\-го интегрирования будет бесполезной из-за ее несоответствия 
+точности аналитической аппроксимации, обеспечиваемой выбором пары~$(s,h)$.
+
+Обычно для стандартных схем численного интегрирования (схемы 
+прямоугольников, трапеций, Симпсона и~пр.) интегралы в~правой части~(\ref{eq:cond}) 
+могут быть оценены сверху на основе анализа остаточного члена в~формуле Тейлора.
+
+Неравенство (\ref{eq:asympt_glob}) также позволяет сделать вывод, что 
+итоговая ошибка аппроксимации решения задачи оптимальной фильтрации 
+выбранной схемой численного интегрирования растет со временем не быстрее, 
+чем линейно.
+
+ \vspace*{-6pt}
+
+ \section{Заключение}
+ 
+  \vspace*{-4pt}
+ 
+ В первой части цикла для практического решения задачи фильтрации 
+ состояния МСП по дискретизованным наблюдениям представлен целый класс 
+ численных алгоритмов. Все они отличаются выбором схем приближенного 
+ интегрирования. Была предложена некоторая достаточно легко вычисляемая 
+ (или оцениваемая сверху) характеристика близости аналитических аппроксимаций и~их 
+ численных реализаций. Она в~итоге позволила оценить величину методической ошибки
+  приближения искомой оценки фильтрации выбранной чис\-лен\-ной схемой. Эта ошибка 
+  складывается из двух составляющих. Первая порождена тем, что в~используемом 
+  алгоритме оценивания не учитывается возможность превышения числом скачков~$N^X$ 
+  выбранного порога~$s$. Вторая возникает из-за неточного вычисления интегралов.
+ 
+ В следующих статьях полученные результаты будут использованы для 
+ сравнительного анализа различных численных схем, применяемых для 
+ приближенного решения задач фильтрации состояний МСП по наблюдениям 
+ как с~аддитивными, так и~с~мультипликативными шумами.
+ 
+ \vspace*{-6pt}
+ 
+{\small \subsection*{\raggedleft Приложение}
+  
+  \noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\ \ теоремы~1.
+Итак, $\widetilde{X}_1 \hm= (\mathbf{1}\psi_1^{\top}\pi)^{-1}\psi_1^{\top}\pi$, 
+$\overline{X}_1 \hm= (\mathbf{1}\xi_1^{\top}\pi)^{-1}\xi_1^{\top}\pi$ 
+и~$\Delta_1 \hm= \widetilde{X}_1\hm - \overline{X}_1$. 
+Используя свойства матричных операций, легко показать, что 
+$[\gamma^{\top}\pi\mathbf{1}\hm-\mathbf{1}\gamma^{\top}\pi I]\gamma^{\top}\pi\hm=0$.
+ Для обеих оценок~$\widetilde{X}_1$ и~$\overline{X}_1$ выполняется условие 
+ нормировки; следовательно, $\|\widetilde{X}_1\|_1 \hm= \|\overline{X}_1\|_1\hm=1$. 
+ Поэтому верна следующая цепочка неравенств:
+ 
+ \noindent
+\begin{multline*}
+\|\Delta_1\|_1 = \fr{1}{\mathbf{1}\psi_1^{\top}\pi \mathbf{1}\xi_1^{\top}\pi}
+\|
+\mathbf{1}\xi_1^{\top}\pi \psi_1^{\top}\pi-
+\mathbf{1}\psi_1^{\top}\pi\xi_1^{\top}\pi
+\|_1 = {}\\
+{}=
+\fr{1}{\mathbf{1}\psi_1^{\top}\pi \mathbf{1}\xi_1^{\top}\pi}
+\|
+\mathbf{1}\xi_1^{\top}\pi \gamma_1^{\top}\pi-
+\mathbf{1}\gamma_1^{\top}\pi\xi_1^{\top}\pi
+\|_1 ={} \\
+{} =
+\fr{1}{\mathbf{1}\psi_1^{\top}\pi \mathbf{1}\xi_1^{\top}\pi}
+\|[
+\gamma_1^{\top}\pi \mathbf{1}-
+\mathbf{1}\gamma_1^{\top}\pi I 
+]\xi_1^{\top}\pi
+\|_1 ={} \\ 
+{}=
+\fr{1}{\mathbf{1}\psi_1^{\top}\pi \mathbf{1}\xi_1^{\top}\pi}
+\|[
+\gamma_1^{\top}\pi \mathbf{1}-
+\mathbf{1}\gamma_1^{\top}\pi I 
+][\xi_1^{\top}\pi + \gamma_1^{\top}\pi]
+\|_1 = {}\\
+{}=\fr{1}{\mathbf{1}\xi_1^{\top}\pi}
+\|
+[
+\gamma_1^{\top}\pi \mathbf{1}-
+\mathbf{1}\gamma_1^{\top}\pi I 
+]\widetilde{X}_1
+\|_1
+\leqslant{} \\
+{}\leqslant
+\fr{1}{\mathbf{1}\xi_1^{\top}\pi}
+\|
+[
+\gamma_1^{\top}\pi \mathbf{1}-
+\mathbf{1}\gamma_1^{\top}\pi I 
+]\|_1 \|\widetilde{X}_1
+\|_1 \leqslant 2\fr{\mathbf{1}\overline{\gamma}_1^{\top}\pi}
+{\mathbf{1}\xi_1^{\top}\pi} ={}\\
+{}= \sum\limits_{i=1}^N\pi_i
+\fr{\sum\nolimits_{j=1}^N \overline{\gamma}_1^{ij}}
+{\sum\nolimits_{k,\ell=1}^N \xi_1^{k\ell}\pi_k}.
+\end{multline*}
+Используя последнее неравенство,  условие~(\ref{eq:cond}) и~формулу~(\ref{eq:me_phi_1}), можно показать, что
+$$
+\me{}{\mathbf{I}_{a_1}(\omega)\|\Delta_1\|_1} \leqslant
+2 \sum\limits_{i=1}^N \pi_i\int\limits_{\mathbb{R}^M}\sum_{i=1}^N 
+\overline{\gamma}^{ij}(y)\,dy
+\leqslant 2\delta.
+$$
+Истинность неравенства~(\ref{eq:num_prec_loc}) следует из того, 
+что неравенство вверху выполняется для произвольного $\pi \hm\in \Pi$.
+
+Оценим сверху норму ошибки $\Delta_r\hm = \widetilde{X}_r\hm - \overline{X}_r$. 
+Проводя выкладки, аналогичные выкладкам для~$\Delta_1$, получаем, что
+\begin{equation}
+\|\Delta_r\|_1 \leqslant 
+\fr{1}{\mathbf{1}\Xi_{1,r}^{\top}\pi}
+\|
+[
+\Gamma_{1,r}^{\top}\pi \mathbf{1}-
+\mathbf{1}\Gamma_{1,r}^{\top}\pi I 
+]\|_1 \eqd \mathcal{I}_1,
+\label{eq:I1}
+\end{equation}
+где 
+\begin{equation}
+\Gamma_{1,r} \eqd \Psi_{1,r} - \Xi_{1,r} = 
+\sum\limits_{t=1}^r \Psi_{1,t-1}\gamma_t\Psi_{t+1,r}.
+\label{eq:sum_1}
+\end{equation}
+Для оценки вклада каждого слагаемого~(\ref{eq:sum_1}) в~(\ref{eq:I1})
+используем формулу~(\ref{eq:me_phi_r}). Рассмотрим неотрицательную 
+функцию $\phi(y_1,y_2,y_3):\mathbf{R}^{3M} \hm\to \mathbf{R}_+$:
+\begin{equation*}
+\phi(y_1,y_2,y_3)=\mathbf{1}\psi^{\top}(y_3)\overline{\gamma}^{\top}(y_2)
+\psi^{\top}(y_1)\pi,
+%\label{eq:phi}
+\end{equation*}
+$O_3$-измеримую случайную величину
+$$
+\Phi \eqd 
+\fr{\phi(Y_1,Y_2,Y_3)}{\mathbf{1}\Xi_{1,3}^{\top}(Y_1,Y_2,Y_3)\pi}
+$$ 
+и~оценим сверху следующее математическое ожидание: 
+\begin{multline*}
+\me{}{\mathbf{I}_{A_3}(\omega)\Phi} ={} \\
+{} =\!\!
+\int\limits_{\mathbb{R}^M}\int\limits_{\mathbb{R}^M}\int\limits_{\mathbb{R}^M}
+\!\sum\limits_{i,j,k,m=1}^N \!\!\!\!\!\!\!
+\pi_i\psi^{ij}(y_1)\overline{\gamma}^{jk}(y_2)\psi^{km}(y_3)dy_3dy_2dy_1={} \\
+{} =
+\sum\limits_{i,j,k,m=1}^N \!\! \!\!\pi_i 
+\sum\limits_{\ell,n=1}^L \varrho_{\ell}^{ij}\varrho_{n}^{km}
+%\sum\limits_{j,k=1}^N 
+\int\limits_{\mathbb{R}^M} \overline{\gamma}^{jk}(y_2)dy_2 \leqslant{}\\
+{}\leqslant
+\delta \sum\limits_{i,j=1}^N \pi_i 
+\sum\limits_{\ell=1}^L \varrho_{\ell}^{ij} %\varrho_{n}^{km}
+%\label{eq:me_Phi} 
+\leqslant \delta.
+\end{multline*}
+Продолжим цепочку неравенств~(\ref{eq:I1}):
+\begin{equation}
+\mathcal{I}_1 \leqslant 2 \sum\limits_{t=1}^r \fr{1}{\mathbf{1}\Xi_{1,r}^{\top}\pi}\,
+\mathbf{1}\Psi_{t+1,r}^{\top}\overline{\gamma}_{t}^{\top}\Psi_{1,t-1}^{\top}\pi\,.
+\label{eq:I2}
+\end{equation}
+Применяя выкладки, аналогичные использованным при оценке 
+$\me{}{\mathbf{I}_{A_3}(\omega)\Phi}$, можно оценить сверху математические 
+ожидания слагаемых в~правой части~(\ref{eq:I2}):
+$$
+\me{}{\mathbf{I}_{A_r}(\omega)\fr
+{
+\mathbf{1}\Psi_{t+1,r}^{\top}\overline{\gamma}_{t}^{\top}\Psi_{1,t-1}^{\top}\pi
+}
+{
+\mathbf{1}\Xi_{1,r}^{\top}\pi
+}} \leqslant
+\delta.
+$$
+Тогда окончательно
+$
+\me{}{\mathbf{I}_{A_r}(\omega)\|\Delta_r\|_1} \hm\leqslant
+2r \delta
+$
+и~истинность неравенства~(\ref{eq:num_prec_glob}) 
+ следует из того, что последнее неравенство выполняется для произвольного $\pi\hm \in \Pi$.
+ 
+Теорема~1 доказана.
+
+
+}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+\bibitem{Wonham_65}
+\Au{Wonham W.} 
+Some applications of stochastic differential equations to optimal nonlinear
+filtering~// SIAM J.~Control. Optim., 1964. Vol.~2. No.\,3. P.~347--369. 
+doi: 10.1137/0302028.
+
+\bibitem{B_18}
+\Au{Борисов А.} Фильтрация Вонэма по наблюдениям с~мультипликативными шумами~// 
+Автоматика и~телемеханика, 2018.
+№\,1. C.~52--65. %doi: 10.1134/ S0005117918010046.
+
+\bibitem{KP_92}
+\Au{Kloeden P., Platen~E.} 
+Numerical solution of stochastic differential equations.~--- 
+Berlin: Springer, 1992. 636~p. doi: 10.1007/978-3-662-12616-5.
+
+  \bibitem{B_18_IA}
+\Au{Борисов А.} Фильтрация состояний марковских 
+скачкообразных процессов по дискретизованным наблюдениям~// Информатика и~её 
+применения,~2018. Т.~12.~Вып.~3.~C.~115--121. doi: 10.14357/19922264180316.
+    \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 18.09.19}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{NUMERICAL SCHEMES OF MARKOV JUMP PROCESS FILTERING GIVEN DISCRETIZED 
+OBSERVATIONS~I:\\ ACCURACY CHARACTERISTICS}
+
+
+\def\titkol{Numerical schemes of Markov jump process filtering given discretized 
+observations~I:~Accuracy characteristics}
+
+\def\aut{A.\,V.~Borisov}
+
+\def\autkol{A.\,V.~Borisov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+\noindent
+Institute of Informatics Problems, Federal Research Center ``Computer Science and Control'' of the Russian
+Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}   
+
+
+
+
+\Abste{The note is the initial in the series of the papers devoted to 
+the numerical realization of the optimal state filtering of Markov 
+jump processes given the indirect observations corrupted by 
+ the additive and/or multiplicative Wiener noises. This problem 
+ is solved by the time discretization of the observations with their
+  subsequent processing. Both the optimal and suboptimal estimations are 
+  expressed in terms of multiple integrals of the Gaussian densities
+  with 
+  some mixing distributions. In the article, the author presents the 
+  investigation of various numerical integration\linebreak\vspace*{-12pt}}
+  
+  \Abstend{schemes' influence on 
+  the accuracy of the approximating estimates. The problem turns into the 
+  characterization of distance between stochastic sequences generated by 
+  some recursions. The paper introduces a~pseudometric describing the distance 
+  and presents a~proposition determining the influence of the characteristic on 
+  both the local and global accuracy of the filtering estimate approximation.}
+
+\KWE{Markov jump process; optimal filtering; additive and multiplicative observation noises; stochastic differential equation; analytical and numerical approximation}
+
+
+
+ \DOI{10.14357/19922264190411} 
+
+%\vspace*{-14pt}
+
+ \Ack
+\noindent
+The work was supported in part by the Russian Foundation
+for Basic Research (project No.\,19-07-00187~A).
+
+
+%\vspace*{-6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+\bibitem{Won_65-1}
+\Aue{Wonham, W.} 1964.~Some applications of stochastic differential equations to optimal
+  nonlinear filtering. \textit{SIAM~J.~Control. Optim.} 2(3):347--369. 
+  doi: 10.1137/0302028.
+
+\bibitem{B_18-1}
+\Aue{Borisov, A.}
+2018.
+Wonham filtering by observations
+with multiplicative noises. \textit{Automat. Rem. Contr.}
+79(1):39--50.  
+doi:~10.1134/S0005117918010046.
+
+\bibitem{KP_92-1}
+\Aue{Kloeden,~P., and E.~Platen.} 1992. \textit{Numerical solution of stochastic
+differential equations.}  Berlin: Springer. 636~p.
+doi: 10.1007/978-3-662-12616-5.
+
+  \bibitem{B_18_IA-1}
+\Aue{Borisov, A.}
+ 2018. Filtratratsiya sostoyaniy markovskikh skachkoobraznykh protsessov 
+ po diskretizovannym nablyudeniyam [Filtering of Markov jump processes by discretized 
+ observations]. \textit{Informatika i~ee Primeneniya~--- Inform.~Appl.} 12(3):115--121.
+ doi: 10.14357/19922264180316.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+%\vspace*{-7pt}
+
+\hfill{\small\textit{Received September 18, 2019}}
+
+%\pagebreak
+
+%\vspace*{-22pt}
+
+
+
+\Contrl
+
+\noindent
+\textbf{Borisov Andrey V.} (b.\ 1965)~--- 
+Doctor of Science in physics and mathematics, principal scientist, 
+Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{aborisov@frccsc.ru}
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}  

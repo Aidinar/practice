@@ -1,0 +1,648 @@
+\def\stat{kochetkova}
+
+\def\tit{МОДЕЛЬ СХЕМЫ ПРИОРИТЕТНОГО ДОСТУПА ТРАФИКА URLLC И~eMBB 
+В~СЕТИ ПЯТОГО ПОКОЛЕНИЯ В~ВИДЕ РЕСУРСНОЙ СИСТЕМЫ МАССОВОГО ОБСЛУЖИВАНИЯ$^*$}
+
+\def\titkol{Модель схемы приоритетного доступа трафика URLLC и~eMBB 
+в~сети пятого поколения в~виде РСМО}
+%ресурсной системы массового обслуживания}
+
+\def\aut{И.\,А.~Кочеткова$^1$, А.\,И.~Кущазли$^2$, П.\,А.~Харин$^3$, 
+С.\,Я.~Шоргин$^4$}
+
+\def\autkol{И.\,А.~Кочеткова, А.\,И.~Кущазли, П.\,А.~Харин, 
+С.\,Я.~Шоргин}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Кочеткова И.\,А.}
+\index{Кущазли А.\,И.}
+\index{Харин П.\,А.} 
+\index{Шоргин С.\,Я.}
+\index{Kochetkova I.\,A.}
+\index{Kushchazli A.\,I.}
+\index{Kharin P.\,A.}
+\index{Shorgin S.\,Ya.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Публикация создана при поддержке Программы стратегического академического лидерства РУДН. 
+Исследование выполнено при финансовой поддержке РФФИ (проект 20-37-70079).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Российский университет дружбы народов; Федеральный исследовательский центр 
+  <<Информатика и~управление>> Российской академии наук, gudkova-ia@rudn.ru}
+\footnotetext[2]{Российский университет дружбы народов, aikushch@yandex.ru}
+\footnotetext[3]{Российский университет дружбы народов, pxarin@mail.ru}
+\footnotetext[4]{Федеральный исследовательский центр <<Информатика и~управление>> 
+Российской академии наук, sshorgin@ipiran.ru}
+
+\vspace*{-8pt}
+
+  
+  
+     
+  
+  \Abst{Сверхнадежная передача данных с~малой задержкой (URLLC, ultrareliable and low-latency communication) 
+и~усовершенствованная подвижная широкополосная связь (eMBB, enhanced mobile broadband) стали ключевыми 
+сценариями реализации сетей пятого поколения (5G, fifth generation). В~работе формализована модель 
+ресурса сети 5G в~виде тройки~--- полоса пропускания радиочастот, продолжительность 
+слота времени и~максимально возможная мощность передаваемого сигнала. Для схемы 
+занятия ресурса, предполагающей адаптивное изменение мощности сигнала и~равномерное 
+распределение слота времени между устройствами, приведено условное распределение 
+вероятностей приема запроса на передачу трафика. Модель с~приоритетным доступом 
+URLLC и~прерыванием обслуживания eMBB с~учетом указанной схемы занятия ресурса 
+построена в~виде ресурсной системы массового обслуживания (РСМО).}
+   
+  \KW{5G; URLLC; eMBB; приоритетный доступ; прерывание обслуживания; ресурсная 
+система массового обслуживания}
+
+\DOI{10.14357/19922264210412}
+  
+\vspace*{-2pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+  
+\section{Введение}
+
+  Беспроводные сети пятого поколения содержат крупномасштабные 
+системы межмашинной связи (massive machine-type communication, mMTC), 
+сверхнадежную передачу данных с~малой задержкой  и~усовершенствованную подвижную широкополосную 
+связь. Например, в~[1--3] рас\-смат\-ри\-ва\-ют\-ся 
+подходы к~совместному обслуживанию URLLC и~eMBB. Для учета случайного 
+расположения устройств в~сети применяется стохастическая геометрия~[4]. 
+Если же учитывать не только модель движения пользователей, но и~их 
+активность обращения к~тем или иным услугам, то удобным аппаратом 
+являются РСМО~[5, 6]. 
+Ресурсные сис\-те\-мы массового обслуживания находят применения в~различных областях, например при 
+анализе совместного использования радиочастот~[7, 8]. 
+  
+  Данная работа продолжает исследования, представленные в~[9--11]. 
+В~\cite{9-koc} рас\-смот\-ре\-на модель совместного обслуживания URLLC и~eMBB 
+с~приостановкой обслуживания eMBB, а~в~\cite{10-koc} рас\-смот\-ре\-на модель 
+с~изменением скорости передачи сессии eMBB до ее прерывания.
+  
+  Статья организована сле\-ду\-ющим образом. В~разд.~2 описаны 
+характеристики соты, требования к~ресурсу и~показаны существующие 
+планировщики для распределения радиоресурсов. Далее, в~разд.~3, детально 
+описана процедура приоритетного доступа узкополосного трафика URLLC 
+и~функционирования системы в~целом. В~разд.~4 
+выведены ве\-ро\-ят\-ност\-но-вре\-мен\-н$\acute{\mbox{ы}}$е характеристики для предложенной модели.
+
+\vspace*{-7pt}
+  
+\section{Модель ресурса}
+
+\vspace*{-2pt}
+
+  В сетях скорость передачи данных зависит от таких параметров, как частота, 
+мощность и~время. Рассмотрим соту сети беспроводной передачи данных, 
+в~которой устройства распределены равномерно, при этом радиус передачи 
+данных равен~$R$, так что $0\hm< d\hm<R$, где $d$~--- расстояние от 
+пользователя до базовой станции. Предполагается, что ресурс имеет 
+трехмерную структуру и~задается как $\mathrm{Y}\hm= [0,\hat{F}]\times 
+[0,\hat{T}=1] \times [0,\hat{F}]$, где, в~свою очередь, $\hat{F}$~--- полоса 
+пропускания частот; $\hat{T}$~--- временн$\acute{\mbox{а}}$я единица, описывающая 
+доступную полосу пропускания частот и~нормированная к~1, т.\,е.\ 
+$\hat{T}\hm=1$; $\hat{F}$~--- максимально возможная мощность 
+передаваемого сигнала. Для планирования распределения ресурсов существует 
+множество схем, к~примеру, таких как Full-Power (FP) и~Round Robin (RR). 
+Разница между ними в~том, что для FF все устройства всегда работают на 
+максимальной мощности, а временной ресурс распределяется соответственно 
+достижимой каждым устройством скорости. А~для RR временной ресурс 
+делится на равные части между всеми устройствами пользователей, которые 
+для обеспечения гарантированной минимальной скорости сами регулируют 
+мощность передачи данных.
+  
+  Требование к~ресурсу для передачи потокового трафика можно выразить 
+вектором $\bm{y}\hm= (y_f, y_t, y_p)$. Тогда скорость передачи~$b$ можно 
+представить в~виде системы трансцендентных уравнений
+  \begin{align*}
+  b&= y_f y_t \log_2\left( 1+\fr{y_p\mathrm{PL}}{N_0}\right)\,;\\
+  A_j\left( y_t, y_t, y_p\right) &=0\,,\enskip j=1,\ldots , J\,,
+  \end{align*}
+где $\mathrm{PL}$~--- коэффициент затухания сигнала; $N_0$~--- коэффициент 
+мощности шума; $A_j(y_f, y_t, y_p)$~--- некоторая функция. Политика 
+занятия ресурса основана на его разделении по частоте и~времени, т.\,е.\ при 
+условии~$n$ сессий потокового трафика множество возможных конфигураций 
+занятия ресурса имеет вид: 
+\begin{multline*}
+\mathbf{Y}(n)= \left\{
+\vphantom{\sum\limits^n_{i=1}}
+ \left( \bm{y}_1, \ldots, \bm{y}_n\right):\right.\\
+0<y_f^i\leq \hat{F}\,,\ 0<y_t^i\leq 1\,,\ 0< y_p^i\leq \hat{F},\\
+\left. \sum\limits_{i=1}^n y_f^i\leq \hat{F}\,,\ \sum\limits^n_{i=1} y_t^i\leq 1\,,\ 
+y_p^i\leq \hat{F}\,,\ i=1,\ldots , n\right\}\,,\\
+ n>0\,,
+%\label{e1-koc}
+\end{multline*}
+а значит, при случайном затухании сигнала~$\mathrm{PL}$  вероятность приема запроса на 
+передачу потокового трафика при условии, что уже установлено~$n$~сессий, 
+определяется по формулам
+\begin{align*}
+p_0&= {\sf P} \left\{ \left( \bm{y}_1, \ldots , \bm{y}_n, \bm{y}_{n+1}\right) \in 
+\mathbf{Y}(1)\right\}\,;\\
+p_n&= \fr{{\sf P} \left\{ \left( \bm{y}_1, \ldots , \bm{y}_n, \bm{y}_{n+1}\right) 
+\in \mathbf{Y}(n+1)\right\}}{{\sf P} \left\{ \left( \bm{y}_1,\ldots , \bm{y}_n\right) 
+\in \mathbf{Y}(n)\right\}}\,,\ n>0\,,
+%\label{e2-koc}
+\end{align*}
+где ${\sf P} \left\{ \left( \bm{y}_1,\ldots , \bm{y}_n\right) \in 
+\mathbf{Y}(n)\right\}$ рассчитывается по политике занятия ресурса с~учетом 
+функциональной зависимости между компонентами требования к~ресурсу 
+$\bm{y}\hm= \left( y_f, y_t, y_p\right)$.
+
+  В работе описывается политика управления радиоресурсами~RR. Как 
+упоминалось ранее, в~этом алгоритме временной ресурс делится поровну между 
+всеми имеющимися пользователями. Однако в~то же время мощность передачи 
+регулируется индивидуально в~зависимости от требований. Получается, что 
+если реализована политика адаптивного изменения мощности без разделения 
+по частоте, т.\,е.\ требование $\bm{y}\hm= \left(y_f, y_t, y_p\right)$ к~ресурсу 
+и~множество $\mathbf{Y}_{\mathrm{RR}}(n)$ возможных конфигураций 
+занятия ресурса имеют вид:
+  \begin{align*}
+    \bm{y}(n)&= \left( y_f=\hat{F}\,,\ y_t=\fr{1}{n}\,,\right.\\[6pt]
+  &\left.\hspace*{10mm}y_p=N_0\left( 
+2^{bn/\hat{F}}-1\right)\mathrm{PL}^{-1}
+\vphantom{\fr{1}{n}}\right)\,;\\
+  \mathbf{Y}_{\mathrm{RR}} (n)&= \left\{ \left( \bm{y}_1, \ldots , 
+\bm{y}_n\right):\ \bm{y}_i=\left( \hat{F}, \fr{1}{n}, y_p^i\right),\right.\\
+& \left.\hspace*{2mm}0<y_p^i\leq  \hat{F}\,,\ i=1,\ldots , n
+\vphantom{\fr{1}{n}}\right\},\ n\geq0\,,
+  %  \label{e3-koc}
+  \end{align*}
+то вероятность приема новой сессии потокового трафика при условии, что уже 
+установлено~$n$ сессий, вычисляется по формулам
+\begin{align*}
+p_0&= 1-F_{\mathrm{PL}} \left( N_0 \left[ 2^{b/\hat{F}} -1\right] \hat{F}^{-
+1}\right);\\
+p_n&= \fr{\left\{ 1-F_{\mathrm{PL}} \left( N_0\left[ 2^{b(n+1)/\hat{F}}-1\right] 
+\hat{F}^{-1}\right)\right\}^{n+1}} {\left\{ 1-F_{\mathrm{PL}} \left( N_0\left[ 
+2^{bn/\hat{F}}-1\right] \hat{F}^{-1}\right)\right\}^n}\,,\\
+&\hspace*{61mm} n>0\,,
+%\label{e4-koc}
+\end{align*}
+где $F_{\mathrm{PL}}(x)$~--- функция распределения коэффициента затухания 
+сигнала. 
+
+  Предположим, что устройства распределены равномерно по кругу~$R$, 
+тогда функция распределения $F_d(x)\hm= {\sf P} \left\{ \xi_d\leq x\right\} \hm= 
+x^2/R^2$, а~плот\-ность распределения равна $f_d(x)\hm= 2x/R^2$. Случайная 
+величина затухания сигнала $\xi_{\mathrm{PL}} \hm= A\xi_d^B$, где $A$ 
+и~$B$~--- константы. Тогда появляется возможность выразить 
+$F_{\mathrm{PL}}(x)$ через $F_d(x)$ по формуле:
+  \begin{multline*}
+  F_{\mathrm{PL}} ={\sf P} \left\{ \xi_{\mathrm{PL}}\leq x\right\} ={\sf P} \left\{ 
+\xi_d\leq \left( \fr{x}{A}\right)^{-B} \right\} ={}\\
+{}=F_d\left( \fr{x}{A}\right)^{-B} = 
+\left( \fr{x}{A}\right)^{-2B}.
+  %\label{e5-koc}
+  \end{multline*}
+  
+  Вероятность приема вычисляется по сле\-ду\-ющим формулам:
+  \begin{equation}
+  \left.
+  \begin{array}{rl}
+  p_0 &= 1-\fr{\left( N_0\left[ 2^{b/\hat{F}}-1\right] \hat{F}  
+\right)^{-2B}}{(AR)^2}\,;\\[6pt]
+  p_n&={}\\
+  &\hspace*{-22pt}{}= \fr{\left\{ 1-N_0 \left[ 2^{b(n+1)/\hat{F}}-1\right]\hat{F}^{-1}/(AR)
+  \right\}^{2(n+1)}}
+  { \left\{ 1-
+   N_0\left[ 2^{bn/\hat{F}}-1\right]\hat{F}^{-1}/(AR)\right\}^{2n}}\,,\\[6pt] 
+&\hspace*{50mm}n>0\,.
+  \end{array}\!\!
+  \right\}\!
+  \label{e6-koc}
+  \end{equation}
+
+\section{Модель схемы приоритетного доступа}
+ 
+  Перейдем к~построению математической модели для узкополосного 
+и~широкополосного трафика в~виде системы массового обслуживания 
+с~приоритетным обслуживанием узкополосного трафика~--- прерыванием 
+скорости передачи широкополосного трафика. Предположим, что входящие 
+потоки запросов на передачу узкополосного и~широкополосного трафика 
+пуассоновские с~интенсивностями~$\lambda_u$ и~$\lambda_m$ соответственно, 
+а~среднее время передачи распределено по экспоненциальному закону 
+с~параметрами~$\mu_u$ и~$\mu_m$. Отметим тот факт, что каж\-дая сессия 
+узкополосного трафика занимает одну ресурсную единицу, 
+а~широкополосного~--- один ресурсный блок (PRB, physical resourse block), состоящий из~$b$ 
+ресурсных единиц. В~таком случае максимальное число сессий URLLC равно 
+$C\hm= bN$, где $N$~--- максимальное число eMBB-сес\-сий, такое что 
+$N\hm= \lfloor C/b\rfloor$. 
+  
+  Узкополосный трафик имеет приоритет, который реализуется за счет 
+прерывания активных сессий широкополосного eMBB-тра\-фи\-ка. Далее 
+представлено описание функционирования системы для разных вариантов 
+развития событий. При поступлении запроса на передачу широкополосного 
+трафика eMBB возможны сле\-ду\-ющие варианты.
+  \begin{enumerate}[1.]
+\item Если свободного ресурса для обеспечения скорости передачи 
+широкополосного трафика достаточно, то запрос на обслуживание 
+широкополосного трафика будет принят.
+\item Если свободного ресурса для обеспечения скорости передачи 
+широкополосного трафика недостаточно, тогда запрос будет заблокирован.
+\end{enumerate}
+
+  После поступления запроса на передачу узкополосного трафика URLLC 
+возможны сле\-ду\-ющие варианты.
+  \begin{enumerate}
+\item Если свободного ресурса для обеспечения скорости передачи 
+узкополосного трафика достаточно, то запрос будет принят и~передача 
+трафика будет начата.
+\item Если свободного ресурса для обеспечения скорости передачи 
+узкополосного трафика недостаточно, но обслуживается хотя бы одна сессия 
+широкополосного трафика, то запрос \mbox{будет} принят за счет прерывания 
+обслуживания случайно выбранной сессии широкополосного трафика 
+и~передача трафика будет начата.
+\item Если свободного ресурса для обеспечения скорости передачи 
+узкополосного трафика недостаточно, а сессии широкополосного трафика 
+отсутствуют, то запрос будет заблокирован.
+\end{enumerate}
+
+  При завершении передачи узкополосного трафика URLLC 
+и~широкополосного трафика eMBB сессия будет завершена, и~выделенный для 
+нее ресурс будет освобожден в~обоих случаях.
+  
+  Опишем функционирование системы при помощи случайного процесса 
+$\mathbf{X}(t)$ с~состояниями вида $\bm{x}\hm= (n_m, n_u)$, где $n_m$~--- число 
+обслуживаемых сессий широкополосного трафика; $n_u$~--- число 
+обслуживаемых сессий узкополосного трафика. Тогда пространство состояний 
+$\mathbf{X}(t)$ будет иметь вид:
+  $$
+  \mathbf{X}=\left\{ \left( n_m, n_u\right):\ n_m\geq0\,,\ n_u\geq 0\,,\ 
+bn_m+n_u\leq C\right\}.
+  $$
+  %
+  В этом случае возможные переходы для произвольного состояния 
+$\bm{\pi}(\bm{x})$, $\bm{x}\hm\in \mathbf{X}$, имеют вид:
+  $$
+   \begin{array}{l}
+  a\left( n_m,n_u\right) \left( n_m+1,n_u\right)=p_m\left( 
+n_m+n_u\right)\lambda_m\,,\\[6pt]
+\hspace*{44mm} bn_m+n_u+b\leq C\,;\\[6pt]
+  a\left( n_m, n_u\right) \left( n_m, n_u+1\right)=p_u\left( 
+n_m+n_u\right)\lambda_u\,,\\[6pt]
+\hspace*{44mm}  bn_m+n_u+1\leq C\,;\\[6pt]
+  a\left( n_m, n_u\right) \left( n_m-1,n_u+1\right) =p_u\left( 
+n_m+n_u\right)\lambda_u\,,\\[6pt]
+\hspace*{31mm}  bn_m+n_u+1>C\,,\ n_m\geq0\,;\\[6pt]
+  a\left( n_m, n_u\right) \left( n_m-1,n_u\right) =n_m\mu_m\,,\ n_m>0\,;\\[6pt]
+  a\left( n_m, n_u\right) \left( n_m+1, n_u\right)= n_u\mu_u\,,\ n_u>0\,,
+  \end{array}
+  $$
+где $p_m(\cdot)$ вычисляется по формулам~(\ref{e6-koc}), а~$p_u(\cdot)$ также 
+вычисляется по формулам~(\ref{e6-koc}), но уже при $b\hm=1$.
+  
+  Исходя из описанных правил, записывается мат\-ри\-ца интенсивностей 
+переходов, и~могут быть найдены стационарные вероятности 
+$\bm{\pi}(\bm{x})$, $\bm{x}\hm\in \mathrm{X}$.
+
+\section{Вероятностные характеристики}
+
+  После нахождения стационарных вероятностей $\bm{\pi}(\bm{x})$, 
+$\bm{x}\hm\in \mathbf{X}$, могут быть вычислены сле\-ду\-ющие показатели 
+эффективности:
+  \begin{itemize}
+\item среднее число сессий широкополосного трафика eMBB
+$$
+\overline{n_m} =\sum\limits^N_{n_m=1} n_m \sum\limits_{n_u=0}^{C-bn_m} 
+\bm{\pi} \left( n_m, n_u\right);
+$$
+\item среднее число сессий узкополосного трафика URLLC 
+$$
+\overline{n_u} =\sum\limits^C_{n_u=1} n_u \sum\limits_{n_m=0}^{\lfloor (C-
+n_u)/b\rfloor}\bm{\pi} \left(n_m, n_u\right);
+$$
+\item вероятность блокировки (\textit{англ.}\ blocking probability) 
+широкополосного трафика eMBB
+$$
+B_m= \sum\limits^C_{n_u=0} \bm{\pi} \left( \left\lfloor \fr{C-n_u}{b}\right\rfloor, 
+n_u\right);
+$$
+\item вероятность блокировки узкополосного трафика URLLC
+$$
+B_u=\bm{\pi} (0,C);
+$$
+\item вероятность прерывания (\textit{англ.}\ interruption probability) 
+обслуживания широкополосного трафика eMBB
+\begin{multline*}
+I=\sum\limits^{N-1}_{n_m=1} \bm{\pi} \left( n_m, C-bn_m\right) \times{}\\
+{}\times
+\fr{p_u(n_m+n_u)\lambda_u}{p_u(n_m+n_u)\lambda_u+n_m\mu_m+n_u\mu_u}\, 
+\fr{1}{n_m}+{}\\
+{}+\bm{\pi} (N, C-bN) 
+\fr{p_u(n_m+n_u)\lambda_u}{p_u(n_m+n_u)\lambda_u+n_m\mu_m}\,\fr{1}{n_m}
+\,.
+\end{multline*}
+\end{itemize}
+
+\section{Заключение}
+  
+  Разработана математическая модель для узкополосного URLLC- 
+и~широкополосного eMBB-тра\-фи\-ка в~виде РСМО с~приоритетным обслуживанием узкополосного трафика~--- 
+прерыванием скорости передачи. Предложены показатели эффективности 
+приоритетного доступа~--- среднее число сессий, вероятность блокировки 
+и~вероятность прерывания обслуживания. 
+  
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-koc}
+\Au{Alsenwi M., Tran~N.\,H., Bennis~M., Pandey~S.\,R., Bairagi~A.\,K., Hong~C.\,S.} Intelligent 
+resource slicing for eMBB and URLLC coexistence in 5G and beyond: A~deep reinforcement 
+learning based approach~// IEEE T.~Wirel. Commun., 2021. Vol.~20. Iss.~7.  
+P.~4585--4600. doi: 10.1109/TWC.2021.3060514.
+\bibitem{2-koc}
+\Au{Zhang W., Derakhshani~M., Lambotharan~S.} Stochastic optimization of URLLC--eMBB joint 
+scheduling with queuing mechanism~// IEEE Wirel. Commun. Le., 2021. Vol.~10. 
+Iss.~4. P.~844--848. doi: 10.1109/LWC.2020.3046628.
+\bibitem{3-koc}
+\Au{Yin H., Zhang L., Roy~S.} Multiplexing URLLC traffic within eMBB services in 5G NR: Fair 
+scheduling~// IEEE T.~Commun., 2021. Vol.~69. Iss.~2. P.~1080--1093. doi: 
+10.1109/TCOMM.2020.3035582.
+\bibitem{4-koc}
+\Au{Hmamouche Y., Benjillali~M., Saoudi~S., Yanikomeroglu~H., Renzo~M.\,D.}  New trends in 
+stochastic geometry for wireless networks: A~tutorial and survey~// P.~IEEE, 2021. 
+Vol.~109. Iss.~7. P.~1200--1252. doi: 10.1109/JPROC.2021.3061778.
+
+\bibitem{6-koc} %5
+\Au{Petrov V., Solomitckii~D., Samuylov~A., Lema~M.\,A., Gapeyenko~M., Moltchanov~D., 
+Andreev~S., Naumov~V., Samouylov~K., Dohler~M., Koucheryavy~Y.} Dynamic  
+multi-connectivity performance in ultra-dense urban mmWave deployments~// IEEE J.~Sel. 
+Area. Comm., 2017. Vol.~35. Iss.~9. P.~2038--2055. doi: 10.1109/JSAC.2017.2720482.
+
+\bibitem{5-koc} %6
+\Au{Naumov V., Samouylov~K.} Product-form Markovian queueing systems with multiple 
+resources~// Probab. Eng. Inform. Sc., 2021. Vol.~35. Iss.~1. P.~180--188. 
+doi: 10.1017/S026996481900024X.
+
+\bibitem{8-koc} %7
+\Au{Markova E., Gudkova~I., Ometov~A., Dzantiev~I., Andreev~S., Koucheryavy~Y., 
+Samouylov~K.} Flexible spectrum management in a~smart city within licensed shared access 
+framework~// IEEE Access, 2017. Vol.~5. P.~22252--22261. doi: 10.1109/ACCESS.2017.2758840.
+
+\bibitem{7-koc} %8
+\Au{Маркова Е.\,В., Гольская~А.\,А., Дзантиев~И.\,Л., Гудкова~И.\,А., Шоргин~С.\,Я.} 
+Сравнительный анализ показателей эффективности модели беспроводной сети 
+межмашинного взаимодействия, работающей в~рамках двух политик разделения 
+радиоресурсов~// Информатика и~её применения, 2019. Т.~13. Вып.~1. С.~108--116. doi: 
+10.14357/19922264190115.
+
+\bibitem{9-koc}
+\Au{Харин П.\,А., Макеева~Е.\,Д., Кочеткова~И.\,А., Ефросинин~Д.\,В., Шоргин~С.\,Я.} 
+Система массового обслуживания с~орбитами для анализа совместного обслуживания 
+трафика с~малыми задержками URLLC и~широкополосного доступа eMBB в~беспроводных 
+сетях пятого поколения~// Информатика и~её применения, 2020. Т.~14. Вып.~4. С.~17--24. 
+doi: 10.14357/19922264200403.
+\bibitem{10-koc}
+\Au{Kushchazli A., Ageeva~A., Kochetkova~I., Kharin~P., Chursin~A., Shorgin~S.} Model of radio 
+admission control for URLLC and adaptive bit rate eMBB in 5G network~// CEUR Workshop 
+Procee., 2021. Vol.~2946. P.~74--84. 
+\bibitem{11-koc}
+\Au{Кочеткова И.\,А., Кущазли~А.\,И., Харин~П.\,А., Шоргин~С.\,Я.} Модель для анализа 
+приоритетного доступа трафика URLLC при прерывании обслуживания и~снижении 
+скорости передачи сессий eMBB в~сети 5G~// Системы и~средства информатики, 2021. Т.~31. 
+№\,3. С.~123--134. 
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 21.10.21}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{6pt}
+
+\def\tit{MODEL FOR ANALYZING PRIORITY ADMISSION CONTROL OF~URLLC AND~eMBB 
+COMMUNICATIONS IN~5G NETWORKS AS~A~RESOURCE QUEUING SYSTEM}
+
+
+\def\titkol{Model for analyzing priority admission control of~URLLC and~eMBB 
+communications in~5G networks as~a~resource
+% queuing 
+system}
+
+
+\def\aut{I.\,A.~Kochetkova$^{1,2}$, A.\,I.~Kushchazli$^1$, P.\,A.~Kharin$^1$, and~S.\,Ya.~Shorgin$^2$}
+
+\def\autkol{I.\,A.~Kochetkova, A.\,I.~Kushchazli, P.\,A.~Kharin, and~S.\,Ya.~Shorgin}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-17pt}
+
+
+\noindent
+$^1$Peoples' Friendship University of Russia (RUDN University), 6~Miklukho-Maklaya Str., 
+Moscow 117198, Russian\linebreak
+$\hphantom{^1}$Federation
+  
+\noindent
+$^2$Federal Research Center ``Computer Science and Control'' of the Russian Academy of 
+Sciences; 44-2~Vavilov\linebreak
+$\hphantom{^1}$Str., Moscow 119133, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2021\ \ \ volume~15\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2021\ \ \ volume~15\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{2pt}
+
+
+  
+  \Abste{Ultrareliable and low-latency communication (URLLC) data transmission and enhanced 
+mobile broadband (eMBB) are critical scenarios for the fifth generation (5G) networks.
+A~5G 
+network resource model was formalized using a~triple~--- radio frequency bandwidth, time slot duration, and the 
+maximum possible power of the transmitted signal. For the scheme of resource occupation which 
+assumes an adaptive change in the signal power and uniform distribution of the time slot between 
+devices, the authors show a conditional distribution of the probabilities of receiving a~request for 
+traffic transmission. The model with priority access URLLC and interruption of eMBB service, 
+considering the specified model of resource occupation, is built in the form of a~resource queuing 
+system.}
+  
+  \KWE{5G; URLLC; eMBB; priority admission control; interruption; resource queuing system}
+  
+  
+
+
+\DOI{10.14357/19922264210412}
+
+\vspace*{-22pt}
+
+\Ack
+
+\vspace*{-6pt}
+
+
+  \noindent
+  The paper was supported by the RUDN University Strategic Academic Leadership Program. 
+The reported study was funded by RFBR, project number 20-37-70079.
+
+
+
+\vspace*{-4pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+ \vspace*{-4pt}
+ 
+\bibitem{1-koc-1}
+  \Aue{Alsenwi, M., N.\,H.~Tran, M.~Bennis, S.\,R.~Pandey, A.\,K.~Bairagi, and C.\,S.~Hong.} 
+2021. Intelligent resource slicing for eMBB and URLLC coexistence in 5G and beyond: A~deep 
+reinforcement learning based approach. \textit{IEEE T.~Wirel. Commun.}  
+20(7):4585--4600. doi: 10.1109/ TWC.2021.3060514.
+ \bibitem{2-koc-1}
+  \Aue{Zhang, W., M.~Derakhshani, and S.~Lambotharan.} 2021. Stochastic optimization of 
+URLLC-eMBB joint scheduling with queuing mechanism. \textit{IEEE Wirel. Commun. 
+Le.} 10(4):844--848. doi: 10.1109/LWC.2020.3046628. 
+\bibitem{3-koc-1}
+  \Aue{Yin, H., L.~Zhang, and S.~Roy.} 2021. Multiplexing URLLC traffic within eMBB 
+services in 5G NR: Fair scheduling. \textit{IEEE T.~Commun.} 69(2):1080--1093.
+doi: 
+10.1109/ TCOMM.2020.3035582.
+\bibitem{4-koc-1}
+  \Aue{Hmamouche, Y., M.~Benjillali, S.~Saoudi, H.~Yanikomeroglu, and M.\,D.~Renzo.} 2021. 
+New trends in stochastic geometry for wireless networks: A~tutorial and survey. 
+\textit{P.~IEEE} 109(7):1200--1252. doi: 10.1109/ JPROC.2021.3061778.
+
+\bibitem{6-koc-1} %5
+  \Aue{Petrov, V., D.~Solomitckii, A.~Samuylov, M.\,A.~Lema, M.~Gapeyenko, D.~Moltchanov, 
+S.~Andreev, V.~Naumov, K.~Samouylov, M.~Dohler, and Y.~Koucheryavy.} 2017. Dynamic 
+multi-connectivity performance in ultra-dense urban mmWave deployments. \textit{IEEE 
+J.~Sel. Area. Comm.} 35(9):2038--2055. doi: 10.1109/JSAC.2017.2720482.
+
+\bibitem{5-koc-1} %6
+  \Aue{Naumov, V., and K.~Samouylov.} 2021. Product-form Markovian queueing systems with 
+multiple resources.
+ \textit{Probab. Eng. Inform. Sc.} 35(1):180--188.
+doi: 10.1017/ S026996481900024X.
+
+
+\bibitem{8-koc-1} %7
+  \Aue{Markova, E., I.~Gudkova, A.~Ometov, I.~Dzantiev, S.~Andreev, Y.~Koucheryavy, and 
+K.~Samouylov.} 2017. Flexible spectrum management in a smart city within licensed shared access 
+framework. \textit{IEEE Access} 5:22252--22261. doi: 10.1109/ACCESS.2017.2758840.
+
+\bibitem{7-koc-1} %8
+  \Aue{Markova, E.\,V., A.\,A.~Golskaia, I.\,L.~Dzantiev, I.\,A.~Gudkova, and S.\,Ya.~Shorgin.} 
+2019. Sravnitel'nyy analiz pokazateley effektivnosti modeli besprovodnoy seti mezhmashinnogo 
+vzaimodeystviya, rabotayushchey v~ramkakh dvukh politik razdeleniya radioresursov 
+[Comparative analysis of performance measures for a wireless machine-to-machine network model 
+operating within two radio resource management policies]. \textit{Informatika i~ee  
+Primeneniya~--- Inform. Appl.} 13(1):108--116.
+doi: 10.14357/ 19922264190115.
+
+\bibitem{9-koc-1}
+  \Aue{Kharin, P.\,A., E.\,D.~Makeeva, I.\,A.~Kochetkova, D.\,V.~Ef\-ro\-si\-nin, and 
+S.\,Ya.~Shorgin.} 2020. Sistema massovogo obsluzhivaniya s~orbitami dlya analiza so\-vmest\-no\-go 
+obsluzhivaniya trafika s~malymi zaderzhkami URLLC i~shirokopolosnogo dostupa eMBB 
+v~besprovodnykh setyakh pyatogo pokoleniya [Retrial queuing model for analyzing joint URLLC 
+and eMBB transmission in 5G networks].
+ \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 
+14(4):17--24. doi: 10.14357/19922264200403.
+\bibitem{10-koc-1}
+  \Aue{Kushchazli, A., A.~Ageeva, I.~Kochetkova, P.~Kharin, A.~Chursin, and S.~Shorgin.} 
+2021. Model of radio admission control for URLLC and adaptive bit rate eMBB in 5G network. 
+\textit{CEUR Workshop Procee.} 2946:74--84. 
+
+\pagebreak
+
+\bibitem{11-koc-1}
+  \Aue{Kochetkova, I.\,A., A.\,I.~Kushchazli, P.\,A.~Kharin, and S.\,Ya.~Shorgin.} 2021. Model' 
+dlya analiza prioritetnogo dostupa trafika URLLC pri preryvanii obsluzhivaniya i~snizhenii skorosti 
+peredachi sessiy eMBB v~seti 5G [Model for analyzing priority URLLC transmission with eMBB 
+bit rate degradation and interruptions in 5G networks]. \textit{Sistemy i~Sredstva Informatiki~--- 
+Systems and Means of Informatics} 31(3):123--134.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Received October 21, 2021}}
+
+%\pagebreak
+
+%\vspace*{-24pt} 
+  
+  \Contr
+  
+  \noindent
+  \textbf{Kochetkova Irina A.} (b.\ 1985)~--- Candidate of Science (PhD) in physics and 
+mathematics, associate professor, Peoples' Friendship University of Russia (RUDN University), 
+6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation; senior scientist, Institute of 
+Informatics Problems, Federal Research Center ``Computer Science and Control'' of the Russian 
+Academy of Sciences, 44-2~Vavilov Str., Moscow 119133, Russian Federation;  
+\mbox{gudkova-ia@rudn.ru}
+  
+  \vspace*{3pt}
+  
+  \noindent
+  \textbf{Kushchazli Anna I.} (b.\ 1997)~--- PhD student, Peoples' Friendship University of 
+Russia (RUDN University), 6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation; 
+\mbox{aikushch@yandex.ru}
+  
+  
+  \vspace*{3pt}
+  
+  \noindent
+  \textbf{Kharin Petr A.} (b.\ 1993)~--- PhD student, Peoples' Friendship University of Russia 
+(RUDN University), 6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation; 
+\mbox{pxarin@mail.ru}
+  
+  \vspace*{3pt}
+  
+  \noindent
+  \textbf{Shorgin Sergey Ya.} (b.\ 1952)~--- Doctor of Science in physics and mathematics, 
+professor, principal scientist, Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 
+119333, Russian Federation; \mbox{sshorgin@ipiran.ru}
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

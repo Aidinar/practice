@@ -1,0 +1,791 @@
+\def\stat{vakulenko}
+
+\def\tit{ФОРМАЛИЗОВАННОЕ ОПИСАНИЕ СТАТИСТИЧЕСКОЙ ОБРАБОТКИ ИНФОРМАЦИИ В~БАЗАХ 
+ДАННЫХ$^*$}
+
+\def\titkol{Формализованное описание статистической обработки информации в~базах 
+данных}
+
+\def\aut{В.\,В.~Вакуленко$^1$, И.\,М.~Зацман$^2$}
+
+\def\autkol{В.\,В.~Вакуленко, И.\,М.~Зацман}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Вакуленко В.\,В.}
+\index{Зацман И.\,М.}
+\index{Vakulenko V.\,V.}
+\index{Zatsman I.\,M.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнялась с~использованием инфраструктуры Центра коллективного пользования <<Высокопроизводительные вы\-чис\-ле\-ния и~большие данные>> 
+(ЦКП <<Информатика>>) ФИЦ ИУ РАН (г.~Москва).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук;
+\mbox{vvak@pm.me}}
+\footnotetext[2]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{izatsman@yandex.ru}}
+
+\vspace*{-13pt}
+
+  
+
+   \Abst{Рассматривается последовательность этапов ста\-ти\-сти\-че\-ской обработки текс\-то\-вой 
+информации, начиная с~конкретных информационных объектов (КИО) баз данных (БД) и~заканчивая 
+значениями чис\-ло\-вых характеристик множеств этих объектов. Например, если в~БД
+хранятся описания пол\-но\-текс\-то\-вых научных ста\-тей, то они считаются 
+КИО. При со\-от\-вет\-ст\-ву\-ющем наполнении такой БД
+многоэтапный процесс их обработки позволяет определить значения чис\-ло\-вых характеристик 
+пуб\-ли\-ка\-ци\-он\-ной ак\-тив\-ности исследователя, научного подразделения или научной организации в~целом. 
+Такие процессы начинаются с~обработки КИО
+и~завершаются вы\-чис\-ле\-ни\-ем значений характеристик множеств этих объектов. На 
+промежуточных этапах обработки могут формироваться таб\-ли\-цы и~другие  
+вер\-баль\-но-чис\-ло\-вые объекты. Если этапы ста\-ти\-сти\-че\-ской обработки спроектированы как 
+обратимые и~в~БД реализована функция верификации значений чис\-ло\-вых 
+характеристик, то процесс их проверки начинается со значений характеристик и~завершается 
+до\-сту\-пом к~КИО, которые были использованы для 
+вы\-чис\-ле\-ния этих значений. Предлагается формализованное описание этапов статистической 
+обработки текс\-то\-вой информации в~БД. Такую ее трансформацию в~чис\-ло\-вые 
+значения предлагается назвать ин\-фор\-ма\-ци\-он\-но-ма\-те\-ма\-ти\-че\-ской  
+(ИМ-транс\-фор\-ма\-ция). Она сочетает обработку КИО, 
+формирование вер\-баль\-но-чис\-ло\-вых объектов и~математические вы\-чис\-ле\-ния значений 
+чис\-ло\-вых характеристик. Такая трансформация текс\-то\-вой информации может на отдельных 
+этапах включать математические преобразования, но в~целом она к~ним не сводится. Цель 
+\mbox{статьи}~--- предложить принципы формализованного описания ИМ-транс\-фор\-ма\-ции текс\-тов 
+в~БД. В~качестве ее ил\-люст\-ра\-ции рас\-смот\-рен пример формализации процесса 
+определения чис\-ла вариантов перевода коннекторов, вы\-ра\-жа\-ющих внут\-ри\-текс\-то\-вые отношения 
+между текс\-то\-вы\-ми фрагментами в~надкорпусной БД (НБД) коннекторов, созданной в~ФИЦ 
+ИУ РАН.}
+   
+   \KW{информационно-математическая трансформация; текс\-то\-вая информация; 
+ста\-ти\-сти\-че\-ская обработка текс\-то\-вой информации; надкорпусная база данных}
+
+\DOI{10.14357/19922264230313}{TYCAEX}
+  
+\vspace*{-6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+   
+
+\section{Введение}
+
+\vspace*{-3pt}
+
+  Процесс статистической обработки текс\-то\-вой информации в~НБД
+параллельных текс\-тов начинается с~\textit{этапа поиска} вхож\-де\-ний 
+ис\-сле\-ду\-емой языковой единицы (ЯЕ) в~параллельных текс\-тах. Одна из целей 
+статистической обработки со\-сто\-ит в~определении чис\-ла вариантов перевода 
+исследуемой ЯЕ, которая может быть словом, словосочетанием, грамматической 
+категорией (например, время глагола) или знаком препинания\footnote[3]{Знаку 
+препинания в~переводе может соответствовать слово или словосочетание.}.
+  
+  Например, если исследуются варианты перевода на французский язык 
+коннектора\footnote[4]{Коннекторами называются лексические единицы, основная функция которых состоит 
+в~выражении одного или нескольких внут\-ри\-текс\-то\-вых отношений между фрагментами текс\-та, например 
+отношения причины~\cite{1-zac}.} \textit{а~то} в~рус\-ско-фран\-цуз\-ских параллельных 
+текстах художественных произведений, то на первом этапе из текс\-тов 
+НБД извлекаются фраг\-мен\-ты (большей частью пред\-ло\-же\-ния), 
+содержащие этот коннектор, и~их переводы на французский язык (см.\ три примера 
+найденных пар фрагментов оригинала и~их переводов в~табл.~1). Всего в~НБД 
+коннекторов, созданной в~ФИЦ ИУ РАН, на 08.05.2023 было~144\,088 таких пар, 
+каждая из которых~--- это конкретный информационный объект НБД. Из 
+них 311~КИО содержат коннектор \textit{а~то} в~русском оригинале, включая три 
+примера, приведенных в~табл.~1. Методы поиска ис\-сле\-ду\-емых ЯЕ в~НБД описаны в~работах~\cite{2-zac, 3-zac, 4-zac}.
+
+   
+  На \textit{втором этапе} для найденных пар выполняется формирование 
+аннотируемых переводных соответствий (АПС), каж\-дое из которых включает 
+структурированное описание коннектора \textit{а~то}, его кон\-текс\-та, перевода 
+этого коннектора на французский язык и~его кон\-текс\-та со\-глас\-но общим 
+принципам аннотирования~\cite{5-zac} и~разработанной на их основе 
+методологии~\cite{3-zac}.
+  
+  Всего на 08.05.2023 для~220 из~311~найденных пар были сформированы 
+220~АПС с~описанием\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\end{multicols}
+
+\begin{table*}\small %tabl1
+\begin{center}
+\Caption{Примеры результатов поиска фрагментов текста с~коннектором \textit{а~то} и~их 
+переводов на французский язык}
+\vspace*{2ex}
+
+\begin{tabular}{|p{79mm}|p{79mm}|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Фрагмент с~коннектором в~оригинале}}& \multicolumn{1}{c|}{\textbf{Перевод}}\\
+\hline
+Я вот теперь выехала, чтоб узнать, \textbf{а~то} засяду уже безвыездно, если, избави Бог, 
+скарлатина.\newline
+[Л.\,Н.~Толстой. Анна Каренина  
+(1873--1877)]&Je suis sortie aujourd'hui pour savoir o$\grave{\mbox{u}}$ vous en 
+$\acute{\mbox{e}}$tiez, \textbf{car} j'ai peur de ne plus pouvoir bouger de longtemps.\newline
+[Перевод Анри Монго (1952)]\\
+\hline
+Я нарочно прибрала, чтобы кто не поднял, \textbf{а~то} потом поминай как звали!\newline
+[М.\,А.~Булгаков. Мастер и~Маргарита (1929--1940)]&Je l'ai trouv$\acute{\mbox{e}}$, dans une 
+serviette, et justement je l'avais mis de c$\hat{\mbox{o}}$t$\acute{\mbox{e}}$ pour que personne ne 
+la ramasse, \textbf{sinon}, hein, adieu la valise!\newline
+[Перевод Клода Линьи (1968)]\\
+\hline
+--- Он женится! Хочешь об заклад, что не женится?~--- возразил он. --- Да ему Захар и~спать-то 
+помогает, \textbf{а~то} жениться!\newline
+[И.\,А.~Гончаров. Обломов (1848--1859)]&--- Lui, se marier ! je parie qu'il ne se mariera pas ! 
+r$\acute{\mbox{e}}$pliqua-t-il. Il a~besoin de Zakhar m$\hat{\mbox{e}}$me pour dormir, \textbf{et} 
+tu veux qu'il se marie!\newline
+[Перевод Артюра Адамова (1959)]\\
+\hline
+\end{tabular}
+\end{center}
+%\end{table*}
+ %  \begin{table*}[b]\small %tabl2
+   \vspace*{-3pt}
+   \begin{center}
+   \Caption{Примеры АПС с~коннектором \textit{а~то}}
+   \vspace*{2ex}
+   
+   \begin{tabular}{|p{44mm}|p{30mm}|p{44mm}|p{30mm}|}
+   \hline
+\multicolumn{1}{|c|}{\tabcolsep=0pt\begin{tabular}{c}\textbf{Фрагмент с~коннектором}\\ \textbf{в~оригинале}\end{tabular}}&
+\multicolumn{1}{c|}{\tabcolsep=0pt\begin{tabular}{c}\textbf{Коннектор}\\
+\textbf{и~внутритекстовое}\\
+\textbf{отношение}\end{tabular}}&\multicolumn{1}{c|}{\textbf{Перевод}}&\multicolumn{1}{c|}{\tabcolsep=0pt\begin{tabular}{c}\textbf{Коннектор}\\
+\textbf{и~внутритекстовое}\\ \textbf{отношение}\end{tabular}}\\
+\hline
+Я вот теперь выехала, чтоб узнать, \textbf{а~то} засяду уже безвыездно, \textit{если}, избави Бог, 
+скарлатина.&\textbf{а то}\newline
+$\langle$отношение причины$\rangle$&Je suis sortie aujourd'hui pour savoir o$\grave{\mbox{u}}$ 
+vous en $\acute{\mbox{e}}$tiez, \textbf{car} j'ai peur de ne plus pouvoir bouger de 
+longtemps.&\textbf{car}\newline
+$\langle$отношение причины$\rangle$\\
+\hline
+Я нарочно прибрала, чтобы кто не поднял, \textbf{а~то} потом поминай как звали!&\textbf{а 
+то}\newline
+$\langle$отношение\newline отрицательной\newline альтернативы$\rangle$&Je l'ai trouv$\acute{\mbox{e}}$, dans 
+une serviette, et justement je l'avais mis de c$\hat{\mbox{o}}$t$\acute{\mbox{e}}$ pour que personne 
+ne la ramasse, \textbf{sinon}, hein, adieu la valise!&\textbf{sinon}\newline
+$\langle$отношение\newline отрицательной\newline альтернативы$\rangle$\\
+\hline
+--- Он женится! 
+Хочешь об за\-клад, что не женится?~--- воз\-ра\-зил он. --- Да ему Захар и~спать-то помогает, 
+\textbf{а~то} жениться!&\textbf{а то}\newline
+$\langle$отношение несоответствия$\rangle$&--- Lui, se marier!
+Qu'est-ce que tu paries qu'il ne se mariera pas? Il ne peut m$\hat{\mbox{e}}$me pas s'endormir sans 
+Zakhar, \textbf{et} tu veux qu'il se marie!&\textbf{et}\newline
+$\langle$соединительное отношение$\rangle$\\
+\hline
+\end{tabular}
+\end{center}
+\end{table*}
+
+
+\begin{multicols}{2}
+
+\noindent
+ коннектора \textit{а~то} и~его переводов (см.\ в~табл.~2 три
+ примера АПС, со\-от\-вет\-ст\-ву\-ющих трем парам фрагментов оригинала и~их 
+переводов из табл.~1). Отметим, что в~этих трех АПС коннектор \textit{а~то} 
+выражает три раз\-ных внут\-ри\-текс\-то\-вых отношения: причина, отрицательная 
+альтернатива, несоответствие. При этом внут\-ри\-текс\-то\-вое 
+отношение в~оригинале и~переводе может быть раз\-ным (см.\ ниж\-нюю строку табл.~2).
+  
+
+   
+  Сформированные АПС дают воз\-мож\-ность определить на \textit{треть\-ем 
+этапе} чис\-ло вариантов перевода коннектора \textit{а~то} на французский язык. 
+Рас\-смот\-рен\-ные три этапа процесса ста\-ти\-сти\-че\-ской обработки текс\-то\-вой 
+информации описаны вербально (словами естественного языка) на примере 
+перевода коннектора \textit{а~то} в~НБД.
+  
+  В статье предлагается подход к~фор\-ма\-ли\-зо\-ванному описанию статистической 
+обработки \mbox{текс\-товой} информации в~БД. Ее трансформацию 
+в~чис\-ло\-вые значения предлагается назвать  
+ИМ-транс\-фор\-ма\-ци\-ей. Она 
+сочетает обработку конкретных текс\-тов, формирование в~результате обработки 
+вер\-баль\-но-чис\-ло\-вых объектов и~вы\-чис\-ле\-ние значений чис\-ло\-вых 
+характеристик. Такая трансформация текс\-то\-вой информации в~чис\-ло\-вые 
+характеристики может на отдельных этапах включать \mbox{математические} 
+преобразования, но в~целом она к~ним не сво\-дится.
+  
+  Цель статьи~--- предложить принципы формализованного описания  
+ИМ-транс\-фор\-ма\-ции текс\-тов в~БД и~ввести понятия: (1)~пол\-ностью 
+обратимая, (2)~час\-ти\-чно обратимая и~(3)~необратимая статистическая обработка 
+текс\-то\-вой ин\-фор\-ма\-ции.
+
+\vspace*{-9pt}
+
+\section{Обратимость статистической обработки}
+
+\vspace*{-2pt}
+
+  Три понятия (полностью обратимая, час\-тич\-но обратимая и~необратимая 
+ста\-ти\-сти\-че\-ская обработка) опишем на примере определения чис\-ла вариантов 
+перевода коннектора \textit{а~то}. В~предыдущем разделе были рас\-смот\-ре\-ны три 
+этапа ста\-ти\-сти\-че\-ской обработки текс\-то\-вой информации, которые сформулируем 
+в~общем \mbox{виде}:
+  \begin{enumerate}[(1)]
+\item поиск вхождений ис\-сле\-ду\-емой ЯЕ в~текс\-то\-вой ин\-фор\-ма\-ции~БД;
+   \item формирование АПС для ис\-сле\-ду\-емых~ЯЕ;
+   \item определение чис\-ло\-вых ста\-ти\-сти\-че\-ских характеристик информации, 
+хранимой в~БД.
+   \end{enumerate}
+   
+  В рассмотренном примере на первом этапе были найдены 311~КИО. Из них для 
+220~КИО на втором этапе были сформированы 220~АПС. Сейчас более по\-дроб\-но 
+рас\-смот\-рим третий этап. В~НБД структура АПС включает два отдельных поля: 
+одно для ис\-сле\-ду\-емо\-го коннектора \textit{а~то} (см.\ второй стол\-бец табл.~2) 
+и~одно для его перевода, например \textit{car} (см.\ четвертый столбец табл.~2; если 
+коннектор не был переведен, то ставится специальная мет\-ка). В~результате 
+со\-по\-став\-ле\-ния значений этих двух полей в~220~АПС была сформирована табл.~3 
+с~чис\-лом вариантов перевода коннектора \textit{а~то} и~чис\-лом АПС, 
+со\-от\-вет\-ст\-ву\-ющих каж\-до\-му варианту. Всего эти АПС содержат 40~вариантов 
+перевода. Девять вариантов с~наибольшим чис\-лом АПС, включая вариант 
+отсутствия перевода, включены в~первые девять строк табл.~3. Сумма АПС для 
+этих девяти вариантов рав\-на~174. Для остальных вариантов (их в~НБД~31) 
+отведена одна десятая строка. Сумма АПС для 31~варианта рав\-на~46.
+
+
+
+  
+  В НБД этапы статистической обработки информации спроектированы как 
+пол\-ностью обратимые, что дает воз\-мож\-ность проверки результатов 
+ста\-ти-\linebreak\vspace*{-12pt}
+
+\vspace*{12pt}
+
+% \begin{table*}\small %tabl3
+   \begin{center}
+   \noindent
+\parbox{228pt}{{{\tablename~3}\ \ \small{Варианты перевода коннектора \textit{а~то} на французский язык 
+(\textit{согласно НБД коннекторов ФИЦ ИУ РАН по состоянию на 08.05.2023})
+}}
+}
+  % \Caption{}
+   \vspace*{2ex}
+   
+ {\small
+  \tabcolsep=4pt
+   \begin{tabular}{|c|l|c|}
+   \hline
+№&\multicolumn{1}{c|}{\tabcolsep=0pt\begin{tabular}{c}Вариант перевода\\ коннектора \textit{а~то}\end{tabular}}&
+\tabcolsep=0pt\begin{tabular}{c}Число\\ АПС\\ варианта\end{tabular}\\
+\hline
+1&sinon&83\\
+\hline
+2&\textit{коннектор в~переводе отсутствует}&43\\
+\hline
+3&et&11\\
+\hline
+4&car&11\\
+\hline
+5&mais&\hphantom{9}9\\
+\hline
+6&si&\hphantom{9}5\\
+\hline
+7&sans quoi&\hphantom{9}4\\
+\hline
+8&sans cela&\hphantom{9}4\\
+\hline
+9&ou&\hphantom{9}4\\
+\hline
+10\hphantom{9}&\tabcolsep=0pt\begin{tabular}{l}31 вариант перевода с~числом\\  АПС~3 и~меньше\end{tabular}&46\\
+\hline
+Итого&40 моделей перевода&220\\
+\hline
+\end{tabular}
+}
+
+\vspace*{3pt}
+\end{center}
+
+\columnbreak
+
+
+%\end{table*}
+
+\noindent
+сти\-че\-ской обработки, начиная с~чис\-ло\-вых значений
+ (см.\ табл.~3) и~заканчивая 
+получением спис\-ка тех АПС, которые были использованы для вы\-чис\-ле\-ния этих 
+зна\-че\-ний\footnote{Аннотируемые переводные соответствия могут редактироваться. Поэтому после завершения статистической 
+обработки отобранных АПС воз\-мож\-ность их редактирования долж\-на быть от\-клю\-чена.}.
+   
+
+  
+  Например, число~11 из четвертой строки табл.~3 в~НБД служит гиперссылкой 
+на список из~11~АПС, включая первое АПС из табл.~2, каж\-дое из которых имеет 
+гиперссылку на со\-от\-вет\-ст\-ву\-ющий КИО, т.\,е.\ пару текс\-то\-во\-го оригинала 
+с~коннектором \textit{а~то} и~перевода с~французским коннектором \textit{car}, 
+включая пер\-вую пару из табл.~1. Если бы в~АПС эта гиперссылка отсутствовала, 
+то ста\-ти\-сти\-че\-ская обработка была бы час\-тич\-но об\-ра\-ти\-мой. А~если и~чис\-ло\-вые 
+значения в~табл.~3 не служили бы гиперссылками на списки АПС, то 
+ста\-ти\-сти\-че\-ская обработка стала бы пол\-ностью необратимой.
+
+  
+\section{Описание этапов статистической обработки}
+
+%\vspace*{-6pt}
+
+  Статистический анализ текстовой информации~--- рас\-про\-стра\-нен\-ный метод 
+исследований в~компьютерной линг\-ви\-сти\-ке, ис\-поль\-зу\-ющий БД
+и~корпусы текс\-тов, включая параллельные~\cite{6-zac, 7-zac, 8-zac, 9-zac}. 
+Вер\-баль\-ное описание этапов ста\-ти\-сти\-че\-ско\-го анализа текс\-то\-вой информации 
+рас\-смот\-рим на примере конт\-рас\-тив\-но\-го исследования пары предлогов 
+\textit{from}/\textit{fra} в~английском и~норвежском языке (пер\-вый предлог~--- 
+английский, второй~--- нор\-веж\-ский)~\cite{10-zac} с~использованием текс\-тов  
+анг\-ло-нор\-веж\-ско\-го параллельного корпуса университета Осло~\cite{11-zac}.
+  
+  Статистические характеристики этой пары предлогов определялись для трех 
+видов переводных соответствий\footnote[2]{Эти три 
+вида переводного соответствия введены в~работе~\cite{11-zac} для исследования переводов значений 
+английского предлога at на араб\-ский язык.}: пред\-лог \textit{from} переведен предлогом 
+\textit{fra}, предлог \textit{from} переведен любым другим предлогом, кроме 
+\textit{fra}, и~предлог в~переводе не использовался~\cite{12-zac}. \mbox{Целью} работы~\cite{10-zac} ставилось 
+вы\-чис\-ле\-ние час\-тот\-ности каждого вида переводного соответствия для каж\-до\-го 
+смыс\-ло\-во\-го значения предлога \textit{from}. Приведем крат\-кое описание этапов их 
+вы\-чис\-ле\-ния из этой ра\-боты.
+  
+  Для определения час\-тот\-ности сначала был сформирован массив текс\-тов, 
+отобранных из анг\-ло-нор\-веж\-ско\-го параллельного корпуса. В~мас\-сив во\-шли 
+только художественные текс\-ты. В~нем был выполнен поиск пар предложений, 
+содержащих пред\-лог \textit{from} в~английском ори\-ги\-нале.
+  
+  Затем был выполнен семантический анализ найден\-ных пар предложений, 
+в~результате которого были экспертно определены кон\-текст\-ные значения 
+предлога \textit{from} и~про\-став\-ле\-ны виды переводных соответствий для 
+\textit{from} (этот пред\-лог переведен предлогом \textit{fra}, другим предлогом или 
+никакой пред\-лог в~переводе не использовался). После определения кон\-текст\-ных 
+значений предлога \textit{from} и~простановки одного из трех видов были 
+определены их час\-тот\-но\-сти для каж\-до\-го кон\-текст\-но\-го значения 
+в~сформированном массиве текс\-тов. Например, проведенное исследование 
+показало: если пред\-лог \textit{from} в~оригинальных английских предложениях 
+имел значение <<причина>> (suffered from high blood pressure), то в~их переводах 
+норвежский пред\-лог \textit{fra} не использовался (нулевая час\-тот\-ность). Если 
+предлог \textit{from} имел значение <<источник>> (lights from the cars in the road), 
+то в~50\% переводов использовался пред\-лог \textit{fra}, в~38\% использовались 
+другие предлоги и~в~12\% переводов при переводе \textit{from} пред\-ло\-ги не 
+использовались. Вы\-чис\-лен\-ные частотности каж\-до\-го вида переводного 
+соответствия для каждого смыс\-ло\-во\-го значения пред\-ло\-га \textit{from} приведены 
+в~табл.~4.8 на с.~63 работы~\cite{10-zac}.
+  
+  Таким образом, в~этой работе дано вербальное описание всех этапов 
+ста\-ти\-сти\-че\-ской обработки параллельных текс\-тов, вклю\-ча\-ющее таб\-ли\-цу 
+частотностей. В~отличие от ста\-ти\-сти\-че\-ской обработки информации НБД 
+коннекторов, в~работе~\cite{10-zac} не ставилась задача обеспечить об\-ра\-ти\-мость 
+этапов обработки, т.\,е.\ <<пройти>> от час\-тот\-ности до исходной текс\-то\-вой 
+информации.
+  
+\section{Принципы информационно-математической трансформации}
+
+   Сформулируем предлагаемые принципы формализованного описания 
+многоэтапного процесса ста\-ти\-сти\-че\-ской обработки текс\-то\-вой информации в~БД. 
+Сначала определяется список этапов ста\-ти\-сти\-че\-ской обработки и~схема связей 
+меж\-ду ними. Затем для каж\-до\-го этапа опре\-де\-ля\-ются:
+   \begin{itemize}
+   \item множества объектов (например, текстовых, вер\-баль\-но-чис\-ло\-вых 
+и/или чис\-ло\-вых) на входе и~выходе \mbox{этапа};
+   \item идентификаторы для доступа в~БД к~объектам входных и~выходных 
+множеств этапа или способ(ы) их опре\-де\-ле\-ния;
+   \item процессы преобразования входных множеств объектов в~выходные;
+   \item классификационные сис\-те\-мы, ис\-поль\-зу\-емые в~процессе пре\-обра\-зо\-ва\-ния;
+   \item возможность до\-сту\-па к~входным множествам объектов этапа либо 
+в~процессе обратного преобразования выходных множеств объектов во входные 
+(обратимое преобразование), либо сохранение в~БД вход\-ных множеств этапа 
+(обратимый этап).
+   \end{itemize}
+   
+   Используя перечисленные принципы, сформулируем описание процесса 
+определения чис\-ла вариантов (моделей) перевода \textit{а~то} в~НБД 
+коннекторов, рас\-смот\-рен\-но\-го в~начале \mbox{статьи}. Этот процесс включает три этапа, 
+которые выполняются по\-сле\-до\-ва\-тельно.
+   
+   На первом этапе есть только одно входное множество (обозначим его как Input 
+Set~1~--- IS1), которое содержит параллельные текс\-ты НБД коннекторов. Эти 
+текс\-ты со\-ст\-оят из пар, вклю\-ча\-ющих русское предложение и~его перевод на 
+французский\linebreak язык. Каждая пара имеет уникальный идентификатор в~НБД. На 
+08.05.2023 было 144\,088 идентификаторов таких пар вход\-но\-го множества IS1\linebreak 
+(список идентификаторов обозначим как Input List~1~--- IL1). Выходное 
+множество на этом этапе формируется так\-же одно (обозначим его как Output 
+Set~1~--- OS1), и~оно содержит предложения русского языка с~коннектором 
+\textit{а~то} и~их переводы на французский язык (см.\ табл.~1). На 08.05.2023 
+было 311~идентификаторов тех пар вы\-ход\-но\-го множества~OS1, рус\-ские 
+предложения которого содержат коннектор \textit{а~то} (список 
+идентификаторов элементов множества~OS1 обозначим как OL1).
+   
+   Преобразование входного множества IS1(IL1) в~выходное~OS1(OL1) 
+выполняется с~по\-мощью поиска тех пар в~IS1, которые содержат коннектор 
+\textit{а~то}. Его обозначим как R1(\textit{а~то}):\ IS1(IL1)\;$\to$\linebreak $\to$\;OS1(OL1). При 
+выполнении этого преобразования классификационные сис\-те\-мы не используются. 
+Первый этап обратимый, что обозначим как RR1(\textit{а~то}), так как в~НБД 
+коннекторов со\-хра\-ня\-ет\-ся входное множество этого \mbox{этапа}.
+   
+   Входным множеством IS2 на втором этапе служит выходное множество OS1 
+первого этапа, идентификаторы элементов (т.\,е.\ 311~пар, рус\-ские предложения 
+которых содержат коннектор \textit{а~то}) \mbox{которого} образуют список~OL1. На 
+этом этапе формируются АПС с~использованием методологии 
+аннотирования~\cite{3-zac}. Выходное множество (обозначим его как OS2) 
+содержит сформированные АПС (см.\ табл.~2), идентификаторы которых 
+образуют список~OL2. Преобразование входного мно\-жест\-ва~IS2(OL1) в~вы\-ход\-ное~OS2(OL2) 
+выполняется с~по\-мощью аннотирования тех пар, которые содержат 
+коннектор \textit{а~то}. Его обозначим как  
+A2(\textit{а~то}):\ IS2(OL1)\;$\to$\;OS2(OL2)/CS(LSR), где CS(LSR)~--- это 
+классификационная сис\-те\-ма ло\-ги\-ко-се\-ман\-ти\-че\-ских отношений, четыре 
+рубрики которой были использованы в~трех АПС в~табл.~2 (отношения причины, 
+отрицательной альтернативы, несоответствия и~соединительное отношение). 
+Второй этап тоже обратимый, что обозначим как~AR2(\textit{а~то}), так как 
+в~НБД коннекторов со\-хра\-ня\-ет\-ся входное множество этого \mbox{этапа}.
+   
+   Входным множеством IS3 третьего этапа служит множество~OS2, которое 
+содержит OL2 сформированных АПС. На этом этапе вы\-чис\-ля\-ет\-ся количество 
+вариантов перевода коннектора \textit{а~то} на французский язык (обозначим как 
+OL3) и~определяется множество~OS3, каж\-дый элемент которого~--- это число 
+АПС для каждого варианта в~НБД коннекторов. Преобразование входного 
+мно\-жест\-ва~IS3(OL2) в~вы\-ход\-ное~OS3(OL3) выполняется с~по\-мощью сравнения 
+содержимого двух полей АПС (для ис\-сле\-ду\-емо\-го коннектора и~его перевода) 
+и~определения чис\-ла пар этих полей, содержимое которых совпадает. Его 
+обозначим как М3(\textit{а~то}):\ IS3(OL2)\;$\to$\;OS3(OL3). Преобразование  
+М2(\textit{а~то}) третьего этапа обратимо, что обозначим как MR3(\textit{а~то}), 
+так как чис\-ло АПС для каж\-до\-го варианта перевода в~НБД коннекторов служит 
+гиперссылкой на список этих АПС. Классификационные сис\-те\-мы на этом этапе не 
+ис\-поль\-зу\-ются.
+   
+   Таким образом, на основе сформулированных принципов  
+ИМ-транс\-фор\-ма\-ции было получено сле\-ду\-ющее формализованное описание 
+трех этапов ста\-ти\-сти\-че\-ской обработки текс\-то\-вой информации в~НБД кон\-нек\-то\-ров:
+   \begin{itemize}
+   \item RR1(\textit{а~то}):\ IS1(IL1)\;$\to$\;OS1(OL1);
+   \item AR2(\textit{а~то}):\ IS2(OL1) \;$\to$\;OS2(OL2)/CS(LSR);
+   \item МR3(\textit{а~то}):\ IS3(OL2) \;$\to$\;OS3(OL3).
+   \end{itemize}
+   
+\section{Заключение}
+   
+   Предлагаемые принципы описания ИМ-транс\-фор\-ма\-ции час\-тич\-но уже 
+использовались при проектировании БД нау\-ко\-мет\-ри\-че\-ской  
+информации~\cite{13-zac, 14-zac, 15-zac, 16-zac}, которые применялись для 
+\mbox{информационного} мониторинга при решении задачи про\-грам\-мно-це-\linebreak ле\-во\-го 
+управ\-ле\-ния~\cite{17-zac}. Эти принципы дают воз-\linebreak мож\-ность получать 
+формализованное описание ста\-ти\-сти\-че\-ской обработки информации в~БД до начала 
+ее проектирования. Это описание может быть использовано как условия, которые 
+необходимо выполнить при проектировании БД, если ста\-ти\-сти\-че\-ская обработка 
+информации в~ней долж\-на быть обратимой. Их выполнение поз\-во\-лит лицам, 
+при\-ни\-ма\-ющим решения, верифицировать с~по\-мощью БД ис\-поль\-зу\-емые ими 
+результаты ста\-ти\-сти\-че\-ской обработки. Для проектировщиков БД 
+формализованное описание, вклю\-ча\-ющее спецификацию преобразований каж\-до\-го 
+этапа, которая в~\mbox{статье} не рас\-смат\-ри\-ва\-ет\-ся, задает требование к~по\-стро\-ению 
+необходимых классификационных сис\-тем, а~так\-же разграничивает обратимые 
+этапы и~обратимые преобразования в~БД.
+   
+   В заключение отметим, что необходимость в~пред\-ла\-га\-емых принципах 
+описания ИМ-транс\-фор\-ма\-ции, воз\-мож\-но, обуслов\-ле\-на теми же причинами, 
+которые Д.\,А.~Пос\-пе\-лов сформулировал при по\-стро\-ении  
+ло\-ги\-ко-линг\-ви\-сти\-че\-ских моделей~\cite{18-zac}. Со\-по\-ста\-ви\-тель\-ный 
+анализ пред\-ла\-га\-емых принципов и~причин создания этих моделей в~будущем 
+поз\-во\-лил бы проверить эту ги\-по\-тезу.
+   
+{\small\frenchspacing
+ { %\baselineskip=12pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-zac}
+\Au{Гончаров А.\,А., Инькова~О.\,Ю.} Методика поиска имплицитных ло\-ги\-ко-се\-ман\-ти\-че\-ских 
+отношений в~текс\-те~// Информатика и~её применения, 2019. Т.~13. Вып.~3. С.~97--104.
+doi: 10.14357/19922264190314.
+\bibitem{2-zac}
+\Au{Зализняк Анна А., Круж\-ков~М.\,Г.} База данных безличных глагольных конструкций 
+русского языка~// Информатика и~её применения, 2016. Т.~10. Вып.~4. С.~132--141.
+doi: 10.14357/19922264160414.
+\bibitem{3-zac}
+\Au{Гончаров А.\,А., Инькова~О.\,Ю., Круж\-ков~М.\,Г.} Методология аннотирования 
+в~надкорпусных базах данных~// Сис\-те\-мы и~средства информатики, 2019. Т.~29. №\,2.  
+С.~148--160. doi: 10.14357/08696527190213.
+\bibitem{4-zac}
+\Au{Нуриев В.\,А., Кружков~М.\,Г.}  Корпусные данные при конт\-рас\-тив\-ном изуче\-нии 
+пунк\-ту\-ации~// Сис\-те\-мы и~средства информатики, 2023. Т.~33. №\,1. С.~14--23.
+doi: 10.14357/08696527230102.
+\bibitem{5-zac}
+Handbook of linguistic annotation~/ Eds. N.~Ide, J.~Pustejovsky.~--- Dordrecht, The Netherlands: 
+Springer Science\;+\;Business Media, 2017. 1468~p.
+\bibitem{6-zac}
+Parallel corpora for contrastive and translation studies: New resources and applications~/ Eds. 
+I.~Doval, M.\,T.~S$\acute{\mbox{a}}$nchez Nieto.~--- Amsterdam, Philadelphia: John Benjamins, 
+2019. 301~p.
+\bibitem{7-zac}
+Translating and comparing languages: Corpus-based insights~/ Eds. S.~Granger, M.-A.~Lefer.~--- 
+Louvain-la-Neuve, Belgique: Presses universitaires de Louvain, 2020. 298~p.
+\bibitem{8-zac}
+Corpora in translation and contrastive research in the digital age: Recent advances and explorations~/ 
+Eds. J.~Lavid-L$\acute{\mbox{o}}$pez, C.~\mbox{Ma$\acute{\mbox{\!\ptb{\i}}}$\,z}-Ar$\acute{\mbox{e}}$valo, 
+J.\,R.~Zamorano-Mansilla.~--- Amsterdam, Philadelphia: John Benjamins, 2021. 351~p.
+\bibitem{9-zac}
+Extending the scope of corpus-based translation studies~/ Eds. S.~Granger, M.-A.~Lefer.~--- London: 
+Bloomsbury Academic, 2022. 288~p.
+\bibitem{10-zac}
+\Au{Savchenko E.} A~contrastive study of the English and Norwegian cognates from and fra: Master's 
+Thesis.~--- Oslo, Norway: University of Oslo, 2013. 120~p. {\sf  
+https:// www.duo.uio.no/handle/10852/37026}.
+\bibitem{11-zac}
+The English--Norwegian Parallel Corpus (\mbox{ENPC}). {\sf  
+https://www.hf.uio.no/ilos/english/services/\linebreak knowledge-resources/omc/enpc}.
+\bibitem{12-zac}
+\Au{Hasan A.\,A., Abdullah~I.\,H.} A~cross mapping of temporal at-ba ``Forward and backward 
+translation''~// English Language Teaching, 2009. Vol.~2. Iss.~1. P.~80--84. doi: 10.5539/elt.v2n1p80.
+\bibitem{13-zac}
+\Au{Зацман И.\,М.} Полидоменные модели в~сис\-те\-мах\linebreak оценки инновационного потенциала 
+и~ре\-зуль\-та\-тивности научных исследований~// Компьютерная лингвисти\-ка и~интеллектуальные 
+технологии: Тр. Междунар. конф. Диалог-2006.~--- М.: РГГУ, 2006. С.~178--183.
+\bibitem{14-zac}
+\Au{Зацман И.\,М.} Полидоменные модели электронных биб\-лио\-тек сис\-тем мониторинга сферы 
+нау\-ки~// Электронные биб\-лио\-те\-ки: перспективные методы и~технологии, электронные 
+коллекции: Тр.\ 8-й Всеросс. научн. конф.~--- Ярославль: ЯрГУ им.\ П.\,Г.~Демидова, 2006. 
+С.~75--81.
+\bibitem{15-zac}
+\Au{Зацман И.\,М., Веревкин~Г.\,Ф., Дры\-но\-ва~И.\,В., Кур\-ча\-во\-ва~О.\,А., Ла\-рин~Н.\,В., 
+Но\-ре\-кян~Т.\,П.} Моделирование сис\-тем информационного мониторинга как проб\-ле\-ма 
+информатики~// Сис\-те\-мы и~средства информатики, 2006. Т.~16. №\,3. С.~257--278.
+\bibitem{16-zac}
+\Au{Зацман И.\,М., Веревкин~Г.\,Ф., Шубников~С.\,К.} Моделирование сис\-тем мониторинга.~--- 
+М.: ИПИ РАН, 2008. 115~с.
+\bibitem{17-zac}
+\Au{Зацман И.\,М., Веревкин~Г.\,Ф.} Информационный мониторинг сферы нау\-ки в~задачах  
+про\-грам\-мно-це\-ле\-во\-го управ\-ле\-ния~// Сис\-те\-мы и~средства информатики, 2006. 
+Т.~16. №\,1. С.~185--210.
+\bibitem{18-zac}
+\Au{Поспелов~Д.\,А.} Ло\-ги\-ко-линг\-ви\-сти\-че\-ские модели в~сис\-те\-мах управ\-ле\-ния.~--- 
+М.: Энергоиздат, 1981. 231~с.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-12pt}
+
+\hfill{\small\textit{Поступила в~редакцию 20.06.23}}
+
+\vspace*{6pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+
+
+\def\tit{FORMALIZED DESCRIPTION OF~STATISTICAL INFORMATION PROCESSING IN~DATABASES}
+
+
+\def\titkol{Formalized description of~statistical information processing in~databases}
+
+
+\def\aut{V.\,V.~Vakulenko and~I.\,M.~Zatsman}
+
+\def\autkol{V.\,V.~Vakulenko and~I.\,M.~Zatsman}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-13pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy 
+of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+
+\Abste{The paper presents an overview of the stages of statistical processing of text data, 
+from specific informational objects in databases to the values of the numerical characteristics of these objects. 
+For example, if the database contains the descriptions of full-text research articles, then they represent specific 
+informational objects. With the appropriate population of such a database, the multistage procedure of their processing 
+makes it possible to determine the values of the numerical characteristics of the publication activity of a~researcher, 
+a~scientific division, and a~scientific organization as a~whole. Such procedures begin with the processing of specific informational objects
+ and end with computing of the values of the numerical characteristics of these objects. 
+ At intermediate stages, tables and other both verbal and numerical objects may form. 
+ If the stages of the statistical processing are designed to be reversible and the database implements the function 
+ of verifying the values of the numerical characteristics, then the procedure of their verification begins with 
+ the values of the characteristics and ends with access to specific informational objects that were used 
+ to compute these values. The paper proposes a~formalized description of the stages of statistical processing 
+ of text data in databases. Informational-mathematic transformation (IM-transformation) is the proposed name 
+ for such transformation of text data into numerical values. It combines the processing of specific informational 
+ objects, the formation of verbal and numerical objects, and the mathematical computation of the values of numerical 
+ characteristics. Such transformation of text data may include mathematic processes at certain stages; however, 
+ it does not completely reverse back to them. The goal of the paper is to propose the principles of formalized description 
+ of IM-transformation of texts in databases. To illustrate this, the paper provides the example of formalizing the
+  process of determining the frequency of translation variants of connectives expressing intertextual 
+  relations between text fragments in the supracorpora database of connectives developed in the FRC CSC RAS.}
+
+\KWE{informational-mathematic transformation; text information; statistical processing of text 
+information; supracorpora database}
+
+
+
+\DOI{10.14357/19922264230313}{TYCAEX}
+
+\vspace*{-18pt}
+
+ 
+     \Ack
+     
+     \vspace*{-2pt}
+     
+\noindent
+The research was carried out using the infrastructure of the Shared Research Facilities ``High 
+Performance Computing and Big Data'' (CKP ``Informatics'') of FRC CSC RAS (Moscow). 
+  
+
+%\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99} 
+\bibitem{1-zac-1}
+\Aue{Goncharov, A.\,A., and O.\,Yu.~In\-ko\-va.} 2019. Me\-to\-di\-ka po\-iska imp\-li\-tsit\-nykh  
+logiko-semanticheskikh ot\-no\-she\-niy v~teks\-te [Methods for identification of implicit logical-semantic 
+relations in texts]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 13(3):97--104. 
+doi: 10.14357/ 19922264190314.
+\bibitem{2-zac-1}
+\Aue{Zalizniak, Anna~A., and M.\,G.~Kruzh\-kov.} 2016. Baza dan\-nykh bez\-lich\-nykh  
+gla\-gol'\-nykh kon\-struk\-tsiy rus\-sko\-go yazy\-ka [Database of Russian impersonal verbal 
+constructions]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl}. 10(4):132--141. doi: 
+10.14357/19922264160414.
+\bibitem{3-zac-1}
+\Aue{Goncharov, A.\,A., O.\,Yu.~Inkova, and M.\,G.~Kruzh\-kov.} 2019. Me\-to\-do\-lo\-giya  
+an\-no\-ti\-ro\-va\-niya v~nad\-kor\-pus\-nykh ba\-zakh dan\-nykh [Annotation methodology of 
+\mbox{supracorpora} databases]. \textit{Sistemy i~Sredstva Informatiki~--- Systems and Means of Informatics} 
+29(2):148--160. doi: 10.14357/ 08696527190213.
+\bibitem{4-zac-1}
+\Aue{Nuriev, V.\,A., and M.\,G.~Kruzh\-kov.} 2023. Korpusnye dannye pri kontrastivnom izuchenii 
+punktuatsii [The parallel corpora perspective on studying contrastive punctuation]. \textit{Sis\-te\-my 
+i~Sredstva Informatiki~--- Systems and Means of Informatics} 33(1):14--23. doi: 
+10.14357/08696527230102.
+\bibitem{5-zac-1}
+Ide, N., and J.~Pustejovsky, eds. 2017. \textit{Handbook of linguistic annotation}. Dordrecht, The 
+Netherlands: Springer Science\;+\;Business Media. 1468~p.
+\bibitem{6-zac-1}
+Doval, I., and M.\,T.~Sanchez Nieto, eds. 2019. \textit{Parallel corpora for contrastive and translation 
+studies: New resources and applications}. Amsterdam, Philadelphia: John Benjamins. 310~p.
+\bibitem{7-zac-1}
+Granger, S., and M.-A.~Lefer, eds. 2020. Translating and comparing languages: Corpus-based 
+insights. Louvain-la-Neuve, Belgique: Presses universitaires de Louvain. 298~p.
+\bibitem{8-zac-1}
+Lavid-L$\acute{\mbox{o}}$pez, J., C.~\mbox{Ma$\acute{\mbox{\ptb{\!\i}}}$\,z}-Ar$\acute{\mbox{e}}$valo, and J.\,R.~Zamorano-Mansilla, eds. 2021. \textit{Corpora in 
+translation and contrastive research in the digital age: Recent advances and explorations}. 
+Amsterdam, Philadelphia: John Benjamins. 351~p.
+\bibitem{9-zac-1}
+Granger, S., and M.-A.~Lefer, eds. 2022. \textit{Extending the scope of corpus-based translation 
+studies}. London: Bloomsbury Academic. 288~p.
+\bibitem{10-zac-1}
+\Aue{Savchenko, E.} 2013. \textit{A~contrastive study of the English and Norwegian cognates from 
+and fra}.  Oslo, Norway: University of Oslo. Master's Thesis. 120~p. Available at:  {\sf 
+https:// www.duo.uio.no/handle/10852/37026} (accessed July~10, 2023).
+\bibitem{11-zac-1}
+The English--Norwegian parallel corpus (\mbox{ENPC}). Available at:   {\sf 
+https://www.hf.uio.no/ilos/english/services/\linebreak  knowledge-resources/omc/enpc} (accessed July~10, 2023).
+\bibitem{12-zac-1}
+\Aue{Hasan, A.\,A., and I.\,H.~Ab\-dullah.} 2009. A~cross mapping of temporal at-ba ``Forward and 
+backward translation.'' \textit{English Language Teaching} 2(1):80--84. doi: 10.5539/elt. v2n1p80.
+\bibitem{13-zac-1}
+\Aue{Zatsman, I.\,M.} 2006. Po\-li\-do\-men\-nye modeli v~sis\-te\-makh otsen\-ki  
+in\-no\-va\-tsi\-on\-no\-go po\-ten\-tsi\-a\-la i~re\-zul'\-ta\-tiv\-nosti na\-uch\-nykh is\-sle\-do\-va\-niy 
+[Polydomain models for evaluation systems of innovative potential and performance of researches]. 
+\textit{Computational Linguistics and Intellectual\linebreak Technologies:   Conference (International) ``Dialog 2006'' 
+Proceedings}. Moscow: RGGU. 178--183.
+\bibitem{14-zac-1}
+\Aue{Zatsman, I.\,M.} 2006. Po\-li\-do\-men\-nye mo\-de\-li elekt\-ron\-nykh bib\-lio\-tek  
+sis\-tem mo\-ni\-to\-rin\-ga sfe\-ry nau\-ki [Polydomain models for digital libraries of monitoring 
+systems in scientific sphere]. \textit{Elektronnyye biblioteki: perspektivnye metody i~tekhnologii, 
+elektronnye kollektsii: Tr. 8-y Vseross. nauchn. konf.} [Digital Libraries: Advanced Methods and 
+Technologies, Digital Collectons. 8th All-Russian Research Conference Proceedings]. Yaroslavl': P.\,G.~Demidov Yaroslavl' State University. 
+75--81.
+\bibitem{15-zac-1}
+\Aue{Zatsman, I.\,M., G.\,F.~Ve\-rev\-kin, I.\,V.~Dry\-no\-va, O.\,A.~Kur\-cha\-vo\-va, N.\,V.~La\-rin, and 
+T.\,P.~No\-re\-kyan.} 2006. Mo\-de\-li\-ro\-va\-nie sis\-tem in\-for\-ma\-tsi\-on\-no\-go mo\-ni\-to\-rin\-ga 
+kak prob\-le\-ma in\-for\-ma\-ti\-ki [Model for systems of information monitoring as a~problem of 
+informatics]. \textit{Sis\-te\-my i~Sredstva Informatiki~--- Systems and Means of Informatics}  
+16(3):257--278.
+\bibitem{16-zac-1}
+\Aue{Zatsman, I.\,M., G.\,F.~Ve\-rev\-kin, and S.\,K.~Shub\-ni\-kov}. 2008. \textit{Mo\-de\-li\-ro\-va\-nie 
+sis\-tem mo\-ni\-to\-rin\-ga} [Modeling of monitoring systems]. Moscow: IPI RAN. 115~p.
+\bibitem{17-zac-1}
+\Aue{Zatsman I.\,M., and G.\,F.~Ve\-rev\-kin.} 2006. In\-for\-ma\-tsi\-on\-nyy mo\-ni\-to\-ring sfe\-ry 
+nau\-ki v~za\-da\-chakh programmno-tselevogo uprav\-le\-niya [Information monitoring for scientific 
+sphere in programme budgeting problems]. \textit{Sis\-te\-my i~Sredstva Informatiki~--- Systems and 
+Means of Informatics} 16(1):185--210.
+\bibitem{18-zac-1}
+\Aue{Pospelov, D.\,A.} 1981. \textit{Logiko-lingvisticheskie mo\-de\-li v~sis\-te\-makh  
+uprav\-le\-niya} [Logical-linguistic models in control systems]. Moscow: Energoizdat. 231~p.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-7pt}
+
+\hfill{\small\textit{Received June 20, 2023}} 
+
+\vspace*{-20pt}
+
+\Contr
+
+
+\vspace*{-2pt}
+
+\noindent
+\textbf{Vakulenko Vasily V.} (b.\ 1995)~--- engineer-researcher, Institute of Informatics Problems, 
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences,  
+44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{vvak@pm.me}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Zatsman Igor M.} (b.\ 1952)~--- Doctor of Science in technology, head of department, 
+Institute of Informatics Problems, Federal Research Center ``Computer Science and Control'' of the 
+Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{izatsman@yandex.ru}
+
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

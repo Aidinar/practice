@@ -1,0 +1,684 @@
+\def\stat{shanin}
+
+\def\tit{МЕТОДЫ И~СРЕДСТВА ОБНАРУЖЕНИЯ НЕШТАТНЫХ СИТУАЦИЙ, ВОЗНИКАЮЩИХ 
+НА~ЭЛЕМЕНТАХ ЖИЛИЩНО-КОММУНАЛЬНОЙ ИНФРАСТРУКТУРЫ$^*$}
+
+\def\titkol{Методы и~средства обнаружения нештатных ситуаций %, возникающих 
+на~элементах жилищно-коммунальной инфраструктуры}
+
+\def\aut{И.\,А.~Шанин$^1$, С.\,А.~Ступников$^2$, В.\,Н.~Захаров$^3$}
+
+\def\autkol{И.\,А.~Шанин, С.\,А.~Ступников, В.\,Н.~Захаров}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Шанин И.\,А.}
+\index{Ступников С.\,А.}
+\index{Захаров В.\,Н.}
+\index{Shanin I.\,A.}
+\index{Stupnikov S.\,A.}
+\index{Zakharov V.\,N.}
+
+
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при финансовой поддержке Министерства образования и~науки Российской Федерации (уникальный идентификатор 
+проекта RFMEFI60717X0176).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управление>> Российской 
+академии наук, \mbox{v08shanin@gmail.com}}
+\footnotetext[2]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управление>> Российской 
+академии наук, \mbox{sstupnikov@ipiran.ru}}
+\footnotetext[3]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управление>> Российской 
+академии наук, \mbox{vzakharov@ipiran.ru}}
+
+%\vspace*{8pt}
+        
+
+\Abst{Работа относится к~области разработки специализированных 
+информационных систем на основе технологии Интернета вещей. 
+Рассматривается подход к~программной реализации компонентов модуля 
+обнаружения нештатных ситуаций как составной части информационной 
+системы, обес\-пе\-чи\-ва\-ющей поддержку технического обслуживания элементов 
+жилищной инфраструктуры в~целях оперативного контроля их состояния, 
+предиктивного ремонта и~оповещения о возникающих нештатных ситуациях 
+и~регулярных событиях. Описаны алгоритмы и~особенности реализации 
+компонентов, осуществляющих построение моделей функционирования 
+элементов жилищной инфраструктуры и~обнаружение нештатных ситуаций. 
+Приводятся экспериментальные результаты применения подхода для 
+обнаружения нештатных ситуаций на модельных наборах данных.}
+
+\KW{Интернет вещей; анализ данных; обнаружение нештатных ситуаций; 
+жи\-лищ\-но-ком\-му\-наль\-ная инфраструктура}
+
+\DOI{10.14357/19922264180310}
+  
+%\vspace*{4pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+      Активное развитие технологии Интернета вещей, предполагающей, 
+в~частности, оснащение физических предметов средствами взаимодействия 
+друг с~другом или с~внешней средой, открывает перспективы появления 
+и~совершенствования новых классов информационных систем для решения 
+насущных задач различного рода. Например, в~области  
+жи\-лищ\-но-ком\-му\-наль\-ной инфраструктуры оснащение элементов 
+инфраструктуры (таких как трансформаторы, насосы, кондиционеры и~др.) 
+разнообразными датчиками~--- температуры, тока, напряжения, звука~--- 
+позволяет собирать с~них данные и~осуществлять их анализ с~целью поддержки 
+технического обслуживания. 
+
+Данная работа проводится в~рамках проекта,\linebreak 
+нацеленного на создание комплекса про\-грам\-мно-тех\-ни\-че\-ских решений по 
+созданию информаци\-онной системы, обеспечивающей поддержку 
+тех\-нического обслуживания элементов жилищной\linebreak инфраструктуры в~целях 
+оперативного контроля их состояния, предиктивного ремонта и~оповещения 
+о~возникающих нештатных ситуациях и~регулярных событиях. К~нештатным 
+ситуациям относится, в~частности, отказ элементов жилищной инфраструктуры в~эксплуатационный период, заявленный производителем; к~регулярным 
+событиям~--- техническое обслуживание и~замена элементов по истечении 
+эксплуатационного периода. В~рамках проекта рассматриваются такие 
+элементы жилищной инфраструктуры, как трансформаторы, насосы, 
+вентиляционные установки и~кондиционеры, газовые котлы, трубчатые электронагреватели
+(\mbox{ТЭНы}), 
+электрические лампы.
+      
+      В работе~[1] авторами была предложена архитектура информационной 
+системы, включающая модули сбора данных, хранения данных, обнаружения 
+и~предсказания нештатных ситуаций, информирования пользователя 
+о~произошедших и~потенциально возможных нештатных ситуациях. Одной из 
+основных составляющих архитектуры является модуль обнаружения 
+и~предсказания нештатных ситуаций, включающий, в~част\-ности, компоненты 
+построения моделей функционирования элементов жилищной инфраструктуры 
+и~обнаружения нештатных ситуаций~[1]. В~данной работе рас\-смат\-ри\-ва\-ет\-ся 
+подход к~программной реализации упомянутых компонентов модуля. Описаны 
+алгоритмы функционирования и~особенности реализации компонентов модуля 
+(разд.~2). Приводятся экспериментальные результаты применения подхода для 
+обнаружения нештатных ситуаций на модельных наборах данных (разд.~3).
+      
+\section{Алгоритмы функционирования компонентов модуля 
+обнаружения нештатных ситуаций}
+
+\subsection{Построение моделей функционирования элементов жилищной 
+инфраструктуры}
+
+      Компонент реализует следующие подходы к~анализу временных рядов: 
+сезонная интегрированная модель авторегрессии~--- скользящего среднего 
+(SARIMA~--- seasonal autoregressive integrated moving average) 
+и~скрытые марковские модели (HMM~--- hidden Markov models).
+      
+      \textit{Модель SARIMA.} Являясь обобщением классической модели 
+авторегрессии~--- скользящего среднего (ARMA~--- autoregressive
+moving average)~[2], данная модель находит 
+массу применений в~анализе временн$\acute{\mbox{ы}}$х рядов, в~част\-ности в~задаче 
+прогнозирования и~интерполяции значений. Модель\linebreak использует понятие  
+тренд-се\-зон\-но\-го разложения временн$\acute{\mbox{о}}$го ряда~[3], представляя 
+наблюдаемые значения в~виде суммы (или произведения) трех компонент: 
+\textit{тренда}, \textit{сезонной со\-став\-ля\-ющей} и~\textit{остатков}. Трендовая 
+составляющая отражает\linebreak долгосрочное изменение показателей, сезонная 
+составляющая отражает периодические колебания временн$\acute{\mbox{о}}$го ряда. Остатки не 
+имеют ни сезонных, ни трендовых особенностей. Для обучения модели 
+необходимо оценить гиперпараметры $p$, $d$, $q$, $P$, $D$, $Q$ и~$s$:
+      \begin{itemize}
+\item целочисленные параметры $p$ и~$q$ соответствуют порядкам моделей 
+авторегрессии (AR~--- autoregression) и~скользящего среднего (MA~---
+moving average), их значение отображает 
+число элементов временн$\acute{\mbox{о}}$го ряда, участ\-ву\-ющих в~по\-стро\-ении линейных 
+моделей AR и~MA;
+\item параметр $d$ соответствует порядку дифференцирования, 
+необходимому для удаления несезонных трендов и~приведения ряда 
+к~стационарному виду;
+\item целочисленный параметр~$s$ соответствует периоду сезонности~--- 
+периодических колебаний временн$\acute{\mbox{о}}$го ряда;
+\item параметры $P$, $D$ и~$Q$ имеют тот же смысл, что и~$p$, $d$ и~$q$, но 
+относятся к~сезонной со\-став\-ля\-ющей ряда.
+\end{itemize}
+      
+      Параметры $p$, $d$, $q$, $P$, $D$ и~$Q$ принимают значения из 
+множества $\{0, 1, 2, 3\}$. Для выбранных наборов значений гиперпараметров 
+оцениваются коэффициенты моделей AR и~MA. 
+      
+      Входные данные ({сlean\_data}) при построении модели 
+представляют собой набор кортежей вида $\langle${timestamp}: 
+{time}, {value}: {real}$\rangle$~--- временной ряд значений 
+некоторого датчика, установленного на элементе жилищной инфраструктуры, 
+соответствующий штатному режиму работы элемента. Построение модели 
+включает следующие шаги:
+      \begin{itemize}
+\item вывести на экран графики функций автокорреляции (ACF~--- autocorrelation
+function) и~час\-тич\-ной 
+автокорреляции (PACF~--- partial ACF) данных. По свойствам этих графиков можно сделать 
+вывод о возможных значениях гиперпараметров модели, тем самым 
+существенно ускорив время обучения;
+\item считать введенные пользователем множества возможных значений 
+гиперпараметров {p\_range}, {d\_range}, {q\_range}, 
+{P\_range}, {D\_range} и~{Q\_range}, являющиеся 
+подмножествами множества $\{0, 1, 2, 3\}$ и~значение~$s^*$ параметра~$s$;
+\item для всех возможных наборов значений гиперпараметров $p$, $d$, $q$, 
+$P,$ $D$ и~$Q$ и~входных данных {сlean\_data} вычисляется значение 
+информационного критерия Акаике (AIC~--- Akaike information
+criterion), выбираются конкретные значения 
+гиперпараметров $p^*$, $d^*$, $q^*$, $P^*$, $D^*$, $Q^*$ и~$s^*$, 
+соответствующие минимальному значению AIC;
+\item обучить модель SARIMA на основании {сlean\_data} 
+и~значений~$p^*$, $d^*$, $q^*$, $P^*$, $D^*$, $Q^*$ и~$s^*$,  при этом 
+определить AR$^*$ и~MA$^*$~--- кортежи вещественных коэффициентов 
+линейных моделей AR и~MA;
+\item вычислить остатки построенной модели на входных данных 
+{сlean\_data};
+\item проверить статистическую гипотезу о~нестационарности остатков 
+временн$\acute{\mbox{о}}$го ряда с~использованием расширенного теста Ди\-ки--Фул\-ле\-ра 
+(ADF~--- augmented Dickey--Fuller test). 
+В~случае если $p$-зна\-че\-ние теста больше~0,05, вернуть 
+предупреждение о~неприменимости SARIMA, иначе вернуть набор 
+параметров модели в~виде кортежа $\langle p^*, d^*, q^*, P^*, D^*, Q^*, 
+\mathrm{AR}^*, \mathrm{MA}^*\rangle$.
+      \end{itemize}
+      
+      Для реализации указанных шагов использовались функции пакета $p^*$, 
+{statsmodels}\footnote{{\sf 
+http://www.statsmodels.org/dev/generated/statsmodels.tsa.statespace.sarimax.SARIMAX.html}.} языка Python.
+      
+      \textit{Модель HMM.} Данная модель~[4] основывается на гипотезе 
+о~том, что у анализируемой сис\-те\-мы имеется конечное множество 
+<<скрытых>> состо\-яний. Таким образом, помимо последовательности\linebreak 
+значений анализируемого временн$\acute{\mbox{о}}$го ряда существует скрытая 
+последовательность состояний (сис\-те\-ма может принимать ровно одно 
+со\-сто\-яние в~каждый момент времени). Скрытая марковская модель 
+характеризуется набором па\-ра\-мет\-ров $\langle T, N, P, M, A\rangle$, где $T$~--- 
+множество возможных скрытых со\-сто\-яний; $N$~--- множество возможных 
+наблюдаемых значений; $P$~--- множество условных вероятностных 
+распределений $p(x\vert t_i)$ для каждого скрытого состояния~$t_i$; $M$~---  
+мат\-ри\-ца размера $\vert T\vert \times \vert T\vert$, элементы~$M_{ij}$ которой 
+являются вероятностями перехода системы из состояния~$t_i$ 
+в~состояние~$t_j$; $A$~--- вероятностное распределение первого состояния 
+скрытой марковской модели (априорное распределение).
+      
+      В данном подходе метки классов неисправностей в~каждый момент 
+времени будут напрямую соответствовать скрытым состояниям модели. 
+Используются два принципиально разных способа применения скрытых 
+марковских моделей: в~первом случае активно используется обучающая 
+выборка, в~которой сигнал уже разделен на сегменты, соответствующие 
+исправным и~неисправным режимам работы; разметка используется на этапе 
+обучения параметров модели по методу максимума правдоподобия. Второй 
+способ не предполагает наличие размеченной выборки, в~этом случае для 
+обуче\-ния модели применяется алгоритм Бау\-ма--Уэл\-ша (частный случай  
+EM (expectation-maximization) ал\-го\-рит\-ма)~[5]. Главным ограничением такого подхода является 
+необходимость заранее оценить число типов различных нештатных ситуаций, 
+а~следовательно, применимость HMM заметно 
+снижается в~случае отсутствия размеченной обучающей выборки. На практике 
+также оказывается эффективным смешанный подход: проводить 
+инициализацию параметров модели с~помощью обучающей выборки по методу 
+максимума правдоподобия, чтобы потом улучшить параметры с~помощью 
+алгоритма Бау\-ма--Уэлша.
+      
+      Входные данные ({training\_data}) при по\-стро\-ении модели 
+представляют собой набор кортежей\linebreak
+ вида $\langle${value}: {real}, 
+{hidden\_state}: {int}$\rangle$, где {value}~--- элемент 
+последовательности значений анализируемого временного ряда, 
+а~{hidden\_state}~--- разметка элементов последовательности по классам\linebreak 
+аномалий. При реализации используется класс {HiddenMarkovModel} 
+пакета {pomegranate}\footnote[2]{{\sf  
+https://pomegranate.readthedocs.io/en/latest/}.} языка Python; для обучения на 
+неразмеченных данных используется вызов метода {fit} на входных 
+данных с~параметром {algorithm}\;=\;`{baum-welch}'. Для обучения 
+на размеченных данных используется\linebreak вызов метода {fit} на входных 
+данных с~параметрами {labels}\;=\;{training\_data.hidden\_state}, 
+{algorithm}\;=\;{labeled}'; а~затем~--- вызов метода {fit} на 
+входных данных с~параметром {algorithm}\;=`{baum-welch}'.
+      
+      В результате обучения формируется модель, содержащая конкретные 
+значения вышеупомянутых параметров $\langle T, N, P, M, A\rangle$.
+
+\subsection{Обнаружение нештатных ситуаций}
+
+      Компонент получает на вход параметры построенных моделей SARIMA 
+и~HMM и~анализируемые временные ряды показаний датчиков, прошедшие 
+предобработку. Цель работы данного компонента~--- бинарная классификация 
+показаний датчиков на показания, соответствующие штатной работе 
+исправного оборудования, и~показания, соответствующие различным 
+нештатным ситуациям (аномалиям во временн$\acute{\mbox{о}}$м ряду). 
+      
+      
+      \textit{Обнаружение нештатных ситуаций при помощи модели 
+SARIMA.} Модель SARIMA позволяет прогнозировать следующее значение 
+временн$\acute{\mbox{о}}$го ря-\linebreak да, зная несколько предыдущих значений. 
+Таким\linebreak образом, для 
+обнаружения аномалий требуется сравнить реальные значения временн$\acute{\mbox{о}}$го 
+ряда с~границами доверительного интервала SARIMA. Входными данными при 
+обнаружении аномалий являются кортеж {model}\;=\;$\langle p, d, q, P, D, 
+Q, \mathrm{AR}, \mathrm{MA}\rangle$\linebreak
+ па\-ра\-мет\-ров модели и~набор {data} кортежей вида 
+$\langle${timestamp}: {time}, {value}: {real}$\rangle$. 
+В~качестве выходных данных выступает бинарный массив {labels}, по 
+числу элементов совпадающий с~{data}, элементы которого принимают 
+значения из множества~$\{0, 1\}$, где~0 означает штатность соответствующего 
+элемента\linebreak {data}, а~1~--- его аномальность. Процедура обнаружения 
+аномалий включает следующие шаги: 
+      \begin{itemize}
+\item инициализировать переменную {filtered\_data} значением 
+{data};
+\item для каждого~$i$ начиная с~$\max(p, q)$  
+до~$\vert \mathrm{data}\vert\hm-1$ на основании первых~$i$ элементов 
+временного ряда {filtered\_data} предсказать ($i+1$)-й элемент ряда 
+с~использованием модели {model}, вычислить предсказанное значение 
+{forecast\_value} и~доверительный интервал {confidence\_interval};
+\item проверить вхождение значения {data}[$i$].{value} 
+в~интервал {confidence\_interval}. В~случае вхож\-дения присвоить~0 
+элементу {labels}[$i$], иначе\linebreak
+ присвоить~1~элементу {labels}[$i$] 
+и~присвоить значение $\langle${data}[$i$].{timestamp}, 
+{forecast\_value}$\rangle$ элементу {filtered\_data}[$i$] для 
+обеспечения воз\-мож\-ности дальнейшего предсказания: фактически, при этом 
+во временн$\acute{\mbox{о}}$м ряду аномальное значение заменяется на штатное, 
+предсказанное мо\-делью.
+\end{itemize}
+      
+      Для реализации указанных шагов использовались функции пакета 
+{statsmodels} языка Python.
+      
+      \textit{Обнаружение нештатных ситуаций при помощи модели HMM.} 
+Здесь задача детектирования нештатных режимов работы оборудования 
+рассматривается как задача сегментации сигнала: по известному набору 
+параметров HMM требуется восстановить наиболее вероятную 
+последовательность скрытых состояний системы. Данная задача решается при 
+помощи алгоритма Витерби~--- классического алгоритма динамического 
+программирования.
+      
+      На входе процедура обнаружения аномалий получает обученную 
+скрытую марковскую модель\linebreak {model} и~анализируемые данные 
+{data}~--- набор кортежей вида $\langle${timestamp}: {time}, 
+{value}: {real}$\rangle$, соответствующие реальной (возможно, 
+нештатной) работе оборудования~--- источника данных. При\linebreak реализации 
+используется вызов метода {predict} класса \mbox{HiddenMarkovModel} из 
+пакета {pomegranate}\linebreak языка Pyhon на наборе {data} с~параметром 
+{algorithm}\;=\;`{viterbi}'. Результатом работы является
+целочисленный массив {labels}, по числу элементов\linebreak совпадающий 
+с~{data}, значения которого соответствуют скрытым состояниям 
+(режимам работы) сис\-те\-мы. Значение~0 соответствует штатному режиму 
+работы, а~все остальные~--- аномальным режимам.
+
+\section{Экспериментальные результаты}
+
+      В рамках проекта RFMEFI60717X0176 для проведения экспериментов 
+создан исследователь-\linebreak ский стенд, развернутый на нескольких объектах 
+жилищной инфраструктуры, включающий ап\-па\-рат\-но-про\-грам\-мные 
+контроллеры и~датчики (рас\-хо\-до\-ме\-ры, датчики вход\-но\-го/вы\-ход\-но\-го 
+то\-ка/на\-пря\-же\-ния, температуры, звука, осве\-щен\-ности,\linebreak
+ дав\-ле\-ния), установленные 
+на трансформаторах, водяных насосах, вентиляционных установках, 
+кондиционерах, газовых котлах, ТЭНах, электрических лампах. В~настоящее 
+время продолжается сбор данных с~компонентов исследовательского стенда для 
+их последующего анализа. В~рамках же данной статьи эксперименты 
+проводятся на двух готовых наборах данных: {Intel Lab Data} 
+и~{LUCE}. Краткое описание наборов данных приведено \mbox{ниже}.
+      
+      \textit{Данные исследовательской лаборатории Intel в~Беркли.} Набор 
+данных состоит из показаний бытовых домашних метеостанций, размещенных в~помещении лаборатории: измерений датчиков освещенности, влажности, 
+температуры и~напряжения~\cite{6-st}. Измерения снимались раз в~31~секунду 
+на протяжении~36~дней, таким образом было собрано 2,3~млн записей. 
+Данные представлены в~виде набора кортежей $\langle${date}:  
+{yyyy-mm-dd}, {time}: {hh:mm:ss.xxx}, {temperature}: 
+{real}, {light}: {real}$\rangle$. Для анализа использовались 
+данные по температуре и~освещенности. Одной из важных особенностей этого 
+набора данных является ярко выраженная сезонность измерений 
+(периодические колебания) с~периодом~24~ч, связанная с~суточным 
+изменением температуры и~освещенности.
+      
+      \textit{Данные эксперимента LUCE проекта SensorScope.} Данный 
+набор данных также представляет собой показания метеостанций, но датчики 
+расположены не в~помещении, а~на улице (использовались уличные 
+метеостанции)~\cite{7-st}. Измерения считывались каждые~120~с, 
+в~набор данных вошли измерения за~44~дня. Среди измеренных значений 
+присутствуют данные об окружающей среде, такие как температура, 
+относительная влажность, солнечная радиация, скорость ветра и~др. Для 
+анализа была выбрана температурная составляющая измерений. Таким 
+образом, кортеж анализируемых данных имеет вид $\langle${date}:  
+{yyyy-mm-dd}, {time}: \textit{hh:mm:ss.xxx}, {temperature}: 
+{real}$\rangle$. В~данных также ярко выражена сезонная составляющая 
+с~периодом~24~ч.
+      
+      Классификация возможных аномалий в~наборах данных Intel Lab 
+и~SensorScope предложена в~\cite{8-st}. Позднее в~\cite{9-st} было 
+сформулировано сле\-ду\-ющее определение. Пусть $r\_i$~--- значение в~момент 
+времени~$i$, предсказываемое моделью, а~$r\_i + \mathrm{eps}\_i$~--- наблюдаемое 
+значение. Тогда предлагается рас\-смат\-ри\-вать сле\-ду\-ющие типы аномалий: 
+      \begin{itemize}
+\item \textit{случайные аномалии}: одиночно встречающиеся зна\-че\-ния-выбросы;
+\item \textit{неисправности}: частое наличие в~данных не\-вер\-ных значений 
+таких, что $\mathrm{eps}\_i \hm> t$ (где~$t$~--- неко-\linebreak торое пороговое значение); 
+в~последовательности неверных значений не предполагается наличие 
+закономерности.
+\end{itemize}
+      
+      В работе~\cite{10-st} разработаны алгоритмы моделирования данных 
+классов аномалий, в~част\-ности построен контрольный набор данных, в~который\linebreak 
+включена размеченная выборка, включающая в~себя смоделированные 
+аномалии. Результаты генерации неисправностей опубликованы в~виде 
+контрольно\-го набора данных~\cite{11-st}, в~котором содержатся данные 
+Intel Lab и~SensorScope, включающие синтезированные неисправности. Кроме того, для 
+каж\-до\-го измерения добавлено контрольное значение, соответствующее классу 
+нештатной ситуации либо ее отсутствию в~конкретный момент. Классы 
+размечены следующим образом: <<0>>~--- нет аномалий; <<1>>~--- случайные 
+аномалии; <<2>>~--- неисправности; <<4>>~--- смещение; <<8>>, <<16>>, 
+<<32>>~--- полиномиальные искажения, сгенерированы разными алгоритмами. 
+Эти данные были выбраны для контроля качества детектирования аномалий 
+разрабатываемой сис\-темы. 
+      
+      На рассматриваемых данных были применены методы обнаружения 
+аномалий, основанные на моделях SARIMA и~HMM. Из набора данных 
+{Intel Lab Data} были использованы данные по датчикам света, из набора 
+данных {LUCE}~--- данные по датчикам температуры. 
+      
+      В~результате настройки моделей SARIMA наиболее часто встречались 
+следующие наборы гиперпараметров $\langle p, d, q, P, D, Q\rangle:\ \langle 0, 1, 
+1, 1, 1, 1\rangle$ и~$\langle 0, 1, 1, 0, 1, 1\rangle$, при сезонном параметре $s 
+\hm= 24$~ч (сутки). Эксперименты показали, что модели \mbox{SARIMA} лучше 
+подходят для обнаружения краткосрочных случайных аномалий, так как 
+в~случае долгосрочных аномалий доверительные интервалы ее предсказаний 
+становятся шире, а~следовательно, слабее.
+      
+      Метод HMM показал себя более успешным на продолжительных 
+аномалиях (неисправностях), при этом заметно уступая методу SARIMA 
+в~краткосрочных аномалиях (случайных выбросах). В~работе~\cite{12-st} 
+также для долгосрочных аномалий отдается предпочтение скрытым 
+марковским моделям.
+      
+      Так, на наборе {Intel Lab Data} средняя доля обнаруженных 
+случайных аномалий составила~92,6\% для SARIMA и~29,3\% для HMM, 
+а~доля обнаруженных неисправностей составила~43,2\% для \mbox{SARIMA} 
+и~69,1\% для HMM. На наборе {LUCE} средняя доля обнаруженных 
+случайных аномалий составила~89,2\% для \mbox{SARIMA} и~32,7\% для HMM, 
+а~доля обнаруженных неисправностей составила~40,1\% для SARIMA 
+и~71,9\% для HMM. Доля ложных срабатываний при этом не превышает~2\% 
+от общего числа измерений.
+      
+      В работе~\cite{8-st} метод SARIMA был применен к~тем же наборам 
+данных, но моделирование аномалий проводилось иначе. Кроме того, 
+параметры модели SARIMA использовались фиксированные: $\langle 0, 1, 1, 0, 
+1, 1\rangle$. Результаты на случайных аномалиях оказались схожими~--- 
+более~96\% ARIMA (других сравнимых типов аномалий в~этой работе не 
+было).
+    
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-st}
+\Au{Kovalev D., Shanin I., Stupnikov~S., Zakharov~V.} Data mining methods and techniques for 
+fault detection and predictive maintenance in housing and utility infrastructure~// Conference 
+(International) on Engineering Technologies and Computer Science.~--- IEEE, 2018.
+doi: 10.1109/EnT.2018.00016.
+\bibitem{2-st}
+\Au{Box G.\,E.\,P., Jenkins G.\,M., Reinsen~G.\,C., Ljung~G.\,M.} Time series analysis: 
+Forecasting and control.~--- 5th ed.~--- Wiley, 2015. 712~p.
+\bibitem{3-st}
+\Au{Cleveland R.\,B., Cleveland~W.\,S., McRae~J.\,E., Terpenning~I.} STL: A~seasonal-trend 
+decomposition~// J.~Off. Stat., 1990. Vol.~6. Iss.~1. P.~3--73.
+\bibitem{4-st}
+\Au{Bengio Y., Frasconi~P.} An input output HMM architecture~//
+NIPS Proceedings.~--- MIT Press, 1995. P.~427--434.
+
+\bibitem{5-st}
+\Au{Rabiner L.\,R.} A~tutorial on hidden Markov models and selected applications in speech 
+recognition~// Readings in speech recognition~/
+Eds. A.~Waibel, K.-F.~Lee.~--- San Francisco, CA, USA:
+Morgan Kaufmann, 1990. P.~267--296.
+\bibitem{6-st}
+\Au{Bodik P., Hong~W., Guestrin~C., Madden~S., Paskin~M., Thibaux~R.} Intel Lab Data. Intel 
+Berkeley Research lab, 2004. {\sf http://db.csail.mit.edu/labdata/labdata.html}.
+\bibitem{7-st}
+Sensorscope: Sensor networks for environmental monitoring. Lausanne Urban Canopy Experiment 
+(LUCE).~--- EPFL, 2006. {\sf https://lcav.epfl.ch/page-145180-en.html}.
+\bibitem{8-st}
+\Au{Sharma A.\,B., Golubchik~L., Govindan~R.} Sensor faults: Detection methods and prevalence 
+in real-world datasets~// ACM Trans. Sens. Netw., 2010. Vol.~6. Iss.~3. 
+P.~23. 
+\bibitem{9-st}
+\Au{Baljak V., Tei~K., Honiden~S.} Fault classification and model learning from sensory 
+Readings~---
+Framework for fault tolerance in wireless sensor networks~// 
+8th Conference (International) on 
+Intelligent Sensors, 
+Sensor Networks and Information Processing.~--- IEEE, 
+2013. P.~408--413.
+{\looseness=1
+
+}
+\bibitem{10-st}
+\Au{De Bruijn B., Nguyen~T.\,A., Bucur~D., Tei~K.} Benchmark datasets for fault detection and 
+classification in sensor data~// 5th Conference (International) on Sensor Networks  
+Proceedings.~--- SCITEPRESS, 2016. P.~185--195.
+\bibitem{11-st}
+\Au{De Bruijn B., Nguyen T.\,A., Bucur~D., Tei~K.} Benchmark datasets for fault detection and 
+classification in sensor data, 2015. {\sf http://tuananh.io/datasets}.
+\bibitem{12-st}
+\Au{Warriach E.\,U., Aiello~M., Tei~K.} A~machine learning approach for identifying and 
+classifying faults in wireless sensor network~// 
+ 15th Conference (International) on
+Computational Science and Engineering.~--- IEEE, 2012. P.~618--625.
+
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 15.07.18}}
+
+%\vspace*{6pt}
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+
+\def\tit{METHODS AND TOOLS FOR~FAULT DETECTION 
+ON~ELEMENTS OF~HOUSING AND~UTILITY INFRASTRUCTURE}
+
+
+\def\titkol{Methods and tools for~fault detection on~elements of~housing and~utility 
+infrastructure}
+
+\def\aut{I.\,A.~Shanin, S.\,A.~Stupnikov, and~V.\,N.~Zakharov}
+
+\def\autkol{I.\,A.~Shanin, S.\,A.~Stupnikov, and~V.\,N.~Zakharov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+\noindent
+Institute of Informatics Problems, Federal Research Center ``Computer Science 
+and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 
+119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{5pt}
+      
+      
+      
+      \Abste{The work belongs to the area of development of specific 
+      information systems based on the Internet of Things technology. 
+      An approach for program implementation of a~module intended for detection 
+      of faults on elements of housing and utility infrastructure is proposed. 
+      The module is considered as a~part of an information system aimed at 
+      technical maintenance of mentioned elements: condition monitoring, 
+      predictive maintenance, fault detection, and reporting. 
+      Operation algorithms of module components are described: building 
+      of operation models for housing and utility infrastructure elements and 
+      fault detection. The approach is applied on 
+      a~couple of datasets for fault detection, experimental results are presented.}
+      
+      \KWE{Internet of Things; data analysis; fault detection; 
+      housing and utility infrastructure}
+      
+      
+      
+      
+\DOI{10.14357/19922264180310} %
+
+%\vspace*{-14pt}
+
+\Ack
+      \noindent
+      The research is supported by Ministry of Education and Science of the 
+Russian Federation (project's unique identifier RFMEFI60717X0176).
+
+
+
+\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-st-1}
+\Aue{Kovalev, D., I.~Shanin, S.~Stupnikov, and V.~Zakharov.} 2018. Data mining 
+methods and techniques for fault detection and predictive maintenance in housing and utility 
+infrastructure. \textit{Conference (International) on Engineering Technologies and Computer 
+Science}. IEEE. doi: 10.1109/EnT.2018.00016.
+\vspace*{2pt}
+
+\bibitem{2-st-1}
+\Aue{Box, G.\,E.\,P., G.\,M.~Jenkins, G.\,C.~Reinsen, and G.\,M.~Ljung.} 2015. 
+\textit{Time 
+series analysis: Forecasting and control.} 5th ed. Wiley. 712~p.
+\vspace*{2pt}
+
+\bibitem{3-st-1}
+\Aue{Cleveland, R.\,B., W.\,S.~Cleveland, J.\,E.~McRae, and I.~Terpenning.} 1990. STL: 
+A~seasonal-trend decomposition. \textit{J.~Off. Stat.} 6(1):3--73.
+\vspace*{2pt}
+
+\bibitem{4-st-1}
+\Aue{Bengio, Y., and P.~Frasconi.} 1995. An input output HMM architecture. 
+\textit{NIPS Proceedings}. MIT Press. 427--434.
+\vspace*{2pt}
+
+\bibitem{5-st-1}
+\Aue{Rabiner, L.\,R.} 2004. A~tutorial on hidden Markov models and selected applications in 
+speech recognition. \textit{Readings in speech recognition}. 
+Eds. A.~Waibel and K.-F.~Lee. San Francisco, CA: Morgan Kaufmann. 267--296.
+\vspace*{2pt}
+
+\bibitem{6-st-1}
+\Aue{Bodik, P., W.~Hong, C.~Guestrin, S.~Madden, M.~Paskin, and R.~Thibaux.} 2004. Intel Lab 
+Data. Intel Berkeley Research lab. Available at: 
+{\sf http://db.csail.mit.edu/\linebreak labdata/labdata.html} 
+(accessed July~16, 2018).
+\bibitem{7-st-1}
+Sensorscope. 2006. Sensorscope: Sensor networks for environmental monitoring. Lausanne Urban 
+Canopy Experiment (LUCE). EPFL. Available at: {\sf  
+https://lcav. epfl.ch/page-145180-en.html} (accessed July~16, 2018).
+\vspace*{2pt}
+
+\bibitem{8-st-1}
+\Aue{Sharma, A.\,B., L.~Golubchik, and R.~Govindan.} 2010. Sensor faults: Detection methods 
+and prevalence in real-world datasets. \textit{ACM Trans. Sens. Netw.} 
+6(3):23. 
+\vspace*{2pt}
+
+\bibitem{10-st-1} %9
+\Aue{Baljak, V., K.~Tei, and S.~Honiden.} 2013. Fault classification and model learning from 
+sensory Readings~--- Framework for fault tolerance in wireless sensor networks. 
+\textit{8th Conference 
+(International) on Intelligent Sensors, Sensor Networks and Information Processing.} 
+IEEE. 408--413.
+\vspace*{2pt}
+
+\bibitem{9-st-1} %10
+\Aue{De Bruijn, B., T.\,A.~Nguyen, D.~Bucur, and K.~Tei.} 2016. Benchmark datasets for fault 
+detection and classification in sensor data. \textit{5th Conference (International) on Sensor 
+Networks Proceedings}. SCITEPRESS. 185--195.
+\vspace*{2pt}
+
+\bibitem{11-st-1}
+\Aue{De Bruijn, B., T.\,A.~Nguyen, D.~Bucur, and K.~Tei.} 2015. Benchmark datasets for fault 
+detection and classification in sensor data. Available at: {\sf http://tuananh.io/datasets/} (accessed 
+July~16, 2018).
+\vspace*{2pt}
+
+\bibitem{12-st-1}
+\Aue{Warriach, E.\,U., M.~Aiello, and K.~Tei.} 2012. A machine learning approach for identifying 
+and classifying faults in wireless sensor network. 
+\textit{15th Conference (International) on Computational Science and Engineering}. 
+ IEEE. 618--625.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+%\vspace*{-6pt}
+
+\hfill{\small\textit{Received July 15, 2018}}
+
+\pagebreak
+
+%\vspace*{-18pt}
+      
+      \Contr
+      
+      \noindent
+      \textbf{Shanin Ivan A.} (b.\ 1991)~--- junior scientist, Institute of Informatics 
+Problems, Federal Research Center ``Computer Science and Control'' of the Russian 
+Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{v08shanin@gmail.com}
+
+\vspace*{5pt}
+      
+      \noindent
+      \textbf{Stupnikov Sergey A.} (b.\ 1978)~--- Candidate of Science (PhD) in 
+technology,, senior scientist, Institute of Informatics Problems, Federal Research 
+Center ``Computer Science and Control'' of the Russian Academy of Sciences,  
+44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{sstupnikov@ipiran.ru}
+
+\vspace*{5pt}
+      
+      \noindent
+      \textbf{Zakharov Victor N.} (b.\ 1948)~--- Doctor of Science in technology, 
+associate professor; Scientific Secretary, Federal Research Center ``Computer 
+Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., 
+Moscow 119333, Russian Federation; \mbox{vzakharov@ipiran.ru}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}       

@@ -1,0 +1,1107 @@
+\renewcommand{\figurename}{\protect\bf Figure}
+\renewcommand{\tablename}{\protect\bf Table}
+\renewcommand{\bibname}{\protect\rmfamily References}
+
+
+
+\def\stat{fr}
+
+\def\tit{SEMIFORMAL VERIFICATION FOR~PIPELINED DIGITAL DESIGNS BASED 
+ON~ALGORITHMIC STATE MACHINES$^*$}
+
+\def\titkol{Semiformal verification for pipelined digital designs based on 
+Algorithmic State Machines}
+
+\def\autkol{S.~Baranov, S.~Frenkel, and~V.~Zakharov}
+\def\aut{S.~Baranov$^1$, S.~Frenkel$^2$, and~V.~Zakharov$^3$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}}\footnotetext[1]
+{The research was partially supported by RFBR (project No.\,09-07-12032) and RAS Presidium program 
+``Fundamental Problems of the System Programming (project~1.1).''}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Holon Institute of Technology,Holon, Israel, samary@012.net.il}
+\footnotetext[2]{Institute of Informatics Problems RAS, fsergei@mail.ru}
+\footnotetext[3]{Institute of Informatics Problems RAS, VZakharov@ipiran.ru}
+
+\Abste{The method and tools  to use Algorithmic State Machine (ASM) 
+formalism for high-level specification of  complex digital designs and their 
+Model-Checking-based verification are described. This methodology is based on the possibility of hierarchical 
+description of the target digital designs at  algorithmic level of abstraction, and ability 
+to  generate finite state machines (FSM) models of the systems from the ASM flowcharts. 
+The software tool was developed for automatic generation of SMV (Symbolic Modes Verifier) 
+codes  from the ASMs and corresponding FSMs. A way of this approach application to design 
+verification is demonstrated for a pipelined microprocessor.}
+
+\KWE{formal verification; Model Checking; finite state machines}
+
+       \vskip 14pt plus 9pt minus 6pt
+
+      \thispagestyle{headings}
+
+      \begin{multicols}{2}
+
+      \label{st\stat}
+
+
+\section{Introduction}
+
+\noindent
+Standards for safety and security increasingly demand the use of formal development 
+methods and automated verification. To apply the formal methods in a systematic way, the nature 
+of the system has to be taken into account. For example, one of the key optimizations used in 
+hardware systems is pipelining, the idea being that the functionality of a system is partitioned into 
+several stages, which can work in parallel resulting in an increase in the throughput of the 
+pipelined implementation of the system.  
+       
+       Existing techniques for verifying of pipelined machines, models that describe the 
+pipelined behavior of hardware systems, effort and resources, paired with the cost of software 
+tools supporting this task lead to an activity that is mostly ad-hoc, labor intensive, and accessible 
+only to a few verification specialists (with PhD degree, usually) within a design team. 
+       
+In the past few decades, much research has been dedicated to improving the quality and the 
+effectiveness of verification algorithms, Model Checking, first of all~[1]. However, much less 
+effort has been devoted to support team activity in the design in order to reduce the efforts 
+mentioned above.  
+       
+       In this paper, which is a continuation of the authors' work~\cite{11fr} a possibility 
+to use ASM~\cite{4fr} as a semiformal specification of pipelined 
+systems is shown, which can provide essential economy of human resources in the design verification 
+process. This semiformality is based on Model Checking with support by well-known SMV 
+(Symbolic Model Verifier) Cadence tool.       
+ 
+\section{Verification Techniques}
+       
+\noindent
+Key point for designers involved in the activity of design verification is to choose   
+appropriate verification algorithms to verify a design relatively properties, which would guarantee 
+the lack of well-known possible hazards in systems. Finally, these problems are affecting the state 
+space explosion problem.  
+       
+       Among the techniques and methodologies available for functional verification, 
+simulation-based verification is prevalent in the industry because of its linear and predictable 
+complexity~\cite{2fr}. The common methodology in this context is \textit{random simulation}, 
+where stimuli are provided by a constraint-based random generator. Such generators can 
+automatically produce random legal input for the design at a very high rate, based on a set of 
+rules (or constraints) derived from the specification document. In random simulation, bugs are 
+detected by means of assertion statements, or checkers, embedded in the design. However, 
+because of the randomized nature of this methodology, simulations cannot provide guarantees on 
+the worst case behavior of a given system as they try to generalize the behavior of the system 
+from a few observed test cases.
+       
+       Besides, real-life Systems-on-Chip (SoCs) are usually highly nondeterministic; therefore, 
+they cannot be efficiently verified by simulations. 
+    
+To overcome the limitations of simulation, the industry is starting to use formal and semiformal 
+methods~\cite{1fr, 2fr, 3fr}, often in conjunction with simulation-based techniques. Verification 
+approaches based on formal methods essentially provide a mathematical proof of correctness for 
+the system and are therefore very exhaustive. For example, Intel's used of formal verification on a 
+large-scale was during the Pentium~4 design cycle and consisted of about 60~person 
+years~\cite{3fr}. Formal methods were used to verify that the design satisfied various properties 
+describing the expected behavior of the microprocessor and, to date, no bugs have been 
+discovered in the parts of the design that were formally verified.
+
+Further, only formal and semiformal approaches will be shortly outlined
+as a principal topic of this  paper.
+   
+\subsection{Formal verification summary} %2.1
+       
+\noindent
+Let us consider the most popular formal verification algorithm via Model Checking~[1].
+In general, a \textit{model checking problem} is a problem of checking whether a given model, 
+describing a design verified, satisfies a given property:
+$$
+M\models \phi
+$$
+ which means that a property~$\phi$ is satisfied for the model~$M$. The properties are expressed in 
+terms of ``atomic propositions'' (i.\,e., variables in the design), Boolean connectives (AND, OR, 
+NOT, IMPLY, etc.), and so-called ``Temporal operators.''
+
+The model~$M$ is a \textit{finite state transition system}, and its properties which must be true for 
+an \textit{implementation} of the system at the lower level of the system design (e.\,g., by a 
+\textit{structural} FSM, that is, with binary coding of its inputs, states, outputs~\cite{1fr}) are expressed 
+in a \textit{propositional temporal logic} like \textit{Linear temporal logic} (LTL) and 
+\textit{Computational Tree Logic} (CTL)~[1]. Linear temporal logic is a temporal logic which can describe logical 
+formulae about the future of paths such as that a condition will eventually be true, that a condition 
+will be true until another fact becomes true. Computational tree logic is a branching-time logic, meaning that its 
+model of time is a tree-like structure in which the future is not determined. That is, there are 
+different paths in the future, any one of which might be an actual path. 
+
+\textbf{Temporal Operators:}
+\begin{itemize}
+\item
+\textbf{X}$p$ ``Formula~$p$ holds next time;''
+\item
+\textbf{F}$p$ ``Formula~$p$ holds sometime in the future;''
+\item
+\textbf{G}$p$ ``Formula~$p$ holds globally in the future;''
+\item
+$p$ \textbf{U}$q$ ``Formula~$p$ holds until~$q$ holds;''
+\item
+$p$ \textbf{R} $q$ ``Formula~$q$ is released when Formula~$p$ becomes false.''
+\end{itemize}
+
+Temporal connectives according to their character can occur as single symbols such as~$X$, $F$, $G$, $U$ 
+(linear time temporal logic LTL) or as a pair of symbols where each symbol of $X$, $F$, $G$, $U$  must 
+be preceded by path quantifiers an~$A$ or an~$E$ (branching time temporal logic CTL), similar to well-known quantifiers of predicate calculus, that is $\forall$ 
+(``All quantor'') and $\exists$ (``Existense quantor''). Quantifier $A\langle$PF$\rangle$ means 
+that for all paths leading from the current state, the path formula PF holds. For example, $AXg$ 
+means that state formula~$g$ is true in the next state of all paths leading from the current state. 
+E$\langle$PF$\rangle$ means that for some of the paths leading from the current state, the path 
+formula PF holds. For example, EF$g$ means that there exists a possible timeline where the 
+formula (``statement'')~$g$ will eventually become true.
+
+Various temporal operators allow us to relate properties of the current state of a given digital 
+system model with the properties of succeeding states of the model. 
+
+Both CTL and LTL are interpreted at the states of a \textit{transition system, which constitute 
+different  paths} $s0$,\linebreak $s1$, \ldots  
+ 
+By this mean, a design is modeled as a state transition graph, called a \textit{Kripke 
+structure}~[1], which is a four-tuple model $K =(S, S_0, R, L)$. $S$ is a finite set of 
+states. $S_0$ is a set of initial states, where $S_0\in S$, $R:\ S\times S$ is a transition relation 
+between states, where for every state $s\in S$, there is a state $s'\in S$ such that for the state 
+transition $(s, s')\in R$, $L:\ S\subseteq 2^{\mathrm{AP}}$ is the labeling function to mark each state with a set 
+of atomic propositions (AP) that hold in that state. It is basically a graph whose nodes represent 
+the reachable states of the system and whose edges represent state transitions. A~labeling 
+function is used to assign a set of properties to each state.
+
+If the transition system is described as a FSM, as a Mealy automaton~$M$, in 
+particular, $M=\langle S, I, O, \delta, \lambda\rangle$, 
+where~$S$ and~$I$ are the state space and the input space; $O$ is the output space, $\delta$ is the state 
+transition function, and $\lambda$ is the output function, then the Kripke structure, corresponding 
+to the FSM $M$ can be described as following~\cite{12fr}:
+\begin{equation}
+\left.
+\begin{array}{c}
+ (\langle s, i\rangle,\langle s', i'\rangle)\in R\  
+\mbox{iff}\ \delta (s,i)=s'\,;\\[6pt]
+ L(\langle s,i\rangle )= S\cup i\cup \lambda (s,i)       
+\end{array}
+\right \}
+\label{e1fr}
+\end{equation}
+for any $s$, $s' \in  S$ and any~$i$, $i'\in  I$.
+
+
+
+In terms of the structure, the properties of a target system can be expressed as propositional 
+temporal logic that describes sequences of transitions on the computation paths of expected 
+design behavior.  
+
+For example, the modulo-3 counter in Fig.~1 with input $I =\{\mathrm{rst}\}$ 
+(corresponding to \textit{reset} signal with active logical value~1), state space $S=\{S0, S1, S2\}$  
+is translated to the Kripke structure shown in Fig.~2. Here, each transition~$\delta(s, i) 
+\rightarrow s'$ in the FSM corresponds to a node $\langle s_k, i \rangle$, $k=0, 1, 2$; $i \in I$ in the 
+Kripke structure one-by-one. $\{S00,S10,S20,S01,S11,S21\}$ is a list of transitions of the Kripke 
+structure. For example, $S10$ in the Kripke structure represents the transition from~$S1$ to~$S2$ in the 
+FSM. The structural automaton that is an implementation of this abstract one (see above) can be\linebreak\vspace*{-12pt}
+\pagebreak
+
+\begin{center} %fig1
+%\vspace*{6pt}
+\mbox{%
+\epsfxsize=79.49mm
+\epsfbox{bar-1.eps}
+}
+\end{center}
+\vspace*{4pt}
+\begin{center}
+{{\figurename~1}\ \ \small{Automaton Mealy of modulo-3 counter}}
+\end{center}
+%\vspace*{9pt}
+
+%\bigskip
+\addtocounter{figure}{1}
+
+\begin{center} %fig2
+\vspace*{6pt}
+\mbox{%
+\epsfxsize=79.49mm
+\epsfbox{bar-2.eps}
+}
+\end{center}
+\vspace*{4pt}
+\begin{center}
+{{\figurename~2}\ \ \small{Modulo-3 counter Kripke structure}}
+\end{center}
+%\vspace*{9pt}
+
+\bigskip
+\addtocounter{figure}{1}
+
+
+
+\noindent
+performed by coding of its states by vector of logical values of the counter bits $\{\mathrm{bit}[0], 
+\mathrm{bit}[1]\}$,  initial state $S_0=S0$ (with the vector $\{\mathrm{bit}[0]=\mathrm{bit}[1]=0\}$, state transition function 
+$\delta$ is represented on the transition diagram in Fig.~1. The variable~$cnt$ in  
+Fig.~1 is the number of clocks (\textit{step of the FSM transition}). 
+
+Correspondingly, there are the following atomic propositions in this case:
+\begin{align*}
+&\{p1:(\mathrm{cnt}=0\&\mathrm{rst}=1) \rightarrow S01\}\,;\\
+&\{p2: (\mathrm{cnt}=1\&\mathrm{rst}=1\rightarrow S11)\}\,;\\
+&\{p3: (\mathrm{cnt}=2\&\mathrm{rst}=1\rightarrow S21)\}\,;\\
+& \mbox{etc.}\ (\mbox{total up to $p$6})\,. 
+\end{align*}
+
+In fact, the Kripke structure nodes constitute global states of the state space of the design and 
+contain all the propositional atoms, which are true in that particular state. The edges of the graph 
+are oriented global state transitions.
+
+Having this structure,  desirable properties of the FSM implementation can be described. For 
+example, if  CTL is used
+\begin{multline*}
+\mathrm{AG}\ ((\mathrm{bit}[0]=0)\&(\mathrm{bit}[1]=0)\&(\mathrm{rst}=0)) \supset{}\\
+{}\supset\mathrm{AX}\ ((\mathrm{bit}[0]=1)\&(\mathrm{bit}[1] =0))
+\end{multline*}
+which means that designed correctly counter with the states encoded as above must transit from 
+the state $\{\mathrm{bit}[0]=0,\ \mathrm{bit}[1]=0\}$ to $\{\mathrm{bit}[0]=1,\ \mathrm{bit}[1]=0\}$, 
+if there is no reset signal.
+
+So, the Model-Checking-based formal verification is performed as following: Given a formal 
+model $M = (S, S0, R, L)$ of a design and a propositional temporal logic~$p$ of a 
+property, the model checking problem is to find the set of all states in~$S$ that satisfy~$p$, $\{s \in 
+S \vert M, s \vert= p\}$. The design satisfies the property if all initial states are in the set. If the 
+property does not hold for the design, error trace from the error state to an initial state is given as 
+a counterexample that helps designers debug the error. 
+       
+       To achieve 100~percent confidence of correctness of the design, the specification should 
+include all the properties that the design should satisfy. 
+
+In general, hardware verification involves comparing two descriptions of a design for 
+``consistency.'' This requires ($i$)~the two descriptions; ($ii$)~formal models for each (since these 
+may or may not be the same); ($iii$)~a formal notion of the ``consistency'' relation between them; and
+($i\nu$)~some way of checking or proving the consistency relation. Such a proof does not need 
+necessarily directly resemble a ``traditional'' logic proof (e.\,g., it may simply be a 
+mechanical enumeration of all possibilities). 
+
+\subsection{Semiformal verification} %2.2
+
+\noindent
+Pure formal verification techniques, such as symbolic simulation, bounded model checking 
+(BMC) or reachability analysis~\cite{1fr, 3fr}, would be ideal to generate verification solutions. 
+Unfortunately, they do not scale well and can only be applied to very small designs. 
+   
+   This problem leads to the concept of semiformal verification~\cite{3fr}. The idea is to 
+combine the strengths of simulation, namely, ease of use and the ability to handle large designs 
+with the thoroughness of formal verification along with various combinations of formal and 
+simulation-based approaches to verification cost reduction. 
+   
+   In fact, there are two possibilities to perform such combination:
+   \begin{enumerate}[(1)]
+\item a ``mechanical'' combination of the verification techniques: part of design is verified by 
+simulation, while another by a formal method; and
+\item  by using both formal and informal specifications.  
+\end{enumerate}
+
+   Thus, in very general sense, Model-Checking-based semiformal verification can deal either 
+with formal test examples generation with an informal results analysis, or with formal generation 
+counterexamples using some results of informal simulation~\cite{8fr}, or in using of a 
+description with well-formalized syntax as an input of simulation. An example of the first 
+approach is BMC~\cite{3fr}, which is a semiformal one as it includes a 
+choice of a trajectory length~$k$.
+   
+   Note that the lack of precise semantics for modeling notations may lead to incorrect 
+interpretations and misunderstands for models. So, the interpretations of model's designer may 
+differ from model's reader. The lack of formal semantics results in the lack of analysis tools that 
+check the consistency of the resulting models and their satisfaction to their properties. Below, 
+it will be shown that using of ASM flowcharts as description is a good point of the semiformal verification 
+as it allows, on one hand, formal description and, on the other hand, a combination of formal 
+model checking and informal simulation.
+     
+\section{Pipelined Microprocessor Model-Checking-Based Verification}
+
+\noindent
+There are a lot of papers on verifying pipelined processors (systems) with 
+Model-Checking-based formal methods~[8, 9]. Using Model Checking, one achieves an essential 
+amount of automation but one suffers from the state explosion problem when the number of 
+properties checked grows. 
+       
+       In general, the properties verified have to meet to the lack of the following hazards:
+       \begin{itemize}
+\item[$\bullet$] \textbf{Data Hazard}~--- occurs when data needed by instruction is not yet 
+available because it needs to be calculated by another instruction;
+\item[$\bullet$] \textbf{Structural Hazard}~--- occurs when there is a conflict over a 
+common resource between several pipeline stages, e.\,g., conflict over the basic registers and 
+operand memory address buses; and
+\item[$\bullet$] \textbf{Control Hazard}~--- hazard caused by flow control. When the 
+processor needs to execute conditional branch, it cannot continue execution till a message 
+whether it needs to take the branch and to where it should be jumped (or make a guess and 
+purge the pipeline if the guess is wrong). Various methods were developed to deal with 
+control hazards with varying success.
+\end{itemize}
+
+It is obvious that plethora of such possible conditions leads to enormous the Model-Checking 
+exploration space.
+
+One of the ways which could help by reducing the state space is to use so-called abstractions, 
+refinement technique, and compositions~\cite{1fr, 3fr}.
+
+In general, an abstraction is used to build from a model~$M$ an abstract model~$M^\prime$ such 
+that
+$$
+M^\prime =\!\!\!\vert\varphi \ \mbox{implies}\  M =\!\!\!\vert\varphi
+$$
+where $\varphi$ is an CTL /LTL specification formula.
+
+
+Intuitively speaking, existent abstraction allows partitioning the states of a Kripke structure into 
+some states\linebreak\vspace*{-12pt}
+\begin{center} %fig3
+\vspace*{-6pt}
+\mbox{%
+\epsfxsize=77.743mm
+\epsfbox{bar-3.eps}
+}
+\end{center}
+\vspace*{-6pt}
+\begin{center}
+{{\figurename~3}\ \ \small{An abstraction $M\rightarrow M^\prime$}}
+\end{center}
+%\vspace*{9pt}
+
+\bigskip
+\addtocounter{figure}{1}
+
+\noindent
+ agglomerations (or clusters), and treating the clusters as new abstract states. That is, 
+the model~$M^\prime$ contains states set~$S'$ which is a surjection~$f$: $S\rightarrow  S'$, 
+and $S'$ in this case is the set of abstract states~\cite{1fr}.
+
+For example, in Fig.~3, $S_a=S2\cup S3$.
+
+From the practical point of view, the main difficulty is that there may be variables in the model 
+with large or unbounded ranges (such as memory addresses) and arrays with large or unbounded 
+number of elements (such as memory arrays). These difficulties can be overcome by using 
+abstract interpretation to reduce each data type to a small number of abstract values~\cite{13fr}. 
+For example, suppose that one has a property with a parameter~$i$ ranging over memory addresses. 
+The type~$A$ of memory addresses is reduced to a set containing two values: parameter value~$i$, 
+and symbol~$A/i$ representing all values other than~$i$. In the abstract interpretation, accessing 
+an array at location~$i$ will produce the value of that location, whereas accessing the array 
+at~$A/i$ will produce a symbol representing an unknown value~\cite{1fr}.
+
+Obviously that use of these abstractions deals with a lot of manual work in order to bridge the 
+gap in abstraction level between the implementation and the specification. The ``specification'' is 
+a description of the design at more abstract level, say, as the instruction set architecture 
+(ISA)~\cite{13fr}, ASM, etc. As the SMV Model checking is considered as the basis of 
+formal verification, let us outline the possibilities of reducing SMV models by the abstractions.     
+
+       \begin{figure*} %fig4
+       \vspace*{1pt}
+\begin{center}
+\mbox{%
+\epsfxsize=166mm
+\epsfbox{bar-4.eps}
+}
+\end{center}
+\vspace*{-6pt}
+       \Caption{Example of an ASM:  (\textit{a})~bubble sort processor; and (\textit{b})~DMACycle
+       \label{f4fr}}
+       \vspace*{-2pt}
+       \end{figure*}
+
+\section{Specification Based on~Algorithmic State Machine}
+
+\noindent
+Let us consider the ASM description as a specification of a digital design. 
+
+\subsection{Algorithmic State Machines} %4.1.
+   
+\noindent
+Algorithmic state machine is a directed connected graph (Fig.~\ref{f4fr}\textit{a}) containing an initial vertex 
+(Begin), a final vertex (End), a finite set of operators (microinstructions) and 
+conditional vertices  (rhombuses)~\cite{4fr}. Operators and conditional vertices have only one 
+input; the initial vertex has no input. The initial vertex and operators have only one output; a 
+conditional vertex has two outputs marked by ``1'' and ``0.'' The final vertex has no outputs. 
+Each operator is, in fact, a microinstruction, and it includes some body consisting of 
+   so-called microoperations. These microinstructions correspond to the instruction set 
+architecture ISA mentioned above. 
+   
+   Execution of each operator vertex takes exactly one clock cycle, in accordance with true 
+values of the Boolean variables  in the rhombuses. For example, in Fig.~\ref{f4fr}\textit{a}, 
+the variables~$s$, dma, and done are the Boolean ones, which can be marked, say, as $x_1$, 
+$x_2$, and~$x_3$.
+       
+       
+       The gray vertexes are the nested ASMs corresponding to pieces of the target design 
+algorithm (see below).  
+       
+The ASM-based design methodology is implemented in ABELITE software tool~\cite{5fr}, 
+which, in particular, generates from ASM a Mealy automaton which is used in a Control Unit 
+design(synthesis), describing the sequence of the microinstruction executions and represented in 
+the form
+
+\vspace*{2pt}
+
+\noindent
+\begin{equation}
+\{a_m, a_s , f_{ms}(x_{i1}, \ldots , x_{ik}),Y\}
+\label{e2fr}
+\end{equation}
+where $a_m$ and $a_s$ are the current and the next states of the automaton, and the transitions 
+$a_m\rightarrow a_s$ corresponding to execution of microoperations in the vertexes (see Table~1 
+and some explanations after as well) labeled as components $Y_j$ of a vector~Y (index~$j$ 
+ranged as number of the vertexes ($j=1, \ldots 5$ for ASM in Fig.~\ref{f4fr}\textit{a})), which 
+are considered as the automaton output variables constituted by set of the microoperations 
+(labeled by ABELITE as $y_k$,\linebreak\vspace*{-12pt}
+
+%\begin{center} %tabl1
+%\noindent
+\begin{center}
+\vspace*{2pt}
+\parbox{50mm}{{\tablename~1}\ \ \small{Finite-state machine built from  ASM flowchart}}
+\end{center}
+\vspace*{2pt}
+
+{\small \begin{center}
+\tabcolsep=8pt
+\begin{tabular}{cccc}
+\hline
+$ a_m$&$a_s$&$X(a_m,a_s)$&$Y$\\
+\hline
+$a_1$&$a_1$&$x_1x_2$&$y_1$\\
+$a_1$&$a_3$&$x_1\sim x_2$&$y_5y_6$\\
+$a_1$&$a_1$&$\sim x_1$&---\\
+$a_2$&$a_3$&1&$y_3$\\
+$a_3$&$a_4$&1&$y_4$\\
+$a_4$ &$a_1$&$x_3$&---\\
+$a_4$&$a_2$&$\sim x_3$&$y_2$\\
+\hline
+\end{tabular}
+\end{center}
+}
+%\vspace*{6pt}
+
+
+\bigskip
+\addtocounter{table}{1}
+
+\noindent
+ $k$ \textit{are the indexes of the microoperations in the vertex}) 
+\textit{executed in the given vertex}. These transitions are performed on the automaton inputs 
+(column~$X(a_m,a_s)$ in Table~1) in accordance with conjunction of all Boolean 
+variables $x_{i1}, \ldots , x_{ik}$, in the conditional vertexes (rhombuses), where~$i$ \textit{marks 
+a~path} between some rectangles (operational vertex). These variables in the 
+column~$X(a_m,a_s)$ are ordered (with one index) by ABELITE as in the field 
+``\textit{Logical Conditions}'' of the following structure:   
+          \begin{equation}
+          \left.
+          \begin{array}{l}
+ \mathrm{Microinstructions}:\ \langle Y_j =\{y_1, y_2,\ldots ,y_k\}\rangle\\[6pt]
+ \mathrm{Microoperations}:\ \langle y_j\;:\;\mathrm{Op}_j\rangle \\[6pt]
+ \mathrm{Logical\ Conditions}:\ \langle x_i\;:\;R_v^i\rangle
+\end{array}
+\right \}
+\label{e3fr}
+\end{equation}
+where Op$_j$ are the signatures of microoperations mentioned above (see below the detailed 
+description of Fig.~\ref{f4fr}), whereas in the set of strings ``Logical Conditions'' 
+symbols~$x_i$ are Boolean variables (where indexes are ranged in accordance with number of 
+rhombus labels in a given ASM flowchart, 1--3 in Fig.~\ref{f4fr}\textit{a}) referring the 
+rhombuses, which correspond to some control variables~$R_v^i$ used in the target systems. 
+            
+
+Column $Y(a_m,a_s)$ contains the $Y_j =\{y_1,y_2,\ldots$\linebreak $\ldots ,y_{kj}\}$ mentioned above.
+
+
+
+For example, the ASM in Fig.~\ref{f4fr}\textit{a} represents an algorithm of the bubble sort 
+processor. Figure~\ref{f4fr}\textit{b} is
+a detailization of one of its gray vertexes, the DMACycle 
+(Direct Memory Access) block. Direct Memory Access is the special mode that does not execute an operation but 
+connects its memory with the outside storage device to read or write information; ext\_rdwr is 
+the signal from outside. When ext\_rdwr\;=\;1, external system writes information to memory 
+from its output ext\_out. When ext\_rdwr\;=\;0, external system reads information from 
+memory to its input ext\_in. 
+       
+       Recall that the transition table of the automata Mealy (FSM) obtained from the ASM of 
+Fig.~\ref{f4fr}\textit{a} (without any gray blocks translation) is represented in 
+Table~1. The table represents the FSM behavior in well-known \textit{cubic} form, that 
+is, each vector of the third column may contain free components (which do not affect the output 
+values). For example, one can say that the second row of Table~1 presents transitions 
+from $a_1$ with any vector which is covered by cube~$10x$. Here, the states marking (generated 
+by ABELITE) can be easily seen from the Microinstruction/Microoperations structure. For 
+example, transition to the state $a_3$ corresponds to execution of microinstruction (vertex) 
+{$i:=0$, $\mathrm{done}\;=\;0$}.
+
+Note that state $a_1$ is assigned to vertexes ``Begin'' and ``End'' (this assignment deals with some 
+logical synthesis issues, see~[3].  One can look at the condition~$s$ as a signal from the 
+button Start-Stop; so, the instruction will be executed only when $s = 1$. There is a
+possibility to transit to state~$a_1$ both from state $a_1$ (after execution of microoperations $i:=0$, 
+$\mathrm{done}:=0$ in the vertex~$Y_5$) and from the state~$a_2$ (after execution of microoperation 
+$i:=i+1$ in the vertex~$Y_3$).
+   
+Structures~(\ref{e3fr}) formed by ABELITE for this example are
+as follows:
+   
+   \smallskip
+   \textbf{Microinstructions:}
+   \smallskip
+   
+   $Y1 = y1$
+   
+   $Y2 = y2$
+   
+   $Y3 = y3$
+   
+   $Y4 = y4$
+   
+   $Y5 = y5\,y6$
+   
+   \smallskip
+   \textbf{Microoperations:}
+   \smallskip
+   
+   $y1  :  \mbox{DMACycle}$
+   
+   $y2  :  \mbox{For2}$
+   
+   $y3  :  i:=i+1$
+   
+   $y4  :  \mathrm{For\_Check}$
+   
+   $y5  :  i:=0$
+   
+   $y6  :  \mathrm{done}:=0$
+   
+   \smallskip
+   \textbf{Logical Conditions:}
+   \smallskip
+   
+   $x1  : s$
+   
+   $x2  : \mathrm{dma}$
+   
+   $x3  : \mathrm{done}$ 
+   
+   \smallskip
+   
+As it can be seen from this example, ABELITE supports the \textit{hierarchical} design 
+style, that is, each of gray vertexes can be included in the automaton either as a 
+microoperation~$Y_j$ or it can be translated with its own ASM (like DMA vertex in 
+Fig.~\ref{f4fr}\textit{b}).     
+       
+\subsection{Decomposition-Based Design}
+
+\noindent
+Decomposition-based design (Fig.~5) means a possibility to get unified model of 
+target system from the models of each individual blocks (both on system high-level and logical 
+level). At the system level, the models are some abstract automata and set of microoperations 
+($y_i$ in the example above).
+                         
+
+
+Since the principal stage of Model checking is the analysis of the Kripke structure (see 
+Section~2), one could use the ASM flowcharts as an input of formal specification if they would 
+have included all information needed for the Kripke structure building. Comparison of 
+formula~(\ref{e1fr}) and structure~(\ref{e2fr}) shows the possibility of this mapping. Example in 
+Table~1 shows all possible transitions from each pair of (input, state) to all reachable 
+states.    
+
+\begin{center} %fig5
+\vspace*{6pt}
+\mbox{%
+\epsfxsize=78.788mm
+\epsfbox{bar-5.eps}
+}
+\end{center}
+\vspace*{-6pt}
+\begin{center}
+{{\figurename~5}\ \ \small{General scheme of hierarchical decompositional design with ABELITE
+where $I_1, \ldots , I_n$  are some ASMs}}
+\end{center}
+\vspace*{6pt}
+
+\bigskip
+\addtocounter{figure}{1}
+
+
+In other words, the Kripke structure, whose state is defined by a collection of state variables, 
+which may be of Boolean or scalar type, can be described by Transitions Table of FSM, 
+generated from the ASM flowchart (like Table~1), as well as by structures ``Microoperation,'' 
+``Microinstruction,'' and ``Logical Condition'' of Section~4 (structure~(\ref{e3fr})).   
+
+Also, ASM enables a convenient way to abstraction description. A possibility to use the 
+ASM-based formalized specification is due to some formal rules, used for ASM flowchart 
+construction~\cite{5fr}:
+\begin{enumerate}[(1)]
+\item state boxes should contain only register statements, control signals in parentheses;
+\item all operations within a state box should be concurrently executable in one clock cycle;
+\item  if the operations in two consecutive state boxes can be executed in the same clock cycle, 
+then these two state boxes can be combined into one state box; and
+\item for each register-transfer statement, there must be a path between the source and 
+destination registers.      
+\end{enumerate}
+       
+       Therefore, it is possible to obtain automatically a Kripke structure from the ASM 
+description, and the ASM description can be used in the Model-checking-based formal 
+verification of the designs. An example of the ASM transformation in SMV code will be done 
+in Section~6.
+
+Below, a methodology of ASM-based semiformal verification, based on the 
+possibility to use ASM as an input of Model Checking,  is considered.
+
+\vspace*{-6pt}
+
+\section{Model Checking Based on~Algorithmic State Machine}
+
+\vspace*{-2pt}
+   
+\noindent
+Let us consider the verification methodology in detail. The design verification scheme is 
+shown in Fig.~6.
+
+   
+   The verification process starts from the informal description (specification) of the target 
+design. The description is manually transformed into ASM flowcharts (see Section~4). The ASM 
+formalism is supported by 
+ABELITE tool~\cite{5fr}, which enables rapidly prototyping 
+hardware systems, performing design space exploration, and simplifying hardware verification. It 
+should be noted that main purpose of ABELITE tool is high-level hardware synthesis using 
+ASM flowchart as an input~\cite{5fr} but this topic is out of the scope of this paper. The ASM 
+flowcharts can be automatically transformed into SMV code, corresponding to microarchitecture (MA)
+level  (see Section~3) using the program ASM2 SMV devel-\linebreak\vspace*{-12pt}
+
+\begin{center} %fig6
+\vspace*{6pt}
+\mbox{%
+\epsfxsize=79.0969mm
+\epsfbox{bar-6.eps}
+}
+\end{center}
+\vspace*{-6pt}
+\begin{center}
+{{\figurename~6}\ \ \small{Semiformal design verification based on ASM}}
+\end{center}
+%\vspace*{9pt}
+
+\bigskip
+\addtocounter{figure}{1}
+
+\noindent
+oped in the Institute of 
+Informatics Problems of the Russian Academy of Sciences (the team of Alexander Kurts and 
+Dmitry Liburkin)~\cite{14fr}. ABELITE output is the automata tables (in the format of 
+structure~(\ref{e2fr}), subsection~4.1~--- see example in Table~1). Some desirable 
+temporal properties on the design are described formally by the CTL language in SMV format. 
+Such properties are supplemented by specification consistency conditions, like absence of hazards 
+and deadlocks between parallel operations. Then, temporal properties are verified by the SMV 
+model checking tool~\cite{6fr}.
+   
+   If the ASM description satisfies all the specified properties, a verification specialist prepares 
+some cycle-accurate specifications of the design (e.\,g., as in~\cite{10fr}) using semiautomated 
+refinement from ASM flowcharts (see Section~3). Finally, the specifications are used for 
+simulation-based verification of the design with some simulation tool.
+
+Before receiving the SMV code, the ASM flowchart can be transformed into a cubic 
+representation of an FSM~\cite{2fr} (formula~(\ref{e1fr}) and structure~(\ref{e2fr})), where 
+variables from conditional vertexes of ASM correspond to FSM input variables, and results of 
+operators correspond to its outputs. 
+   
+   It should be emphasized that during compilation, all generalized operational vertexes 
+(see Section~4) will be included in the overall ASM. Thus, a microinstruction can be either a set of 
+microoperations or a generalized operator.
+   
+   At early stages of the design process, when some operations (or parts of operations) are not 
+clearly defined, we may informally outline some desirable actions in the vertexes using textual 
+comments. This allows us to capture a timing structure of the target operations without specifying 
+their functionality. On the base of such partial flowcharts, one can automatically construct various 
+test benches for verification via simulation. 
+
+Usage of ASM for graphical representation of target design is more convenient in comparison 
+with informal description in natural language. It allows verification engineers to present visually a 
+timing structure of operations and their functionality (totally or partially). It should be emphasized 
+that the ASM flowchart is not only a picture describing the target design; it has formal semantics 
+and can be used for formal verification.
+
+
+\vspace*{-6pt}
+
+\section{Pipelined Microprocessor Algorithmic-State-Machine-Based Specification and~Verification}
+
+\vspace*{-3pt}
+
+\noindent
+Let us consider the pipelined processor~\cite{7fr}. In the processor, every pipeline stage 
+has its data path and\linebreak\vspace*{-12pt}
+\pagebreak
+
+\end{multicols}
+
+\begin{figure} %fig7
+\vspace*{1pt}
+\begin{center}
+\mbox{%
+\epsfxsize=165.752mm
+\epsfbox{bar-7.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{ASMM of  Fetch stage~(\textit{a}), and (Fetch~1/Fetch~2) blocks~(\textit{b})
+\label{f7fr}}
+\vspace*{-6pt}
+\end{figure}
+
+\begin{multicols}{2}
+
+
+\noindent
+ control unit. Instruction execution begins by fetching the instruction from 
+program memory which address is in the program counter (PC). The instruction is then decoded 
+to determine the operation type, the operand registers, the branch target, etc. The program counter 
+is updated by incrementing its current value.
+
+
+Let us consider the fetch stage in the pipeline (Fig.~\ref{f7fr}), which is responsible for fetching 
+instructions from the instruction memory. Note that the gray vertexes are the nested ASMs (not 
+expanded here). 
+       
+       The instruction is read into two Instruction Registers, IR1 and IR2, used for short and long 
+instructions, correspondingly. The address of the instruction is stored in the 
+PC, which is promoted every time when instruction is read. Program counter, IR1 and IR2 are then passed to 
+the next stage.
+    
+The fetch stage also deals with branch execution, interrupts, and DMA 
+which allows outside devices to read or write data directly into each of two memory blocks.  The 
+CheckBranch  vertex checks whether  the fetched instruction is a branch one, and in dependence 
+of the result, produces corresponding flag. ``Int'' block fetches an instruction from memory, say, a 
+memory block M0 (Fig.~\ref{f7fr}\textit{b}), and if it is a short instruction (length of 16~bits), 
+then this is indicated by zero in bit~5 of the IR1$f$ register (suffix~$f$ denotes that the register 
+copy is modeled on the Fetch stage), and the following action will correspond to the right branch 
+of the flowchart. But if this bit is one, Fetch~2 block is activated, and the remaining bits of the 
+instruction are written to the 16-bit register IR2$f$.
+       
+       The Logical condition ShLodInpBran\_in\_F checks if the fetched instruction is one of the 
+types ``Shift,'' ``Load,'' ``Input,'' or ``Branch.'' They require for their processing algorithm, 
+described in the nested vertex Fetch2Oper2, another instructions are processed in the nested 
+vertex Fetch2Oper1. Note that thanks to hierarchical properties of the ASM/ABELITE, we can 
+abstract away all data from gray blocks when we are aimed to study properties on the high level 
+description.     
+
+       The condition variable bool2std(IR1f(0to3) checks condition of skip of next instruction. 
+       
+       In distinct of more specialized systems like SystemC, ABELITE does not support 
+directly the modeling of several simultaneous process, but possibility of reading/writing 
+description in numerous register blocks, using different models of their interactions, as well as 
+hierarchical description of target design by ASM allows description and verification of the 
+pipelining stages execution. In particular, in the framework of Model-Checking verification, the 
+idea is to show that a machine modeled at the MA level, which corresponds 
+to microoperations set and connections of ABELITE ASM model, implements 
+(refines) a machine modeled at the ISA level. That is, a mapping 
+function from MA states to ISA states. The refinement map, $r$, shows how to view an MA state 
+as an ISA state, e.\,g., the refinement map has to hide some MA components that do not appear in 
+the ISA. That is,  the verification problem can be considered as a checking of equivalence of ISA 
+and~MA.
+       
+In terms of formal verification, SMV model obtained from ASM with generalized blocks 
+(hierarchical ASM) is an \textit{implementation} of the system designed (see subsection~2.1) in comparison 
+with the high-level ASM.  States of the Pipelined machine FSM model, generated from ASM by 
+the FSM2SMV program mentioned above contain both all visible by a programmer components 
+and the pipeline registers, which should be represented in ASM specification.
+
+In fact, ASM captures the structure, behavior, and mapping (between the structure and behavior) 
+of the architecture pipelines. The structure is defined by its components (units, storages, ports, 
+connections) and the connectivity (pipeline and data paths) between these components. We can 
+write CTL/LTL-based properties for each category of the hazard mentioned above. 
+
+Designers can be interested to check various properties, which show how instructions are 
+transferred from fetch pipeline stage to Fetch2Oper1 and Fetch2Oper2 stages. Taking into 
+account that the authors verify their design via Model-Checking methodology, that is, compare 
+instruction level description of the target processor and its MA level FSM behavior 
+(represented in terms of microoperations generated by ABELITE), the program 
+ASM2SMV with fetch flowchart as input (see Fig.~\ref{f4fr}) is used and one gets the SMV model of FSM, 
+implemented all microoperations as a result. 
+
+It is interesting, for example, to check the fulfillment of the property, described by 
+LTL as
+\begin{multline*}
+\mbox{assert G}\, ((\mbox{ShLodInpBran\_in\_F}\;=\;0) \\
+{}\rightarrow \mbox{F} (\mbox{state}\,= 
+n))  
+\end{multline*}
+where ``state'' is a state of FSM, generated from ASM, with a number~$n=1, 2, \ldots , 7$. 
+%(Fig.~\refure 8). 
+The specific variable ``state'' is assigned from the ASM, by the program, which translated ASM 
+to SMV. In this example, state~1 corresponds to the DMA feature, that is, one checks that before the 
+DMA is performed, fetch stage waits for all other stages to stop so there are no conflicts between 
+the stages.    
+
+\begin{figure*}[b]   %fig9
+\vspace*{9pt}
+\begin{center}
+\mbox{%
+\epsfxsize=120mm
+\epsfbox{bar-9.eps}
+}
+\end{center}
+\vspace*{-6pt}
+\Caption{Window of SMV program execution  
+\label{f9fr}}
+\end{figure*}
+
+The resulted SMV code of the Fetcher is: 
+%\end{multicols}
+\begin{verbatim}
+module main() {
+ S : boolean;
+ ShLodInpBran_in_F : boolean;
+ bool2std : array 1..100 of boolean;
+ to3 : boolean;
+ PCf : 0..100;
+ DMA : boolean;
+ IR1f :array 1..100 of boolean; 
+ FGO : boolean;
+ FGI : boolean;
+ state : 1..7;
+
+ init(state):=1;
+ case {
+   state=1 : 
+      if ((S) & !(DMA)) {
+        ; /* CheckBranch */
+        next(state):=7;
+      }
+      else if (!(S))
+        next(state):=1;
+      else {
+        ; /* DMACycle */
+        next(state):=1;
+      }
+   state=2 : 
+      if (!(ShLodInpBran_in_F)) {
+        ; /* Fetch2Oper1 */
+        next(state):=1;
+      }
+      else {
+        ; /* Fetch2Oper2 */
+        next(state):=1;
+      }
+   state=3 : 
+      if (!(IR1f[5]) & 
+        (bool2std[IR1f[0to3]=1100])) {
+        next(state):=5;
+        next(PCf):=PCf+1;
+      }
+      else if (!(IR1f[5]) & 
+        !(bool2std[IR1f[0to3]=1100]) & 
+        (ShLodInpBran_in_F)) {
+        ; /* Fetch2Oper2 */
+        next(state):=1;
+      }
+      else if (IR1f[5]) {
+        ; /* Fetch2 */
+        next(state):=2;
+      }
+      else {
+        ; /* Fetch2Oper1 */
+        next(state):=1;
+      }
+   state=4 :  {
+      ; /* Fetch1 */
+      next(state):=3;
+   }
+   state=5 : 
+      if ((IR1f[4]) & !(FGO))
+        next(state):=1;
+      else if (!(IR1f[4]) & 
+        (FGI)) {
+        next(state):=6;
+        next(PCf):=PCf+1;
+      }
+      else if (!(IR1f[4]) & !(FGI))
+        next(state):=1;
+      else {
+        next(state):=6;
+        next(PCf):=PCf+1;
+      }
+   state=6 :  {
+      next(state):=1;
+      next(PCf):=PCf+1;
+   }
+   state=7 :  {
+      ; /* Int */
+      next(state):=4;
+   }
+ }
+assert G ((ShLodInpBran_in_F=0) ->
+ F (state = 1)); 
+}
+\end{verbatim}
+%Figure 8. SMV code of the Fetcher
+
+
+       Let us describe briefly the states constituting the Kripke structure built form the ASM 
+flowchart in Fig.~\ref{f7fr}.  Totally 7~following states were generated: state~1 is an initial state 
+of the fetcher, and it corresponds both to the vertexes ``Begin'' and ``End,'' execution of the 
+vertexes Fetch2Oper1or Fetch2Oper2 corresponds to transition from the state~2 to state~1 (end 
+of this fetch stage), execution of the vertex Fetch1 means the transition either from state~3 to 
+state~5 with the PC promotion (in dependence of the flags FGO/FG1 values), or execution of the 
+Fetch2Oper1/Fetch2Oper2 functions with ending of the fetch stage, etc.
+ 
+Execution of the SMV code by CADENCE SMV program shows (see the SMV code of the Fetcher above) 
+that given property 
+is carried out with necessity (true is indicated in the ``Result'' position in Fig.~\ref{f9fr}).  
+
+
+Here, structure Kripke is represented by SMV operators next() which correspond to transitions 
+represented  by Table~1.
+
+Note that as it was mentioned above, the main difficulty is that there may be variables in the 
+model with large or unbounded ranges (such as memory addresses) and arrays with a large or 
+unbounded number of elements (such as memory arrays). Therefore, the program ASM2SMV 
+allows definition of any type of variables during synthesis of SMV code.  
+
+\section{Concluding Remarks}
+
+\noindent   
+    This paper introduces a new semiformal methodology for functional verification of 
+pipelined hardware designs. This methodology has two specification levels: ($i$)~ASM (upper level) 
+and ($ii$)~microarchitectural specifications (lower level). Algorithmic state machine 
+is used for the graphic specification of 
+target design. Using the ASM descriptions, one can automatically check temporal properties of the 
+design using model checking techniques. In fact, ASM captures the structure, behavior, 
+and mapping (between the structure and behavior) of the pipelines MA. The 
+structure is defined by its components (units, storages, ports, connections) and the connectivity 
+(pipeline and data-transfer paths) between these components. Usage of ASM for graphical 
+representation of target design is more convenient in comparison with informal description in 
+natural language. It allows verification engineers to visually present a timing structure of 
+operations and their functionality (totally or partially). It should be emphasized that the ASM is not 
+only a picture describing the target design; it has formal semantics and can be used for formal 
+verification.
+
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\addcontentsline{toc}{section}{Литература}
+\begin{thebibliography}{99}   
+
+\bibitem{1fr}
+\Au{Clarke E.\,M., Grumberg O., Peled~D.}
+Model checking.~--- MIT Press, 2000.
+
+\bibitem{11fr} %2
+\Au{Baranov S., Frenkel S., Sinelnikov~V., Zakharov~V.}
+Concurrent design and verification of digital  hardware~// Informatics and Its Applications, 2008. 
+Vol.~2. Issue~3. P.~7--25.   
+
+\bibitem{4fr} %3
+\Au{Baranov S.}
+Logic and system design of digital systems.~--- TTU Press, 2008.
+
+\bibitem{2fr} %4
+\Au{Lee R., Tsien~B.}
+Pre-silicon verification of the Alpha 21364 microprocessor error handling system~// Design 
+Automation Conference, DAC'01, Proceedings. 2001. P.~822--827.
+
+\bibitem{3fr} %5
+\Au{Bhadra J., Abadir M.\,S., Wang L.-C., Ray~S.} 
+A survey of hybrid techniques for functional verification~// IEEE Design \& Test of Computers,  
+March--April 2007. P.~112--122.
+
+\bibitem{12fr} %6
+\Au{Xu X., Kimura~S., Horika K., Tsuchiya~T.} 
+Coverage estimation using transition perturbation for symbolic model checking in hardware 
+verification~// \mbox{IEICE} TRANS. Fundamentals, 2006. Vol.~E89-A. No.\,12. 
+P.~3451--3457.  
+
+
+\bibitem{8fr} %7
+\Au{Kirxhsteiger Chr., Grinshel J., Trummer Chr., Steger~Chr., Weil~R.} 
+Automatic test generation from semi-formal specification for function~//
+IEEE International System Conference SysCon2008. Montreal, Canada. April 7--10, 2008.
+
+\bibitem{9fr} %8
+\Au{Mcmillan K.\,L.} 
+Verification of an implementation of Tomasulo's algorithm by compositional model checking~// 
+CAV98 Proceedings. 1998. P.~110--121. 
+
+\bibitem{13fr} %9
+\Au{McMillan K.\,L.}
+A methodology for hardware verification using compositional model checking~// Sci. Comp. 
+Prog., 2000. Vol.~37. No.\,1--3. P.~279--309.    
+
+\bibitem{5fr} %10
+\Au{Baranov S.}
+ASMs in high level synthesis of EDA tool ABELITE~// DESDes'09  Int.   IFAC Workshop  
+Proceedings. Valensia, Spain, 2009. P.~195--200.
+
+
+ %\label{end\stat}
+
+\bibitem{14fr} %11
+\Au{Frenkel~S., Kurts~A., Liburkin~D., Anders~B., Fandjushina~N.}
+Certificate of the State Registration No.\,2010612828 on the software program ``Translator of the 
+Mealy automaton table representations into programs on SMV language for the automation of the 
+process of digital devices verification basing on Model Checking''. 26~April, 2010.
+
+\bibitem{6fr} %12
+\Au{McMillan~K.}
+Getting started with SMV.~--- Cadence, 2001.
+
+\bibitem{10fr} %13
+\Au{Frenkel S.,  Kamkin~A.} 
+Verification methodology based on algorithmic state machine and cycle-accurate contract 
+specifications~// 7th IEEE East--West Design \& Test Symposium EWDTS Proceedings.  2009. 
+P.~39--42.
+
+\bibitem{7fr} %14
+\Au{Kutzman I., Raitzin A.}
+Design of fast pipelined processor with complex addressing mode. M.Sc. Thesis. Bar Ilan 
+University, 2007.
+
+ \end{thebibliography}
+}
+}
+
+
+\end{multicols}
+
+%\hrule
+
+\vspace*{-30pt}
+
+
+\def\tit{ПОЛУФОРМАЛЬНАЯ ВЕРИФИКАЦИЯ  ЦИФРОВОГО УСТРОЙСТВА С~КОНВЕЙЕРОМ, ОСНОВАННАЯ НА~ИСПОЛЬЗОВАНИИ 
+АЛГОРИТМИЧЕСКИХ~МАШИН СОСТОЯНИЯ}
+
+\def\aut{С. Баранов$^1$, С.\,Л.~Френкель$^2$, В.\,Н.~Захаров$^3$}
+
+\titelr{\tit}{\aut}
+
+%\vspace*{12pt}
+
+\noindent
+$^1$Холонский технологический институт, Израиль,
+samary@012.net.il\\
+\noindent
+$^2$Институт проблем информатики Российской академии наук,
+fsergei@mail.ru\\
+\noindent
+$^3$Институт проблем информатики Российской академии наук, VZakharov@ipiran.ru\\
+
+%\vspace*{10mm}
+\medskip
+
+
+\Abst{Статья  описывает методы  и средства  использования Алгоритмических машин состояний (ASM)  
+для высокоуровневой спецификации проектов сложных цифровых систем  и их верификации методом Проверки 
+моделей (Model Checking). Данный подход  использует иерархическое описание проектов на алгоритмическом 
+уровне абстракции и  возможность построения конечно-автоматных моделей по ASM-диаграммам алгоритмов. 
+Для автоматической генерации программ Проверки моделей на языке SMV (Symbolic Modes Verifier)  по 
+ASM-диаграмме проектируемого устройства была разработана  специальная программа.  Способ применения 
+данного подхода и программы демонстрируется на примере верификации проекта конвейерного микропроцессора.
+}
+
+
+\KW{формальная верификация; метод Проверки моделей; конечные автоматы}
+
+\label{end\stat}
+
+
+\renewcommand{\figurename}{\protect\bf Рис.}
+\renewcommand{\tablename}{\protect\bf Таблица}
+\renewcommand{\bibname}{\protect\rmfamily Литература}

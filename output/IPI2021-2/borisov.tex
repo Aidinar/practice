@@ -1,0 +1,1207 @@
+\newcommand{\pp}[1]{\mathsf{P}\left\{ #1 \right\}}
+\newcommand{\me}[2]{\mathsf{E}_{ #1 }\left\{ \mathop{#2} \right\} }
+
+
+
+
+\def\stat{borisov}
+
+\def\tit{ФИЛЬТРАЦИЯ СОСТОЯНИЙ МАРКОВСКИХ СКАЧКООБРАЗНЫХ ПРОЦЕССОВ ПО~КОМПЛЕКСНЫМ НАБЛЮДЕНИЯМ~I: 
+ТОЧНОЕ РЕШЕНИЕ ЗАДАЧИ$^*$}
+
+\def\titkol{Фильтрация состояний марковских скачкообразных процессов по~комплексным наблюдениям~I}
+%:  точное решение задачи}
+
+\def\aut{А.\,В.~Борисов$^1$, Д.\,Х.~Казанчян$^2$}
+
+\def\autkol{А.\,В.~Борисов, Д.\,Х.~Казанчян}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Борисов А.\,В.}
+\index{Казанчян Д.\,Х.}
+\index{Borisov A.\,V.}
+\index{Kazanchyan D.\,Kh.}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при частичной поддержке РФФИ (проект 19-07-00187 А) 
+и~в~соответствии с~программой Московского центра фундаментальной и~прикладной математики.}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управ\-ле\-ние>> 
+Российской академии наук; Московской авиационный институт;
+Факультет вычислительной математики и~кибернетики Московского государственного университета имени 
+М.\,В.~Ломоносова; Центр фундаментальной и~прикладной математики Московского государственного университета 
+имени М.\,В.~Ломоносова, \mbox{ABorisov@frccsc.ru}}
+\footnotetext[2]{Факультет вычислительной математики и~кибернетики Московского государственного 
+университета имени М.\,В.~Ломоносова, \mbox{Drastamat94@gmail.com}}
+
+
+\vspace*{6pt}
+
+
+\Abst{Первая часть цикла посвящена решению задачи оптимальной фильтрации состояний  
+марковских скачкообразных процессов (МСП) по совокупности наблюдаемых диффузионных и~считающих процессов. 
+Интенсивности шумов в~наблюдаемой диффузии и~скачков в~разрывных наблюдениях зависят от оцениваемого 
+состояния. Предложено специальное эквивалентное преобразование наблюдений, приводящее их к~совокупности 
+диффузионного процесса с~единичной диффузией, множеству считающих процессов и~совокупности косвенных 
+наблюдений, выполненных в~неслучайные дискретные моменты времени. Искомая оптимальная оценка 
+представима в~форме решения дис\-крет\-но-не\-пре\-рыв\-ной 
+стохастической дифференциальной системы с~преобразованными 
+наблюдениями в~правой части. Приведено условие идентифицируемости, при выполнении которого состояние 
+МСП может быть восстановлено по косвенным зашумленным наблюдениям точно.}
+
+\KW{марковский скачкообразный процесс; оптимальная фильтрация; мультипликативные шумы 
+в~наблюдениях; непрерывные и~считающие наблюдения; условия идентифицируемости}
+
+\DOI{10.14357/19922264210202}
+
+\vspace*{8pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+ \section{Введение}
+ 
+ 
+ Данный цикл может рассматриваться как продолжение работ~\cite{B_19_1_IA, B_20_2_IA, B_20_3_IA},
+ посвященных тео\-ре\-ти\-че\-скому и~практическому аспектам решения задачи оптимальной фильтрации состояний 
+ \textit{марковских скачкообразных процессов} по косвенным зашумленным наблюдениям. На 
+ этот раз наблюдения пополнены процессами Кокса, интенсивность которых зависит от оцениваемого состояния 
+ МСП. Данная работа посвящена тео\-ре\-ти\-че\-ско\-му решению задачи фильтрации.
+
+ Статья организована следующим образом. 
+ 
+ Раздел~2 содержит формальную постановку задачи 
+ оптимальной фильтрации. 
+ 
+ В~разд.~3 предложено специальное преобразование наблюдений, позволяющее 
+ решить поставленную задачу, а также утверждение, представляющее дис\-крет\-но-не\-пре\-рыв\-ную 
+ стохастическую систему, описывающую искомую оценку. 
+ 
+ Заключительные замечания приведены в~разд.~4.
+
+ \section{Постановка задачи фильтрации}
+ 
+ \vspace*{5pt}
+ 
+  На полном вероятностном пространстве с~фильт\-ра\-цией 
+  $(\Omega,\mathcal{F},{\sf P},\{\mathcal{F}_t\}_{t \geqslant 0})$ 
+  рассматривается стохастическая динамическая система
+  
+  \vspace*{-6pt}
+  
+  \noindent
+\begin{align}
+ X_t &=X_0 + \int\limits_0^t \Lambda^{\top}(s)X_{s}\,ds + \mu_t^X\,;
+ \label{eq:stat_1}
+ \\[-2pt]
+ Y_t &= \int\limits_{0}^{t}f(s)X_s\,ds+\int\limits_{0}^{t} \sum\limits_{n=1}^NX_s^ng_n^{1/2}(s)\,dW_s;
+ \label{eq:cobs_1}
+ \\[2pt]
+ \displaystyle Z_t& = \int\limits_{0}^{t}h(s)X_s\,ds+\mu_t^Z,
+ \label{eq:sobs_1}
+ \end{align}
+ 
+   \vspace*{-6pt}
+   
+   \noindent
+ где
+ 
+   \vspace*{-2pt}
+   
+   \noindent
+  \begin{itemize}
+  \item
+  $X_t \triangleq \mathop{\mathrm{col}}(X_t^1,\ldots,X_t^N) \hm\in \mathbb{S}^N$~--- 
+  ненаблюдаемое состояние системы~--- МСП с~множеством состояний $\mathbb{S}^N \hm\triangleq 
+  \{e_1,\ldots,e_N\}$ ($\mathbb{S}^N$~--- множество единичных векторов пространства~$\mathbb{R}^N$), 
+  мат\-рич\-но\-знач\-ной функцией интенсивностей пе-\linebreak\vspace*{-16pt}
+  \end{itemize}
+  
+  \pagebreak
+  
+\begin{itemize}
+  \item[\ ]
+  реходов~$\Lambda(t)$ и~начальным распределением~$\pi$;
+  $\mu_t^X \hm \triangleq \mathop{\mathrm{col}}(\mu_t^{X_1},\ldots,\mu_t^{X_N})\hm\in \mathbb{R}^N$~--- 
+  $\mathcal{F}_t$-со\-гла\-со\-ван\-ный мартингал;
+  \item
+  $Y_t \triangleq \mathop{\mathrm{col}}(Y_t^1,\ldots,Y_t^M) \hm\in \mathbb{R}^M$~--- косвенные наблюдения,
+зашумленные $\mathcal{F}_t$-со\-гла\-со\-ван\-ным стандартным винеровским процессом $W_t 
+\hm\triangleq \mathop{\mathrm{col}}(W_t^1,\ldots,W_t^M) \hm\in \mathbb{R}^M$;  
+$f(t)$~--- $(M \times N)$-мер\-ная матричнозначная функция плана наблюдений, а~набор $(M\times M)$-мер\-ных 
+симметричных матричнозначных функций
+  $\{g_n(t)\}_{n=\overline{1,N}}$ характеризует интенсивности шумов 
+  в~зависимости от текущего состояния~$X_t$;
+  \item
+  $Z_t \triangleq \mathop{\mathrm{col}}(Z_t^1,\ldots,Z_t^K) \hm\in \mathbb{R}^K$~--- 
+  косвенные наблюдения, компоненты которого являются считающими процессами: 
+  элементы \mbox{$(K \times N)$}-мер\-ной матричнозначной функции~$h(t)$ опре-\linebreak деляют интенсивность скачков 
+  отдельных\linebreak компонент в~за\-ви\-си\-мости от текущего со\-сто\-яния~$X_t$; 
+  $\mu_t^Z \hm\triangleq \mathop{\mathrm{col}}(\mu_t^{Z_1},\ldots,\mu_t^{Z_K})
+  \hm\in \mathbb{R}^N$~--- $\mathcal{F}_t$-со\-гла\-со\-ван\-ный мартингал.
+  \end{itemize}
+
+  Обозначим через $\{\mathcal{O}_t\}$ поток $\sigma$-ал\-гебр всех наблюдений,
+полученных на отрезке времени $[0,t]$, $\mathcal{O}_0 \hm\triangleq \{\varnothing,\Omega\}$, 
+а~$\{\overline{\mathcal{O}}_t\}\; (\mathcal{O}_{t+} \hm\triangleq \cap_{s: s\geqslant t} \mathcal{O}_s)$~--- 
+вариант данного потока, замкнутый справа.
+
+\textit{Задача оптимальной фильтрации состояния МСП} $X_t$ заключается в~построении 
+\textit{условного математического ожидания} (УМО) $\widehat{X}_t 
+\hm\triangleq \me{}{X_t|\overline{\mathcal{O}}_t}$.
+
+Ниже представлены ограничения на ис\-сле\-ду\-емую систему наблюдения~(\ref{eq:stat_1})--(\ref{eq:sobs_1}), 
+необходимые для корректного решения поставленной задачи фильтрации.
+\begin{itemize}
+   \item[А.]
+  Поток $\sigma$-под\-ал\-гебр~$\mathcal{F}_t$ непрерывен справа.
+  Все траектории МСП $\{X_t\}_{t \hm\geqslant 0}$
+  непрерывны справа и~имеют конечные пределы слева, т.\,е.\ являются 
+  {c$\acute{\mbox{a}}$dl$\acute{\mbox{a}}$g-про\-цес\-сами}.
+  \item[Б.]
+  Все компоненты $\Lambda(t)$, $f(t)$, $\{g_n(t)\}_{n=\overline{1,N}}$ и~$h(t)$~--- 
+  неслучайные {c$\acute{\mbox{a}}$dl$\acute{\mbox{a}}$g}-про\-цессы.
+  \item[В.]
+  Шумы в~$Y$ равномерно невырожденны~\cite{LSh_1_01}, т.\,е.\ для любых
+   $t \hm\geqslant 0$, $1 \leqslant n \hm\leqslant N$ верно неравенство
+  $g_n(t) \hm\geqslant \alpha I \hm > 0$ (здесь и~ниже~$I$ обозначает единичную матрицу подходящей размерности).
+  \item[Г.]
+  Процессы
+  \begin{equation}
+  K_{ij}(t) \triangleq \mathbf{I}_{\{\mathbf{0}\}}\left(g_i(t)-g_j(t)\right),\enskip  i,j=\overline{1,N},
+  \label{eq:K_def}
+  \end{equation}
+  имеют локально ограниченную вариацию;
+  здесь и~ниже $\mathbf{I}_{\mathcal{A}}(x)$ обозначает индикаторную функцию множества~$\mathcal{A}$, 
+  а~$\mathbf{0}$~--- нулевую матрицу подходящей размерности.
+  \item[Д.] Компоненты мартингала $\mu^{Z}$ процесса~$Z$~(\ref{eq:cobs_1}) ортогональны друг другу, т.\,е.\
+  %\begin{equation}
+  $$
+  \langle   Z   \rangle_t \hm= \int\limits_0^t \mathrm{diag}\left( h(s)X_s\right)\,ds\,.
+  $$
+  %\label{eq:Z_qc}
+ % \end{equation}
+  Мартингалы в~процессе состояния~$\mu^{X}$ и~в~считающих наблюдениях~$\mu^{Z}$ также ортогональны
+  %\begin{equation}
+  $\langle   X,Z   \rangle_t \hm\equiv \mathbf{0}.$
+ % \label{eq:XZ_qc}
+  %\end{equation}
+\end{itemize}
+
+Условия А--В являются стандартными в~задачах фильтрации~\cite{LSh_1_01, Kall_80, YZL_04}. 
+Условие Г обеспечивает регулярность разбиения временн$\acute{\mbox{о}}$й оси на множества, где ка\-кие-ли\-бо 
+функции~$\{g_n(\cdot)\}$ совпадают или различны: на любом конечном промежутке времени $[0,t]$ 
+для каждой пары $(i,j)$, $i,j\hm=\overline{1,N}$, множество, на котором интенсивности~$g_i(\cdot)$ 
+и~$g_j(\cdot)$ совпадают, представимо в~виде объединения конечного набора интервалов. 
+В~частности, это условие выполнено в~случае, когда все компоненты~$\{g_n(\cdot)\}$ 
+ку\-соч\-но-глад\-кие с~локально ограниченными производными~\cite{MN_2019}.
+
+Ограничение Д также не представляется обременительным: ортогональность 
+мартингалов считающих процессов означает, что скачки этих процессов \textit{почти наверное} (п.\,н.)\ 
+не совпадают. В~случае если мартингалы в~наблюдаемых процессах не ортогональны, исходные наблюдения 
+всегда можно трансформировать так, чтобы обеспечить тре\-бу\-емую ортогональность 
+преобразованных наблюдений. Для этого достаточно в~считающих наблюдениях синхронные 
+скачки различных компонент выделить в~отдельные процессы. Условие ортогональности 
+мартингалов в~состоянии и~наблюдениях
+%(\ref{eq:XZ_qc})
+позволяет избежать излишней громоздкости формул.
+
+Рассмотрение задач фильтрации относительно замыкания справа~$\{\mathcal{O}_{t}\}$ имеет техническую подоплеку.
+ Дело в~том, что математический аппарат стохастического анализа развит для случая, когда поток 
+ $\sigma$-ал\-гебр, порожденных наблюдениями, непрерывен справа. В~общем случае п.\,н.\
+  непрерывность траекторий процессов не гарантирует не\-пре\-рыв\-ности справа потока $\sigma$-ал\-гебр, 
+  порожденных этими процессами~\cite{S_97}. В~\cite{BS_20} показано, что для наблюдений~(\ref{eq:cobs_1}), 
+  (\ref{eq:sobs_1}) эта непрерывность нарушается. Переход к~$\{\overline{\mathcal{O}}_t\}$ 
+  позволяет успешно решить теоретическую задачу оптимальной фильтрации. Данная 
+  техническая особенность не коснется практической реализации решения задачи. 
+  Во второй части работы будут предложены аппроксимации теоретических оценок, 
+  вычисляемые по исходному незамкнутому потоку $\sigma$-ал\-гебр наблюдений~$\{\mathcal{O}_{t}\}$.
+
+ \section{Преобразование непрерывных наблюдений и~решение задачи фильтрации}
+ 
+В~\cite{LSh_89} представлен фундаментальный результат~--- 
+формула УМО специального семимартингала по наблюдениям также в~форме специального семимартингала. 
+В~общем случае эта формула не позволяет задать искомое УМО в~виде решения конечной замкнутой системы 
+стохастических уравнений. Ситуация упрощается, если наблюдения с~помощью гирсановской 
+замены вероятностной меры сводятся к~совокупности винеровских и~пуассоновских процессов~\cite{WH_85, EAM_10}. 
+Наблюдения~(\ref{eq:cobs_1}) и~(\ref{eq:sobs_1}) не удовлетворяют этим условиям, однако существует 
+преобразование, приводящее их к~эквивалентной совокупности диффузионного процесса с~единичной диффузией, 
+набора считающих процессов и~наблюдений, выполняемых в~неслучайные дискретные моменты времени.
+
+Рассмотрим квадратичную характеристику
+
+\vspace*{-4pt}
+
+\noindent
+\begin{multline*}
+  \langle   Y
+  \rangle_t = Y_tY_t^{\top} - \int\limits_0^t Y_s\,dY_s^{\top} -  \int\limits_0^t \,dY_sY_s^{\top} ={}\\
+  {}=
+  \int\limits_{0}^{t} \sum\limits_{n=1}^NX_{s}^ng_n(s) \,ds\,.
+ % \label{eq:YY_qc}
+  \end{multline*}
+  
+  \vspace*{-4pt}
+
+Введем в~рассмотрение $\overline{\mathcal{O}}_t$-со\-гла\-со\-ван\-ный процесс
+\begin{equation}
+q_t \triangleq \fr{d \langle   Y   \rangle_s}{ds}|_{s=t+} = \sum\limits_{n=1}^N X_{t}^n g_n(t)=q_t\left(X_t\right).
+\label{eq:q_def}
+\end{equation}
+
+\vspace*{-2pt}
+
+\noindent
+Так как на любом конечном отрезке времени процессы~$X$ и~$\{g_n\}$ п.\,н.\
+ терпят лишь конечное число скачков, то $\overline{\mathcal{O}}_t$-со\-гла\-со\-ван\-ный процесс
+%\begin{equation}
+$U_t \hm \triangleq
+\int\nolimits_0^t q_s^{-{1}/{2}}\,dY_s$
+%\label{eq:U_def}
+%\end{equation}
+допускает мартингальное разложение
+
+\vspace*{-2pt}
+
+\noindent
+$$
+U_t =
+\int\limits_0^t \overline{f}(s)X_s\,ds \hm+\overline{W}_t,
+$$
+%\label{eq:U_mr}
+%\end{equation}
+где
+
+\vspace*{-2pt}
+
+\noindent 
+$$
+\overline{f}(t) \triangleq \sum\limits_{n=1}^N g_n^{-{1}/{2}}(t)f(t) 
+\mathrm{diag} e_n;
+$$
+
+\vspace*{-2pt}
+
+\noindent
+$\overline{W}_t$~--- некоторый $\mathcal{F}_t$-со\-гла\-со\-ван\-ный 
+стандартный винеровский процесс~\cite{LSh_1_01}. Преобразуем наблюдения~$q_t$ так, чтобы 
+построить полный прообраз преобразования~(\ref{eq:q_def}) в~форме $N$-мер\-но\-го случайного процесса~$H_t$:
+
+\vspace*{-2pt}
+
+\noindent
+  $$
+H_t \triangleq \sum\limits_{n=1}^N\mathbf{I}_{\{\mathbf{0}\}}\left(q_t-g_n(t)\right)e_n\,.
+$$
+Из А и~Б следует, что  $H_t$~--- {c$\acute{\mbox{a}}$dl$\acute{\mbox{a}}$g}-про\-цесс,
+представимый в~виде:
+
+\vspace*{2pt}
+
+\noindent
+  \begin{equation*}
+H_t =  \sum\limits_{n,k=1}^N\mathbf{I}_{\{\mathbf{0}\}}\left(g_k(t+)-g_n(t+)\right)X_t^ke_n=K(t+)X_t\,,
+%\label{eq:h_def_2}
+\end{equation*}
+
+\vspace*{-2pt}
+
+\noindent
+где элементы матричнозначной функции~$K(\cdot)$ определяются формулой~(\ref{eq:K_def}). 
+Из определения~$H_t$  и~$K(t)$ следует, что существует такая матрично-\linebreak\vspace*{-12pt}
+
+\columnbreak
+
+\noindent
+значная функция~$T(t): 
+\mathbb{R}_+ \hm\to \mathbb{R}^{N \times N}$, что процесс
+$
+V_t \triangleq  T(t)H_t$
+обладает следующими свойствами:
+\begin{itemize}
+\item[(i)]
+все компоненты~$V_t$ являются
+{c$\acute{\mbox{a}}$dl$\acute{\mbox{a}}$g}-про\-цес\-са\-ми, причем
+$\pp{V_t \in \mathbb{S}^N} \hm\equiv 1$;
+\item[(ii)]
+матрица $J(t) \triangleq T(t)K(t+)$ состоит из {c$\acute{\mbox{a}}$dl$\acute{\mbox{a}}$g}-эле\-мен\-тов, 
+является трапециевидной, а ее строки~--- ортогональные векторы, сформированные из~0  и~1.
+\end{itemize}
+В силу своей структуры процесс~$V_t$ допускает разложение 
+
+\noindent
+$$
+V_t = D_t\hm+R_t\,.
+$$
+
+\vspace*{-2pt}
+
+\noindent
+Здесь
+
+\vspace*{-6pt}
+
+\noindent
+  \begin{equation*}
+D_t = J(0)X_0+\!\!\!\sum\limits_{\substack{{s_j \leqslant t:}\\{\Delta J(s_j) \neq \mathbf{0} }}} 
+\!\!\!\!\!\Delta J(s_j)X_{s_j}; \enskip
+%\label{eq:D_def}
+%\end{equation}
+  %\begin{equation}
+R_t = \int\limits_0^t J(s)\,dX_s\,,
+%\label{eq:D_R_def}
+\end{equation*}
+
+\vspace*{-2pt}
+
+\noindent
+где $ \Delta J(t) \triangleq  J(t)\hm -  \Delta J(t-)$~--- функция скачков~$J(t)$. По сути, процесс~$D_t$ 
+аккумулирует скачки~$V_t$, по\-рож\-ден\-ные изменениями матрицы~$J(t)$ в~неслучайные моменты времени~$s_i$, 
+а~$R_t$~--- скачки~$V_t$, порожденные переходами состояния~$X_t$ в~случайные моменты времени~$\tau_j$. 
+Заметим, что с~вероятностью~1 множества моментов~$\{s_i\}$ и~$\{\tau_j\}$ не пересекаются.
+Процесс~$R_t$ взаимно однозначно определяется процессом $C_t \hm\triangleq \mathop{\mathrm{col}}
+(C^1_t,\ldots,C^N_t)$, компоненты которого считают число скачков~$R_t$ в~состояние~$e_n$, $n \hm= 
+\overline{1,N}$, произошедших за время $[0,t]$:
+
+\vspace*{2pt}
+
+\noindent
+$$
+ C^n_t\hm = \int\limits_0^t (1-e^{\top}_nV_{s-})e^{\top}_n\,dR_s.
+ $$
+ 
+ %\smallskip
+ 
+ \noindent
+ \textbf{Лемма~1.}\
+% \begin{lemma} \label{lm:lm_1}
+\textit{Для любого $ t \hm\geqslant 0$ верно тождество 
+$\sigma\{U_s, Z_s, C_s, D_s:\; 0 \hm\leqslant s  \hm\leqslant t\} \hm\equiv \overline{\mathcal{O}}_t$}.
+
+\vspace*{3pt}
+
+ Истинность леммы~1 следует из взаимно однозначного соответствия траекторий~$Y$ и~$(U, C, D)$:
+ 
+ \vspace*{-5pt}
+ 
+ \noindent
+ \begin{align*}
+  U_t &\triangleq
+ \int\limits_0^t q_s^{-{1}/{2}}dY_s, \enskip
+q_t = \fr{d  \langle   Y   \rangle_s}{ds}\Bigl|_{s=t+}; \\[-1pt]
+  C_t &=   \displaystyle\!\!\int\limits_0^t \! (I-\mathrm{diag}\, V_{s-})\,dV_s\! -\! \!\!\!\!\!\!\!\!
+  \sum\limits_{\substack{{s_j \leqslant t:}\\[-1pt]
+  {\Delta J(s_j) \neq \mathbf{0}}}} \!\!\!\!\!\!
+  (I\!-\!\mathrm{diag}\, V_{s_j-})\Delta V_{s_j};\\[-1pt]
+  D_t &= V_0 + \!\!\!\!\!\!\!\!\sum\limits_{\substack{{s_j \leqslant t:}\\
+  {\Delta J(s_j) \neq \mathbf{0}}}}\!\!\! \Delta V_{s_j},  \enskip
+  V_t = T(t)H_t, 
+  \end{align*}
+  
+  \vspace*{-3pt}
+  
+  \noindent
+  где
+  
+\vspace*{-3pt}
+
+\noindent
+  $$
+  H_t \triangleq \sum\limits_{n=1}^N\mathbf{I}_{\{\mathbf{0}\}}(q_t-g_n(t))e_n;
+  $$
+
+ % \vspace*{-6pt}
+  
+\noindent
+\begin{align*}
+ V_t &= D_t + \int\limits_0^t \sum\limits_{i,j=1}^N V_{s-}^i\left(e_j-e_i\right)\,dC_s^j; 
+\\[-1pt]
+ Y_t& = \int\limits_0^t \sum\limits_{n=1}^{N}V_{s}^n g_n^{{1}/{2}}(s)\,dU_s.
+\end{align*}
+
+\vspace*{-2pt}
+
+\noindent
+ Таким образом исходные наблюдения были преобразованы  в~совокупность:
+ \begin{itemize}
+ \item непрерывного диффузионного процесса~$U_t$ с~единичной диффузией;
+ \item совокупности считающих процессов~$Z_t$ и~$C_t$;
+ \item наблюдений~$D_t$, полученных в~дискретные неслучайные моменты времени.
+ \end{itemize}
+
+ Ниже используем обозначения
+ $J_n(t) \hm\triangleq e_n^{\top} J(t)$  для $n$-й строки~$J(t)$, $h_k(t) 
+ \hm\triangleq e_k^{\top} h(t)$ для $k$-й строки~$h(t)$, а также
+ \begin{equation*}
+\Gamma_n(t) \triangleq \mathrm{diag}\left(J_n(t)\right) \Lambda^{\top}(t)
+\left(I-\mathrm{diag}\, J_n(t)\right), \  n=\overline{1,N}.
+%\label{eq:Gamma_def}
+\end{equation*}
+
+%\vspace*{-12pt}
+
+\noindent
+\textbf{Лемма~2.}\
+% \begin{lemma} \label{lm:lm_2} %\cite{BS_20}.
+ \textit{Верны следующие утверждения}.
+ \begin{enumerate}
+ \item
+  \textit{Процессы $C_t^n,\; n=\overline{1,N}б$, допускают следующее мартингальное разложение}:
+  
+    \vspace*{-3pt}
+  
+\noindent
+ \begin{multline*}
+ C_t^n = \int\limits_0^t \mathbf{1}\Gamma_n(s)X_{s}\,ds +{}\\
+ {}+ \int\limits_0^t 
+ \left(1 - J_n(s)X_{s-}\right)J_n(s)\,d\mu_s^X\,.
+ \label{eq:Cj_dec}
+ \end{multline*}
+ \item
+ $\langle C^n,C^m\rangle_t \equiv 0$  \textit{для любых} $n \hm\neq m$;
+ 
+     \vspace*{-1pt}
+     
+     \noindent
+ \begin{equation*}
+ \langle C^n, C^n \rangle_t = \int\limits_0^t \mathbf{1}\Gamma_n(s)X_{s}\,ds\,.
+% \label{eq:Cj_char}
+ \end{equation*}
+ \item
+ $\langle C^n, Z^m \rangle_t \equiv 0$  \textit{для любых} $n\hm=\overline{1,N}$, $m\hm=\overline{1,M}$.
+ \item
+ \textit{Обновляющие процессы}
+ 
+     \vspace*{-4pt}
+     
+     \noindent
+ \begin{align*}
+ \nu_t^n &\triangleq \int\limits_0^t \left(dC_s^n - \mathbf{1}\Gamma_n(s)\widehat{X}_{s}\,ds \right), 
+ \enskip n=\overline{1,N}\,;
+% \label{eq:nij_def}
+\\
+ \varkappa_t^k &\triangleq \int\limits_0^t \left(dZ_s^k - h_k(s)\widehat{X}_{s}\,ds \right), \enskip 
+ k=\overline{1,K}\,,
+ %\label{eq:kij_def}
+ \end{align*}
+ 
+ \vspace*{-2pt}
+ 
+ \noindent
+  \textit{являются $\overline{\mathcal{O}}_t$-со\-гла\-со\-ван\-ны\-ми 
+  мартингалами с~квадратичными характеристиками}
+ \begin{equation}
+ \left.
+ \begin{array}{rl}
+ \langle \nu^n\rangle_t&= \displaystyle\int\limits_0^t \mathbf{1}\Gamma_n(s)\widehat{X}_{s}\,ds\,; \\[6pt]
+ %\label{eq:nij_char}
+ %\end{equation}
+  %\begin{equation}
+ \langle \varkappa^k \rangle_t&=\displaystyle \int\limits_0^t h_k(s)\widehat{X}_{s}\, ds\,,
+ \end{array}
+ \right\}
+ \label{eq:nkij_char}
+ \end{equation}
+  \textit{а обновляющий процесс}
+  
+      \vspace*{-3pt}
+      
+      \noindent
+  \begin{equation}\label{eq:filt_2}
+ \omega_t \triangleq U_t - \int\limits_0^t \overline{f}(s)\widehat{X}_{s}\,ds
+ \end{equation}
+  \textit{является $\overline{\mathcal{O}}_t$-со\-гла\-со\-ван\-ным $M$-мер\-ным 
+  стандартным винеровским процессом}.
+ \end{enumerate}
+
+\noindent
+ Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\ \ леммы~2 
+ подобно доказательству соответствующего утверждения в~\cite{BS_20}.
+ 
+ \vspace*{2pt}
+ 
+ \noindent
+ \textbf{Теорема~1.}
+%  \begin{theorem}\label{th:th_1}
+ \textit{Оптимальная оценка фильтрации $\widehat{X}_t$ является сильным 
+ решением стохастической дифференциальной системы}
+ 
+     \vspace*{-3pt}
+ 
+ \noindent
+ \begin{multline}\label{eq:filt_1}
+   \widehat{X}_t =
+  \left((D_0)^{\top}J(0)\pi_0\right)^+\mathrm{diag}\left(D_0\right)J(0)\pi_0
+   + {}\\
+   {}+
+   \int\limits_0^t \Lambda^{\top}(s)\widehat{X}_{s}\,ds +
+   \int\limits_0^t \mathbf{k}_s \overline{f}^{\top}(s)\,d\omega_s +
+   \sum\limits_{n=1}^N\int\limits_{0}^t    \left(
+\Gamma_n(s) -{}\right.\\
+\left.{}- \mathbf{1}\Gamma_n(s)\widehat{X}_{s-} I
+\right)\widehat{X}_{s-}
+\left(\mathbf{1}\Gamma_n(s)\widehat{X}_{s-}\right)^+
+    \,d\nu_s^n +{} \\
+{}    +
+   \sum\limits_{k=1}^K\int\limits_{0}^{t}
+     \mathbf{k}_{s-}h_k^{\top}(s)
+\left( h_k(s)\widehat{X}_{t-}\right)^+ d \varkappa_s^k +{} \\
+{}   + \sum\limits_{\substack{{s_j \leqslant t:}\\{\Delta J(s_j) \neq \mathbf{0}}}}
+ \left(    \left(
+   \Delta D_{s_j}^{\top}\Delta J(s_j)\widehat{X}_{s_j-}\right)^+
+   \mathrm{diag}\left(\Delta D_{s_j}\right)\times{}\right.\\
+\left.   {}\times \Delta J(s_j) - I
+  \vphantom{\left(\Delta D_{s_j}^{\top}\Delta J(s_j)\widehat{X}_{s_j-}\right)^+}
+       \right) \widehat{X}_{s_j-},
+ \end{multline}
+ 
+     \vspace*{-6pt}
+     
+     \noindent
+ \textit{где}
+ 
+     \vspace*{-3pt}
+     
+     \noindent
+ \begin{equation}
+ \mathbf{k}_t = \mathrm{diag}\left(\widehat{X}_{t}\right)- \widehat{X}_{t} \widehat{X}_{t}^{\top},
+ \label{eq:k_def}
+ \end{equation}
+ 
+     \vspace*{-2pt}
+     
+     \noindent
+ \textit{а $A^+$ обозначает операцию псевдообращения.
+Решение системы единственно в~классе неотрицательных кусочно-непрерывных $\overline{\mathcal{O}}_{t}$-согласованных процессов с~точками разрыва, принадлежащими множеству точек разрыва процесса $V$.
+}
+
+\noindent
+ Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\ \ теоремы~1 приведено в~приложении.
+ 
+ \vspace*{2pt}
+
+  Теорема~1 позволяет точно восстанавливать состояние МСП~$X_t$ 
+  по косвенным зашумленным наблюдениям~(\ref{eq:cobs_1}), (\ref{eq:sobs_1}) 
+  в~случае выполнения условий идентифицируемости, представленных в~сле\-ду\-ющей лемме.
+  
+  \vspace*{2pt}
+  
+  \noindent
+  \textbf{Лемма~3.}
+  %\begin{lemma} \label{lm:lm_3}
+\textit{Если для  любых $n\hm\neq m$ ($n,m\hm=\overline{1,N}$) неравенства 
+$G_n(s) \hm\neq G_m(s)$ верны почти всюду по мере Лебега на $[0,t]$, то $\widehat{X}_t 
+\hm= X_t$ ${\sf P}$-п.\,н., и~$X_t$ является решением}~(\ref{eq:filt_1}).
+
+\vspace*{2pt}
+
+\noindent
+ Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\ \ леммы~3 
+ аналогично доказательству соответствующего утверждения в~\cite{BS_20}.
+ 
+ \vspace*{-6pt}
+
+ \section{Заключение}
+ 
+ \vspace*{-2pt}
+ 
+ Первая часть цикла содержит теоретическое решение задачи оптимальной фильтрации по
+  комплексным (непрерывным и~считающим) наблюдениям при наличии в~непрерывных наблюдениях
+  \textit{мультипликативных шумов}, т.\,е.\ шумов, интенсивность которых зависит от 
+  оцениваемого состояния.
+       Оценка фильтрации определяется решением некоторой замкнутой 
+  дис\-крет\-но-не\-пре\-рыв\-ной стохастической  системы, в~правую часть которой входят
+   наблюдения, преобразованные специальным образом. Вид оценки имеет важное теоретическое 
+   значение, так как позволяет описать важные свойства оценки, в~частности условия полной 
+   идентифицируемости состояния, когда его можно восстановить точно, основываясь на косвенных 
+   зашумленных наблюдениях. Тем не менее этот вид  малопригоден для конструирования чис\-лен\-ных 
+   алгоритмов фильтрации из-за того, что необходимое преобразование наблюдений включает в~себя 
+   операцию, подразумевающую двойной предельный переход: во-пер\-вых, вычисление квадратичной
+    характеристики~$\langle Y \rangle$ диффузионных наблюдений и,~во-вто\-рых, 
+    вы\-чис\-ле\-ние ее правой производной. Последующие исследования посвящены эффективным численным 
+    методам решения данной задачи фильтрации.
+    
+{\small \subsection*{\raggedleft Приложение}
+
+ 
+
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\ \ теоремы~1.
+%\begin{proofoftheorem} {\ref{th:th_1}}
+Используем подход из~\cite[Part~III,~Sect.~8.7]{EAM_10}.
+ Из правила Байеса следует, что
+\begin{multline*}
+\widehat{X}_0 = \me{}{X_0|\mathcal{O}_{0+}}\hm = {}\\
+{}=\me{}{X_0|D_0}\hm= \left(D_0^{\top}J(0)\pi\right)^+
+\mathrm{diag}\left(D_0\right)J(0)\pi\,.
+\end{multline*}
+Пусть  $s_{j-1}$~--- неслучайный момент $(j-1)$-го дискретного наблюдения~$\Delta D_{s_{j-1}}$. 
+Исследуем поведение~$X_t$ на интервале $[s_{j-1}, s_{j})$:
+$$
+X_t = X_{s_{j-1}} + \int\limits_{s_{j-1}}^t \Lambda^{\top}(s)X_{s}\,ds
+ + \mu^X_t - \mu^X_{s_{j-1}}.
+$$
+Вычисляя УМО обеих частей равенства относительно~$\overline{\mathcal{O}}_t$, можно показать, что
+$$
+\widehat{X}_t = \widehat{X}_{s_{j-1}} + \int\limits_{s_{j-1}}^t \Lambda^{\top}(s)\widehat{X}_{s}\,ds + \mu_t^1,
+$$
+где $\{\mu_t^1\}_{t \in [s_{j-1}, s_{j})}$~--- $\overline{\mathcal{O}}_t$-со\-гла\-со\-ван\-ный мартингал.
+Для любого $t \hm\in [s_{j-1}, s_{j})$ верно равенство 
+\begin{multline*}
+\overline{\mathcal{O}}_{t}=
+\overline{\mathcal{O}}_{s_{j-1}} \vee \sigma\{U_s,Z_s\;s  \in (s_{j-1},t]\} 
+\vee{}\\
+{}\vee \sigma\{C_s^n, s \in (s_{j-1},t],\enskip n=\overline{1,N}\}\,.
+\end{multline*}
+Процесс $\{\omega_t\}$~(\ref{eq:filt_2})  является $\overline{\mathcal{O}}_t$-со\-гла\-со\-ван\-ным 
+стандартным винеровским;
+$U_t$ является $\overline{\mathcal{O}}_t$-со\-гла\-со\-ван\-ным семимартингалом 
+с~условно независимыми относительно~$\mathcal{F}^X$ приращениями, в~то время 
+как $\{C^n_t\}_{n=\overline{1,N}}$ и~$\{Z^k_t\}_{k=\overline{1,K}}$~--- 
+$\overline{\mathcal{O}}_t$-со\-гла\-со\-ван\-ные точечные процессы. Поэтому мартингал~$\mu_t^1$ 
+\textit{допускает интегральное представление}~\cite[Chap. 4, \S\,8, Problem~1]{LSh_89},
+т.\,е.
+
+\noindent
+\begin{multline}
+\widehat{X}_t = \widehat{X}_{s_{j-1}} + \int\limits_{s_{j-1}}^t \Lambda^{\top}(s)\widehat{X}_{s}\,ds
++ \int\limits_{s_{j-1}}^t \alpha_s\, d\omega_s
++{}\\
+{}+ \int\limits_{s_{j-1}}^t \sum\limits_{n=1}^N\beta_s^n\, d\nu_s^n+
+\int\limits_{s_{j-1}}^t \sum\limits_{k=1}^K\gamma_s^k \,d\varkappa_s^k,
+\label{eq:filt_3}
+\end{multline}
+где $\alpha_t$, $\{\beta_t^n\}_{n=\overline{1,N}}$ и~$\{\gamma_t^k\}_{k=\overline{1,K}}$ представляют собой
+$\overline{\mathcal{O}}_t$-пред\-ска\-зу\-емые процессы подходящей размерности, подлежащие определению.
+
+По обобщенному правилу Ито
+\begin{multline*}
+X_tU_t^{\top}= X_{s_{j-1}}U_{s_{j-1}}^{\top}+{}\\
+{}+
+\int\limits_{s_{j-1}}^t \left(
+\Lambda^{\top}(s)X_{s}U_{s}^{\top} + \mathrm{diag}\left(X_{s}\right)\overline{f}^{\top}(s)
+\right)\,ds + \mu_t^2,
+\end{multline*}
+где $\mu_t^2$ -- некоторый $\mathcal{F}_t$-со\-гла\-со\-ван\-ный мартингал.
+Беря УМО от обеих частей равенства относительно  $\overline{\mathcal{O}}_{t}$, можно показать, что
+\begin{multline}
+\widehat{X}_tU_t^{\top}= \widehat{X}_{s_{j-1}}U_{s_{j-1}}^{\top}+ {}\\
+{}+\int\limits_{s_{j-1}}^t \left(
+\Lambda^{\top}(s)\widehat{X}_{s}U_{s}^{\top} + \mathrm{diag}\left(\widehat{X}_{s}\right)\overline{f}^{\top}(s)
+\right)ds + \mu_t^3,
+\label{eq:xy_1}
+\end{multline}
+где $\mu_t^3$~--- некоторый $\overline{\mathcal{O}}_t$-со\-гла\-со\-ван\-ный мартингал. 
+В~то же время из правила Ито, представления~(\ref{eq:filt_3}) и~факта, что $\omega_t$~--- 
+винеровский процесс следует, что
+\begin{multline}
+\widehat{X}_tU_t^{\top}=  \widehat{X}_{s_{j-1}}U_{s_{j-1}}^{\top}+ {}\\
+\!\!{}+ \!\!\int\limits_{s_{j-1}}^t\!\! \left(
+\Lambda^{\top}(s)\widehat{X}_{s}U_{s}^{\top} + \widehat{X}_{s}\widehat{X}_{s}^{\top}
+\overline{f}^{\top}(s) + \alpha_s
+\right)ds + \mu_t^4,\!\!
+\label{eq:xy_2}
+\end{multline}
+где $\mu_t^4$~--- некоторый $\overline{\mathcal{O}}_t$-со\-гла\-со\-ван\-ный мартингал. Так
+как~(\ref{eq:xy_1}) и~(\ref{eq:xy_2})
+являются двумя разложениями одного и~того же специального семимартингала~$\widehat{X}_tU_t^{\top}$, 
+то из его единственности следует, что $\overline{\mathcal{O}}_{t}$-пред\-ска\-зу\-емый процесс~$\alpha_t$ 
+удовлетворяет равенству
+$$
+\int\limits_{s_{j-1}}^t
+\mathrm{diag}\left(\widehat{X}_{s}\right)\overline{f}^{\top}(s)
+ds=\int\limits_{s_{j-1}}^t \left(\widehat{X}_{s}\widehat{X}_{s}^{\top}\overline{f}^{\top}(s) + \alpha_s
+\right)ds
+$$
+и с~учетом (\ref{eq:k_def}) и~свойств~$\omega_t$ может быть выбран в~виде
+$
+\alpha_t = \mathbf{k}_{t} \overline{f}^{\top}(t).
+$
+
+Вновь из правила Ито, свойств МСП $X$ и~$C^n$ по\-лу\-чаем:
+\begin{multline*}
+X_tC_t^n =
+X_{s_{j-1}}C^n_{s_{j-1}} +{}\\
+{}+ \int\limits_{s_{j-1}}^t \!\!
+\left(
+\Lambda^{\top}(s)X_sC^n_s + \Gamma_n(s)X_s
+\right)ds  + \mu^5_t,
+\end{multline*}
+где  $\mu_t^5$~--- $\mathcal{F}_t$-со\-гла\-со\-ван\-ный мартингал. 
+Вычисляя УМО  относительно~$\overline{\mathcal{O}}_{t}$, получаем:
+\begin{multline}
+\widehat{X}_tC_t^n =
+\widehat{X}_{s_{j-1}}C^n_{s_{j-1}} +{}\\
+{}+\int\limits_{s_{j-1}}^t
+\left(
+\Lambda^{\top}(s)\widehat{X}_sC^n_s + \Gamma_n(s)\widehat{X}_s
+\right)ds + \mu^6_t, 
+\label{eq:xz_1}
+\end{multline}
+где $\mu_t^6$~--- $\overline{\mathcal{O}}_{t}$-со\-гла\-со\-ван\-ный мартингал.
+
+С другой стороны, по правилу Ито и~с~учетом~(\ref{eq:filt_3}) и~(\ref{eq:nkij_char}) можно показать, что
+\begin{multline}
+\widehat{X}_tC_t^n =
+\widehat{X}_{s_{j-1}}C^n_{s_{j-1}}+{}\\
+{}+
+\int\limits_{s_{j-1}}^t\!
+\left(
+\Lambda^{\top}(s)\widehat{X}_sC^n_s +
+\widehat{X}_s\mathbf{1}\Gamma_n(s)\widehat{X}_s+
+\beta^n_s \mathbf{1}\Gamma_n(s)\widehat{X}_s
+\right)ds +{}\\
+{}+ \mu^7_t,
+\label{eq:xz_2}
+\end{multline}
+где $\mu_t^7$~--- $\overline{\mathcal{O}}_{t}$-со\-гла\-со\-ван\-ный мартингал.  
+Из совпадения разложений~(\ref{eq:xz_1}) и~(\ref{eq:xz_2}) можно заключить, что процесс~$\beta^n_s$ 
+должен удовлетворять равенству
+\begin{equation*}
+\int\limits_{s_{j-1}}^t
+\Gamma_n(s)\widehat{X}_s\,ds =
+\int\limits_{s_{j-1}}^t
+\left[
+\widehat{X}_s\mathbf{1}\Gamma_n(s)\widehat{X}_s+
+\beta^n_s \mathbf{1}\Gamma_n(s)\widehat{X}_s
+\right]ds
+\end{equation*}
+и может быть выбран в~форме
+\begin{multline*}
+\beta^n_t = \left(
+\Gamma_n(t) - \mathbf{1}\Gamma_n(t)\widehat{X}_{t-} I
+\right)\widehat{X}_{t-}
+\left(\mathbf{1}\Gamma_n(t)\widehat{X}_{t-}\right)^+,\\
+n=\overline{1,N}\,.
+\end{multline*}
+
+
+Вновь из правила Ито получаем
+\begin{multline*}
+X_tZ_t^k =
+X_{s_{j-1}}Z^k_{s_{j-1}} +{}\\
+{}+\int\limits_{s_{j-1}}^t\!\!
+\left(
+\Lambda^{\top}(s)X_sZ^k_s + \mathrm{diag}\left(X_s\right)h_k^{\top}(s)
+\right)ds
+ + \mu^8_t,
+\end{multline*}
+где  $\mu_t^8$~--- $\mathcal{F}_t$-со\-гла\-со\-ван\-ный мартингал. Вычисляя УМО 
+ относительно~$\overline{\mathcal{O}}_{t}$, получаем
+\begin{multline}
+\widehat{X}_tZ_t^k =
+\widehat{X}_{s_{j-1}}Z^k_{s_{j-1}} +{}\\
+{}+\int\limits_{s_{j-1}}^t\!\!
+\left(
+\Lambda^{\top}(s)\widehat{X}_sZ^k_s + \mathrm{diag}\left(\widehat{X}_s\right)h_k^{\top}(s)
+\right)ds + \mu^9_t,
+\label{eq:xz_3}
+\end{multline}
+где $\mu_t^9$~--- $\overline{\mathcal{O}}_{t}$-со\-гла\-со\-ван\-ный мартингал.
+С~другой стороны, по правилу Ито и~результатам леммы~2 можно получить равенство
+
+\noindent
+\begin{multline}
+\widehat{X}_tZ_t^k =
+\widehat{X}_{s_{j-1}}Z^k_{s_{j-1}}
++{}\\
+{}+
+\int\limits_{s_{j-1}}^t\!\!
+\left(
+\Lambda^{\top}(s)\widehat{X}_sZ^k_s +
+\widehat{X}_s \widehat{X}_s^{\top} h_k^{\top}(s) +\gamma_s^k h_k(s)\widehat{X}_s
+\right)ds  + {}\\
+{}+\mu^{10}_t,
+\label{eq:xz_4}
+\end{multline}
+где $\mu_t^{10}$~--- $\overline{\mathcal{O}}_{t}$-со\-гла\-со\-ван\-ный мартингал.  
+Из совпадения разложений~(\ref{eq:xz_3}) и~(\ref{eq:xz_4}) следует, что процесс~$\gamma^k_s$ 
+должен удовлетворять равенству
+$$
+\int\limits_{s_{j-1}}^t\!\!\!\!
+ \mathrm{diag}\left(\widehat{X}_s\right)h_k^{\top}(s)\,ds =\!\!\!\!
+\int\limits_{s_{j-1}}^t \!\!\!\!\left(
+\widehat{X}_s \widehat{X}_s^{\top} h_k^{\top}(s) +\gamma_s^k h_k(s)\widehat{X}_s\right)ds
+$$
+и может быть выбран в~форме
+$$
+\gamma^k_t\hm =
+\mathbf{k}_{t-} h_k^{\top}(t)
+\left( h_k(t)\widehat{X}_{t-}\right)^+,\enskip k=\overline{1,K}\,.
+$$
+
+
+Таким образом, на интервале $[s_{j-1},s_{j})$ оптимальная оценка~$\widehat{X}_t$ 
+описывается стохастической дифференциальной системой
+\begin{multline}
+   \widehat{X}_t =
+  \widehat{X}_{s_{j-1}}
+   + \int\limits_{s_{j-1}}^t\! \Lambda^{\top}(s)\widehat{X}_{s-}\,ds +
+   \int\limits_{s_{j-1}}^t \!\mathbf{k}_{s}\overline{f}^{\top}(s)\,d\omega_s +{} \\
+   {} +
+   \sum\limits_{n=1}^N \,\int\limits_{s_{j-1}}^t\!\!\!\!
+   \left(
+\Gamma_n(s) - \mathbf{1}\Gamma_n(s)\widehat{X}_{s-} I
+\right)\!\widehat{X}_{s-}\!
+\left(\mathbf{1}\Gamma_n(s)\widehat{X}_{s-}\right)^+\!\!
+    d\nu_s^n + {}\hspace*{-1.07239pt}\\ 
+    {}+
+     \sum\limits_{k=1}^K\,\int\limits_{s_{j-1}}^t\!
+     \mathbf{k}_{s-}h_k^{\top}(s)
+\left( h_k(s)\widehat{X}_{s-}\right)^+ \!d \varkappa_s^k.
+   \label{eq:f_cut}
+ \end{multline}
+
+Так как $\pp{\Delta X_{s_j} = 0}\hm = 1$, то с~вероятностью~1
+   \begin{multline*}
+   {\sf E}\left\{ X_{s_{j}}|\overline{\mathcal{O}}_{s_{j-1}}
+\vee \sigma\left\{U_s,Z_s\;s \in (s_{j-1},s_{j}]\right\}
+ \vee {}\right.\\
+ \left.{}\vee\sigma\left\{C_s^n,\;s \in (s_{j-1},s_{j}],\enskip n=\overline{1,N}\right\}\right\}
+  ={} \\ 
+   {}=
+ \widehat{X}_{s_{j-1}}
+   + \!\int\limits_{s_{j-1}}^{s_{j}} \!\Lambda^{\top}(s)\widehat{X}_{s-}\,ds +
+   \int\limits_{s_{j-1}}^{s_{j}}\! \mathbf{k}_{s}\overline{f}^{\top}(s)\,d\omega_s + {}\\ 
+  {}+
+   \sum\limits_{n=1}^N\int\limits_{s_{j-1}}^{s_{j}}\!\!\!
+   \left(
+\Gamma_n(s) - \mathbf{1}\Gamma_n(s)\widehat{X}_{s-} I
+\right)\!\widehat{X}_{s-}
+\left(\mathbf{1}\Gamma_n(s)\widehat{X}_{s-}\!\right)^+
+   \! \!d\nu_s^n +{} \\
+    {} +
+     \sum\limits_{k=1}^K\,\int\limits_{s_{j-1}}^{s_{j}}\!
+     \mathbf{k}_{s-}h_k^{\top}(s)
+\left( h_k(s)\widehat{X}_{s-}\right)^+ \! d \varkappa_s^k = \widehat{X}_{s_{j}-}.
+ \end{multline*}
+
+В силу того что
+ \begin{multline*}
+   \overline{\mathcal{O}}_{s_{j}} = \overline{\mathcal{O}}_{s_{j-1}}
+   \vee \sigma\left\{U_s,Z_s,\;s \in (s_{j-1},s_{j}]\right\}
+   \vee{}\\
+   {}\vee \sigma\{C_s^n,\;s \in (s_{j-1},s_{j}],\enskip
+    n=\overline{1,N}\} \vee \sigma\left\{\Delta D_{s_{j}}\right\},
+   \end{multline*}
+   по правилу Байеса получаем
+   \begin{multline}
+   \widehat{X}_{s_{j}} ={}\\
+  \!\!\! {}= \left(\Delta D_{s_{j}}^{\top}\Delta J(s_{j})\widehat{X}_{s_{j}-}\right)^+
+   \mathrm{diag}\left(\Delta D_{s_{j}}\right)\Delta J(s_{j})\widehat{X}_{s_{j}-}.\!
+   \label{eq:Bayes}
+   \end{multline}
+
+   Уравнение (\ref{eq:filt_1}) получается путем <<склейки>> локальных решений~(\ref{eq:f_cut}), 
+   описывающих изменение~$\widehat{X}_t$ на интервалах $[s_{j-1},s_{j})$, и~формулы~(\ref{eq:Bayes}), 
+   описывающей пересчет оценок в~моменты~$s_{j}$ поступления дискретных наблюдений~$\Delta D$.
+
+   Единственность сильного решения в~классе не\-от\-ри\-ца\-тель\-ных 
+   ку\-соч\-но-не\-пре\-рыв\-ных 
+   $\overline{\mathcal{O}}_t$-со\-гла\-со\-ван\-ных процессов с~моментами скачков, принадлежащими 
+   множеству скачков~$V_t$, доказывается аналогично~\cite[Ch.~9, Theorem~9.2]{{LSh_1_01}}.
+   Теорема~1 доказана.
+}   
+
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+%\addcontentsline{toc}{section}{References}
+\begin{thebibliography}{99}
+
+\bibitem{B_19_1_IA}
+  \Au{Борисов А.} Численные схемы фильтрации марковских скачкообразных процессов по дискретизованным 
+  наблюдениям~I: характеристики точности~// Информатика и~её применения, 2019. Т.~13. Вып.~4. C.~68--75. 
+doi: 10.14357/19922264190411.
+
+
+     \bibitem{B_20_2_IA}
+  \Au{Борисов А.} Численные схемы фильтрации марковских скачкообразных процессов по
+   дискретизованным наблюдениям~II: случай аддитивных шумов~// Информатика и~её применения, 2020. Т.~14.
+   Вып.~1. C.~17--23. doi: 10.14357/19922264200103.
+ 
+\bibitem{B_20_3_IA}
+  \Au{Борисов~А.} Численные схемы фильтрации марковских скачкообразных процессов по 
+  дискретизованным наблюдениям~III: случай мультипликативных шумов~// Информатика и~её применения, 
+  2020. Т.~14. Вып.~2. C.~10--18. 
+  doi: 10.14357/19922264200202.
+
+
+ \bibitem{LSh_1_01}
+ \Au{Liptser R., Shiryaev~A.} Statistics of random processes~I: General theory.~--- 
+ Berlin/Heidelberg:~Springer, 2001. 427~p.
+
+ \bibitem{Kall_80} %5     
+\Au{Kallianpur G.}  Stochastic filtering theory.~--- New York, NY, USA:~Springer, 1980. 318~p.
+
+\bibitem{YZL_04}
+\Au{Yin G., Zhang~Q., Liu~Y.}
+Discrete-time approximation of Wonham filters~//
+IET Control Theory~A., 2004. No.\,2. P.~1--10. doi: 10.1007/s11768-004-0017-7.
+
+
+\bibitem{MN_2019}
+\Au{Magnus J., Neudecker~H.}
+  Matrix differential calculus with applications in statistics and econometrics.~--- 
+  New York, NY, USA: Wiley, 2019. 504~p.
+
+  \bibitem{S_97}
+\Au{Stoyanov J.} Counterexamples in probability.~--- Hoboken, NJ, USA: Wiley, 1997. 352~p.
+
+  \bibitem{BS_20} %9
+ \Au{Borisov A., Sokolov~I.} Optimal filtering of Markov jump processes given 
+ observations with state-dependent noises: Exact solution and stable numerical schemes~// Mathematics, 2020. 
+ Vol.~8. Iss.~4. Art. No.\,506. 22~p. doi: 10.3390/ math8040506.
+
+ \bibitem{LSh_89}
+ \Au{Liptser~R.,  Shiryaev~A.} Theory   of   martingales.~---  Dortrecht: Springer, 1989. 792~p.
+
+ \bibitem{WH_85}
+ {\it Wong E., Hajek~B.} Stochastic processes in engineering systems.~--- New York, NY, USA:
+ Springer, 1985. 361~p.
+
+ \bibitem{EAM_10}
+\Au{Elliott R., Moore~J., Aggoun~L.} Hidden Markov models: Estimation and control.~--- New York, NY, USA:
+ Springer, 2010. 382~p.
+ %\bibitem{LSh_2_01}
+  %{\em Liptser, R.; Shiryaev, A.} Statistics of Random Processes II: Applications; Springer: Berlin/Heidelberg, Germany, 2001.
+
+
+ \end{thebibliography}
+
+}
+}
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Поступила в~редакцию 05.03.2021}}
+
+\vspace*{6pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+\vspace*{-2pt}
+
+\def\tit{FILTERING OF MARKOV JUMP PROCESSES GIVEN COMPOSITE OBSERVATIONS~I: EXACT SOLUTION}
+
+
+\def\titkol{Filtering of Markov jump processes given composite observations~I: Exact solution}
+
+\def\aut{A.\,V. Borisov$^{1,2,3,4}$ and D.\,Kh.~Kazanchyan$^{3}$}
+
+\def\autkol{A.\,V. Borisov and D.\,Kh.~Kazanchyan}
+
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-15pt}
+
+
+\noindent
+$^1$Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+\noindent
+$^2$Moscow Aviation Institute (National Research University), 4~Volokolamskoe Shosse, Moscow 125080, 
+Russian\linebreak
+$\hphantom{^1}$Federation 
+
+\noindent
+$^3$Department of Mathematical Statistics, Faculty of Computational Mathematics and Cybernetics,
+M.\,V.~Lomo-\linebreak 
+$\hphantom{^1}$nosov Moscow State University, 1-52~Leninskiye Gory, GSP-1, Moscow 119991, 
+Russian Federation
+
+\noindent
+$^4$Moscow Center for Fundamental and Applied Mathematics, M.\,V.~Lomonosov Moscow State University,\linebreak
+$\hphantom{^1}$1-52~Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation 
+
+
+
+ 
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2021\ \ \ volume~15\ \ \ issue\ 2}
+}%
+\def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2021\ \ \ volume~15\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+\Abste{The first part of the series is devoted to the optimal filtering of the 
+finite-state Markov jump processes (MJP) given the ensemble of the diffusion and 
+counting observations. The noise intensity in the observable diffusion depends on 
+the estimated MJP state. The special equivalent observation transformation 
+converts them into the collection of the diffusion process of unit intensity, 
+counting processes, and indirect measurements performed at some nonrandom discrete 
+instants. The considered filtering estimate is expressed as a~solution to the 
+discrete-continuous stochastic differential system with the transformed observations 
+on the right-hand side. The identifiability condition, under which
+MJP state can be reconstructed from indirect noisy observations precisely, is presented.}
+
+\KWE{Markov jump process; optimal filtering; multiplicative observation noises; stochastic 
+differential equation; continuous and counting observations; identifiability condition}
+
+
+
+
+\DOI{10.14357/19922264210202}
+
+%\vspace*{-15pt}
+
+ \Ack
+\noindent
+The work was supported in part by the Russian Foundation
+for Basic Research (project 19-07-00187~A). The research was conducted in accordance with the
+program of the Moscow Center for Fundamental and Applied Mathematics.
+
+\vspace*{12pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+\bibitem{B_19_1_IA-1}
+\Aue{Borisov, A.} 2019. Chislennyye skhemy fil'tratsii mar\-kov\-skikh skachkoobraznykh protsessov po
+ diskretizovannym nablyudeniyam~I:  kharakteristiki tochnosti [Numerical schemes of Markov jump process 
+ filtering given discretized observations~I: 
+ Accuracy characteristics]. \textit{Informatika i~ee Primeneniya~--- Inform.~Appl.}
+ 13(4):68--75.
+  doi: 10.14357/19922264190411.
+
+  \bibitem{B_20_2_IA-1}
+\Aue{Borisov, A.} 2020. Chislennye skhemy fil'tratsii mar\-kov\-skikh skachkoobraznykh 
+protsessov po diskretizovannym nablyudeniyam~II: sluchay additivnykh shuchmov 
+ [Numerical schemes of Markov jump process filtering given discretized observations~II: Additive noises case].
+ \textit{Informatika i~ee primeneniya~--- Inform.~Appl.}
+ 14(1):17--23. doi: 10.14357/19922264200103.
+
+\bibitem{B_20_3_IA-1} %3
+  \Aue{Borisov, A.} 2020. Chislennye skhemy fil'tratsii mar\-kov\-skikh skachkoobraznykh 
+  protsessov po diskretizovannym nablyudeniyam III:  sluchay mul'tiplikativnykh shumov
+  [Numerical schemes of Markov jump process filtering given
+discretized observations III: Multiplicative noises case].
+\textit{Informatika i~ee primeneniya~--- Inform.~Appl.}
+14(2):10--18. doi: 10.14357/19922264200202.
+
+
+ \bibitem{LSh_1_01-1}
+ \Aue{Liptser, R., and A.~Shiryaev.} 2001. \textit{Statistics of random processes~I: General theory.}  
+ Berlin/Heidelberg: Springer. 427~p.
+ {\looseness=-1
+ 
+ }
+ 
+ 
+  \bibitem{Kall_80-1}     
+ \Aue{Kallianpur, G.} 1980. \textit{Stochastic filtering theory.}  New York, NY: Springer. 318~p.
+
+\bibitem{YZL_04-1}
+\Aue{Yin, G., Q.~Zhang, and Y.~Liu.} 2004.
+Discrete-time approximation of Wonham filters.
+\textit{IET Control Theory~A.} 2:1--10.
+doi: 10.1007/s11768-004-0017-7.
+
+\bibitem{MN_2019-1}
+ \Aue{Magnus, J., and H.~Neudecker.} 2019.
+\textit{Matrix differential calculus with applications in statistics and econometrics.}  
+New York, NY: Wiley. 504~p.
+
+  \bibitem{S_97-1}
+ \Aue{Stoyanov, J.} 1997. \textit{Counterexamples in probability.} Hoboken, NJ: Wiley. 352~p.
+
+
+  \bibitem{BS_20-1}
+ \Aue{Borisov, A., and  I.~Sokolov.}
+  2020. Optimal filtering of Markov jump processes given observations with state-dependent noises: 
+  Exact solution and stable numerical schemes. \textit{Mathematics} 8(4):506. 22~p. doi: 10.3390/ math8040506.
+ 
+  \bibitem{LSh_89-1}
+ \Aue{Liptser, R., and A.~Shiryaev.} 1989. \textit{Theory of martingales.}  Dortrecht: Springer. 792~p.
+ 
+ 
+  \bibitem{WH_85-1}
+ \Aue{Wong, E., and B.~Hajek.} 1985. \textit{Stochastic processes in engineering systems.} New York, NY:
+ Springer. 361~p.
+
+ \bibitem{EAM_10-1}
+ \Aue{Elliott, R., J.~Moore, and L.~Aggoun.} 2010. 
+ \textit{Hidden Markov models: Estimation and control.} New York, NY: Springer. 382~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+  \hfill{\small\textit{Received March~5, 2021}}
+
+
+%\pagebreak
+
+%\vspace*{-8pt}  
+
+
+
+\Contr
+
+\noindent
+\textbf{Borisov Andrey V.} (b.\ 1965)~--- 
+Doctor of Science in physics and mathematics, principal scientist, Institute of Informatics Problems, 
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119333, Russian Federation; professor, Moscow Aviation 
+Institute (National Research University), 4~Volokolamskoe Shosse, Moscow 125080, Russian Federation; 
+professor, Department of Mathematical Statistics, Faculty of Computational Mathematics and Cybernetics,
+M.\,V.~Lomonosov Moscow State University, 1-52~Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation; 
+senior scientist, Moscow Center for Fundamental and Applied Mathematics, 
+M.\,V.~Lomonosov Moscow State University, 1-52~Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation; 
+\mbox{ABorisov@frccsc.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Kazanchyan Drastamat Kh.} (b.\ 1994)~--- 
+PhD student, Department of Mathematical Statistics, Faculty of Computational Mathematics and Cybernetics, 
+M.\,V.~Lomonosov Moscow State University, 1-52~Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation; 
+\mbox{drastamat94@gmail.com} 
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}

@@ -1,21 +1,43 @@
-document        = preamble content* ;
-preamble        = command* ;
-content         = section | figure | text | bibliography | comment ;
-command         = "\\", command_name, [ arguments ] ;
-command_name    = letter+ | special_char ;
-arguments       = optional_argument | mandatory_argument ;
-optional_argument = "[", text, "]" ;
-mandatory_argument = "{", text, "}" ;
+<document> ::= <statement>*
+<statement> ::= <text> | <command> | <document_command> | <title> | <author> | <email> |
+                <formula> | <section> | <subsection> | <theorem> | <lemma> | <corollary> |
+                <proof> | <bibitem> | <footnote> | <keywords> | <enumerate> | <itemize> |
+                <center> | <figure> | <epsfxsize> | <epsfbox> | <linebreak> | <textit> |
+                <textbf> | <vspace> | <noindent> | <smallskip> | <comment> | <group> |
+                <escaped> | <braces> | <brackets>
 
-section         = "\section{", text, "}", content* ;
-figure          = "\begin{figure}", content*, "\end{figure}" ;
-bibliography    = "\begin{thebibliography}", bibitem*, "\end{thebibliography}" ;
-bibitem         = "\bibitem{", key, "}", text ;
-
-text            = ( any_char - special_chars ) | escaped_char ;
-escaped_char    = "\", any_char ;
-special_chars   = "\" | "%" | "{" | "}" ;
-comment         = "%", { any_char }, newline ;
-
-key             = letter+ | digit+ ;
-
+<text> ::= TEXT
+<command> ::= COMMAND [<text> | <group> | <braces> | <brackets> | <email>]*
+<document_command> ::= \documentclass[<options>]{<class>}
+<title> ::= \title{<text>}
+<author> ::= (\aut | \autkol | \Au | \Aue | \author | \Author | \index){<text> [^{<index>}]}
+<email> ::= EMAIL
+<formula> ::= $ <text> $ | \[ <text> \] | \begin{equation} <text> \end{equation} |
+              \begin{align} <text> \end{align} | \begin{gather} <text> \end{gather}
+<section> ::= \section{<text>} <statement>*
+<subsection> ::= \subsection{<text>} <statement>*
+<theorem> ::= \begin{theorem} <statement>* \end{theorem}
+<lemma> ::= \begin{lemma} <statement>* \end{lemma}
+<corollary> ::= \begin{corollary} <statement>* \end{corollary}
+<proof> ::= \begin{proof} <statement>* \end{proof}
+<bibitem> ::= \bibitem{<key>} [<text> | <group> | <command> | <email>]*
+<footnote> ::= \footnote{<text>} [<text> | <group> | <command> | <email>]*
+<keywords> ::= (\KW | \KWE){<text>}
+<enumerate> ::= \begin{enumerate} <item>* \end{enumerate}
+<itemize> ::= \begin{itemize} <item>* \end{itemize}
+<center> ::= \begin{center} <item>* \end{center}
+<item> ::= \item <statement>*
+<figure> ::= \begin{figure} <statement>* \end{figure}
+<epsfxsize> ::= \epsfxsize=<value>
+<epsfbox> ::= \epsfbox{<file>}
+<linebreak> ::= \linebreak
+<textit> ::= \textit{<text>} [<text> | <group> | <email>]*
+<textbf> ::= \textbf{<text>} [<text> | <group> | <email>]*
+<vspace> ::= \vspace{<value>} | \vspace*
+<noindent> ::= \noindent
+<smallskip> ::= \smallskip
+<comment> ::= % <text>
+<group> ::= { <statement>* }
+<escaped> ::= \ <char> | \, | \-
+<braces> ::= { | }
+<brackets> ::= [ | ]

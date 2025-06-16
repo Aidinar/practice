@@ -1,0 +1,770 @@
+\newcommand{\correl}{{\sf corr}}
+\newcommand{\covrel}{{\sf cov}}
+
+
+
+\def\stat{shestakov}
+
+\def\tit{МЕТОД ОЦЕНИВАНИЯ ПАРАМЕТРОВ ГАММА-ЭКСПОНЕНЦИАЛЬНОГО РАСПРЕДЕЛЕНИЯ ПО~ВЫБОРКЕ СО~СЛАБО ЗАВИСИМЫМИ КОМПОНЕНТАМИ$^*$}
+
+\def\titkol{Метод оценивания параметров %гамма-экспоненциального 
+распределения по выборке со слабо зависимыми компонентами}
+
+\def\aut{А.\,А.~Кудрявцев$^1$, О.\,В.~Шестаков$^2$}
+
+\def\autkol{А.\,А.~Кудрявцев, О.\,В.~Шестаков}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Кудрявцев А.\,А.}
+\index{Шестаков О.\,В.}
+\index{Kudryavtsev A.\,A.}
+\index{Shestakov O.\,V.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при финансовой поддержке РНФ (проект №\,22-11-00212).}}
+
+%Исследование выполнено при 
+%поддержке Междисциплинарной на\-уч\-но-обра\-зо\-ва\-тель\-ной школы Московского 
+%университета <<Мозг, когнитивные сис\-те\-мы, искусственный интеллект>>.}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет 
+имени М.\,В.~Ломоносова, факультет вы\-чис\-ли\-тель\-ной математики и~кибернетики; 
+Московский центр фундаментальной и~при\-клад\-ной математики, 
+\mbox{aakudryavtsev@cs.msu.ru}}
+\footnotetext[2]{Московский государственный университет 
+имени М.\,В.~Ломоносова, факультет вы\-чис\-ли\-тель\-ной математики и~кибернетики; 
+Московский центр фундаментальной и~при\-клад\-ной математики; Федеральный 
+исследовательский центр <<Информатика и~управ\-ле\-ние>> Российской академии наук, 
+\mbox{oshestakov@cs.msu.ru}}
+
+\vspace*{-9pt}
+
+
+\Abst{Доказывается асимптотическая нормальность оценок па\-ра\-мет\-ров гамма-экс\-по\-нен\-ци\-аль\-но\-го 
+распределения, полученных при помощи модифицированного метода моментов, в~случае 
+слабой за\-ви\-си\-мости компонент выборки. Для оценок параметров изгиба и~масштаба 
+гамма-экспоненциального распределения при фиксированных параметрах формы и~концентрации 
+доказана центральная предельная теорема в~случае, когда максимальный коэффициент корреляции 
+между элементами выборки стремится к~нулю. Метод доказательства основан на исследовании 
+спектральной плотности выборки и~результатах теории стационарных случайных 
+по\-сле\-до\-ва\-тель\-нос\-тей. Результаты статьи могут быть использованы 
+для обоснования асимптотической нормальности оценок параметров ди\-гам\-ма-рас\-пре\-де\-ле\-ния, 
+к~частным видам которого относятся обобщенное гамма-распределение и~обобщенное бета-распределение 
+второго рода, возникающие при описании процессов, для моделирования которых используются 
+распределения с~неотрицательным неограниченным носителем.}
+
+\KW{слабая зависимость; оценивание параметров; гамма-экс\-по\-нен\-ци\-аль\-ное распределение; смешанные распределения; метод моментов; 
+асимп\-то\-ти\-че\-ская нор\-маль\-ность}
+
+
+\DOI{10.14357/19922264230308}{PEXTVK}
+  
+\vspace*{2pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+%\vspace*{-2pt}
+
+Подавляющее большинство моделей, ис\-поль\-зу\-ющих\-ся для описания случайных 
+характеристик, име\-ющих непрерывные не\-от\-ри\-ца\-тель\-ные носители, оперируют 
+распределениями из гамма- и~бета-клас\-сов. При этом необходимо возникает задача 
+ста\-ти\-сти\-че\-ско\-го оценивания неизвестных па\-ра\-мет\-ров при\-ме\-ня\-емо\-го распределения. 
+В~статье рас\-смат\-ри\-ва\-ет\-ся предложенное в~\cite{Ku2019_2} распределение, тес\-но 
+связанное как с~обобщенным гам\-ма-рас\-пре\-де\-ле\-ни\-ем~\cite{KrMe1946,KrMe1948}, так 
+и~с~обобщенным бе\-та-рас\-пре\-де\-ле\-ни\-ем второго рода~\cite{McDonald1984}.
+
+\smallskip
+
+\noindent
+\textbf{Определение.}\ 
+Будем говорить, что случайная величина~$\zeta$ имеет гам\-ма-экс\-по\-нен\-ци\-аль\-ное 
+распределение GE$(r,\nu,s,t,\delta)$ с~па\-ра\-мет\-ра\-ми изгиба $0\hm\le r\hm<1$, формы 
+$\nu\hm\neq0$, концентрации $s,t\hm>0$ и~мас\-шта\-ба $\delta\hm>0$, если ее плот\-ность при 
+$x\hm>0$ задается со\-от\-но\-ше\-нием
+\begin{equation}
+\label{GED}
+g_E(x) =
+\fr{|\nu|x^{t\nu-1}}{\delta^{t\nu}\Gamma(s)\Gamma(t)}
+   \,{\sf Ge}_{r,\, tr+s}\left(-\left(\fr{x}{\delta} \right)^{\nu}\right),
+\end{equation}
+где $E=(r,\nu,s,t,\delta)$; ${\sf Ge}_{\alpha,\, \beta} (x)$~--- гамма-экс\-по\-нен\-ци\-аль\-ная функция~\cite{KuTi2017}:
+
+\noindent
+\begin{multline}
+\label{GEF}
+{\sf Ge}_{\alpha, \beta} (x) = 
+\sum\limits_{k=0}^{\infty}\fr{x^k}{k!}\, \Gamma(\alpha k + \beta), \\
+ x\in\mathbb{R}\,, \enskip 0\le\alpha<1\,, \enskip \beta> 0\,.
+\end{multline}
+
+\vspace*{-3pt}
+
+В работе~\cite{Ku2019_2} было показано, что рас\-пре\-де\-ле\-ние~(\ref{GED}) адекватно 
+описывает байесовские модели ба\-лан\-са~\cite{Ku2018}. Это преж\-де всего вызвано 
+тем, что распределение с~плот\-ностью~(\ref{GED}) может быть пред\-став\-ле\-но
+ как мас\-штаб\-ная смесь двух случайных ве\-ли\-чин, име\-ющих обобщенное 
+гам\-ма-рас\-пре\-де\-ле\-ние~\cite{Ku2019_2}.
+
+Проблема оценивания па\-ра\-мет\-ров обобщенного гамма-рас\-пре\-де\-ле\-ния, его част\-ных 
+видов и~смесей имеет богатую историю и~до сих пор актуальна~\cite{IrVaGoGo2020,RiBaGaGo2020,CoNg2021,SaGoBaGo2022}.
+
+Ввиду представления плот\-ности~$g_E(x)$ в~терминах специальной гам\-ма-экс\-по\-нен\-ци\-аль\-ной функции~(\ref{GEF})
+ метод максимального прав\-до\-по\-до\-бия 
+пред\-став\-ля\-ет\-ся за\-труд\-ни\-тель\-ным. То же мож\-но сказать и~о~прямом методе моментов. 
+По этой причине в~работе~\cite{KuShe2020} было предложено оценивать па\-ра\-мет\-ры 
+гам\-ма-экс\-по\-нен\-ци\-аль\-но\-го рас\-пре\-де\-ле\-ния при помощи модифицированного метода, 
+осно\-ван\-но\-го на логарифмических моментах.
+
+\pagebreak
+
+Кроме того, в~ряде задач приходится рас\-смат\-ри\-вать выборку из зависимых 
+компонент. Такие ситуации воз\-ни\-ка\-ют, например, при анализе раз\-лич\-ных 
+геофизических процессов и~анализе помех в~коммуникационных каналах.
+
+Пусть $\{X_i\}_{i\in\mathbb{Z}}$~--- стационарная в~строгом смыс\-ле 
+по\-сле\-до\-ва\-тель\-ность случайных величин, определенных на одном вероятностном 
+про\-стран\-ст\-ве~$(\Omega, \mathfrak{F}, {\sf P})$, и~$\mathfrak{F}_k^m$~--- $\sigma$-ал\-геб\-ра, 
+по\-рож\-ден\-ная \mbox{случай\-ны\-ми} величинами~$X_i$, $k\hm\leq i\hm\leq m$. Обозначим 
+через ${\mathcal{L}}^2(\mathfrak{F}_k^m)$ со\-во\-куп\-ность всех $\mathfrak{F}_k^m$-из\-ме\-ри\-мых 
+случайных величин с~конечными вторыми моментами. Определим 
+максимальный коэффициент кор\-ре\-ляции:
+\begin{multline*}
+\label{corr}
+\rho(n)=\sup\limits_{f,g}\abs{\correl(f,g)},\\
+ f\in {\cal{L}}^2(\mathfrak{F}_{-\infty}^0),\enskip g\in {\cal{L}}^2(\mathfrak{F}_n^{\infty}), \enskip  n>0\,.
+\end{multline*}
+Условие $\rho(n)\longrightarrow0$ при $n\hm\to\infty$ означает ослабевание 
+зависимости в~по\-сле\-до\-ва\-тель\-ности $\{X_i\}_{i\in\mathbb{Z}}$ между <<прош\-лым>> 
+и~<<будущим>>.
+
+В статье показывается асимп\-то\-ти\-че\-ская нор\-маль\-ность оценок па\-ра\-мет\-ров гам\-ма-экс\-по\-нен\-ци\-аль\-но\-го 
+рас\-пре\-де\-ле\-ния, полученных при помощи модифицированного метода 
+моментов. При этом предполагается, что компоненты вы\-бор\-ки, по которой строятся 
+оцен\-ки, слабо за\-ви\-симы.
+
+
+\section{Структурные характеристики распределения выборки}
+
+В дальнейших рас\-суж\-де\-ни\-ях понадобятся сле\-ду\-ющие мо\-мент\-ные характеристики 
+гам\-ма-экс\-по\-нен\-ци\-аль\-но\-го рас\-пре\-де\-ле\-ния~(\ref{GED}), полученные в~работе~\cite{KuShe2020}:
+\begin{equation}
+\left.
+\begin{array}{rl}
+\mu_1&\equiv\e\ln \zeta=\fr{\nu\ln\delta+\psi(t)-r\psi(s)}{\nu};
+\\[6pt]
+\mu_2&\equiv\e\ln^2 \zeta=
+\fr{\left[\nu\ln\delta+\psi(t)-r\psi(s)\right]^2}{\nu^2}+{}\\
+&\hspace*{30mm}{}+\fr{\psi'(t)+r^2\psi'(s)}{\nu^2}.
+\end{array}
+\right\}
+\label{E_ln}
+\end{equation}
+
+Обозначим
+\begin{multline*}
+R_{k,l}(m)=\covrel\left(\ln^kX_n,\ln^lX_{n+m}\right)={}\\
+{}=\e\ln^kX_n\ln^lX_{n+m}-\mu_k\mu_l,\enskip k,l=1,2.
+\end{multline*}
+
+Всюду далее предполагается, что ряд $\sum\nolimits_{n=1}^\infty\rho(n)$ сходится. В~этом 
+случае существует положительно по\-лу\-опре\-де\-лен\-ная спект\-раль\-ная мат\-ри\-ца~\cite{JeWa1972, Ibragimov1975}
+\begin{equation}
+\label{Sigma}
+\Sigma_\lambda=2\pi\begin{pmatrix}
+f_{1,1}(\lambda)
+&
+f_{1,2}(\lambda)
+\\[3pt]
+f_{1,2}(\lambda)
+&
+f_{2,2}(\lambda)
+\end{pmatrix},
+\end{equation}
+где
+$$
+f_{k,l}(\lambda)=\fr{1}{2\pi}\sum\limits_me^{-im\lambda}R_{k,l}(m),\enskip k,l=1,2\,,
+$$
+непрерывны и~ограничены. Ввиду чет\-ности~$R_{k,l}(m)$
+\begin{multline*}
+f_{k,l}(\lambda)=\fr{1}{2\pi}\sum\limits_me^{-im\lambda}R_{k,l}(m)={}\\
+{}=
+\fr{1}{2\pi}\sum\limits_me^{im\lambda}R_{k,l}(m)=
+\fr{1}{2\pi}\sum\limits_m\cos(m\lambda)R_{k,l}(m)={}\\
+{}=
+\fr{1}{2\pi}\left(R_{k,l}(0)+2\sum\limits_{m=1}^\infty\cos(m\lambda)R_{k,l}(m)\right).
+\end{multline*}
+
+\section{Оценки параметров гамма-экспоненциального распределения}
+
+Введем обозначение для выборочных логарифмических моментов случайной величины~$\zeta$:
+\begin{equation*}
+\label{L_m}
+L_k(\mathbb{X})=\fr{1}{n}\sum\limits_{i=1}^n\ln^k X_i,
+\end{equation*}
+где $\mathbb{X}=(X_1,\ldots,X_n)$~--- выборка из рас\-пре\-де\-ле\-ния $\zeta\hm\sim \mathrm{GE}(r,\nu,s,t,\delta)$.
+
+Метод построения рас\-смат\-ри\-ва\-емых оценок основан на решении сис\-те\-мы урав\-нений
+$$
+\mu_k=L_k(\mathbb{X}),\enskip k=1,2\,,
+$$
+причем предполагается, что па\-ра\-мет\-ры фор\-мы~$\nu$ и~кон\-цент\-ра\-ции~$s$ и~$t$ 
+фик\-си\-ро\-ваны.
+
+Приведем известные оценки па\-ра\-мет\-ров из\-ги\-ба~$r$ и~мас\-шта\-ба~$\delta$ гам\-ма-экс\-по\-нен\-ци\-аль\-но\-го 
+рас\-пре\-де\-ле\-ния. Для этого введем в~рас\-смот\-ре\-ние ди\-гам\-ма-функ\-цию 
+$ \psi(z)\hm={\Gamma'(z)}/{\Gamma(z)}$ и~функции
+\begin{equation}
+\left.
+\begin{array}{rl}
+\!\!\!\!R(l_1,l_2)&=
+\sqrt{\fr{\nu^2(l_2-l_1^2)-{\psi'(t)}}{\psi'(s)}}\,;
+\\[6pt]
+\!\!\!\!D(l_1,l_2)&=
+\exp\left\{
+\vphantom{\sqrt{\fr{\nu^2(l_2\!-\!l_1^2)\!-\!{\psi'(t)}}{\psi'(s)}}^2}
+l_1\!-\!
+\fr{\psi(t)}{\nu}+{}\right.\\[6pt]
+&\left.{}+\fr{\psi(s)}{\nu}\sqrt{\fr{\nu^2(l_2-l_1^2)-{\psi'(t)}}{\psi'(s)}}
+\right\}.
+\end{array}\!\!
+\right\}\!
+\label{R_D}
+\end{equation}
+
+В силу состоятельности выборочных логарифмических моментов для оценок па\-ра\-мет\-ров~$r$ и~$\delta$, 
+полученных в~работе~\cite{KuShe2020}, справедливо сле\-ду\-ющее 
+утверж\-де\-ние.
+
+\smallskip
+
+\noindent
+\textbf{Лемма~1.}\
+%\label{r_delta_est}
+\textit{При фиксированных па\-ра\-мет\-рах~$\nu$, $s$ и~$t$ рас\-пре\-де\-ле\-ния 
+$\mathrm{GE}(r,\nu,s,t,\delta)$ оценки}
+
+\pagebreak
+
+\noindent
+\begin{align}
+{\hat r}(\mathbb{X}) &=R(L_1(\mathbb{X}),L_2(\mathbb{X}));
+\label{hat_r}\\
+%\textit{и}
+{\hat \delta}(\mathbb{X})&=D(L_1(\mathbb{X}),L_2(\mathbb{X}))
+\label{hat_delta_r}
+\end{align}
+\textit{параметров~$r$ и~$\delta$ обладают свойством со\-сто\-я\-тель\-ности}.
+
+
+
+\section{Асимптотическая нормальность оценок параметров гамма-экспоненциального 
+распределения}
+
+Утверждения об асимп\-то\-ти\-че\-ской нор\-маль\-ности оценок~(\ref{hat_r}) и~(\ref{hat_delta_r}) 
+базируются на сле\-ду\-ющих леммах~\cite{Serfling2002}.
+
+\smallskip
+
+\noindent
+\textbf{Лемма~2.}\
+%\label{Serfling_Rn}
+\textit{В $\mathbb{R}^n$ случайный вектор~$X_n$ сходится по рас\-пре\-де\-ле\-нию к~случайному 
+век\-то\-ру~$X$, если и~только если каж\-дая линейная комбинация компонент~$X_n$ 
+сходится по распределению к~такой же линейной комбинации компонент~$X$.}
+
+
+\smallskip
+
+\noindent
+\textbf{Лемма~3.}\
+%\label{Serfling_nd}
+\textit{Предположим, что в~$\mathbb{R}^k$ при $n\hm\to\infty$}
+$$
+\sqrt{n}(T_{n1},\ldots,T_{nk})\Longrightarrow N\left(\mu, \Sigma\right),
+$$
+\textit{где $\Sigma$~--- ковариационная мат\-ри\-ца. Пусть действительная функция 
+$g(t)\hm=g(t_1,\ldots,t_k)$ имеет от\-лич\-ный от нуля дифференциал в~точ\-ке $t\hm=\mu$. 
+По\-ложим}
+$$
+d=\left(\fr{\partial g}{\partial t_1}\Big|_{t=\mu},\ldots,
+\fr{\partial g}{\partial t_k}\Big|_{t=\mu}\right).
+$$
+\textit{Тогда $\sqrt{n}g(T_{n1},\ldots,T_{nk})\Longrightarrow N(g(\mu), d\Sigma d^{\mathrm{T}})$}.
+
+\smallskip
+
+
+Ввиду леммы~3 понадобятся производные функ\-ций~(\ref{R_D}):
+\begin{align*}
+\fr{\partial R}{\partial l_1}(l_1,l_2)&=
+\fr{\nu^2}{2 \psi'(s) R(l_1,l_2)};
+\\ %[9pt]
+\fr{\partial R}{\partial l_2}(l_1,l_2)&=
+-\fr{l_2 \nu^2}{\psi'(s) R(l_1,l_2)};
+\\ %[9pt]
+\fr{\partial D}{\partial l_1}(l_1,l_2)&=
+\left(\fr{\nu\psi(s) }{2 \psi'(s) R(l_1,l_2)}+1\right)D(l_1,l_2);
+\\ %[9pt]
+\fr{\partial D}{\partial l_2}(l_1,l_2)&=
+-\fr{\nu\psi(s)l_2D(l_1,l_2)}{\psi'(s) R(l_1,l_2)}.
+%\label{d_function_d_l}
+\end{align*}
+
+Обозначим
+\begin{multline}
+d_{R}=\left(\fr{\partial R}{\partial l_1}(l_1,l_2)\Big|_{(l_1,l_2)=(\mu_1,\mu_2)},\right.\\
+\left. \fr{\partial R}{\partial l_2}(l_1,l_2)\Big|_{(l_1,l_2)=(\mu_1,\mu_2)}\right);
+\label{d_R_pm}
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+d_{D}=\left(\fr{\partial D}{\partial 
+l_1}(l_1,l_2)\Big|_{(l_1,l_2)=(\mu_1,\mu_2)},\right.\\
+\left.\fr{\partial D}{\partial l_2}(l_1,l_2)\Big|_{(l_1,l_2)=(\mu_1,\mu_2)}\right),
+\label{d_D_pm}
+\end{multline}
+
+\columnbreak
+
+\noindent
+где математические ожидания $\mu_k$ определены\linebreak
+ в~(\ref{E_ln}).
+
+Сформулируем утверждения об асимптотической нор\-маль\-ности оценок~(\ref{hat_r}) и~(\ref{hat_delta_r})
+ при фиксированных па\-ра\-мет\-рах формы~$\nu$ и~кон\-цент\-ра\-ции~$s$ и~$t$.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~1.}\
+\textit{Предположим, что спект\-раль\-ная мат\-ри\-ца~$\Sigma_0$ в}~(\ref{Sigma}) \textit{положительно 
+определена. При $n\hm\to\infty$ оцен\-ка}~(\ref{hat_r}) \textit{неизвестного па\-ра\-мет\-ра~$r$ 
+асимп\-то\-ти\-чески нормальна}:
+$$
+\sqrt{n}\fr{{\hat r}(\mathbb{X})-r}{\sqrt{
+d_{R}\Sigma_0 d_{R}^{\mathrm{T}}}}\Longrightarrow N(0,1),
+$$
+\textit{где мат\-ри\-ца~$\Sigma_0$ и~вектор $d_R$ задаются соотношениями}~(\ref{Sigma}) \textit{и}~(\ref{d_R_pm}).
+
+\smallskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \
+Покажем асимптотическую нор\-маль\-ность вектора из выборочных логарифмических 
+моментов $(L_1(\mathbb{X}), L_2(\mathbb{X}))$. Для этого введем в~рас\-смот\-ре\-ние 
+линейную комбинацию 
+$$Z_i(\alpha_1,\alpha_2)\hm=\alpha_1\ln X_i\hm+\alpha_2\ln^2 X_i,\enskip
+\alpha_1^2\hm+\alpha_2^2\hm>0\,.$$
+ Найдем дис\-пер\-сию нормированной суммы таких линейных 
+комбинаций. \mbox{Имеем}
+\begin{multline*}
+\D\fr{1}{n}\sum\limits_{i=1}^nZ_i(\alpha_1,\alpha_2)=
+\D(\alpha_1L_1(\mathbb{X})+\alpha_2L_2(\mathbb{X}))={}\\
+{}=
+(\alpha_1,\alpha_2)\Sigma'(\alpha_1,\alpha_2)^{\mathrm{T}},
+\end{multline*}
+где
+\begin{multline*}
+\label{Sigma_bis}
+\Sigma' =\begin{pmatrix}
+\sigma_{1,1}(n)
+&
+\sigma_{1,2}(n)
+\\[3pt]
+\sigma_{1,2}(n)
+&
+\sigma_{2,2}(n)
+\end{pmatrix}
+\equiv{}\\
+{}\equiv
+\begin{pmatrix}
+\D L_1(\mathbb{X})
+&
+\covrel\left(L_1(\mathbb{X}),L_2(\mathbb{X})\right)
+\\[3pt]
+\covrel\left(L_1(\mathbb{X}),L_2(\mathbb{X})\right)
+&
+\D L_2(\mathbb{X})
+\end{pmatrix}.
+\end{multline*}
+
+При $n\to\infty$~\cite{Ibragimov1975}
+$$
+n\sigma_{k,l}(n)
+\longrightarrow
+2\pi f_{k,l}(0),\enskip k,l=1,2\,.
+$$
+
+Таким образом,
+$$
+n\D\fr{1}{n}\sum\limits_{i=1}^nZ_i(\alpha_1,\alpha_2)\longrightarrow
+(\alpha_1,\alpha_2)\Sigma_0(\alpha_1,\alpha_2)^{\mathrm{T}}.
+$$
+
+Поскольку матрица~$\Sigma_0$ положительно определена и~ряд 
+$\sum\nolimits_{n=1}^\infty\rho(n)$ сходится, имеем~\cite{Ibragimov1975}
+\begin{multline*}
+\left(\fr{1}{n}\sum\nolimits_{i=1}^n \!Z_i(\alpha_1,\alpha_2)-
+\e \fr{1}{n}\sum\nolimits_{i=1}^n \! Z_i(\alpha_1,\alpha_2)\right) \times{}\\
+{}\times \left( %\sqrt
+{\D \fr{1}{n}\sum\nolimits_{i=1}^n 
+Z_i(\alpha_1,\alpha_2)}\right)^{-1/2}\Longrightarrow%\hspace*{-0.771pt}
+%\\
+%\Longrightarrow 
+N(0,1).
+\end{multline*}
+
+Следовательно, по лемме~2 получаем
+$$
+\sqrt{n}\,\left(L_1(\mathbb{X}),L_2(\mathbb{X})\right)\Longrightarrow 
+N(\mu,\Sigma_0),\enskip n\to\infty\,.
+$$
+
+Кроме того, в~условиях тео\-ре\-мы компоненты вектора~$d_{R}$, определенного в~(\ref{d_R_pm}), 
+конечны и~функция~$R(l_1,l_2)$  имеет в~точ\-ке $(\mu_1,\mu_2)$ 
+отличный от нуля дифференциал.
+
+Таким образом, выполнены все условия лем\-мы~3. Сле\-до\-ва\-тельно,
+$$
+\sqrt{n}R(L_1(\mathbb{X}),L_2(\mathbb{X}))\Longrightarrow N\left(R(\mu_1,\mu_2), 
+d_{R}\Sigma_0 d_{R}^{\mathrm{T}}\right).
+$$
+
+Теорема доказана.
+
+\smallskip
+
+Полностью аналогично доказывается тео\-ре\-ма об асимп\-то\-ти\-че\-ской нор\-маль\-ности оцен\-ки 
+${\hat \delta}(\mathbb{X})$ па\-ра\-мет\-ра мас\-шта\-ба~$\delta$.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~2.}\
+\textit{Предположим, что спект\-раль\-ная мат\-ри\-ца $\Sigma_0$ в}~(\ref{Sigma}) \textit{положительно 
+определена. При $n\hm\to\infty$ оценка}~(\ref{hat_delta_r}) \textit{неизвестного па\-ра\-мет\-ра~$\delta$ асимпто\-ти\-чески нор\-мальна}:
+$$
+\sqrt{n}\,\fr{{\hat \delta}(\mathbb{X})-\delta}{\sqrt{d_{D}\Sigma_0 d_{D}^{\mathrm{T}}}}\Longrightarrow N(0,1),
+$$
+\textit{где матрица~$\Sigma_0$ и~вектор~$d_D$ задаются соотношениями}~(\ref{Sigma}) \textit{и}~(\ref{d_D_pm}).
+
+\section{Заключение}
+
+
+В работе показана асимптотическая нор\-маль\-ность по\-стро\-ен\-ных по выборке со слабо 
+зависимыми компонентами оценок па\-ра\-мет\-ров изгиба\linebreak и~масштаба гам\-ма-экс\-по\-нен\-ци\-аль\-но\-го распре\-де\-ления при фиксированных 
+па\-ра\-мет\-рах фор\-мы 
+и~концентрации. Результаты работы автоматически переносятся на пару оценок 
+па\-ра\-мет\-ров формы и~мас\-шта\-ба при фиксированных па\-ра\-мет\-рах изгиба и~концентрации. 
+Предложенный метод доказательства асимп\-то\-ти\-че\-ской нор\-маль\-ности применим в~более 
+широком классе задач, в~част\-ности при доказательстве цент\-раль\-ной предельной 
+тео\-ре\-мы для оценок па\-ра\-мет\-ров ди\-гам\-ма-рас\-пре\-де\-ле\-ния, 
+обобщающего гам\-ма-экс\-по\-нен\-ци\-аль\-ное рас\-пре\-де\-ле\-ние. Решение по\-доб\-ных задач пред\-став\-ля\-ет собой 
+на\-прав\-ле\-ние дальнейших исследований авторов.
+
+{\small\frenchspacing
+ { %\baselineskip=12pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{Ku2019_2}
+\Au{Кудрявцев~А.\,А.}
+О~представлении гам\-ма-экс\-по\-нен\-ци\-аль\-но\-го и~обобщенного отрицательного 
+биномиаль-\linebreak
+\vspace*{-12pt}
+
+\columnbreak
+
+\noindent
+ного распределений~// Информатика и~её применения, 2019. Т.~13. Вып.~4. С.~76--80.
+doi: 10.14357/ 19922264190412.
+
+\bibitem{KrMe1946} %2
+\Au{Крицкий~С.\,Н., Менкель~М.\,Ф.}
+О~приемах исследования случайных колебаний реч\-но\-го стока~// Труды НИУ ГУГМС. Сер.~IV, 1946. Вып.~29. С.~3--32. 
+
+\bibitem{KrMe1948} %3
+\Au{Крицкий~С.\,Н., Менкель~М.\,Ф.}
+Выбор кривых рас\-пре\-де\-ле\-ния вероятностей для расчетов реч\-но\-го стока~// Известия АН СССР. Отд. техн. наук, 1948. №\,6. С.~15--21.
+
+\bibitem{McDonald1984} %4
+\Au{McDonald~J.\,B.}
+Some generalized functions for the size distribution of income~// Econometrica, 1984. Vol.~52. No.\,3. P.~647--665.
+
+\bibitem{KuTi2017} %5
+\Au{Кудрявцев~А.\,А., Титова~А.\,И.}
+Гам\-ма-экс\-по\-нен\-ци\-аль\-ная функция в~байесовских моделях массового обслуживания~// Информатика и~её применения, 2017. Т.~11. Вып.~4. С.~104--108.
+doi: 10.14357/ 19922264170413. 
+
+\bibitem{Ku2018} %6
+\Au{Кудрявцев~А.\,А.}
+Байесовские модели баланса~// Информатика и~её применения, 2018. Т.~12. Вып.~3. С.~18--27.
+doi: 10.14357/19922264180303.
+
+\bibitem{IrVaGoGo2020} %7
+\Au{Iriarte~Y.\,A., Varela~H., G$\acute{\mbox{o}}$mez~H.\,J., G$\acute{\mbox{o}}$mez~H.\,W.}
+A~gamma-type distribution with applications~// Symmetry, 2020. Vol.~12. Iss.~5. Art.~870. 15~p. doi: 10.3390/ sym12050870.
+
+\bibitem{RiBaGaGo2020} %8
+\Au{Rivera~P.\,A., Barranco-Chamorro~I., Gallardo~D.\,I., G$\acute{\mbox{o}}$mez~H.\,W.}
+Scale mixture of Rayleigh distribution~// Mathematics, 2020. Vol.~8. Iss.~10. Art.~1842. 22~p. doi: 10.3390/math8101842.
+
+\bibitem{CoNg2021} %9
+\Au{Combes~C., Ng~H.\,K.\,T.}
+On parameter estimation for Amoroso family of distributions~// Math. Comput. Simulat., 2021. Vol.~191. P.~309--327.
+
+\bibitem{SaGoBaGo2022} %10
+\Au{Santoro~K.\,I., G$\acute{\mbox{o}}$mez~H.\,J., Barranco-Chamorro~I., G$\acute{\mbox{o}}$mez~H.\,W.}
+Extended half-power exponential distribution with applications to COVID-19 data~// Mathematics, 2022. Vol.~10. Iss.~6. Art.~942. 
+16~p. doi: 10.3390/ math10060942.
+
+\bibitem{KuShe2020} %11
+\Au{Кудрявцев~А.\,А., Шестаков~О.\,В.}
+Метод логарифмических моментов для оценивания па\-ра\-мет\-ров гам\-ма-экс\-по\-нен\-ци\-аль\-но\-го рас\-пре\-де\-ле\-ния~// 
+Информатика и~её применения, 2020. Т.~14. Вып.~3. С.~49--54. doi: 10.14357/19922264200307.
+
+\bibitem{JeWa1972} %12
+\Au{Дженкинс~Г., Ваттс~Д.} Спект\-раль\-ный анализ и~его приложения / Пер. с англ.~--- М.: Мир, 1972. 285~с. (\Au{Jenkins G.\,M., Watts D.\,G.}
+ Spectral analysis and its applications.~--- San Francisco, CA, USA: Holden-Day, 1968. 552~p.)
+
+
+
+\bibitem{Ibragimov1975} %13
+\Au{Ибрагимов~И.\,А.} 
+Замечание о~цент\-раль\-ной предельной тео\-ре\-ме для зависимых случайных величин~// Тео\-рия вероятностей и~её применения, 1975. Т.~20. Вып.~1. С.~134--140.
+
+\bibitem{Serfling2002} %14
+\Au{Serfling~R.\,J.}
+Approximation theorems of mathematical statistics.~--- New York, NY, USA: John Wiley \& Sons, 2002. 371~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 03.07.23}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+
+
+\def\tit{A METHOD FOR ESTIMATING PARAMETERS OF~THE~GAMMA-EXPONENTIAL DISTRIBUTION FROM~A~SAMPLE~WITH~WEAKLY DEPENDENT COMPONENTS}
+
+
+\def\titkol{A method for estimating parameters of~the~gamma-exponential distribution from~a~sample with weakly dependent components}
+
+
+\def\aut{A.\,A.~Kudryavtsev$^{1,2}$ and~O.\,V.~Shestakov$^{1,2,3}$}
+
+\def\autkol{A.\,A.~Kudryavtsev and~O.\,V.~Shestakov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-10pt}
+
+\noindent
+$^{1}$Department of Mathematical Statistics, Faculty of Computational Mathematics and Cybernetics, M.\,V.~Lomo-\linebreak
+$\hphantom{^1}$nosov Moscow State University,  1-52~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation
+
+\noindent
+$^{2}$Moscow Center for Fundamental and Applied Mathematics, M.\,V.~Lomonosov Moscow State University,\linebreak
+$\hphantom{^1}$1~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation
+
+
+\noindent
+$^3$Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences,  
+44-2~Vavilov\linebreak
+$\hphantom{^1}$Str., Moscow 119133, Russian Federation
+
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{9pt}
+
+
+\Abste{The article proves the asymptotic normality of the estimators for 
+the gamma-exponential distribution parameters obtained using the modified 
+method of moments in the case of a weak dependence of the sample components. 
+For the estimators of the bent and scale parameters of the gamma-exponential 
+distribution with fixed shape and concentration parameters, the central limit 
+theorem is proved in the case when the maximum correlation coefficient between 
+the sample elements tends to zero. The proof is based on the study of the sample 
+spectral density and the results of the theory of stationary random sequences. 
+The results of the article can be used to substantiate the asymptotic normality 
+of the estimators for the parameters of the digamma distribution, the particular 
+types of which include the generalized gamma distribution and the generalized beta 
+distribution of the second kind that arise when describing processes modeled 
+with distributions having a~nonnegative unbounded support.}
+
+
+\KWE{weak dependence; parameter estimation; gamma-exponential distribution; mixed distributions; method of moments; asymptotic normality}
+
+\DOI{10.14357/19922264230308}{PEXTVK}
+
+\vspace*{-12pt}
+
+\Ack
+\noindent
+The research was supported by the Russian Science Foundation, project No.\,22-11-00212.
+
+%This research has been supported by the Interdisciplinary Scientific 
+%and Educational School of Moscow University ``Brain, Cognitive Systems, Artificial Intelligence.''
+
+\vspace*{8pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99} 
+
+\bibitem{Ku2019_2-1}
+\Aue{Kudryavtsev, A.\,A.} 2019. O~pred\-stav\-le\-nii gamma-eksponentsial'nogo i~obob\-shchen\-no\-go ot\-ri\-tsa\-tel'\-no\-go 
+bi\-no\-mi\-al'\-no\-go ras\-pre\-de\-le\-niy 
+[On the representation of gamma-exponential and generalized negative binomial distributions]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 13(4):76--80. 
+doi: 10.14357/19922264190412.
+
+\bibitem{KrMe1946-1} %2
+\Aue{Kritsky, S.\,N., and M.\,F.~Menkel.}
+ 1946. O~pri\-emakh is\-sle\-do\-va\-niya slu\-chay\-nykh ko\-le\-ba\-niy rech\-no\-go sto\-ka 
+ [Methods of investigation of random fluctuations of river flow]. \textit{Trudy NIU GUGMS. Ser.~IV} [Proceedings of GUGMS research institutions. Ser. IV] 29:3--32.
+
+\bibitem{KrMe1948-1} %3
+\Aue{Kritsky, S.\,N., and M.\,F.~Menkel.}
+ 1948. Vy\-bor kri\-vykh ras\-pre\-de\-le\-niya ve\-ro\-yat\-no\-stey dlya ra\-sche\-tov rech\-no\-go sto\-ka 
+ [Selection of probability distribution curves for river flow calculations]. \textit{Izvestiya AN SSSR. Otd. tekhn. nauk} 
+ [Herald of the Russian Academy of Sciences. Technical Sciences] 6:15--21.
+
+\bibitem{McDonald1984-1} %4
+\Aue{McDonald, J.\,B.} 1984. Some generalized functions for the size distribution of income. \textit{Econometrica} 52(3):647--665.
+
+\bibitem{KuTi2017-1} %5
+\Aue{Kudryavtsev, A.\,A., and A.\,I.~Titova.}
+ 2017. Gamma-eksponentsial'naya funk\-tsiya v~baye\-sov\-skikh mo\-de\-lyakh mas\-so\-vo\-go ob\-slu\-zhi\-va\-niya 
+ [Gamma-exponential function in Bayesian queuing models]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 11(4):104--108. doi: 10.14357/ 19922264170413. 
+
+\bibitem{Ku2018-1} %6
+\Aue{Kudryavtsev, A.\,A.} 2018. Baye\-sov\-skie mo\-de\-li ba\-lan\-sa [Bayesian balance models]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 
+12(3):18--27. doi: 10.14357/ 19922264180303.
+
+\bibitem{IrVaGoGo2020-1} %7
+\Aue{Iriarte, Y.\,A., H.~Varela, H.\,J.~G$\acute{\mbox{o}}$mez, and H.\,W.~G$\acute{\mbox{o}}$mez.}
+ 2020. A~gamma-type distribution with applications. \textit{Symmetry} 12(5):870. 15~p. doi: 10.3390/sym12050870.
+
+\bibitem{RiBaGaGo2020-1} %8
+\Aue{Rivera, P.\,A., I.~Barranco-Chamorro, D.\,I.~Gallardo, and H.\,W.~G$\acute{\mbox{o}}$mez.}
+ 2020. Scale mixture of Rayleigh distribution. \textit{Mathematics} 8(10):1842. 22~p. doi: 10.3390/ math8101842.
+
+\bibitem{CoNg2021-1} %9
+\Aue{Combes, C., and H.\,K.\,T.~Ng.} 2021. On parameter estimation for Amoroso family of distributions.
+\textit{Math. Comput. Simulat.} 191:309--327. doi: 10.1016/j.matcom. 2021.07.004
+
+\bibitem{SaGoBaGo2022-1} %10
+\Aue{Santoro, K.\,I., H.\,J.~G$\acute{\mbox{o}}$mez, I.~Barranco-Chamorro, and H.\,W.~G$\acute{\mbox{o}}$mez.} 2022.
+Extended half-power exponential\linebreak
+\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+distribution with applications to COVID-19 data.
+\textit{Mathematics} 10(6):942. 16~p. doi:~10.3390/math10060942.
+
+\bibitem{KuShe2020-1}
+ \Aue{Kudryavtsev, A.\,A., and O.\,V.~Shestakov.} %11
+ 2020. Me\-tod lo\-ga\-rif\-mi\-che\-skikh mo\-men\-tov dlya otse\-ni\-va\-niya pa\-ra\-met\-rov gamma-eksponentsialnogo ras\-pre\-de\-le\-niya
+[Method of logarithmic moments for estimating the gamma-exponential distribution parameters]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 
+ 14(3):49--54. doi: 10.14357/ 19922264200307.
+ 
+ \bibitem{JeWa1972-1}
+\Aue{Jenkins, G.\,M., and D.\,G.~Watts.}
+ 1968. \textit{Spectral analysis and its applications}. San Francisco, CA: Holden-Day. 552~p.
+ 
+\bibitem{Ibragimov1975-1} %13
+\Aue{Ibragimov, I.\,A.} 1975. A~note on the central limit theorems for dependent random variables. 
+\textit{Theor. Probab. Appl.} 20(1):135--141. doi: 10.1137/1120011.
+
+\bibitem{Serfling2002-1} %14
+\Aue{Serfling, R.\,J.} 2002. 
+\textit{Approximation theorems of mathematical statistics}.
+New York, NY: John Wiley \& Sons. 371~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received July 3, 2023}} 
+
+\vspace*{-12pt}
+
+
+\Contr
+
+\noindent
+\textbf{Kudryavtsev Alexey A.}(b.\ 1978)~--- 
+Candidate of Science (PhD) in physics and mathematics, associate professor, Department of Mathematical Statistics, Faculty of
+ Computational Mathematics and Cybernetics, M.\,V.~Lomonosov Moscow State University, 1-52~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation; 
+ senior scientist, Moscow Center for Fundamental and Applied Mathematics, M.\,V.~Lomonosov Moscow State University,
+1~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation; \mbox{aakudryavtsev@cs.msu.ru}
+
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Shestakov Oleg V.} (b.\ 1976)~--- Doctor of Science in physics and mathematics, professor, Department of Mathematical Statistics, 
+Faculty of Computational Mathematics and Cybernetics, M.\,V.~Lomonosov Moscow State University, 1-52~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation; 
+senior scientist, Institute of Informatics Problems, Federal Research Center ``Computer Science and Control'' 
+of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+leading scientist, Moscow Center for Fundamental and Applied Mathematics, M.\,V.~Lomonosov Moscow State University, 1~Leninskie Gory, GSP-1, 
+Moscow 119991, Russian Federation; \mbox{oshestakov@cs.msu.su}
+
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

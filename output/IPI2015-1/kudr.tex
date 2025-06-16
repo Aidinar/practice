@@ -1,0 +1,965 @@
+\def\stat{kudr}
+
+\def\tit{БАЙЕСОВСКАЯ РЕКУРРЕНТНАЯ МОДЕЛЬ РОСТА НАДЕЖНОСТИ:
+БЕТА-РАВНОМЕРНОЕ РАСПРЕДЕЛЕНИЕ ПАРАМЕТРОВ$^*$}
+
+\def\titkol{Байесовская рекуррентная модель роста надежности:
+бета-равномерное распределение параметров}
+
+\def\aut{Ю.\,В.~Жаворонкова$^1$,  А.\,А.~Кудрявцев$^2$,  С.\,Я.~Шоргин$^3$}
+
+\def\autkol{Ю.\,В.~Жаворонкова,  А.\,А.~Кудрявцев,  С.\,Я.~Шоргин}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Исследование выполнено при поддержке
+Российского научного фонда (проект 14-11-00397).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{ООО Спутник,
+juliana-zh@yandex.ru}
+\footnotetext[2]{
+Московский государственный университет им.\ М.\,В.~Ломоносова, факультет вычислительной математики и кибернетики,
+nubigena@mail.ru}
+\footnotetext[3]{Институт проблем информатики Российской академии наук, sshorgin@ipiran.ru}
+
+\Abst{Прогнозирование надежности сложных модифицируемых информационных
+систем (СМИС) является в~настоящее время одной из актуальных задач теории массового
+обслуживания.
+Любая впервые созданная сложная система, предназначенная для
+переработки или передачи информационных потоков, как правило, не
+обладает требуемой надежностью. Такие системы подвергаются модификациям
+в~ходе разработки, опытной эксплуатации и~штатного функционирования.
+Целью этих модификаций является увеличение надежности информационных систем.
+В~связи с~этим возникает необходимость формализации понятия надежности
+модифицируемых информационных систем и~разработки методов и~алгоритмов оценивания
+и~прогнозирования различных надежностных характеристик.
+Одним из подходов к~определению надежности системы является вычисление
+вероятности того, что на сигнал, поданный на вход системы в~определенный
+момент времени, система отреагирует корректно.
+В~статье рассматривается экспоненциальная рекуррентная модель роста надежности,
+в~которой вероятность надежности системы представляется как линейная
+комбинация параметров <<дефективности>> и~<<эффективности>> средства,
+исправляющего недостатки системы. Предполагается, что исследователь не
+имеет точных сведений об исследуемой системе, а~лишь знаком с~характеристиками
+класса, из которого берется данная система. В~рамках байесовского подхода
+предполагается, что один из показателей <<дефективности>> и~<<эффективности>>
+имеет бе\-та-рас\-пре\-де\-ле\-ние, а~другой~--- равномерное распределение.
+Вычисляется средняя предельная надежность системы. Приводятся численные
+результаты для модельных примеров.}
+
+\KW{модифицируемые информационные системы; теория надежности; байесовский подход;
+бета-распределение; равномерное распределение}
+
+\DOI{10.14357/19922264150109}
+
+
+\vskip 14pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Постановка задачи}
+
+Задача прогнозирования надежности СМИС была сформулирована в~[1], а~в~дальнейшем более подробно рассмотрена в~[2].
+В~статье~[3] дано подробное описание класса моделей, в~рамках которых возникает
+необходимость использования байесовского подхода к~анализу роста надежности СМИС,
+таких как новая программная система для компьютера, новая
+ин\-фор\-ма\-ци\-он\-но-вы\-чис\-ли\-тель\-ная сеть или новая
+ад\-ми\-ни\-стра\-тив\-но-ин\-фор\-ма\-ци\-он\-ная система, которые,
+как правило, изначально не обладают требуемой надежностью.
+
+Исследуемые СМИС подвергаются периодическим изменениям (модификациям)
+с~целью увеличения надежности информационных систем. В~\mbox{статье} рассматривается
+описанная в~книге~[2] модель роста надежности, обычно использующаяся, когда
+удобно иметь дело непосредственно с~параметром, интерпретируемым как надежность
+сис\-темы.
+{\looseness=1
+
+}
+
+Рассмотрим произвольную систему, на вход которой подаются некоторые сигналы
+(например, команды оператора или внешние воздействия). Реакция системы на
+поданные сигналы может быть либо правильной (корректной), либо неправильной
+(некорректной).
+
+В~каждый момент времени~$t$ надежность системы можно характеризовать
+параметром $p(t)$~--- вероятностью того, что на сигнал, поданный на вход системы
+в~момент~$t$, система отреагирует правильно. По смыслу такая характеристика
+надежности ближе всего к~традиционно используемому коэффициенту готовности.
+В~случайные моменты времени $0\hm=Y_0\hm\le Y_1 \hm\le Y_2 \le\cdots$ система
+подвергается (мгновенной) модификации, в~результате чего изменяется параметр
+$p(t)$.
+
+Следует обратить внимание на то обстоятельство, что ниже рассматривается
+непрерывное время, без привязки напрямую процесса модифицирования системы
+к~процессу ее тестирования. Предположим, что траектории процесса $p(t)$
+непрерывны справа и~ку\-соч\-но-по\-сто\-ян\-ны, так что $p(t) \hm= p(Y_j)$ при
+$Y_j \hm\le t\hm< Y_{j+1}$.
+
+Обозначим $p_j \hm= p(Y_j)$. Рассмотрим поведение~$p_j$
+в~зависимости от изменения~$j$. Другими словами, будем изучать изменение
+надежности системы в~зависимости от номера модификации.
+В~книге~[2] рассматривается, в~частности, следующая рекуррентная модель
+рос\-та надежности.  Пусть  $\{(\theta_j, \eta_j)\}$, $j\hm\ge1$,~---
+последовательность независимых одинаково распределенных двумерных
+случайных векторов таких, что $0 \hm< \eta_1 \hm< 1$; $0 \hm< \theta_1 \hm < 1$
+почти наверное.
+
+Задав начальную надежность~$p_0$, рассмотрим модель, определяемую рекуррентным
+соотноше\-нием
+$$p_{j+1} = \eta_{j+1}p_j + \theta_{j+1}(1-p_j)\,.$$
+Эта модель названа дискретной экспоненциальной моделью.
+В~такой модели случайные величины~$\eta_j$ (параметры <<дефективности>>)
+описывают возможное уменьшение надежности из-за некачественных модификаций,
+в~ходе которых вместо исправления существующих дефектов в~систему могут
+быть внесены новые, в~то время как величины~$\theta_j$ (параметры <<эффективности>>)
+описывают повышение надежности за счет исправления дефектов.
+
+Обозначим $\lambda = 1 \hm- {\sf E}\theta_1$, $\mu  \hm= {\sf E}\eta_1$.
+В~[2] доказано, что при условии $\lambda\hm+\mu\hm\neq1$
+$$
+p=\lim\limits_{j\to\infty}{\sf E} p_j = \fr{\mu}{\lambda+\mu}\,.
+$$
+
+Изучение предельного значения средней величины ${\sf E} p_j$ представляет
+значительный интерес, поскольку эта величина характеризует асимптотическое
+значение надежности системы в~рамках некото\-рой рекуррентной модели,
+задаваемой набором $\{(\theta_j, \eta_j)\}$. Из результатов~[2] следует,
+что это асимптотическое значение зависит только от средних значений величин
+$\{(\theta_j, \eta_j)\}$, $j\hm\ge1$.
+
+В~[3, 4] исследовалась ситуация, при которой рассматривается набор
+однотипных сложных модифицируемых объектов (МО), каждый из которых
+обслуживается собственной ремонтной бригадой (РБ). Исследователю хотелось
+бы определить усредненное значение~$p$ по всем МО. Для решения этой задачи
+в~указанной работе предложена так называемая байесовская постановка.
+Предполагается, что рассматривается целая группа однотипных МО и~группа
+им соответствующих однотипных РБ. Пусть $m\hm=1,2,\ldots$~---
+номера этих объектов. Для каждого МО (вместе с~его РБ) существует
+собственный набор $\{(\theta_j^m, \eta_j^m)\}$, $j\hm\ge1$, $m\hm\ge1$,
+независимых одинаково распределенных при каждом фиксированном~$j$
+двумерных случайных векторов таких, что $0\hm < \eta_1^m \hm< 1$;
+$0 \hm< \theta_1^m \hm < 1$ почти наверное. Но средние значения величин~$\theta_j^m$,
+$\eta_j^m$, $j\hm\ge1$, $m\hm\ge1$, не предполагаются известными; более того, они
+не предполагаются даже одинаковыми. Вводится предположение, что величины
+$\lambda \hm = 1 \hm-  {\sf E}\theta_j^m$, $\mu \hm= {\sf E}\eta_j^m$ сами
+по себе являются случайными, т.\,е.\ на вероятностном пространстве,
+в~которое в~качестве элементарных событий входят все рас\-смат\-ри\-ва\-емые
+в~рамках данной постановки МО вместе с~их РБ, заданы случайные величины~$\lambda$
+и~$\mu$ (которые полагаем независимыми), имеющие смысл $\lambda\hm = 1 \hm-
+{\sf E}\theta_j^m$, $\mu \hm= {\sf E}\eta_j^m$, где $m$~--- случайный номер МО.
+Принимаемые исследователем за основу распределения величин~$\lambda$ и~$\mu$
+будем называть априорными.
+
+Подлежащие вычислению характеристики такой <<рандомизированной>>
+группы МО, естественно, являются рандомизацией аналогичных характеристик
+<<отдельно взятой>> МО с~учетом априорного распределения параметров~$\lambda$
+и~$\mu$, взятого исследователем за основу. Наиболее естественной и~удобной
+для изучения характеристикой является усредненное по всем МО значение
+предельной вероятности надежности, т.\,е.\
+$$
+p_{\mathrm{сред}} = {\sf E} p = {\sf E} \fr{\mu}{\lambda+\mu}\,,
+$$
+где усреднение ведется по совместному распределению случайных
+величин $(\lambda,\mu)$.
+
+В рассматриваемой ситуации величины $\eta_j^m$ и~$\theta_j^m$
+удовлетворяют ограничениям $0 \hm< \eta_j^m \hm< 1$, $0 \hm< \theta_j^m  \hm< 1$.
+Значит, и~значения~$\lambda$ и~$\mu$ величин $1 \hm-
+{\sf E}\theta_j^m$ и~${\sf E}\eta_j^m$ соответственно также находятся на отрезке
+$[0,1]$. Поэтому в~качестве априорных распределений параметров~$\lambda$
+и~$\mu$ следует выбирать только распределения, сосредоточенные на $[0,1]$.
+
+В работах [3, 4] были рассмотрены независимые случайные параметры~$\lambda$
+и~$\mu$, имеющие одновременно равномерное или бе\-та-рас\-пре\-де\-ле\-ние
+соответственно. В~настоящей статье исследования байесовской рекуррентной
+модели роста на\-деж\-ности продолжены для ситуации, когда один из параметров
+имеет бе\-та-рас\-пре\-де\-ле\-ние, а~другой~--- равномерное распределение.
+
+\section{Основные результаты}
+
+
+Введем следующие обозначения. Через $B(m,n)$, $m,n\hm>0$, будем
+обозначать бе\-та-функ\-цию. Через $R(a,b)$ и~$\beta(m,n)$ обозначим соответственно
+равномерное распределение и~бе\-та-рас\-пре\-де\-ле\-ние. Пусть
+$$
+(\alpha)_i=\alpha(\alpha+1)\cdots(\alpha+i-1)\,,\enskip
+(\alpha)_0=1\,.
+$$
+Несмотря на то что $(\alpha)_i$ имеет смысл неполного факториала,
+нигде далее не требуется, чтобы~$\alpha$ было положительным.
+Рассмотрим классическую гипергеометрическую функцию Гаусса
+$$
+G(\alpha,\beta,\gamma;x)=\sum\limits_{i=0}^\infty\fr{(\alpha)_i(\beta)_i}
+{(\gamma)_i \,i!}\,x^i\,.
+$$
+По аналогии с~9.180.1, 9.180.3 и~9.14 п.\,1 из~[5] введем в~рассмотрение
+две обобщенные гипергеометрические функции двух переменных:
+\begin{multline}
+G^{p,q}_{s,t}(\alpha, \beta_1,\ldots,\beta_p,\beta_1',\ldots,\beta_q';
+\gamma,\delta_1,\ldots\\[2pt]
+\ldots,\delta_s,\delta_1',\ldots,
+\delta_t';x,y)={}\\[2pt]
+{}=\sum\limits_{i=0}^\infty\sum\limits_{j=0}^\infty
+\fr{(\alpha)_{i+j}(\beta_1)_i\cdots(\beta_p)_i(\beta_1')_j\cdots
+(\beta_q')_j}{(\gamma)_{i+j}
+(\delta_1)_i\cdots(\delta_s)_i(\delta_1')_j\cdots(\delta_t')_j}\times{}
+\\[2pt]
+{}\times\fr{x^iy^j}{i!j!}\,;\label{e1-kud}
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+H^{p,q}_{s,t}(\beta_1,\ldots,\beta_p,\beta_1',\ldots,\beta_q';\gamma,\delta_1,
+\ldots,\delta_s,\delta_1',\ldots\\[2pt]
+\ldots,
+\delta_t';x,y)={}\\[2pt]
+{}=\sum\limits_{i=0}^\infty\sum\limits_{j=0}^\infty
+\fr{(\beta_1)_i\cdots(\beta_p)_i(\beta_1')_j\cdots(\beta_q')_j}{(\gamma)_{i+j}
+(\delta_1)_i\cdots(\delta_s)_i(\delta_1')_j\cdots(\delta_t')_j}\times{}\\[2pt]
+{}\times
+\fr{x^iy^j}{i!j!}\,.\label{e2-kud}
+\end{multline}
+
+\smallskip
+
+\noindent
+\textbf{Теорема 1.} \textit{Пусть случайные величины~$\lambda$ и~$\mu$
+независимы и~имеют соответственно распределения
+$R(a,b)$ и~$\beta(m,n)$, где $0\hm\le a\hm<b\hm\le1$, $m,n\hm>0$. Тогда}
+\begin{multline}
+p_{\mathrm{сред}} = \fr{B(m+1,n)}{(b-a)B(m,n)}\ln\left(\fr{b+1}{a+1}\right)+{}\\
+{}+\fr{b(m+1)^{-2}}{(b-a)B(m,n)(b+1)}\times{}\\
+{}\times H_{1,0}^{3,2}
+\left(\vphantom{\fr{1}{b+1}}
+1-n,m+1,m+1,1,1;\right.\\
+\left. m+2,m+2;\fr{1}{b+1},1\right)-
+\fr{a(m+1)^{-2}}{(b-a)B(m,n)(a+1)}\times{}\\
+{}\times H_{1,0}^{3,2}\left(\vphantom{\fr{1}{a+1}}
+1-n,m+1,m+1,1,1;\right.\\
+\left.m+2,m+2;\fr{1}{a+1},1\right)\,.\label{e3-kud}
+\end{multline}
+
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \
+Найдем плотность $f_p(x)$ случайной величины~$p$. Имеем
+$$
+f_p(x)=\il{a}{b}\fr{y}{(1-x)^2}\,f_\mu\left(\fr{x}{1-x}\,y\right)f_\lambda(y)\,dy\,.
+$$
+
+\noindent
+Используя замену переменной $z\hm=xy/(1\hm-x)$, по формуле~8.391 из~[5]
+для $0\hm<x\hm<1/(b+1)$ имеем
+
+\noindent
+\begin{multline*}
+f_p(x) = \il{a}{b} \fr{(1-x)^{-2}y}{(b-a)B(m,n)}\times{}\\[2pt]
+{}\times
+\left(\fr{xy}{1-x}\right)^{m-1} \left(1 - \fr{xy}{1-x}\right)^{n-1} dy ={}\\[2pt]
+{} = \fr{(m+1)^{-1}x^{-2}}{(b-a)B(m,n)} \left( \!\left(
+\fr{bx}{1-x} \right)^{m+1}\times{}\right.\\[2pt]
+\left.{}\times G\left(
+1-n,m+1,m+2; \fr{bx}{1-x}\right)  -{}\right.\\[2pt]
+\left.{}- \left( \fr{ax}{1-x} \right)^{m+1}
+\!  G \left(\!1-n,m+1, m+2; \fr{ax}{1-x}\right)\!  \right)\equiv{}\\[2pt]
+  {}\equiv  S_1(x)\,,
+ \end{multline*}
+а для $1/(b+1)\hm\le x\hm<1/(a+1)$
+\begin{multline*}
+f_p(x) = \hspace*{-2mm}\il{a}{(1-x)/x} \hspace*{-2mm}\fr{(1-x)^{-2}y}{(b-a)B(m,n)}
+\left(\fr{xy}{1-x}\right)^{m-1}\times{}\\[2pt]
+{}\times \left(1 - \fr{xy}{1-x}\right)^{n-1} dy =
+\fr{x^{-2}}{(b-a)B(m,n)} \times{}\\[2pt]
+{}\times \left( B(m+1, n)  -
+\fr{1}{m+1}\left( \fr{ax}{1-x} \right)^{m+1} \times{}\right.\\[2pt]
+\left.{}\times G
+\left(1-n,m+1, m+2; \fr{ax}{1-x}\right)
+\vphantom{\left.\fr{xy}{1-x}\right)^{n-1}}
+ \right)\equiv S_2(x)\,.
+\end{multline*}
+
+Таким образом,
+\begin{equation}
+{\sf E} p =\! \il{}{}\hspace*{-1mm}xf_p(x)\,dx=\hspace*{-3mm}\il{0}{1/(b+1)}
+\hspace*{-3.2mm}xS_{1}(x)\, dx +
+\hspace*{-3.2mm}\il{1/(b+1)}{1/(a+1)} \hspace*{-3mm}xS_{2}(x)\, dx.\label{e4-kud}
+\end{equation}
+
+Вычислим отдельно первый интеграл из правой части~(\ref{e4-kud}). Имеем
+\begin{multline*}
+\il{0}{1/(b+1)} \hspace*{-3mm}xS_{1}(x)\, dx = {}\\[2pt]
+{}=\hspace*{-3mm}\il{0}{1/(b+1)}
+\fr{(m+1)^{-1}x^{-1}}{(b-a)B(m,n)} \left(\! \left(
+\fr{bx}{1-x} \right)^{m+1}\times{}\right.\\[2pt]
+\left.{}\times G\left(1-n,m+1, m+2; \fr{bx}{1-x}\right)  -
+ \left( \fr{ax}{1-x} \right)^{m+1}\!\!\times{} \right.\hspace*{-2.315315pt}\\[2pt]
+\left.{} \times G\left(
+1-n,m+1,m+2; \fr{ax}{1-x}\right)  \!\right)\, dx\equiv U_1-U_2\,.\hspace*{-0.19241pt}
+\end{multline*}
+
+Для первого слагаемого имеем:
+\begin{multline*}
+U_1 = \fr{b^{m+1}(m+1)^{-1}}{(b-a)B(m,n)} \sum\limits_{i=0}^{\infty}
+\fr{(1-n)_i(m+1)_i  b^i}{(m+2)_i i!}\times{}\\
+{}\times
+\il{0}{1/(b+1)} \fr{x^{m+i}\,dx}{(1-x)^{m+i+1}} =
+- \fr{b^{m+1}(m+1)^{-1}}{(b-a)B(m,n)} \times{}\\
+{}\times \sum\limits_{i=0}^{\infty}
+\fr{(1-n)_i(m+1)_i  b^i}{(m+2)_i i!} \il{0}{1/b}
+\fr{\left( (1/b) - z  \right) ^{m+i}}{\left( z - (b+1)/b \right) }\, dz\,.
+\end{multline*}
+
+Воспользуемся формулой~3.196.1 из~[5]:
+\begin{multline*}
+ U_1 = \fr{b^{m+1}(m+1)^{-1}}{(b-a)B(m,n)}
+ \sum\limits_{i=0}^{\infty} \fr{(1-n)_i(m+1)_i b^i}{(m+2)_i i!}\,
+ \times{}\\[2pt]
+ {}\times
+ \fr{b}{b+1}\left( \fr{1}{b} \right)^{m+i+1}
+ \fr{G(1,1,m+i+2,{1/(b+1)})}{m+i+1} ={}\\[2pt]
+{} = \fr{b}{(b-a)B(m,n)} \times{}\\[2pt]
+{}\times\sum\limits_{i=0}^{\infty}
+\sum\limits_{j=0}^{\infty}
+\fr{(1-n)_i(m+i+1)^{-2}j!}{i!(m+i+2)_{j}} \left( \fr{1}{b+1} \right)^{j+1}\,.
+\end{multline*}
+Аналогично
+\begin{multline*}
+U_2 = \fr{a^{m+1}}{(b-a)B(m,n)}\times{}\\[2pt]
+{}\times
+\sum\limits_{i=0}^{\infty} \sum\limits_{j=0}^{\infty}
+\fr{(1-n)_i(m+i+1)^{-2}a^ij!}{ i!(m+i+2)_{j}}\times{}\\[2pt]
+{}\times \left( \fr{1}{b}
+\right)^{m+i}\left( \fr{1}{b+1} \right)^{j+1}\,.
+\end{multline*}
+
+Аналогично получаем для второго слагаемого из~(\ref{e4-kud}):
+\begin{multline*}
+\il{1/(b+1)}{1/(a+1)} xS_{2}(x)\, dx =
+\fr{ B(m+1, n)}{(b-a) B(m,n)}\ln\left( \fr{ b+1}{a+1} \right)-{}\\[2pt]
+{}- \il{1/(b+1)}{1/(a+1)} \fr{(m+1)^{-1}x^{-1}}{(b-a)B(m,n)} \left(
+\fr{ax}{1-x} \right)^{m+1}\times{}\\[2pt]
+{}\times G\left(
+1-n,m+1,m+2; \fr{ax}{1-x}  \right)\,dx\equiv U_3-U_4\,.
+\end{multline*}
+
+Разбив вычитаемое в~последнем выражении на два интеграла, получим
+
+\noindent
+\begin{multline*}
+U_4= \il{0}{1/(a+1)} \fr{(m+1)^{-1}x^{-1}}{(b-a)B(m,n)} \left(
+\fr{ax}{1-x} \right)^{m+1}\times{}\\[2pt]
+{}\times G\left(1-n,m+1,m+2; \fr{ax}{1-x}  \right)\,dx-U_2={}\\[2pt]
+{} = \fr{a}{(b-a)B(m,n)}\times{}\\[2pt]
+{}\times \sum\limits_{i=0}^{\infty}\sum\limits_{j=0}^{\infty}
+\fr{(1-n)_i(m+i+1)^{-2}j!}{ i!(m+i+2)_{j}} \left( \fr{1}{a+1}
+\right)^{j+1}-U_2\,.\hspace*{-2.3764pt}
+\end{multline*}
+
+Подытоживая все вспомогательные выкладки, получаем для~(\ref{e4-kud})
+\begin{multline}
+{\sf E} p=U_1-U_2+U_3-U_4={}\\[2pt]
+{}=
+\fr{ B(m+1, n)}{(b-a) B(m,n)}\ln\left(
+\fr{ b+1}{a+1} \right)+ \fr{b}{(b-a)B(m,n)}\times{}\\[2pt]
+{}\times \sum\limits_{i=0}^{\infty}\sum\limits_{j=0}^{\infty}
+\fr{(1-n)_i(m+i+1)^{-2}j!}{i!(m+i+2)_{j}} \left( \fr{1}{b+1} \right)^{j+1}-{}\\
+{} -\fr{a}{(b-a)B(m,n)} \times{}\\[2pt]
+\hspace*{-3mm}{}\times\sum\limits_{i=0}^{\infty}\sum\limits_{j=0}^{\infty}
+\fr{(1-n)_i(m+i+1)^{-2}j!}{ i!(m+i+2)_{j}} \left( \fr{1}{a+1}
+\right)^{j+1}.\label{e5-kud}
+\end{multline}
+
+Используя элементарные преобразования для~(\ref{e5-kud}), по определению~(\ref{e2-kud})
+получаем~(\ref{e3-kud}), что завершает доказательство теоремы.
+
+\smallskip
+
+Теперь рассмотрим симметричный случай для распределений случайных величин~$\lambda$
+и~$\mu$.
+
+\medskip
+
+\noindent
+\textbf{Теорема 2.} \textit{Пусть случайные величины~$\lambda$ и~$\mu$
+независимы и~имеют соответственно распределения $\beta(m,n)$
+и~$R(a,b)$, где $0\hm\le a\hm<b\hm\le1$, $m,n\hm>0$. Тогда}
+\begin{multline}
+p_{\mathrm{сред}} = \fr{B(m + 1, n)}{B(m,n)} \left( 1 + \fr{1}{b-a}
+\ln \left( \fr{a+1}{b+1}\right)  \right)+{}\\
+{}+\fr{bm^{-1}(m+1)^{-1}}{(b-a)B(m,n)}\times{}\\
+{}\times G_{1,0}^{2,1}\left(
+m,1-n,m+1,1;m+1,m+2;1,-\fr{1}{b}\right)-{}\\
+{}-\fr{am^{-1}(m+1)^{-1}}{(b-a)B(m,n)}\times{}
+\\
+\!\!\!\!\!{}\times G_{1,0}^{2,1}\left(m,1-n,m+1,1;m+1,m+2;1,
+-\fr{1}{a}\!\right).\!\!\!
+\label{e6-kud}
+\end{multline}
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \
+Найдем плотность $f_p(x)$ случайной величины~$p$. Имеем
+
+\pagebreak
+
+\noindent
+$$
+f_p(x)=\il{0}{1}\fr{y}{(1-x)^2}\,f_\mu\left(\fr{x}{1-x}\,y\right)f_\lambda(y)\,dy\,.
+$$
+По формуле~8.391 из~[5] для $a/(a + 1) \hm< x \hm< b/(b+1)$ имеем
+\begin{multline*}
+f_p(x) = \il{a(1 - x)/x}{1} \fr{(1-x)^{-2}}{(b-a)B(m,n)}\, y^{m}
+(1 - y)^{n-1}\, dy ={}\\
+{}=
+ \fr{B(m + 1, n)(1-x)^{-2}}{(b-a) B(m,n)}  -{}\\
+{}-  \fr{a^{m+1}(m+1)^{-1}(1-x)^{m-1}}{(b-a) B(m,n)x^{m+1}}\times{}\\
+ {}\times
+ G \left(1-n,m+1, m+2, \fr{a(1 - x)}{x} \right)\equiv T_1(x)\,,
+ \end{multline*}
+а для $b/(b + 1)\le x < 1$
+\begin{multline*}
+\hspace*{-0.46051pt}f_p(x) = \fr{(1-x)^{-2}}{(b - a) B(m,n)} \left(
+\il{0}{b(1 - x)/x}\hspace*{-4mm} y^{m} (1 - y)^{n-1} \,dy -{}\right.\\
+\left.{}-
+\il{0}{a(1 - x)/x} \hspace*{-4mm} y^{m} (1 - y)^{n-1}\, dy   \right)={}\\
+{}= \fr{b^{m+1}(m+1)^{-1}(1-x)^{m-1}}{(b - a) B(m,n)x^{m+1}}\times{}\\
+{}\times G
+\left(1-n,m+1,m+2, \fr{b(1 - x)}{x} \right) -{}\\
+{}- \fr{a^{m+1}(m+1)^{-1}(1-x)^{m-1}}{(b - a) B(m,n)x^{m+1}}\times{}\\
+{}\times
+G\left(1-n,m+1,m+2, \fr{a(1 - x)}{x} \right)\equiv T_2(x)\,.
+\end{multline*}
+
+Таким образом,
+\begin{equation}
+ {\sf E} p = \int\! xf_p(x)\,dx=\hspace*{-3mm}\il{a/(a+1)}{b/(b+1)}\hspace*{-4mm}
+ xT_{1}(x)\, dx + \hspace*{-3mm}\il{b/(b+1)}{1} \hspace*{-4mm}xT_{2}(x)\, dx.\!\label{e7-kud}
+ \end{equation}
+
+Вычислим отдельно первый интеграл из правой части~(\ref{e7-kud}). Имеем
+\begin{multline*}
+\il{a/(a+1)}{b/(b+1)} xT_{1}(x) \,dx ={}\\
+{}= \fr{B(m + 1, n)}{B(m,n)}
+ \left( 1 + \fr{1}{b-a} \ln \left( \fr{a+1}{b+1}\right)  \right) -{}
+\end{multline*}
+
+\noindent
+\begin{multline*}
+{}- \il{a/(a+1)}{b/(b+1)}\fr{a^{m+1}(m+1)^{-1}(1-x)^{m-1}}{(b-a) B(m,n)x^{m}}  \times{}\\
+{}\times
+G\left(1-n,m+1, m+2, \fr{a(1 - x)}{x} \right)\,dx \equiv V_1-V_2\,.
+\end{multline*}
+Для вычисления $V_2$ воспользуемся формулой~3.196.1 из~[5]. Имеем
+\begin{multline*}
+V_2= \fr{a^{m+1}(m+1)^{-1}}{(b - a)B(m,n)} \sum\limits_{i=0}^{\infty}
+\fr{(1-n)_{i}(m+1)_{i} a^{i}}{(m+2)_{i} i! }\times{}\\
+{}\times
+\il{a/(a+1)}{b/(b+1)} \fr{(1-x)^{m+i-1}}{x^{m+i}}\, dx  ={}\\
+{}= \fr{a^{m+1}}{(b - a)B(m,n)} \sum\limits_{i=0}^{\infty}
+\fr{(1-n)_{i}a^{i}}{(m+i+1)i! }\times{}\\
+{}\times
+\il{1/(b+1)}{1/(a+1)} \fr{y^{m+i-1}}{(1-y)^{m+i}}\, dy  ={}\\
+{}= \fr{a^{m+1}}{(b - a)B(m,n)} \sum\limits_{i=0}^{\infty}
+\fr{(1-n)_{i}a^{i}}{(m+i+1) i! }\times{}\\
+{}\times
+\left( \il{0}{1/(a+1)}
+\fr{\left( 1/(a+1)-x\right)^{m+i-1}}
+{\left(x+a/(a+1)\right)^{m+i}}\, dx -{}\right.\\
+\left.{}-
+\il{0}{1/(b+1)}
+\fr{\left(1/(b+1)-x\right)^{m+i-1}}
+{\left(x+b/(b+1)\right)^{m+i}}\, dx\right)  ={}\\
+{}= \fr{a^{m+1}}{(b - a)B(m,n)} \sum\limits_{i=0}^{\infty}
+\fr{(1-n)_{i}a^{i}}{(m+i+1) i! }\times{}\\
+{}\times\left( \fr{a^{-m-i}}{m+i}\,G\left(1,m+i,m+i+1,-\fr{1}{a}\right)-
+\fr{b^{-m-i}}{m+i}\times{}\right.\\
+\left.{}\times G\left(1,m+i,m+i+1,-\fr{1}{b}\right)\right)={}\\
+{}= \fr{a^{m+1}}{(b - a)B(m,n)} \sum\limits_{i=0}^{\infty}
+\fr{(1-n)_{i}a^{i}}{(m+i+1) i! }\times{}\\
+{}\times\left(
+\sum\limits_{j=0}^\infty \fr{a^{-m-i}(-a)^{-j}}{m+i+j}-
+\sum\limits_{j=0}^\infty \fr{b^{-m-i}(-b)^{-j}}{m+i+j}\right)\,.
+\end{multline*}
+
+
+Для второго слагаемого в~(\ref{e7-kud}) аналогично имеем
+\begin{multline*}
+\il{b/(b+1)}{1}\hspace*{-3mm} xT_{2}(x)\, dx =\hspace*{-3mm}
+\il{b/(b+1)}{1} \hspace*{-3mm}\fr{ b^{m+1}(m+1)^{-1} (1-x)^{m-1}}{(b - a) B(m,n)x^{m}}\times{}\\
+{}\times
+G\left(1-n,m+1,m+2, \fr{b(1 - x)}{x} \right)\,dx -{}
+\end{multline*}
+
+\end{multicols}
+
+\begin{table*}[b]\small %tabl1
+\begin{center}
+\Caption{Частные значения средней надежности ($\lambda\sim R(a,b)$,
+$\mu\sim \beta(m,n)$)}
+\vspace*{2ex}
+
+%\tabcolsep=5pt
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+ \hline
+ &\multicolumn{10}{c|}{$m;n$}\\
+ \cline{2-11}
+ \multicolumn{1}{|c|}{\raisebox{6pt}[0pt][0pt]{$[a,b]$ }}&
+  ${1; 7}$ & ${1; 3}$ & ${3; 5}$ &
+  ${1; 1}$ & ${6; 10}$ & ${2; 2}$ &
+  ${10; 6}$ & ${5; 3}$ & ${3; 1}$ & ${7; 1}$\\
+ \hline
+$[0,1/4]$&0,47&0,60&0,74&0,75&0,75&0,78&0,84&0,83&0,85&0,88\\
+% \hline
+$[0,1/2]$&0,34&0,48&0,61&0,63&0,62&0,66&0,73&0,73&0,76&0,79\\
+% \hline
+$[0,3/4]$&0,28&0,40&0,53&0,56&0,54&0,58&0,65&0,65&0,68&0,72\\
+% \hline
+$[0,1]$&0,24&0,35&0,47&0,50&0,48&0,52&0,59&0,59&0,62&0,66\\
+% \hline
+$[1/4,1/2]$&0,22&0,35&0,48&0,52&0,49&0,54&0,62&0,62&0,66&0,70\\
+% \hline
+$[1/4,3/4]$&0,19&0,30&0,42&0,46&0,43&0,48&0,56&0,55&0,60&0,64\\
+% \hline
+$[1/4,1]$&0,16&0,27&0,38&0,42&0,38&0,44&0,51&0,51&0,55&0,59\\
+% \hline
+$[1/2,3/4]$&0,15&0,26&0,36&0,40&0,37&0,42&0,50&0,49&0,54&0,58\\
+% \hline
+$[1/2,1]$&0,13&0,23&0,32&0,37&0,33&0,38&0,46&0,45&0,49&0,54\\
+% \hline
+$[3/4,1]$&0,12&0,20&0,29&0,33&0,29&0,35&0,41&0,41&0,45&0,50\\
+ \hline
+ \end{tabular}
+ \end{center}
+%\end{table*}
+%\begin{table*}\small %tabl2
+\begin{center}
+\Caption{Частные значения средней надежности ($\lambda\sim R(a,b)$, $\mu\sim \beta(m,n)$)}
+\vspace*{2ex}
+
+\tabcolsep=5pt
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+ \hline
+ &\multicolumn{10}{c|}{$m;n$}\\
+ \cline{2-11}
+ \multicolumn{1}{|c|}{\raisebox{6pt}[0pt][0pt]{$[a,b]$ }}&
+  ${1; 7}$ & ${1,1; 3,3}$ & ${1,2; 2,0}$ &
+  ${1,3; 1,3}$ & ${1,4; 2,33}$ & ${1,5; 1,5}$ &
+  ${1,6; 0,96}$ & ${1,7; 1,02}$ & ${1,8; 0,6}$ & ${1,9; 0,27}$\\
+ \hline
+$[0,1/4]$&0,47&0,61&0,70&0,76&0,71&0,77&0,81&0,81&0,85&0,87\\
+% \hline
+$[0,1/2]$&0,34&0,48&0,57&0,64&0,58&0,65&0,70&0,71&0,75&0,78\\
+% \hline
+$[0,3/4]$&0,28&0,41&0,50&0,57&0,50&0,57&0,63&0,63&0,67&0,71\\
+% \hline
+$[0,1]$&0,24&0,36&0,44&0,51&0,45&0,51&0,57&0,57&0,62&0,66\\
+% \hline
+$[1/4,1/2]$&0,22&0,35&0,45&0,53&0,46&0,53&0,60&0,60&0,65&0,69\\
+% \hline
+$[1/4,3/4]$&0,19&0,31&0,40&0,47&0,40&0,47&0,54&0,54&0,59&0,63\\
+% \hline
+$[1/4,1]$&0,16&0,27&0,36&0,43&0,36&0,43&0,49&0,49&0,54&0,59\\
+% \hline
+$[1/2,3/4]$&0,15&0,26&0,34&0,41&0,35&0,42&0,48&0,48&0,53&0,58\\
+% \hline
+$[1/2,1]$&0,13&0,23&0,31&0,38&0,31&0,38&0,44&0,44&0,49&0,53\\
+% \hline
+$[3/4,1]$&0,12&0,20&0,28&0,34&0,28&0,34&0,40&0,40&0,45&0,49\\
+ \hline
+ \end{tabular}
+ \end{center}
+ \end{table*}
+
+ \begin{multicols}{2}
+
+\noindent
+\begin{multline*}
+{}- \il{b/(b+1)}{1} \fr{a^{m+1}(m+1)^{-1} (1-x)^{m-1}}{(b - a) B(m,n)x^{m}}\times{}\\
+{}\times
+G\left(1-n,m+1,m+2, \fr{a(1 - x)}{x} \right)\,dx \equiv V_3-V_4\,,
+\end{multline*}
+где
+\begin{align*}
+V_3&= {}\\
+&\hspace*{-5mm}{}=\fr{b}{(b - a)B(m,n)} \sum\limits_{i=0}^{\infty}\sum\limits_{j=0}^\infty
+\fr{(1-n)_{i}(-b)^{-j}}{(m+i+j)(m+i+1)i! }\,;\\
+V_4&= {}\\
+&\hspace*{-5mm}{}=\fr{a^{m+1}b^{-m}}{(b - a)B(m,n)} \sum\limits_{i=0}^{\infty}\sum\limits_{j=0}^\infty
+\fr{(1-n)_{i}a^{i}b^{-i}(-b)^{-j}}{(m+i+j)(m+i+1) i!}\,.
+\end{align*}
+
+Объединяя полученные результаты, получаем из~(\ref{e7-kud})
+\begin{multline*}
+{\sf E} p=V_1-V_2+V_3-V_4= {}\\
+{}=\fr{B(m + 1, n)}{B(m,n)} \left(
+1 + \fr{1}{b-a} \ln \left( \fr{a+1}{b+1}\right)  \right)-{}\\
+\!\!{}- \fr{a}{(b - a)B(m,n)} \sum\limits_{i=0}^{\infty}\sum\limits_{j=0}^\infty
+\fr{ (1-n)_{i}(-a)^{-j}}{(m+i+j)(m+i+1) i! }+{}
+\end{multline*}
+
+\noindent
+\begin{multline}
+{}+ \fr{b}{(b - a)B(m,n)} \times{}\\
+{}\times \sum\limits_{i=0}^{\infty}\sum\limits_{j=0}^\infty
+\fr{(1-n)_{i}(-b)^{-j}}{(m+i+j)(m+i+1) i! }\,.\label{e8-kud}
+\end{multline}
+
+Используя элементарные преобразования для~(\ref{e8-kud}), по определению~(\ref{e1-kud})
+получаем~(\ref{e6-kud}), что завершает доказательство теоремы.
+
+\smallskip
+
+\noindent
+\textbf{Замечание 1.} При $a\hm=0$, очевидно, выражение~(\ref{e6-kud}) остается
+справедливым, если последнее слагаемое положить равным нулю.
+
+\smallskip
+
+\noindent
+\textbf{Замечание 2.} Выражения~(\ref{e3-kud}) и~(\ref{e6-kud}) служат для компактной
+записи $p_{\mathrm{сред}}$. Для практического использования
+(непосредственного вычисления) имеет смысл представлять
+$p_{\mathrm{сред}}$ в~виде рядов типа~(\ref{e5-kud}) и~(\ref{e8-kud}), которые
+несложно вычисляются с~любой наперед заданной точностью.
+
+\smallskip
+
+В качестве иллюстрации приведем несколько таблиц со значениями
+$p_{\mathrm{сред}}$. Для удобства сравнения с~результатами, опубликованными
+в~[3] и~[4],  значения параметров равномерного и~бе\-та-рас\-пре\-де\-ле\-ния
+взяты из этих статей. Таблицы~1 и~2 соответствуют распределениям~$\lambda$
+и~$\mu$ из теоремы~1, а~табл.~3 и~4 соответствуют теореме~2.
+
+\end{multicols}
+
+\begin{table}\small %tabl3
+\begin{center}
+\Caption{Частные значения средней надежности ($\lambda\sim \beta(m,n)$, $\mu\sim R(a,b)$)}
+\vspace*{2ex}
+
+%\tabcolsep=5pt
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+ \hline
+ &\multicolumn{10}{c|}{$[a,b]$}\\
+ \cline{2-11}
+ \multicolumn{1}{|c|}{\raisebox{6pt}[0pt][0pt]{$m;n$ }}&
+  $[0,1/4]$ & $[0,1/2]$ & $[0,3/4]$ &
+  $[0,1]$ & $[1/4,1/2]$ & $[1/4,3/4]$ &
+  $[1/4,1]$ & $[1/2,3/4]$ & $[1/2,1]$ & $[3/4,1]$\\
+ \hline
+${1; 7}$&0,53&0,79&0,81&0,74&0,72&0,74&0,75&0,71&0,66&0,67\\
+% \hline
+${1; 3}$&0,40&0,52&0,57&0,65&0,73&0,69&0,75&0,77&0,78&0,75\\
+% \hline
+${3; 5}$&0,09&0,39&0,72&0,52&0,69&0,73&0,74&0,83&0,85&0,27\\
+% \hline
+${1; 1}$&0,25&0,35&0,43&0,50&0,51&0,55&0,58&0,61&0,63&0,66\\
+% \hline
+${6; 10}$&0,25&0,38&0,46&0,54&0,70&0,73&0,74&0,83&0,85&0,86\\
+% \hline
+${2; 2}$&0,23&0,32&0,41&0,48&0,39&0,47&0,55&0,59&0,62&0,64\\
+% \hline
+${10; 6}$&0,16&0,27&0,35&0,41&0,55&0,54&0,55&0,65&0,67&0,74\\
+% \hline
+${5; 3}$&0,17&0,26&0,39&0,41&0,55&0,50&0,48&0,87&0,18&0,87\\
+% \hline
+${3; 1}$&0,15&0,25&0,32&0,38&0,33&0,41&0,44&0,49&0,51&0,54\\
+ %\hline
+${7; 1}$&0,13&0,22&0,27&0,34&0,30&0,36&0,38&0,42&0,47&0,49\\
+ \hline
+ \end{tabular}
+ \end{center}
+% \end{table*}
+%\begin{table*}\small %tabl4
+\begin{center}
+\Caption{Частные значения средней надежности ($\lambda\sim \beta(m,n)$, $\mu\sim R(a,b)$)}
+\vspace*{2ex}
+
+%\tabcolsep=5pt
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+ \hline
+ &\multicolumn{10}{c|}{$[a,b]$}\\
+ \cline{2-11}
+ \multicolumn{1}{|c|}{\raisebox{6pt}[0pt][0pt]{$m;n$ }}&
+  $[0,1/4]$ & $[0,1/2]$ & $[0,3/4]$ &
+  $[0,1]$ & $[1/4,1/2]$ & $[1/4,3/4]$ &
+  $[1/4,1]$ & $[1/2,3/4]$ & $[1/2,1]$ & $[3/4,1]$\\
+ \hline
+${1; 7}$&0,36&0,79&0,81&0,74&0,72&0,74&0,75&0,71&0,69&0,68\\
+% \hline
+${1,1; 3,3}$&0,53&0,57&0,61&0,60&0,78&0,67&0,66&0,69&0,71&0,69\\
+% \hline
+${1,2; 2,0}$&0,34&0,50&0,54&0,58&0,62&0,59&0,63&0,68&0,69&0,75\\
+% \hline
+${1,3; 1,3}$&0,25&0,43&0,48&0,50&0,45&0,53&0,53&0,54&0,60&0,59\\
+% \hline
+${1,4; 2,33}$&0,37&0,45&0,56&0,50&0,50&0,56&0,59&0,60&0,64&0,63\\
+% \hline
+${1,5; 1,5}$&0,23&0,35&0,42&0,49&0,46&0,53&0,57&0,58&0,60&0,65\\
+% \hline
+${1,6; 0,96}$&0,20&0,30&0,36&0,44&0,42&0,46&0,51&0,54&0,59&0,62\\
+% \hline
+${1,7; 1,02}$&0,15&0,29&0,35&0,41&0,40&0,45&0,49&0,52&0,58&0,59\\
+% \hline
+${1,8; 0,6}$&0,16&0,28&0,32&0,42&0,34&0,40&0,45&0,45&0,49&0,51\\
+% \hline
+${1,9; 0,27}$&0,13&0,21&0,28&0,37&0,35&0,39&0,40&0,40&0,46&0,48\\
+ \hline
+ \end{tabular}
+ \end{center}
+ \end{table}
+
+\begin{multicols}{2}
+
+
+\section{Заключение}
+
+Полученные результаты могут применяться, например, для
+вычисления других моментов и~построения доверительных интервалов
+для характеристики~$p$.
+%
+В дальнейшем предполагается расширить класс совместных распределений
+параметров~$(\lambda, \mu)$, разработать соответствующие расчетные алгоритмы
+для вычисления величины $p_{\mathrm{сред}}$ и~провести тестовые расчеты.
+
+\vspace*{-9pt}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{GK}
+\Au{Gnedenko B.\,V., Korolev~V.\,Yu.}
+Random summation: Limit theorems and applications.~--- Boca Raton, FL:
+CRC Press, 1996. 288~p.
+
+\columnbreak
+
+\bibitem{KS}
+\Au{Королев В.\,Ю., Соколов И.\,А.}
+Основы математической теории надежности модифицируемых систем.~---
+М.: ИПИ РАН, 2006. 108~c.
+
+\vspace*{4pt}
+
+\bibitem{KuSoSh}
+\Au{Кудрявцев А.\,А., Соколов И.\,А., Шоргин~С.\,Я.}
+Байесовская рекуррентная модель роста надежности:
+равномерное распределение параметров~//
+Информатика и~её применения, 2013. Т.~7. Вып.~2. С.~55--59.
+
+\vspace*{4pt}
+
+\bibitem{ZhaKuSh}
+\Au{Жаворонкова Ю.\,В., Кудрявцев А.\,А., Шоргин~С.\,Я.}
+Байесовская рекуррентная модель роста надежности:
+бе\-та-рас\-пре\-де\-ле\-ние параметров~//
+Информатика и~её применения, 2014. Т.~8. Вып.~2. С.~48--54.
+
+\vspace*{4pt}
+
+\bibitem{GR71}
+\Au{Градштейн И.\,С., Рыжик И.\,М.}
+Таблицы интегралов, сумм, рядов и~произведений.~--- М.: Наука, 1971. 1108~с.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в редакцию 26.01.15}}
+
+\newpage
+
+%\vspace*{12pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+\vspace*{-36pt}
+
+\def\tit{BAYESIAN RECURRENT MODEL OF~RELIABILITY GROWTH: BETA-UNIFORM DISTRIBUTION
+OF~PARAMETERS}
+
+\def\titkol{Bayesian recurrent model of~reliability growth: Beta-uniform distribution
+of~parameters}
+
+\def\aut{Iu.\,V.~Zhavoronkova$^1$, A.\,A.~Kudryavtsev$^2$, and~S.\,Ya.~Shorgin$^3$}
+
+\def\autkol{Iu.\,V.~Zhavoronkova, A.\,A.~Kudryavtsev, and~S.\,Ya.~Shorgin}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+\noindent
+$^1$Sputnik Ltd., 8/2 Prishvina Str., Moscow 127549, Russian Federation
+
+
+\noindent
+$^2$Faculty of Computational
+Mathematics and Cybernetics, M.\,V.~Lomonosov Moscow State University,
+1-52\linebreak
+$\hphantom{^1}$Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation
+
+
+\noindent
+$^3$Institute of Informatics Problems, Russian Academy of Sciences,
+44-2 Vavilov Str., Moscow 119333, Russian\linebreak
+$\hphantom{^1}$Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2015\ \ \ volume~9\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2015\ \ \ volume~9\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+\Abste{Forecasting reliability of complex modifiable information systems is one
+of the topical problems of the mass service theory nowadays. Any first established
+complex system designed for processing or transmission of information flows, as
+a rule, does not possess the required reliability. Such systems are subject to
+modifications during development, testing, and regular functioning. The purpose
+of such modifications is to increase reliability of information systems. In this
+connection, there is a necessity to formalize the concept of reliability of
+modifiable information systems and to develop methods and algorithms of estimation
+and forecasting of various reliability characteristics. One approach to determine
+system reliability is to compute the probability that the signal fed to the input
+of the system at a given point of time will be reacted to correctly by the system.
+The article considers the exponential recurrent growth model of reliability, in
+which the probability of system reliability is represented as a linear combination
+of ``defectiveness'' and ``efficiency'' parameters of tools correcting the
+deficiencies in the system. It is assumed that the researcher does not have
+exact information about the system under study and is only familiar with the
+characteristics of the class from which this system is taken. In the framework
+of the Bayesian approach, it is assumed that one of the indicators of
+``defectiveness'' and ``efficiency'' has the beta-distribution and the other
+one has the uniform distribution. Average marginal system reliability is
+calculated. Numerical results for model examples are obtained.}
+
+\KWE{modifiable information systems; theory of reliability; Bayesian approach;
+beta-distribution; uniform distribution}
+
+\DOI{10.14357/19922264150109}
+
+\vspace*{-21pt}
+
+\Ack
+
+\vspace*{-4pt}
+
+\noindent
+This work was financially supported by the Russian Science Foundation
+(grant No.\,14-11-00397).
+
+
+
+%\vspace*{3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+ \vspace*{-4pt}
+
+\bibitem{1-kud-1}
+\Aue{Gnedenko, B.\,V., and V.\,Yu.~Korolev}.
+1996. \textit{Random summation: Limit theorems and applications}.
+Boca Raton, FL: CRC Press, 1996. 288~p.
+
+\bibitem{2-kud-1}
+\Aue{Korolev, V.\,Yu., and I.\,A.~Sokolov}. 2006.
+\textit{Osnovy ma\-te\-ma\-ti\-che\-skoy teorii nadezhnosti modifitsiruemykh system}
+[Fundamentals of mathematical theory of modified systems reliability].
+Moscow.: IPI RAN, 2006. 108~p.
+
+\bibitem{3-kud-1}
+\Aue{Kudryavtsev, A.\,A., I.\,A.~Sokolov, and S.\,Ya.~Shorgin}.
+2013. Bayesovskaya rekurrentnaya model' rosta nadezhnosti:
+Ravnomernoe raspredelenie parametrov [Bayesian recurrent model of reliability
+growth: Uniform distribution of parameters].
+\textit{Informatika i~ee Primeneniya}~--- \textit{Inform. Appl.} 7(2):55--59.
+
+\bibitem{4-kud-1}
+\Aue{Zhavoronkova, Iu.\,V., A.\,A.~Kudryavtsev, and S.\,Ya.~Shor\-gin}.
+2013. Bayesovskaya rekurrentnaya model' rosta nadezhnosti:
+Be\-ta-ras\-pre\-de\-le\-nie parametrov [Bayesian recurrent model
+of reliability growth: Beta-distribution of parameters].
+\textit{Informatika i~ee Primeneniya}~--- \textit{Inform. Appl.} 8(2):48--54.
+
+\bibitem{5-kud-1}
+\Aue{Gradshteyn, I.\,S., and I.\,M.~Ryzhik}. 1971. \textit{Tablitsy integralov,
+summ, ryadov i~proizvedeniy} [Tables of integrals, sums, series, and products].
+Moscow: Nauka. 1108~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-8pt}
+
+\hfill{\small\textit{Received January 26, 2015}}
+
+\vspace*{-24pt}
+
+
+\Contr
+
+\vspace*{-2pt}
+
+\noindent
+\textbf{Zhavoronkova Iuliia V.} (b.\ 1990)~--- software developer,
+Sputnik Ltd., 8/2 Prishvina Str., Moscow 127549, Russian Federation; juliana-zh@yandex.ru
+
+
+%\vspace*{3pt}
+
+\noindent
+\textbf{Kudryavtsev Alexey A.} (b.\ 1978)~---
+Candidate of Science (PhD) in physics and mathematics, associate professor,
+Faculty of Computational Mathematics and
+Cybernetics, M.\,V.~Lomonosov Moscow State University,
+1-52 Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation; nubigena@mail.ru
+
+%\vspace*{3pt}
+
+\noindent
+\textbf{Shorgin Sergey Ya.} (b.\ 1952)~--- Doctor of Science in physics and
+mathematics, professor, Deputy Director, Institute of Informatics Problems,
+Russian Academy of Sciences, 44-2 Vavilov Str., Moscow 119333,
+Russian Federation; sshorgin@ipiran.ru
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}

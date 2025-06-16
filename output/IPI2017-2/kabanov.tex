@@ -1,0 +1,1853 @@
+\renewcommand{\figurename}{\protect\bf Figure}
+\renewcommand{\tablename}{\protect\bf Table}
+
+\def\stat{kabanov}
+
+
+\def\tit{DYNAMIC MODELS OF SYSTEMIC RISK AND CONTAGION}
+
+\def\titkol{Dynamic models of systemic risk and contagion}
+
+\def\autkol{Kh.\ El Bitar,  Yu.~Kabanov, and~R.~Mokbel}
+
+\def\aut{Kh.\ El Bitar$^1$,  Yu.~Kabanov$^2$, and~R.~Mokbel$^3$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+%\footnotetext[1] {The 
+%research of Yuri Kabanov was done under partial financial support   of the grant 
+%of  RSF No.\,14-49-00079.}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Laboratoire de Math$\acute{\mbox{e}}$matiques, Universit$\acute{\mbox{e}}$ de 
+Franche-Comt$\acute{\mbox{e}}$, 16~Route de Gray, 25030 \mbox{Besan{\!\ptb{\c{c}}}on}, CEDEX, France, 
+\mbox{khalilbitar\_aw@hotmail.com}}
+\footnotetext[2]{Laboratoire de 
+Math$\acute{\mbox{e}}$matiques, Universit$\acute{\mbox{e}}$ de
+ Franche-Comt$\acute{\mbox{e}}$, 16~Route de Gray, 25030 
+\mbox{Besan{\!\ptb{\c{c}}}on}, CEDEX, France; 
+Institute of Informatics Problems, Federal Research 
+Center ``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+National Research University 
+``MPEI,'' 14~Krasnokazarmennaya Str., Moscow 111250, Russian Federation, 
+\mbox{Youri.Kabanov@univ-fcomte.fr}}
+\footnotetext[3]{Laboratoire de 
+Math$\acute{\mbox{e}}$matiques, Universit$\acute{\mbox{e}}$ de 
+Franche-Comt$\acute{\mbox{e}}$, 
+16~Route de Gray, 25030  \mbox{Besan{\!\ptb{\c{c}}}on}, CEDEX, France,
+\mbox{ritamokbel@hotmail.com}}
+
+\index{El Bitar Kh.}
+\index{Kabanov Yu.}
+\index{Mokbel R.}
+\index{Эль Битар Х.}
+\index{Кабанов Ю.}
+\index{Мокбель Р.}
+
+
+%\vspace*{-9pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+
+
+
+\Abste{Modern financial systems are complicated networks of interconnected 
+financial institutions and default of any of them may have serious consequences 
+for others. The recent crises have shown that complexity and interconnectedness 
+are the major factors of systemic risk, which became the subject of intensive 
+studies usually concentrated on static models. The authors develop 
+a~dynamic model based on the so-called structural approach, where defaults are 
+triggered by the exit of some stochastic process from a~domain. In the case
+considered, this is 
+a~process defined by the evolution of bank's portfolios values. At the exit time, 
+a~bank defaults and a~cascade of defaults starts. The authors believe that the 
+distribution of the exit time and the subsequent losses may serve as indicators 
+allowing regulators to monitor the state of the system and take corrective actions 
+in order to avoid contagion in a~financial system. The authors model the development 
+of a~financial system as a~random graph using the preferable attachment algorithm and 
+provide results of numerical experiments on simulated data.}
+
+
+\KWE{systemic risk; contagion; scale free network; default}
+
+\DOI{10.14357/19922264170201} 
+
+%\vspace*{-12pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+      \thispagestyle{myheadings}
+
+      \begin{multicols}{2}
+
+                  \label{st\stat}
+
+
+
+
+\section{Introduction} 
+
+\noindent
+In interbank market, systemic risk is a~risk arising from a~complexity of 
+financial network and threatening the entire system by a~potential financial 
+crisis,
+resulting in high economical and social costs.  Controlling financial stability 
+and assessing systemic  risk is a~major concern of central banks and financial 
+regulators.
+The rapid growth of financial innovation and integration as well as a~
+complicated  network of claims and obligations  linking the balance sheets of 
+banks raise the challenge of the systemic risk analysis.
+This kind of risk is highly dynamic, slowly building up    during periods of 
+stability and rapidly rising during crises and spreading through the network.  
+On the other hand, the interconnections of banks have a~positive side since they   
+enhance  liquidity and increase the risk sharing among the financial 
+institutions. 
+
+One of the aim of theoretical studies is to provide regulators comprehensive 
+indicators allowing  to monitor  the risk of contagion, understood as  a~cascade 
+of defaults that may lead to a~serious consequences and even to the collapse of 
+the whole economy.  To the moment, there is a~substantial progress in 
+understanding various phenomena  causing the contagion
+ on the basis of modeling using random graphs.  Network models became the 
+mainstream of current researches in the field (see the recent book by 
+Hurd~\cite{Hurd}  and the references wherein).
+
+Recent crisis revealed that the systemic risk might take various forms. One of 
+them is an interbank contagion process when, due to the interconnectedness of 
+banks through interbank loans, the default of one bank leads to losses and 
+subsequent chain of  defaults of other banks. This kind of risk is usually 
+combined with a~risk  related to a~correlation  between banks' portfolios which
+consists in the phenomena that a~common shock, due to common asset holdings, 
+affects many banks at once.
+
+De Bandt {\it et al.}\ provided a~categorization of systemic 
+risks, distinguishing between those understood in  a~broad and in a~narrow 
+sense~\cite{Bandt}: contagion effects pose a~systemic risk in the narrow sense while in the 
+broad sense, it is a~common shock that affects many nodes and once.
+A~similar idea is developed  by Gai and Kapadia~\cite{GK},  who model 
+two channels of contagion in financial system that can trigger further rounds of 
+defaults: contagion due to the direct interbank claims and obligations and 
+contagion due to common shocks on the asset side of the balance sheet, 
+especially when the market for key financial system assets is illiquid.
+
+Deposits also could affect the financial system stability:  a~large sudden 
+withdrawal of funds  by depositors in panic  could lead to a~collapse of the 
+system. However, in the present paper,  this is not considered as one of the 
+major sources of system risk. in fact, its impact can be minimized and 
+controlled by the central bank intervention imposing  an appropriate withdrawal 
+limit.
+{\looseness=1
+
+}
+
+A large part  of the literature has focused on the analysis of the contagion 
+effect due to the interbank market while only few authors studied the impact 
+of the correlated defaults which is of great importance, the magnitude 
+of correlation between the banks balance sheets, the amount of external 
+investments, and the appropriate assessment of the risk embedded in these 
+external assets.
+Acharya and Yorulmazer proved that banks are motivated to 
+increase the correlation between their investments amplifying by such actions  
+the risk of a~common shock~\cite{AY}. In their analysis, Elsinger {\it et al.}\ 
+combine the two major sources  of systemic risk and find that the 
+correlation in investments is far more important than financial linkages~[5, 6].
+
+One can also consider a~subordinate source of risk due to the fire sale of 
+external assets of defaulting banks which will lead to other banks default 
+because of the price depreciation.  This is  why some banks have an interest to 
+bailout other peers in order to minimize the default cost of the system and to 
+prevent fire sale and the writing down of their own external assets.
+
+While the interbank risk is concerned, Gai and Kapadia show  that the 
+risk of systemic crises is reduced with increasing connectivity while
+at the same time,
+ the 
+amplitude of the systemic crises is increasing~\cite{7a}. Higher 
+connectivity simply creates more channels of contact through which default could 
+spread, increasing the potential or probability for contagion. However, in the 
+financial system setup, greater connectivity allows counterparties risk sharing 
+as exposures are distributed over a~wider set of banks, especially in periods 
+of stability. In times of crisis, however, the same interconnections can amplify 
+shocks that spread through the system.
+
+Allen and Gale demonstrated that the spread of contagion 
+depends on the network structure of the financial system and  strongly 
+interconnected banking systems are less affected by the systemic risk~\cite{Allen}. They also 
+pointed out that the assumption that the agents have complete information on 
+their environment is not realistic. Acharya and Bisin 
+compared over-the-counter (OTC) and centralized clearing markets in a~general 
+equilibrium model~\cite{AB}. They showed that the intransparency of OTC markets is ex-ante 
+inefficient and will lead to underpricing of counterparty risk.
+
+The counterparty risk makes it clear that the network structure of financial 
+system plays an important role when assessing systemic risk.
+
+Empirical analyses of the interbank network structure exist for a~number of 
+countries. It shows that the interbank network has a~scale free topology. This 
+means that there are a~few large banks with many interconnections and many small 
+banks with  a~few connections. In contrast, other authors argue that the 
+intransparency of real data makes the random network more valid to capture the 
+hidden links. More formally, the terminology 
+``scale free network'' means that at least, when the number of nodes increases to 
+infinity, 
+the number~$k$ of connections (``in'' or ``out'')  attributed to each node decays as 
+$k^{-\gamma}$, $\gamma >1$.  
+
+    
+
+Georg proposed a~dynamic model of cascading banking defaults~\cite{Co}: 
+at each stage of the cascade, each bank collects all his exposures, pays all his 
+liabilities, adjust the price of its external assets, and, when remains solvent, 
+it optimizes a~portfolio of risky and risk-free assets and initiates other 
+interconnections within the banking system.
+
+On the other hand, Gai and Kapadia highlighted that in normal times, 
+developed country banks are robust and minor variations in their default 
+probabilities do not affect lending decisions on the interbank market~\cite{7a}. But in 
+crises, as illustrated by the sudden failures of Lehman Brothers, contagion may 
+spread rapidly with banks having little time to alter their behavior before they 
+are affected. Thus, the almost static behavior of the system during crisis is 
+best captured by the static model as also applied in the present paper.
+
+It seems that the majority of existing literature  deals with ``homogeneous''
+models, like Erd\"os--Renyi model where the network graph is generated by 
+a~matrix whose nondiagonal entries are identically distributed independent  
+Bernoulli random variables (see~\cite{GK}), or even models where 
+all nodes have the same number of connections~\cite{MA}.   Though such models 
+are  convenient 
+for theoretical studies, they look to be too far from the reality and in the 
+present paper,  the behavior of the systemic risk indicator is investigated using 
+networks with a~structure obtained by a~preference attachment algorithm leading 
+to a~scale free network.  
+
+Under the Basel II accord, improving the quality of default models  is the key 
+risk-management priority. Many researchers have studied the loss or impact of 
+the systemic risk once a~crisis or shock is in place. However, there is a~need 
+to predict and prevent the defaults of banks before it happens. To the date, the 
+major part of research papers concentrates on studies of static or stationary 
+models. In this note, the authors suggest an approach influenced by the structural model 
+of defaultable securities (see~\cite{Biel-Rut}). Namely, it is supposed that the 
+cascade of default is triggered in a~natural way when the value of a~portfolio 
+process of some bank falls below  a~certain level. Financial market  reacts 
+negatively to such an event. Prices of the external assets drop down and 
+contagion propagates not only to interconnected banks but also via correlation. 
+Assuming that the matrix of exposures as well as the vector of the investments 
+into external assets is known, the regulators, having a~model for the dynamic of 
+the ``reference portfolio,''  can compute, with moving time horizons, two 
+``alert indicators:''  the probability that the default  happens during 
+the planning period and the total losses incurred when the default happens. The 
+total losses are the aggregation of the losses due to the external asset price 
+depreciation (correlation)  and the losses due to the interbank linkages 
+(contagion). To simplify the calculation, it is assumed that there is a~single 
+external risky asset common to all banks in the system and the difference is 
+only in the size of portfolios. A~model where each bank has its own portfolio 
+structure  can be treated in a~similar way.
+The present approach is rather flexible and can be combined with existing methods of 
+reconstructing of the exposure matrix.
+
+
+
+Thus, the main novelty of this approach, in contrast to the majority of existing  
+studies  concentrated on  static or stationary models, is in developing  a~
+dynamic model of financial system before the crisis in combination with a~static 
+contagion model for the crisis.  
+The model is described by a~graph whose nodes are banks (or other 
+financial institutions). The directed graph structure  arises from the matrix of 
+liabilities/exposures. Each bank is characterized by a~stylized balance sheet. 
+On the asset side, 
+there are exposures (due to the  interbank lending) and liquid assets, risky 
+(stocks) and nonrisky (cash).   
+ The liability side is composed by the received interbank loans and the net 
+worth, the quantity, equating both sides of the balance sheet.  The dynamic is 
+introduced via random fluctuations of the value of the risky asset. Decreasing 
+of its price means that the net worth is decreasing. The authors suppose that the risky 
+asset is unique for all banks. One may think of this asset as a~``benchmark (or 
+reference) portfolio.''  Taking into account that banks try to mimic behavior of 
+each other (``herding effect''), we believe that this assumption may suit to our 
+highly stylized model but for  practical applications, it can be relaxed.  Of 
+course,  there is a~need to introduce dynamics in other parts of the balance 
+sheet  but we prefer avoid this in the paper. 
+ 
+
+The paper contains some numerical experiments. Unfortunately,  the liability 
+matrix of a~financial system is not publicly available (with rare exceptions). 
+By this reason, the  applicability of the model was tested on simulated data. In 
+numerical experiments,  a~construction of the scale-free network is used with the
+help of 
+a~preferential attachment algorithm (see~\cite{BarAlb}).   
+The present authors populate the model by balance sheets and compute the alert indicators.   
+The carried out experiments show that the alert indicators can be used as a~tool to support 
+regulator's decision to increase the stability of the financial system by 
+withdrawal of the license of the 
+bank  having low re\-liability.  
+{\looseness=1
+
+}
+
+
+
+The structure of the article is as follows. In Section~2, 
+the general network approach to contagion is described. 
+Section~3  gives the model description and the definition of the alert 
+indicators. 
+Section~4 is devoted to simulation results.  
+ 
+
+\section{Network Approach} 
+%\label{network}
+
+\subsection{General principles}
+
+\noindent
+The basic ideas are very simple and can be described as follows. The set 
+$G=\{1,\ldots ,N\}$ stands for the banking system involving  $N$ financial 
+institutions  described by an $N\times N$ matrix $L=(L^{ij})$ with
+nonnegative entries vanishing on the diagonal ($L^{ii}=0$) and a~vector $C\in 
+{\bf R}^N$ with nonnegative components. 
+
+The entry $L^{ij}$ represents the {\it  liability} of the $i$th bank to the 
+$j$th bank, i.\,e.,  the debts  of~$i$ to~$j$ or, in other words, the total amount 
+of credit provided by~$j$ to~$i$. By the reciprocity, for the $i$th bank, the 
+value~$L^{ji}$ is its {\it  exposure} to the bank~$j$.  By this reason, in the 
+literature, the model  is described quite often by the matrix of the liabilities 
+$X=(X^{ij})$, $X=L'$ where $'$ is used to denote the transpose.   Let 
+$B^{ij}=I_{\{L^{ij}>0\}}$. The matrix~$B$ (whose entries are zeros and units) 
+defines the directed graph structure on the set of~$N$ points in a~usual way (as 
+is done in the theory of Markov chains): there is a~flesh $i\to j$ if 
+$B^{ij}>0$, showing that  the $i$th bank is indebted  to the $j$th bank 
+(attention: in some papers, the direction of fleshes can be opposite). With this 
+observation, one can use the standard terminology of the network theory and 
+identify banks with the nodes of the (weighted) oriented graph. 
+
+The component $C^i$ of the vector~$C$ represents the proper capital  reserve the 
+$i$th bank; it is {\it  solvent}
+if the net worth 
+\begin{equation*}
+\mathrm{NW}^i:=\sum\limits_{j\in G}L^{ji}-\sum\limits_{j\in G}L^{ij}+  C^i\ge 0\,.
+\end{equation*}
+If the above solvency condition does not hold, the bank {\it defaults}. 
+
+It is important to note that the definitions ``exposure,'' ``liability,'' and
+``default'' 
+appeal to a~common sense rather having a~precise meaning. Their understanding 
+varies from paper to paper. 
+In practice, the balance sheet of a~bank has a~much more complicated structure. 
+For example, the exposure may include
+overnight credits as well as long term loans,  the debts are of different 
+seniority, and so on. The ``standard'' highly stylized balance sheet,  i.\,e., 
+the equality $\mathrm{Assets}=\mathrm{Liabilities}$ presented as a~table, containing 
+the interbank exposures (loans) and external assets (that can be split in 
+liquid and illiquid, risky and nonrisky) on the assets 
+sides  while on the liability side, there are 
+interbank borrowings, deposits, and, to equate the both side, the net worth 
+(called also capital reserve, or equity)~---  in the case that the bank is 
+solvent.  
+
+\subsection{Defaults}
+
+\noindent
+In the literature, the typical descriptions of the contagion process and 
+defaults ``in cascade" can be found (e.\,g., in  \cite{Hurd}). Here, they are 
+presented in a~succinct  
+way  as follows.  Let us denote by $I_{\mathrm{out}}(i)$ (respectively, by $I_{\mathrm{in}}(i)$) 
+the set  of banks to which the bank $i$
+has a~liability (respectively, an exposure). That is,  $I_{\mathrm{out}}(i)$ is the set 
+of  nodes terminal for the fleshes (arcs) outgoing from the node $i$ while 
+$I_{\mathrm{in}}(i)$ is the set of nodes with fleshes ending at this node. Let us 
+denote by 
+$n_{\mathrm{out}}(i)$ and $n_{\mathrm{in}}(i)$ 
+the cardinality of the corresponding sets, i.\,e., the 
+numbers  of outgoing  and ingoing fleshes.  Clearly,  $n_{\mathrm{out}}(i)=\sum\nolimits_jB^{ij}$ 
+and $n_{\mathrm{in}}(i)=\sum\nolimits_jB^{ji}$. 
+
+The default of the bank~$i$ triggers the following procedure. The bank is 
+excluded from the network.  
+Debts are collected from debtors at liquidation. Creditors loose a~fraction $1-
+R$  
+of their exposures to~$i$, where the parameter~$R$ is referred to as {\it 
+recovery rate}. Formally, one can think that the matrix $L$ is replaced 
+by the matrix~$\bar L$ obtained by replacing the elements of the $i$th row and 
+$i$th column by zeros. The transformed vector of capital reserves~$\bar C$ has
+the components   $\bar C^j=C^j+RL^{ij}-L^{ji}$, $j\neq i$, $\bar C^i=0$. Put 
+$D_0(i):=\{i\}$ and skip further the argument~$i$ here and in further 
+definitions (depending also on~$R$). For some~$j$ (different from~$i$),  the 
+solvency condition 
+\begin{equation*}
+\sum\limits_{k\in G\setminus D_0}\bar L^{kj}-\sum\limits_{k\in G\setminus D_0}\bar L^{jk}+  
+\bar C^j\ge 0\,,  
+\end{equation*}
+which can be written also as 
+\begin{equation*}
+%\label{first}
+\sum\limits_{k\in G}L^{kj}-\sum\limits_{k\in G} L^{jk}+  C^j- (1- R)L^{ij}\ge 0\,,  
+\end{equation*}
+may fail. Let us denote by $D_1:=D_1(i)$ the set of such indices, corresponding  to 
+the first-order defaults in the cascade of the defaults 
+triggered by  the default of~$i$. In the same way,  the contagion is propagated 
+further, to the set of banks $D_2=D_2(i)$ which is a~subset of 
+indices~$j$ outside of the union~$D_0^1$ of~$D_0$ and~$D_1$  and  such that the 
+solvency condition becomes negative:
+$$
+\sum\limits_{k\in G}L^{kj}-\sum\limits_{k\in G} L^{jk}+  C^j- (1-R)\sum\limits_{k\in D_0^1}L^{kj}< 0\,.   
+$$
+Continue in the same way, for the set~$D_0^n$,  put  $D_0^{n+1}:=D_0^n\cup 
+D_{n+1}$ where~$D_{n+1}$ is the set of indices~$j$ in the complement of~$D_0^n$ 
+such that
+$$
+\sum\limits_{k\in G}^NL^{kj}-\sum\limits_{j\in G} L^{jk}+  C^j- (1-R)\sum\limits_{k\in D_0^n}L^{jk}< 
+0\,. 
+$$
+The process stops if $D_{n+1}=\emptyset$. One can consider the value 
+$$
+L(i):=(1-R)\sum\limits_{n=0}^N\sum\limits_{j\in D_{n+1}}\sum\limits_{k\in D_0^n}L^{jk} 
+$$ 
+as the total losses incurred by the cascade of defaults triggered by the default 
+of the $i$th bank. 
+
+It is not difficult to extend the above definitions to obtain expressions for 
+losses triggered by  simultaneous defaults
+of a~group of banks.  
+
+\vspace*{-4pt}
+
+
+\subsection{Practical aspects and difficulties}
+
+\vspace*{-2pt}
+
+\noindent
+On the first sight, the above formulae are of great help for the researchers in 
+financial systemic risk providing them~$N$~functions of the recovery rate which 
+allows  to  classify banks according to their systemic importance. The 
+described procedure  can be also used to find the most vulnerable banks, 
+sensitive to defaults of others. However, the practical implementation is not so 
+straightforward. 
+Indeed, in the majority of cases, the exposure matrix~$X$ (having one million 
+entries for a~system with $N=1000$) is not publicly available
+though a~certain  subset of its entries may be known.   
+Usually, only the  sums of  elements along  each line and each column can be 
+extracted from the balance sheets.  
+If only this information is available, one cannot recover  the matrix~$L$ in 
+a~unique way: one needs to solve the system of~$2N$~equations
+
+\noindent
+\begin{equation}
+\label{systeq}
+\sum\limits_{j\in G} L^{ji}=a^i\,; \enskip 
+\sum\limits_{j\in G} L^{ij}=b^i\,, \enskip 1\le i,j\le N\,, 
+\end{equation}
+with $N^2-N$ unknown $L^{ij}\ge 0$, $i\neq j$,  and all $L^{ii}=0$.   
+
+Obviously, system~(\ref{systeq}) has the nonnegative solution 
+$x^{ij}=a^jb^i/\sum\nolimits_ib^i$ (note that $\sum\nolimits_ib^i=\sum\nolimits_ja^j)$. 
+But this is not the needed solution since not all $x^{ii}=0$. In the literature 
+(see, for example,~\cite{Mistrulli}), it is recommended to take as the matrix~$X$ the solution 
+of the entropy minimization problem: 
+
+\noindent
+$$
+\sum\limits_{ij}\ln\fr {L^{ji}}{x^{ji}}\to \min\,,
+$$  
+under constraints~(\ref{systeq}),  $L^{ij}\ge 0$ and  $L^{ii}=0$ for all~$i,j$. 
+
+This approach is  criticized since it leads to a~matrix generating a~complete 
+graph and the overestimation of stability 
+of financial system. On the other hand, in some cases,  a~part of the matrix~$L$ 
+is known, e.\,g., the  absence of  connections 
+between some nodes can be a~plausible hypothesis. The entropy minimization 
+method can be easily adapted to such cases leading  to a~rather realistic 
+recovery of the exposure matrix.   
+
+\vspace*{-4pt}
+
+\subsection{Probabilistic modeling}
+
+\vspace*{-2pt}
+
+\noindent
+Due to the lack  of the information on the real structure of the financial 
+system, there is an 
+interest to generate\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+ numerically models which have, at least, basic features of 
+such models. 
+ 
+Apparently, the liability  matrix~$L$ and the reserve vector~$R$ are random and 
+evolve as stochastic processes. Due to the high dimensionality of the problem, 
+their modeling is extremely complicated and simplifying assumptions are 
+unavoidable.  The majority of available studies consider static models or 
+stationary models and start  modeling with the description of the incidence 
+matrix~$B$. 
+
+The simplest model is based on the hypothesis that the nondiagonal elements of 
+the incidence matrix~$B$ are independent identically  distributed Bernoulli 
+random variables (see, e.\,g.,~\cite{NierYYA} where low-parameter models are 
+suggested to evaluate the impact of various factors on the financial stability).  
+In addition to~$N$ and $p=P(B^{ij}=1)$, there are three more parameters: 
+the total value of assets~$A$, the value of external assets~$C$, and the net 
+worth as the percentage of the total value of assets~$\gamma$. 
+These parameters are used to generate the balance sheets. In our notations, the 
+interbank exposures and liabilities for the $i$th bank are defined as follows: 
+$$
+a^i = (A-C)\fr{n_{\mathrm{in}}(i)}{|B|}\,; 
+\quad b^i = (A-C)\fr{n_{\mathrm{out}}(i)}{|B|}
+$$
+ where $|B|:= \sum\nolimits_{ij}B^{ij}$. The value of external assets of the bank are 
+defined by the formula:
+ \begin{multline*}
+C^i= \left(b^i - a^i\right)I_{\{a^i < b^i\}}\\
+{}+ \fr {1}{N}
+ \left(C  - \sum\limits_j \left(b^j - a^j\right)I_{\{a^j 
+< b^j\}}\right)\,.  
+ \end{multline*}    
+If the second term is positive, then all banks in the system are solvent. Since~$a^j$ 
+and~$b^j$ are random,  one should have a~sufficiently high  ratio $C/A$ 
+(in~\cite{NierYYA}, it was always taken greater than~0.3).  The  quantity 
+$\gamma (a^ i-b^i +C^i)$ models the net worth while $(1-\gamma) (a^ i-b^i +C^i)$ 
+stands for the consumer deposits. 
+
+%\section{Simulations}
+%\label{sim}
+%\subsection {Model}
+
+%In this section we give a~description of a~model with 3 groups of banks with 
+%different %levels of interconnections  within each group. 
+ 
+
+\section{Dynamic Models and~Alert~Indicators}
+%\label{alert}
+
+\subsection {Structural model}
+
+\noindent
+The aim of the model is to provide regulators two functions on the current state 
+of the system 
+which can be used to calculate the alert indicators. 
+The first one is the probability that the system will suffer  a~cascade of 
+defaults before a~specified 
+time horizon. The second  indicator 
+is the total losses  incurred by the cascade of defaults, if it happens. 
+ 
+Suppose that at time zero, the regulators dispose the liability matrix~$L$ or 
+its transpose the exposure matrix $X=L'$ (in reality, this  information is  
+public only in rare countries, like Brasil, but can be available to central 
+banks) and the vector of capital reserves~$C$ which 
+is decomposed into nonrisky reserve~$c$ (say, Treasury bonds) and investments~$y$ 
+into a~single risky asset which can be  interpreted as a~market index, or 
+a~market portfolio.   In the present very stylized model,  all these values are fixed up to 
+the time horizon~$T$.  
+Of course, in reality, the banks trade and portfolios are composed in many 
+assets.
+Nevertheless,  quite often banks mimic the behavior of each other and one may 
+guess  that a~ typical portfolio value has the same evolution as a~certain 
+reference 
+portfolio. Let us describe its dynamics by a~geometric Brownian motion:
+\begin{equation}
+\fr{dS_t}{S_t}=\mu\, dt + \sigma\, dW_t\,, 
+\label{e3a-kab}
+\end{equation}
+that is,  
+$$
+S_t=S_0e^{\sigma W_t+(\mu -\sigma^2/2)t}\,. 
+$$
+At time zero, all banks are supposed to be  solvent.  
+
+The default cascade will be triggered at the instant when one of the solvency 
+conditions is violated. 
+
+The solvency condition for the $i$th bank has the form: 
+\begin{equation*}
+V_t  +y^i_0S_0e^{\sigma W_t+(\mu -\sigma^2/2)t}\ge 0\,.
+\end{equation*}
+Here, 
+$$
+V_t{:=}b^i_t-a^i_t +  c^i_t
+$$
+where
+$$ 
+b^i_t{:=} \sum\limits_{j\in G}L^{ji}_t\,;  
+\qquad a^i_t:=\sum\limits_{j\in G}L^{ij}_t\,.
+$$
+
+\noindent
+\textbf{Hypothesis:}\ $V_t=V$ for all $t\in [0,T]$. 
+
+\smallskip
+
+The above assumption allows one to provide the regulators some easily calculated  
+indicators of the system stability. Without any doubts, in the present 
+oversimplified form, they can be criticized. For example,  assume that the 
+interbank operations to a~large extend are balanced by liquid assets.  In favor 
+of this are evidences that interbank lending is not the main activity of banks.  
+Let us also assume a~rigidity of the investment portfolio. 
+Again, econometric studies confirm that banks have a~tendency to follow similar 
+behavior. 
+The benchmark portfolio process may have various dynamics and various 
+theoretical and 
+statistical models can be used for its description.  
+
+\begin{table*}[b]\small 
+%\vspace*{-12pt}
+    \begin{center}
+      \Caption{Summary of the parameters considered in the network construction 
+of the model}
+\vspace*{2ex}
+
+
+    \begin{tabular}{clcc}
+        \hline
+        Parameter & \multicolumn{1}{c}{Description} &  Value & Range of variation \\ 
+        \hline
+        $n$  & Number of banks in the initial random graph & 10 & fixed \\ 
+       % \hline
+        $N$  & Total number of banks in the network & 250\hphantom{9} & fixed \\
+        %\hline
+        $m$  & Maximum number of connections in the random network & \hphantom{9}5 & 
+fixed \\ 
+        %\hline
+        $m'$  & Maximum number of connections in the scale free network & \hphantom{9}3 & 
+fixed \\
+        \hline
+    \end{tabular}
+  \end{center}
+\end{table*}
+
+\smallskip 
+
+Put 
+$$
+\lambda ^i:=\fr {1}{\sigma}\ln \fr{V^i}{y^iS_0}
+$$
+with a~convention that $\lambda ^i:=-\infty$, if $V^i\le 0$. 
+Let~$i_0$ be the index corresponding to the largest of values of~$\lambda^i$.  
+One may assume, with very minor loss of generality, that all  finite values 
+of~$\lambda^i$ are different (the coincidence is not expected in the present 
+context) and that~$\lambda^{i_0}$ is finite (otherwise, there will be no defaults). 
+
+Let us introduce the stopping time  
+$$
+\tau:=\inf \left\{t\ge 0:\ w_t+\beta t\le \lambda ^{i_0} \right\}
+$$
+where $\beta :=\mu/\sigma-\sigma /2$. 
+If  $\tau\le T$, the system will have a~default and it happens with the 
+node~$i_0$; the price of the market portfolio at this date will 
+be $S_0e^{\sigma\lambda ^{i_0} }$. 
+The distribution of~$\tau$ is the well-known inverse Gaussian distribution (see, 
+e.\,g.,~\cite{Bor-Sal}) and one has that 
+$$
+P(\tau\le T)=\Phi(h_1(T))+e^{2\beta \lambda ^{i_0}}\Phi(h_2(T))
+$$
+where $\Phi$ is the standard Gaussian distribution function; 
+$$
+h_1(T):= \fr{\lambda ^{i_0}- \beta T}{\sqrt{T}}\,; \qquad h_2(T):= \fr{\lambda 
+^{i_0}+\beta T}{\sqrt{T}}\,. 
+$$
+
+The default of the bank~$i_0$ generates a~cascade of the defaults. 
+It seems reasonable to suppose that the market reacts to such an event and the 
+risky asset may loss a~certain percentage of its value.
+With this assumption the set $D_1=D_1(i_0)$ of the first-order defaults of the banks 
+correspond to the indices~$j$
+such that 
+\begin{equation*}
+%\label{first-1}
+\sum\limits_{k\in G}L^{kj}-\sum\limits_{j\in G} L^{jk}+  c^j+\alpha y^jS_0e^{\lambda ^{i_0} } \\
+{}- (1- R)L^{ij_0}<0\,,   
+\end{equation*}  
+$D_0^1(i_0):=D_0\cup D_1$, etc. The parameter $\alpha \in ]0,1]$ represents the 
+default impact on the price of the reference portfolio. 
+
+The second alert indicator is the amount of total losses: 
+
+\vspace*{-2pt}
+
+\noindent
+$$
+L(i_0):=(1-R)\sum\limits_{n=0}^N\sum\limits_{j\in D_{n+1}}\sum\limits_{k\in D_0^n}L^{jk}\,. 
+$$ 
+In the considered setting, it can be augmented, e.\,g., 
+by the losses of nondefaulted banks due to a~depreciation of their portfolios: 
+$$
+\tilde L(i_0):=(1-\alpha)\sum\limits_{j\in G\setminus D_0^N}y^jS_0e^{\lambda ^{i_0} }\,.  
+$$ 
+
+\vspace*{-12pt}
+
+\subsection {Discussion}
+
+\vspace*{-1pt}
+
+\noindent
+The model introduced above has an advantage of its simplicity. It combines 
+structural approach to defaultable 
+securities with ideas of modern theory of financial networks.  The alert 
+indicators have a~simple and comprehensive meaning. They can be easily computed 
+at the monitoring dates $t_m$ (when the new  balance sheets are communicated)  
+for the moving time horizons $t_m+T$. This allows regulator to see dangerous 
+trends in the evolution of the system. It is worth noting that the 
+model combines two channels of contagions: via the network as well as via the 
+correlation due to common source of randomness.
+
+Surely, the model is highly stylized. How serious are the weak points and how 
+the model can be improved? 
+
+ It is assumed that the investment in the single risky asset are static 
+though in reality, there is an intensive trading. 
+For a~fixed input, there is only  the bank triggering the default is uniquely 
+determined. 
+
+To our mind, these objections should be examined carefully. Due to extreme 
+complexity of  financial systems (recall that they may contain hundreds of 
+banks) and complexity of individual  balance sheets, for more sophisticated 
+models, one can have an accumulation of various factors: misspecification errors, 
+calibration errors,  data aggregation errors, etc.   That is why, simplifying 
+hypotheses seems to be inevitable. It seems that one  can accept  that banks 
+investment portfolios are close to the most performant one.  
+{\looseness=-1
+
+}
+
+Of course, the predetermined bank triggering  of the default cascade is not 
+intuitive. However, as it is known from the literature, 
+the matrix~$L$ is rarely known and should be reconstructed from the aggregated 
+exposure of the banks. It is not difficult to  implement a~random reconstruction 
+procedure;  for each realized reconstruction, one can compute conditional alert 
+indicators and take the average. 
+  
+
+
+    \begin{figure*}[b] %fig1
+    \vspace*{1pt}
+    \begin{minipage}[t]{80mm}
+\begin{center}
+\mbox{%
+\epsfxsize=77.973mm
+\epsfbox{kab-1.eps}
+}
+\end{center}
+\vspace*{-9pt}
+         \Caption{Illustration of a~financial  network generated by the 
+algorithm and limited to~40~banks  for clarity of the figure}
+        \label{fig:1}
+        \end{minipage}
+        \hfill
+            %\end{figure*}
+%    \begin{figure*} %fig2
+    \vspace*{1pt}
+    \begin{minipage}[t]{80mm}
+\begin{center}
+\mbox{%
+\epsfxsize=78.228mm
+\epsfbox{kab-2.eps}
+}
+\end{center}
+\vspace*{-9pt}
+         \Caption{Representation of the scale-free topology}
+        \label{fig:2}
+                \end{minipage}
+            \end{figure*}   
+            
+            \vspace*{-6pt}         
+
+\section{Numerical Experiments}
+%\label{simulations} 
+
+            \vspace*{-6pt}
+
+
+\subsection{Network construction}
+
+            \vspace*{-4pt}
+
+\noindent
+Here, the  numerical simulations are presented to offer further insight into the role of 
+the external assets in contributing to a~systemic risk in the financial system 
+and to show an impact of  parameters  range to financial stability.
+Table~1 summarizes the baseline simulations parameters. The system comprises~$N$ 
+banks. As in~\cite{Eboli},  the  banking system is considered as 
+a~network of nodes where each node represents a~bank (or any other financial 
+institution) and each link represents a~directional lending relationship between 
+two nodes (two banks). 
+We believe that network reflects its ``genetic'' structure. The development of the 
+system starts from relatively small kernel composed from a~few banks. A~newly 
+created bank establishes relationships  preferably with more ``important" 
+nodes of the network, namely, those that already have more connections  than 
+others. Also, usually, well connecting bank 
+ has better chances not to be eliminated from the system (``too 
+connected to fail''). 
+
+As an example, let us make a~look on  the development of the banking system in 
+Russia. In the USSR, the number of banks were about a~dozen. The first commercial 
+bank was registered in August~1988 (Cooperative bank ``Patent,'' Leningrad).  
+Already to the end of 1989, the country had~43~commercial banks.   Afterwards,  
+the number of banks in Russia evolved (approximately) as follows:  
+1991~--- 1400;  1994~--- 2300; 1997~--- 2000; 2003~--- 1300; and  2011~---
+1000. 
+
+In   2016, the total number was  less than~700.  To compare:  in~2014, the USA had  
+more than~6800~banks.  
+
+Of course, the evolution of the banking system is a~rather complicated process 
+but  statistically, it leads to a~network having common features with other 
+types of networks like Internet connections.  In particular, interbank networks 
+have a~scale-free topology with a~few large banks having many interconnections 
+and many small banks with a~few connections.
+By this reason, we generate our simulating financial system using the 
+methodology introduced in~\cite{BarAlb}. We are 
+based on the idea that a~larger and more connected bank is usually more trusted 
+and, as a~consequence, other system banks tend to deal with it rather than with 
+the less connected  one.
+
+The algorithm starts with creating the initial network (the ``seed'') with 
+a~small amount of nodes $n$.  The connections between them are taken randomly, and 
+the maximal number of connections (``in'' and ``out'')  is limited by $m$ as well 
+as the total number~$M$ of connections (in the present experiments, $n=10$, $m=5$, 
+and $M=20$). 
+  When drawing the network, we allow for the possibility that two banks can be 
+linked to each other via both lending and borrowing links but at most one   in 
+the same direction is possible between the~2~banks (Fig.~1).
+
+\smallskip  
+
+\noindent
+\textbf{Remark.}\ In general, we expect that the structure of the initial  network 
+has a~relatively small impact 
+on the resulting network which may be in dozens or even hundred times larger 
+than the ``seed.'' 
+So, the initial network  involving a~few nodes can be created in various way, 
+e.\,g., as Erd\"os--R$\acute{\mbox{e}}$nyi network with the matrix 
+$B=(b^{ij})$ where  entries~$b^{i,j}$, $i\neq j$, form a~set of independent
+ identically distributed  Bernoulli random variables with $P(b^{i,j}=1)=p$.      
+
+\begin{table*}\small 
+    \begin{center}
+        \Caption{Summary of the system benchmark parameters}
+        \vspace*{2ex}
+    
+    \begin{tabular}{clcc}
+        \hline
+         Parameter & \multicolumn{1}{c}{Description} &  Value & Range of variation \\ 
+        \hline
+        $A$  & Value of the total assets of the network  & 10,000,000,000  & 
+fixed \\ 
+       % \hline
+        $\beta$  & Proportion of external assets from the total assets of a~
+bank  & 0.5 & fixed \\
+        %\hline
+        $S_0$  &    Initial price of risky asset  & 10,000 & fixed \\ 
+        %\hline
+        $T$  & Time horizon & 40    & fixed \\
+        \hline
+    \end{tabular}
+\end{center}
+%\end{table*}
+\vspace*{9pt}
+%\begin{table*}\small %tabl3
+\begin{center}
+    \Caption{Summary of the balance sheet parameters}
+    \vspace*{2ex}
+    
+    \begin{tabular}{clcc}
+        \hline
+       Parameter & \multicolumn{1}{c}{Description} &  Value & Range of variation \\ 
+        \hline
+        $\alpha$  & 
+        \tabcolsep=0pt\begin{tabular}{l}Percentage of price degradation following the panic\\ in 
+the market during the crisis\end{tabular}  & 1\hphantom{.9}  & 0 to 1 \\ 
+        \hline
+        $R$  & Recovery rate & 0.5 & 0 to 1 \\
+        \hline
+        $\theta$  & Percentage of riskless asset from total external asset  
+& 0.4 & 0 to 1 \\ 
+        \hline
+        $\sigma$  & Volatility of the risky asset price & 0.4   & 0 to 1 \\
+        \hline
+        $\mu$  & Drift of the risky asset price & 0.2   & 0 to 1 \\
+        \hline
+    \end{tabular}
+\end{center}
+\vspace*{6pt}
+\end{table*}
+
+
+To generate a~scale free network, assuming that a~seed network of~$n$~banks is 
+randomly generated as mentioned above, let us proceed recursively. At each step,  
+add  $m'<m$ new nodes choosing each time a~partner~$i$ between the  existing 
+nodes and selecting according to the  Connection Probability~$P(i)$ defined as 
+follows: 
+$$
+P(i ) = \fr{\mbox{total\ number\ of\ connections\ of\ $i$}}{\mbox{total\ number\ of\ 
+connections\ of\ the\ network}}
+$$ 
+where~$i$ is the existing node in the network. The nodes will be added each time 
+until  a~network size limit  equal to~$N$ is reached. As shown in Fig.~\ref{fig:2},  
+the 
+distribution of a~number of nodes in the considered model is in a~conformity with that one 
+can expect from   a~typical scale-free network topology where a~few nodes have 
+a~high number of connections while the majority of nodes have a~small number of 
+connections. In particular, 
+on the realization of the algorithm depicted on the scatterplot, only~6~banks 
+from~250 have each at least~25~connections while~185 have at most~5~connections.  
+
+
+
+
+For any realization of the random graph, we populate the individual banks' 
+balance sheets in a~manner consistent with bank level and aggregate balance 
+sheet identities (Table~3).
+ 
+
+
+Amongst assets, let us distinguish  external assets (investors' borrowing), denoted 
+by~$C^i$, and interbank assets (other banks borrowing), denoted by~$a^i$. Thus, 
+for the bank~$i$,  the asset part of the balance sheet  can be decomposed as  
+$$
+\mbox{Total\ assets} = C^i + a^i\,, \qquad i = 1,\ldots,N\,.
+$$ 
+Moreover, the external assets can be of two types: risky~$r^i$ and riskless 
+(cash)~$l^i$, so that   $C^i=r^i+l^i$.  Introducing the parameter~$\theta$ as a~
+proportion of cash holdings, the volume of the risky assets is $r^i = (1- 
+\theta) C^i$.  
+The liabilities of each bank  are composed of the net worth of a~bank, denoted 
+by~$NW^i$, and the interbank borrowing, denoted by~$b^i$. Hence, for the bank~$i$, 
+one has:  
+$$
+\mbox{Total\ liabilities}= NW^i + b^i\,, \qquad i = 1,\ldots,N\,.
+$$ 
+An example of a~bank balance sheet as generated by the simulator is also shown 
+in Fig.~3.  
+
+    
+
+The balance sheets have been constructed for individual banks in a~sequence  of steps.
+The entry parameter is the total value of all assets in the system denoted 
+by~$A$ and the parameter~$\beta$ which defines the proportion of the external 
+asset~$C$ representing the total loans made to ultimate investors and thus 
+relating to the total size\linebreak\vspace*{-12pt}
+
+\columnbreak
+
+ { \begin{center}  %fig3
+ \vspace*{-3pt}
+ \mbox{%
+\epsfxsize=78.001mm
+\epsfbox{kab-3.eps}
+}
+
+
+%\vspace*{-3pt}
+
+
+\noindent
+{{\figurename~3}\ \ \small{Representation of the balance sheet}}
+\end{center}
+}
+
+\vspace*{9pt}
+
+\addtocounter{figure}{1}
+
+
+
+
+\noindent
+ of the flow of funds from savers to investors through 
+the banking system. That is, $\beta = C/A$.
+ The aggregate assets of the whole banking industry can be written as $A = C + 
+I$ where $I=(1- \beta)A$ represents the aggregate volume of interbank 
+exposures, i.\,e., $I:=\sum\nolimits_{i,j}L^{ij}$.  
+
+
+Dividing the total interbank assets by the total number of nodes in the network, 
+one arrives at the level of each bank.  So, weights of all links are equal banks 
+borrow and lend by equal  portions $w=I/|B|$. Though this looks not very 
+realistic,  such a~hypothesis is accepted to reduce the number of parameters.  
+Hence, using~$w$ and the structure of the network, one
+can calculate for each bank the volume of its liabilities $a^i=n_{\mathrm{in}}(i)w$ and  
+exposures $b ^i=n_{\mathrm{out}}(i)w$.
+For any bank to be able to operate, the value of its external 
+assets is required to be not less than its net interbank borrowing, that is, 
+one has:
+ $C^i \ge 
+b^i- a^i$. Let us fulfill this constraint by applying the following two-step 
+algorithm.
+
+First, for each bank, fill up the bank external assets part of the balance 
+sheet in such a~way that its external assets plus interbank lending will 
+equalize its interbank borrowing. That is, provide first the bank~$i$ the 
+volume $\tilde C^i = (b_i-a_i)^-$ where $\tilde C^i$ is the fraction of the 
+total volume $C$ reserved for the external assets.
+At the second stage,  what is left in aggregated external assets is equally 
+distributed among all banks. Note that the total of external assets is equal to~$C$. 
+Hence, in the second step, distribute $\bar C =C- \sum^N_{i=1} \tilde 
+C^i$ equally among all~$N$~banks. Hence, one has $C^i = \tilde C^i +\bar C/N $. 
+The constraint can become difficult to meet if the percentage of external asset 
+is too low. Since the distribution of links is stochastic, some banks may be 
+assigned interbank borrowing much larger than interbank lending. When the total 
+amount of external assets is low, there may be not enough assets to go round to 
+close all balance sheet gaps opened up in this way. To avoid this difficulty,  
+make sure that the total volume of external assets is at least~30\%~of the total 
+volume of all assets.
+
+%\smallskip
+
+Although the model is applied to fully heterogeneous banks, for the purpose of 
+illustration and simplicity, let us consider one common risky asset for all banks 
+(full correlation among the banks). Further studies can be conducted for 
+portfolios composed  of many  different risky assets. Furthermore, let us choose the 
+risky asset evolving according to value of a~reference portfolio  whose dynamics 
+follows a~geometric Brownian motion~(\ref{e3a-kab}).
+
+Since $S_t = S_0$  at time $t = 0$, one can define~$y^i$ as the amount of the 
+risky assets in the portfolio of each bank with $y^i =r^i/S_0$.
+
+Hence, the asset side of the bank balance sheet is completed as well as interbank 
+borrowing~$b$ on the liability side. The determination of the remaining 
+component, the net worth (equity)~$\mathrm{NW}$ on the liability side, is relatively 
+straightforward. The net worth is set as 
+$\mathrm{NW} = a~+C -b$. This completes the construction of the banking system and of 
+each constituent bank balance sheet. 
+
+Now, let us calculate the probability of the first default. Then, let us
+specify which 
+bank will first default to check the price of the risky asset at the time of 
+default~$S_\tau$ where~$\tau$ is the time of the first default (1st stopping 
+time). This generates a~loss in the asset price from~$S_0$  to~$S_\tau$   on 
+each bank~$i$ which will suffer a~loss of  $y^i  (S_0  - S_\tau )$. The sum of 
+these losses  is equal to $\sum^N_{i=1} y^i  (S_0  - S_\tau )$ and is denoted   
+as Corr\_loss (correlation loss).
+In what follows, it is assumed that the first default will affect the neighborhood  
+and will trigger a~cascade of default due to the loss transmission through the 
+interbank connections. The sum of the total losses generated by the cascade of 
+default is denoted as Con\_loss and is equal to $(1-R) \sum\nolimits^N_{n=0} 
+\sum\nolimits_{i\in  D_{n+1}} \sum\nolimits_{ \in D_n}$. 
+Having the probability as well as
+$$
+\mbox{Network\ total\ loss\;=\;Correlation\ loss\,+\,Contagion\ loss,}
+$$ 
+one can calculate  
+$$
+\mbox{
+Probable\ loss\ Indicator\;=\;$P$\;$\cdot$\;Total\ loss\,.}
+$$
+
+In what follows, the parameters will be varied in the experiments.  
+
+\subsection{Experiment~1: The influence of~the~external assets volume 
+and~its~riskless proportion on~the~probability~and~losses}
+
+\noindent
+Given the balance sheet above we want to compute the probability of default when 
+the proportion of the risky asset varies.
+For the sake of more profit and wealth, banks have the choice to invest in 
+either risky assets or riskless assets. It is known that the revenue in risky 
+assets can be much larger than the riskless ones. Thus, banks have more tendency to 
+invest there while keeping an eye on the risks and their liabilities towards 
+other banks making sure they can settle when needed. Therefore, let us check 
+the probability of the first default that can trigger a~cascade of defaults in the 
+system based on the percentage of the risky assets. Regulators may impose 
+a~minimum threshold on the level of riskless assets~$(\theta)$ held by banks as 
+well as define a~certain proportion that a~bank can invest in  external assets. 
+That is why, both parameters will be considered in this experience to check how 
+both of them can affect the vulnerability of the system and what is the optimal 
+requirement on the riskless assets thresholds for each volume of external 
+investments.
+
+As for the following figures, this experiment illustrates that with an increase 
+of the riskless assets level, the probability of the first default decreases to 
+become zero after a~certain threshold of~$\theta.$
+Also, note that this threshold is smaller with an increasing volume of 
+assets~$\beta$ (Fig.~4).
+
+For example, for $\beta = 0.55 $, the probability of default is always less 
+than~$0.5$ decreasing with~$\theta$ and becomes null after $\theta =0.6$. If the 
+system is engaged with high level of external investments $\beta > 0.75 $, the 
+probability of default is very low with a~very low rate of riskless assets 
+$\theta = 0.55$. This means that the system is rather stable even if the level 
+of risky assets is high. On the other hand, for a~high level of external assets 
+investments as shown in Fig.~5, the probability of the first default 
+remains low even with high level of risky assets.
+
+   
+
+
+
+In the following experiments,  $\beta=0.5 $  will be fixed as it is assumed that banks 
+have the same probability to invest in external and internal assets. 
+
+\pagebreak
+
+\end{multicols}
+
+ \begin{figure*} %fig4
+    \vspace*{1pt}
+\begin{center}
+\mbox{%
+\epsfxsize=162.513mm
+\epsfbox{kab-4.eps}
+}
+\end{center}
+\vspace*{-9pt}
+       \Caption{Probability of default with~$\beta$ percentage of external 
+assets and~$\theta$ proportion of riskless assets: \textit{1}~--- $\beta=0.35$;
+\textit{2}~--- 0.45; \textit{3}~--- 0.55; \textit{4}~---0.65;
+\textit{5}~--- 0.75; \textit{6}~--- 0.80; \textit{7}~--- 0.85;
+\textit{8}~--- 0.90; and \textit{9}~--- $\beta=0.95$}
+   % \end{figure*}
+     %   \begin{figure*} %fig5
+    \vspace*{6pt}
+\begin{center}
+\mbox{%
+\epsfxsize=163.207mm
+\epsfbox{kab-5.eps}
+}
+\end{center}
+\vspace*{-9pt}
+        \Caption{Probability of default with $\theta$ and  volatility of 
+the asset price: \textit{1}~--- $\theta=0.1$;
+\textit{2}~--- 0.2; \textit{3}~--- 0.3;
+\textit{4}~--- 0.4;
+\textit{5}~--- 0.5;
+\textit{6}~--- 0.6;
+\textit{7}~--- 0.7;
+\textit{8}~--- 0.8;
+\textit{9}~--- 0.9;
+and \textit{10}~--- $\theta=1.0$}
+        \label{fig:5}
+       % \vspace*{6pt}
+        \end{figure*}
+
+\begin{multicols}{2}
+
+\subsection{Experiment~2: The influence of~the~volatility and~drift of~the~risky~asset~price}
+
+\noindent
+Now, let us study how the volatility and drift of the asset price can also 
+affect the probability taking into consideration also the level of the risky 
+assets in banks balance sheet.  The volatility reflects the risk of changing the 
+portfolio price due to  external and internal factors. 
+
+
+Assuming that the portfolio of risky asset price has a~volatility that varies 
+from~$0.1$ to~$1$, one can conclude that for the volatility less than~$0.25$, 
+the probability of default is low for any~$\theta$ level. When volatility 
+increases above~$0.25$, the probability of default increases with $\theta$ 
+decreasing and volatility increasing. The pattern of every plot is changing with 
+$\theta$: having the plot concave for high~$\theta$ and convex for low~$\theta$ 
+shows that the behavior of the volatility influences more the probability of 
+default since for higher~$\theta$, the increase in probability is faster than the 
+lower one. So, summarizing, the volatility should be limited to a~certain extent 
+in order to save the network from a~high probable default; otherwise, a~high 
+impact will be affecting the asset price which, in its turn, will trigger a~higher 
+indicator of default.
+
+
+
+
+        
+       
+       \begin{figure*} %fig6
+       \vspace*{1pt}
+\begin{center}
+\mbox{%
+\epsfxsize=163.212mm
+\epsfbox{kab-7.eps}
+}
+\end{center}
+\vspace*{-9pt}
+        \Caption{Probability of default with $\theta$  and the drift of 
+the asset price: \textit{1}~--- $\theta=0.1$;
+\textit{2}~--- 0.2; \textit{3}~--- 0.3;
+\textit{4}~--- 0.4;
+\textit{5}~--- 0.5;
+\textit{6}~--- 0.6;
+\textit{7}~--- 0.7;
+\textit{8}~--- 0.8;
+\textit{9}~--- 0.9;
+and \textit{10}~--- $\theta=1.0$}
+        \label{fig:7}
+        \end{figure*}
+        
+         \begin{figure*}[b]  %fig7
+ \vspace*{-3pt}
+ \begin{minipage}[t]{80mm}
+ \begin{center}
+\mbox{%
+\epsfxsize=78.822mm
+\epsfbox{kab-9.eps}
+}
+\end{center}
+\vspace*{-12pt}
+\Caption{Contagion losses}
+\end{minipage}
+%\end{figure}
+\hfill
+%\begin{figure}  %fig8
+ \vspace*{-3pt}
+  \begin{minipage}[t]{80mm}
+ \begin{center}
+\mbox{%
+\epsfxsize=78.336mm
+\epsfbox{kab-10.eps}
+}
+\end{center}
+\vspace*{-12pt}
+\Caption{Fire sale losses}
+\end{minipage}
+\end{figure*}
+        
+           
+
+
+
+Moreover, we also evaluate the effect of the asset price drift on the 
+probability considering at the same time the level of the risky assets in banks' 
+balance sheet. We conclude that a~portfolio price with high drift or high 
+average of return will, for sure, lead to a~more stable financial system.  The 
+optimal portfolio would be with high drift and low volatility.
+
+Figure~6\textit{a} shows for each level~$\theta$ the variation of the probability 
+relatively to the drift. In particular, one can see that for $\theta = 0.5$, the 
+level of drift required to assure a~probability less than~0.2 is also~0.5 
+but if $\theta = 0.6$, one can see that  in this case,
+the required level of drift is~0.05.
+
+Figure~6\textit{b} highlights the relation between the volatility and the drift affecting 
+the probability of default. It is normal that the probability of default 
+increases with increasing volatility and decreases with increasing drift. But 
+from Fig.~6\textit{a}, one can 
+also see that when volatility is very high, the influence of 
+the increasing drift is reduced.
+{\looseness=1
+
+}
+
+
+
+
+\subsection{Experiment 3: The~impact of recovery rate and~the~level of~the~riskless 
+asset in~the~banks' balance sheet on~the~losses}
+
+\noindent
+In the present model, the system loss is another parameter that influences the indicator 
+as probability of the first default can be low; however, when it happens, the loss in 
+the system can be huge. Therefore, we analyze the behavior of the network when 
+recovery rate is changing knowing that recovery rate is one of the main 
+influencer of the losses due to the default cascade.
+Figure~7 shows that the total loss in the system decreases when 
+recovery rate is increasing  due to the fact that defaulted banks need to settle 
+their due payment. One can clearly observe that there is a~linear relation 
+between the recovery rate and the contagion losses.
+
+
+
+ \subsection{Experiment~4: The impact of~the~fire~sale~on~the~losses} 
+
+\noindent
+Also, let us consider a~subordinate source of risk due to the fire sale of 
+external assets of defaulting banks which
+ will lead to other banks default 
+because of the price depreciation. In bad times,  in order to compensate certain 
+losses, distressed banks tend to sell assets in a~depressed price, a~situation 
+called asset ``fire sale.'' Because of the correlation between the banks' balance 
+sheets having common assets, the decrease in the asset price affects all banks 
+holding these assets and, as a~consequence, a~cascade of losses created by others 
+banks, too. In this experiment, we want to compute what will be the losses 
+resulting from the ``fire sale'' mechanism that will respectively add to the 
+total loss of the system (Fig.~8). It is expected that the fire sales loss will increase 
+with the drop rate of the price but it is worth to note that the increase is 
+very sharp and fast.
+
+
+
+
+    \begin{figure*} %fig9
+    \vspace*{1pt}
+\begin{center}
+\mbox{%
+\epsfxsize=162.513mm
+\epsfbox{kab-11.eps}
+}
+\end{center}
+\vspace*{-9pt}
+                \Caption{Comparison between before~(\textit{1}) 
+                and after~(\textit{2}) removing the weak 
+bank(s): (\textit{a})~probability of default; 
+and (\textit{b})~total system loss}
+        \end{figure*}
+
+
+   
+
+
+\subsection{Experiment~5:  Removing the~weakest bank to~make the~system more 
+resilient} 
+
+\noindent
+The financial system is a~number of financial institutions, in the present paper 
+considered as banks. Every bank has its investment strategy, priorities, 
+relationship, and connections as a~consequence different influence, power, and 
+risk level in the financial system.
+Banks balance sheets are populated on the quarterly basis and can be available 
+to regulators at any time. Thus, it is possible to understand the risk level of 
+each bank to be defaulted. Since banks default can generate a~default cascade, 
+it is worth to verify if it is better to exclude the risky bank from the 
+financial network.  It is important to determine  the weakest bank that can 
+default anytime either due to a~market price drop or liquidity shortage.
+
+In this experiment, we create a~scale-free network of~250~nodes using the same 
+methodology as above and determine the bank~$i$, having the highest probability 
+to default or, in other words, the weakest bank to default. Also, we calculate, 
+on the  basis of the above, the probable loss Indicator of this network. In some 
+cases,\linebreak we may have more than one bank defaulting simultaneously.  
+
+
+Once the bank is identified, let us check if removing the bank from the 
+network is healthier for the financial system.  Of course, such an action has 
+important  consequences to the owner, employees as well as debtors and creditors 
+in this bank.  The modification on  the balance sheet of this bank 
+and all banks connected and in relation to this bank will be described as follows:
+\begin{itemize}
+\item removed bank pays all its liabilities to all its creditors and, as 
+a~consequence, updates its creditors' balance sheets~$a_j$ by adding the amount 
+of money bank~$i$ has landed from bank~$j$ to the riskless assets;
+
+\item removed bank collects all its exposures from all its debtors and, as 
+a~consequence, updates its debtors balance sheets~$b_j$ by removing the amount of 
+money bank~$i$ has credited to bank~$j$. Bank~$j$ is supposed to pay to bank~$i$ 
+from their external assets (riskless assets and risky assets; so, either bank~$j$ 
+has to pay from its liquid reserve or sell some external assets to pay its due).
+\end{itemize}
+
+We conduct this experiment and compute the probability, total loss, and indicator 
+having the vulnerable bank (banks) in the system and after removing it (them) 
+from the network.
+
+Figure~9 confirms that when removing the risky bank, the probability of 
+default will decrease. This means that the system becomes more resilient to 
+default.
+
+
+
+Now, let us check the total losses that may occur in the system due to a~default in 
+the above two mentioned cases and note that, contrary to the probability, the 
+total losses will be higher in the case where it has been decided to remove the 
+vulnerable banks. The reason could be that the external assets prices that have 
+decreased to~$S_\tau$ causing the first default in the first round has to 
+decrease more to trigger the default after removing the set of banks that could 
+defaulted on~$S_\tau$. 
+In this case, though the probability is lower, the increase in the total losses 
+from before to after removing the banks is due to the fact 
+that the risky assets price should drop more and, accordingly, the correlation 
+losses increase. On the other hand, since the shock on the net worth of every 
+bank becomes higher, we expect that the contagion losses are larger now.
+Having both correlations and contagion losses higher, this will lead to a~high 
+total loss as shown in Fig.~9. It is worthy to note that for small 
+recovery rate, the increase of the total loss after removing the weak banks is 
+even higher.
+
+
+
+
+\section{Concluding Remarks} 
+
+\noindent
+In this paper, a~financial network model of interbank interactions has been developed 
+which incorporates a~dynamical behavior of banks portfolios and combines it with 
+cascade defaults. It is assumed that the portfolios contain, 
+together with riskless asset, a~unique risky asset, which can be interpreted as a~market index or a~benchmark portfolio and whose price evolution is described 
+by a~geometric Brownian motion. This part of modeling follows the ideas of the 
+so-called structural approach well known in the context of pricing defaultable 
+securities. A~crisis starts  
+when the net worth of a~bank hits zero triggering a~cascade of defaults. The 
+time to default and the total losses calculated for the ``frozen'' parameters of 
+the balance sheets  can constitute indicators of the ``health'' of financial 
+system. They can be easily  monitored,  on a~regular basis, by the regulators. 
+Usually, the detailed structure of the system is available only to regulators 
+but it is  not public. By this reason,  the present study is completed with numerical 
+experiments with 
+simulated data. Due to complexity of financial systems this is a~nontrivial 
+problem.  The network graph is built by a~version  of preferable attachment 
+algorithm augmented by a~procedure of simulations of balance sheets.  The results of 
+the experiments are presented by plots showing dependences of the indicators as 
+functions   of parameters.    In particular, an experiment with 
+removing the weakest  bank from the system is presented. We believe that developing 
+this 
+approach on the basis of practical data 
+can provide regulator additional tools of monitoring vulnerability of banking 
+system and measuring its stability. 
+  
+
+\Ack  
+\noindent
+This work was done 
+under partial financial support   of the grant 
+of  the Russian Science Foundation No.\,14-49-00079.
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+
+\vspace*{-6pt}
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\begin{thebibliography}{99}
+\bibitem{Hurd} %1
+\Aue{Hurd, T.} 
+2016. \textit{Contagion! The spread of systemic risk in financial networks}.  Springer.
+139~p.
+
+\bibitem{Bandt} %2
+\Aue{De Bandt, O., P.~Hartmann, and J.~Peydr$\acute{\mbox{o}}$}.  2009.
+Systemic risk in banking: An update.  \textit{Oxford handbook of banking}.
+Eds.\ A.~Berger, P.~Molyneux, and J.~Wilson. Oxford 
+University Press. 994~p.
+
+\bibitem{GK} %3
+\Aue{Gai, P., and S.~Kapadia}. 2010.
+Contagion in financial networks. Bank of England. Working 
+Paper~383. 36~p.
+\bibitem{AY} %4
+\Aue{Acharya, V., and T.~Yorulmazer}. 2008.
+Information contagion and bank herding. \textit{J.~Money Credit Bank}.   40(1):215--231.
+\bibitem{ElsingerLS1} %5
+\Aue{Elsinger, H., A.~Lehar,  and M.~Summer}. 2006. Risk assessment for banking systems. 
+\textit{Manage. Sci.} 52(9):1301--1314.
+
+\bibitem{ElsingerLS2} %6
+\Aue{Elsinger, H., A.~Lehar,  and M.~Summer}. 2006.
+Systemically important banks: An analysis 
+for the European banking system. \textit{Int. Econ. Econ. Policy} 
+1:73--89.3.
+\bibitem{7a}
+\Aue{Gai, P., and S.~Kapadia}. 
+2010. Contagion in financial networks. \textit{Proc.~R. Soc.~A} 466:2401--2423.  
+
+
+
+\bibitem{Allen} %7
+\Aue{Allen, F., and D.~Gale}. 
+2000. Financial contagion. \textit{J.~Polit. Econ.} 108(1):1--33.
+\bibitem{AB} %8
+\Aue{Acharya V., and A.~Bisin}. 2014. Counterparty risk externality: Centralized 
+versus over-the-counter markets. \textit{J.~Econ. Theory} 149(C):153--182.
+
+\bibitem{Co} %9
+\Aue{Georg, C.\,P.} 2013.  The effect of the interbank network structure on contagion and 
+common shocks.  \textit{J.~Bank. Financ.} 37(7).  
+\bibitem{MA} %10
+\Aue{May, R.\,M., and N.~Arinaminpathy}. 2010. 
+Systemic risk: The dynamics of model banking systems. 
+\textit{J.~R.~Soc. Interface} 7:823--838.   
+\bibitem{Biel-Rut} %11
+\Aue{Bielecki, T.\,R.,  and M.~Rutkowski}. 2002.
+\textit{Credit risk: Modelling, valuation and hedging}. 
+Berlin: Springer.  501~p.
+\bibitem{BarAlb} %12
+\Aue{Barab$\acute{\mbox{a}}$si,~A., and R.~Albert}. 
+1999. Emergence of scaling in random networks. \textit{Science} 286:509--512.
+\bibitem{Mistrulli} %13
+\Aue{Mistrulli, P.\,E.} 2007.
+  Assessing financial contagion in the interbank market: Maximum 
+entropy versus observed interbank lending patterns. Rome, Italy: Bank of 
+Italy. Working Paper~641.
+ 
+\bibitem{NierYYA} %14
+\Aue{Nier, E.,  J.~Yang, T.~Yorulmazer, and A.~Alentorn}. 2008.
+ Network models and financial 
+stability.  Bank of England. Working Paper~346.
+% \bibitem{BIS}
+%Bank of International Settlements.  1994. 
+% Basel, Switzerland: BIS. 64th  Annual Report. 221~p.
+
+%\bibitem{Bartho}
+%\Aue{Bartholomew, P., L.~Mote, and G.~Whalen}. 1995. The definition of systemic risk. 
+%\textit{Annual Meeting of the Western Economic Association}. San
+%Diego, CA.
+
+
+ 
+%\bibitem{Billio}
+%\Aue{Billio, M., M.~Getmansky, A.~Lo,  and L.~Pelizzon}. 
+%2010. Measuring systemic risk in the 
+%finance and insurance sectors. MIT Sloan School. Working Paper 4774. 58~p.
+
+%\bibitem{Bisias}
+%\Aue{Bisias, D., M.~Flood, A.~A., and S.~Valavanis}. 2012.
+% A~survey of systemic risk analytics. 
+%Office of Financial Research. Working Paper. 160~p.
+
+%\bibitem{Board} 
+%Board of Governors of the Federal Reserve System. 2001. Policy statement on payment 
+%systems risk. 66 FR 30199. 7~p.
+
+
+
+%\bibitem{Cont-Moussa-Santos} 
+%\Aue{Cont, R., A.~Moussa, and E.~Santos}.  2010.
+%Network structure and systemic risk in banking 
+%systems. Preprint. 41~p.
+%Available at: {\sf http://papers.ssrn.com/sol3/id=1733528}  (accessed April~25, 2017).
+
+%\bibitem{Dardac}
+%\Aue{Dardac, N., and M.~Bogdan}. 2006. Assessing inter-bank contagion phenomenon using 
+%quantitative methods. A~case study on Romania.
+%Available at: {\sf http:// www.ase.ro/upcpr/profesori/756/Contagion\_2007.pdf} 
+%(accessed April~25, 2017).
+
+\bibitem{Bor-Sal} %15
+\Aue{Borodin, A., and P.~Salminen}. 2002.
+\textit{Handbook of Brownian motion: Facts and formulae}.  2nd 
+ed.  Birkh$\ddot{\mbox{a}}$user. 465~p.
+
+
+\bibitem{Eboli} %16
+\Aue{Eboli, M.} 2004.
+Systemic risk in financial networks: A~graph-theoretic approach. Italy: 
+\mbox{Universit{\!\ptb{\`{a}}}} di Chieti Pescara. Preprint.  19~p.
+
+%\bibitem{Eisenberg-Noe}
+%\Aue{Eisenberg, L., and T.\,H.~Noe}. 2001.
+%Systemic risk in financial systems. \textit{Manage. Sci.} 
+%47(2):236--249.
+
+
+
+%\bibitem{ECB}
+%European Central Bank (ECB). 2010. Financial networks and financial stability. 
+%\textit{Financ. Stability Rev.} 155--160.
+
+
+
+
+
+
+
+%\bibitem{Jorda}
+%\Aue{Jorda, O., M.~Schularick, and A.\,M.~Taylor}. 2014.
+%Betting the house. Working paper ser. 28. 
+%Federal Reserve Bank of San Francisco. 43~p.
+
+
+
+%\bibitem{Mattig}
+%\Aue{Mattig, A., and S.~Morkoetter}.  2011.
+%Financial crises and agency of regulatory responses.
+%\textit{Systemic risk, Basel III, Financial stability and 
+%regulation}. 25~p.
+
+
+
+%\bibitem{Mishkin}
+%\Aue{Mishkin, F.} 2007. Systemic risk and
+%the international lender of last resort.
+%\textit{10th Annual International Banking Conference}.
+%Chicago, IL. 
+%Federal Reserve  Bank of Chicago. 
+%Available at: {\sf https://www.federalreserve.gov/newsevents/speech/mishkin20070928a.htm}
+%(accessed April~25, 2017).
+
+
+
+%\bibitem{Moussa}
+%\Aue{Moussa, A.} 2011. Contagion and systemic risk in financial networks. Columbia 
+%University. D.Sc.\ Diss.
+%Available at: {\sf http://hdl.handle.net/10022/AC:P:10249} (accessed April~25, 2017).
+
+
+
+%\bibitem{Monetary} 
+%The International Monetary Fund and the Financial Stability Board. 2009.  Fighting the 
+%global crisis. Annual Report.
+
+\end{thebibliography} } }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received November 14, 2016}}
+
+%\vspace*{-18pt}
+
+\Contr
+
+%\vspace*{-3pt}
+
+\noindent
+\textbf{El Bitar  Khalil} (b.\ 1981)~--- 
+PhD student, Laboratoire de Mathematiques, Universite de Franche-Comte, 
+16~Route de Gray, 25030, \mbox{Besan{\!\ptb{\c{c}}}on}, CEDEX, France; 
+\mbox{khalilbitar\_aw@hotmail.com}  
+
+ \vspace*{1pt}
+ 
+ \noindent
+ \textbf{Kabanov Yuri M.} (b.\ 1948)~---
+  professor, Laboratoire de Mathematiques, Universite de Franche-Comte, 
+  16~Route de Gray, 25030, Besancon, CEDEX, France; leading scientist, 
+  Institute of Informatics Problems, Federal Research Center 
+  ``Computer Science and Control'' of the Russian Academy of Sciences,  
+  44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+  National Research University ``MPEI,'' 14~Krasnokazarmennaya Str., 
+  Moscow 111250, Russian Federation; \mbox{Youri.Kabanov@univ-fcomte.fr} 
+
+\vspace*{1pt}
+ 
+ \noindent
+ \textbf{Mokbel Rita} (b.\ 1981)~--- 
+ PhD student, Laboratoire de Mathematiques, Universite de Franche-Comte, 
+ 16~Route de Gray, 25030, Besancon, CEDEX, France; \mbox{ritamokbel@hotmail.com}
+
+
+
+
+%\vspace*{8pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+\newpage
+
+\vspace*{-24pt}
+
+
+
+\def\tit{ДИНАМИЧЕСКИЕ МОДЕЛИ СИСТЕМНOГО РИСКА  И~ЗАРАЖЕНИЯ$^*$}
+
+\def\aut{Х.~Эль Битар$^1$, Ю.~Кабанов$^{1,2,3}$, Р.~Мокбель$^1$}
+
+
+\def\titkol{Динамические модели системнoго риска  и~заражения}
+
+\def\autkol{Х.~Эль Битар, Ю.~Кабанов, Р.~Мокбель}
+
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\footnotetext[1]{Работа выполнена при частичной поддержке Российского научного 
+фонда (грант №\,14-49-00079).}}
+
+
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-12pt}
+
+\noindent
+$^1$Лаборатория математики Университета Франш-Кон\-те, г.~Безансон, Франция
+
+\noindent
+$^2$Институт проблем информатики Федерального исследовательского
+центра <<Информатика и~управление>>\linebreak
+$\hphantom{^1}$Российской академии наук, Российский
+университет дружбы народов
+
+\noindent
+$^3$Национальный исследовательский университет <<МЭИ>>
+
+\vspace*{6pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 11\ \ \ выпуск\ 2\ \ \ 2017}
+}%
+ \def\rightfootline{\small{ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 11\ \ \ выпуск\ 2\ \ \ 2017
+\hfill \textbf{\thepage}}}
+
+\vspace*{-4pt}
+
+\Abst{Современные финансовые системы являются сложными сетями взаимосвязанных 
+финансовых институтов (банков, хедж-фон\-дов, 
+страховых компаний, и~т.\,д.), и~дефолт одного из них может вызвать цепную реакцию 
+дефолтов других институтов системы. После недавних финансовых кризисов важность 
+системного риска вышла на первый план, и~теоретические исследования в~этой об\-ласти 
+интенсифицировались. Б$\acute{\mbox{о}}$льшая часть известных результатов 
+относится к~статическим моделям, которые посвящены процессам,  происходящим в~сис\-те\-ме, 
+когда каскад дефолтов уже начался. Авторы предлагают 
+динамическую модель так называемого структурного типа, когда дефолт 
+начинается в~момент выхода некоторого стохастического процесса из области. 
+Каскад инициируется в~момент достижения критического уровня процессом, описывающим 
+портфели банков. Вероятность выхода и~суммарные издержки в~результате каскада 
+дефолтов 
+могут служить индикаторами, позволяющими регуляторам осуществлять мониторинг системы 
+и~предпринимать упреждающие коррекции для понижения сис\-тем\-но\-го риска.  
+Проводится численное моделирование сис\-те\-мы, которая строится на осно\-ве 
+случайного графа, полученного при помощи алгоритма предпочтительного присоединения. 
+Приводятся результаты численных экспериментов при различных значениях параметров.}  
+
+\KW{системный риск; финансовые сети; заражение; дефолт}
+
+\DOI{10.14357/19922264170201} 
+
+%\vspace*{6pt}
+
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily Литература}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\begin{thebibliography}{99}
+\bibitem{23-k} %1
+\Au{Hurd T.}  Contagion! The spread of systemic risk in financial networks.~---
+Springer, 2016. 139~p.
+\bibitem{14-k} %2
+\Au{De Bandt~O.,  Hartmann P., Peydro~J.}
+ Systemic risk in banking: An update~// Oxford handbook of banking
+ ~/ Eds. A.~Berger, P.~Molyneux, J.~Wilson.~--- 
+ Oxford University Press, 2009. 994~p.
+ \bibitem{20-k} %3
+\Au{Gai P., Kapadia S.}
+Contagion in financial networks.~--- Bank of England, 2010. Working Paper~383. 36~p.
+
+\bibitem{2-k} %4
+\Au{Acharya, V., Yorulmazer T.}  Information contagion and bank herding~//
+J.~Money Credit Bank., 2008. Vol.~40. No.\,1. P.~215--231.
+\bibitem{17-k} %5
+\Au{Elsinger~H., Lehar~A., Summer~M}.  Risk assessment for banking systems~//
+Manage. Sci., 2006. Vol.~52. No.\,9. P.~1301--1314.
+\bibitem{18-k} %6
+\Au{Elsinger H.,  Lehar A., Summer M.}  
+Systemically important banks: An analysis for the European banking system~//
+Int. Econ. Econ. Policy, 2006. Vol.~3. No.\,1. P.~73--89.
+\bibitem{7a-1}
+\Au{Gai P., Kapadia S.} 
+ Contagion in financial networks~// Proc.~R. Soc.~A, 2010. Vol.~466. P.~2401--2423.  
+\bibitem{3-k} %7
+\Au{Allen F., Gale D.} Financial contagion~//
+ J.~Polit. Econ., 2000. Vol.~108. No.\,1. P.~1--33.
+ \bibitem{1-k} %8
+\Au{Acharya, V., Bisin A.} Counterparty risk externality: Centralized versus
+over-the-counter markets~// J.~Econ. Theory, 2014. Vol.~149(C). P.~153--182.
+\bibitem{21-k} %9
+\Au{Georg C.\,P.}  The effect of the interbank network structure on contagion and 
+common shocks~// J.~Bank. Financ., 2013. Vol.~37. No.\,7. P.~2216--2228.
+\bibitem{25-k} %10
+\Au{May R.\,M., Arinaminpathy~n.} 
+ Systemic risk: The dynamics of model banking systems~// J.~R.~Soc. Interface,
+ 2010. Vol.~7. P.~823--838.
+\bibitem{7-k} %11
+\Au{Bielecki, T.\,R., Rutkowski M.} 
+Credit risk: Modelling, valuation and hedging.~---
+Berlin:  Springer, 2002. 501~p.
+\bibitem{4-k} %12
+\Au{Barab$\acute{\mbox{a}}$si A., Albert R}. Emergence of scaling in random networks~//
+Science, 1999. Vol.~286. P.~509--512.
+
+\bibitem{27-k} %13
+\Au{Mistrulli P.\,E.} Assessing financial contagion in the interbank market: Maximum 
+entropy versus observed interbank lending patterns.~---  
+Rome, Italy: Bank of Italy,  2007. Working Paper~641.
+\bibitem{29-k} %14
+\Au{Nier E., Yang J., Yorulmazer~T., Alentorn~A.} 
+Network models and financial stability.~---  Bank of England, 2008. Working Paper 346.
+
+\bibitem{11-k} %15
+\Au{Borodin~A., Salminen P.} 
+Handbook of Brownian motion: Facts and formulae.~--- 2nd ed.~--- Birkh$\ddot{\mbox{a}}$user,
+2002. 465~p.
+
+\bibitem{15-k} %16
+\Au{Eboli M.}  Systemic risk in financial networks: 
+A~graph-theoretic approach.~--- Italy: 
+\mbox{Universit{\!\ptb{\`{a}}}} di Chieti Pescara,
+2007. Preprint. 19~p.
+
+%\bibitem{5-k}
+%Bank of International Settlements.~---  
+%Basel, Switzerland: BIZ, 1994.  64th Annual Report. 221~p.
+%\bibitem{6-k}
+%\Au{Bartholomew P., Mote L., Whalen~G.}  The definition of systemic risk~// 
+%Annual Meeting of the Western Economic Association.~--- 
+%San Diego, CA, USA. 1995.
+
+
+%\bibitem{8-k}
+%\Au{Billio M., Getmansky M., Lo A., Pelizzon~L.} 
+% Measuring systemic risk in the finance and insurance sectors. 
+% MIT Sloan School, 2010. Working Paper~4774. 58~p.
+%\bibitem{9-k}
+%\Au{Bisias D., Flood M., Lo A., Valavanis~S.}  
+%A~survey of systemic risk analytics. Office of Financial Research, 2012. Working Paper.
+% 160~p.
+%\bibitem{10-k}
+%Board of Governors of the Federal Reserve System. 
+%Policy statement on payment systems risk. 2001.  66~FR 30199. 7~p.
+
+
+
+%\bibitem{12-k}
+%\Au{Cont R., Moussa A., Santos~E.} 
+% Network structure and systemic risk in banking systems. Preprint, 2010.
+% 41~p. {\sf http://papers.ssrn.com/sol3/id=1733528}.
+%\bibitem{13-k}
+%\Au{Dardac N., Bogdan M.}  Assessing inter-bank contagion phenomenon using 
+%quantitative methods. A case study on Romania. 
+%2006. {\sf http://www.ase.ro/upcpr/profesori/756/Contagion\_2007.pdf}. 
+%Accessed on April 25, 2017.
+
+
+
+%\bibitem{16-k}
+%\Au{Eisenberg~L., Noe T.\,H.}  Systemic risk in financial systems~//
+%Manage. Sci., 2001. Vol.~47. No.\,2. P.~236--249.
+
+%\bibitem{19-k}
+%European Central Bank (ECB). Financial networks and financial stability~// 
+%Financ. Stability Rev., 2010. P.~155--160.
+
+
+%\bibitem{22-k}
+%\Au{Jorda O., Schularick~M., Taylor~A.\,M.} 
+% Betting the house.~--- Working paper ser.~28.~--- Federal Reserve Bank of San Francisco,
+% 2014. 43~p.
+
+%\bibitem{24-k}
+%\Au{Mattig A., Morkoetter~S}. 
+% Financial crises and adequacy of regulatory responses~// Systemic risk, Basel~III, 
+% financial stability and regulation, 2011. 25~p.
+
+%\bibitem{26-k}
+%\Au{Mishkin F.}
+%Systemic risk and
+%the international lender of last resort.~//  10th Annual International Banking Conference, 2007. 
+%Federal Reserve Bank of Chicago. Chicago, IL, USA. Speech. 
+%{\sf https://www.federalreserve.gov/newsevents/speech/mishkin20070928a.htm}.
+
+%\bibitem{28-k}
+%\Au{Moussa A.} Contagion and systemic risk in financial networks.~---  
+%Columbia University, 
+%2011. D.Sc.\ Diss. {\sf http://hdl.handle.net/10022/AC:P:10249}.
+
+%\bibitem{30-k}
+%Fighting the global crisis.
+%The International Monetary Fund and the Financial Stability Board, 2009. 
+% Annual Report.
+\end{thebibliography}
+} }
+
+\end{multicols}
+
+ \label{end\stat}
+
+ \vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в редакцию  14.11.2016}}
+%\renewcommand{\bibname}{\protect\rm Литература}
+\renewcommand{\figurename}{\protect\bf Рис.}
+\renewcommand{\tablename}{\protect\bf Таблица}

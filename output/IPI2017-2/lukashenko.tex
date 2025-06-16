@@ -1,0 +1,1254 @@
+%\newcommand{\Cov}{\ensuremath{{\rm\mathbb{C}ov}}}
+
+\renewcommand{\figurename}{\protect\bf Figure}
+\renewcommand{\tablename}{\protect\bf Table}
+
+\def\stat{lukashenko}
+
+
+\def\tit{ON THE EFFICIENCY OF~BRIDGE MONTE-CARLO ESTIMATOR}
+
+\def\titkol{On the efficiency of Bridge Monte-Carlo estimator}
+
+\def\autkol{O.\,V.~Lukashenko,
+E.\,V.~Morozov,   and~M.~Pagano}
+
+\def\aut{O.\,V.~Lukashenko$^{1}$,
+E.\,V.~Morozov$^{2}$,   and~M.~Pagano$^{3}$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+%\footnotetext[1] {The 
+%research of Yuri Kabanov was done under partial financial support   of the grant 
+%of  RSF No.\,14-49-00079.}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Institute of  Applied Mathematical Research of Karelian Research 
+Centre of 
+the Russian Academy of Sciences, 11~Pushkinskaya Str.,  Petrozavodsk 185910, 
+Republic of Karelia, Russian Federation; 
+Petrozavodsk State University, 33~Lenin Str., Petrozavodsk 185910, 
+Republic of Karelia, Russian Federation, \mbox{lukashenko@krc.karelia.ru}}
+\footnotetext[2]{Institute of  Applied Mathematical Research of Karelian Research Centre of the
+Russian Academy of Sciences, 11~Pushkinskaya Str.,  
+Petrozavodsk 185910, Republic of Karelia, Russian Federation; 
+ Petrozavodsk State University, 33~Lenin Str., Petrozavodsk 185910, 
+ Republic of Karelia, Russian Federation; \mbox{emorozov@karelia.ru}}
+\footnotetext[3]{University of Pisa, 
+ 43~Lungarno Pacinotti, Pisa 56126, Italy; \mbox{m.pagano@iet.unipi.it}}
+
+\index{Lukashenko O.\,V.}
+\index{Morozov E.\,V.}
+\index{Pagano M.}
+\index{Лукашенко О.\,В.}
+\index{Морозов Е.\,В.}
+\index{Пагано М.}
+
+
+\vspace*{-10pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2017\ \ \ volume~11\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+
+\Abste{Long-term correlation is a~key feature of  traffic flows and has a~deep 
+impact on network performance. Indeed, the arrival rate can persist on relatively 
+high values 
+for a~considerable amount of time, provoking long busy periods and possibly bursts 
+of lost packets. The authors focus on Gaussian processes, well-recognized 
+and flexible traffic models, and consider the probability that the normalized 
+cumulative workload grows at least as the length~$T$ of the considered interval. 
+As~$T$ increases, such event becomes rare and ad-hoc techniques should be used 
+to estimate its probability. To this aim, the authors present a~variant of the well-known 
+conditional Monte-Carlo (MC) method, in which the target probability is expressed as 
+a~function of the corresponding bridge process. In more detail, they
+derive the analytical expression of the estimator, verify its effectiveness through 
+simulations (for different sets of parameters), and investigate the effects of the 
+discretization step.}
+
+
+\KWE{Gaussian processes; conditional Monte Carlo; bridge process; rare events; 
+variance reduction}
+
+\DOI{10.14357/19922264170202} 
+
+\vspace*{-4pt}
+
+
+\vskip 12pt plus 9pt minus 6pt
+
+      \thispagestyle{myheadings}
+
+      \begin{multicols}{2}
+
+                  \label{st\stat}
+
+
+\section{Introduction}
+
+\noindent
+Key features of traffic patterns in modern computer networks are the high level 
+of statistical multiplexing and, at the same time, strong correlations over several 
+time-scales~\cite{Leland}. In this framework Gaussian processes have emerged as 
+well-recognized and flexible models able to describe the traffic dynamics of 
+a~wide class of networks~\cite{norrosJSAC, Mandjes-book}. Indeed, they permit 
+to capture, in a~simple and parsimonious way, the properties of self-similarity 
+and long-range dependence, which have a~deep impact on network dimensioning and
+ QoS (Quality of Service) issues~\cite{Erramilli}.
+In a~nutshell, self-similarity means that the distribution of the process
+ remains unchanged under suitable scaling of time and space, while
+long-range dependence (also known as Joseph effect)~\cite{Samorodnitsky} 
+implies a~slow decay of the autocorrelation function.
+
+Network performance are, in general, deeply influenced by packet losses and many 
+works have been devoted to the estimation of the overflow probability in presence 
+of long-range dependent traffic (see, for instance,~\cite{Mandjes-book} and references
+ therein). However, not only the loss rate is relevant, but also the way in which 
+ losses are distributed over time. Indeed, bursts of losses can significantly degrade 
+ the QoE (Quality of Experience) in case of real-time multimedia applications 
+ and also affect the throughput of elastic applications, since TCP congestion 
+ control~\cite{rfc5681} poorly reacts in presence of multiple losses during 
+ the same congestion window, which often lead to the expire of timeouts 
+ (instead of the AIMD (Additive Increase Multiplicative Decrease) behavior 
+ that happens when losses are detected via triple duplicate acknowledgements). 
+ Such bursts of losses are often determined by high-activity periods that last 
+ for relative long intervals of time, a~typical consequence of the above-mentioned 
+ Joseph effect.
+
+Moreover, the properties of long-memory and self-similarity make difficult 
+the theoretical analysis even for simple queuing systems and, as a~consequence, 
+simulation is often the only available tool to investigate network performance. 
+
+Simulation permits to study the performance of complex systems
+with an arbitrary level of detail, but the traditional approach, known in the 
+literature as crude MC, becomes highly inefficient when the event 
+of interest gets rarer and
+rarer. Indeed, given a~required level of accuracy (typically expressed in terms 
+of relative error), the length of the simulation is inversely proportional to the target probability,
+which can assume (for instance, in the case of high-quality video flows) values of the
+order of $10^{-9}$~\cite{Demetres}. Moreover, every estimate may be related to 
+the simulation of complex networks and so includes the generation of a~huge 
+amount (of the order of millions or more,
+depending on the time horizon and the complexity of the system) of random numbers, 
+with additional concerns related not only to the length of the simulation, but 
+also to the goodness of the random generator itself.
+
+Variance reduction techniques aim at achieving the desired accuracy with a~lower 
+number of samples~\cite{Ross}, but require some
+additional information about the behavior of the system, typically provided  
+(although in an asymptotic and eventually approximate form) by the Large Deviation 
+Theory (LDT)~\cite{BigQueues}.
+Among them,  Importance Sampling (IS) is probably the most popular 
+approach~\cite{Heidelberger} due to its links with 
+LDT\footnote{On one side, several proofs in LDT are based on IS arguments and, 
+on the other side, efficient changes of measure are often related to sample-path 
+LDT results}, providing a~solid theoretical background for its applicability. 
+However, under an improper choice of the change of measure (the optimal choice 
+is known just for simple queuing systems), the variance may even grow 
+infinitely~\cite{glasserman1997}.
+
+In this paper, based on its predecessors \cite{dccn,Tomsk}, the focus is on 
+an alternative approach, known as Conditional MC, in which the target probability 
+is expressed as a~conditional expectation. Although conditional MC always leads 
+to variance reduction, it is often impossible, or at least very difficult, 
+to find a~suitable conditioning quantity. However, in case of Gaussian processes, 
+the target probability can be easily expressed as a~function of the corresponding 
+bridge process, as originally
+proposed in~\cite{Giordano} under the name of \textit{Bridge Monte Carlo} (BMC), 
+for the estimation of the overflow probability. As mentioned above, in this work, 
+the authors investigate the applicability of BMC to the tail distribution of the duration 
+of high activity periods, which indeed become  rare events when the duration 
+of the considered interval goes to infinity. In comparison with the preliminary 
+work~\cite{dccn}, the experimental results have been widely extended: indeed, 
+the authors investigated the asymptotic properties of the estimator, compared its 
+performance with a~basic version of IS, and analyzed the effect of the 
+discretization step on the estimated probability.
+
+
+The rest of the paper is organized as follows. In Section~2,
+ the authors formally define the problem addressed in this work and recall the few available 
+ asymptotic results.
+Then, Section~3 addresses the general issues related to rare event 
+simulation, including the basic definitions about simulation efficiency and a~short 
+description of (single-twist) IS, the most widely used variance 
+reduction technique that will be considered later for performance comparison.
+The use of the bridge process is investigated in Section~4, while its 
+performance is analyzed in Section~5, taking into account the effect 
+of different parameters (such as the length of the activity period, the conditioning 
+point, and the discretization step). Finally, Section~6 ends the paper 
+with some final remarks.
+
+\vspace*{-4pt}
+
+\section{High Activity Periods for~Gaussian~Processes}
+%\label{sec:theory}
+
+\vspace*{-2pt}
+
+\noindent
+In traffic modeling, Gaussian processes have emerged as a~flexible and powerful tool, 
+able to take into account the long memory properties of real traffic, while keeping 
+a~relatively simple and elegant description.
+
+
+In this work,  a~centered Gaussian process with stationary increments
+$\{X_t,\,t \in \mathbb{R}_+\}$ is considered. Let us denote by 
+$v_t :=\mathrm{Var} X_t$ the variance of~$X_t$; then,
+the covariance function has the following expression:
+\begin{equation*}
+\Gamma_{s,t}  =  \fr{1}{2} \left( v_t+v_s-v_{|t-s|} \right)\,.
+\end{equation*}
+
+It is interesting to estimate the following probability:
+\begin{eqnarray}
+\pi (T)  :=  \mathbb{P} \, (\forall t \in \mathbb{T}:\, X_t >t)
+\label{e1-luk}
+\end{eqnarray}
+where $\mathbb{T}=(0,T] \subseteq \mathbb{R}_+ $. Such probability is closely related 
+to the duration of busy periods and plays an important role in the study 
+of QoS indexes since it takes into account bursts of losses (for more details,
+see~\cite{Norros, Mandjes}).
+
+It is worth mentioning that the present approach only requires that $v_t$ is an 
+increasing function. Such condition is quite general and holds, for instance, 
+for the following processes, well-known in the literature and widely-used in 
+traffic modeling:
+\begin{enumerate}[(1)]
+\item fractional Brownian Motion (FBM), one of the most studied 
+self-similar long-range dependent Gaussian processes,  originally proposed 
+in the traffic modeling framework by Norros~\cite{norrosJSAC}. It has been shown 
+in~\cite{Taqqu} that FBM arises as
+the scaled limit process when the cumulative workload is 
+a~superposition of on-off sources with mutually independent
+heavy-tailed on and/or off periods. In this case,
+$$
+v_t=t^{2H}\,, \qquad H \in (0,1)\,,
+$$
+and in the teletraffic framework, usually, $H\linebreak \in (1/2,1)$, corresponding 
+to processes with long-range dependence;
+
+\item sum of independent FBMs:
+$$
+v_t=\sum_i t^{2 H_i}\,.
+$$
+The use of this model is also motivated by the fundamental result in~\cite{Taqqu} 
+in case of heterogeneous on-off sources; and
+
+\item integrated Ornstein--Uhlenbeck process (IOU):
+$$
+v_t=t+e^{-t}-1
+$$
+is the Gaussian counterpart of the well-known Anick--Mitra--Sondi 
+fluid model~\cite{Addie}, and its relevance in the framework of teletraffic
+ is also discussed in~\cite{Kulkarni}.
+\end{enumerate}
+
+
+Note that the analytical expression of the target probability is 
+not known in explicit form for a~general Gaussian input (including the 
+considered examples). Indeed, there are only a~few asymptotic results available, 
+based on LDT. For instance, in the case of FBM input,
+\begin{multline}
+\lim\limits_{T \to \infty} \fr{1}{T^{2-2H}} \log\mathbb{P}\left( \forall t \in (0,T]:\,\,X_t > t \right)\\
+=\lim_{n \to \infty} \fr{1}{n}
+ \log\mathbb{P}\left( \forall t \in (0,1]:\,\,\fr{X_t}{\sqrt{n}} > t \right)\\
+=-\inf_{f \in \mathscr{B}} \Lambda(f):=-\nu\label{BMC-6}
+\end{multline}
+where
+$$
+\mathscr{B}:=\{f \in \mathcal{R} :  f(r) > r, \, \forall r \in (0,1]\}\,;
+$$
+$\Lambda$ denotes the rate function; and $\mathcal{R}$ is the reproducing 
+kernel Hilbert space (RKHS) associated with the distribution of FBM 
+(for more details, see~\cite{Deuschel}). Moreover, it is known~\cite{Norros} 
+that the constant $\nu\in [{1}/{2},\,c^2_H/2]$, where
+\begin{multline*}
+c_H:=\left[ \vphantom{\fr{1}{2}}
+H\,(2H-1)\,(2-2H)\right.\\
+\left.{}\times{\sf B}\left(H-\fr{1}{2}, \,2-2H \right)  \right]^{-1/2} 
+%\label{eq-12}
+\end{multline*}
+ and ${\sf B}$ is the Beta function. Note that the upper bound for this constant 
+ is close to $1/2$ in case when $H>1/2$ (Fig.~1). 
+ A~further characterization of the most likely path in the set~$\mathscr{B}$ 
+ has been found in~\cite{Mandjes1}, and since an  explicit expression for~$\nu$ 
+ is not available, numerical methods to calculate~$\nu$   have been proposed. 
+ The above-mentioned  asymptotic result has been generalized in~\cite{Dieker2} 
+ to the case of Gaussian processes with regularly varying at infinity variance, 
+ which includes the sum of independent FBMs and IOU as well.
+ 
+ Due to the lack of exact analytical results, simulation is the  only available
+ tool for estimating the target probability~(\ref{e1-luk}). On the other hand, when 
+ $T \to \infty$, the  event\linebreak\vspace*{-12pt}
+ 
+  { \begin{center}  %fig1
+ \vspace*{12pt}
+ \mbox{%
+\epsfxsize=77.9mm
+\epsfbox{luk-1.eps}
+}
+
+
+\vspace*{3pt}
+
+
+\noindent
+{{\figurename~1}\ \ \small{Upper bound for $\nu$}}
+
+\end{center}
+}
+
+%\vspace*{12pt}
+
+\addtocounter{figure}{1}
+
+
+\noindent
+$\{\forall t \in \mathbb{T}:\,\,X_t >t\}$  becomes rare and,  
+hence, standard MC requires an unacceptable large number of generated sample paths. 
+Indeed, the key contribution of this work is the application of a~variant of the 
+conditional MC method for variance reduction.
+
+
+\section{Preliminaries on~Rare Event Simulation}
+%\label{sec:rare}
+
+\noindent
+Let~$X$ be a~random process. Consider estimating the probability
+$$
+\pi(T):=\mathbb{P}\left(X \in A_T\right) = \mathbb{E} I\left(X \in A_T\right)
+$$
+for some Borel set~$A_T$ of the paths of the process~$X$ 
+where~$I$ denotes the indicator function and~$T$ is the so-called parameter of 
+rarity: $\pi_T \to 0$ as $T \to \infty$. To estimate~$\pi_T$ by standard 
+MC simulation, one should generate~$N$ replications $X^{(1)},\ldots,X^{(N)}$ of 
+the process~$X$. In the following, there will be considered the estimators of the form
+\begin{equation}
+\widetilde{\pi}_N(T)=\fr{1}{N} \sum\limits_{n=1}^N F_T \left(X^{(n)}\right) \label{est-l1}
+\end{equation}
+for a~measurable function~$F_T$. If $F_T(X)=I(X \in A_T)$, one has the crude MC 
+estimator.
+The relative error (RE) of the estimate~$\widetilde{\pi}_N(T)$ is defined as
+$$
+ \mathrm{RE} \left(\widetilde{\pi}(T)\right):=
+ \fr{\sqrt{\mathrm{Var} [\widetilde{\pi}_N(T)]}}{\mathbb{E} [\widetilde{\pi}_N(T)]}\,,
+$$
+and for the crude estimate, it behaves as
+$$
+\mathrm{RE} \left(\widetilde{\pi}(T)\right) \sim \fr{1}{\sqrt{\pi(T) N}}\
+\mbox{as}\ \pi(T) \to 0\,.
+$$
+Therefore, the RE of the standard MC estimation is unbounded when the event becomes 
+rare. That is why for the rare event simulation, it is crucially important to define 
+modified estimators in order to reduce variance (and, as a~result, RE).
+
+Let us consider the number of sample paths required to obtain some given maximal RE:
+\begin{equation*}
+N_T = \inf \left\{N \in \mathbb{N}:\, \mathrm{RE}\left(\widetilde{\pi}(T)\right) 
+\le \mathrm{RE_{\max}}\right\}
+\end{equation*}
+and let us introduce the concept of relative efficiency
+\begin{equation*}
+R_T:= \fr{ \log \mathbb{E} \left[F_T(X)^2\right]}{\log \mathbb{E} \left[F_T(X)\right]}\,.
+\end{equation*}
+
+An estimate~\eqref{est-l1} is said to be asymptotically optimal~\cite{Dieker,Dieker1}
+ with respect to the parameter~$T$ if
+$$
+\limsup\limits_{T \to \infty} \fr{1}{T} \log N_T =0 \,,
+$$
+i.\,e., if the corresponding RE increases  slower than any exponential function.
+ The latter condition is equivalent~to
+\begin{equation*}
+\lim\limits_{T \to \infty} R_T = 2\,.
+\end{equation*}
+Remark that the limit above is always less or equal~2 
+since $\mathbb{E} [F_T(X)^2] \ge (\mathbb{E} [F_T(X)])^2$. 
+The proof of asymptotic optimality usually relies on LDT, namely, on Varadhan's 
+lemma~\cite{Dieker}.
+
+Let us briefly describe the method of simulation by conditioning, known in the 
+literature as \textit{conditional MC}~\cite{Ross}. Denote
+ $$
+ Z=I\left(X \in A_T\right)
+ $$
+and assume that one has an auxiliary random variable (r.v.)~$Y$ correlated with~$Z$ 
+such that $\mathbb{E} [Z|Y]$ is available in explicit form. Let $Y^{(1)},\ldots,Y^{(N)}$ 
+be the sample of~$Y$; then, the corresponding unbiased estimator 
+of $\mathbb{E} [Z|Y]$ is defined~as
+\begin{equation*}
+\widehat{\pi}_{N}(T) := \fr{1}{N} \sum\limits_{n=1}^N \mathbb{E} \left[Z|Y^{(n)}\right]\,.
+\end{equation*}
+Note that the variance of this estimator is always less than
+the variance of the standard MC one since
+\begin{equation}
+\mathrm{Var} Z=\mathbb{E} \left[\mathrm{Var}[Z|Y]\right]+ \mathrm{Var} \left[\mathbb{E}[Z|Y]\right]\,. 
+\label{BMC-1}
+\end{equation}
+
+Another popular method for variance reduction is IS. 
+The basic idea of  IS  is the change of the probability measure, so that the target 
+rare event becomes more likely to occur~\cite{Heidelberger}:
+\begin{multline*}
+\pi(T) = \mathbb{E} I(X \in A_T) = \int I\left(x \in A_T\right)\,d\mathbb{P}(x)\\
+{}= \int I(x \in A_T)\fr{d\mathbb{P}(x)}{d\tilde{\mathbb{P}}(x)}\,d\tilde{\mathbb{P}}(x)=\tilde{\mathbb{E}}\left[I(X \in A_T)L(X)  \right]\hspace*{-1.1258pt}
+\end{multline*}
+where $L:= {d\mathbb{P}(x)}/{d\tilde{\mathbb{P}}(x)}$ is the likelihood ratio 
+and~$\tilde{\mathbb{E}}$ means expectation associated with the probability 
+measure~$\tilde{\mathbb{P}}$.
+Hence, the IS estimator is defined as
+\begin{equation*}
+\widehat{\pi}^{\mathrm{IS}}_N(T):=\fr{1}{N} \sum\limits_{n=1}^N 
+I\left(X^{(n)} \in A_T\right) L\left(X^{(n)}\right)
+\end{equation*}
+where $(X^{(1)},\ldots,X^{(N)})$ are independent and identically-distributed 
+replications generated according 
+to~$\tilde{\mathbb{P}}$.
+
+It is well known that the optimal change of measure (zero-variance) requires the 
+knowledge of the probability of interest and, therefore, cannot be practically 
+adopted.
+
+A class of IS estimators (known in the literature as single-twist estimators) 
+can be constructed by shifting the process~$X$ with a~deterministic path~$\eta_t$ 
+($\tilde{\mathbb{P}}$ is the law of $\{X_t+\eta_t\}$) in order to make the 
+rare event more likely to occur. In the finite-dimensional case, when~$X$ is 
+a~centered Gaussian  random vector with nondegenerate covariance
+ matrix~$\mathbf{\Gamma}$, it is easy
+to show (see, for example,~\cite{Asm}) that the likelihood ratio is given~by
+{\looseness=1
+
+}
+$$
+L(x)=\exp\left\{ -\eta' \mathbf{\Gamma}^{-1}x + 
+\fr{1}{2}\eta'\mathbf{\Gamma}^{-1}\eta  \right\}.
+$$
+
+\section{Bridge Monte-Carlo Estimator}
+%\label{sec:bmc}
+
+\noindent
+The BMC is a~special case of the conditional MC
+method, particularly suitable for the
+% new  approach  to
+estimation of the rare event probabilities  in a~queueing system with
+Gaussian input.
+
+Originally proposed by some of the authors in~\cite{Giordano,Giordano1,Lukashenko}, 
+BMC is based on the idea of expressing the overflow probability as the
+expectation of a~function of the {Bridge} $Y:=\{Y_t\}$ of the
+Gaussian input process~$X$, i.\,e.,  the process obtained by
+conditioning~$X$ to reach a~certain level at some prefixed (deterministic) time 
+instant~$\tau$:
+\begin{equation*}
+Y_t = X_t - \psi_t X_{\tau}
+\end{equation*}
+where $\psi_t$ is expressed via the covariance function as
+$$
+\psi_t   :=
+\fr{\Gamma_{t,\tau}}{\Gamma_{\tau, \tau}} \,.
+$$
+ Since the variance of the input is an increasing function of~$t$ 
+ in all models considered,
+it is easy to see that  $\psi_t>0$ for all $t \in T$.
+Moreover, note that for any $t \in \mathbb{T}$, $Y_t$ is
+independent of~$X_{\tau}$ since
+$$
+\mathbb{E}\left[X_{\tau}Y_t\right]=
+\Gamma_{\tau,t}-\fr{\Gamma_{t,\tau}}{\Gamma_{\tau,\tau}}\,\Gamma_{\tau,\tau}=0
+$$
+and $(X_{\tau},Y_t)$ has bivariate normal distribution.
+
+The target probability can be expressed in the following form:
+\begin{multline*}
+\pi(T)=\mathbb{P}\left(\forall t \in \mathbb{T}:\,\,X_t >t\right)\\
+{}=\mathbb{P}\left( \forall\ t \in \mathbb{T}:\,\, X_{\tau}>
+\fr{t-Y_t}{\psi_t}\right)\\
+{}=\mathbb{P}\left( X_{\tau}\ge\sup\limits_{t \in \mathbb{T}}
+\fr{t-Y_t}{\psi_t}\right)=\mathbb{P}\left( X_{\tau}\ge\overline{Y} \right)
+\end{multline*}
+where
+\begin{equation*}
+\overline{Y}:=\sup\limits_{t \in \mathbb{T}}\fr{t- Y_t}{\psi_t}\,. 
+%\label{BMC_4}
+\end{equation*}
+
+
+
+Observe that random variable~$\overline{Y}$ is independent of~$X_{\tau}$. 
+For the sake of simplicity, let us prove this property in the case 
+$\mathbb{T}=\{1,\ldots,T\}$ which is enough for simulation needs. Indeed, 
+the random vector $(X_{\tau},Y_1,\ldots,Y_T)$ has multivariate normal distribution 
+and, moreover, as it was shown above, $X_{\tau}$ is independent of~$Y_i$,
+$i=1,\ldots,T$; hence,~$X_{\tau}$ is independent of the vector $(Y_1,\ldots,Y_T)$ 
+(due to the properties of the multivariate normal distribution, see~\cite{Gut} 
+for more details) and, as a~consequence, of any function of its components.
+
+Having in mind that
+$
+X_t =_d \sqrt{\Gamma_{t,\,t}}\,N(0,\,1),
+$
+the  considered
+probability can be rewritten as follows:
+
+\vspace*{-2pt}
+
+\noindent
+\begin{multline*}
+\pi(T)=\mathbb{P}\left(X_{\tau}\ge\overline{Y}\right)=
+\int\limits_R \mathbb{P}(X_{\tau}\ge   u)\mathbb{P}\left(\overline{Y}\in
+ du\right)\\
+{}=
+\mathbb{E}\left[\Phi\left(\fr{\overline{Y}}{ \sqrt{\Gamma_{\tau,\,\tau}}}
+\right)\right] 
+\end{multline*}
+where independence between~$\overline{Y}$ and~$X_{\tau}$ is used and~$\Phi$ 
+denotes the tail distribution of standard normal variable, that is,
+
+\noindent
+$$
+\Phi(x)=\fr{1}{\sqrt{2\pi}} \int\limits_x^\infty e^{-y^2/2}dy\,\,.
+$$
+
+Hence, given a~sample~$\{\overline{Y}^{(n)},\,\,n=1,\ldots,N\}$  of~$\overline{Y}$,
+the estimator of~$\pi(T)$ is defined as follows:
+\begin{equation*}
+\widehat{\pi}_N^{\textrm{BMC}}  :=  \fr{1}{N}\sum\limits_{n=1}^N
+\Phi \left(\fr{\overline{Y}^{(n)}}{\sqrt{\Gamma_{\tau,\tau}}}\right)\,.
+%\label{estimator}
+\end{equation*}
+
+Note that
+\begin{equation*}
+\Phi\left(\fr{\overline{Y}}{ \sqrt{\Gamma_{\tau,\,\tau}}}\right)=
+\mathbb{E} \left[ I(X_{\tau}>\overline{Y}) | \overline{Y}\right]\,;
+%\label{BMC-5}
+\end{equation*}
+therefore, the BMC approach is actually a~special case of the conditional MC method. 
+By~(\ref{BMC-1}), $\mathrm{Var}\, Z\linebreak\ge  \mathrm{Var} 
+[\mathbb{E}[Z|\overline{Y}]]$;
+so, one can expect that the BMC estimator implies variance reduction  
+(with regard to crude MC simulation) in   the estimation of the target probability~$\pi(T)$.
+
+\vspace*{-2pt}
+
+\section{Simulation Results}
+%\label{sec:res}
+
+\vspace*{-2pt}
+
+\noindent
+In this section, through simulation results, the accuracy of the 
+ BMC estimator and the dependence of its performance on different parameters
+ will be pointed out. 
+ For sake of brevity, only the results for FBM input  considering 
+ $N=10000$ replications (unless otherwise stated) will be presented.
+
+Figure~2 shows the dependence of the target probability on the interval 
+duration~$T$ in case of $H=0.8$, a~typical value of the Hurst parameter for
+ traffic data. The probability~$\pi(T)$ exhibits an exponential decay in 
+ agreement with the known LDT asymptotic results (see formula~\eqref{BMC-6}). 
+ To better understand the practical applicability of such limits, 
+ in Fig.~3, the ratio between BMC estimates and~\eqref{BMC-6} is reported for 
+ different values of~$T$.
+
+
+In order to verify the goodness of the present estimator,  the 
+dependence of the RE on the parameters~$T$ has been  considered. 
+Figure~4 highlights 
+that the RE grows slowly and for probabilities of the order of~$10^{-11}$, it is 
+still less than~18\%, as can be easily verified by comparing the values in 
+Figs.~2 and~4.
+
+
+
+The goodness of the present method is also confirmed by the table, 
+where BMC is compared to single twist (with a~constant linear drift 
+chosen by minimizing  the variance of the estimator) IS in terms of RE: 
+for all\linebreak\vspace*{-12pt}
+
+{ \begin{center}  %fig2
+ \vspace*{12pt}
+\mbox{%
+\epsfxsize=77.933mm
+\epsfbox{luk-2.eps}
+}
+
+
+\vspace*{1pt}
+
+
+\noindent
+{{\figurename~2}\ \ \small{Dependence of $\pi$ on parameter~$T$}}
+\end{center}
+}
+
+\vspace*{1pt}
+
+
+{ \begin{center}  %fig3
+ \vspace*{3pt}
+\mbox{%
+\epsfxsize=76.527mm
+\epsfbox{luk-3.eps}
+}
+
+
+\vspace*{1pt}
+
+
+\noindent
+{{\figurename~3}\ \ \small{Comparison with LDT asymptotic results}}
+\end{center}
+}
+
+\vspace*{1pt}
+
+{ \begin{center}  %fig4
+ \vspace*{3pt}
+\mbox{%
+\epsfxsize=77.933mm
+\epsfbox{luk-4.eps}
+}
+
+
+\vspace*{1pt}
+
+
+\noindent
+{{\figurename~4}\ \ \small{Dependence of the RE on~$T$}}
+\end{center}
+}
+
+
+%\vspace*{12pt}
+
+%\addtocounter{figure}{1}
+
+%\begin{table*}
+{\small
+\vspace*{-4.1pt}
+\begin{center}
+%\label{tab1}
+%\vspace*{2ex}
+
+\begin{tabular}{|c|c|c|}
+\multicolumn{3}{c}{Relative errors for BMC and IS}\\
+\multicolumn{3}{c}{\ }\\[-6pt]
+  \hline
+ \ $T$ \ & \ \ BMC\  \ & IS \\
+  \hline
+  \hphantom{9}200 & 0.0691 & 0.1483 \\
+     \hphantom{9}400 & 0.0779 & 0.1850 \\
+     \hphantom{9}600 & 0.0941 & 0.1755 \\
+     \hphantom{9}800 & 0.0894 & 0.1772 \\
+   1000 & 0.1039 & 0.2275 \\
+  1200 & 0.1044 & 0.2084 \\
+ 1400 & 0.1101 & 0.1980 \\
+ 1600 & 0.1104 & 0.2462 \\
+ 1800 & 0.1150 & 0.2182 \\
+\ \ 2000\ \ & \ \ 0.1177\ \ & 0.2696 \\
+   \hline
+\end{tabular}
+\end{center}}
+%\end{table*}
+
+\vspace*{9pt}
+
+
+
+\noindent
+ the considered values of~$T$, BMC reduces the RE by a~factor around~2.
+
+
+
+
+
+To better understand the asymptotic properties of the estimator 
+(at least heuristically), in Figs.~5 and~6, 
+the behavior of~$N_T$ and~$R_T$ is shown: the required number of sample paths (for a~fixed 
+value of the RE) grows very slowly (at least in logarithmic scale) and the relative 
+efficiency is above~1.9 for $T > 20\,000$ (and gets closer to~2 for higher values 
+of~$T$).
+
+
+
+In all previous simulation sets, the conditioning point~$\tau$ in the BMC 
+algorithm has been assumed equal\linebreak\vspace*{-12pt}
+
+ { \begin{center}  %fig5
+ \vspace*{12pt}
+ \mbox{%
+\epsfxsize=77.933mm
+\epsfbox{luk-5.eps}
+}
+
+
+\vspace*{3pt}
+
+
+\noindent
+{{\figurename~5}\ \ \small{Dependence of $N_T$ on~$T$ for RE$_{\max}=0.1$}}
+
+\end{center}
+}
+
+%\vspace*{12pt}
+
+ { \begin{center}  %fig6
+ \vspace*{12pt}
+\mbox{%
+\epsfxsize=78.326mm
+\epsfbox{luk-6.eps}
+}
+
+
+\vspace*{3pt}
+
+
+\noindent
+{{\figurename~6}\ \ \small{Dependence of $R_T$ on $T$ for $N=10000$}}
+
+\end{center}
+}
+
+%\vspace*{12pt}
+
+
+{ \begin{center}  %fig7
+ \vspace*{1pt}
+\mbox{%
+\epsfxsize=76.181mm
+\epsfbox{luk-7.eps}
+}
+
+
+\vspace*{3pt}
+
+
+\noindent
+{{\figurename~7}\ \ \small{Dependence of RE on $\tau$ for $T=3000$}}
+
+\end{center}
+}
+
+%\vspace*{12pt}
+
+{ \begin{center}  %fig8
+ \vspace*{12pt}
+\mbox{%
+\epsfxsize=79.023mm
+\epsfbox{luk-8.eps}
+}
+
+
+\vspace*{3pt}
+
+
+\noindent
+{{\figurename~8}\ \ \small{Effect of the  discretization step~$h$}}
+
+\end{center}
+}
+
+\vspace*{9pt}
+
+
+
+\noindent
+ to the duration of the interval. The correctness 
+of such choice is confirmed for $T=3000$ by Fig.~7 in which an absolute
+ minimum of the RE can be identified in a~neighborhood of~$T$.
+ 
+
+
+
+Finally, in Fig.~8, the effect of the discretization step (simulations 
+always involve finite-size vectors and not continuous-time processes!) 
+on the estimated probability is highlighted. In more detail, $T=100$
+ with discretisation step~$h$ (in the previous simulations, $h=1$) has
+ been considered. This means that 
+ each FBM sample path consists of~$T/h$ points: apart some oscillations of the 
+ estimated value (the confidence intervals should also be taken into account!), 
+ as expected, the target probability decreases when sampling is more dense.
+
+
+\vspace*{-6pt}
+
+
+
+\section{Concluding Remarks}
+%\label{sec:conc}
+
+\vspace*{-2pt}
+
+\noindent
+In this paper,  the estimation of the busy period duration in 
+Gaussian queues was considered with focus on the upper tail of the distribution. To address the 
+issues related to the simulation of such rare events,
+the authors considered a~special case 
+of conditional MC estimator based on bridge processes. In more detail, 
+the BMC approach exploits the Gaussian nature of the input process (independence 
+is equivalent to uncorrelatedness) and relies on the properties of bridges to 
+write down the target probability as the conditional one.
+
+To study the properties of the proposed estimator, several simulation experiments 
+have been  carried out focusing on FBM sample paths, although the methods are
+applicable to any Gaussian process with increasing variance. In the experimental 
+analysis,  different values of the relevant parameters (duration of 
+the interval, choice of the conditioning point, and discretization step) have
+been considered and 
+ the asymptotic properties of the estimator (in terms of relative 
+efficiency and duration of the simulation for a~given precision of the estimates)
+have been investigated. 
+Finally, it is worth mentioning that the relative error is halved with respect to 
+single twist IS, highlighting the efficiency of BMC over well-known rare event 
+simulation techniques.
+
+\vspace*{-6pt}
+
+\Ack  
+\noindent
+This work is supported by the Russian Foundation for Basic
+Research, projects 15--07--02341, 15--07--02354, and 15--07--02360 and also 
+ by the Program of Strategic Development of Petrozavodsk State University.
+ 
+ 
+\renewcommand{\bibname}{\protect\rmfamily References}
+
+\vspace*{-6pt}
+
+%\vspace*{-6pt}
+
+{\small\frenchspacing
+{\baselineskip=10.65pt
+\begin{thebibliography}{99}
+\bibitem{Leland} %1
+\Aue{Leland, W.\,E., M.\,S.~Taqqu, W.~Willinger, and D.\,V.~Wilson.} 1994. 
+On the self-similar nature of Ethernet traffic (extended version). 
+\textit{IEEE ACM Trans. Network.} 2(1):1--15.
+
+\bibitem{norrosJSAC} %2
+\Aue{Norros,~I.} 1995. On the use of fractional Brownian motion in the theory of
+  connectionless networks. \textit{IEEE J.~Sel. Area. Comm.} 
+  13(6):953--962.
+
+\bibitem{Mandjes-book} %3
+\Aue{Mandjes, M.} 2007. \textit{Large deviations of Gaussian queues.}
+Chichester: Wiley. 340~p.
+
+
+
+\bibitem{Erramilli}
+ \Aue{Erramilli, A., O.~Narayan, and W.~Willinger.} 1996. Experimental 
+ queueing analysis with long-range dependent packet traffic. 
+ \textit{IEEE ACM Trans. Network.} 4(2):209--223.
+
+\bibitem{Samorodnitsky}
+\Aue{Samorodnitsky, G.} 2007. Long range dependence. 
+\textit{Found. Trends$^\registered$ Stochastic Syst.} 1(3):163--257. doi: 10.1561/0900000004.
+
+\bibitem{rfc5681}
+\Aue{Allman, M., V.~Paxson, and E.~Blanton.} 2009. TCP Congestion Control.
+{RFC 5681 (Draft Standard).}
+
+\bibitem{Demetres}
+\Aue{Kouvatsos, D.\,D.} 2000. 
+\textit{Performance evaluation and applications of ATM networks}. Kluwer Academic. 
+472~p.
+
+\bibitem{Ross}
+\Aue{Ross, S.\,M.} 2006. \textit{Simulation.} Elsevier. 314~p.
+
+\bibitem{BigQueues}
+\Aue{Ganesh, A., N.~O'Connell, and D.~Wischik.} 2004. 
+\textit{Big queues}. Lecture notes in mathematics ser. Springer. 260~p.
+
+\bibitem{Heidelberger}
+\Aue{Heidelberger, P.} 1995. Fast simulation of rare events in queueing 
+and reliability models. \textit{ACM Trans. Model. Comput. Simul.} 5(1):43--85.
+
+\bibitem{glasserman1997}
+\Aue{Glasserman, P., and Y.~Wang.} 
+1997. Counterexamples in importance sampling for large deviations probabilities. 
+\textit{Ann. Appl. Probab.} 7(3):731--746.
+
+\bibitem{dccn}
+\Aue{Lukashenko, O.\,V., E.\,V.~Morozov, and M.~Pagano.} 2016. 
+On Conditional Monte Carlo estimation of busy period probabilities in 
+Gaussian queues. \textit{Comm.
+Com. Inf. Sc.} 601:280--288. doi: 10.1007/978-3-319-30843-2\_29.
+
+\bibitem{Tomsk}
+\Aue{Lukashenko, O.\,V., E.\,V.~Morozov, and M.~Pagano.} 
+2016. On the use of a~bridge process in a~Conditional Monte Carlo simulation of 
+Gaussian queues. \textit{Comm. Com.  Inf. Sc.} 638:207--220. 
+doi: 10.1007/978-3-319-44615-8\_18.
+
+\bibitem{Giordano} %14
+\Aue{Giordano, S., M.~Gubinelli, and M.~Pagano.} 2005. Bridge Monte-Carlo: 
+A~novel approach to rare events of Gaussian processes. 
+\textit{5th St.\ Petersburg Workshop on Simulation Proceedings.} 281--286.
+
+\bibitem{Norros} %15
+\Aue{Norros, I.} 1999. Busy periods of fractional Brownian storage: 
+A~large deviations approach. \textit{Adv. Perf. Anal.} 2:1--19.
+
+\bibitem{Mandjes} %16
+\Aue{Mandjes, M., I.~Norros, and P.~Glynn.} 2009. 
+On convergence to stationarity of fractional Brownian storage. 
+\textit{Ann. Appl. Probab.} 19:1385--1403.
+
+
+
+\bibitem{Taqqu}
+\Aue{Taqqu, M.\,S., W.~Willinger, and R.~Sherman.} 1997. 
+Proof of a~fundamental result in self-similar traffic modeling. 
+\textit{Comput. Commun. Rev.} 27:5--23.
+
+\bibitem{Addie}
+\Aue{Addie, R., P.~Mannersalo, and I.~Norros.} 2002.
+Most probable paths and performance formulae 
+for buffers with Gaussian input traffic. \textit{Eur. Trans. 
+Telecommun.} 13:183--196.
+
+
+\bibitem{Kulkarni}
+\Aue{Kulkarni, V., and T.~Rolski.} 1994. Fluid model driven by an Ornstein--Uhlenbeck 
+process. \textit{Probab. Eng. Inform. Sc.} 8:403--417.
+
+\bibitem{Deuschel}
+\Au{Deuschel, J.\,D., and D.\,W.~Stroock.} 1989. \textit{Large deviations.}  
+Academic Press. 330~p.
+
+\bibitem{Mandjes1}
+\Aue{Mandjes, M., P.~Mannersalo, I.~Norros, and M.~van Uitert.} 2006.  
+Large deviations of infinite intersections of events in Gaussian processes. 
+\textit{Stoch. Proc. Appl.} 116:1269--1293.
+
+\bibitem{Dieker2}
+\Aue{Dieker, A.\,B.} 2005. Conditional limit theorems for queues with Gaussian input: 
+A~weak convergence approach. \textit{Stoch. Proc. Appl.} 
+115(5):849--873.
+
+\bibitem{Dieker}
+\Aue{Dieker, A.\,B., and M.~Mandjes.} 2005.
+On asymptotically efficient simulation of large deviation probabilities. 
+\textit{Adv. Appl. Probab.} 37:539--552.
+
+\bibitem{Dieker1}
+\Aue{Dieker, A.\,B., and M.~Mandjes.} 2006.
+Fast simulation of overflow probabilities in a~queue with Gaussian input. 
+\textit{ACM Trans. Model. Comput. Simul.} 16:119--151.
+
+\bibitem{Asm}
+\Aue{Asmussen, S., ans P.~Glynn.} 2007. 
+\textit{Stochastic simulation: Algorithms and analysis.} Springer. 476~p.
+
+\bibitem{Giordano1}
+\Aue{Giordano, S., M.~Gubinelli, and M.~Pagano.} 2007. Rare events of Gaussian 
+processes: A~performance comparison between Bridge Monte-Carlo and Importance 
+Sampling. \textit{Next generation teletraffic and wired/wireless advanced networking.}
+Eds.\ Y.~Koucheryavy, J.~Harju, and A.~Sayenko.
+Computer communication networks and
+telecommunications ser. Berlin--Heidelberg: Springer. 
+4712:269--280.
+
+\bibitem{Lukashenko}
+\Aue{Lukashenko, O.\,V., E.\,V. Morozov, and M.~Pagano.} 2012. 
+Performance analysis of Bridge Monte-Carlo estimator. 
+\textit{Transactions of KarRC RAS} 5:54--60.
+
+\bibitem{Gut}
+\Aue{Gut, A.} 2009. \textit{An intermediate course in probability.} Springer. 304~p.
+
+\end{thebibliography} } }
+
+\end{multicols}
+
+\vspace*{-12pt}
+
+\hfill{\small\textit{Received February 16, 2017}}
+
+
+
+%\vspace*{-3pt}
+
+\Contr
+
+
+\noindent
+\textbf{L ukashenko Oleg~V.} (b.\ 1986)~--- Candidate of Science (PhD) 
+in physics and mathematics, scientist, 
+Institute of  Applied Mathematical Research of Karelian Research Centre of 
+the Russian Academy of Sciences, 11~Pushkinskaya Str.,  Petrozavodsk 185910, 
+Republic of Karelia, Russian Federation; 
+lecturer, Petrozavodsk State University, 33~Lenin Str., Petrozavodsk 185910, 
+Republic of Karelia, Russian Federation; \mbox{lukashenko@krc.karelia.ru}
+
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Morozov Evsei V.} (b.\ 1947)~--- 
+Doctor of Science in physics and mathematics, professor, leading scientist, 
+Institute of  Applied Mathematical Research of Karelian Research Centre of the
+Russian Academy of Sciences, 11~Pushkinskaya Str.,  
+Petrozavodsk 185910, Republic of Karelia, Russian Federation; professor,
+ Petrozavodsk State University, 33~Lenin Str., Petrozavodsk 185910, 
+ Republic of Karelia, Russian Federation; \mbox{emorozov@karelia.ru}
+ 
+ \vspace*{3pt}
+ 
+ \noindent
+ \textbf{Pagano Michele} (b.\ 1968)~--- 
+ PhD in Information Engineering, associate professor, University of Pisa, 
+ 43~Lungarno Pacinotti, Pisa 56126, Italy; \mbox{m.pagano@iet.unipi.it}
+
+
+
+
+\vspace*{12pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\newpage
+
+%\vspace*{-24pt}
+
+\vspace*{8pt}
+
+\def\tit{ОБ ЭФФЕКТИВНОСТИ ОЦЕНКИ МОНТЕ КАРЛО\\ НА ОСНОВЕ ГАУССОВСКОГО МОСТА$^*$}
+
+\def\aut{О.\,В.~Лукашенко$^{1,2}$,
+ Е.\,В.~Морозов$^{1,2}$,   М.~Пагано$^{3}$}
+
+
+\def\titkol{Об эффективности оценки Монте Карло на основе гауссовского моста}
+
+\def\autkol{О.\,В.~Лукашенко, Е.\,В.~Морозов, М.~Пагано}
+
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\footnotetext[1]{Работа поддержана грантами РФФИ
+№№\,15--07--02341, 15--07--02354 и~15--07--02360, а также 
+программой стратегического развития Петрозаводского государственного университа.}}
+
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-12pt}
+
+\noindent
+$^1$Институт прикладных математических исследований Карельского научного центра 
+Российской акаде-\linebreak
+$\hphantom{^1}$мии наук
+
+\noindent
+$^2$Петрозаводский государственный университет
+
+\noindent
+$^3$Университет г.\ Пиза, Италия
+
+\vspace*{6pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 11\ \ \ выпуск\ 2\ \ \ 2017}
+}%
+ \def\rightfootline{\small{ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 11\ \ \ выпуск\ 2\ \ \ 2017
+\hfill \textbf{\thepage}}}
+
+
+
+\Abst{Наличие долговременной зависимости в современных сетях передачи данных 
+приводит к тому, что объем передаваемого трафика может быть большим на протяжении 
+значительного периода времени. Это, в свою очередь, влечет перегрузку систем на 
+протяжении длительного периода времени. В~данной работе рассматривается задача
+ оценки вероятности занятости системы обслуживания с гауссовским входным 
+ потоком в течение некоторого заданного периода~$T$. При больших значениях~$T$ 
+ интересующее нас событие является редким, и для оценки его вероятности с приемлемой 
+ точностью необходимо использовать специальные методы понижения дисперсии оценки. 
+ В~статье рассмотрен частный случай условного метода Мон\-те Кар\-ло, 
+ который заключается в том, что искомая вероятность может быть
+ выражена 
+ как математическое ожидание некоторой функции от так называемого гауссовского моста. 
+ Исследована эффективность предложенной процедуры,
+  а~также влияние шага дискретизации на свойство получаемой оценки.
+}
+
+\KW{гауссовские процессы; условный метод Монте Карло; процесс моста; 
+редкие события; уменьшение дисперсии}
+
+\DOI{10.14357/19922264170202} 
+
+%\vspace*{6pt}
+
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily Литература}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\begin{thebibliography}{99}
+
+\bibitem{Leland-1}
+\Au{Leland W.\,E., Taqqu~M.\,S., Willinger~W., Wilson~D.\,V.} 
+On the self-similar nature of Ethernet traffic (extended version)~// IEEE ACM Trans. 
+Network., 1994. Vol.~2. No.\,1. P.~1--15.
+
+
+
+\bibitem{norrosJSAC-1}
+\Au{Norros I.} On the use of fractional Brownian motion in the theory of
+  connectionless networks~// IEEE J.~Sel. Area. Comm.,  1995. Vol.~13. 
+  No.\,6. P.~953--962.
+  
+  \bibitem{Mandjes-book-1}
+\Au{Mandjes M.} Large deviations of Gaussian queues.~---
+Chichester: Wiley, 2007. 340~p.
+
+\bibitem{Erramilli-1}
+\Au{Erramilli A., Narayan~O., Willinger~W.} Experimental queueing analysis with 
+long-range dependent packet traffic~//  IEEE ACM Trans. Network., 1996. Vol.~4. No.\,2. 
+P.~209--223.
+
+\bibitem{Samorodnitsky-1}
+\Au{Samorodnitsky~G.} Long range dependence~// 
+ Found. Trends$^\registered$ Stochastic Syst., 2007. Vol.~1. No.\,3. P.~163--257. 
+ doi: 10.1561/0900000004.
+
+\bibitem{rfc5681-1}
+\Au{Allman M., Paxson~V., Blanton~E.} TCP congestion control. RFC 5681
+(Draft Standard), 2009.
+
+\bibitem{Demetres-1}
+\Au{Kouvatsos D.\,D.} Performance evaluation and applications of ATM networks.~--- 
+Kluwer Academic, 2000. 472~p.
+
+\bibitem{Ross-1}
+\Au{Ross S.\,M.} Simulation.~--- Elsevier, 2006. 314~p.
+
+\bibitem{BigQueues-1}
+\Au{Ganesh A., O'Connell~N., Wischik~D.} Big queues.~--- 
+Lecture notes in mathematics ser.~--- Springer, 2004. 260~p.
+
+\bibitem{Heidelberger-1}
+\Au{Heidelberger P.} 
+ Fast simulation of rare events in queueing and reliability models~// 
+ ACM Trans. Model. Comput. Simul., 1995. Vol.~5. No.\,1. P.~43--85.
+
+\bibitem{glasserman1997-1}
+\Au{Glasserman P., Wang~Y.} Counterexamples in importance sampling for large 
+deviations probabilities~//  Ann. Appl. Probab., 1997. Vol.~7. No.\,3. P.~731--746.
+
+\bibitem{dccn-1}
+\Au{Lukashenko O.\,V., Morozov~E.\,V., Pagano~M.} On 
+Conditional Monte Carlo estimation of busy period probabilities in Gaussian queues~// 
+Comm. Com. Inf. Sc., 2016. Vol.~601. P.~280--288. 
+doi: 10.1007/978-3-319-30843-2\_29.
+
+\bibitem{Tomsk-1}
+\Au{Lukashenko O.\,V., Morozov~E.\,V., Pagano~M.} On the use of a~bridge process 
+in a~Conditional Monte Carlo simulation of Gaussian queues~// 
+Comm. Com. Inf. Sc., 2016. Vol.~638. P.~207--220. 
+doi: 10.1007/978-3-319-44615-8\_18.
+
+\bibitem{Giordano-1}
+\Au{Giordano S., Gubinelli~M., Pagano~M.} 
+Bridge Monte-Carlo: A~novel approach to rare events of Gaussian processes~// 
+5th St.\ Petersburg Workshop on Simulation Proceedings, 2005. P.~281--286.
+
+
+
+\bibitem{Norros-1}
+\Au{Norros I.} Busy periods of fractional Brownian storage: 
+A~large deviations approach~// Adv. Perf. Anal., 1999. Vol.~2. P.~1--19.
+
+\bibitem{Mandjes-1}
+\Au{Mandjes M., Norros~I., Glynn~P.} 
+On convergence to stationarity of fractional Brownian storage~// 
+Ann. Appl. Probab., 2009. Vol.~19. P.~1385--1403.
+
+\bibitem{Taqqu-1}
+\Au{Taqqu M.\,S., Willinger~W., Sherman~R.} 
+Proof of a~fundamental result in self-similar traffic modeling~// 
+Comput. Commun. Rev., 1997. Vol.~27. P.~5--23.
+
+\bibitem{Addie-1}
+\Au{Addie R., Mannersalo~P., Norros~I.}
+Most probable paths and performance formulae for buffers with Gaussian input traffic~// 
+Eur. Trans. Telecommun., 2002. Vol.~13. P.~183--196.
+
+\bibitem{Kulkarni-1}
+\Au{Kulkarni V., Rolski~T.} 
+Fluid model driven by an Ornstein--Uhlenbeck process~// 
+Probab. Eng. Inform. Sc., 1994. Vol.~8. P.~403--417.
+
+\bibitem{Deuschel-1}
+\Au{Deuschel J.\,D, Stroock D.\,W.} Large deviations.~--- Academic Press, 1989. 330~p.
+
+\bibitem{Mandjes1-1}
+\Au{Mandjes M., Mannersalo~P., Norros~I., van Uitert~M.} 
+Large deviations of infinite intersections of events in Gaussian processes~// 
+Stoch. Proc. Appl., 2006. Vol.~116. P.~1269--1293.
+
+\bibitem{Dieker2-1}
+\Au{Dieker A. B.} Conditional limit theorems for queues with Gaussian input: 
+A~weak convergence approach~// Stoch. Proc. Appl., 2005. 
+Vol.~115. No.\,5. P.~849--873.
+
+\bibitem{Dieker-1}
+\Au{Dieker A.\,B., Mandjes~M.} 
+On asymptotically efficient simulation of large deviation probabilities~// 
+Adv. \mbox{Appl.} Probab., 2005. Vol.~37. P.~539--552.
+
+\bibitem{Dieker1-1}
+\Au{Dieker A.\,B., Mandjes~M.} Fast simulation of overflow probabilities in 
+a~queue with Gaussian input~// ACM Trans. Model. Comput. Simul., 2006. Vol.~16. 
+P.~119--151.
+
+\bibitem{Asm-1}
+\Au{Asmussen S., Glynn P.} Stochastic simulation: Algorithms and analysis.~--- 
+Springer, 2007. 476~p.
+
+\bibitem{Giordano1-1}
+\Au{Giordano S., Gubinelli~M., Pagano~M.} 
+Rare events of Gaussian processes: A~performance comparison between\linebreak Bridge Monte-Carlo 
+and importance sampling~// Next\linebreak generation teletraffic and wired/wireless advanced 
+networking~/
+Eds.\ Y.~Koucheryavy, J.~Harju, and A.~Sayen\-ko.~---
+Computer communication networks and
+telecommunications ser.~--- Berlin--Heidelberg: Springer, 2007. 
+Vol.~4712. P.~269--280.
+
+\bibitem{Lukashenko-1}
+\Au{Lukashenko O.\,V., Morozov~E.\,V., Pagano~M.} 
+Performance analysis of Bridge Monte-Carlo estimator~// 
+Труды Карельского НЦ РАН, 2012. Т.~5. С.~54--60.
+
+\bibitem{Gut-1}
+\Au{Gut A.} An intermediate course in probability.~--- Springer, 2009. 304~p.
+\end{thebibliography}
+} }
+
+\end{multicols}
+
+ \label{end\stat}
+
+ \vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в редакцию  16.02.2017}}
+%\renewcommand{\bibname}{\protect\rm Литература}
+\renewcommand{\figurename}{\protect\bf Рис.}
+\renewcommand{\tablename}{\protect\bf Таблица}

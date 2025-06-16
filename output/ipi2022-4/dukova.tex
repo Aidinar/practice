@@ -1,0 +1,825 @@
+
+\def\stat{dukova}
+
+\def\tit{О СЛОЖНОСТИ ОБУЧЕНИЯ ЛОГИЧЕСКИХ ПРОЦЕДУР КЛАССИФИКАЦИИ}
+
+\def\titkol{О сложности обучения логических процедур классификации}
+
+\def\aut{Е.\,В.~Дюкова$^1$, А.\,П.~Дюкова$^2$}
+
+\def\autkol{Е.\,В.~Дюкова, А.\,П.~Дюкова}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Дюкова Е.\,В.}
+\index{Дюкова А.\,П.}
+\index{Djukova E.\,V.}
+\index{Djukova A.\,P.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнена при поддержке РФФИ (проект 20-07-00804).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{edjukova@mail.ru}}
+\footnotetext[2]{Федеральный исследовательский центр <<Информатика и~управление>. Российской академии 
+наук, \mbox{anastasia.d.95@gmail.com}}
+
+
+\vspace*{-12pt}
+
+
+  \Abst{Исследуются вопросы сложности логического анализа целочисленных данных. Для 
+специальных задач поиска частых и~нечастых элементов в~данных, на решении которых 
+базируется обучение логических процедур классификации, приведены асимптотики 
+типичного числа решений. Технические основы получения указанных оценок опираются на 
+методы получения аналогичных оценок для труднорешаемой дискретной задачи построения 
+(перечисления) тупиковых покрытий целочисленной матрицы, формулируемой в~работе как 
+задача поиска <<минимальных>> нечастых элементов. Новые результаты в~основном 
+касаются изучения метрических (количественных) свойств частых элементов. Полученные 
+оценки типичного числа часто встречающихся фрагментов в~описаниях прецедентов 
+позволяют сделать вывод о~перспективности применения алгоритмов поиска таких 
+фрагментов на этапе обучения логических классификаторов типа <<Кора>>.}
+  
+  \KW{атрибут; частый элементарный фрагмент; нечастый элементарный фрагмент; 
+монотонная дуализация; тупиковое покрытие целочисленной матрицы; классификация по 
+прецедентам; классификатор типа <<Кора>>}
+
+\DOI{10.14357/19922264220409} 
+  
+%\vspace*{-3pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+  
+\section{Введение}
+
+  Рассматриваемые задачи поиска частых и~не\-час\-тых элементов в~данных 
+формулируются сле\-ду\-ющим образом.
+  
+  Исследуется множество объектов~$M$. Каждый объект из~$M$ может быть 
+представлен в~виде числового вектора, полученного на основе наблюдения или 
+измерения ряда его характеристик. Такие характеристики называют 
+атрибутами. Предполагается, что каждый атрибут имеет ограниченное 
+множество допустимых значений, которые кодируются целыми числами.
+  
+  Пусть $X=\{x_1, \ldots , x_n\}$~--- заданное множество атрибутов;   $H$~---
+  набор 
+из~$r$~различных атрибутов вида $H\hm= \{ x_{j_1}, \ldots , x_{j_r}\}$; 
+$\sigma\hm= \left( \sigma_1, \ldots , \sigma_r\right)$~--- набор, 
+в~котором~$\sigma_i$~--- допустимое значение признака~$x_{j_i}$, $i\hm= 1,2, 
+\ldots, r$. Пару $(\sigma, H)$ назовем элементарным фрагментом (ЭФ) 
+длины~$r$. Через $W(M,X)$ обозначим множество всех ЭФ.
+  
+  Пусть $S=(a_1,\ldots , a_n)$~--- объект из~$M$ (здесь~$a_j$, $j\hm\in \{1, 2 
+\ldots ,n\}$,~--- значение атрибута~$x_j$ для объекта~$S$). Будем говорить, 
+что~$S$ содержит ЭФ $(\sigma, H)$, если $a_{j_i}\hm= \sigma_i$ при $i\hm= 
+1,2,\ldots , r$.
+  
+  Дана некоторая совокупность объектов~$D$ из~$M$ и~задано число~$p$, 
+$0\hm< p\hm\leq 1$. Объекты в~$D$ не обязательно различны. Через $\vert 
+D\vert$ обозначается чис\-ло объектов в~$D$. Элементарный фрагмент $(\sigma, 
+H)$, $(\sigma,H)\hm\in W(M,X)$, называется $(p,D)$-\textit{час\-тым}, если не 
+менее $p\vert D\vert$ объектов %~$S^\prime$ 
+из~$D$ содержат $(\sigma, H)$. 
+Иначе ЭФ $(\sigma, H)$~--- $(p,D)$-\textit{не\-час\-тый}. Элементарный 
+фрагмент $(\sigma, H)$, $(\sigma, H)\hm\in W(M,X)$, называется  
+\mbox{$(0,D)$-\textit{не}}\-\textit{час\-тым}, если ни один объект из~$D$ не содержит 
+$(\sigma, H)$.
+  
+  Элементарный фрагмент $(\sigma, H)$, являющийся $(p,D)$-час\-тым 
+в~$W(M,X)$, называется \textit{максимальным} $(p,D)$-час\-тым в~$W(M,X)$, 
+если любой ЭФ $(\sigma^\prime, H^\prime)$ из~$W(M,X)$, такой что 
+$\sigma^\prime \hm\supset \sigma$, $H^\prime \hm\supset H$, не является  
+$(p,D)$-час\-тым.
+  
+  Элементарный фрагмент $(\sigma, H)$ длины~$r$ называется 
+\textit{правильным} в~$W(M,X)$, если $(\sigma, H)$~---   
+$(r/\vert D\vert, D)$-час\-тый в~$W(M,X)$.
+  
+  Элементарный фрагмент  $(\sigma, H)$, являющийся $(p,D)$-не\-час\-тым 
+в~$W(M,X)$, называется \textit{минимальным} $(p,D)$-не\-час\-тым 
+в~$W(M,X)$, если любой ЭФ $(\sigma^\prime, H^\prime)$ из~$W(M,X)$, такой 
+что $\sigma^\prime \hm\subset \sigma$, $H^\prime\hm\subset H$, не является 
+$(p,D)$-не\-час\-тым. Понятие \textit{минимального} $(0,D)$-не\-час\-то\-го ЭФ 
+полностью аналогично введенному понятию минимального  
+$(p,D)$-не\-час\-то\-го ЭФ для $p\hm>0$.
+  
+  Возникают две отдельные задачи: 
+  \begin{enumerate}[(1)]
+  \item для заданного~$p$, $0\hm< p\hm\leq 1$, 
+найти в~$W(M,X)$ все (максимальные) $(p,D)$-час\-тые ЭФ; 
+\item для заданного 
+$p$, $0\hm\leq p\leq 1$, найти все (минимальные) $(p,D)$-не\-час\-тые ЭФ. 
+\end{enumerate}
+Иногда требуется совместное перечисление максимальных частых 
+и~минимальных не\-час\-тых ЭФ.
+
+  
+  Задачи поиска частых и~нечастых элементов в~данных входят в~число 
+центральных задач интеллектуального анализа данных и~особенно важны 
+в~случае больших данных. Эти задачи актуальны для многих прикладных 
+областей, среди которых следует выделить нахождение в~данных 
+ассоциативных правил и~машинное обучение.
+  
+  В первом случае~$D$ называют базой данных, а~каж\-дый объект из~$D$ 
+называют транзакцией. Ассоциативное правило (АП) устанавливает 
+зависимость между двумя частыми ЭФ, согласно которой один частый ЭФ~$X$ 
+(посылка) с~некоторой <<до\-сто\-вер\-ностью>> влечет другой частый 
+ЭФ~$Y$. При этом ЭФ~$X$ и~$Y$ порождаются одним общим частым ЭФ, 
+обозначаемым $(X,Y)$. Наиболее информативными считаются те АП, которые 
+порождаются максимальными частыми ЭФ $(X,Y)$ с~<<минимальной>> 
+посылкой~$X$. Вопросы поиска ассоциативных правил возникли в~связи 
+с~анализом потребительской корзины и~наиболее изучены для случая 
+бинарных данных~[1].
+  
+  Одна из главных задач машинного обучения~--- задача классификации на 
+основе прецедентов. В~этом случае~$D$~--- обучающая выборка (некоторая 
+заданная совокупность примеров объектов из~$M$), а каждый объект  
+из~$D$~--- обуча\-ющий объект, или прецедент. Подлежащие измерению или 
+наблюдению свойства исследуемых объектов называются признаками. 
+В~самом простом случае прецеденты делятся на два класса (класс 
+положительных и~класс отрицательных примеров). В~общем случае число 
+классов может быть больше двух. Требуется по признаковому описанию 
+предъявленного объекта, о котором заранее не известно, к~какому классу он 
+относится, определить (распознать) этот класс.
+  
+  Хорошие результаты показывают логические классификаторы, при 
+конструировании которых используются основные идеи как алгоритма 
+<<Кора>>~[2], так и~алгоритмов вычисления оценок~[3]. Эти классификаторы 
+впервые предложены в~[4]. В~дальнейшем подход развивался в~работах~[5--7] 
+и~др. В~алгоритмах типа <<Кора>> анализ прецедентной информации 
+проводится в~предположении, что признаковые описания любых двух 
+обуча\-ющих объектов, принадлежащих разным классам, не совпадают. На этапе 
+обуче\-ния для каждого класса~$K$ ищутся так называемые  
+$(p,q)$-пред\-ста\-ви\-тель\-ные элементарные классификаторы, 
+пред\-став\-ля\-ющие собой специальные ЭФ из~$W(M,X)$.
+  
+  Пусть $Q(K)$ и~$Q(\overline{K})$~--- множества прецедентов из класса~$K$ 
+и~не из класса~$K$ соответственно и~$p\hm>0$, $q\hm<p$. Тогда  
+$(p,q)$-пред\-ста\-ви\-тель\-ный элементарный классификатор является 
+одновременно (максимальным) $(p,Q(K))$-час\-тым ЭФ и~(минимальным) 
+$(q,Q(\overline{K}))$-не\-час\-тым ЭФ в~$W(M,X)$. Как правило, сначала 
+строятся минимальные $(q,Q(\overline{K}))$-не\-час\-тые ЭФ, а~затем из них 
+отбираются те, которые являются $(p,Q(K))$-час\-ты\-ми. На следующем этапе 
+найденные $(p,q)$-пред\-ста\-ви\-тель\-ные элементарные классификаторы 
+класса~$K$ участвуют в~процедуре <<голосования>> за отнесение 
+распознаваемого объекта к~этому классу. Материал обучения без\-оши\-боч\-но 
+классифицируется при $q\hm=0$. Однако нахождение  
+$(0,Q(\overline{K}))$-не\-час\-тых ЭФ требует больших вычислительных 
+затрат. В~простейшем случае бинарных данных, когда требуется найти все 
+минимальные $(0,Q(\overline{K}))$-не\-час\-тые ЭФ вида $(0, \ldots , 0)$, это 
+известная труднорешаемая перечислительная задача, называемая монотонной 
+дуализацией~[8, 9].
+  
+  Отметим, что к~задаче совместного перечисления максимальных частых 
+  и~минимальных не\-час\-тых ЭФ сводится задача расшифровки монотонной 
+функции~[10].
+  
+  В целях исследования скорости решения рассматриваемых задач в~случае 
+больших данных представляет интерес получение асимптотик типичного числа 
+частых и~нечастых ЭФ, а~также типичной длины таких ЭФ.  
+В~работах~\cite{5-duk, 6-duk} искомые оценки приведены для множества 
+минимальных $(0,Q(\overline{K}))$-не\-час\-тых ЭФ, называемых в~этих 
+работах тупиковыми покрытиями целочисленной матрицы. В~настоящей 
+работе так же, как и~в~\cite{5-duk, 6-duk}, рассмотрен случай большого чис\-ла 
+атрибутов. Требуемые оценки получены для правильных ЭФ в~предположении, 
+что каж\-дый атрибут имеет~$k$, $k\hm \geq 2$, до\-пус\-ти\-мых значений. При 
+доказательстве основной тео\-ре\-мы использовано мат\-рич\-ное пред\-став\-ле\-ние 
+данных. Сравнение полученных в~на\-сто\-ящей работе оценок с~оценками  
+из~\cite{5-duk, 6-duk} свидетельствует о~перспективности применения методов 
+поиска час\-тых ЭФ для построения $(p,0)$-пред\-ста\-ви\-тель\-ных 
+элементарных классификаторов.
+  
+\section{Асимптотика типичного числа правильных элементарных 
+фрагментов в~случае большого числа атрибутов}
+
+  Пусть~$L\hm= (a_{ij})$, $i\hm= 1, \ldots , m$, $j\hm= 1, \ldots , n$,~--- 
+матрица с~элементами из $\{0,1,\ldots , k-1\}$, $k\hm\geq 2$; $E_k^r$, $r\hm\leq 
+n$, $k\hm \geq 2$,~--- множество наборов $(\sigma_1, \ldots , \sigma_r)$, 
+$\sigma_i \hm\in \{0,1,\ldots , k-1\}$,$i\hm= 1,2,\ldots , r$; $W_r^n$, $r\hm\leq 
+n$,~--- множество всех наборов вида $\{ j_1, \ldots , j_r\}$, где $j_t\hm\in 
+\{1,2,\ldots , n\}$ при $t\hm= 1,2,\ldots , r$ и~$j_1< \cdots <j_r$.
+  
+  Положим $\sigma\hm\in E_k^r$, $\sigma\hm= (\sigma_1, \ldots , \sigma_r)$, 
+$H\hm\in W_r^n$, $H\hm= \{ j_1, \ldots , j_r\}$. Будем говорить, что строка 
+$(a_{i1}, \ldots , a_{in})$ матрицы~$L$ содержит \textit{фрагмент} $(\sigma, H)$, 
+если $a_{ij_t}\hm= \sigma_t$ при $t\hm=1,2,\ldots , r$. Число~$r$ назовем 
+\textit{длиной} фрагмента $(\sigma, H)$. Фрагмент $(\sigma,H)$ длины~$r$ 
+назовем \textit{правильным} в~$L$, если не менее~$r$~строк в~$L$ содержат 
+$(\sigma,H)$.
+  
+  Набор столбцов матрицы~$L$ с~номерами из~$H$ называется 
+\textit{тупиковым}-\textit{покрытием длины}~$r$, если ни одна строка в~$L$ 
+не содержит фрагмент $(\sigma, H)$ и~для любого $t\hm\in 1,2, \ldots , r$ в~$L$ найдется строка, 
+содержащая фрагмент $(\gamma, H)$, где $\gamma\hm= (\sigma_1, \ldots 
+,\sigma_{t-1}, \overline{\sigma}_t, \sigma_{t+1}, \ldots , \sigma_r)$, 
+$\overline{\sigma}_t\hm\in \{0,1,\ldots , k-1\}$, $\overline{\sigma}_t \not= 
+\sigma_t$.
+  
+  Введем обозначения: $\mathfrak{M}^k_{mn}$~--- множество всех матриц 
+размера $m\times n$ с~элементами из $\{ 0,1,\ldots\linebreak \ldots , k-1\}$, $k\hm\geq 2$; 
+$R(L)$~--- множество правильных фрагментов в~матрице~$L$ 
+из~$\mathfrak{M}^k_{mn}$; $T(L,\sigma)$~--- множество ту\-пи\-ко\-вых-по\-кры\-тий 
+матрицы~$L$ из~$\mathfrak{M}_{mn}^k$; $T(L)\hm= \cup^n_{r=1} 
+\cup_{\sigma\in E_k^r} T(L,\sigma)$; $b_n\sim c_n$, $n\hm\to \infty$, означает, 
+что $\lim_{n\to \infty} b_n/c_n\hm=1$; $b_n\hm\leq_{\!\!\!n}\ c_n$ означает, что 
+$b_n\hm\leq c_n$ при всех достаточно больших~$n$; $\vert N\vert$~--- 
+мощность множества~$N$; $\phi_k(m)$~--- интервал
+$\left( 0{,}5\log_k mn -0{,}5\log_k \log_k mn -\log_k\log_k\log_k n\right.$,\linebreak
+$\left.0{,}5\log_k mn- 0{,}5\log_k \log_k mn+\log_k\log_k\log_k n\right)$.
+  
+  В настоящей работе получены асимптотики типичных значений величины 
+$\vert R(L)\vert$ и~длины фрагмента из~$R(L)$. Выявление типичной ситуации 
+связано с~высказыванием типа <<для почти всех матриц~$L$ 
+из~$\mathfrak{M}^k_{mn}$ при $n\hm\to \infty$ выполнено $F_1(L)\sim 
+F_2(L)$>> (здесь $F_1(L)$ и~$F_2(L)$~--- два функционала, заданные на 
+матрицах из~$\mathfrak{M}^k_{mn}$). Данное высказывание означает, что 
+существуют две положительные бесконечно убывающие функции~$\alpha(n)$ 
+и~$\beta(n)$ такие, что для всех достаточно больших~$n$ имеет место $1\hm- 
+\vert \mathfrak{M}\vert/\vert \mathfrak{M}^k_{mn}\vert \hm\leq \alpha(n)$, 
+где~$\mathfrak{M}$~--- множество таких матриц~$L$ 
+в~$\mathfrak{M}^k_{mn}$, для которых\linebreak $1\hm- \beta(n)\hm< \vert F_1(L)\vert 
+/\vert F_2(L)\vert \hm< 1\hm+ \beta(n)$.
+  
+  Аналогичные результаты для множества $T(L)$ получены  
+в~\cite{5-duk, 6-duk} и~приведены ниже (теорема~1) для полноты изложения.
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Теорема~1} (см.~\cite{5-duk, 6-duk}). \textit{Если $m^a\hm\leq 
+n\hm\leq k^m$, $a\hm> 1$, то для почти всех матриц~$L$ 
+из~$\mathfrak{M}^k_{mn}$ справедливо}
+  $$
+  \vert T(L)\vert \sim \sum\limits_{r\in \phi_k(m)} C_n^r C^r_m r! (k-1)^r k^{r-
+r^2}\,,\ n\to\infty\,,
+  $$
+\textit{и длины почти всех тупиковых покрытий из $T(L)$ принадлежат 
+интервалу}~$\phi_k(m)$.
+
+\smallskip
+  
+  \noindent
+  \textbf{Теорема~2.} \textit{Если $m^a\hm\leq n\hm\leq k^m$, $a\hm>1$, 
+$k\hm\geq 2$, то для почти всех матриц~$L$ из~$\mathfrak{M}^k_{mn}$ 
+справедливо}
+  $$
+  \vert R(L)\vert \sim\sum\limits_{r\in \phi_k(m)} C_n^r C_m^r k^{r-r^2}\,,\enskip 
+n\to \infty\,,
+  $$
+\textit{и длины почти всех фрагментов из~$R(L)$ принадлежат 
+интервалу}~$\phi_k(m)$.
+
+\smallskip
+
+  \noindent
+  Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\ тео\-ре\-мы~2 опирается на ряд приводимых 
+ниже лемм.
+   
+  Обозначим через $V_r^m$ $(r\hm\leq m)$ множество всех упорядоченных 
+наборов вида $(i_1, \ldots , i_r)$, где $i_t\not= i_l$ при $t, l \hm= 1,2,\ldots , r$.
+  
+  Пусть $v\hm\in V_r^m$, $H\hm\in W_r^n$, $\sigma \hm\in E_k^r$. Мат\-ри\-ца 
+$L\hm\in \mathfrak{M}$ называется $(v,\sigma, H)$-мат\-ри\-цей, если каждая 
+строка с~номером~$v$ содержит фрагмент $(\sigma, H)$. Матрица $L\hm\in 
+\mathfrak{M}^k_{mn}$, являющаяся $(v,\sigma, H)$-мат\-ри\-цей, называется 
+правильной, если из условия $v_1\hm\in V_r^m$, $v_1\not= v$, следует, 
+что~$L$ не является $(v_1,\sigma,H)$-мат\-ри\-цей. Обозначим 
+через~$N_{(v,\sigma,H)}$ совокупность $(v,\sigma, H)$-мат\-риц 
+в~$\mathfrak{M}_{mn}^k$, через~$N^*_{(v,\sigma,H)}$~--- совокупность всех 
+правильных $(v,\sigma,H)$-мат\-риц в~$\mathfrak{M}^k_{mn}$.
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Лемма~1.}\  \textit{Если $v\hm\in V_r^m$, $H\hm\in W_r^n$, 
+$\sigma\hm\in E_k^r$, то}
+  $$
+  \left\vert N_{(v,\sigma,H)} \right\vert =k^{mn-r^2}.
+  $$
+  
+  \noindent
+  Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \  Оценим, сколькими способами 
+можно построить матрицу~$L$ из~$N_{(v,\sigma,H)}$. Однозначным образом 
+определяются те элементы мат\-ри\-цы~$L$, которые расположены на 
+пересечении строк с~номерами из~$v$ и~столбцов с~номерами из~$H$. 
+Остальные элементы этой матрицы могут быть выбраны произвольным 
+образом. Таким образом, элементы матрицы~$L$, расположенные в~столбцах 
+с~номерами, не входящими в~$H$, могут быть выбраны $k^{m(n-r)}$ 
+способами, а~строки подматрицы матрицы~$L$, образованной столбцами 
+из~$H$, можно выбрать $k^{r(m-r)}$ способами. Отсюда получаем требуемую 
+оценку. Лемма доказана.
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Лемма~2.}\ \textit{Если $v\hm\in V_r^m$, $H\hm\in W_r^n$, $\sigma 
+\hm\in E_k^r$, то}
+  $$
+  \left\vert N^*_{(v,\sigma, H)} \right\vert = \left(1-k^{-r}\right)^{m-r} k^{mn-r^2}.
+  $$
+  
+  \noindent
+  Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ Оценим, сколькими способами 
+можно построить матрицу~$L$ из $N^*_{(v,\sigma,H)}$. Элементы этой 
+мат\-ри\-цы, расположенные в~столбцах с~номерами, не входящими в~$H$, могут 
+быть выбраны произвольным образом ($k^{m(n-r)}$ способов). Отсюда, 
+учитывая, что строки в~под\-мат\-ри\-це мат\-ри\-цы~$L$, образованной столбцами 
+из~$H$, можно выбрать $(k^r\hm-1)^{m-r}$ способами, получаем тре\-бу\-емую 
+оценку. Лемма доказана.
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Лемма~3.}\  \textit{Пусть $v_1\hm\in V_r^m$, $v_2\hm\in 
+V_l^m$, $H_1\hm\in W_r^n$, $H_2\hm\in W_l^n$, $\sigma^\prime \hm\in E_k^r$, 
+$\sigma^{\prime\prime} \hm\in E_k^l$ и~наборы~$v_1$ и~$v_2$ пересекаются по $a$ $(a\hm\geq 
+0)$ элементам, а наборы~$w_1$ и~$w_2$ пересекаются по $b$ $(b\hm\geq 0)$ 
+элементам. Тогда}
+  $$
+  \left\vert N_{(v_1,\sigma^\prime, H_1)} \cap N_{(v_2, \sigma^{\prime\prime}, 
+H_2)} \right\vert \leq k^{mn-r^2-l^2+ab}.
+  $$
+  
+  \noindent
+  Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\ леммы~3 не приводится в~силу ее 
+очевидности.
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Лемма~4.} \textit{Если $m^a\hm\leq n\hm\leq k^m$, $a\hm>1$, 
+$k\hm\geq 2$, то имеет место}
+  $$
+  \sum\limits^m_{r=1} C_n^r C_m^r k^{r-r^2}\sim \sum\limits_{r\in \phi_k(m)} 
+C_n^r C_m^r k^{r-r^2}\,,\ n\to \infty\,.
+  $$
+  
+  
+  \noindent
+  Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\  леммы~4 аналогично 
+доказательству леммы~4 из работы~\cite{6-duk}.
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Лемма~5.}\ \textit{Если $r,l\hm\leq c\log_k n$, $c\hm<1$, то имеет 
+место}
+  $$
+  \sum\limits_{m=0}^{\min(r,l)} k^{lb} C_n^r C_r^b C_{n-r}^{l-b} < C_n^r C_n^l 
+(1+\delta(n)),
+  $$
+\textit{где} $\delta(n)\hm\to 0$ при $n\hm\to \infty$.
+
+\smallskip
+
+  \noindent
+  Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\   леммы~5 аналогично 
+доказательству леммы~5 из работы~\cite{6-duk}.
+  
+  \smallskip
+  
+  Будем считать $\mathfrak{M}^k_{mn}\hm= \{L\}$ пространством 
+элементарных событий, в~котором каждое событие~$L$ происходит 
+с~вероятностью $1/\vert \mathfrak{M}^k_{mn}\vert$. Математическое ожидание случайной величины~$X(L)$, 
+определенной на множестве~$\mathfrak{M}^k_{mn}$, будем обозначать через 
+${\sf M}X(L)$, дисперсию~--- через ${\sf D}X(L)$.
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Лемма~6} (см.~\cite{11-duk}). \textit{Пусть для случайных величин 
+$X_1(L)$ и~$X_2(L)$, определенных на~$\mathfrak{M}^k_{mn}$, выполнено 
+$X_1(L)\hm\geq X_2(L)\hm\geq 0$ и~при $n\hm\to \infty$ верно ${\sf M}X_1(L)\sim 
+{\sf M}X_2(L)$, ${\sf D}X_2(L)/({\sf M}X_2(L))^2\hm\to 0$. Тогда для почти всех матриц~$L$ из 
+$\mathfrak{M}^k_{mn}$ имеет место} $X_1(L)\sim X_2(L)\sim {\sf M}X_2(L)$, 
+$n\hm\to \infty$.
+  
+  \smallskip
+  
+  Пусть $v\in V_r^m$, $H\hm\in W_r^n$, $\sigma\hm\in E_k^r$. На 
+$\mathfrak{M}^k_{mn}\hm= \{L\}$ рассмотрим случайную 
+величину~$\zeta_{(\sigma,H)}(L)$, равную~1, если $(\sigma,H)$~--- правильный 
+фрагмент в~$L$, и~равную~0 в~противном случае. Положим
+  \begin{align*}
+  \zeta_1(L)&= \sum\limits_{r=1}^{\min(m,n)} \sum\limits_{\substack{{v\in V_r^m}\\ {H\in  W_r^n}}}
+\sum\limits_{\sigma\in E_k^r} \zeta_{(\sigma,H)}(L)\,;\\
+  \zeta_2(L) &= \sum\limits_{r\in \phi_k(m)}
+   \sum\limits_{\substack{{v\in V_r^m}\\ {H\in  W_r^n}}} \sum\limits_{\sigma\in E_k^r}\zeta_{(\sigma,H)} (L)\,.
+  \end{align*}
+  %
+  Нетрудно видеть, что $\zeta_1(L)\hm= \vert R(L)\vert$, а~$\zeta_2(L)$~--- 
+число тех фрагментов в~$R(L)$, длины которых принадлежат 
+интервалу~$\phi_k(m)$.
+  
+  Оценим вероятность события $\zeta_{(\sigma,H)}(L)\hm=1$, обозначаемую 
+далее через ${\sf P}(\zeta_{(\sigma,H)}(L)\hm=1)$. Очевидно, в~силу леммы~1
+  \begin{equation}
+  {\sf P}\left( \zeta_{(\sigma,H)}(L)=1\right) \leq \fr{\left\vert 
+N_{(v,\sigma,H)}\right\vert }{\left \vert \mathfrak{M}^k_{mn}\right\vert } =k^{-
+r^2}.
+  \label{e1-duk}
+\end{equation}
+ % 
+  С другой стороны, в~силу леммы~2 имеем
+  $$
+  {\sf P}\left( \zeta_{(\sigma,H)}(L)=1\right) \geq \fr{\left\vert 
+N^*_{(v,\sigma,H)}\right\vert }{\left\vert \mathfrak{M}^k_{mn}\right\vert } \geq (1-k^{-
+r})^{m-r} k^{-r^2}.
+  $$
+  
+  В случае $r\in \phi_k(m)$ получаем 
+\begin{align*}
+  \left(1- k^{-r}\right)^{m-r}&\geq \left(1- k^{-r}\right)^m \geq 1- mk^{-r};
+\\
+mk^{-r} &\leq  \fr{c_1 \log_k^2 n}{n^{c_2}},\enskip c_1,  c_2>0.
+\end{align*}
+ Следовательно,
+ 
+ \noindent
+  \begin{equation}
+  {\sf P}\left( \zeta_{(\sigma,H)}(L)=1\right)\geq F(n) k^{-r^2},
+  \label{e2-duk}
+ \end{equation}
+ 
+ \vspace*{-2pt}
+ 
+ \noindent
+где $F(n)\hm\to 1$ при $n\hm\to \infty$.
+  
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Лемма~7.}\  \textit{Если $m^a\hm\leq n\hm\leq k^m$, $a\hm>1$, 
+$k\hm\geq 2$, то}
+  $$
+  {\sf M}\zeta_1(L)\sim {\sf M}\zeta_2(L)\sim\sum\limits_{r\in \phi_k(m)} C_n^r C_m^r k^{r-
+r^2},\ n\to \infty\,.
+  $$
+  
+  \noindent
+  Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ Имеем
+  \begin{align*}
+  {\sf M}\zeta_1(L) &= \sum\limits^m_{r=1} \sum\limits_{\substack{{v\in V_r^m}\\ {H\in W_r^n}}} 
+\sum\limits_{\sigma\in E_k^r} {\sf P}\left( \zeta_{(\sigma,H)}(L)=1\right);\\
+  {\sf M}\zeta_2(L)&= \sum\limits_{r\in \phi_k(m)}
+  \sum\limits_{\substack{{v\in V_r^m}\\ {H\in  W_r^n}}} \sum\limits_{\sigma\in E_k^r} {\sf P}\left( \zeta_{(\sigma,H)}(L)=1\right).
+  \end{align*}
+%  
+
+ \vspace*{-2pt}
+ 
+ \noindent
+  Следовательно, в~силу~(\ref{e1-duk})
+  \begin{equation}
+  {\sf M}\zeta_2(L)\leq {\sf M}\zeta_1(L)\leq \sum\limits^m_{r=1} C_n^r C_m^r k^{r-r^2}.
+  \label{e3-duk}
+  \end{equation}
+  %
+  
+   \vspace*{-2pt}
+ 
+ \noindent
+  В силу~(\ref{e2-duk})
+  \begin{equation}
+  {\sf M}\zeta_1(L)\geq {\sf M}\zeta_2(L)\geq F(n) \sum\limits_{r\in \phi_k(m)} C_n^r C_m^r 
+k^{r-r^2},
+  \label{e4-duk}
+  \end{equation}
+  
+   \vspace*{-2pt}
+ 
+ \noindent
+где $F(n)\to 1$ при $n\hm\to \infty$.
+
+  Из~(3), (4) и~леммы~4 сразу следует утверждение доказываемой леммы.
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Лемма~8.}\ \textit{Имеет место}
+  $$
+  \fr{{\sf D}\zeta_2(L)}{({\sf M}\zeta_2(L))^2} \to 0\,,\enskip n\to \infty\,.
+  $$
+  
+  \noindent
+  Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ Имеем
+\begin{equation}
+{\sf D}\zeta_2(L) ={\sf M}\left( \zeta_2(L)\right)^2 -\left( {\sf M}\zeta_2(L)\right)^2.
+\label{e5-duk}
+\end{equation}
+  %
+  
+   \vspace*{-2pt}
+ 
+ \noindent
+  Нетрудно видеть, что
+$$
+{\sf M}\left(\zeta_2(L)\right)^2 \leq \sum\limits_{r,l\in \phi_k(m)} 
+\sum\limits_{\substack{{v_1\in V_r^m, v_2\in V_l^m}\\ {H_1\in W_r^n, H_2\in W_l^n}}} 
+\sum\limits_{\substack{{\sigma^\prime \in E_k^r}\\
+{\sigma^{\prime\prime}\in E_k^l}}} \fr{\vert N\vert}{k^{mn}},
+$$
+
+ \vspace*{-2pt}
+ 
+ \noindent
+где $N=N_{(v_1,\sigma^\prime, H_1)}\cap N_{(v_2, \sigma^{\prime\prime}, 
+H_2)}$. Отсюда, пользуясь леммами~3 и~5, получаем
+
+\noindent
+\begin{multline}
+{\sf M}\left( \zeta_2(L)\right)^2 \leq{}\\
+{}\leq\!\! \!\sum\limits_{r,l\in \phi_k(m)} 
+\sum\limits_{b=0}^{\min(r,l)} k^{r+l} k^{-r^2-l^2+lb} C_n^r C_r^b C_{n-r}^{l-b} 
+C_m^r C_m^l\leq{}\\
+{}\leq \sum\limits_{r,l\in \phi_k(m)} C_n^r C_n^l C_m^r C_m^l k^{r+l} k^{-r^2-
+l^2} (1+\delta(n)),
+\label{e6-duk}
+\end{multline}
+где $\delta(n)\to 0$ при $n\hm\to \infty$.
+  
+  С другой стороны, в~силу леммы~7
+  \begin{multline}
+  \left( {\sf M}\zeta_2(L)\right)^2 \sim \sum\limits_{r,l\in\phi_k(m)} C_n^r C_n^l C_m^r 
+C_m^l k^{r+l} k^{-r^2-l^2}\,,\\ n\to \infty.
+  \label{e7-duk}
+  \end{multline}
+  
+  Из~(\ref{e5-duk})--(\ref{e7-duk}) следует утверждение доказываемой леммы.
+  
+  \smallskip
+  
+  Утверждение теоремы~2 следует непосредственно из лемм~6--8.
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Замечание.} В~задаче классификации по прецедентам рассмотрим 
+класс~$K$ и~представим множества прецедентов $Q(K)$ и~$Q(\overline{K})$ 
+в~виде матриц, имеющих размеры $m_1\times n$ и~$m_2\times n$ соответственно. 
+Тогда, заменяя~$m$ на~$m_1$, в~качестве следствия из теоремы~2 получим 
+асимптотики типичных значений чис\-ла и~длины правильных ЭФ в~$Q(K)$ 
+и,~заменяя~$m$ на~$m_2$, в~качестве следствия из тео\-ре\-мы~1 получим 
+аналогичные характеристики для $(0,Q(\overline{K}))$-не\-час\-тых ЭФ. 
+Сравнение этих оценок свидетельствует об эффективности в~плане 
+вычислительных затрат методов поиска частых ЭФ для построения 
+представительных элементарных классификаторов в~алгоритмах типа 
+<<Кора>> в~случае, когда~$m_2$ не меньше~$m_1$. Полученные оценки 
+согласуются с~приведенными в~\cite{12-duk} результатами 
+экспериментальных исследований.
+  
+\section{Заключение}
+
+  Для множества объектов, описываемых в~виде наборов значений атрибутов 
+(измеряемых или наблюдаемых характеристик объектов), исследованы 
+метрические (количественные) свойства часто и~нечасто встречающихся частей 
+описаний объектов (ЭФ). Рассмотрены специальные 
+виды час\-тых и~не\-час\-тых ЭФ и~приведены асимптотики 
+типичных значений их чис\-ла и~длины. Подобные оценки ранее были известны 
+исключительно для множества решений дискретной перечислительной задачи, 
+называемой монотонной дуализацией, а~так\-же некоторых обобщений этой 
+задачи. Име\-ют\-ся в~виду задачи построения тупиковых покрытий булевых 
+и~целочисленных матриц. Полученные результаты свидетельствуют 
+о~це\-ле\-со\-об\-раз\-ности (в~плане сокращения временн$\acute{\mbox{ы}}$х затрат) применения 
+методов поиска час\-тых ЭФ при по\-стро\-ении логических 
+процедур классификации по прецедентам, ба\-зи\-ру\-ющих\-ся на решении задачи 
+монотонной дуализации.
+  
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+  \bibitem{1-duk}
+  \Au{Aggarwal C.} Frequent pattern mining.~--- Heidelberg:  Springer, 2014. 467~p.
+  \bibitem{2-duk}
+  \Au{Вайнцвайг М.\,Н.} Алгоритм обучения распознаванию образов <<Кора>>~// 
+Алгоритмы обучения распознаванию образов~/ Под ред. В.\,Н.~Вапника.~--- М.: Советское 
+радио, 1973. С.~110--116.
+  \bibitem{3-duk}
+  \Au{Журавлёв Ю.\,И.} Об алгебраическом подходе к~решению задач распознавания 
+и~классификации~// Проб\-ле\-мы кибернетики, 1978. Вып.~33. С.~5--68.
+  \bibitem{4-duk}
+  \Au{Баскакова Л.\,В., Журавлёв~Ю.\,И.} Модель распознающих алгоритмов 
+с~представительными наборами и~сис\-те\-ма\-ми опорных множеств~// Ж.~вычисл. матем. 
+матем. физ., 1981. Т.~21. №\,5. С.~1264--1275.
+  \bibitem{5-duk}
+  \Au{Дюкова Е.\,В.} Алгоритмы распознавания типа <<Кора>>: сложность реализации 
+  и~метрические свойства~// Распознавание, классификация, прогноз.~--- М.: Наука, 1989. Вып.~2. С.~99--125.
+  \bibitem{6-duk}
+  \Au{Дюкова Е.\,В., Журавлев~Ю.\,И.} Дискретный анализ признаковых описаний 
+в~задачах распознавания большой раз\-мер\-ности~// Ж.~вычисл. матем. матем. физ., 2000. 
+Т.~40. №\,8. С.~1264--1278.
+  \bibitem{7-duk}
+  \Au{Дюкова Е.\,В., Песков Н.\,В.} Поиск информативных фрагментов описаний объектов 
+в~дискретных процедурах распознавания~// Ж.~вычисл. матем. матем. физ., 2002. Т.~42. 
+№\,5. С.~741--753.
+  \bibitem{8-duk}
+  \Au{Fredman M.\,L., Khachiyan~L.} On the complexity of dualization of monotone disjunctive 
+normal forms~// J.~Algorithm., 1996. Vol.~21. No.\,3. P.~618--628.
+  \bibitem{9-duk}
+  \Au{Дюкова Е.\,В., Прокофьев~П.\,А.} Об асимптотически оптимальных алгоритмах 
+дуализации~// Ж.~вычисл. матем. матем. физ., 2015. Т.~55. №\,5. С.~895--910.
+  \bibitem{10-duk}
+  \Au{Алексеев В.\,Б.} О~расшифровке некоторых классов монотонных многозначных 
+функций~// Ж.~вычисл. матем. матем. физ., 1976. Т.~16. №\,1. С.~189--198.
+  \bibitem{11-duk}
+  \Au{Носков В.\,Н., Слепян~В.\,А.} О~чис\-ле тупиковых тестов для одного класса  
+таб\-лиц~// Кибернетика, 1972. №\,1. С.~60--65.
+  \bibitem{12-duk}
+  \Au{Dragunov N., Djukova~E., Djukova~A.} Supervised classification and finding frequent 
+elements in data~// 8th Conference (International) on Information Technology and 
+Nanotechnology Proceedings.~--- Piscataway, NJ, USA: IEEE, 2022. Art. 9848521. 5~p. doi: 
+10.1109/ \mbox{ITNT55410}.2022.9848521.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Поступила в~редакцию 30.09.22}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{ON THE COMPLEXITY OF~LOGICAL CLASSIFICATION LEARNING 
+PROCEDURES}
+
+
+\def\titkol{On the complexity of~logical classification learning 
+procedures}
+
+
+\def\aut{E.\,V.~Djukova and~A.\,P.~Djukova}
+
+\def\autkol{E.\,V.~Djukova and~A.\,P.~Djukova}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-8pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+  
+
+
+\Abste{The issues of integer data logical analysis complexity are investigated. For 
+special tasks of searching in data for frequent and infrequent elements, on the 
+solution of which logical supervised classification procedures are based, asymptotics 
+of a typical number of solutions are given. The technical foundations for obtaining 
+these estimates are based on methods for obtaining similar estimates for intractable 
+discrete problem of constructing (enumerating) irredundant coverings of integer 
+matrix formulated in the paper as the problem of finding ``minimal'' infrequent 
+elements. The new results mainly concern the study of metric (quantitative) 
+properties of frequent elements. The obtained estimates for the typical number of 
+frequently occurring fragments in precedent descriptions allow one to conclude that the 
+use of algorithms for finding such fragments at the stage of training logical classifiers 
+of the ``Kora'' type is promising.}
+
+\KWE{attribute; frequent elementary fragment; infrequent elementary fragment; 
+monotone dualization; irredundant covering of integer matrix; supervised 
+classification; classifier of ``Kora'' type}
+
+\DOI{10.14357/19922264220409} 
+
+\vspace*{-16pt}
+
+% \Ack
+ %   \noindent
+  
+
+\vspace*{12pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+  \bibitem{1-duk-1}
+\Aue{Aggarwal, C.} 2014. \textit{Frequent pattern mining}. Heidelberg: Springer. 
+467~p.
+  \bibitem{2-duk-1}
+\Aue{Weinzweig, M.\,N.} 1973. Algoritm obucheniya ras\-po\-zna\-va\-niyu obrazov 
+``Kora''  [Algorithm for learning \mbox{pattern} recognition ``Kora'']. \textit{Algoritmy obucheniya raspoznavaniyu obrazov}
+[Algorithms 
+for learning pattern recognition]. Ed. V.\,N.~Vapnik. Moscow: Sovetskoe radio. 110--116.
+  \bibitem{3-duk-1}
+\Aue{Zhuravlev, Yu.\,I.} 1978. Ob algebraicheskom podkhode k~resheniyu zadach 
+raspoznavaniya i klassifikatsii [On the algebraic approach to solving recognition and 
+classification tasks]. \textit{Problemy kibernetiki} [Problems of Cybernetics]  
+33:5--68.
+  \bibitem{4-duk-1}
+\Aue{Baskakova, L., and Yu.~Zhuravlev.} 1981. A~model of recognition algorithms 
+with representative samples and systems of supporting sets. \textit{USSR Comp. Math. 
+Math.} 21(5):189--199.
+  \bibitem{5-duk-1}
+\Aue{Djukova, E.\,V.} 1989. Algoritmy raspoznavaniya tipa ``Kora'': slozhnost' 
+realizatsii i~metricheskie svoystva [Kora-type recognition algorithms: 
+Implementation complexity and metric properties]. \textit{Raspoznavanie, 
+klassifikatsiya, prognoz} [Recognition, 
+classification, and prediction] . Moscow: Nauka. 
+2:99--125.
+  \bibitem{6-duk-1}
+\Aue{Djukova, E., and Y.~Zhuravlev.} 2000. Discrete analysis of feature descriptions 
+in recognition problems of high dimensionality. \textit{Comp. Math. Math. Phys.} 
+40(8):1214--1227.
+  \bibitem{7-duk-1}
+\Aue{Djukova, E., and N.~Peskov.} 2002. Search for informative fragments of object 
+descriptions in discrete recognition procedures. \textit{Comp. Math. Math. Phys.} 
+42(5):711--723.
+  \bibitem{8duk-1}
+\Aue{Fredman, M., and L.~Khachiyan.} 1996. On the complexity of dualization of 
+monotone disjunctive normal forms. \textit{J.~Algorithm.} 21(3):618--628.
+  \bibitem{9-duk-1}
+\Aue{Djukova, E., and P.~Prokofyev.} 2015. Asymptotically optimal dualization 
+algorithms. \textit{Comp. Math. Math. Phys.} 55(5):891--905. 
+  \bibitem{10-duk-1}
+\Aue{Alekseev, V.\,B.} 1976. Deciphering of some classes of monotonic 
+ many-valued functions. \textit{Comp. Math. Math. Phys.} 16(1):180--189.
+  \bibitem{11-duk-1}
+\Aue{Noskov, V.\,N., and V.\,A.~Slepyan.} 1972. Number of dead-end tests for a~certain class of tables. 
+\textit{Cybern. Syst. Anal.} 8(1):64--71.
+  \bibitem{12-duk-1}
+\Aue{Dragunov, N., E.~Djukova, and A.~Djukova.} 2022. Supervised classification 
+and finding frequent elements in data. \textit{8th Conference (International) on 
+Information Technology and Nanotechnology Proceedings}. Piscataway, NJ: IEEE. 9848521. 5~p. doi: 10.1109/\mbox{ITNT55410}. 2022.9848521.9848521. 
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-7pt}
+
+\hfill{\small\textit{Received September 30, 2022}}
+
+\vspace*{-16pt}
+
+\Contr
+
+\vspace*{-5pt}
+
+\noindent
+\textbf{Djukova Elena V.} (b.\ 1945)~--- Doctor of Science in physics and 
+mathematics, principal scientist, Federal Research Center ``Computer Science and 
+Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, 
+Russian Federation; associate professor, Faculty of Computational Mathematics and 
+Cybernetics, M.\,V.~Lomonosov Moscow State University, 1-52~Leninskie Gory, 
+GSP-1, Moscow 119991, Russian Federation; \mbox{edjukova@mail.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Djukova Anastasia P.} (b.\ 1995)~--- PhD student, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov 
+Str., Moscow 119333, Russian Federation; \mbox{anastasia.d.95@gmail.com}
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}    

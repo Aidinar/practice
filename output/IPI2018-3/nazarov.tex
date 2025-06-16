@@ -1,0 +1,879 @@
+\def \SS{{\frak S}}
+\def \SK{{\frak K}}
+\def \SL{{\frak L}}
+\def\bs{\backslash}
+
+
+\def\stat{nazarova}
+
+\def\tit{АНАЛИЗ РАЗРЕЗНЫХ ПОВРЕЖДЕНИЙ В~МНОГОПОЛЮСНЫХ СЕТЯХ}
+
+\def\titkol{Анализ разрезных повреждений в~многополюсных сетях}
+
+\def\aut{Ю.\,Е.~Малашенко$^1$, И.\,А.~Назарова$^2$, Н.\,М.~Новикова$^3$}
+
+\def\autkol{Ю.\,Е.~Малашенко, И.\,А.~Назарова, Н.\,М.~Новикова}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Малашенко Ю.\,Е.}
+\index{Назарова И.\,А.}
+\index{Новикова Н.\,М.}
+\index{Malashenko Yu.\,E.}
+\index{Nazarova I.\,A.}
+\index{Novikova N.\,M.}
+
+
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнена при частичной поддержке РФФИ (проект 16-07-00677).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Вычислительный центр им.\ А.\,А.~Дородницына Федерального исследовательского 
+центра <<Информатика и~управление>> Российской академии наук, \mbox{malash09@ccas.ru}}
+\footnotetext[2]{Вычислительный центр им.\ А.\,А.~Дородницына Федерального исследовательского центра 
+<<Информатика и~управление>> Российской академии наук, \mbox{irina-nazar@yandex.ru}}
+\footnotetext[3]{Вычислительный центр им.\ А.\,А.~Дородницына Федерального исследовательского центра 
+<<Информатика и~управление>> Российской академии наук, \mbox{n\_novikova@umail.ru}}
+
+
+\vspace*{-10pt}
+
+
+
+\Abst{Предложен метод оценки изменения функциональных возможностей многополюсной 
+потоковой сетевой системы после повреждающего  воздействия. Для каждой 
+стоковой дуги вычисляется максимальный поток, не зависящий от величины 
+потока по остальным стоковым дугам. Разрезным структурным по\-вреж\-де\-ни\-ем 
+считается удаление из сети всех дуг, образующих минимальный разрез, 
+соответствующий максимальному потоку по некоторой стоковой дуге. Среди 
+найденных структурных по\-вреж\-де\-ний по введенному критерию выбираются критически опасные.
+ Для каждой дуги, принадлежащей хотя бы одному разрезному структурному по\-вреж\-де\-нию, 
+ проводится количественная оценка последствий ее разрушения. Описанный подход 
+ предлагается использовать при исследовании уязвимости территориально распределенных 
+ многопользовательских систем передачи одного вида продукта, имеющих сетевую 
+ структуру связей.}
+
+\KW{однопродуктовая потоковая сеть; структурная  уязвимость  сети; 
+многополюсная потоковая модель}
+
+\DOI{10.14357/19922264180305}
+  
+%\vspace*{4pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+\section{Введение}
+
+В~\cite{MalInf17} на примере многополюсной однопродуктовой модели изучались
+ возможности передачи пользователям запрашиваемых величин потоков при полном 
+ разрушении отдельных элементов исходной сетевой системы. Последовательно 
+ определялись гарантированные оценки величин потоков, которые можно передать в~сети 
+ после аварии. В~\cite{MalInf181} был описан  метод  вычисления  векторов ущерба 
+ для пользователей сети при различных по\-вреж\-да\-ющих воздействиях. 
+ Предлагалось одновременно анализировать уязвимость и~живучесть  сети, а~также 
+ вычислять величины потоков, которые можно гарантированно доставить всем пользователям.
+
+В~настоящей работе в~рамках того же формализма однопродуктового потока и~многосто\-ковой 
+модели рассматриваются предельные функ\-циональные возможности сети и~их изменение\linebreak 
+после \mbox{аварий}. Для оценки функциональных характеристик сис\-те\-мы  для каждой 
+стоковой дуги вычисляется максимальный поток, не зависящий от величины потока 
+по остальным стоковым дугам, и~определяется соответствующий ему минимальный 
+разрез~\cite{ford}. Для сети вводится понятие критически опасного по\-вреж\-де\-ния 
+как по\-вреж\-де\-ния, в~результате которого передача потока из источника хотя бы в~одну 
+стоковую вершину оказывается невозможной. Разрезным структурным по\-вреж\-де\-ни\-ем 
+считается удаление из сети всех дуг, соответствующих минимальному разрезу для 
+некоторой стоковой вершины. Для каждой стоковой вершины выбирается свой 
+минимальный разрез. После моделирования такого по\-вреж\-де\-ния сети определяются 
+значения максимального потока по всем стоковым дугам и~подсчитывается 
+число нулевых значений. На основании проведенных расчетов выявляются 
+стоковые вершины, передача потоков для которых чаще других оказывается в~зоне 
+критически опасных по\-вреж\-де\-ний, вычисляются показатели, позволяющие оценить 
+уязвимость системы в~случае разрезных по\-вреж\-де\-ний, строится таб\-ли\-ца сравнительного 
+<<вклада>> в~уязвимость сети каждой из ее дуг, относящихся к~множеству обра\-зу\-ющих 
+критические разрезы.
+
+\vspace*{-4pt}
+
+\section{Многополюсная потоковая модель}
+
+\vspace*{-2pt}
+
+Сеть передачи единственного вида продукта в~многополюсной 
+системе будем описывать ориентированным графом $\overline {\mathcal{G}} \hm= 
+\langle \overline{\mathcal{V}}, \overline{\mathcal{L}} \rangle$ без петель, 
+который определяется множеством вершин (узлов) $\overline{\mathcal{V}}
+\hm = \{v_1,v_2,\ldots,v_ N\}$, где $|\overline{\mathcal{V}}| \hm= N$, 
+$\mathcal{N}$~--- множество индексов вершин,
+и~множеством направленных дуг
+$\overline {\mathcal{L}}\hm =\{l_{ij} \ | \ i \in \mathcal{N}, \ j \in \mathcal{N}, 
+i \not= j \}$,
+соединяющих вершины. Здесь
+$l_{ij} \hm= (v_i, v_j)$ ~---  дуга, ведущая из вершины~$v_i$ в~вершину~$v_j$, 
+$|\overline{\mathcal{L}}| \hm= L$.
+
+Обозначим через $\mathcal{V}_\SS$ и~$\mathcal{V}_\SK$  множества вершин 
+графа $\overline{\mathcal{G}}$, являющихся соответственно источниками и~стоками 
+для потока, который передается по многополюсной сети;
+$\mathcal{N}_\SS$ и~$\mathcal{N}_\SK$~---  множества индексов вер\-шин-источ\-ни\-ков 
+и~вер\-шин-сто\-ков:
+$\mathcal{V}_\SS \hm= \{v_i | \ i \in \mathcal{N}_\SS \}$,   
+$|\mathcal{V}_\SS| \hm= S$,  
+$\mathcal{{V}}_\SS \hm\subset \mathcal{\overline{V}}$, 
+$\mathcal{N}_\SS \hm\subset \mathcal{N}$,  $S \hm\geq 1,$
+$\mathcal{V}_\SK \hm= \{v_i | \ i \in \mathcal{N}_\SK\}$,   
+$|\mathcal{V}_\SK | \hm= K$, $\mathcal{V}_\SK \hm\subset \mathcal{\overline{V}}$,  
+$\mathcal{N}_\SK \hm\subset \mathcal{N}$, $K \hm\geq 1, $
+$\mathcal{V}_\SS \bigcap \mathcal{V}_\SK \hm= \emptyset. $
+
+Считается, что на дугах графа $\overline{\mathcal{G}}$ заданы веса~--- 
+значения~$d_{ij}$ пропускной спо\-соб\-ности дуг~$l_{ij}$. 
+Вектор~$d$ определяет максимально до\-пус\-ти\-мую величину потока  по дугам,
+$d \hm= \{d_{ij} \ |\  d_{ij}\hm \geq 0$, $l_{ij}\hm\in \overline{\mathcal{L}}\}$.
+К~графу~$\overline{\mathcal{G}}$ добавим:
+\begin{description}
+\item[\,]
+$v_0$~---  единственный источник потока бесконечной мощности  и~дуги 
+$(v_0, v_j)$,   $j \hm\in \mathcal{N}_\SS$, соединяющие~$v_0$ с~каждым 
+уз\-лом-источ\-ни\-ком. Для каждой дуги~$l_{0j}$ формально определим 
+верхнее ограничение~$d_{0j}$, которое соответствует величине максимального 
+потока из уз\-ла-источ\-ни\-ка~$v_j$ в~сис\-те\-му. Будем считать, что  
+дуги $(v_0, v_j)$, $j \hm\in \mathcal{N}_\SS$, являются ду\-га\-ми-источ\-ни\-ка\-ми, 
+и~обозначим их множество через
+$ \hat{\mathcal{L}}\hm=\{l_{0 j} \ | \  j \hm\in \mathcal{N}_\SS \}$, 
+$| \hat{\mathcal{L}}| \hm=  S; $
+\item[\,]
+$v_{N+1}$~---  единственный узел-сток бесконечного объема и~дуги 
+$(v_i, v_{N+1})$,  $i \hm\in \mathcal{N}_\SK$, соединяющие каждый 
+узел-сток с~$v_{N+1}$. Назовем направленные дуги $(v_i, v_{N+1})$, 
+$i \in \mathcal{N}_\SK$,  ду\-га\-ми-сто\-ка\-ми, или стоковыми дугами, и~обозначим 
+их множество через
+$\tilde{\mathcal{L}}\hm=\{ l_{iN + 1}  |  i  \in \mathcal{N}_\SK\}$, 
+$|\tilde{\mathcal{L}}| \hm=  K.$
+Для каждой дуги~$l_{iN+1}$ формально определим верхнее ограничение~$d_{iN+1}$, 
+которое соответствует величине максимального потока из системы в~$v_i$. 
+Значение~$d_{iN+1}$ задает верхний предел для величины потока,  
+покидающего систему через узел~$v_i$.
+Ориентированный граф, который определяется множествами вершин $\mathcal{V}\hm = 
+\overline{\mathcal{V}} \bigcup \{v_0, v_{N+1}\}$ и~дуг 
+$\mathcal{L} \hm= \tilde{\mathcal{L}} \bigcup \overline{\mathcal{L}} 
+\bigcup \hat{\mathcal{L}}$, обозначим $\mathcal{G} \hm= \langle {\mathcal{V}}, 
+{\mathcal{L}} \rangle $.
+\end{description}
+
+Для графа $\mathcal{G}$ введем:
+$x_{ij}$~--- поток по дуге~$l_{ij}$, $l_{ij}\hm\in {\mathcal{L}}$, 
+протекающий в~соответствии с~ее направлением;
+$\mathcal{N}^{-}_j$~--- множество индексов узлов, из которых исходят дуги, ведущие 
+в~$j$-й узел, $\mathcal{N}^{-}_j \hm\subset \mathcal{N} \bigcup \{0\} $;
+$\mathcal{N}^{+}_j$~--- множество индексов узлов, в~которые ведут дуги,
+ исходящие из $j$-го узла, $\mathcal{N}^{+}_j \hm\subset \mathcal{N} \bigcup \{N+1\}$.
+Вектор потоков
+$x\hm= \langle x_{0j},\ldots, x_{ij},\ldots, x_{i(N+1)}\rangle$ по дугам 
+$l_{ij}\hm\in {\mathcal{L}}$, где
+
+\noindent
+\begin{multline}
+i \in \mathcal{N} \bigcup \{0\}, \ 
+j \in \mathcal{N} \bigcup \{N+1\}, \ 
+i \neq j, \ \  
+l_{ij} \in {\mathcal{L}},\\
+  \mbox{ и~если} \ 
+i  = 0, \ \mbox{то} \ j \not = N+1\,,
+\label{e1-naz}
+\end{multline}
+должен удовлетворять
+условию сохранения потока в~транзитных узлах
+\begin{equation}
+\sum\limits_{i \in \mathcal{N}^{-}_j}^{}{x_{ij}}= 
+\sum\limits_{i \in \mathcal{N}^{+}_j}^{}{x_{ji}},  \enskip
+ j \in \mathcal{N}\,,
+ \label{e2-naz}
+ \end{equation}
+и ограничению на пропускную способность соответствующих дуг
+\begin{equation}
+0 \le x_{ij} \le d_{ij}, \ 
+l_{ij}\in {\mathcal{L}}, \ \mbox{для $i, j$ выполняется~(1)}.
+\label{e3-naz}
+\end{equation}
+Множество допустимых потоков в~сети
+$ \mathcal{X} \hm= \{x \ | \mbox{ выполняются~(1)--(3)}  \}$.
+
+
+При анализе функциональных возможностей системы будем 
+рассматривать потоки по стоковым дугам.
+Перенумеруем стоковые дуги по некоторому правилу натуральными числами от~1 до~$K$, 
+т.\,е. установим взаимно однозначное  соответствие $  l_{k} \hm= l _{j (N+1)}$, 
+$k \hm= \overline{1, K}$, $j \hm\in \mathcal{N}_\SK$.
+Пусть $\overline {x}_{k}$~--- величина потока по стоковой дуге~$l_{k}$,
+$\overline {x}_{k} \hm= x _{j (N+1)}$, $x _{j (N+1)}\hm\geq 0$, 
+$k \hm= \overline{1, K}$, $j \hm\in \mathcal{N}_\SK. $
+Таким образом, вектор
+$ \overline {x} \hm= \langle \overline {x}_{1}, \ldots, 
+\overline {x}_{k}, \ldots, \overline {x}_{K}\rangle$, $k \hm= \overline{1, K},$
+покомпонентно определяет величины потока, которые передаются по каждой 
+стоковой дуге сети  в~соответствии с~некоторым допустимым потоком 
+$x \hm\in \mathcal{X}$.
+Обозначим через~$\overline{\mathcal{X}}$ множество всех допустимых 
+векторов~$\overline{x}$:
+\begin{multline}
+\overline{\mathcal{X}} = \{ \overline {x} \ | \ \overline{x}_{k} = 
+x _{j (N+1)}, \\
+ k = \overline{1, K}, \ j \in \mathcal{N}_\SK, \ 
+\ x \in \mathcal{X} \}.  \label{e4-naz}
+\end{multline}
+
+\vspace*{-4pt}
+
+\section{Предельные функциональные характеристики}
+
+\vspace*{-2pt}
+
+Рассмотрим множество $\overline{\mathcal{X}}$ век\-то\-ров-по\-то\-ков 
+по стоковым дугам~(\ref{e4-naz}).
+Каждый допустимый вектор $\overline {x} \hm\in \overline{\mathcal{X}}$
+ характеризует возможности системы  по передаче потоков, 
+ покидающих сеть по всем стоковым дугам одновременно.
+Множество~$\overline{\mathcal{X}}$ является выпуклым и~многогранным. 
+Точки, лежащие на границе множества~$\overline{\mathcal{X}}$, будем называть 
+предельными функциональными характеристиками системы (ПФ-ха\-рак\-те\-ри\-сти\-ками).
+
+\smallskip
+
+\noindent
+\textbf{Определение~1.}\ 
+Монопольным режимом  передачи потока из фиктивного уз\-ла-источ\-ни\-ка~$v_0$ 
+в~фиктивный сток~$v_{N+1}$ по  стоковой дуге~$l_{a}$ будем называть такой 
+режим функционирования системы, при котором потоки по всем остальным 
+стоковым дугам полагаются равными нулю.
+
+\smallskip
+
+Для анализа множества~$\overline{\mathcal{X}}$ рассмотрим некоторую фиксированную 
+стоковую дугу~$l_{a}$, по которой поток~$\overline {x}_a$ из вершины 
+$v_a \hm\in \mathcal{V}_{\SK}$ покидает систему. Вычислим максимальную 
+величину потока~$\overline {x}_a$ при работе системы в~монопольном режиме, т.\,е.\
+ решим следующую задачу о~максимальном потоке.
+ 
+ \smallskip
+
+\noindent
+\textbf{Задача~1.}\ Для выделенной стоковой вершины $v_a \hm\in \mathcal{V}_{\SK}$ 
+найти
+$$
+ \overline {x}_a^* = \max\limits_{\overline {x} \in \overline{\mathcal{X}}} \overline {x}_a 
+ $$
+при дополнительном условии 
+$\overline {x}_{i} \hm= 0$ {для всех} $i \not= a$,  $i \hm\in \mathcal{N}_{\SK}$.
+
+\smallskip
+
+Оптимальное решение задачи~1~--- максимально допустимый поток~$\overline {x}_a^*$ 
+по дуге~$l_a$ из стоковой вершины 
+$v_a \hm\in \mathcal{V}_{\SK}$ при передаче в~монопольном режиме  в~вершину~$v_{N+1}$.
+Значение~$\overline {x}_a^*$ для стоковой вершины~$v_a$ будем называть максимальным 
+потоком, передаваемым в~монопольном режиме, или МРМ-по\-то\-ком.
+Вектор $\left\langle 0, 0, \ldots, \overline {x}_a^*, 0, 0, \ldots, 0\right\rangle $ 
+является угловой точкой множества~$\overline{\mathcal{X}}$ и~лежит на соответствующей 
+координатной оси. Величина МРМ-по\-то\-ка~$\overline {x}_a^*$ определяет 
+значение $a$-й ПФ-ха\-рак\-те\-ри\-сти\-ки сети.
+
+Последовательно решим задачу~1 и~вычислим МРМ-потоки  для каждой стоковой дуги~$l_k$,  
+$k \hm = \overline{1, K}$.
+С~по\-мощью полученных решений сформируем вектор МРМ-по\-то\-ков по стоковым дугам
+${\overline{{x}}^*} \hm= \langle \overline {x}_{1}^*,\ldots, \overline {x}_{k}^*, 
+\ldots, \overline {x}_{K}^* \rangle$,
+значение  $k$-й компоненты которого равно величине потока по стоковой дуге~$l_k$ 
+в~фиктивный узел-сток~$v_{N+1}$ при монопольном режиме, т.\,е.\
+ без учета потоков по другим стоковым дугам. Для вычисления предельных 
+ значений потоков при одновременной передаче их в~сети решим сле\-ду\-ющую задачу.
+ 
+ \smallskip
+ 
+ \noindent
+ \textbf{Задача~2.}\ Найти
+$$
+\alpha^{*} = \max_{\alpha, \  \overline{{x}} \in \overline{\mathcal{X} }}\alpha
+$$
+при условиях 
+$ \alpha \overline {x}_k^{*} \hm\le  \overline {x}_k$, 
+$k \hm= \overline {1, K}$, $\alpha \hm\geq 0.$ 
+
+Вектор потоков, отвечающий оптимальному решению  $\alpha^{*}\hm>0$ задачи~2, обозначим 
+через~${f}^*$,
+${f}^* \hm= \alpha^* \overline {x}^* \hm=  \langle \alpha^*\overline {x}_{1}^*,\ldots, 
+\alpha^*\overline {x}_{j}^*,\ldots, \alpha^*\overline {x}_{K}^* \rangle.$
+
+Точка с~координатами $(\alpha^*\overline {x}_{1}^*,\ldots, 
+\alpha^*\overline {x}_{j}^*,\ldots$\linebreak $\ldots,  
+\alpha^*\overline {x}_{K}^*)$ лежит на слейтеровской~\cite{germ, Pod} грани 
+множества~$\overline{\mathcal{X}}$ по критерию максимизации вектора потоков 
+по всем стоковым дугам.
+В~рамках формализма модели можно утверждать, что вектор~${f}^*$ 
+определяет передачу в~равных долях максимальных потоков~$\overline{x}_{j}^*$, 
+достижимых только при монопольных режимах управления.  Такое равнодолевое 
+распределение обеспечивает допустимый поток при одновременной передаче 
+из фиктивного источника бесконечной мощности~$v_{\SS}$ по всем стоковым дугам 
+в~фиктивный сток бесконечной емкости~$v_{\SK}$.
+Поскольку хотя бы для одной стоковой дуги компонента вектора~${f}^*$ 
+задает ее предельные функциональные возможности при одновременной пе\-редаче 
+потока в~условиях равнодолевого распределения, далее вектор~${f}^*$ 
+будем называть ПФР-ха\-рак\-те\-ри\-сти\-кой многополюсной потоковой сетевой\linebreak 
+сис\-те\-мы (предельной функциональной равнодолевой характеристикой). 
+
+\vspace*{-4pt}
+
+\section{Критически опасные повреждения сети}
+
+\vspace*{-2pt}
+
+Пусть повреждение сети задается подмножеством~$w$ дуг исходной сети, 
+пропускная способность которых становится равной нулю. Предполагается, 
+что по\-вреж\-де\-ны могут быть любые дуги сети, кроме стоковых. Положим $\mathcal{L}' \hm= 
+\overline{\mathcal{L}} \hm\bigcup \hat{\mathcal{L}}$, тогда
+$w \hm\subseteq \mathcal{L}' $.
+Обозначим  через~$d_{ij}(w)$ пропускную способность дуги~$l_{ij}$ по\-вреж\-ден\-ной сети 
+и~положим
+\begin{equation}
+ d_{ij}(w) =
+\begin{cases}
+0 , & \mbox{если }  l_{ij} \in w\,;  \\
+d_{ij}, & \mbox{если }  l_{ij} \in \mathcal{L}  \bs w\,.
+\end{cases}
+\label{e5-naz}
+\end{equation}
+Для допустимого после по\-вреж\-де\-ния сети потока
+${x}(w)$, где распределение потоков по дугам описывается компонентами  вектора
+${x} (w)\hm=\langle x_{0j}(w),\ \ldots$\linebreak $\ldots , x_{ij}(w)$,\ \ldots, $x_{i(N+1)}(w)\rangle, $
+должно выполняться~(\ref{e1-naz}). 
+Для любых допустимых потоков~${x}(w)$ в~по\-вреж\-ден\-ной сети выполняются 
+стандартные ограничения
+\begin{multline}
+ 0 \le x_{ij}(w) \le d_{ij}(w),\\
+   \mbox{ где }
+ d_{ij}(w) \mbox{ определяется~(5)}, \ \ 
+ l_{ij}\in {\mathcal{L}}, 
+ \label{e6-naz}
+ \end{multline}
+и закон сохранения потока в~транзитных узлах
+\begin{equation}
+ \sum\limits_{i \in \mathcal{N}^{-}_j}{x_{ij}(w)}= 
+ \sum\limits_{i \in \mathcal{N}^{+}_j}{x_{ji}(w)},  \enskip
+   j \in \mathcal{N}\,.
+   \label{e7-naz}
+   \end{equation}
+Множество $\mathcal{X}(w)$  допустимых потоков  в~по\-вреж\-ден\-ной сети  
+определяется условиями~(\ref{e1-naz}), (\ref{e6-naz}) и~(\ref{e7-naz}):
+$\mathcal{X}(w) \hm= \{{x}(w) \ | \mbox{ выполняется (1), (6), (7)} \}.$
+
+Пусть $\overline {x}_k(w)$~--- величина потока по $k$-й стоковой дуге после 
+разрушающего воздействия, тогда
+$\overline {x}(w)$~--- вектор величин потоков по всем стоковым дугам,
+$\overline {{x}}(w) \hm= \langle \overline {x}_1(w), \ldots, \overline {x}_k(w),\ldots,  
+\overline {x}_K(w)\rangle.$
+Аналогично~(\ref{e4-naz}) множество
+\begin{multline*}
+ \overline{\mathcal{X}}(w)= \{ \overline {{x}}(w) \ | \ \overline {x}_{k}(w) 
+ = x _{j (N+1)}(w)\,, \\
+  k = \overline{1, K}\,,  \ 
+ j \in \mathcal{N}_\SK\,, \ \ x(w) \in \mathcal{X} (w)\} 
+ \end{multline*}
+описывает достижимые потоки по стоковым дугам после по\-вреж\-дения.
+
+\smallskip
+
+\noindent
+\textbf{Определение~2.}\
+Критически опасным структурным по\-вреж\-де\-ни\-ем (КС-по\-вреж\-де\-ни\-ем)~$w$ 
+будем называть разрушающее воздействие на дуги сети, при котором поток хотя 
+бы к~одной стоковой вершине оказывается равным нулю. Формально в~случае 
+КС-по\-вреж\-де\-ния сети~$w$ у~вектора потоков~$\overline {x}(w)$ 
+всегда найдется компонента, равная нулю, т.\,е.
+$$
+\forall \ \overline {{x}}(w) \in \overline{\mathcal{X}}(w)\ \  \exists\ k:\ \
+ \overline {x}_{k}(w) = 0.
+ $$
+ 
+ \smallskip
+
+Рассмотрим влияние КС-по\-вреж\-де\-ний на ПФ- и~ПФР-ха\-рак\-те\-ри\-сти\-ки многополюсной 
+потоковой сетевой системы.
+Согласно классической тео\-рии\linebreak
+ о~передаче однопродуктового  потока~\cite{ford} 
+максимальному потоку в~сети соответствует минимальный разрез, 
+пропускная способность которого\linebreak
+ равна величине максимального потока. 
+При разрушении дуг, определяющих минимальный разрез, передача потока в~сети 
+становится невозможной. Таким образом,  по определению~2, все разрезы, 
+соответствующие МРМ-по\-то\-кам, образуются КС-по\-вреж\-де\-ни\-ями.
+Действительно, для того чтобы применить~\cite{ford} в~задаче~1, формально 
+положим пропускную способность всех стоковых дуг, кроме~$l_a$, равной нулю и~решим 
+задачу на максимум потока без дополнительного условия, имевшегося в~задаче~1. 
+Получим МРМ-по\-ток для дуги~$l_a$.
+Для МРМ-по\-то\-ка~$\overline {x}_a^*$ в~этой задаче уже найдем со\-от\-вет\-ст\-ву\-ющее  
+минимальному разрезу (далее~--- МРМ-раз\-рез) подмножество $\mathcal{R}(a)$
+дуг $l_{ij} \hm\in \mathcal{L}'$, суммарная пропускная способность которых 
+равна~$\overline{x}_a^*$, и~такое, что в~случае по\-вреж\-де\-ния~$\mathcal{R}(a)$ 
+при монопольном для~$l_a$ режиме функционирования передача потока из единственного 
+источника~$v_0$ в~единственный узел-сток~$v_{N+1}$ через стоковую дугу~$l_a$ 
+окажется невозможна, т.\,е.
+$$
+ \sum\limits_{l_{ij} \in \mathcal{R}(a)} d_{ij} = \overline {x}_a^*, \quad    
+ \overline {x}_a = 0  \ \ \forall    
+  \ {{x}}(\mathcal{R}(a)) \in \mathcal{X}(\mathcal{R}(a))\,.
+  $$
+
+Далее для сохранения простоты изложения будем считать, что 
+каждому МРМ-по\-то\-ку соответствует единственный МРМ-раз\-рез и~единственное 
+КС-по\-вреж\-де\-ние~$\mathcal{R}(a)$.
+Все такие по\-вреж\-де\-ния объединим в~одно множество, т.\,е\
+ введем  $\overline{\mathcal{R}} \hm= \{ \mathcal{R}(a)\ | \ a \hm\in 
+ \mathcal{N}_{\SK}\}.$
+Если МРМ-по\-то\-ку~$\overline {x}_a^*$ соответствует несколько КС-по\-вреж\-де\-ний, 
+то любые (все) из них по\-мес\-тим в~$\overline{\mathcal{R}}$. Повреждения, за\-да\-ва\-емые 
+МРМ-раз\-ре\-за\-ми, будем называть разрезными. Каждое  
+$R(a) \in\overline{\mathcal{R}} $ является оптимальным в~игровой 
+задаче за условного противника, разрушающего сеть по критерию отделения 
+одной из стоковых вершин ($v_a$) с~минимальными затратами на 
+уничтожение пропускной способности дуг. Когда же выбираемая 
+<<разрушителем>> стоковая вершина не известна заранее (как в~модели <<оборона 
+против нападения>>~\cite{ germ}), можно ожидать любого по\-вреж\-де\-ния 
+из~$\overline{\mathcal{R}}$. Поэтому из большого набора КС-по\-вреж\-де\-ний 
+для анализа уязвимости сети выберем именно разрезные и~получение оценок 
+уязвимости проведем с~помощью множества~$\overline{\mathcal{R}}$.
+
+Обозначим через $R$ общее число разрезных КС-по\-вреж\-де\-ний 
+в~множестве~$\overline{\mathcal{R}}$.
+Для каждой стоковой дуги~$l_k$ вычислим долю случаев~$\rho_k$, когда при 
+по\-вреж\-де\-нии того или иного множества дуг~$\mathcal{R}(a)$, 
+$a \hm\in \mathcal{N}_{\SK}$, поток по выбранной стоковой дуге~$l_k$ 
+оказывается равным нулю. Для этого число разрезных по\-вреж\-де\-ний~$m(l_k)$, 
+<<об\-ну\-ля\-ющих>> поток по выбранной стоковой дуге~$l_k$, разделим на общее чис\-ло~$R$ 
+по\-вреж\-де\-ний в~множестве~$\overline{\mathcal{R}}$, т.\,е.\ положим
+$$
+ \rho_k = \fr{m(l_k)}{R}\,.
+ $$
+
+Передача потока через стоковые дуги~$l_k$, для которых величина~$\rho_k$ 
+больше чем у~других, представляется более рискованной, так как пути в~соответствующие 
+стоковые вершины~$v_k$ чаще проходят в~зоне критических по\-вреж\-де\-ний сети. 
+Следовательно, можно считать, что пользователи, стоящие за подобными 
+стоковыми вершинами~$v_k$, наиболее уязвимы в~случае разрезных по\-вреж\-де\-ний. 
+Получили просто вычисляемый показатель относительной уязвимости стоковых 
+вершин многополюсной сети. 
+
+\vspace*{-4pt}
+
+\section{Эффективные повреждения сети}
+
+\vspace*{-2pt}
+
+Теперь предложим способ ранжирования разрезных КС-по\-вреж\-де\-ний 
+из~$\overline{\mathcal{R}}$. Обозначим разрушение всех дуг 
+некоторого $\mathcal{R}(a)\hm\in\overline{\mathcal{R}}$ через~$w_a$. 
+Напомним, что в~этом случае поток по стоковой дуге~$l_a$ оказывается равным нулю.
+Для оценки изменений относительно исходной ПФР-ха\-рак\-те\-ри\-сти\-ки~$ f^{*}$ 
+решим на сети после по\-вреж\-де\-ния $w_a\hm= \mathcal{R}(a)$ сле\-ду\-ющую задачу.
+
+\smallskip
+
+\noindent
+\textbf{Задача~3.}\ Найти
+$$
+ \beta^{*}(w_a) = \min\limits_{{x}(w_a) \in {\mathcal{X}(w_a)}} 
+ \sum\limits_{k = \overline{1, K}} \left( \fr{f_k^* - \overline{x}_k(w_a)}
+ {f_k^*} \right)^2. 
+ $$
+
+Вектор, отвечающий решению задачи~3, обозначим через~${x}^*(w_a)$. 
+Вектору~${x}^*(w_a)$ соответствует вектор потоков по стоковым 
+дугам~$\overline{{x}}^*(w_a)$ при по\-вреж\-де\-нии~$w_a$: 
+$ \overline{{x}}^*(w_a)\hm =  \left\langle \overline{x}_1^*(w_a), 
+\overline{x}_2^*(w_a), \ldots, \overline{x}_K^*(w_a)  \right\rangle.$
+Компоненты вектора~$\overline{{x}}^*(w_a)$ определяют максимальные (но не 
+выше исходных значений у~ПФР-ха\-рак\-те\-ри\-сти\-ки) 
+потоки по стоковым дугам при условии, что пропускная способность дуг из 
+выбранного множества~$\mathcal{R}(a)$ равна нулю. Заметим, что $a$-я компонента 
+вектора~$\overline{{x}}^*(w_a)$ гарантированно равна нулю.
+
+
+
+
+Для решения $\overline{{x}}^*(w_a)$ задачи~3 введем множество номеров 
+стоковых дуг, величина потока по которым равна нулю,
+$\mathcal{K}^-(w_a) \hm= \{ k = \overline{1, K} \  | \ \overline{x}_k^*(w_a) \hm= 0\}$, 
+и~обозначим через~$\mathcal{K}^+(w_a)$ множество номеров стоковых дуг, 
+величина потока по которым больше нуля,
+$\mathcal{K}^+(w_a) \hm= \{ k = \overline{1, K}\  | \ \overline{x}_k^*(w_a) \hm> 0\} $.
+При этом
+$ \mathcal{K}^-(w_a) \hm\bigcup \mathcal{K}^+(w_a)\hm = \hat{\mathcal{L}}$.
+Вычислим долю стоковых дуг с~нулевым потоком и~обозначим ее
+$$
+\kappa(w_a) \hm= \fr{|\mathcal{K}^-(w_a)|}{K}\,.
+$$
+Найдем  значение суммарных относительных потерь для сохранившихся потоков 
+по стоковым дугам:
+$$
+\Delta (w_a)= \sum\limits_{k\in\mathcal{K}^+(w_a)}
+\fr{f_k^* - \overline {x}_k^*(w_a)}{f_k^*}\,.  
+$$
+
+Процедуру построения векторов~$\overline{{x}}^*(w_k)$ и~определения
+величин~$\kappa(w_k)$ 
+и~$\Delta (w_k)$ проведем для каж\-до\-го из КС-по\-вреж\-де\-ний~$\mathcal{R}(k)$, 
+$k \hm\in \mathcal{N}_\SK$, входящих в~$\overline{\mathcal{R}}$. Выберем 
+из~$\overline{\mathcal{R}}$ подмножество~$\overline{\mathcal{R}}^*$ 
+разрезных по\-вреж\-де\-ний, недоминируемых сразу по двум показателям $(\kappa, \Delta)$:
+\begin{multline*}
+ \overline{\mathcal{R}}^* = \{ 
+\mathcal{R}(k)\in\overline{\mathcal{R}} \ | \
+\forall\ a \in \mathcal{N}_{\SK}: \ \ \mbox{если} \ \kappa(w_a) > \kappa(w_k),\\ 
+\ \mbox{то} \  \Delta(w_k) > \Delta(w_a)  \}.
+\end{multline*}
+Критически опасные структурные по\-вреж\-де\-ния из~$\overline{\mathcal{R}}^*$ будем называть эффективными 
+(с~точки зрения  разрушителя сети~--- 
+по векторному критерию~$(\kappa, \Delta)$ на максимум). Они задают конфигурации 
+дуг сети, образующие ее <<слабые мес\-та>>, защита которых требуется в~первую очередь. 
+Остальные элементы~$\overline{\mathcal{R}}$~--- доминируемые по\-вреж\-де\-ния, 
+но тоже могут быть полезны для целей аналитики.
+
+Опираясь на полученные результаты, определим, полное разрушение 
+каких дуг из КС-по\-вреж\-де\-ний, входящих в~множество~$ \overline{\mathcal{R}}$, 
+оказывает  наибольшее влияние на уязвимость сети.
+Для этого\linebreak построим таблицу, организованную следующим образом. 
+В~первый стролбец таблицы внесем дуги сети~$l_{ij}$, которые могут быть 
+подвержены разрушению, во второй~--- общее число разрезных по\-вреж\-де\-ний~$n(l_{ij})$, 
+в~которые входит дуга~$l_{ij}$, в~третий~---\linebreak\vspace*{-12pt}
+
+%\begin{table*}[b]
+{\small
+\vspace*{12pt}
+
+\begin{center}
+
+
+\begin{tabular}{|c|c|c|}
+\multicolumn{3}{p{66mm}}{Формирование разрезных и~эффективных пов\-реж\-де\-ний}\\
+\multicolumn{3}{c}{\ }\\[-6pt]
+ \hline
+\multicolumn{1}{|c|}{Дуги сети} &  
+\tabcolsep=0pt\begin{tabular}{c}Разрезные\\ повреждения\end{tabular} &
+      \tabcolsep=0pt\begin{tabular}{c}     Эффективные\\ повреждения\end{tabular}\\
+\hline
+$l_{0j}$& $n(l_{0j})$&   $n^*(l_{0j})$\\
+$\vdots$&      $\vdots$&      $\vdots$\\
+$l_{ij}$& $n(l_{ij})$ & $n^*(l_{ij})$\\
+$\vdots$&      $\vdots$&      $\vdots$\\
+$l_{iN}$ & $n(l_{iN})$ & $n^*(l_{iN})$ \\  
+      \hline
+\end{tabular}
+\vspace*{3pt}
+\end{center}}
+%\end{table*}
+
+\noindent 
+общее число эффективных разрезных по\-вреж\-де\-ний~$n^*(l_{ij})$ с~дугой~$l_{ij}$.
+
+
+
+Чем больше значение~$ n(l_{ij})$, тем важнее сохранить дугу~$l_{ij}$ от разрушения,
+ поскольку удаление~$l_{ij}$ снижает пропускную способность минимального разреза 
+ (и~МРМ-по\-то\-ки) для большего числа стоковых вершин. Заметим, что 
+ ПФР-ха\-рак\-те\-ри\-сти\-ки КС-по\-вреж\-де\-ний для указанных вершин не обязательно 
+ хуже, чем при удалении иной дуги. Для дуг с~большими значениями как~$n (l_{ij})$, 
+ так и~$n^*(l_{ij})$ их
+  влияние на уязвимость сети по отношению к~разрезным 
+ по\-вреж\-де\-ни\-ям, по-ви\-ди\-мо\-му, еще существенней. 
+
+\vspace*{-4pt}
+
+\section{Заключение}
+
+\vspace*{-2pt}
+
+Сценарии повреждения дуг, соответствующих минимальным разрезам, не являются 
+единственно возможными. При исследовании сетевых систем приходится обращаться к~теории 
+графов и~методам комбинаторной оптимизации~\cite{Sigal, Harari}. Проблема 
+состоит в~том, что попытки решения многих практических задач требуют применения 
+ресурсоемких переборных методов анализа структуры сети с~последующим специальным 
+изучением функциональных потоковых  характеристик~\cite{Mur13, ros}. 
+
+Предложенная 
+в~настоящей работе схема выделяет на дереве перебора содержательно важные 
+точки ветвления~--- конфигурации дуг сети, образующие МРМ-раз\-ре\-зы. 
+Подобным образом опытный шахматист или хорошая шахматная программа заранее 
+тщательно рассматривает некоторые стандартные часто встречающиеся позиции, 
+чтобы сэкономить время в~реальной партии и/или лучше понять внутреннюю логику 
+возможных последующих ходов в~игре. 
+
+Разработанный подход опирается на мето\-до\-логию 
+исследования операций~\cite{germ}. Определение\linebreak допустимых потоков через все 
+стоковые дуги позволяет анализировать сложные взаимосвязи, свойственные большим 
+территориально распределенным сис\-те\-мам (см., например,~\cite{Koz17}). 
+Изучение разрезных по\-вреж\-де\-ний помогает выявить наиболее уязвимые стоковые вершины. 
+Следует подчеркнуть, что методы потокового программирования~\cite{ford}, положенные 
+в~основу анализа, дают способ быст\-ро и~эффективно проводить необходимые 
+вычисления и~получать значимые  результаты. 
+
+\vspace*{-4pt}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+\vspace*{-2pt}
+    
+\bibitem{MalInf17} 
+\Au{Малашенко Ю.\,Е., Назарова И.\,А., Новикова~Н.\,М.} 
+Метод анализа функциональной уязвимости потоковых сетевых систем~// 
+Информатика и~её применения, 2017. Т.~11. Вып.~4. С.~47--54.
+\pagebreak
+
+\bibitem{MalInf181} 
+\Au{Малашенко Ю.\,Е., Назарова~И.\,А., Новикова~Н.\,М.} 
+Диаграммы уязвимости потоковых сетевых систем~// Информатика и~её применения, 2018. 
+Т.~12. Вып.~1. С.~11--18.
+
+\bibitem{ford} 
+\Au{Форд Л., Фалкерсон~Д.} Потоки в~сетях~/ Пер. с~англ.~--- 
+М.: Мир, 1966. 277~с. (\Au{Ford~L.\,R.,   Fulkerson~D.\,R.} Flows in networks.~--- 
+Princeton, NJ, USA: Princeton University Press, 1962. 332~p.)
+
+\bibitem{germ}  
+\Au{Гермейер Ю.\,Б.} Введение в~теорию исследования операций.~--- 
+М.: Наука, 1971. 384~с.
+
+\bibitem{Pod} %5
+\Au{Подиновский В.\,В., Ногин~В.\,Д.} 
+Па\-ре\-то-оп\-ти\-маль\-ные решения многокритериальных задач.~--- 2-е изд.~--- 
+М.: Физматлит, 2007.  256~с.
+
+\bibitem{Harari}  %6
+\Au{Харари Ф.} Теория графов~/ Пер. с~англ.~--- М.: Мир, 1973. 302~с. 
+(\Au{Harari~F.} Graph theory.~--- Boston, MA, USA: Addison-Wesley, 1969. 300~p.)
+\columnbreak
+
+\bibitem{Sigal}  %7
+\Au{Сигал И.\,Х., Иванова~А.\,П.} Введение в~прикладное дискретное программирование.~--- 
+М.: Физматлит, 2002. 240~с.
+
+\bibitem{ros}   %8
+\Au{ Rosas-Casals M., Valverde S., Sole~R.\,V.}
+ Topological vulnerability of the European power grid under errors and attacks~// 
+ Int. J.~Bifurcat. Chaos, 2007. Vol.~17. Iss.~7. 
+ Р.~2465-2475.
+
+\bibitem{Mur13}  %9
+\Au{Murray A.\,T. } An overview of network vulnerability modeling approaches~// 
+GeoJournal, 2013. Vol.~78. P.~209--221.
+
+\bibitem{Koz17} 
+\Au{Козлов М.\,В., Малашенко Ю.\,Е., Назарова~И.\,А. и~др.} 
+Управление   топ\-лив\-но-энер\-ге\-ти\-че\-ской  сис\-те\-мой  
+при  круп\-но\-масш\-таб\-ных по\-вреж\-де\-ни\-ях. I.~Сетевая  модель  и~программная реализация~// 
+Изв. РАН. ТиСУ, 2017. №\,6. С.~50--73.
+
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-5pt}
+
+\hfill{\small\textit{Поступила в~редакцию 28.06.18}}
+
+\vspace*{6pt}
+
+%\newpage
+
+%\vspace*{-24pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+\vspace*{-6pt}
+
+
+\def\tit{ANALYSIS OF CUTTING DAMAGES TO~MULTIPOLAR NETWORKS\\[-5pt]}
+
+\def\titkol{Analysis of cutting damages to multipolar networks}
+
+\def\aut{Yu.\,E.~Malashenko, I.\,A.~Nazarova, and~N.\,M.~Novikova\\[-5pt]}
+
+\def\autkol{Yu.\,E.~Malashenko, I.\,A.~Nazarova, and~N.\,M.~Novikova}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-22pt}
+
+
+\noindent
+Dorodnicyn Computing Center, Federal Research Center ``Computer Science and Control'' 
+of the Russian Academy of Sciences, 40~Vavilov Str., 
+Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2018\ \ \ volume~12\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{2pt}
+
+
+
+
+\Abste{The method of estimating changes in the functional 
+capabilities of a~multipolar  flow network system after a~damage is proposed.  
+For each sink arc, the maximal flow is calculated, independent of the flow 
+value across the remaining sink arcs. The authors consider cutting structural 
+damages that correspond to removing all arcs forming a~minimal cut. 
+The capacity of the cut is equal to the maximal flow along some sink arc. 
+Among the structural damages, the critically dangerous ones are selected with 
+an introduced criterion. For each arc belonging to at least one cutting 
+structural damage, a~quantitative characteristic is computed to estimate 
+consequences of its destruction. The described approach is proposed to be used 
+in studying vulnerability of  territorially distributed  multiuser systems 
+with the network 
+structure in the case of a~single-product transfer.} 
+
+\KWE{single-product flow network; structural 
+vulnerability of network; multipolar flow model }
+
+\DOI{10.14357/19922264180305}
+
+%\vspace*{-14pt}
+
+%\Ack
+%\noindent
+
+
+
+%\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+\bibitem{1-n}
+\Au{Malashenko, Yu.\,E., I.\,A.~Nazarova, and N.\,M.~Novikova.} 
+2017. Metod analiza funktsional'noy uyazvimosti potokovykh setevykh system 
+[Method of the analysis of the functional vulnerability of flow network systems]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 11(4):50--73.
+
+\bibitem{2-n}
+\Aue{Malashenko, Yu.\,E., I.\,A.~Nazarova, and N.\,M.~Novikova.} 2018. 
+Diagrammy uyazvimosti potokovykh setevykh sistem [Diagram of the functional
+ vulnerability of flow network systems]. 
+ \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 12(1):11--18. 
+
+\bibitem{3-n}
+\Aue{Ford, L.\,R., and   D.\,R.~Fulkerson.} 1962. 
+\textit{Flows in networks.}  Princeton, NJ: Princeton University Press. 332~p. 
+
+\bibitem{4-n}
+\Aue{Germeier, Yu.\,B.} 1971. \textit{Vvedenie v~teoriyu issledovaniya operatsiy} 
+[An introduction to operations research theory]. Moscow: Nauka. 384~p. 
+
+\bibitem{5-n}
+\Aue{Podinovskij, V.\,V., and V.\,D.~Nogin.}  2007. 
+\textit{Pareto-optimal'nye resheniya mnogokriterial'nykh zadach} 
+[Pareto-optimal solutions of multicriteria tasks]. 2nd ed.  
+Moscow: Fizmatlit. 256~p. 
+
+ 
+
+
+\bibitem{7-n} %6
+\Aue{Harari, F.} 1969.
+\textit{Graph theory.}  Boston, MA: Addison-Wesley Publ. 300~p.
+
+\bibitem{6-n} %7
+\Aue{Sigal, I.\,H., and  A.\,P.~Ivanova.} 2002. 
+\textit{Vvedenie v~prikladnoe diskretnoe programmirovanie}
+[An introduction to applied discrete programming]. Moscow: Fizmatlit. 240~p. 
+
+\bibitem{9-n} %8
+\Aue{Rosas-Casals, M., S.~Valverde, and R.\,V.~Sole.}  2007. 
+Topological vulnerability of the European power grid under errors and attacks. 
+\textit{Int. J.~Bifurcat.  Chaos} 17(7):2465--2475. 
+
+\bibitem{8-n} %9
+\Aue{Murray, A.\,T.} 2013. An overview of network vulnerability modeling approaches. 
+\textit{GeoJournal} 78:209--221.
+
+\bibitem{10-n}
+\Aue{Kozlov, M.\,V.,  Yu.\,E.~Malashenko, I.\,A.~Nazarova, \textit{et al.}} 
+2017. Fuel and energy system control at large-scale damages. 
+I.~Network model and software implementation.  
+\textit{J.~Comput.  Sys. Sc. Int.}  56(6):945--968.    
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Received June 28, 2018}}
+
+\pagebreak
+
+%\vspace*{-18pt}
+
+\Contr
+
+
+\noindent
+\textbf{Malashenko Yuri E.} (b.\ 1946)~--- 
+Doctor of Science in physics and mathematics, principal scienist, Dorodnicyn 
+Computing Center, Federal Research Center ``Computer Science and Control'' 
+of the Russian Academy of Sciences, 40~Vavilov Str., 
+Moscow 119333, Russian Federation; \mbox{malash09@ccas.ru}
+
+\vspace*{5pt}
+
+\noindent
+\textbf{Nazarova Irina A.} (b.\ 1966)~--- 
+Candidate of Science (PhD) in physics and mathematics, scientist, 
+Dorodnicyn Computing Center, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 
+40~Vavilov Str., Moscow 119333, Russian Federation; \mbox{irina-nazar@yandex.ru}
+
+\vspace*{5pt}
+
+\noindent
+\textbf{Novikova Natalya M.} (b.\ 1953)~--- 
+Doctor of Science in physics and mathematics,  professor,  leading scientist, 
+Dorodnicyn Computing Center, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 
+40~Vavilov Str., Moscow 119333, Russian Federation; \mbox{n\_novikova@umail.ru}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}       

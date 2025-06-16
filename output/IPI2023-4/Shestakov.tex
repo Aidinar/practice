@@ -1,0 +1,894 @@
+\def\stat{shestakov}
+
+\def\tit{НЕЛИНЕЙНАЯ РЕГУЛЯРИЗАЦИЯ ОБРАЩЕНИЯ ЛИНЕЙНЫХ
+ОДНОРОДНЫХ ОПЕРАТОРОВ С~ПОМОЩЬЮ МЕТОДА\\ БЛОЧНОЙ
+ПОРОГОВОЙ ОБРАБОТКИ$^*$}
+
+\def\titkol{Нелинейная регуляризация обращения линейных
+однородных операторов с~помощью метода %блочной
+пороговой обработки}
+
+\def\aut{О.\,В.~Шестаков$^1$, Е.\,П.~Степанов$^2$}
+
+\def\autkol{О.\,В.~Шестаков, Е.\,П.~Степанов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Шестаков О.\,В.}
+\index{Степанов Е.\,П.}
+\index{Shestakov O.\,V.}
+\index{Stepanov E.\,P.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при поддержке программы 
+развития Московского университета, проект №\,23-Ш03-03.}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет 
+им.~М.~В.~Ломоносова, факультет вычислительной математики и~кибернетики; 
+Мос\-ков\-ский центр фундаментальной и~прикладной математики; Федеральный 
+исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{oshestakov@cs.msu.ru}}
+\footnotetext[2]{Московский государственный университет 
+им.~М.~В.~Ломоносова, факультет вычислительной математики и~кибернетики, 
+\mbox{estepanov@lvk.cs.msu.ru}}
+
+
+\vspace*{-12pt}
+
+
+
+\Abst{Методы пороговой обработки коэффициентов вейв\-лет-раз\-ло\-же\-ний 
+стали популярным инструментом для регуляризации обратных статистических задач 
+благодаря своей простоте, вычислительной эффективности и~возможности адаптации 
+как к~виду обращаемых операторов, так и~к особенностям исследуемой функции. 
+Наиболее плодотворным данный подход оказался при обращении линейных однородных 
+операторов, возникающих в~некоторых задачах обработки сигналов и~изображений. 
+В~работе рассматривается метод блочной пороговой обработки, в~котором коэффициенты 
+разложения обрабатываются группами, что позволяет учитывать информацию 
+о~соседних коэффициентах. В~модели данных с~аддитивным гауссовским шумом 
+проводится анализ несмещенной оценки среднеквадратичного риска и~показывается, 
+что при определенных условиях данная оценка становится сильно состоятельной 
+и~асимптотически нормальной. Данные свойства позволяют строить асимптотические 
+доверительные интервалы для теоретического среднеквадратичного риска 
+рассматриваемого метода.}
+
+
+\KW{линейный однородный оператор; вейвлеты; блочная 
+пороговая обработка; несмещенная оценка риска; асимптотическая нормальность; 
+сильная состоятельность}
+
+\DOI{10.14357/19922264230401}{PGKKYE}
+  
+\vspace*{-6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+
+\section{Введение}
+
+При решении обратных статистических задач возникает проблема обращения 
+некоторого оператора, и~если в~наблюдаемых данных содержится шум, то необходимо 
+применять методы регуляризации.
+Примером может служить восстановление сигнала в~беспроводных каналах, 
+зашумленного за счет гео- и~гелиомагнитных условий, состояния ионосферы Земли.
+Во многих ситуациях рассматриваемый оператор оказывается линейным и~однородным. 
+В таких случаях часто применяются методы подавления шума с~помощью вейв\-лет-раз\-ло\-же\-ния и~процедур пороговой обработки. Они приобрели свою популярность 
+благодаря адаптивности, вычислительной эффективности и~асимптотической 
+оптимальности. 
+
+Чаще всего процедуры пороговой обработки применяются отдельно 
+к~каждому коэффициенту вейв\-лет-раз\-ло\-же\-ния. Коэффициент сравнивается с~пороговым 
+значением, и~если его абсолютная величина оказывается меньше этого значения, то 
+он обнуляется. Среди таких процедур наиболее распространены процедуры жест\-кой 
+и~мягкой пороговой обработки. Однако они имеют свои недостатки и~часто не 
+достигают оптимальных результатов. В~работе~\cite{HKP99} рассмотрен метод 
+блочной пороговой обработки, при котором коэффициенты обрабатываются не 
+отдельно, а~группами. Цель такого подхода заключается в~использовании информации 
+о~соседних коэффициентах. По\-лу\-ча\-емые оценки имеют оптимальный (в~минимаксном 
+смысле) порядок среднеквадратичного риска для различных классов функций~\cite{Cai99}.
+
+Для практического анализа погрешности данного метода можно использовать 
+несмещенную оценку среднеквадратичного риска~\cite{St81}, которая дает 
+возможность оценивать качество обработанного сигнала на основе только 
+наблюдаемых данных. В~данной работе исследуются статистические свойства этой 
+оценки и~показывается, что для довольно широкого класса пространств Бесова она 
+является асимптотически нормальной и~сильно состоятельной. В~работе~\cite{SH21} 
+подобные исследования проведены для задачи непараметрического оценивания функции 
+сигнала. 
+
+Для методов пороговой обработки отдельных коэффициентов свойства оценки 
+среднеквадратичного риска при обращении линейных однородных операторов 
+исследованы в~работах~\cite{KS11, SH12, SH16, SH18} в~предположении 
+о~принадлежности исследуемой функции сигнала классу равномерно регулярных по 
+Липшицу функций.
+
+\vspace*{-6pt}
+
+\section{Обращение линейных однородных операторов с~помощью вейг\-лет-вейв\-лет-разложения}
+
+\vspace*{-3pt}
+
+Линейный оператор $K$ называется однородным, если
+$$
+K[f(a(x-x_0))]=a^{-\alpha}(Kf)[a(x-x_0)]
+$$
+для любого $x_0\hm\in\mathbb{R}$ и~любого $a\hm>0$. Параметр~$\alpha$ называется 
+показателем однородности. Примерами\linebreak однородных линейных операторов служат 
+операторы дифференцирования и~интегрирования, преобразование Гильберта, 
+преобразование Абеля и~некоторые операторы свертки. Во многих \mbox{прикладных} задачах 
+наблюдаются значения функции~$Kf$, а~интерес представляет функция~$f$, т.\,е.\ 
+необходимо решать задачу обращения оператора~$K$. Для этого воспользуемся 
+методом вейг\-лет-вейв\-лет-раз\-ло\-же\-ния.
+
+Вейвлет-разложение~$Kf$ представляет собой ряд
+\begin{equation}
+\label{wavelet_decomp}
+Kf = \sum\limits_{j,k \in Z} \langle Kf,\psi_{j,k} \rangle \psi_{j,k},
+\end{equation}
+где $\psi$~--- некоторая материнская вейв\-лет-функ\-ция, а~$\psi_{j,k}(t) \hm= 
+2^{j/2}\psi(2^jt - k)$ (семейство $\{\psi_{j,k}\}_{j,k \in Z}$ образует 
+ортонормированный базис в~$L^2(\mathbb{R})$). Индекс~$j$ в~(\ref{wavelet_decomp}) называется масштабом, а~индекс~$k$~--- сдвигом.
+
+Поскольку оператор $K$ линеен и~однороден, существуют такие функции~$u_{jk}$, 
+что $\langle f,u_{jk}\rangle\hm=\langle Kf,\psi_{jk}\rangle$. При этом функция~$f$ 
+представляется в~виде ряда
+\begin{equation}
+\label{VWD}
+f = \sum_{j,k \in Z}\beta_{j}\langle Kf,\psi_{j,k}\rangle u_{j,k},
+\end{equation}
+где $u_{j,k} = K^{-1}\psi_{j,k} / \beta_{jk}$, $\beta_{j}\hm=2^{\alpha j}\beta_{0}$, а~$\beta_{0} \hm= \norm{K^{-1}\psi}$ 
+(функции~$u_{j,k}$  называются 
+вейглетами). Формула~(\ref{VWD}) и~есть основа метода вейг\-лет-вейв\-лет-раз\-ло\-же\-ния~\cite{AS98}. 
+При соответствующем выборе вейв\-лет-функ\-ции~$\psi$ 
+последовательность~$\{u_{jk}\}$ образует устойчивый базис~\cite{Lee97}. Также, 
+если~$\psi$ имеет~$r$~непрерывных производных и~$r$ нулевых моментов, определим 
+при $0\hm<\gamma\hm<r$ и~$1\hm\leqslant p,q\hm\leqslant\infty$ полунорму последовательности вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов выражением
+
+\noindent
+$$
+\abs{Kf}_{{B}^{\gamma}_{p,q}}=\!\left(\sum\limits_{j=0}^{\infty}\left(2^{sj
+}\left(\sum\limits_{k}\abs{\langle 
+Kf,\psi_{j,k}\rangle}^p\right)^{\!1/p}\right)^q\right)^{\!1/q}\!,
+$$
+где $s=\gamma+1/2-1/p$. Далее будем считать, что~$\psi$ удовле\-тво\-ря\-ет всем 
+необходимым требованиям, а~$Kf$ задана на конечном отрезке и~принадлежит 
+пространству Бесова ${B}^{\gamma}_{p,q}(A)$ ($A\hm>0$), т.\,е.\ 
+$\abs{Kf}_{{B}^{\gamma}_{p,q}}\hm\leqslant A$.
+
+\vspace*{-6pt}
+
+\section{Модель данных}
+
+\vspace*{-3pt}
+
+При практических измерениях значения функции~$Kf$ регистрируются в~дискретных 
+отсчетах. К~тому же эти значения, как правило, содержат шум. В~данной работе 
+рассматривается следующая модель данных:
+\begin{equation*}
+%\label{Data_Model}
+X_i = (Kf)_i + \epsilon_i, \enskip i =\overline{1, 2^J}\,,
+\end{equation*}
+где $2^J$~--- число отсчетов функции сигнала; $(Kf)_i$~--- незашумленные значения 
+функции~$Kf$; $\epsilon_i$~--- независимые нормально распределенные случайные 
+величины с~нулевым средним и~дисперсией~$\sigma^2$.
+После применения дискретного вейв\-лет-пре\-обра\-зо\-ва\-ния получается следующая модель 
+зашумленных вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов:
+\begin{equation*}
+Y_{j,k}=\mu_{j,k}+\epsilon^W_{j,k},\enskip j=\overline{0,J-1},\enskip k=\overline{0,2^{j}-1}\,,
+\end{equation*}
+где $\epsilon^W_{j,k}$ независимы и~распределены так же, как и~$\epsilon_i$, 
+а~$\mu_{j,k}\hm= 2^{J/2}\langle Kf,\psi_{j,k}\rangle$~\cite{Mall99}.
+
+\vspace*{-6pt}
+
+
+\section{Блочная пороговая обработка}
+
+\vspace*{-3pt}
+
+Для подавления шума коэффициенты~$Y_{j,k}$ подвергаются некоторой обработке. 
+Наибольшее распространение получили методы жесткой и~мягкой пороговой обработки 
+и~их модификации~\cite{DonJ94, DonJ95, DonJ98, G98, PK05, LC10, HL10, HX15, ZC15}. При использовании этих методов происходит сравнение абсолютной величины 
+каждого коэффициента с~некоторым порогом, и~если это значение\linebreak оказывается меньше 
+порога, то коэффициент считается шумом и~обнуляется. Такие методы обрабатывают 
+каждый коэффициент отдельно, не используя информацию о~других коэффициентах. 
+\mbox{Блочная} пороговая обработка применяется к~группам соседних коэффициентов, т.\,е.\ 
+решение об обнулении принимается сразу ко всем коэффициентам из группы.
+
+Пусть $B_{j,1},\ldots,B_{j,M_j}$~--- разбиение множества индексов 
+$\{0,\ldots,2^j-1\}$ на блоки одинаковой длины~$L$ (для удобства предположим, 
+что~$2^j$ делится на~$L$). Пусть $S^2_{j,m}\hm=\sum\nolimits_{k\in 
+B_{j,m}}Y^2_{j,k}$. Оценки коэффициентов~$\mu_{j,k}$ вычисляются по правилу:
+%\noindent
+\begin{equation*}
+\widehat{\mu}_{j,k}=\left(1-\fr{TL\sigma^2}{S^2_{j,m}}\right)_+Y_{j,k},\enskip
+j=\overline{0,J-1},\ \ k\in B_m,
+\end{equation*}
+
+\noindent
+т.\,е.\ если величина $\sum\nolimits_{k\in B_{j,m}}Y^2_{j,k}$ меньше порога 
+$TL\sigma^2$, то все коэффициенты в~рассматриваемом блоке обнуляются.
+
+На качество оценок, получаемых с~помощью блочной пороговой обработки, 
+естественно, влияют размер блока $L$ и~значение порога~$T$. В~работе~\cite{Cai99} показано, что при $L\hm=\log 2^j$ достигается баланс между локальной 
+и~глобальной адап\-тив\-ностью метода блочной пороговой обработки, и~если при этом 
+$T^*\hm\approx4{,}50524$ ($T^*$~--- это корень уравнения $T\hm-\log  T \hm-3\hm=0$), то 
+сред\-не\-квад\-ра\-тич\-ный риск оказывается (почти) оптимальным (в~минимаксном смыс\-ле). 
+В~данной работе рас\-смат\-ри\-ва\-ют\-ся именно такие значения~$L$ и~$T$.
+
+Одним из самых распространенных критериев качества описанного метода служит 
+среднеквадратичный риск, который определяется по формуле:
+\begin{equation*}
+%\label{Risk}
+R_J(T)=\sum\limits_{j=0}^{J-1}\sum\limits_{k=0}^{2^j-1}\beta^2_{j}{\sf E}\left(\widehat{\mu}_{j,k}-\mu_{j,k}\right)^2.
+\end{equation*}
+Вычислить его значение на практике нельзя, поскольку~$R_J(T)$ зависит от 
+ненаблюдаемых <<чистых>> коэффициентов~$\mu_{j,k}$. Однако его можно оценить, 
+используя наблюдаемые значения~$Y_{j,k}$. Далее будут исследованы свойства такой 
+оценки.
+
+\vspace*{-6pt}
+
+
+\section{Асимптотические свойства несмещенной оценки риска}
+
+\vspace*{-3pt}
+
+В~\cite{Cai99} показано, что
+\begin{equation*}
+\sum\limits_{k=0}^{2^j-1}{\sf E}\left(\widehat{\mu}_{j,k}-
+\mu_{j,k}\right)^2=\sum\limits_{m=1}^{M_j}{\sf E} F_m[T,L], %\notag
+\end{equation*}
+где
+\begin{multline*}
+F_m(T,L)=\left[
+\vphantom{\fr{T^2L^2\sigma^4-2TL\sigma^4(L-2)}{S_{j,m}^2}}
+L\sigma^2+{}\right.\\
+{}+\fr{T^2L^2\sigma^4-2TL\sigma^4(L-2)}{S_{j,m}^2}
+\cdot \Ik\left(S^2_{j,m}>TL\sigma^2\right)+{}\\
+\left.{}+\left(S^2_{j,m}-2L\sigma^2\right)\cdot \Ik\left(S^2_{j,m}\leqslant 
+TL\sigma^2\right)
+\vphantom{\fr{T^2L^2\sigma^4-2TL\sigma^4(L-2)}{S_{j,m}^2}}
+\right].
+\end{multline*}
+Таким образом, величина
+\begin{equation}
+\label{Risk_Estimate}
+\widehat{R}_J(T)=\sum\limits_{j=0}^{J-1}\beta^2_{j}\sum\limits_{m=1}^{M_j} F_m(T,L)
+\end{equation}
+служит несмещенной оценкой~$R_J(T)$, не зависящей от~$\mu_{j,k}$.
+
+Покажем, что оценка~(\ref{Risk_Estimate}) асимптотически нормальна.
+
+\columnbreak
+
+\noindent
+\textbf{Теорема~1.}\ \textit{Пусть $K$~--- линейный однородный оператор с~показателем 
+однородности $\alpha\hm>0$, а~$Kf\hm\in B^{\gamma}_{p,q}(A)$ и~задана на 
+конечном отрезке. Если $1\hm\leqslant p,q\hm\leqslant\infty$ и~$r\hm>\gamma\hm>\max(0,1/p-1/2)$, то 
+при} $J\hm\to\infty$
+\begin{equation}
+\label{Normality}
+{\sf P}\left(\fr{\widehat{R}_J(T^*)-R_J(T^*)}{D_J}<x\right)\to\Phi(x),
+\end{equation}
+\textit{где}
+$$
+D^2_J=\fr{2\sigma^4\beta_{0}^4}{2^{4\alpha+1}-1}\cdot 2^{(4\alpha+1)J}\,,
+$$
+\textit{а $\Phi(x)$~--- функция распределения стандартного нормального закона}.
+
+\smallskip
+
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,: \ 
+Выберем $0\hm<d\hm<1$ и~запишем:
+\begin{multline}
+\label{Two_Sums}
+\widehat{R}_J(T^*)-R_J(T^*)={}\\
+{}=\sum\limits_{j=0}^{[dJ]}\beta^2_{j}\sum\limits_{m=1}^{M_j} 
+\left[F_m(T^*,L)-{\sf E} F_m(T^*,L)\right]+{}\\
+{}+\sum\limits_{j=[dJ]+1}^{J-1}\beta^2_{j}\sum\limits_{m=1}^{M_j} 
+\left[F_m(T^*,L)-{\sf E} F_m(T^*,L)\right].
+\end{multline}
+ Число слагаемых в~первой сумме не превосходит $2^{[dJ]\hm+1}$. Кроме того, 
+существует такая константа $C_F\hm>0$, что
+\begin{equation}
+\label{Bounds}
+\abs{F_m(T^*,L)-{\sf E} F_m(T^*,L)}\leqslant C_FT^*L\;\;\mbox{п.~в.} % см. формулу 9.3 в~статье Cai
+\end{equation}
+
+Применяя неравенство Хеффдинга, получаем, что для любого $\delta\hm>0$ найдется 
+константа $C_\delta\hm>0$ такая, что
+\begin{multline}
+{\sf P}\left(\fr{1}{D_J}\left\vert \sum\limits_{j=0}^{[dJ]}\beta^2_{j}\sum\limits_{m=1}^{M_j} 
+\left[F_m(T^*,L)-{}\right.\right.\right.\\
+\left.\left.\left.{}-{\sf E} F_m(T^*,L)\right]
+\vphantom{\sum\limits_{j=0}^{[dJ]}}
+\right\vert>\delta\right)\leqslant{}
+\\
+{}\leqslant\sum\limits_{j=0}^{[dJ]}{\sf P}\left( \fr{\beta^2_{j}}{D_J}
+\sum\limits_{m=1}
+^{M_j} \left[F_m(T^*,L)-{}\right.\right.\\
+\!\!\!\left.\left.{}-{\sf E} F_m(T^*,L)\right]\!>\!J^{-1}\delta
+\vphantom{\sum\limits_{j=0}^{[dJ]}}
+\!\right)\!\leqslant\! % {}\\
+%{}\leqslant
+J\exp\left\{-C_\delta\fr{2^{J-[dJ]}}{J^2}\!\right\}\!,
+\!\!\label{Hoeff}\!\!
+\end{multline} 
+т.\,е.\
+\begin{multline}
+\label{First_Sum}
+\fr{\sum\nolimits_{j=0}^{[dJ]}\beta^2_{j}\sum\nolimits_{m=1}^{M_j} \left[F_m(T^*,L)-
+{\sf E} F_m(T^*,L)\right]}{D_J}\stackrel{{\sf P}}{\to}0\\
+\mbox{при}\; J\to\infty.
+\end{multline}
+
+При $p_1\leqslant p_2$ справедливы неравенства~\cite{Cai99}
+\begin{multline}
+\label{Norms}
+\left(\sum\limits_{k=0}^{2^j-1}\abs{\mu_{j,k}}^{p_2}\right)^{1/p_2}\leqslant\left(\sum\limits_{k=0}^{2^j-1}
+\abs{\mu_{j,k}}^{p_1}\right)^{1/p_1}\leqslant{}\\
+{}\leqslant 2^{j(1/p_1-1/p_2)}\left(\sum\limits_{k=0}^{2^j-1}
+\abs{\mu_{j,k}}^{p_2}\right)^{1/p_2}.
+\end{multline}
+Так как $f\in B^{\gamma}_{p,q}(A)$, то 
+$$
+2^{js}\left(\sum\limits_{k=0}^{2^j-1}\abs{\mu_{j,k}}^p\right)^{1/p}\hm\leqslant 
+A2^{J/2}
+$$ 
+и~из неравенств~\eqref{Norms} следует, что при $p\hm\geqslant2$
+\begin{equation}
+\label{Besov2}
+\sum\limits_{k=0}^{2^j-1}\mu_{j,k}^2 =\sum\limits_{m=1}^{M_j}\sum\limits_{k\in 
+B_{j,m}}\mu_{j,k}^2\leqslant A^22^{-2\gamma j+J}.
+\end{equation}
+Для произвольного $\varepsilon\hm>0$ при всех $j\hm>dJ$ существуют не более $A^22^{J-2\gamma 
+j\hm+\varepsilon j}$ слагаемых в~\eqref{Besov2} таких, что 
+$$
+\sum\limits_{k\in B_{j,m}}\mu_{j,k}^2\hm>2^{-\varepsilon j}.
+$$
+Выделяя эти слагаемые из второй суммы в~(\ref{Two_Sums}) в~отдельную сумму~$S'$ и~применяя к~$S'$ неравенство Хеффдинга, аналогичное~\eqref{Hoeff}, получаем, 
+что
+$$
+\fr{S'}{\sigma^2\sqrt{2^{J+1}}}\stackrel{{\sf P}}{\to}0
+$$ 
+при $J\hm\to\infty$.
+Таким образом, без ограничения общности можно считать, что во второй сумме в~(\ref{Two_Sums}) 
+$$
+\sum\limits_{k\in B_{j,m}}\mu_{j,k}^2\hm\to0
+$$ 
+при $J\hm\to\infty$
+для всех $m\hm=1,\ldots,M_j$ и~$j\hm>dJ$.
+
+Если $p<2$ и~$\gamma>1/p-1/2$, то $s\hm>0$ и~из неравенств~\eqref{Norms} следует, 
+что
+\begin{equation}
+\label{Besovp}
+\sum\limits_{k=0}^{2^j-1}\mu_{j,k}^2 \leqslant A^2\cdot 2^{-2s j+J}.
+\end{equation}
+Рассуждая аналогично случаю $p\hm\geqslant2$, заключаем, что без ограничения общности 
+можно считать, что во второй сумме в~(\ref{Two_Sums}) также $\sum\nolimits_{k\in B_{j,m}}\mu_{j,k}^2\hm\to0$ при $J\hm\to\infty$ для всех $m\hm=1,\ldots,M_j$ и~$j\hm>dJ$.
+
+Рассмотрим дисперсии слагаемых во второй сумме в~(\ref{Two_Sums}). Имеем 
+${\sf D} F_m(T^*,L)\hm={\sf D} \left[S^2_{j,m}\hm-L\sigma^2\hm+U_{j,m}(T^*,L)\right]$, где
+\begin{multline*}
+U_{j,m}(T^*,L)=\left[\fr{(T^*L)^2\sigma^4-2T^*L\sigma^4(L-2)}{S_{j,m}^2}-{}\right.\\
+\left.{}-
+S_{j,m}^2 +2L\sigma^2
+\vphantom{\fr{(T^*L)^2\sigma^4-2T^*L\sigma^4(L-2)}{S_{j,m}^2}}
+\right]\cdot \Ik\left(S^2_{j,m}>T^*L\sigma^2\right).
+\end{multline*}
+Пусть $X_{L}$~--- случайная величина, имеющая распределение~$\chi^2_{L}$ с~$L$ 
+степенями свободы, и~$C_1$ и~$C_2$~--- некоторые положительные константы.
+Тогда\linebreak в~силу~(\ref{Besov2}) или~(\ref{Besovp}) для некоторой константы 
+$1\hm<C_\chi\hm<1\hm+\delta_\chi$ ($0\hm<\delta_\chi\hm<1$)
+
+\vspace*{-6pt}
+
+\noindent
+\begin{multline*}
+{\sf D}\left[S_{j,m}^2\cdot \Ik(S^2_{j,m}>T^*L\sigma^2)\right]\leqslant{}\\
+{}\leqslant {\sf E} 
+\left[\left(S_{j,m}^2\right)^2\cdot \Ik(S^2_{j,m}>T^*L\sigma^2)\right]\leqslant{}\\
+{}\leqslant C^2_\chi{\sf E}\left[X^2_{L}\cdot \Ik(C_\chi X_{L}>T^*L)\right]\leqslant{}\\
+{}\leqslant 
+C_1(T^*L)^2{\sf P}\left(C_\chi X_{L}>T^*L\right)
+\end{multline*}
+и аналогично
+
+\vspace*{-6pt}
+
+\noindent
+\begin{multline*}
+{\sf D}\left(\left[\fr{(T^*L)^2\sigma^4-2T^*L\sigma^4(L-2)}
+{S_{j,m}^2}+{}\right.\right.\\
+\left.\left.{}+2L\sigma^2
+\vphantom{\fr{(T^*L)^2\sigma^4-2T^*L\sigma^4(L-2)}{S_{j,m}^2}}
+\right]\cdot \Ik(S^2_{j,m}>T^*L\sigma^2)\right)\leqslant {}\\
+{}\leqslant
+C_2(T^*L)^2{\sf P}\left(C_\chi X_{L}>T^*L\right).
+\end{multline*}
+
+\vspace*{-6pt}
+
+\noindent
+В силу леммы~2 из работы~\cite{Cai99} и~вида~$T^*$ и~$L$
+$$
+\left(T^*L\right)^2{\sf P}\left(C_\chi X_{L}\hm>T^*L\right)\to0
+$$
+при $J\hm\to\infty$.
+
+Таким образом, учитывая очевидное соотношение для дисперсии разности случайных 
+величин $X\hm-Y$: 
+$$
+(\sqrt{{\sf D} X}\hm-\sqrt{{\sf D} Y})^2\hm\leqslant {\sf D}(X\hm-
+Y)\leqslant(\sqrt{{\sf D} X}+\sqrt{{\sf D} Y})^2,
+$$
+ получаем
+\begin{equation}
+\label{Var_Lim1}
+\lim\limits_{J\to\infty}\fr{{\sf D}\sum\nolimits_{j=[dJ]+1}^{J-1}\beta^2_{j}\sum\nolimits_{m=1}^{M_j} 
+F_m(T^*,L)}{{\sf D}\sum\nolimits_{j=[dJ]+1}^{J-1}\sum\nolimits_{k=0}^{2^j-
+1}\beta^2_{0}2^{2\alpha j}Y^2_{j,k}}=1\,.
+\end{equation}
+Кроме того, поскольку $Y_{j,k}$ независимы и~${\sf D} Y^2_{j,k}\hm=2\sigma^4\hm+4\sigma^2\mu^2_{j,k}$, получаем:
+\begin{equation}
+\label{Var_Lim2}
+\lim\limits_{J\to\infty}\fr{{\sf D}\sum\nolimits_{j=[dJ]+1}^{J-1}\sum\nolimits_{k=0}^{2^j-1}\beta^2_{0}2^{2\alpha j}Y^2_{j,k}}{D^2_J}=1.
+\end{equation}
+
+Наконец, выполнено условие Линдеберга: для любого $\epsilon\hm>0$ при $J\hm\to\infty$
+
+\vspace*{-6pt}
+
+\noindent
+\begin{multline}
+\label{Norm_Cond}
+\fr{1}{D^2_J}\sum\limits_{j=[dJ]+1}^{J-1}\sum\limits_{m=1}^{M_j} {\sf E}
+\left[\beta^4_{j}\left( F_m(T^*,L)-{}\right.\right.\\
+\left.{}-{\sf E} F_m\left(T^*,L\right)\right)^2\cdot \Ik\left( 
+\beta^2_{j}\left\vert F_m(T^*,L)-{}\right.\right.\\
+\left.\left.\left.{}-{\sf E} F_m\left(T^*,L\right)\right\vert >\epsilon D_J\right)\right]\rightarrow 0\,.
+\end{multline}
+
+\vspace*{-6pt}
+
+\noindent
+Действительно, в~силу~(\ref{Bounds}), (\ref{Var_Lim1}) и~(\ref{Var_Lim2}) 
+начиная с~некоторого~$J$ все индикаторы в~(\ref{Norm_Cond}) обращаются в~нуль. Объединяя~(\ref{First_Sum}), 
+(\ref{Var_Lim2}) и~(\ref{Norm_Cond}), получаем~(\ref{Normality}). Теорема 
+доказана.
+
+
+\pagebreak
+
+
+
+%\smallskip
+
+Докажем теперь свойство сильной состоятельности оценки~(\ref{Risk_Estimate}), 
+справедливое при более слабых ограничениях.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~2.}\ \textit{Пусть $K$~--- линейный однородный оператор с~показателем 
+однородности $\alpha\hm>0$, а $Kf\hm\in  L^2(\mathbb{R})$ и~задана на конечном 
+отрезке. Тогда при любом $\theta\hm>1/2\hm+2\alpha$ имеет место сходимость}
+\begin{equation}
+\label{Strong_Con}
+\fr{\widehat{R}_J(T^*)-R_J(T^*)}{2^{\theta J}}\rightarrow 0 \;\mbox{ п.~в.\ при\ } J\rightarrow\infty.
+\end{equation}
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,:\ \  Используя неравенство Хеффдинга, с~учетом~(\ref{Bounds})
+ получаем, что для любого $\delta\hm>0$ найдется константа 
+$C_\delta\hm>0$ такая, что
+
+\vspace*{-6pt}
+
+\noindent
+\begin{multline*}
+p_J={\sf P}\left(\fr{\abs{\widehat{R}_J(T^*)-R_J(T^*)}}{2^{\theta 
+J}}>\delta\right)\leqslant {}\\
+{}\leqslant J\exp\left\{-C_\delta\fr{2^{(2\theta-1-4\alpha) 
+J}}{J^2}\right\},
+\end{multline*}
+
+\vspace*{-6pt}
+
+\noindent
+и, поскольку
+\begin{equation*}
+\sum\limits_{J=1}^{\infty}p_J<\infty\,,
+\end{equation*}
+
+\vspace*{-3pt}
+
+\noindent
+в силу леммы Бореля--Кан\-тел\-ли выполнено~(\ref{Strong_Con}). Тео\-ре\-ма доказана.
+
+Теоремы 1 и~2 дают теоретическое обоснование использования значения 
+$\widehat{R}_J(T^*)$ в~качестве оценки неизвестной величины риска (по\-греш\-ности) 
+$R_J(T^*)$, а~так\-же поз\-во\-ля\-ют строить асимптотические доверительные интервалы 
+для~$R_J(T^*)$.
+
+\vspace*{-9pt}
+
+{\small\frenchspacing
+ {\baselineskip=10.6pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+ \vspace*{-3pt}
+
+\bibitem{HKP99}
+\Au{Hall P., Kerkyacharian~G., Picard~D.} On the minimax optimality of block 
+thresholded wavelet estimators~// Stat. Sinica, 1999. Vol.~9. P.~33--50.
+
+\bibitem{Cai99}
+\Au{Cai T.} Adaptive wavelet estimation: A~block thresholding and oracle 
+inequality approach~// Ann. Stat., 1999. Vol.~28. No.\,3. P.~898--924.
+doi: 10.1214/aos/1018031262.
+
+\bibitem{St81} %3
+\Au{Stein C.} Estimation of the mean of a~multivariate normal distribution~// Ann. Stat., 1981. Vol.~9. No.\,6. P.~1135--1151.
+doi: 10.1214/aos/1176345632.
+
+\bibitem{SH21} %4
+\Au{Шестаков О.\,В.} Анализ несмещенной оценки среднеквадратичного риска 
+метода блочной пороговой обработки~// Информатика и~её применения, 2021.  Т.~15. 
+Вып.~2. С.~30--35. doi: 10.14357/19922264210205. EDN: DSQQAU.
+
+\bibitem{KS11} %5
+\Au{Кудрявцев А.\,А., Шестаков~О.\,В.} Асимптотика оценки риска при вейг\-лет-вейв\-лет 
+разложении наблюдаемого сигнала~// T-Comm~--- Телекоммуникации 
+и~транспорт, 2011. №\,2. С.~54--57.
+
+\bibitem{SH12} %6
+\Au{Шестаков О.\,В.}  О~свойствах оценки среднеквадратичного риска при 
+регуляризации обращения линейного однородного оператора с~по\-мощью адаптивной 
+пороговой обработки коэффициентов вейг\-лет-вейв\-лет разложения~// Вестн. Тверск. 
+ун-та. Сер. Прикладная математика, 2012. №\,1. С.~117--130. EDN: PEZOJH.
+
+\bibitem{SH16} %7
+\Au{Шестаков О.\,В.} Статистические свойства метода подавления шума, 
+основанного на стабилизированной жесткой пороговой обработке~// Информатика и~её 
+применения, 2016.  Т.~10. Вып.~2. С.~65--69. doi: 10.14357/19922264160207. EDN: WCBWWP.
+
+\bibitem{SH18} %8
+\Au{Shestakov O.\,V.} Nonlinear regularization of inverse problems for linear 
+homogeneous transforms by stabilized hard thresholding~// J.~Math. Sci., 2018. 
+Vol.~234. No.\,6. P.~780--785. doi: 10.1007/s10958-018-4044-1.
+
+\bibitem{AS98} %9
+\Au{Abramovich F., Silverman~B.\,W.} Wavelet decomposition approaches to 
+statistical inverse problems~// Biometrika, 1998. Vol.~85. No.\,1. P. 115--129.
+
+\bibitem{Lee97}
+\Au{Lee N.} Wavelet-vaguelette decompositions and homogenous equations: PhD 
+Thesis.~--- West Lafayette, IN, USA: Purdue University, 1997. 93~p.
+
+\bibitem{Mall99}
+\Au{Mallat S.} A~wavelet tour of signal processing.~--- New York, NY, USA: 
+Academic Press, 1999. 857~p.
+
+\bibitem{DonJ94} %12
+\Au{Donoho D., Johnstone~I.\,M.} Ideal spatial adaptation via wavelet 
+shrinkage~// Biometrika, 1994. Vol.~81. No.\,3.
+P.~425--455. doi: 10.2307/2337118.
+
+\bibitem{DonJ95} %13
+\Au{Donoho D., Johnstone~I.\,M.} Adapting to unknown smoothness via wavelet 
+shrinkage~// J.~Am. Stat. Assoc., 1995. Vol.~90. P.~1200--1224. doi: 10.2307/2291512.
+
+\bibitem{DonJ98} %14
+\Au{Donoho D., Johnstone~I.\,M.} Minimax estimation via wavelet shrinkage~// 
+Ann. Stat., 1998. Vol.~26. No.\,3. P.~879--921.
+
+\bibitem{G98}
+\Au{Gao H.-Y.} Wavelet shrinkage denoising using the non-negative garrote~// 
+J.~Comput. Graph. Stat., 1998. Vol.~7. No.\,4. P.~469--488.
+
+\bibitem{PK05} %16
+\Au{Poornachandra S., Kumaravel~N., Saravanan~T.\,K., Somaskandan~R.} 
+WaveShrink using modified hyper-shrinkage function // 27th Annual Conference (International) 
+ of the IEEE Engineering in Medicine and Biology Society Proceedings.~--- Piscataway, NJ, USA: IEEE, 2005. P.~30--32.
+
+\bibitem{LC10} %17
+\Au{Lin Y., Cai~J.} A~new threshold function for signal denoising based on 
+wavelet transform~// Conference (International) on Measuring Technology and Mechatronics Automation Proceedings.~--- 
+Piscataway, NJ, USA: IEEE, 2010. P.~200--203.
+
+\bibitem{HL10} %18
+\Au{Huang H.-C., Lee~T.\,C.\,M.} Stabilized thresholding with generalized sure 
+for image denoising~// 17th Conference (International) on Image Processing Proceedings.~--- Piscataway, NJ, USA: IEEE, 2010. P.~1881--1884.
+
+\bibitem{HX15}
+\Au{He C., Xing~J., Li~J., Yang~Q., Wang~R.} A~new wavelet thresholding 
+function based on hyperbolic tangent function~// Math. Probl. 
+Eng., 2015. Vol.~2015. Art.~528656. 10~p.
+
+\bibitem{ZC15}
+\Au{Zhao R.-M., Cui H.-M.} Improved threshold denoising method based on 
+wavelet transform~// 7th  Conference (International) on 
+Modelling, Identification and Control Proceedings.~--- Piscataway, NJ, USA: 
+IEEE, 2015. Art.~7409352. 4~p. doi: 10.1109/ICMIC.2015.7409352.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-10pt}
+
+\hfill{\small\textit{Поступила в~редакцию 07.09.23}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+
+
+\def\tit{NONLINEAR REGULARIZATION OF~THE~INVERSION\\ OF~LINEAR
+HOMOGENEOUS OPERATORS\\ USING~THE~BLOCK THRESHOLDING
+METHOD}
+
+
+\def\titkol{Nonlinear regularization of~the~inversion of~linear
+homogeneous operators using~the~block thresholding
+method}
+
+
+\def\aut{O.\,V.~Shestakov$^{1,2,3}$ and~E.\,P.~Stepanov$^{1}$}
+
+\def\autkol{O.\,V.~Shestakov and~E.\,P.~Stepanov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-10pt}
+
+
+\noindent
+$^1$Department of Mathematical Statistics, Faculty of Computational Mathematics and Cybernetics, M.\,V.~Lomo-\linebreak
+$\hphantom{^1}$nosov Moscow State University, 1-52~Leninskie 
+Gory, GSP-1, Moscow 119991, Russian Federation
+
+\noindent
+$^2$Moscow Center for Fundamental and Applied Mathematics, M.\,V.~Lomonosov Moscow State University,
+1~Lenin-\linebreak
+$\hphantom{^1}$skie Gory, GSP-1, Moscow 119991, Russian Federation
+
+\noindent
+$^3$Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov\linebreak
+$\hphantom{^1}$Str., Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+
+\Abste{The methods of thresholding the coefficients of wavelet expansions have
+become a popular tool for regularization of inverse statistical problems due to their
+simplicity, computational efficiency, and the ability to adapt both to the type of operators
+and to the features of the function under study. This approach proved to be the most
+fruitful for inversion of linear homogeneous operators arising in some signal and image
+processing problems. The paper considers the block thresholding method in which the
+decomposition coefficients are processed in groups that allows taking into account
+information about neighboring coefficients. In a~data model with an additive Gaussian
+noise, an unbiased estimate of the mean-square risk is analyzed and it is shown that under
+certain conditions, this estimate is strongly consistent and asymptotically normal. These
+properties allow constructing asymptotic confidence intervals for the theoretical mean-square risk of the method under consideration.}
+
+
+\KWE{linear homogeneous operator; wavelets; block thresholding; unbiased risk
+estimate; asymptotic normality; strong consistency}
+
+
+
+\DOI{10.14357/19922264230401}{PGKKYE}
+
+\vspace*{-20pt}
+
+\Ack
+
+\vspace*{-4pt}
+
+\noindent
+The work was done with the support of MSU Program of Development, Project No.\,23-SCH03-03.
+
+
+
+\vspace*{-1pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99} 
+ 
+ \vspace*{-5pt}
+%1
+\bibitem{HKP99-1} 
+\Aue{Hall, P., G.~Kerkyacharian, and D.~Picard.}
+ 1999. On the minimax optimality of block thresholded wavelet estimators. \textit{Stat. Sinica} 9:33--50.
+
+%2
+\bibitem{Cai99-1}
+\Aue{Cai, T.} 1999. Adaptive wavelet estimation: A~block thresholding and oracle inequality approach. 
+\textit{Ann. Stat.} 28(3):898--924. doi: 10.1214/aos/1018031262.
+
+%3
+\bibitem{St81-1}
+\Aue{Stein, C.} 
+1981. Estimation of the mean of a multivariate normal distribution. \textit{Ann. Stat.} 9(6):1135--1151. doi: 10.1214/aos/1176345632.
+
+%4
+\bibitem{SH21-1}
+\Aue{Shestakov, O.\,V.} 2021. 
+Analiz nesmeshchennoy otsenki srednekvadratichnogo riska metoda blochnoy po\-ro\-go\-voy obrabotki 
+[Analysis of the unbiased mean-square risk estimate of the block thresholding method]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 15(2):30--35. doi: 10.14357/19922264210205. EDN: DSQQAU.
+
+%5
+\bibitem{KS11-1}
+\Aue{Kudryavtsev, A.\,A., and O.\,V.~Shestakov.}
+ 2011. Asimptotika otsenki riska pri veyglet-veyvlet razlozhenii nablyuda\-emo\-go signala [The average risk assessment of the wavelet decomposition of the signal]. 
+ \textit{T-Comm~--- Telekommunikatsii i~transport} [T-Comm~--- Telecommunications and Transport] 2:54--57.
+
+%6
+\bibitem{SH12-1}
+\Aue{Shestakov, O.\,V.} 2012. 
+O~svoystvakh otsenki sred\-ne\-kvad\-ra\-tich\-no\-go riska pri regulyarizatsii obrashcheniya lineynogo odnorodnogo operatora 
+s~pomoshch'yu adaptivnoy porogovoy obrabotki koeffitsientov veyglet-veyvlet raz\-lo\-zhe\-niya 
+[On the properties of estimating the mean-square risk in the regularization of the inversion of a~linear homogeneous operator using adaptive 
+thresholding of the coefficients of the vaguelette-wavelet decomposition]. 
+\textit{Vestn. Tversk. un-ta. Ser. Prikladnaya matematika} [Herald of Tver State University. Series: Applied Mathematics] 1:117--130. EDN: PEZOJH.
+
+%7
+\bibitem{SH16-1}
+\Aue{Shestakov, O.\,V.}
+ 2016. Statisticheskie svoystva metoda podavleniya schuma, osnovannogo na stabilizirovannoy zhest\-koy porogovoy obrabotke 
+ [Statistical properties of the denoising method based on the stabilized hard thresholding]. 
+ \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 10(2):65--69. 
+doi: 10.14357/19922264160207. EDN: WCBWWP.
+
+%8
+\bibitem{SH18-1}
+\Aue{Shestakov, O.\,V.}
+ 2018. Nonlinear regularization of inverse problems for linear homogeneous transforms by stabilized hard thresholding. 
+ \textit{J.~Math. Sci.} 234(6):780--785. doi: 10.1007/s10958-018-4044-1.
+
+%9
+\bibitem{AS98-1}
+\Aue{Abramovich, F., and B.\,W.~Silverman.}
+ 1998. Wavelet decomposition approaches to statistical inverse problems. \textit{Biometrika} 85(1):115--129.
+
+%10
+\bibitem{Lee97-1}
+\Aue{Lee, N.} 1997. Wavelet-vaguelette decompositions and homogeneous equations.  West Lafayette, IN: Purdue University. PhD Thesis. 93~p.
+
+%11
+\bibitem{Mall99-1}
+\Aue{Mallat, S.} 1999. \textit{A wavelet tour of signal processing}. New York, NY: Academic Press. 857~p.
+
+%12
+\bibitem{DonJ94-1}
+\Aue{Donoho, D., and I.\,M.~Johnstone.} 1994. Ideal spatial adaptation via wavelet shrinkage. \textit{Biometrika} 81(3):425--455. doi: 10.2307/2337118.
+
+%13
+\bibitem{DonJ95-1}
+\Aue{Donoho, D., and I.\,M.~Johnstone.} 1995. Adapting to unknown smoothness via wavelet shrinkage. \textit{J.~Am. Stat. Assoc.} 90:1200--1224. 
+doi: 10.2307/2291512.
+
+%14
+\bibitem{DonJ98-1}
+\Aue{Donoho, D., and I.\,M.~Johnstone.} 1998. Minimax estimation via wavelet shrinkage. \textit{Ann. Stat.} 26(3):879--921.
+
+%15
+\bibitem{G98-1}
+\Aue{Gao, H.-Y.} 1998. Wavelet shrinkage denoising using the non-negative garrote. \textit{J.~Comput. Graph. Stat.} 7(4):469--488.
+
+%16
+\bibitem{PK05-1}
+\Aue{Poornachandra, S., N.~Kumaravel, T.\,K.~Saravanan, and R.~Somaskandan.}
+ 2005. WaveShrink using modified hyper-shrinkage function. \textit{27th Annual Conference (International) 
+ of the IEEE Engineering in Medicine and Biology Society Proceedings}. Piscataway, NJ: IEEE. 30--32.
+
+%17
+\bibitem{LC10-1}
+\Aue{Lin, Y, and J.~Cai.} 2010. A~new threshold function for signal denoising based on wavelet transform. 
+\textit{Conference (International) on Measuring Technology and Mechatronics Automation Proceedings}. Piscataway, NJ: IEEE.\linebreak 200--203.
+
+%18
+\bibitem{HL10-1}
+\Aue{Huang, H.-C., and T.\,C.\,M.~Lee.}
+ 2010. Stabilized thresholding with generalized sure for image denoising. 
+ \textit{17th Conference (International) on Image Processing Proceedings}. Piscataway, NJ: IEEE. 1881--1884.
+
+%19
+\bibitem{HX15-1}
+\Aue{He, C., J.~Xing, J.~Li, Q.~Yang, and R.~Wang.} 2015. 
+A~new wavelet thresholding function based on hyperbolic tangent function. \textit{Math. Probl. Eng.} 2015:528656. 10~p.
+
+%20
+\bibitem{ZC15-1}
+\Aue{Zhao, R.-M., and H.-M.~Cui.}
+ 2015. Improved threshold denoising method based on wavelet transform. 
+ \textit{7th Conference (International) on Modelling, Identification and Control Proceedings}. Piscataway, NJ: IEEE. Art. ID.~7409352. 4~p. 
+ doi: 10.1109/ICMIC.2015.7409352.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received September 7, 2023}} 
+
+%\vspace*{-18pt}
+
+\Contr
+
+\vspace*{-4pt}
+
+\noindent
+\textbf{Shestakov Oleg V.} (b.\ 1976)~--- Doctor of Science in physics and mathematics, professor, Department of Mathematical Statistics, 
+Faculty of Computational Mathematics and Cybernetics, M.\,V.~Lomonosov Moscow State University, 1-52~Leninskie Gory, GSP-1, 
+Moscow 119991, Russian Federation; senior scientist, Federal Research Center ``Computer Science and Control'' 
+of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; leading scientist, Moscow Center 
+for Fundamental and Applied Mathematics, M.\,V.~Lomonosov Moscow State University, 1~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation; 
+\mbox{oshestakov@cs.msu.su}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Stepanov Evgeniy P.} (b.\ 1994)~--- Candidate of Science (PhD) in physics and
+mathematics, junior scientist, Department of Computing Systems and Automation, Faculty of
+Computational Mathematics and Cybernetics, M.\,V.~Lomonosov Moscow State
+University, 1-52~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation;
+\mbox{estepanov@lvk.cs.msu.ru}
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

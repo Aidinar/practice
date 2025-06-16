@@ -1,0 +1,630 @@
+<?xml version="1.0" encoding="utf-8"?>
+<papers>
+  <paper>
+    <metadata>
+      <annotation value="\Abst{Рассмотрена сложность резервного копирования (backup), использующего различия между двумя последовательными снимками (snapshots). Предложены формальная модель, в которой можно точно поставить проблему, а также алгоритм, который решает эту проблему за почти линейное время от объема различий.}"/>
+      <keywords>
+        <braces>
+          <text value="\KW{резервное копирование (backup); снимки (snapshots); восстановление файловой системы; журнал файловой системы}"/>
+        </braces>
+      </keywords>
+    </metadata>
+    <fulltext>
+      <literature/>
+      <text value="kozm"/>
+      <text value="РЕЗЕРВНОЕ КОПИРОВАНИЕ, ИСПОЛЬЗУЮЩЕЕ СНИМКИ"/>
+      <text value="Резервное копирование, использующее снимки"/>
+      <text value="В."/>
+      <text value="А. Козмидиади"/>
+      <text value="В."/>
+      <text value="А. Козмидиади$^1$"/>
+      <command value="\titel">
+        <braces>
+          <braces>
+            <text value="{}"/>
+            <command value="\tit">
+              <braces/>
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <command value="\aut">
+                    <braces/>
+                    <braces>
+                      <braces>
+                        <text value="{}"/>
+                        <command value="\autkol">
+                          <braces/>
+                          <braces>
+                            <braces>
+                              <text value="{}"/>
+                              <command value="\titkol">
+                                <braces/>
+                              </command>
+                            </braces>
+                          </braces>
+                        </command>
+                      </braces>
+                    </braces>
+                  </command>
+                </braces>
+              </braces>
+            </command>
+          </braces>
+        </braces>
+      </command>
+      <command value="\renewcommand">
+        <braces>
+          <braces>
+            <text value="{}"/>
+            <command value="\thefootnote">
+              <braces/>
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <command value="\arabic">
+                    <braces>
+                      <braces>
+                        <text value="{}"/>
+                        <text value="footnote"/>
+                      </braces>
+                    </braces>
+                    <braces/>
+                    <braces/>
+                  </command>
+                </braces>
+              </braces>
+            </command>
+          </braces>
+        </braces>
+      </command>
+      <command value="\footnotetext">
+        <braces>
+          <text value="\footnotetext[1]{}"/>
+        </braces>
+      </command>
+      <text value="Институт проблем информатики Российской академии наук, v.kozmidiady@gmail.com"/>
+      <command value="\vskip">
+        <braces>
+          <text value="24pt plus 9pt minus 6pt"/>
+        </braces>
+      </command>
+      <command value="\thispagestyle">
+        <braces>
+          <braces>
+            <text value="{}"/>
+            <text value="headings"/>
+          </braces>
+        </braces>
+        <braces/>
+      </command>
+      <command value="\begin">
+        <braces>
+          <braces>
+            <text value="{}"/>
+            <text value="2"/>
+          </braces>
+        </braces>
+        <braces/>
+      </command>
+      <command value="\label">
+        <braces>
+          <braces>
+            <text value="{}"/>
+            <text value="st"/>
+            <command value="\stat">
+              <braces/>
+            </command>
+          </braces>
+        </braces>
+      </command>
+      <section id="id1">
+        <braces>
+          <text value="\section{}"/>
+        </braces>
+        <text value="Введение"/>
+        <text value="Под"/>
+        <command value="\textit">
+          <braces>
+            <text value="\textit{}"/>
+          </braces>
+          <text value="резервным копированием"/>
+        </command>
+        <text value="("/>
+        <command value="\textit">
+          <braces>
+            <text value="\textit{}"/>
+          </braces>
+          <text value="backup"/>
+        </command>
+        <text value=")"/>
+        <text value="1--4"/>
+        <text value="понимается создание копии данных, предназначенной для их восстановления в оригинальном месте при повреждении или разрушении. Резервное копирование выполняется периодически, поэтому в случае нарушения данных содержимое сохраненной копии может отставать от оригинальных данных. Резервное копирование предполагает наличие оригинала, который выступает передатчиком, и копии, играющей роль приемника. Далее будет рассматриваться только резервное копирование файловой системы. Резервное копирование обычно занимает значительное время, поэтому на это время нельзя запретить доступ пользователей к файловой системе. Но тогда при копировании может происходить создание, изменение, удаление файлов и директорий, а это может привести к тому, что созданная копия будет неконсистентной, т."/>
+        <text value="е."/>
+        <text value="данные могут оказаться не согласованными друг с другом. Чтобы избежать этого создают"/>
+        <command value="\textit">
+          <braces>
+            <text value="\textit{}"/>
+          </braces>
+          <text value="снимок"/>
+        </command>
+        <text value="("/>
+        <command value="\textit">
+          <braces>
+            <text value="\textit{}"/>
+          </braces>
+          <text value="snapshot"/>
+        </command>
+        <text value=") файловой системы"/>
+        <text value="5, 6"/>
+        <text value=". Снимок можно рассматривать как доступную только для чтения файловую систему, данные которой есть замороженные в определенный момент времени данные исходной системы. Изготовление снимка состоит из двух этапов. Перед изготовлением завершаются все выполняющиеся запросы к файловой системе. Далее на очень небольшой промежуток времени$T$задерживаются все новые запросы и делается сам снимок. Промежуток времени$T$для многих файловых систем является константой и имеет очень небольшое значение. Предполагается, что снимок содержит консистентные данные, поэтому при резервном копировании целесообразно использовать снимок. Таким образом, резервирование данных обеспечивается следующим образом. Периодически изготавливаются снимки файловой системы, после чего выполняется резервное копирование, т."/>
+        <text value="е."/>
+        <text value="происходит синхронизация, замена старого снимка на новый. Если на оригинальной системе происходит отказ, приведший к искажению или потере данных, осуществляется восстановление файловой системы по последнему сохраненному ее снимку. Передача всего снимка фактически означает передачу всех данных файловой системы. Делать это, пусть даже с низкой частотой, недопустимо при сколь-нибудь значительных объемах файловой системы. Если частота синхронизации не слишком низка, объем сделанных изменений обычно невелик: он на много порядков меньше объема всей файловой системы. Поэтому хотелось бы"/>
+        <command value="\mbox">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="найти"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="способ передавать только изменения, которые отличают предыдущую копию от текущего оригинала. При этом будем предполагать, что созданная копия не изменяется до следующего резервного копирования. Обычно системы порождения снимков дают возможность сохранять несколько снимков, сделанных в разные моменты времени. Поэтому можно считать, что в распоряжении имеется два снимка. Первый снимок соответствует копии, хранящейся на приемнике и сделанной в предыдущем цикле резервного копирования. Второй снимок соответствует копии, которая должна быть создана в следующем цикле. Для передачи изменений нужно определить, в чем эти снимки различаются. Некоторые изменения могут касаться структуры файловой системы, например добавление и удаление файлов и директорий. Такие изменения приводят к необходимости передачи информации о произведенных изменениях структуры и, если это надо, передачи данных файлов. Другие изменения сводятся к модификации данных файлов. Это приводит к передаче информации о сделанных модификациях. В данной работе не будет рассматриваться вопрос об экономной передаче данных или модификации этих данных. Это совершенно отдельная тема; сошлемся здесь на работы по сжатию данных"/>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="7"/>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="и алгоритмы передачи, которые учитывают наличие на приемнике более старой версии данных"/>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="8"/>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=". В статье рассматривается только проблема поиска различий между снимками. Понятно, что при отсутствии дополнительной информации для этого нужно рассмотреть оба снимка. Если число файлов и директорий в первом снимке равно$N_1$"/>
+          </braces>
+        </command>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="$N_2$, для выяснения различий потребуется никак не меньшая сложность, чем"/>
+        <formula id="id2" value="$O(N_1+N_2)$"/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="привлечь дополнительную информацию (ниже она названа журналом работы файловой системы), чтобы получить сложность"/>
+        <formula id="id3" value="$O(\Delta)$"/>
+        <text value=". Здесь"/>
+        <formula id="id4" value="$\Delta$"/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="количество измененных, созданных или удаленных файлов либо директорий между двумя снимками. Сложность этой задачи подчеркнута в"/>
+        <text value="9"/>
+        <text value=". При рассмотрении будем ориентироваться на UNIX-подобные файловые системы, например такие, как"/>
+        <text value="10"/>
+        <text value="."/>
+        <command value="\vspace*">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="-5pt"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+      </section>
+      <section id="id5">
+        <braces>
+          <text value="\section{}"/>
+        </braces>
+        <text value="Определения и формулировка задачи"/>
+        <command value="\vspace*">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="-2pt"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="Приведенные ниже определения дают возможность точно сформулировать решаемую в работе задачу."/>
+          </braces>
+        </command>
+        <command value="\vspace*">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="-5pt"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <subsection>
+          <text value="$G$"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="класс DAG"/>
+          <text value="Пусть$G$"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="класс непустых направленных ациклических графов (directed acyclic graphs, DAG), которые удовлетворяют следующим ограничениям:"/>
+          <itemize/>
+          <command value="\vspace*">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="-4pt"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+        </subsection>
+        <subsection>
+          <text value="Семантика"/>
+          <command value="\vspace*">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="-2pt"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="Каждый член"/>
+            </braces>
+          </command>
+          <formula id="id6" value="$g\in G$"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="это некоторый граф файловой системы. Вершинами$V$этого графа являются директории и файлы. Дуги"/>
+          <formula id="id7" value="$V_1\rightarrow V_2$"/>
+          <text value="соответствуют отношениям &amp;lt;&amp;lt;Директория$V_1$содержит$V_2$"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="другую директорию или файл&amp;gt;&amp;gt;."/>
+          <enumerate/>
+          <text value="Граф файловой системы может не быть деревом из-за наличия жестких ссылок"/>
+          <command value="\footnote">
+            <braces>
+              <text value="\footnote{}"/>
+            </braces>
+          </command>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="введение равноправных синонимичных имен файла. Жесткие ссылки на директории не допускаются."/>
+          <text value="(hard links) и символических ссылок"/>
+          <command value="\footnote">
+            <braces>
+              <text value="\footnote{}"/>
+            </braces>
+            <text value="Символическая ссылка, как и жесткая ссылка, содержит имя файла и находится в директории, но, в отличие от жесткой ссылки, указывает не на индексный дескриптор, а на другую жесткую или символическую ссылку. Поэтому, если в файловой системе не предприняты специальные меры, возможно образование циклов из символических ссылок."/>
+          </command>
+          <text value="(symbolic links). Далее предполагается, что в файловой системе отсутствуют символические ссылки, поэтому, как нетрудно видеть, ее граф является DAG."/>
+          <command value="\vspace*">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="-4pt"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+        </subsection>
+        <subsection>
+          <text value="Номера индексных дескрипторов и их свойства"/>
+          <command value="\vspace*">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="-2pt"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="Номер индексного дескриптора является уникальным идентификатором элемента файловой"/>
+            </braces>
+          </command>
+          <command value="\linebreak">
+            <braces>
+              <text value="\linebreak"/>
+            </braces>
+          </command>
+          <command value="\vspace*">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="-12pt"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\pagebreak"/>
+          <command value="\noindent">
+            <braces>
+              <text value="\noindent"/>
+            </braces>
+          </command>
+          <text value="системы, т."/>
+          <text value="е."/>
+          <text value="индексного дескриптора, соответствующего файлу или директории. Свойства номеров индексных дескрипторов:"/>
+          <itemize/>
+        </subsection>
+        <subsection>
+          <text value="Операции над"/>
+          <formula id="id8" value="$g\in G$"/>
+          <text value="Обозначим через"/>
+          <formula id="id9" value="$V\in g$"/>
+          <text value=","/>
+          <formula id="id10" value="$g\in G$"/>
+          <text value=", отношение &amp;lt;&amp;lt;$V$является вершиной графа$g$&amp;gt;&amp;gt;. Ниже рассматривается набор операций над графами"/>
+          <formula id="id11" value="$g\in G$"/>
+          <text value=". Операция$O$может быть применена к графу$G$, если"/>
+          <formula id="id12" value="$O(g)\in G$"/>
+          <text value="."/>
+          <enumerate/>
+          <text value="Операции имеют следующие свойства:"/>
+          <itemize/>
+        </subsection>
+        <subsection>
+          <text value="Журнал работы файловой системы"/>
+          <text value="Этот журнал представляет собой линейно упорядоченное (по возрастанию номеров) множество номеров индексных дескрипторов, сопровождаемых набором признаков и номеров (параметров). Набор признаков следующий:"/>
+          <itemize/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="для устранения признаков. Например, если для вершины нужно установить признак Del, а для нее уже установлены признаки Create, Mod, их"/>
+          <command value="\begin"/>
+          <command value="\small"/>
+          <center/>
+          <command value="\end">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="table*"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="следует устранить. Ниже перечислены допустимые комбинации установленных признаков:"/>
+            </braces>
+          </command>
+          <command value="\pagebreak"/>
+          <command value="\noindent">
+            <braces>
+              <text value="\noindent"/>
+            </braces>
+          </command>
+          <itemize/>
+          <text value="Таблица"/>
+          <command value="\ref">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="t1koz"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="описывает эти добавляемые при выполнении операций номера и признаки. Рассмотрим$S_1$и$S_2$"/>
+            </braces>
+          </command>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="два последовательных снимка файловой системы. Снимок$S_2$получается из$S_1$с помощью определенной последовательности операций"/>
+          <formula id="id13" value="$O_1, O_2, \ldots , O_n$"/>
+          <text value=", которые были перечислены выше. Вначале журнал файловой системы пуст. Каждая операция$O_i$("/>
+          <formula id="id14" value="$1 \leq i \leq n$"/>
+          <text value="), возможно, добавляет в журнал один или несколько номеров. Для некоторых номеров устанавливаются признаки. В итоге обработки всей последовательности операций достигается снимок$S_2$и образуется журнал, который описывает изменения, произошедшие за это время. Если"/>
+          <formula id="id15" value="$V(S)$"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="множество номеров, присутствующих в снимке$S$, то множество номеров в журнале есть подмножество"/>
+          <formula id="id16" value="$V(S_1)\cup V(S_2)$"/>
+          <text value=". Журнал работы файловой системы между двумя последовательными снимками будем обозначать через"/>
+          <formula id="id17" value="$J(S_1, S_2)$"/>
+          <text value="."/>
+          <command value="\smallskip">
+            <braces>
+              <text value="\smallskip"/>
+            </braces>
+          </command>
+          <command value="\noindent">
+            <braces>
+              <text value="\noindent"/>
+            </braces>
+          </command>
+          <braces>
+            <text value="{}"/>
+            <command value="\sf"/>
+          </braces>
+          <command value="\textbf">
+            <braces>
+              <text value="\textbf{}"/>
+            </braces>
+            <text value="Примечание."/>
+          </command>
+          <text value="Описанная структура журнала работы файловой системы неестественна и очень неудобна для работы. Но эта структура определяется в основном соображениями производительности. Например, был бы естественным журнал, представляющий собой последовательный файл. Хвост этого файла постоянно пополняется описаниями выполненных операций. Такое решение очень неэффективно. Файл может оказаться очень большим, если снимки делаются редко. Только операции чтения не требуют записи в этот файл. Кроме того, следует учитывать, что обычно файловая система может одновременно выполнять несколько операций. Особенно это важно для распределенных файловых систем. Журнал с последовательной организацией оказывается &amp;lt;&amp;lt;узким местом&amp;gt;&amp;gt;, так как является совместно используемым ресурсом, требующим монопольного захвата. В то же время индексные дескрипторы файлов и директорий, находящиеся в работе, размещаются в памяти. Введение в них дополнительных полей не вызывает затруднений. Поэтому разработчику средств резервного копирования трудно предлагать удобную для него структуру журнала, ему приходится соглашаться с тем, что согласны сделать для него разработчики файловой системы."/>
+        </subsection>
+        <subsection>
+          <text value="Формулировка задачи"/>
+          <text value="Пусть имеются$S_1$и$S_2$"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="и журнал работы файловой системы"/>
+          <formula id="id18" value="$J(S_1, S_2)$"/>
+          <text value=". Требуется построить такую последовательность операций"/>
+          <command value="\linebreak">
+            <braces>
+              <text value="\linebreak"/>
+            </braces>
+          </command>
+          <text value="(возможно, отличающуюся от исходной), которая$S_1$переводит в$S_2$. Эта работа выполняется на передатчике. Предполагается, что на приемнике есть файловая система, состояние которой совпадает со снимком$S_1$. Тогда, передавая на приемник построенную последовательность операций и выполняя на приемнике эти операции, можно привести состояние файловой системы преемника в состояние, соответствующее$S_2$."/>
+          <command value="\smallskip">
+            <braces>
+              <text value="\smallskip"/>
+            </braces>
+          </command>
+          <text value="Требуется оценить сложность построения нужной последовательности операций. Но чтобы оценить сложность, следует описать средства, которые можно применять. К этому описанию и перейдем."/>
+        </subsection>
+        <subsection>
+          <text value="Инструментарий и оценка сложности"/>
+          <text value="При построении требуемой последовательности операций допускается применение любых стандартных для UNIX функций, используемых для доступа к файловой системе. Набор таких функций содержится в"/>
+          <text value="10"/>
+          <text value=". Кроме того, можно применять специальные функции доступа к снимкам и журналу. Примерный перечень этих функций приведен ниже."/>
+          <center/>
+          <command value="\noindent">
+            <braces>
+              <text value="\noindent"/>
+            </braces>
+          </command>
+          <braces>
+            <text value="{}"/>
+            <command value="\tabcolsep">
+              <braces>
+                <text value="=3pt"/>
+              </braces>
+            </command>
+            <command value="\begin">
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <text value="lp"/>
+                </braces>
+              </braces>
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <text value="67.5mm"/>
+                </braces>
+              </braces>
+              <braces/>
+              <braces/>
+              <braces>
+                <text value="$S$&amp;amp; снимок"/>
+              </braces>
+            </command>
+          </braces>
+          <text value="$S_1$,$S_2$&amp;amp; два последовательных снимка"/>
+          <text value="$V$&amp;amp; номер индексного дескриптора (здесь отождествлены индексные дескрипторы, их номера и вершины графа снимка)"/>
+          <formula id="id19" value="$V(S)$"/>
+          <text value="&amp;amp; множество номеров индексных дескрипторов, присутствующих в снимке$S$"/>
+          <command value="\end">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="tabular"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces/>
+          </command>
+          <command value="\noindent">
+            <braces>
+              <text value="\noindent"/>
+            </braces>
+          </command>
+          <braces>
+            <text value="{}"/>
+            <command value="\tabcolsep">
+              <braces>
+                <text value="=3pt"/>
+              </braces>
+            </command>
+            <command value="\begin">
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <text value="lp"/>
+                </braces>
+              </braces>
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <text value="72.5mm"/>
+                </braces>
+              </braces>
+              <braces/>
+              <braces/>
+              <braces>
+                <text value="$n_J$&amp;amp; количество упомянутых номеров индексных дескрипторов в журнале работы файловой системы"/>
+              </braces>
+            </command>
+            <formula id="id20" value="$J(S_1, S_2)$"/>
+          </braces>
+          <text value="$N$&amp;amp; количество номеров в"/>
+          <formula id="id21" value="$V(S_1)\cup V(S_2)$"/>
+          <command value="\end">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="tabular"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces/>
+          </command>
+        </subsection>
+        <subsection>
+          <text value="Описание функций"/>
+          <command value="\noindent">
+            <braces>
+              <text value="\noindent"/>
+            </braces>
+          </command>
+          <command value="\begin"/>
+        </subsection>
+      </section>
+    </fulltext>
+  </paper>
+</papers>

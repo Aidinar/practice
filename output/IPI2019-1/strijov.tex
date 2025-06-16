@@ -1,0 +1,1025 @@
+\def\stat{strijov}
+
+\def\tit{КЛАССИФИКАЦИЯ ФИЗИЧЕСКОЙ АКТИВНОСТИ ЧЕЛОВЕКА 
+С~ПОМОЩЬЮ ЛОКАЛЬНЫХ АППРОКСИМИРУЮЩИХ МОДЕЛЕЙ$^*$}
+
+\def\titkol{Классификация физической активности человека 
+с~помощью локальных аппроксимирующих моделей}
+
+\def\aut{Д.\,А.~Аникеев$^1$, Г.\,О.~Пенкин$^2$, В.\,В.~Стрижов$^3$}
+
+\def\autkol{Д.\,А.~Аникеев, Г.\,О.~Пенкин, В.\,В.~Стрижов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Аникеев Д.\,А.}
+\index{Пенкин Г.\,О.}
+\index{Стрижов В.\,В.}
+\index{Anikeyev D.\,A.}
+\index{Penkin G.\,O.}
+\index{Strijov V.\,V.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при частичной финансовой поддержке РФФИ (проекты 17-07-1574 и~19-07-1155) 
+и~Правительства Российской Федерации (соглашение №\,05.Y09.21.0018).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский физико-технический институт, dmitriy.anikeyev@phystech.edu}
+\footnotetext[2]{Московский физико-технический институт, \mbox{penkin.gr@gmail.com}}
+\footnotetext[3]{Московский физико-технический институт; Вычислительный центр им.\
+ А.\,А.~Дородницына Федерального исследовательского центра <<Информатика и~управление>> 
+ Российской академии наук, \mbox{strijov@ccas.ru}}
+
+\vspace*{12pt}
+
+
+\Abst{Исследуется проблема классификации временных рядов 
+акселерометра мобильного телефона. Классу физической активности 
+соответствует сегмент временного ряда. Сегменту сопоставляется 
+его признаковое описание. Оно порождается аппроксимирующим сплайном. 
+Элементами вектора признаков являются коэффициенты при базисных функциях 
+сплайнов. Вычислительный эксперимент находит оптимальные параметры 
+аппроксимации и~параметры модели классификации 
+согласно максимуму правдоподобия логистической модели классификации.}
+
+
+\KW{временные ряды; классификация; сплайн; локальная аппроксимация; 
+признаковое пространство}
+
+\DOI{10.14357/19922264190106}
+  
+%\vspace*{4pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+\section{Введение}
+
+Цель работы заключается в~решении задачи классификации временн$\acute{\mbox{ы}}$х рядов 
+сложной структуры~\cite{Karasikov2016,Farmer1987}, для которых признаковое 
+описание не задано  явно. Такие временные ряды встречаются в~задачах 
+классификации звуковых сигналов~\cite{myas1970}, данных 
+с~акселерометра~\cite{Gary2011,ivkin2015}, построения прогностических 
+финансовых моделей~\cite{Tsay2010}. В~\cite{Esl2012,Fu2011} дается обзор 
+методов анализа временн$\acute{\mbox{ы}}$х рядов за последнее десятилетие.  
+Задача построения признакового пространства требует выбора адекватной 
+гипотезы порождения временн$\acute{\mbox{о}}$го ряда. Многие 
+из ис\-сле\-ду\-емых временн$\acute{\mbox{ы}}$х рядов 
+описываются моделью авторегрессии~\cite{SEMOR2004,Fatma} или 
+моделью анализа сингулярного спектра.
+
+В данной работе изучается классификация сегментов временн$\acute{\mbox{ы}}$х рядов по 
+их локальному описанию. Под локальным описанием будем понимать параметры 
+сплайна, аппроксимирующего сегмент ряда~\cite{Istomin2005,Tselykh2012,Det2007}.
+
+Предполагается, что класс физической ак\-тив\-ности описывается уникальной 
+аппрокси\-ми\-ру\-ющей кривой, моделью, которая задана су\-перпозицией параметрических функций.  
+В~\cite{Karasikov2016,ivkin2015} показано, что использование параметров 
+ап\-про\-кси\-ми\-ру\-ющих моделей в~качестве признакового описания сегмента дает 
+ожидаемое качество классификации физической активности.
+%
+При этом остается открытой проблема использования значения параметров локальных 
+аппроксимирующих моделей. Точность классификации зависит от этих па\-ра\-мет\-ров. 
+Требуется найти оптимальные па\-ра\-мет\-ры локальных моделей. 
+
+Построение моделей, 
+использующих в~качестве признакового описания параметры локальных моделей, 
+рассмотрено в~\cite{Gholizadeh2009}.
+
+В данной работе для решения задачи классификации временн$\acute{\mbox{ы}}$х рядов поставлена 
+задача поиска оптимальной локальной аппроксимирующей модели. Сегмент 
+временн$\acute{\mbox{о}}$го 
+ряда аппроксимируется сплайном (алгебраическим, сглаживающим, адаптивным 
+регрессионным или сплайном с~динамическими узлами). При помощи логистической 
+регрессии строится отображение из вектора признаков, состоящего из коэффициентов 
+сплайна, в~метку класса.
+
+В качестве прикладной задачи рассматривается классификация физической активности 
+человека по данным с~акселерометра. В~вычислительном эксперименте сравнивается 
+точность классификации в~пространствах признаков, построенных различными 
+локальными моделями, найдены оптимальные параметры таких моделей.
+
+
+\section{Постановка задачи классификации сегментов временного ряда}
+
+Поставим задачу  построения признакового пространства, описывающего сегменты 
+временн$\acute{\mbox{ы}}$х\linebreak рядов с~целью их классификации. 
+Задачу сформулируем в~терминах построения суперпозиции функций. 
+Задан временной ряд, полученный в~результате измерений акселерометра.
+Для построения  выборки~$\mathfrak{D}$  ряд разбивается на сегменты.
+Сегмент временн$\acute{\mbox{о}}$го ряда~--- конечная последовательность 
+значений~$\mathbf{x}(t)\hm=[x_1,\dots,x_p]^\mathsf{T}$ в~моменты 
+времени $\mathbf{t} \hm= [t_1, \dots, t_p]^\mathsf{T}.$ 
+Задана выборка~$\mathfrak{D}\hm=\{(\mathbf{x}_i,y_i)\},$ где
+$y\hm\in \mathbb{Y}$~--- метка класса  из конечного множества.
+Требуется найти оптимальный классификатор~$f(\mathbf{x}_i)$ из условия
+\begin{equation*}
+\hat{f}={\mathop{\mathrm{arg}}\underset{f}{\min}} 
+\;\mathrm{CV}\left(f,\mathfrak{D}\right),
+\end{equation*}
+где
+$$
+\mathrm{CV} (f,\mathfrak{D})=\fr{1}{R}\sum\limits_{r=1}^R \left[f(\mathbf{x}_i)\neq y_i\right]
+$$
+при $\mathbf{x}_i\in \mathfrak{D\setminus D}_r$.
+
+Выборка~$\mathfrak{D}$ случайно разбивается~$R$ раз на контрольную~$\mathfrak{D}_r$ 
+и~тестовую~$\mathfrak{D\setminus D}_r$. Функцией ошибки выступает 
+число неверно классифицированных объектов~$\mathbf{x}_i$ на тестовой выборке. 
+Предлагается представить~$f$ в~виде суперпозиции функций~$f\hm=g\left(a(t)\right)$. 
+Параметризованное отображение
+$$
+a: (\mathbf{t},\mathbf{b}) \mapsto \mathbf{x}
+$$
+отображает сегмент временн$\acute{\mbox{о}}$го ряда~$\mathbf{x}\hm\in \mathbf{X}$ 
+в~пространство параметров аппроксимирующего сплайна, а 
+$$
+g:( \mathbf{b},\mathbf{w}) \mapsto y
+$$ 
+является логистической регрессией и~отображает признаковое описание в~метку класса. 
+Вектор~$\mathbf{b}$ назовем вектором параметров аппроксимирующей модели, 
+а~$\mathbf{w}$~--- вектором параметров классификатора~$g$.
+Оптимальные параметры $(\mathbf{b},\mathbf{w})$ находятся минимизацией ошибок:
+\begin{align}
+\label{1-str}
+\hat{\mathbf{b}}&=
+\mathrm{\mathop{\mathrm{arg}}\underset{\mathbf{b}}\min}\;\norm{a(\mathbf{t, b}) - \mathbf{x}}_2^2\,;
+\\
+\hat{\mathbf{w}} &= \mathrm{\mathop{\mathrm{arg}}\underset{\mathbf{w}}{\min}} \;\mathrm{CV}
+\left(f(a,\hat{\mathbf{b}}, \mathbf{w}),\mathfrak{D}\right),\notag
+\end{align}
+где~$a$~--- сплайн, аппроксимирующий сегмент временн$\acute{\mbox{о}}$го ряда, 
+а~$\norm{\cdot}_2^2$~--- квадратичная ошибка аппроксимации.
+
+\section{Выбор локальных аппроксимирующих моделей}
+
+Рассмотрим различные методы построения признакового 
+пространства. Зафиксируем сегмент~$\mathbf{x}\hm=[x_1,\ldots,x_p]^\mathsf{T}$ 
+временн$\acute{\mbox{о}}$го ряда, порожденный измерениями, получаемыми с~носимого 
+устройства в~моменты времени~$t_1,\ldots,t_p$.
+
+\subsection{Алгебраический сплайн}
+
+Разобьем сегмент~$[t_1,t_p]$ на~$K$ равных отрезков. Зададим~$\{h_1(t),\ldots,
+h_N(t)\}$~--- базисные функции сплайна. Гладким сплайном называется 
+функция~$a(t)$. Она непрерывна и~имеет непрерывные производные вплоть 
+до порядка, называемого гладкостью сплайна, причем на каждом из~$K$ отрезков
+\begin{multline}
+\label{2-str}
+a_k(t)=\sum\limits_{n=1}^N \theta_{k,n} 
+ h_n\left(t-\fr{t_k-t_{k-1}}{2}\right), \\
+ k\in\{1,\ldots,K\},
+\end{multline}
+где коэффициенты при базисных функциях~$\theta_{k,n}\hm\in \mathbb{R}$.
+
+Оптимальный с~точки зрения аппроксимации сплайн ищется из условия~\eqref{1-str}.
+В~разновидностях сплайнов, аппроксимирующих функцию, накладываются 
+дополнительные условия на функцию. Матрица~$\boldsymbol{\Theta}_{K \times N}$ 
+векторизуется, образуя элемент признакового пространства.
+Для алгебраического сплайна порядка~$N$ базисными функциями являются мономы
+$
+h_n=t^n, \enskip   n \in \{1,\dots,N\}.
+$
+
+В качестве параметров модели выступают
+\begin{equation}
+\label{4-str}
+\mathbf{b} = \left[\boldsymbol{\Theta}_{K \times N},N,K\right].
+\end{equation}
+По каждому сегменту строится~$K\times (N+1)$ параметров. 
+В~данной работе рассматриваются только квадратичный и~кубический сплайны.
+
+\subsection{Сглаживающий сплайн}
+
+Сглаживающий сплайн минимизирует на отрезке~$\left[t_{\min},t_{\max}\right]$ 
+одновременно квадратичную невязку и~производную~$a(t)$ порядка~$m$.
+В~данной работе используется вторая производная и~модель вида~(\ref{2-str}). 
+Таким образом, минимизируется  линейная комбинация
+$$
+(1-\lambda)\sum\limits_{k=1}^K \left(x(t_k)-a(t_k)\right)^2+
+\lambda\!\int\limits_{t_{\min}}^{t_{\max}}\!\!\!\left(D^2f(t)\right)^2\,dt 
+\rightarrow \min_\mathbf{\theta},
+$$
+где~$\lambda$~--- параметр гладкости; $N$~--- число базисных функций; 
+$K$~--- число узлов.
+В качестве базисных функций выступают мономы не выше заданной степени. 
+Параметрами аппроксимирующей модели являются
+\begin{equation}
+\label{5-str}
+\mathbf{b} = \left[\boldsymbol{\Theta}_{K \times N},\lambda, K, N\right].
+\end{equation}
+
+\subsection{Адаптивные регрессионные сплайны}
+
+В одномерном случае адаптивные регрессионные сплайны 
+(МАRS) выражаются через ку\-соч\-но-ли\-ней\-ные базисные функции:
+\begin{align*}
+(\tau-t)_+ &=
+\begin{cases}
+\tau-t, &\mbox{если\ } \tau>t\,;\\
+0 &\mbox{ иначе;}
+\end{cases}
+\\
+(t-\tau)_+ &=
+\begin{cases}
+t-\tau, &\mbox{если } \tau<t\,;\\
+0 &\mbox{иначе.}
+\end{cases}
+\end{align*}
+
+Используемые для аппроксимации базисные функции имеют вид:
+$$
+h_j(t)=\prod\limits_{k=1}^{K_j}\left((-1)^{s(j)}(t-\tau_{k_j})\right)_+,
+$$
+где $K_j$~--- общее число усеченных линейных функций в~$m$-й базисной функции.
+На каждом из~$M$ шагов алгоритма в~множество базисных функций 
+(изначально содержащем одну) добавляется функция вида
+$$
+h_m(t)=\hat{C}h_j(t)\left(\tau_k-t\right)_++\hat{C'}h_j(t)\left(t-\tau_k\right)_+
+$$
+такая, что ошибка~\eqref{1-str} минимальна.
+Таким образом, модель имеет вид:
+\begin{equation}
+\label{3-str}
+a(t)= c_0 +  \sum\limits_{j=1}^M c_j h_j(t) +\varepsilon\,,
+\end{equation}
+где~$\varepsilon$~--- невязка.
+
+В результате добавления  модель приобретает избыточное 
+число базисных функций. Необходимо  удалить из множества базисных функций те, 
+удаление которых  вносит наименьший вклад в~увеличение ошибки~\eqref{1-str}. 
+Параметрами данной модели выступают
+\begin{equation}
+\label{6-str}
+ \mathbf{b} = [\mathbf{H}, M].
+\end{equation}
+Оптимальное число базовых функций
+$$
+\hat{M}=\mathop{\mathop{\mathrm{arg}}\min}_{M \in \{1, \ldots, M_{\max}\}}\mathrm{GCV}\,(M)
+$$
+определяется с~помощью критерия обобщенного скользящего контроля
+$$
+\mathrm{GCV}\,(M)=\fr{1}{R}\sum\limits_{i=1}^R
+\fr{\left(x\left(\tau_i\right)-a_M\left(\tau_i\right)\right)^2}{
+\left(1-C(M)/R\right)^2}\,,
+$$ 
+где~$R$~--- размер выборки;  $C(M)$~--- оценка штрафов модели: 
+$$C(M)=\mathrm{trace}\left(\mathbf{H}\left(\mathbf{H}^\mathsf{T}\mathbf{H}\right)^{-1}
+\mathbf{H}^\mathsf{T}\right)+1,
+$$
+в которой~$\mathbf{H}$~--- матрица c элементами~$h_j(\tau_i)$.
+
+\subsection{Сплайны с~динамическими узлами}
+
+Пусть временной сегмент~$[t_1,t_p]$ разбит на несколько 
+отрезков~$[t_1,t_{n_1}]$, $[t_{n_1},t_{n_2}],\ldots, [t_{n_{K-1}},t_p]$. 
+Рассмотрим аппроксимацию сегмента временн$\acute{\mbox{о}}$го ряда на каждом
+ отрезке~$[t_{n_{k-1}},t_{n_k}]$ с~помощью полинома степени~$N$. 
+ Тогда~$K\times (N+1)$ коэффициентов матрицы~$\boldsymbol{\Theta}_{K \times N}$ 
+ образуют элемент признакового пространства. Предлагается определять 
+ концы отрезков последовательно, используя критерий Фишера. 
+ Метод заключается в~последовательном определении~$t_{n_k}$ ($t_{n_0}=t_1$). 
+ Положим текущую длину отрезка $l\hm=1$. Построим полином~$y_k^l(t)$ 
+ соответствующей степени, минимизирующий RSS (regression sum of squares)
+ на отрезке~$[t_{n_k},t_{n_{k}+l}]$. 
+ Полученные значения~$x(t)$ и~$y_k^l(t)$ в~целых точках на этом отрезке 
+ образуют две выборки~$X$ и~$Y$. Отношение дисперсий
+ $$
+ F=\fr{\hat\sigma^2_X}{\hat\sigma^2_Y}
+ $$
+определяет схожесть дисперсий данных выборок. 
+Если дисперсии выборок близки, увеличиваем чис\-ло~$l$ на~$1$ 
+(кривая хорошо аппроксимирует временной ряд). Формально определяем 
+критерий остановки с~помощью~$p$-зна\-че\-ния.
+Если~$p(F)$ ниже уровня значимости~$\alpha$~--- 
+определяем~$n_{k+1}\hm=n_k\hm+l.$ Продолжим получать последовательность 
+узлов~$t_{n_k}$, пока сегмент не закончится. 
+Число~$\alpha\hm\in[0;0,5]$ будем интерпретировать как параметр метамодели.
+
+Поиск аппроксимирующего сплайна сведем к~задаче условной 
+минимизации среднеквадратичного отклонения~(\ref{1-str}) 
+при соответствующих условиях гладкости функции
+$$
+\fr{\partial^j y_{k+1}(t_{n_k})}{\partial t^j}=
+\fr{\partial^j y_k(t_{n_k})}{\partial t^j} \mbox{~для всех~} k<K\,,\enskip  n<N\,.
+$$
+Также рассматривается аппроксимация при условиях равенства только 
+значений сплайна на концах смежных отрезков (ку\-соч\-но-глад\-кая).
+Результаты аппроксимации при параметре $\alpha\hm=0{,}07$ 
+и~различных степенях полинома показаны на рис.~1.
+
+
+Критерий Фишера устанавливает разное число узлов на разных сегментах. 
+Способ построения признакового пространства в~таком случае заключается\linebreak\vspace*{-12pt}
+
+{ \begin{center}  %fig1
+ \vspace*{-2pt}
+   \mbox{%
+ \epsfxsize=79mm 
+ \epsfbox{str-1.eps}
+ }
+
+
+\end{center}
+
+
+\noindent
+{{\figurename~1}\ \ \small{Аппроксимация сплайном с~динамическими узлами: \textit{1}~---
+    без аппроксимации;
+    \textit{2}~--\textit{4}~--- степени~1--3}}
+}
+
+\vspace*{12pt}
+
+\addtocounter{figure}{1}
+
+
+\noindent
+ в~дополнении 
+всех векторов нулевыми компонентами до вектора одинаковой размерности. В~качестве 
+альтернативного метода рассмотрим сле\-ду\-ющую перестановку компонент получившегося 
+вектора.
+
+Назовем $\norm{\mathbf{y}-\mathbf{g}}_2^2$ относительным изменением импульса 
+на сегменте,
+где~$\mathbf{g}\hm=(0;0;9{,}8)$~м/с$^2$~--- ускорение 
+свободного падения. Отсортируем отрезки по убыванию относительных 
+изменений\linebreak импульса, запишем в~соответствующем порядке\linebreak параметры 
+сплайнов и~дополним все векторы ну\-левыми компонентами до векторов 
+одинаковой размерности. Поскольку производится классификация данных с~акселерометра, 
+такая сортировка позволяет соотносить между собой отрезки времени с~наибольшими 
+изменениями импульса датчика для различных сегментов.
+
+Параметрами модели в~этом случае являются
+\begin{equation}
+\label{7-str}
+\mathbf{b} =\left[\boldsymbol{\Theta}_{K \times N}, \alpha, K, N\right]\,.
+\end{equation}
+
+\subsection{Альтернативные локальные модели}
+Рассмотрим некоторые альтернативные методы построения признакового пространства.
+
+\textbf{Дискретное преобразование Фурье.} 
+В~качестве признакового описания временн$\acute{\mbox{о}}$го ряда берутся коэффициенты 
+прямого преобразования Фурье:
+\begin{align*}
+ \theta(\mathbf{x})&=
+ \left[\theta_1,\dots,\theta_{2p}\right];\\
+ \theta_{2k-1}+i\theta_{2k}&=\sum\limits_{j=1}^p x^j 
+ \exp\left(-\fr{2\pi i}{t}kj\right).
+\end{align*}
+Тогда обратное преобразование задает аппроксимацию: 
+$$
+a(x^k)=\fr{1}{t}\sum\limits_{j=1}^t\left(\theta_{2j-1}+i\theta_{2j}\right)
+\exp\left( -\fr{2\pi i}{t}kj\right).
+$$
+Коэффициенты преобразования, образующие признаковое про\-стран\-ст\-во, 
+отыскиваются с~по\-мощью линейной регрессии временн$\acute{\mbox{о}}$го 
+ряда на столбцы мат\-ри\-цы Фурье. Применение этого метода для классификации 
+рас\-смат\-ри\-ва\-ет\-ся в~статье~\cite{Karasikov2016}.
+
+\textbf{Анализ сингулярного спектра.} 
+Элементы признакового пространства~--- сингулярные числа 
+траекторной мат\-ри\-цы~$\mathbf{X}_N$, отвечающие за величины различных час\-тот 
+спект\-ра сегмента
+\begin{equation}
+\label{8-str}
+\textbf{X}^\mathsf{T}\textbf{X}=\textbf{V}\boldsymbol{\Lambda} 
+\textbf{V}^\mathsf{T},\; \boldsymbol{\Lambda}=\mathrm{diag}\{\lambda_1,\ldots,\lambda_p\}.
+\end{equation}
+Тогда собственные числа матрицы~$\mathbf{X}^\mathsf{T}\textbf{X}$ 
+образуют вектор признаков~$\boldsymbol{\Lambda}.$
+Значение~$N$ назначается равным математическому ожиданию длины сегмента 
+по критерию, описанному в~разделе сегментации. 
+Результаты классификации в~таком пространстве описаны в~\cite{ivkin2015}.
+
+\section{Сегментация временных рядов}
+
+Исходные данные представляют собой размеченные несегментированные
+ отрезки произвольной длины. Для построения выборки необходимо 
+ их сегментировать: разбить временной ряд~$x_1,\ldots,x_L$ на сегменты 
+ вида~$[x_1,\ldots,x_p]^\mathsf{T}$ длины~$p$.
+Рассматриваются два варианта разбиения квазипериодических рядов 
+на синфазные сегменты. Алгоритмы выделения периодов рассмотрены 
+в~\cite{vasko2002estimating,Motrenko2015Fundamental}.
+
+\textbf{Выделение главных компонент} заключается в~разложении 
+временн$\acute{\mbox{о}}$го ряда
+$\mathbf{x}=\hat{\mathbf{x}}+\tilde{\mathbf{x}}+\boldsymbol{\varepsilon},
+$
+где~$\mathbf{\hat{x}}$~--- тренд; $\mathbf{\tilde{x}}$~--- периодическая часть; 
+$\boldsymbol{\varepsilon}$~--- вектор невязок.
+Построим траекторную матрицу из элементов временн$\acute{\mbox{о}}$го 
+ряда~$x_1,\ldots,x_L$:
+$$
+\mathbf{X}=\begin{bmatrix} 
+x_1 & \cdots & x_p \\ 
+\vdots & \ddots & \vdots \\ 
+x_{L-p+1} & \cdots & x_L \end{bmatrix}\,.
+$$
+По первым собственным значениям матрицы (\ref{8-str})
+$$
+\textbf{X}^\mathsf{T}\textbf{X}=\textbf{V}\boldsymbol{\Lambda} 
+\textbf{V}^\mathsf{T},\; \boldsymbol{\Lambda}=\mathrm{diag}
+\left\{\lambda_1,\ldots,\lambda_p\right\},
+$$
+восстановим периодическую зависимость~$\tilde {\textbf{x}}\hm=\textbf{x}_1
++$\linebreak $+\cdots+\textbf{x}_d,$ где \mbox{$\mathbf{x}_i\hm=\sqrt{\lambda_i}
+\textbf{v}_i(\textbf{Xv}_i)^\mathsf{T}$}.
+Искомый период ряда~$\hat{p}\hm= 
+\mathop{\mathrm{arg}}\,\min\nolimits_{p} 
+\norm{\textbf{x} - \tilde{\textbf{x}} - \hat{\textbf{x}}}_2^2.$
+
+\begin{figure*}[b] %fig2
+\vspace*{12pt}
+ \begin{center}  
+  \mbox{%
+ \epsfxsize=159.635mm 
+ \epsfbox{str-2.eps}
+ }
+\end{center}
+\vspace*{-11pt}
+\Caption{Матрица ковариации для кубического~(\textit{а}) и~квадратичного~(\textit{б}) сплайна}
+    \label{ris:cs}
+%\end{figure*}
+%\begin{figure*} %fig3
+\vspace*{9pt}
+ \begin{center}  
+  \mbox{%
+ \epsfxsize=162.546mm 
+ \epsfbox{str-3.eps}
+ }
+\end{center}
+\vspace*{-11pt}
+    \Caption{Зависимость точности классификации от параметра сглаживания~(\textit{а}) 
+    и~от числа базисных функций~(\textit{б})}
+    \label{ris:sm1}
+\end{figure*}
+
+\textbf{Метод поиска локального максимума временного ряда.}
+Для заданных чисел~$s$ и~$p$ в~каждом отрезке ищется индекс 
+начала сегмента согласно условию
+$
+\hat{s}= \mathrm{arg}\,\underset{j<s}{\max}\; x_j$ и~в~качестве 
+сегмента берется ~$[x_{\hat{s}},\ldots,x_{\hat{s}+p}]^\mathsf{T}.$ 
+Для получения синфазных отрезков квазипериодических рядов 
+предлагается использовать параметр~$s$, больший длины периода. 
+Данный метод неустойчив к~выбросам, но требует малой вычислительной 
+мощности. Сложность алгоритма~--- линейная по длине исходного сегмента.
+
+\vspace*{-6pt}
+
+\section{Вычислительный эксперимент}
+
+В качестве вычислительного эксперимента выбрана задача классификации 
+типов физической активности человека по данным с~акселерометра.
+
+\vspace*{-6pt}
+
+\paragraph*{Данные WISDM.} Данные представляют собой размеченные 
+несегментированные трехмерные временн$\acute{\mbox{ы}}$е ряды, полученные с~датчиков 
+ак\-се\-ле\-ро\-мет\-ра. Частота измерений составляла~20~Гц.\linebreak
+В~выборке представлены классы sitting~(225), standing~(275), walking~(2890), 
+jogging~(1631), upstairs~(801) и~downstairs~(657).
+Дробление производилось на временн$\acute{\mbox{ы}}$е сегменты длины~50. 
+Для выравнивания сегментов использовался поиск максимального значения 
+за следующие несколько отсчетов, который задает точку начала сегмента.
+
+Сегментация временн$\acute{\mbox{о}}$го ряда проводилась методом поиска 
+максимума с~параметрами
+$m\hm=20, k\hm=100$.   В~качестве классифицирующего алгоритма использована 
+логистическая регрессия из библиотеки sklearn. Результаты классификации 
+показаны на рис.~\ref{ris:cs}.
+
+\begin{table*}\small 
+\begin{center}
+   
+   
+   % \label{tab:comp}
+    
+    \begin{tabular}{|l|c|c|}
+     \multicolumn{3}{c}{Сравнение моделей локальной аппроксимации WISDM и~USC-HAD}\\
+     \multicolumn{3}{c}{\ }\\[-6pt]
+        \hline
+        \multicolumn{1}{|c|}{Аппроксимирующая модель}&Оптимальный параметр&Точность\\
+        \hline
+        \multicolumn{3}{|c|}{Выборка WISDM}\\
+        \hline
+        Quadratic ~(\ref{2-str})&(\ref{4-str})&\hphantom{9}0,2540\\
+        Cubic ~(\ref{2-str})&(\ref{4-str})&\hphantom{9}0,7305\\
+        Smoothing spline ~(\ref{2-str})&$\lambda=0{,}25$ (\ref{5-str})&0,748\\
+        MARS (\ref{3-str})&$M=4$ (\ref{6-str})\hphantom{0{,}99}&0,56\hphantom{9}\\
+                \hline
+        \multicolumn{3}{|c|}{Выборка USC-HAD} \\
+        \hline
+        Quadratic ~(\ref{2-str})&(\ref{4-str})&0,587\\
+        Cubic  (\ref{2-str})&(\ref{4-str})&0,926\\
+        Smoothing spline ~(\ref{2-str})&$\lambda=0{,}4$ (\ref{5-str})&0,960\\
+        MARS (\ref{3-str})&$M=4$ (\ref{6-str})\hphantom{{,}99}&0,835\\
+        Динамические узлы Sort ~(\ref{2-str})&$K=2$, $\alpha=0{,}015$ (\ref{7-str})&0,935\\
+        Динамические узлы Unsorted (\ref{2-str})&$K=2$, $\alpha=0{,}01$\hphantom{9} (\ref{7-str})&0,926\\
+        \hline
+    \end{tabular}
+    \end{center}
+\end{table*}
+\setcounter{figure}{4}
+
+
+
+Точность классификации для квадратичной ап\-прок\-си\-ма\-ции составляет~$0{,}25$, 
+что ниже результатов остальных исследованных методов аппроксимации. 
+
+
+Зависимость точ\-ности модели от па\-ра\-мет\-ра~$p$ для сглаживающего сплайна 
+можно наблюдать на рис.~\ref{ris:sm1},\,\textit{а}. 
+Как видно из данного графика, максимальная точ\-ность достигается 
+при па\-ра\-мет\-ре сглаживания~$p\hm=0{,}25$.
+
+Для построения адаптивного регрессионного сплайна была выбрана библиотека ARESLAB. 
+Для того чтобы размерность пространства параметров была одинакова для всех 
+сегментов, аппроксимация происходила без фазы назад. Параметр такой модели~--- 
+число базисных функций. График зависимости точности классификации от параметра 
+метамодели показан на рис.~\ref{ris:sm1},\,\textit{б}. Рассмотрены различные 
+отображения~$h$ временн$\acute{\mbox{ы}}$х рядов в~признаковое пространство. 
+Данные отображения можно сравнить с~тождественным, т.\,е.\ 
+таким, при котором в~качестве матрицы плана выступает матрица значений временн$\acute{\mbox{о}}$го 
+ряда в~фиксированные моменты времени. Точность и~оптимальные параметры моделей 
+представлены для сравнения в~таблице. %~\ref{tab:comp}.
+
+
+
+\vspace*{-9pt}
+
+\paragraph*{Данные USC-HAD.} Данные представляют собой размеченные временн$\acute{\mbox{ы}}$е 
+ряды различной длины с~датчиков акселерометра. Даны проекции ускорения на три 
+оси с~частотой~100~Гц.
+В выборке представлены классы walking forward, jumping up, 
+walking left, sitting, walking right, standing, walking upstairs, 
+sleeping, walking downstairs, elevator up, running forward, elevator down.
+
+
+Рассмотрим теперь аппроксимацию гладкими сплайнами с~динамическими узлами  
+и~ку\-соч\-но-глад\-ки\-ми, о~которых шла речь в~подразд.~3.4.
+После аппроксимации ими сегментов имеется возможность менять порядок получаемых 
+признаков.
+Можно задать его пропорциональным длине кривой между двумя соседними 
+узлами или же пропорционально относительному изменению импульса. 
+Также можно оставить его без изменения.
+
+Все вышеизложенные варианты дают всего~6~различных вариантов 
+(с~точ\-ностью до степени аппроксимирующего многочлена) задания призна-\linebreak\vspace*{-12pt}
+
+{ \begin{center}  %fig4
+ \vspace*{-4pt}
+   \mbox{%
+ \epsfxsize=78.952mm 
+ \epsfbox{str-6.eps}
+ }
+
+
+\end{center}
+
+
+\noindent
+{{\figurename~4}\ \ \small{Точность классификации для сплайнов с~динамическими узлами: пустые
+    значки~--- неотсортированные сглаженные;
+    черные~--- неотсортированные;
+    серые значки~---  отсортированные по энергии; \textit{1}~---  линейный метод;
+    \textit{2}~--- квадратичный; \textit{3}~--- кубический метод}}
+}
+
+\vspace*{8pt}
+
+\addtocounter{figure}{1}
+
+\noindent
+кового 
+пространства. На рис.~4 изображено качество 
+классификации в~зависимости от значения параметра~$p$.
+
+
+
+
+Чтобы результаты классификации для этой выборки можно было сравнить с~предыдущей, 
+выделим  также~6~классов, по своей природе совпа\-да\-ющих или близких к~WISDM. 
+Возьмем классы~1, 6, 7, 8, 9 и~10. Будем их для краткости называть walking, 
+running, jumping, sitting, standing и~sleeping. Сегментация временн$\acute{\mbox{о}}$го 
+ряда также производилась методом поиска максимума с~параметрами
+$m\hm=50$, $k\hm=200$. Результаты сравнения моделей представлены в~таблице.
+
+
+На рис.~5 показана зависимость точ\-ности 
+классификации от па\-ра\-мет\-ра сглаживания (рис.~5.\,\textit{а})
+и~от~чис\-ла базисных функ\-ций (рис.~5,\,\textit{б}).
+Зависимость погрешности аппроксимации SMAPE от чис\-ла базисных функций для 
+регрессионного сплайна показана на рис.~6.
+
+
+\setcounter{figure}{4}
+\begin{figure*} %fig5
+\vspace*{1pt}
+ \begin{center}  
+  \mbox{%
+ \epsfxsize=162.555mm 
+ \epsfbox{str-4.eps}
+ }
+\end{center}
+\vspace*{-13pt}
+ \Caption{Зависимость точности классификации от параметра сглаживания~(\textit{а}) 
+ и~от числа базисных функций~(\textit{б})}
+    \label{ris:sm2}
+    \vspace*{-6pt}
+\end{figure*}
+
+
+
+
+{ \begin{center}  %fig6
+ \vspace*{-6pt}
+  \mbox{%
+ \epsfxsize=78.603mm 
+ \epsfbox{str-5.eps}
+ }
+
+
+\end{center}
+
+
+\noindent
+{{\figurename~6}\ \ \small{Зависимость погрешности SMAPE от числа базисных функций}}
+}
+
+%\vspace*{12pt}
+
+\addtocounter{figure}{1}
+
+\vspace*{-9pt}
+
+\section{Заключение}
+
+\vspace*{-1pt}
+
+В работе были описаны различные параметрические модели аппроксимации 
+временн$\acute{\mbox{ы}}$х 
+рядов. Проанализирована их эффективность при по\-стро\-ении классификатора. 
+Предложен метод классификации временн$\acute{\mbox{ы}}$х рядов при помощи по\-стро\-ения 
+пространства коэффициентов локальных аппроксимирующих моделей. 
+Сравнивался ряд таких моделей.  Квадратичный сплайн оказался 
+непригоден\linebreak для классификации, остальные отображения по\-казали результат, 
+сравнимый с~тождественным отоб\-ра\-же\-ни\-ем. Оптимальные параметры классификатора 
+повышают точность на 3\%--5\%. Предложенный метод позволяет получить 
+классификатор без затрат времени на ручную генерацию признаков.
+{\looseness=-1
+
+}
+
+\vspace*{-9pt}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+ \vspace*{-1pt}
+ 
+ \bibitem{Farmer1987} %1
+\Au{Farmer~J.\,D., Sidorowich~J.\,J.} 
+Predicting chaotic time series~// Phys. Rev. Lett.,~1987. Vol.~59. No.\,8. P.~845--848.
+
+\bibitem{Karasikov2016} %2
+\Au{Карасиков~М.\,Е., Стрижов~В.\,В.} 
+Классификация временных рядов в~пространстве параметров порожда\-ющих моделей~// 
+Информатика и~её применения,~2008. T.~10. Вып.~4. С.~121--131.
+
+
+
+\bibitem{myas1970}
+\Au{Мясников~Л.\,Л., Мясникова~Е.\,Н.} 
+Автоматическое распознавание звуковых образов.~--- Л.: Энергия, 1970.  183~с.
+
+\bibitem{Gary2011}
+\Au{Kwapisz~J.\,R., Weiss~G.\,M., Moore~S.\,A.} 
+Activity recognition using cell phone accelerometers~// 
+ACM SigKDD Explorations Newsletter, 2011. Vol.~12. No.\,2. P.~72--82.
+
+\bibitem{ivkin2015}
+\Au{Кузнецов~М.\,П., Ивкин~Н.\,П.} 
+Алгоритм классификации временных рядов акселерометра по комбинированному 
+признаковому описанию~// Машинное обучение и~анализ данных,~2015. Т.~1. №\,11. 
+С.~1471--1483.
+
+%6
+\bibitem{Tsay2010} %6
+\textit{Tsay~R.\,S.} Analysis of financial time series.~--- 
+Hoboken, NJ, USA:  Wiley, 2006. 712~p.
+
+
+\bibitem{Fu2011} %7
+\Au{Fu~C.} A~review on time series data mining~// 
+Eng. Appl. Artif. Intel., 2011. Vol.~24. P.~164--181.
+
+\bibitem{Esl2012} %8
+\Au{Esling~P., Agon~C.} Time series data mining~// 
+ACM Comput. Surv., 2012. Vol.~45. No.\,1. P.~1--34.
+
+
+\bibitem{SEMOR2004}
+\Au{Coull~B.\,A., Staundenmayer~J.} 
+Self modeling regression for multivariate curve data~// 
+Stat. Sinica, 2004. Vol.~14. P.~695--711.
+
+\bibitem{Fatma}
+\Au{Weber G.-W., Batmaz~I., K$\ddot{\mbox{o}}$ksal~G., \textit{et al.}} 
+CMARS: A~new contribution to nonparametric regression 
+with multivariative adaptive regression splines supported by continuous optimisation~// 
+Inverse Probl.  Sci.  En., 2012. Vol.~20. No.~3. P.~371--400.
+doi: 10.1080/17415977.2011.624770.
+
+
+\bibitem{Istomin2005} %11
+\Au{Истомин~И.\,А., Котляров~О.\,Л., Лоскутов~А.\,Ю.} 
+К~проблеме обработки временных рядов: расширение возможностей метода 
+локальной аппроксимации посредством сингулярного спектрального анализа~// 
+Теоретическая и~математическая физика, 2005. Т.~142. №\,1. С.~148--160.
+
+
+\bibitem{Det2007} %12
+\Au{Dette~H., Melas~V.\,B., Pepelyshev~A.} Optimal design for smoothing splines~// 
+Ann. I.~Stat. Math., 2007. Vol.~63. No.\,5. P.~981--1003.
+
+\bibitem{Tselykh2012} %13
+\Au{Целых~В.\,Р.} Многомерные адаптивные регрессионные сплайны~// 
+Машинное обучение и~анализ данных, 2012. Т.~1. №\,3. С.~272--278.
+
+
+\bibitem{Gholizadeh2009}
+\Au{Gholizadel~S., Salajegheh~E.} Optimal design of structures subjected 
+to time history loading by swarm intelligence and an advanced metamodels~// 
+Comput. Method. Appl.~M., 2009. Vol.~198. P.~2936--2949.
+
+\bibitem{vasko2002estimating}
+\Au{Vasko~K., Toivonen~H.} Estimating the number of segments in 
+time series data using permutation tests~//  Conference 
+(International) on Data Mining Proceedings.~--- IEEE, 2006. P.~466--473.
+
+\bibitem{Motrenko2015Fundamental}
+\Au{Motrenko A.\,P., Strijov~V.\,V.} 
+Extracting fundamental periods to segment biomedical signals~// IEEE J.~Biomed. 
+Health,~2015. Vol.~20. No.\,6. P.~1466--1476.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 23.05.18}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{LOCAL APPROXIMATION MODELS FOR~HUMAN PHYSICAL ACTIVITY CLASSIFICATION}
+
+
+\def\titkol{Local approximation models for~human physical activity classification}
+
+\def\aut{D.\,A.~Anikeyev$^1$, G.\,O.~Penkin$^1$, and~V.\,V.~Strijov$^{1,2}$}
+
+\def\autkol{D.\,A.~Anikeyev, G.\,O.~Penkin, and~V.\,V.~Strijov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+\noindent
+    $^1$Moscow Institute of Physics and Technology, 
+9~Institutskiy Per., Dolgoprudny, Moscow Region 141700, Russian\linebreak
+$\hphantom{^1}$Federation
+
+%\noindent
+%$^2$M.\,V.~Lomonosov Moscow State University?????
+
+\noindent
+$^2$A.\,A.~Dorodnicyn Computing Center, Federal Research Center ``Computer Science and Control'' 
+of Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 40~Vavilov Str., Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{6pt}
+
+
+
+
+\Abste{The research is devoted to the time series classification. 
+The time series is measured by an accelerometer of a~wearable device. 
+A~class of physical activity is defined by its feature description of 
+a~time segment. To construct this description, the authors propose to use parameters 
+of various approximation splines (algebraic, smoothing, adaptive regression, 
+or spline with dynamic nodes). The logistic regression is used as a~classifier. 
+It delivers desired quality of the activity recognition.
+        The authors analyze the space of the local approximation parameters. 
+        Classification accuracy depends on the method of this space construction. 
+        The computational experiment finds the optimal approximation parameters 
+        and parameters of the classifier.}
+        
+        
+        \KWE{local approximation model; time series; classification; 
+        splines; feature space}
+
+
+\DOI{10.14357/19922264190106}
+
+\vspace*{-14pt}
+
+\Ack
+\noindent
+The work was partially supported by the Russian Foundation for Basic Research 
+(projects 17-07-1574 and~19-07-1155).
+
+
+
+\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+ \bibitem{Farmer1987-1} %1
+\Aue{Farmer, J.\,D., and J.\,J.~Sidorowich.} 
+1987. Predicting chaotic time series. \textit{Phys. Rev. Lett.} 59(8):845--848.
+
+\bibitem{Karasikov2016-1} %2
+\Aue{Karasikov, M.\,E., and V.\,V.~Strijov.} 
+2008. Klassifikatsiya vremennykh ryadov v~prostranstve 
+parametrov porozhdayushchikh modeley 
+[Feature-based time-series classification].
+ \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 10(4):128--138.
+
+
+
+
+
+\bibitem{myas1970-1} %3
+\Aue{Myasnikov, L.\,L., and E.\,N.~Myasnikova.} 1970. \textit{Avtomaticheskoe 
+raspoznavanie zvukovykh obrazov} [Automatic speech recognition]. 
+Moscow: Energiya. 183~p.
+
+\bibitem{Gary2011-1} %4
+\Aue{Kwapisz, J.\,R., G.\,M.~Weiss, and S.\,A.~Moore.}
+ 2011. Activity recognition using cell phone accelerometers. 
+ \textit{ACM SigKDD Explorations Newsletter} 12(2):72--82.
+
+\bibitem{ivkin2015-1} %5
+\Aue{Kuznetsov, M.\,P., and N.\,P.~Ivkin.} 2015. Algoritm klassifikatsii 
+vremennykh ryadov akselerometra po kombinirovannomu priznakovomu opisaniyu 
+[Time series classification algorithm using combined feature description]. 
+\textit{Mashinnoe obuchenie i~analiz dannykh} 
+[{Machine Learning Data Anal.}] 1(11):1471--1483.
+
+\bibitem{Tsay2010-1} %6
+\Aue{Tsay, R.\,S.} 2010. \textit{Analysis of financial time series.} 
+Hoboken, NJ: {Wiley.} 712~p.
+
+
+
+\bibitem{Fu2011-1} %7
+\Aue{Fu, C.} 2011. A~review on time series data mining. 
+\textit{Eng. Appl. Artif. Intel.} 24:164--181.
+
+\bibitem{Esl2012-1} %8
+\Aue{Esling, P., and C.~Agon.} 2012. Time series data mining. 
+\textit{ACM Comput. Surv.} 45(1):1--34.
+
+\bibitem{SEMOR2004-1} %9
+\Aue{Coull, B.\,A., and J.~Staundenmayer.} 2004. Self modeling regression for
+ multivariate curve data. \textit{Stat. Sinica} 14:695--711.
+
+\bibitem{Fatma-1} %10
+%\Aue{Fatma, Y.} 2011. \textit{CMARS: A~new contribution to nonparametric 
+%regression with multivariative adaptive regression splines 
+%supported by continuous optimisation}. Lambert. 212~p.
+\Aue{Weber, G.-W., I.~Batmaz, G.~K$\ddot{\mbox{o}}$ksal, \textit{et al.}} 2012.
+CMARS: A~new contribution to nonparametric regression 
+with multivariative adaptive regression splines supported by continuous optimisation. 
+\textit{Inverse Probl.  Sci.  En.} 20(3):371--400.
+doi: 10.1080/17415977.2011.624770.
+
+\bibitem{Istomin2005-1} %11
+\Aue{Istomin, I.\,A., O.\,L.~Kotlyarov, and A.\,Yu.~Loskutov.} 2005. 
+The problem of processing time series: Extending possibilities 
+of the local approximation method using singular spectrum analysis. 
+\textit{Theor. Math. Phys.} 142(1):128--137.
+
+\bibitem{Det2007-1} %12
+\Aue{Dette, H., V.\,B.~Melas, and A.~Pepelyshev.} 2011. Optimal design for 
+smoothing splines \textit{Ann.~I.~Stat. Math.} 
+63(5):981--1003.
+
+\bibitem{Tselykh2012-1} %13
+\Aue{Tselykh, V.\,R.} 2012. Mnogomernye adaptivnye regressionnye splayny 
+[Multivariate adaptive regression splines]. \textit{Mashinnoe obuchenie 
+i~analiz dannykh} [{Machine Learning Data Anal.}] 1(3):272--278.  
+
+
+
+\bibitem{Gholizadeh2009-1} %14
+\Aue{Gholizadel, S., and E.~Salajegheh.} 2009. 
+Optimal design of structures subjected to time history loading by swarm 
+intelligence and an advanced metamodels. 
+\textit{Comput. Method. Appl.~M.} 198:2936--2949.
+
+
+
+\bibitem{vasko2002estimating-1} %15
+\Aue{Vasko, K., and H.~Toivonen.}
+ 2002. Estimating the number of segments in time series data using 
+ permutation tests. \textit{Conference (International) on Data Mining
+ Proceedings} 466--473.
+
+\bibitem{Motrenko2015Fundamental-1} %16
+\Aue{Motrenko, A.\,P., and V.\,V.~Strijov.} 2016. 
+Extracting fundamental periods to segment biomedical signals. 
+\textit{IEEE J.~Biomed. Health} 20(6):1466--1476.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received May 23, 2018}}
+
+%\pagebreak
+
+%\vspace*{-18pt}
+
+
+\Contr
+
+\noindent
+\textbf{Anikeyev Dmitriy A.} (b.\ 1995)~--- 
+student, Moscow Institute of Physics and Technology, 
+9~Institutskiy Per., Dolgoprudny, Moscow Region 141700, Russian Federation; 
+\mbox{dmitriy.anikeyev@phystech.edu}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Penkin Grigoriy O.} (b.\ 1993)~--- 
+PhD student, Moscow Institute of Physics and Technology, 
+9~Institutskiy Per., Dolgoprudny, Moscow Region 141700, Russian Federation; 
+\mbox{penkin.gr@gmail.com}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Strijov Vadim V.} (b.\ 1967)~--- 
+Doctor of Science in physics and mathematics, leading scientist, 
+A.\,A.~Dorodnicyn Computing Center, Federal Research Center ``Computer Science and Control'' 
+of Russian Academy of Sciences, 40~Vavilov Str., Moscow 119333, Russian Federation;
+professor,  Moscow Institute of Physics and Technology, 
+9~Institutskiy Per., Dolgoprudny, Moscow Region 141700, Russian Federation;
+\mbox{strijov@ccas.ru}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}  

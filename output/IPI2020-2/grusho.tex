@@ -1,0 +1,747 @@
+\def\stat{grusho}
+
+\def\tit{МЕТОДЫ НАХОЖДЕНИЯ ПРИЧИН СБОЕВ В~ИНФОРМАЦИОННЫХ 
+ТЕХНОЛОГИЯХ\\ С~ПОМОЩЬЮ МЕТАДАННЫХ$^*$}
+
+\def\titkol{Методы нахождения причин сбоев в~информационных 
+технологиях с~помощью метаданных}
+
+\def\aut{Н.\,А.~Грушо$^1$, А.\,А.~Грушо$^2$, М.\,И.~Забежайло$^3$, 
+Е.\,Е.~Тимонина$^4$}
+
+\def\autkol{Н.\,А.~Грушо, А.\,А.~Грушо, М.\,И.~Забежайло, 
+Е.\,Е.~Тимонина}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Грушо Н.\,А.}
+\index{Грушо А.\,А.}
+\index{Забежайло М.\,И.}
+\index{Тимонина Е.\,Е.}
+\index{Grusho N.\,A.}
+\index{Grusho A.\,A.}
+\index{Zabezhailo M.\,I.}
+\index{Timonina E.\,E.}
+ 
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа частично поддержана РФФИ (проекты 18-29-03081 и~18-07-00274).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского 
+центра <<Информатика 
+и~управление>> Российской академии наук, \mbox{info@itake.ru}}
+\footnotetext[2]{Институт проблем информатики Федерального исследовательского 
+центра <<Информатика 
+и~управление>> Российской академии наук, \mbox{grusho@yandex.ru}}
+
+\footnotetext[3]{Вычислительный центр им.\ А.\,А.~Дородницына Федерального 
+исследовательского центра <<Информатика и~управление>> Российской академии наук, 
+\mbox{m.zabezhailo@yandex.ru}}
+\footnotetext[4]{Институт проблем информатики Федерального исследовательского 
+центра <<Информатика 
+и~управление>> Российской академии наук, \mbox{eltimon@yandex.ru}}
+
+
+%\vspace*{-6pt}
+   
+  \Abst{Статья посвящена вопросам удаленного выявления и~локализации сбоя 
+в~информационных системах. Определены информационные ресурсы для решения 
+перечисленных выше задач и~исследованы модели использования этих информационных 
+ресурсов. В данной статье метаданные описываются естественными для моделей 
+биз\-нес-про\-цес\-сов и~информационных технологий (ИТ) ориентированными ациклическими графами
+ (DAG~--- directed acyclic graph). 
+  Рассматриваемая задача состоит в~следующем. При сбое или ошибке необходимо быстро 
+выйти на содержащий причину сбоя блок, который уже не настолько дорог, чтобы его беречь, 
+и~он был бы заменяем. Если блок содержит очень дорогие компоненты, например сервер, то его 
+замена может быть экономически недоступна организации. Если говорить о~программных 
+приложениях, то они могут быть легко реинсталлированы, и~цена такой замены невелика. 
+Следовательно, причину надо искать в~направлении сверху вниз по уровням иерархической 
+декомпозиции (ИД) DAG информационной технологии.
+  Проведено исследование по анализу и~выявлению сбойных данных в~ИТ
+   при условии правильности работы всех блоков информационной системы.}
+  
+  \KW{модели информационных технологий; метаданные; ориентированные ациклические 
+графы; причины сбоев и~ошибок в~информационных технологиях} 
+  
+\DOI{10.14357/19922264200205}
+ 
+ 
+%\vspace*{9pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+  
+
+\section{Введение} 
+  
+  В задачи, решаемые системными администраторами, входит выявление ошибок 
+и~сбоев ИТ в~распределенных ин\-фор\-ма\-ци\-он\-но-вы\-чис\-ли\-те\-ль\-ных 
+сис\-те\-мах (\mbox{РИВС}). Слож\-ность этих задач привела к~тому, что 
+наблюдается дефицит высококвалифицированных системных администраторов.\linebreak 
+В~связи с~расширением числа информационных сис\-тем поддержки цифровой 
+экономики высококвалифицированные системные администраторы все чаще 
+переходят на удаленную работу по обслуживанию информационных систем 
+малого и~среднего бизнеса. При этом необходимо удаленно решать следующие 
+задачи:
+  \begin{itemize}
+\item как узнать о~сбое;
+\item какую информацию необходимо получить о~деталях сбоя;
+\item как определить причину сбоя;
+\item как дистанционно осуществить восстановление~ИТ;
+\item как обеспечить безопасность дистанционной работы системного 
+администратора.
+  \end{itemize}
+  
+  В работе не рассматриваются задачи безопас\-ной связи и~сбор информации 
+мониторинга в~контролируемых информационных системах~[1]. В~\mbox{статье} 
+рассмотрены вопросы удаленного выявления и~локализации сбоя 
+в~информационных системах. Определены информационные ресурсы для 
+решения перечисленных выше задач и~исследованы модели использования этих 
+информационных ресурсов. 
+  
+  В работах~[2--4] определены метаданные для управления соединениями 
+в~РИВС. Метаданные представляют информацию о~необходимых и~до\-пус\-ти\-мых 
+взаимодействиях хостов, на которых\linebreak реализуется ИТ. Метаданные отражают 
+логику биз\-нес-про\-цес\-сов и~позволяют дистанционно контролировать ИТ, 
+связанные с~их выполнением. В~[5] показано, что метаданные можно также 
+использовать для поиска сбоев и~ошибок. Поскольку в~работе не 
+рассматриваются сетевые вопросы, то поиск причин сбоев и~ошибок в~SDN 
+(software-defined networking)
+можно найти в~работе~[6]. 
+  
+  В отличие от предыдущих работ в~данной статье метаданные описываются 
+естественным для моделей 
+  бизнес-процессов и~ИТ способом~--- в~виде DAG. 
+  
+  Причина~$A$ свойства~$P$ в~данных определяется как детерминированное 
+появление свойства~$P$ в~данных при появлении в~них причины~$A$~[7]. 
+В~этом определении свойство~$P$ называется следствием причины~$A$. 
+Исследования формализованных описаний причин, следствий и~связанных 
+с~этими понятиями исследований можно найти в~работах В.\,К.~Финна (см., 
+например,~[8]). 
+  
+  Следует отметить, что причина свойства~$P$ не всегда является единственной. 
+Например, предположим, что некоторая система выполняет свои функции 
+последовательно на устройствах A, B и~C. Сбой работы системы выявляется на 
+устройстве~C (свойство~$P$) и~может быть связан с~выходом из строя 
+устройства~A или устройства~B. Каждое из этих событий порождает в~системе 
+свойство~$P$. Тогда сбои~A и~B являются причинами свойства~$P$. Но 
+отсюда не следует, что в~случае появления свойства~$P$ на устройстве~C 
+причина однозначно определена. Вместе с~тем уточнение того, какая из причин 
+повлияла на сбой в~системе, в~этом примере имеет практическое значение. Если 
+можно заменить любое из устройств~A или~B, то экономически целесообразно 
+сначала узнать, какое из них вышло из строя. 
+
+\vspace*{-6pt}
+  
+  \section{Модели графов для~описания информационных технологий} 
+  
+  \vspace*{-3pt}
+  
+  В работе рассмотрены ИТ~[9], представимые в~виде DAG. Прописными 
+латинскими буквами $A, B,\ldots$ будем обозначать \textit{данные} (объекты), 
+служащие входными или выходными данными преобразований информации 
+в~ИТ, на рисунках данные будем представлять окружностями. Преобразования 
+будем называть \textit{блоками}, обозначать строчными латинскими буквами и~на 
+рисунках обозначать прямоугольниками. 
+  
+  Каждый блок соответствует преобразованию информации и~решает одну или 
+несколько задач, необходимых для реализации ИТ. Дуги DAG соответствуют 
+передаче данных блокам от предыдущих блоков, т.\,е.\ дуга выходит из выходных 
+данных выполненного преобразования и~направляется во входные данные для 
+следующего преобразования. 
+  
+  В ИТ могут быть ориентированные циклы преобразований. Очевидно, что 
+входные и~выходные данные каждого цикла отличаются. Следовательно, в~графе 
+ИТ ориентированные циклы отсутствуют. Если выходные данные преобразования 
+полностью определяют входные данные одного или несколько следующих 
+преобразований, то из выходных данных такого преобразования выходят 
+несколько дуг, при этом часть выходных данных в~следующем блоке может не 
+использоваться. 
+  
+  При рассмотрении ИД ИТ может возникнуть 
+необходимость рас\-смат\-ри\-вать преобразования на уровне операционной
+сис\-те\-мы (ОС) и~аппаратной 
+платформы. Тогда преобразование верхнего блока можно представить в~виде 
+суперпозиции час\-ти преобразования этого блока, блока, связанного 
+с~преобразованием информации на уровне ОС и~аппаратной платформы, 
+и~оставшейся части преобразования верхнего блока. Повтор преобразований 
+допустим, если они имеют разные входные данные. 
+  
+  Простейший DAG, описывающий произвольную ИТ, имеет вид, 
+представленный на рис.~1, где $A$~--- входные данные ИТ; $B$~--- выходные 
+данные ИТ; $f$~--- преобразование, реализующее ИТ. 
+
+{ \begin{center}  %fig1
+ \vspace*{3pt}
+    \mbox{%
+ \epsfxsize=45mm 
+ \epsfbox{gru-1.eps}
+ }
+\vspace*{6pt}
+
+\noindent
+{{\figurename~1}\ \ \small{Простейший DAG}
+}
+\end{center}
+}
+
+%\vspace*{6pt}
+
+
+
+  Если выходные данные~$A$ какого-то преобразования или выходные 
+данные~$B$ другого какого-то преобразования используются для 
+преобразования~$f$, то входные данные для преобразования~$f$ представляют 
+собой вектор $(A, B)$ (рис.~2). 
+
+{ \begin{center}  %fig2
+ \vspace*{3pt}
+   \mbox{%
+ \epsfxsize=79mm 
+\epsfbox{gru-2.eps}
+ }
+\vspace*{6pt}
+
+\noindent
+{{\figurename~2}\ \ \small{Векторные входные данные 
+}}
+
+\end{center}
+}
+
+%\vspace*{6pt}
+
+
+  Далее потребуется ИД DAG. Иерархическая декомпозиция определяется 
+итерационно с~по\-мощью двух операций. 
+
+
+
+
+  \begin{enumerate}[1.]
+  \item \textit{Операция деления блока.} Пусть преобразование данных~$f$ 
+в~текущем DAG имеет вид, показанный на рис.~1. Предположим, что~$f$ может 
+быть представлено в~виде суперпозиции двух преобразований: 
+$$
+B\hm= f(A)\hm= 
+f_2(f_1(A));\enskip  f_1(A)\hm=C\,.
+$$ 
+
+Тогда фрагмент DAG на рис.~1 может быть 
+графически представлен в~виде, отраженном на рис.~3.
+%
+  Такое преобразование сохраняет ацикличность исходного графа. 
+  
+  \end{enumerate}
+  
+  { \begin{center}  %fig3
+ \vspace*{6pt}
+    \mbox{%
+ \epsfxsize=79mm 
+ \epsfbox{gru-3.eps}
+ }
+\vspace*{6pt}
+
+\noindent
+{{\figurename~3}\ \ \small{Операция деления блока
+}}
+
+\end{center}
+}
+
+\vspace*{3pt}
+
+\begin{enumerate}[1.]
+\setcounter{enumi}{1}
+  \item \textit{Операция детализации блоков.} Пусть преобразование~$f$ зависит 
+от исходных данных $(A, B)$ и~может быть представлено в~виде $C\hm= f(A,B)$. 
+Предположим, что существуют функции~$f_1$ и~$f_2$ такие, что $f(A,B)\hm= 
+f_2(f_1(A),B)$. Тогда результат этой детализации имеет вид, показанный на 
+рис.~4.
+  \end{enumerate}
+  
+
+\vspace*{3pt}
+  
+{ \begin{center}  %fig4
+ %\vspace*{3pt}
+    \mbox{%
+ \epsfxsize=79mm 
+ \epsfbox{gru-4.eps}
+ }
+\vspace*{6pt}
+
+\noindent
+{{\figurename~4}\ \ \small{Операция детализации блока
+}}
+
+\end{center}
+}
+
+\vspace*{6pt}
+
+   Очевидно, что операция детализации блоков не порождает ориентированных 
+циклов в~по\-рож\-да\-емом графе. 
+
+   Применяя операции деления и~детализации, можно из общего представления 
+ИТ (см.\ рис.~1) получить DAG, в~котором блоки соответствуют используемым в~ИТ 
+приложениям. Выделим этот этап ИД в~связи с~тем, что создатели приложений, 
+как правило, готовят для них хорошие средства тестирования и~описания входных 
+и~выходных данных. 
+   
+  \section{Использование иерархической декомпозиции ориентированных 
+  ациклических графов 
+для~анализа сбоев и~ошибок}
+   
+   Рассмотрим этот вопрос на уровне DAG блоков приложений, реализующихся 
+в~ИТ. Задача состоит в~следующем. При сбое или ошибке необходимо быстро 
+выйти на содержащий причину сбоя блок, который уже не настолько дорог, чтобы 
+его беречь, и~он был бы заменяем. Если блок содержит очень дорогие 
+компоненты, например сервер, то его замена может быть экономически 
+недоступна организации. Если говорить о~программных приложениях, то они 
+могут быть легко реинсталлированы, и~цена такой замены невелика. 
+Следовательно, причину надо искать в~направлении сверху вниз по уровням 
+иерархической декомпозиции DAG ИТ. При этом если выявлены блоки, ставшие 
+причиной выхода из строя ИТ, и~их удается заменить или <<отремонтировать>>, 
+то апостериорная вероятность выхода из строя таких же блоков в~дальнейшем 
+увеличивается. Тогда необходимо готовиться к~тому, что эти блоки, возможно, 
+будут выходить из строя и~в~других системах. 
+   
+   Если все приложения (включая ОС и~про\-граммно-аппаратные платформы) 
+работают исправно, то причину сбоя следует искать в~данных. Этот вопрос 
+рассмотрен в~следующем разделе. 
+  
+  \section{Поиск причин сбоя в~данных} 
+  
+  Сбои могут возникать даже при правильной работе всех приложений 
+и~технических систем. Эти сбои связаны с~неправильными входными данными. 
+В~ИТ, представленной на рис.~1, сбой данных~$B$ при правильно работающем 
+преобразовании~$f$ связан с~неправильными исходными данными~$A$. 
+  
+  Более детальный анализ причины сбоя в~этой ситуации потребует введения 
+новых обозначений и~доказательства ряда утверждений.
+  
+  Пусть $A$, $B$ и~$f$~--- параметры блока на рис.~1. Обозначим через $D(f)$ 
+множество возможных исходных данных, которые могут быть поданы на вход 
+преобразования~$f$. Если на данных $A\hm\in D(f)$ преобразование~$f$ не 
+может быть вычислено, то $f(A)\hm=0$. Если сбой произошел на предыдущих 
+блоках ИТ, то формально положим $0\hm\in D(f)$ и~$f(0)\hm=0$. Таким образом, 
+значение~0~--- это очевидно идентифицируемый сбой. 
+  
+  Пусть $J(f)$~--- это множество выходных данных преобразования~$f$ при 
+входных данных, принадлежащих $D(f)$, $0\hm\in J(f)$. Предположим, что 
+определена функция~$\varphi(B)$, принимающая значение~~1, когда~$B$ можно 
+признать допустимым результатом преобразования~$f$, и~значение~0 
+в~противном случае. Тогда $J(f)$ разбивается на два непересекающихся 
+подмножества $J^+(f)$ и~$J^-(f)$, $J^+(f)\cap J^-(f)\hm= \emptyset$, 
+соответственно допустимых и~недопустимых значений. Недопустимое значение 
+означают сбой или ошибку в~ИТ по результатам выполнения преобразования~$f$. 
+  
+  Разбиение $J(f)\hm= J^+(f)\cup J^-(f)$ индуцирует разбиение множества 
+$D(f)\hm= D^+(f)\cup D^-(f)$, где~$D^-(f)$~--- множество тех исходных 
+данных~$A$,\linebreak которые преобразуются в~$J^-(f)$. Пусть при выполнении ИТ 
+встретился фрагмент DAG, изображенный на рис.~3, когда последовательно 
+выполняются преобразования~$f_1$ и~$f_2$, а~выходные\linebreak данные 
+преобразования~$f_1$ служат выходными данными преобразования~$f_2$. Тогда 
+из недопустимости выходных данных~$B$ следует, что входные данные 
+преобразования~$f_2$ принадлежат $D^-(f_2)$. Но тогда выходные данные 
+преобразования~$f_1$ должны удовлетворять условию $J^-(f_1)\hm\subseteq D^-
+(f_2)$. Иначе данные~$B$~--- до\-пус\-ти\-мы. Это означает, что недопустимость 
+данных~$B$ (результата блока~$f_2$) при правильности работы блоков~$f_1$ 
+и~$f_2$ требует, чтобы данные $A\hm\in D^-(f_1)$.
+  
+  Предположим, что в~ИТ выделен фрагмент, изображенный на рис.~2. При 
+правильности работы~$f$ и~предыдущих блоков (обозначим их~$f_1$\linebreak и~$f_2$), 
+если данные $C\hm\in J^-(f)$, то вектор данных $(A,B)\hm\in D^-(f)$. При этом 
+важно, что данные~$A$ и~$B$ могут быть допустимыми для 
+преобразований~$f_1$ и~$f_2$, т.\,е.\ помимо недопустимости\linebreak данных~$A$ 
+или~$B$ ошибку может инициировать сочетание $(A, B)$. Прообраз данных $(A, 
+B)$ находится в~произведении $D(f_1)\times D(f_2)\hm= D((f_1,f_2))$. Отсюда 
+$(A,B)\hm\in D^- ((f_1,f_2))$. Справедливо следующее утверждение. 
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Утверждение 1.}\ \textit{Если все блоки работают правильно, но 
+результат данного блока является ошибочным, то такой результат возможен, 
+когда исходные данные этого блока представимы в~виде вектора, 
+не\-со\-вмес\-ти\-мо\-го с~допустимыми данными~ИТ.} 
+  
+  Продолжая последовательность приведенных выше рассуждений (возможно, 
+с~увеличением размерности данных и~преобразований), получим следующее 
+утверждение.
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Утверждение 2.}\ \textit{В~случае недопустимости выходных данных 
+ИТ их причинами могут быть либо сбои и~ошибки в~блоках, либо 
+недопустимость исходных данных~ИТ.} 
+  
+  Смысл этого утверждения состоит в~том, что недопустимость выходных 
+данных при правильной работе блоков не может возникнуть из-за 
+не\-до\-пус\-ти\-мости данных промежуточных блоков, а~является следствием 
+недопустимости входных дан\-ных~ИТ. 
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Следствие.} Для поиска причин ошибок и~сбоев необходимо иметь 
+хорошие тесты для блоков и~две бинарные функции: 
+  \begin{enumerate}[(1)]
+\item $\varphi$ для определения допустимости выходных данных ИТ;
+\item $\psi$ для проверки допустимости входных данных.
+  \end{enumerate}
+  
+  Проведенный анализ позволяет определить источник ошибок в~данных.
+  
+  \section{Примеры быстрого поиска сбоев блоков и~выявление 
+ошибок в~данных}
+  
+  Поиск причин скрытых ошибок и~сбоев~--- важная функция системного 
+администратора информационной системы. Для сложных ИТ или для большого 
+количества ИТ метаданные в~виде DAG позволяют выделить сбойные фрагменты 
+информационной системы или отдельные блоки, которые необходимо проверить 
+на наличие сбоев. Однако определение множеств $D^+(f)$, $D^-(f)$,\linebreak $J^+(f)$ 
+и~$J^-(f)$~--- труднореализуемая задача. По\-мимо определения этих множеств 
+необходимо строить эффективно вычислимые функции при\-над\-леж\-ности к~этим 
+множествам (например, $\varphi$ и~$\psi$). 
+  %
+  \mbox{Поэтому} можно воспользоваться методом контейнерной 
+виртуализации~\cite{10-gr}. 
+
+Пусть выделен хотя бы один сервер, на котором 
+можно быстро устанавливать виртуальные контейнеры, эмулирующие 
+проверяемые блоки (приложения и~ОС). 
+  
+  Предположим, что входные и~выходные данные приложений запоминаются 
+(например, в~соседних блоках). Тогда можно использовать известный метод 
+контроля программ для проверки работы блока. Для этого на эмуляторе 
+запускается преобразование контролируемого блока и~сравниваются результаты 
+этого преобразования с~полученными ранее результатами. Если они совпадают, то 
+можно считать, что блок работает правильно. Если результаты не совпадают, то 
+причина этого может быть или в~сбое преобразования, или в~сбое ОС, или 
+в~сбое аппаратной платформы. Для каждого из этих компонентов должны быть 
+построены свои тесты. При этом целесообразно построить отдельный DAG для 
+преобразований в~блоке, позволяющий рассматривать отдельные процессы ИТ. 
+  
+  Хранение контейнеров возможно в~базе данных ресурсов системного 
+администратора, что позволит ему быстро на основании метаданных выявлять 
+сбои и~заменять сбойный блок временно работающим виртуальным эмулятором 
+(с замыканием на него соответствующих сетевых соединений). 
+  
+  Метаданные можно также использовать для контроля сетевых 
+соединений~\cite{5-gr}. Аналогичный подход был разработан в~\cite{11-gr} для 
+контроля критических систем. 
+  
+  \section{Заключение}
+   
+   В работе рассмотрена задача поиска и~локализации причин сбоев и~ошибок 
+в~ИТ, представимых ИД DAG. Введенные модели 
+используют нетрадиционное определение DAG в~том смысле, что дуги графа 
+характеризуют связи между входными и~выходными данными различных 
+преобразований в~ИТ. 
+   
+   Построена ИД таких DAG, позволяющая решать 
+задачу поиска наименьшей глубины абстракции для экономически осуществимой 
+замены программного обеспечения или элементов аппаратной платформы 
+информационной системы. 
+   
+   Проведено исследование по анализу и~выявлению сбойных данных в~ИТ при 
+условии пра\-виль\-ности работы всех блоков информационной системы. 
+   
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-gr}
+\Au{Грушо Н.\,А.} Метод интеграции многоагентного поиска информации со средствами анализа 
+за\-щи\-щен\-ности и~информационными сервисами в~цифровых инфраструктурах~// Проблемы 
+информационной безопас\-ности. Компьютерные системы, 2019. №\,2. С.~45--55. 
+
+\bibitem{4-gr} %2
+\Au{Грушо А.\,А., Забежайло М.\,И., Грушо~Н.\,А., Тимонина~Е.\,Е.}
+ Информационная безопасность на основе\linebreak метаданных в~компонентно-интеграционных 
+архитектурах информационных систем~// Системы и~средства информатики, 2018. Т.~28. 
+№\,2. С.~34--41.
+ 
+\bibitem{3-gr} %3
+\Au{Грушо А.\,А., Тимонина Е.\,Е., Шоргин~С.\,Я.} Иерархический метод порождения 
+метаданных для управления сетевыми соединениями~// Информатика и~её применения, 
+2018. Т.~12. Вып.~2. С.~44--49. 
+
+\bibitem{2-gr} %4
+\Au{Грушо А.\,А., Забежайло М.\,И., Грушо~Н.\,А., Тимонина~Е.\,Е.} Поиск эмпирических 
+причин сбоев и~ошибок в~компьютерных системах и~сетях с~использованием 
+метаданных~// Системы и~средства информатики, 2019. Т.~29. №\,4. С.~28--38.
+
+
+\bibitem{5-gr}
+\Au{Grusho A., Grusho N., Timonina~E.} Information flow control on the basis of meta data~// 
+Distributed Computer and Communication Networks, 22-nd International Conference, DCCN 2019, 
+Revised Selected Papers~/ Eds. V.\,M.~Vishnevskiy, K.\,E.~Samouylov, 
+D.\,V.~Kozyrev.--- Lecture 
+notes in computer science ser.~--- Springer, 2019. Vol.~11965. P.~548--562.
+\bibitem{6-gr}
+\Au{Grusho A., Grusho N., Zabezhailo~M., Zatsarinny~A., Timonina~E.} Information security of SDN 
+on the basis of metadata~// Computer network security~/ Eds. J.~Rak, J.~Bay, I.\,V.~Kotenko, 
+\textit{et al.}~--- Lecture notes in computer science ser.~--- Springer, 2017. Vol.~10446.  
+P.~339--347.
+\bibitem{7-gr}
+\Au{Милль Дж. С.} Система логики силлогической и~индуктивной: Изложение принципов 
+доказательства в~связи с~методами научного исследования~/ 
+Пер. с~англ.~--- 5-е изд., испр. 
+и~доп.~--- Сер.\ <<Из наследия мировой философской мысли: Логика>>.~--- 
+М.: Ленанд, 2011. 832~с. 
+(\Au{Mill~J.\,S.} A~system of logic, ratiocinative and inductive: Being a~connected view of 
+the principles of evidence, and the methods of scientific investigation.~--- 
+Cambridge library collection~--- philosophy ser.~--- 
+Cambridge University Press. Vol.~1.   602~p.)
+\bibitem{8-gr}
+\Au{Финн В.\,К.} Искусственный интеллект: Методология, применения, философия.~--- М.: 
+Красанд, 2011. 448~с.
+\bibitem{9-gr}
+\Au{Самуйлов К.\,Е., Чукарин А.\,В., Яркина~Н.\,В.} Бизнес-про\-цес\-сы и~информационные 
+технологии в~управлении телекоммуникационными компаниями.~--- М.: Альпина 
+Паблишерс, 2009. 442~с.
+\bibitem{10-gr}
+\Au{Кондрашин М.} Контейнерная виртуализация: преимущества и~проблемы 
+безопасности~// ИнформКурьер-Связь, 2019. №\,4.  
+С.~92--95.
+\bibitem{11-gr}
+\Au{Шубинский И.\,Б., Николаев В.\,И., Колганов~С.\,К., Заяц~А.\,М.} Активная защита от 
+отказов управляющих модульных вычислительных систем.~--- СПб.: Наука, 1993. 284~с.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+%\vspace*{-12pt}
+
+\hfill{\small\textit{Поступила в~редакцию 08.04.20}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{METHODS OF~FINDING THE~CAUSES OF~INFORMATION TECHNOLOGY FAILURES BY~MEANS 
+OF~METADATA}
+
+
+\def\titkol{Methods of finding the causes of information technology failures 
+by means of metadata}
+
+\def\aut{N.\,A.~Grusho$^1$, A.\,A.~Grusho$^1$, M.\,I.~Zabezhailo$^2$, and 
+E.\,E.~Timonina$^1$}
+
+\def\autkol{N.\,A.~Grusho, A.\,A.~Grusho, M.\,I.~Zabezhailo, and E.\,E.~Timonina}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+$^1$Institute of Informatics Problems, Federal Research Center ``Computer 
+Science 
+and Control'' of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 44-2~Vavilov Str., Moscow 
+119333, Russian Federation
+
+\noindent
+$^2$Dorodnicyn Computing Center, Federal Research Center ``Computer Science 
+and 
+Control'' of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 40~Vavilov Str., Moscow 119333, Russian 
+Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+
+\Abste{The work is devoted to remote detection and localization of failures in information systems. 
+Information resources for these tasks have been identified and models for the use of these information 
+resources have been investigated. This article describes metadata by firected acyclic graphs (DAG) 
+which are used for business processes and information technology descriptions. The task in question is 
+as follows. In case of a~failure or an error, it is necessary to find quickly the block containing the 
+cause of failure, which is not so expensive that it could\linebreak
+\vspace*{-12pt}}
+
+\Abstend{not be replaced, and it would be replaced. If 
+a~unit contains very expensive components, such as a~server, replacing it may not be cost-effective 
+for an organization. In terms of software applications, they can be easily reinstalled and the cost of 
+such a~replacement is low. Therefore, the cause should be sought in the top-down direction along the 
+levels of hierarchical decomposition of DAG of information technology. A~study has been carried out 
+on analysis and detection of failed data in information technology, provided that all blocks of an 
+information system operate correctly.}
+
+\KWE{models of information technologies; metadata; directed acyclic graphs; causes of information 
+technology failures and errors}
+
+
+\DOI{10.14357/19922264200205} 
+
+%\vspace*{-20pt}
+
+\Ack
+\noindent
+The paper was partially supported by the Russian Foundation for Basic Research 
+(projects 18-29-03081 and 18-07-00274).
+
+%\vspace*{6pt}
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+
+\bibitem{1-gr-1}
+\Aue{Grusho, N.} 2019. Metod integratsii mnogoagentnogo poiska informatsii so sredstvami analiza 
+zashchishchennosti i~informatsionnymi servisami v~tsifrovykh infrastrukturakh [Method of 
+integration of multi-agent information search with security analysis tools and information services for 
+digital infrastructures]. \textit{Problemy Informatsionnoy Bezopasnosti. Komp'yuternye Sistemy} 
+[Information Security Problems. Computer Systems] 2:45--55.
+
+\bibitem{4-gr-1} %2
+\Aue{Grusho, A.\,A., M.\,I.~Zabezhailo, N.\,A. Grusho, and E.\,E.~Timonina.}
+ 2018. Informatsionnaya bezopasnost' na osnove metadannykh v~komponentno-integratsionnykh 
+arkhitekturakh informatsionnykh sistem [Information security on the basis of meta data in enterprise 
+application integration architecture of information systems]. \textit{Sistemy i Sredstva Informatiki~--- 
+Systems and Means of Informatics} 28(2):34--41.
+
+\bibitem{3-gr-1} %3
+\Aue{Grusho, A.\,A., E.\,E. Timonina, and S.\,Ya.~Shorgin.} 2018. Ierarkhicheskiy metod 
+porozhdeniya metadannykh dlya upravleniya setevymi soedineniyami [Hierarchical method of meta 
+data generation for control of network connections]. \textit{Informatika i ee Primeneniya~--- Inform. 
+Appl.} 12(2):44--49.
+
+\bibitem{2-gr-1} %4
+\Aue{Grusho, A.\,A., M.\,I.~Zabezhailo, N.\,A. Grusho, and E.\,E.~Timonina.} 
+2019. Poisk empiricheskikh prichin sboev i~oshibok v~komp'yuternykh sistemakh i~setyakh 
+s~ispol'zovaniem metadannykh [Search of empirical causes of failures and errors in computer systems 
+and networks using metadata]. \textit{Sistemy i Sredstva Informatiki~--- Systems and Means of 
+Informatics} 29(4):28--38.
+
+
+\bibitem{5-gr-1}
+\Aue{Grusho, A.\,A., N.\,A. Grusho, and E.\,E.~Timonina.} 2019. Information flow control on the 
+basis of meta data. \textit{Distributed computer and communication networks}.
+ Eds. V.\,M.~Vishnevskiy, K.\,E.~Samouylov, and 
+D.\,V.~Kozyrev. Lecture notes in computer science ser. Springer. 11965:548--562.
+\bibitem{6-gr-1}
+\Aue{Grusho, A., N. Grusho, M.~Zabezhailo, A.~Zatsarinny, and E.~Timonina.} 2017. Information 
+security of SDN on the basis of metadata. \textit{Computer network security}. Eds. J.~Rak, J.~Bay, 
+I.\,V.~Kotenko, \textit{et al.} Lecture notes in computer science ser. Springer. 10446:339--347.
+\bibitem{7-gr-1}
+\Aue{Mill, J.\,S.} 2011. \textit{A system of logic, ratiocinative and inductive: Being a~connected view of 
+the principles of evidence, and the methods of scientific investigation}. 
+Cambridge library collection~--- philosophy ser. 
+Cambridge University Press. Vol.~1.   602~p.
+\bibitem{8-gr-1}
+\Aue{Finn, V.\,K.} 2011. \textit{Iskusstvennyy intellekt: Metodologiya, primeneniya, filosofiya} 
+[Artificial intelligence: Methodology, applications, philosophy]. Moscow: Krasand. 448~p.
+\bibitem{9-gr-1}
+\Aue{Samuylov, K.\,E., A.\,V. Chukarin, and N.\,V.~Yarkina.} 2009. 
+\textit{Biznes-protsessy 
+i~informatsionnye tekhnologii v~upravlenii telekommunikatsionnymi kompaniyami} [Business 
+processes and information technologies in management of the telecommunication companies]. 
+Moscow: Alpina Publs. 442~p.
+\bibitem{10-gr-1}
+\Aue{Kondrashin, M.} 2019. Konteynernaya virtualizatsiya: preimushchestva i problemy bezopasnosti 
+[Container virtualization: advantages and security problems]. \textit{InformKur'er-Svyaz'} 
+[InformCourier-Communications] 4:92--95.
+\bibitem{11-gr-1}
+\Aue{Shubinsky, I.\,B., V.\,I.~Nikolaev, S.\,K.~Kolganov, and A.\,M.~Zayats.} 1993. \textit{Aktivnaya 
+zashchita ot otkazov upravlyayushchikh modul'nykh vychislitel'nykh system} [Active protection against 
+failures of control modular computing systems]. St.\ Petersburg: Nauka. 284~p.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Received April 8, 2020}}
+
+%\pagebreak
+
+%\vspace*{-24pt}
+
+
+
+\Contr
+
+\noindent
+\textbf{Grusho Nikolai A.} (b.\ 1982)~--- Candidate of Science (PhD) in physics and mathematics, 
+senior scientist, Institute of Informatics Problems, Federal Research Center ``Computer Sciences and 
+Control'' of the Russian Academy of Sciences; 44-2~Vavilov Str., Moscow 119133, Russian 
+Federation; \mbox{info@itake.ru}
+
+%\vspace*{3pt}
+
+\noindent
+\textbf{Grusho Alexander A.} (b.\ 1946)~--- Doctor of Science in physics and mathematics, professor, 
+principal scientist, Institute of Informatics Problems, Federal Research Center ``Computer Sciences 
+and Control'' of the Russian Academy of Sciences; 44-2~Vavilov Str., Moscow 119133, Russian 
+Federation; \mbox{grusho@yandex.ru}
+
+\vspace*{6pt}
+
+\noindent
+\textbf{Timonina Elena E.} (b.\ 1952)~--- Doctor of Science in technology, professor, leading scientist, 
+Institute of Informatics Problems, Federal Research Center ``Computer Sciences and Control'' of the 
+Russian Academy of Sciences; 44-2~Vavilov Str., Moscow 119133, Russian Federation; 
+\mbox{eltimon@yandex.ru}
+
+
+\vspace*{6pt}
+
+\noindent
+\textbf{Zabezhailo Michael I.} (b. 1956)~--- Doctor of Science in physics and mathematics, principal scientist, 
+Dorodnicyn Computing Centre, Federal Research Center ``Computer Science 
+and Control'' of the Russian 
+Academy of Sciences, 40 Vavilov Str., Moscow 119333, Russian Federation; m.zabezhailo@yandex.ru
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

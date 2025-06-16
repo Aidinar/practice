@@ -1,0 +1,728 @@
+\def\stat{gorbunova}
+
+\def\tit{АППРОКСИМАЦИЯ ВРЕМЕНИ ОТКЛИКА СИСТЕМЫ ОБЛАЧНЫХ 
+ВЫЧИСЛЕНИЙ$^*$}
+
+\def\titkol{Аппроксимация времени отклика системы облачных 
+вычислений}
+
+\def\aut{А.\,В.~Горбунова$^1$, И.\,С.~Зарядов$^2$, С.\,И.~Матюшенко$^3$, 
+К.\,Е.~Самуйлов$^4$, С.\,Я.~Шоргин$^5$ }
+
+\def\autkol{А.\,В.~Горбунова, И.\,С.~Зарядов, С.\,И.~Матюшенко и~др.} 
+%К.\,Е.~Самуйлов, С.\,Я.~Шоргин}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при частичной финансовой поддержке РФФИ (проект 15-07-03051).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Российский университет дружбы народов, avgorbunova@rambler.ru}
+\footnotetext[2]{Российский университет дружбы народов, izaryadov@sci.pfu.edu.ru}
+\footnotetext[3]{Российский университет дружбы народов, matushenko@list.ru}
+\footnotetext[4]{Российский университет дружбы народов, ksam@sci.pfu.edu.ru}
+\footnotetext[5]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+sshorgin@ipiran.ru}
+
+\vspace*{-6pt}
+
+\Abst{Облачные вычисления представляют собой эволюционную технологию, позволяющую 
+удаленному пользователю получать доступ к~различным ресурсам посредством 
+интернет-сервисов. В~статье рассматривается система облачных вычислений, в~которую поступают 
+сложные пользовательские запросы, состоящие из нескольких подзапросов. Для обработки 
+каждого подзапроса выделяется одна единица ресурса. Точная оценка эффективности 
+облачных вычислительных ресурсов является необходимым условием обеспечения 
+требуемого качества обслуживания. Время отклика системы, служащее одним из важнейших 
+показателей этого качества, требует адекватного моделирования. Для его анализа построена 
+математическая модель функционирования облачной системы в~виде системы массового 
+обслуживания (СМО), состоящей из нескольких подсистем, на которую поступает единый 
+пуассоновский поток запросов. Каждый из поступивших запросов в~момент поступления 
+делится на несколько частей, обслуживаемых своей подсистемой массового обслуживания с~
+накопителем неограниченной емкости и~экспоненциальным распределением времени 
+обслуживания на приборе. С~по\-мощью данной математической модели получена 
+аналитическая формула для нахождения приближения среднего значения и~дисперсии 
+времени отклика системы~--- максимального времени обработки составляющих запрос 
+подзапросов. Для оценки точности приближения выполнено имитационное моделирование 
+средствами GPSS (General Purpose Simulation System).}
+
+\KW{система облачных вычислений; время отклика; обработка сложных запросов; система 
+массового обслуживания; аппроксимация; имитационное моделирование}
+
+\DOI{10.14357/19922264150304}
+
+%\vspace*{-6pt}
+
+\vskip 12pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+  Облачные вычисления (cloud computing) представляют собой технологию, 
+позволяющую удаленному пользователю в~режиме реального времени по 
+требованию получать доступ к~вычислительным ресурсам (программным 
+приложениям, серверам, устройствам хранения данных, сервисам и~др.) через 
+Интернет в~рамках согласованного качества обслуживания для выбранной 
+ценовой категории. В~задачи поставщика таких услуг входит не только 
+обеспечение требуемого уровня оказываемых услуг, но и, как следствие, 
+избежание перегрузки ресурсов при обработке пользовательских 
+требований~[1--3].
+  
+  Рассмотрим облачный центр, состоящий из нескольких физических машин, 
+которые резервируются пользователями в~порядке поступления запросов и~
+могут использоваться совместно для их обработки посредством метода 
+виртуализации. Разделение доступа к~данным, виртуальным машинам и~
+контроль их использования представляют собой основные задачи поставщика 
+облачных услуг. Если же говорить о качестве обслуживания, то его показателем 
+в большинстве случаев считается время отклика системы, т.\,е.\ время 
+обработки запроса пользователя~[4]. 
+
+В~статье рассматриваются сложные 
+запросы пользователей, содержащие несколько задач, для обработки каждой из 
+которых требуется одна виртуальная машина: посылаемый запрос разбивается 
+на~$K$~подзапросов и~для его обработки выделяется~$K$~виртуальных 
+машин. Запрос считается выполненным, т.\,е.\ пользователь получает отклик 
+системы, после обработки всех его подзапросов. 
+
+Таким образом, время отклика 
+системы облачных вычислений определяется как максимальное время 
+обработки составляющих его заданий или подзапросов~[5, 6].
+  
+  Следует отметить, что основой для построения описываемой аналитической 
+модели послужила так называемая fork-join система (система с~расщеплением), 
+которая, в~свою очередь, является естественной моделью для многих реальных 
+систем. В~качестве примеров можно привести сферу обслуживания, 
+медицинские приложения, производственные системы и~др.~\cite{7-gor}. Если 
+же говорить об информационных технологиях, то прежде всего стоит 
+упомянуть распределенные вычисления, технология которых оказала 
+значительное влияние на концепцию облачных вычислений, а~также 
+параллельные вычисления, например обработку пакетов данных, телефонных 
+вызовов и~др.~[8].
+  
+  Но, несмотря на довольно большой перечень прикладных задач, которые 
+могут быть решены с~помощью такого рода модели, на сегодняшний день 
+точные аналитические результаты для среднего времени отклика существуют 
+только для случая расщепления на два подзапроса, причем с~учетом некоторых 
+дополнительных ограничений, а~именно: условия равенства интенсивностей 
+обслуживания~[9]. Для случая же $K\hm>2$ большинство авторов в~своих 
+работах концентрируются непосредственно на различных методах 
+аппроксимации искомой величины~\cite{7-gor, 10-gor, 11-gor}. Это связано со 
+сложностями, возникающими при поиске точного аналитического решения в~
+рамках данной модели из-за существующей зависимости между очередями 
+подзапросов вследствие общих моментов поступления. Отметим, что таких 
+сложностей не возникает для случая, когда каждая подсистема состоит из 
+бесконечного числа приборов~[12, 13].
+  
+  В большинстве статей из интуитивных соображений аппроксимация 
+основывается на допущении о~$K$~параллельно функционирующих и~
+независимых системах массового обслуживания, на вход которых поступают 
+независимые потоки подзапросов. Подробный обзор существующих 
+публикаций по данной тематике представлен в~\cite{14-gor}. В~данной работе 
+с помощью анализа системы уравнений равновесия (СУР) получено логическое 
+обоснование причин такого перехода и~приведен достаточно подробный 
+сравнительный анализ полученных результатов применительно к~системе 
+облачных вычислений.
+  
+  Статья организована следующим образом: в~разд.~2 описывается общая 
+математическая модель функционирования рассматриваемой облачной 
+системы, в~разд.~3 проводится анализ ее времени отклика, в~разд.~4 
+представлены численные результаты и, наконец, в~разд.~5 кратко подведены 
+итоги и~сформулированы дальнейшие планы исследований.
+
+\vspace*{-6pt}
+
+\section{Математическая модель}
+
+\vspace*{-3pt}
+
+  Итак, рассмотрим СМО с~$K$~независимыми 
+параллельно работающими приборами, каждый из которых имеет накопитель 
+неограниченной ем\-кости. В~эту систему поступает пуассоновский по-\linebreak ток заявок 
+(запросов) с~интенсивностью~$\lambda$. При этом в~момент поступления 
+заявка делится на~$K$ подзапросов от 1-го до $K$-го типа и~посылает их\linebreak 
+в~каж\-дую из~$K$~очередей. Заявка считается обслуженной в~момент окончания 
+обслуживания последнего из составляющих ее подзапросов. Време\-на 
+обслужива\-ния заявок-под\-за\-про\-сов являются независимыми случайными 
+величинами, распределенными по экспоненциальному закону 
+с~па\-ра\-мет\-ром~$\mu_k$ для подзапроса $k$-го типа, $k\hm=\overline{1,K}$.
+  
+  Пусть $x_k(t)$~--- число подзапросов $k$-го типа, находящихся в~системе 
+в~момент времени~$t$. Обозначим $X(t)\hm= (x_1(t),\ldots, x_K(t))$. 
+Случайный процесс $\{ X(t),\ t\hm\geq 0\}$, описывающий поведение системы 
+во времени, является марковским (МП) с~множеством состояний $X\hm= \{ 
+\vec{n}{:=}( n_1, \ldots , n_k, \ldots , n_K)$, $n_1\hm\geq 0,\ldots , n_k\hm\geq 
+0,\ldots , n_K\hm\geq 0\}$.
+  
+  В предположении о его существовании стационарное распределение должно 
+удовлетворять следующей СУР:
+  \begin{multline*}
+  \left( \lambda +\sum\limits_{k=1}^K \mu_k u\left( n_k\right) \right) p\left( 
+\vec{n}\right) ={}\\
+{}=\lambda p\left( \vec{n}-\vec{1}\right) \prod\limits_{k=1}^K u\left( 
+n_k\right) +\sum\limits_{k=1}^K \mu_k p\left( \vec{n}+\vec{e}_k\right),\enskip 
+\vec{n}\in X,\hspace*{-1.6638pt}
+  \end{multline*}
+где $\vec{e}_k$~--- вектор, все элементы которого равны нулю, кроме $k$-го, 
+который равен~1, $\vec{1}$~--- единичный вектор и
+$$
+u\left( n_k\right) = \begin{cases}
+0\,, &\ \mbox{если } n_k\leq0\,;\\
+1\,, &\ \mbox{если } n_k>0\,.
+\end{cases}
+$$ 
+  
+  Здесь не исследуется очевидное условие эргодичности рассматриваемой 
+системы и~считается далее, что $\rho= \max\limits_{1\leq k\leq K} \rho_k<1$, где 
+$\rho_k\hm= \lambda/\mu_k$, $k\hm=\overline{1,K}$.
+
+  \begin{figure*}[b] %fig1
+         \vspace*{18pt}
+\begin{minipage}[t]{79mm}
+ \begin{center}
+ \mbox{%
+% \epsfxsize=77.81mm
+% \epsfbox{gor-1.eps}
+ \epsfxsize=73.4mm
+ \epsfbox{gor-1t.eps}
+ }
+ \end{center}
+ \vspace*{-6pt}
+  \Caption{Среднее время отклика: 
+  \textit{1}~--- аналитическая модель; \textit{2}~--- имитационная модель}
+%  \end{figure*}
+%  \begin{figure*} %fig2
+\end{minipage}
+\hfill
+            \vspace*{1pt}
+            \begin{minipage}[t]{79mm}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=77.9mm
+ \epsfbox{gor-3.eps}
+ }
+ \end{center}
+ \vspace*{-6pt}
+  \Caption{Среднеквадратическое отклонение времени отклика: 
+  \textit{1}~--- аналитическая модель; \textit{2}~--- имитационная модель}
+\end{minipage}
+  \end{figure*}
+  
+\section{Анализ времени отклика системы}
+
+  Исследуя СУР, замечаем, что суммированием ее уравнений по всем 
+индексам, кроме $n_k$-го, приходим к~СУР, соответствующей 
+СМО $M_\lambda/M_{\mu_k}/1$. Следовательно, можем 
+получить выражения для маргинальных вероятностей макросостояний МП 
+$X(t)$: 
+  $$
+  p_{n_k} =\left( 1-\rho_k\right) \rho_k^{n_k}\,,\enskip n_k\geq 0\,.
+  $$
+  
+  Далее выписываем функцию распределения времени отклика с~учетом 
+допущения о независимости времен пребывания подзапросов в~под\-сис\-те\-мах:
+  \begin{multline*}
+  {\sf P}\left( \eta<y\right) ={\sf P}\left( \max \left( \xi_1,\ldots , \xi_K\right) <y\right) ={}\\[2pt]
+  {}=
+{\sf  P}\left( \xi_1<y,\ldots , \xi_K<y\right) ={}\\[2pt]
+  {}=
+  {\sf P}\left( \xi_1<y\right) \cdots P\left( \xi_K<y\right) ={}\\[2pt]
+  {}= \left( 1-e^{-(\mu_1-\lambda)y}\right) \cdots \left( 1- e^{-(\mu_K-
+\lambda)y}\right)\,.
+  \end{multline*}
+    Тогда среднее время отклика и~его дисперсия будут иметь вид:
+  \begin{multline*}
+{\sf  E}\eta = \sum\limits^K_{l=1} \fr{1}{\mu_l-\lambda} - \sum\limits_{l\ne m} 
+\fr{1}{\mu_l+\mu_m-2\lambda} +{}\\
+{}+\sum\limits_{l\ne m\ne n} \fr{1}{\mu_l 
++\mu_m+\mu_n-3\lambda}+\cdots{}\\
+  {}\cdots + (-1)^{2K-1} \fr{1}{\mu_1+\mu_2+\cdots+\mu_K-K\lambda}\,;
+  \end{multline*}
+  
+  \vspace*{-12pt}
+  
+  \noindent
+  \begin{multline*}
+{\sf   D}\eta = \sum\limits^K_{l=1} \fr{2}{(\mu_l-\lambda)^2} -\sum\limits_{l\ne m} 
+\fr{2}{(\mu_l+\mu_m-2\lambda)^2} +{}\\
+{}+ \sum\limits_{l\ne m\ne n} 
+\fr{2}{(\mu_l+\mu_m+\mu_n-3\lambda)^2}+\cdots{}\\
+  {}\cdots+ (-1)^{2K-1} \fr{2}{(\mu_1+\mu_2+\cdots+ \mu_K - K\lambda)^2} -{}\\
+  {}-
+  \left( \sum\limits^K_{l=1} \fr{1}{\mu_l-\lambda}- \sum\limits_{l\ne m} 
+\fr{1}{\mu_l+\mu_m-2\lambda}+{}\right.
+\end{multline*}
+
+\noindent
+  \begin{multline*}
+   {}+ \sum\limits_{l\ne m\ne n} \fr{1}{\mu_l+\mu_m+\mu_n-3\lambda} 
++\cdots{}\\
+\left.{}\cdots + (-1)^{2K-1} \fr{1}{\mu_1 +\mu_2 +\cdots + \mu_K-K\lambda}
+\vphantom{\sum\limits^K_{l=1} \fr{1}{\mu_l-\lambda}}
+\right)^2\,.
+  \end{multline*}
+
+  Кроме того, можно записать выражения и~для других характеристик СМО, 
+используя аналогичные результаты для системы типа  $M/M/1$.
+
+\vspace*{-6pt}
+
+\section{Численный пример}
+
+\vspace*{-3pt}
+
+  Для оценки полученной аппроксимации с~помощью программных средств 
+GPSS была построена имитационная модель. Поскольку интерес представляют 
+характеристики системы в~стационарном режиме ее работы, имитационное 
+моделирование проводилось до тех пор, пока не стабилизировались параметры 
+модели. Стабилизация наступила после прохождения через систему около 
+500\,000 запросов.
+  
+
+  
+  На рис.~1 и~2 представлены графики зависи\-мости среднего 
+  и~среднеквадратического отклонения времени отклика системы облачных 
+вычислений от интенсивности поступления запросов~$\lambda$. Расчеты были 
+выполнены для случая расщепления пользовательского запроса на 
+3~подзапроса ($K\hm=3$) для симметричного случая $\mu_1\hm= \mu_2\hm= 
+10$~с$^{-1}$ при меняющейся интенсивности входящего потока~$\lambda$. 
+Видно, что полученная с~помощью аналитической модели оценка среднего 
+времени отклика является оценкой <<сверху>>, а~среднеквадратического 
+отклонения~--- оценкой <<снизу>>. Заметим, что для несимметричного случая 
+качественных изменений численных результатов не наблюдается.
+
+\begin{figure*}
+\vspace*{1pt}
+\begin{minipage}[t]{79mm}
+\begin{center}  %fig3
+\mbox{%
+ \epsfxsize=77.81mm
+ \epsfbox{gor-2.eps}
+ }
+\end{center}
+ \vspace*{-9pt}
+\Caption{Математическое ожидание (сплошные кривые)
+ и~среднеквадратическое отклонение (штриховые кривые) времени отклика: 
+ \textit{1}~--- экспоненциальное обслуживание; \textit{2}~--- детерминированное обслуживание}
+\end{minipage}
+\hfill
+%\begin{figure*} %fig4
+            \vspace*{1pt}
+            \begin{minipage}[t]{79mm}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=77.707mm
+ \epsfbox{gor-4.eps}
+ }
+ \end{center}
+ \vspace*{-9pt}
+\Caption{Погрешность аппроксимации для среднего времени отклика: \textit{1}~--- 
+$K\hm=2$;
+\textit{2}~--- 3; \textit{3}~--- 4; \textit{4}~--- 5; \textit{5}~--- 6; \textit{6}~--- 
+$K\hm=7$}
+\end{minipage}
+\end{figure*}
+
+\begin{table*}\small
+  \begin{center}
+  \begin{tabular}{|l|c|c|c|c|c|c|}
+  \multicolumn{7}{c}{Квантили случайной величины времени отклика системы}\\[6pt]
+   \hline
+  \multicolumn{1}{|c|}{Квантиль случайной величины} &\multicolumn{6}{c|}{Значения 
+квантилей в~зависимости от нагрузки $\rho$}\\
+\cline{2-7}
+  \multicolumn{1}{|c|}{времени отклика}&\ \ 0,10\ \  &\ \  0,30\ \  &\ \  0,50\ \  &
+  \ \  0,70\ \  &\ \  0,80\ \  &0,90\\
+\hline
+Квантиль уровня 0,97&0,51&0,66&0,92&1,53&2,30&4,60\\
+Квантиль уровня 0,98&0,56&0,71&1,00&1,67&2,50&5,00\\
+Квантиль уровня 0,99&0,63&0,81&1,14&1,90&2,85&5,70\\
+Квантиль уровня 0,999&0,89&1,14&1,60&2,67&4,00&8,01\\
+Квантиль уровня 0,9999&1,15&1,47&2,06&3,44&5,15& 10,31\hphantom{9}\\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{4pt}
+\end{table*}
+ 
+
+  Рисунок~3 иллюстрирует разницу в~значениях времени отклика, полученных 
+с~по\-мощью имитационного моделирования, для случаев экспоненциального 
+и~детерминированного обслуживания. С~увеличением нагрузки математическое 
+ожидание времени отклика при экспоненциальном обслуживании возрастает 
+в~среднем в~два раза по сравнению с~детерминированным обслуживанием. 
+Заметим, что аналогичный результат аналитически следует из формулы  
+Пол\-ла\-че\-ка--Хин\-чи\-на для СМО $M/M/1$ и~$M/D/1$.
+   
+   
+  
+  На рис.~4 изображены графики для погрешности аппроксимации 
+математического ожидания времени отклика в~зависимости от интенсивности 
+входящего потока~$\lambda$ для различных значений $K\hm= \overline{2,7}$. 
+Видно, что с~увеличением числа подзапросов и~интенсивности входящего 
+потока увеличивается ошибка приближения.
+  
+  
+  
+  В таблице представлены значения верхней границы для времени отклика 
+  с~заданными вероятностями (квантили функции распределения времени отклика) 
+для различных значений интенсивности нагрузки~$\rho$ в~случае $K\hm=3$. 
+Результаты, отраженные в~таблице, подтверждают сделанное выше замечание 
+об увеличении значений времени отклика с~ростом нагрузки.
+
+\begin{center}  %fig5
+\vspace*{-1pt}
+ \mbox{%
+ \epsfxsize=78.908mm
+ \epsfbox{gor-5.eps}
+ }
+
+\end{center}
+
+\vspace*{-6pt}
+
+\noindent
+{{\figurename~5}\ \ \small{Графики эмпирической~(\textit{1}) и~аналитической~(\textit{2}) функций 
+распределения}}
+ 
+ \vspace*{15pt}
+  
+
+  
+  На рис.~5 приведены графики эмпирической функции распределения, 
+построенной по данным имитационного моделирования, и~аналитической 
+функции распределения для времени отклика. 
+
+Из рисунка следует, что 
+эмпирическая функция распределения аппроксимирует аналитическую 
+функцию распределения сверху, что сочетается с~результатами, 
+иллюстрируемыми рис.~1.
+  
+\section{Заключение}
+
+  В статье рассмотрена и~проанализирована модель системы облачных 
+вычислений, в~которую поступают сложные запросы. Получена формула для 
+расчета приближения времени отклика системы, реализована имитационная 
+модель и~проведен сравнительный анализ.
+  
+  Помимо получения изложенных в~предыдущем разделе численных 
+результатов с~помощью имитационного моделирования исследовалась цепь\linebreak 
+Маркова, вложенная по моментам поступления запросов. Полученные 
+значения стационарных вероятностей вложенной цепи Маркова оказались близкими 
+к~значениям стационарных вероятностей по МП, поэтому не следует ожидать, 
+что полученная аппроксимация не точна из-за того, что вывод формул для 
+характеристик времени отклика основывался именно на вероятностях по 
+процессу. Также были вычислены попарные корреляции между очередями. 
+Эксперимент проводился на ограниченном объеме данных, но можно увидеть, 
+что корреляция положительна и~составляет около 50\%, т.\,е.\ очереди 
+коррелированы и~поэтому расчет времени отклика по маргинальным 
+распределениям фактически означает расчет в~предположении об их 
+независимости. Но из полученных значений для корреляции следует, что 
+очереди зависимы, и~поэтому аналитически получается аппроксимация, которая 
+дает положительный с~точки зрения инженерных расчетов результат. 
+Погрешность в~параметрах, близких к~реальным, составляет не более 14\%.
+  
+  В~дальнейшем планируется улучшить аналитические и~имитационные 
+результаты, а~также исследовать модели с~другим типом входящего потока 
+и~иными законами распределения времени обслуживания, провести расчет их 
+основных ве\-ро\-ят\-но\-ст\-но-вре\-мен\-н$\acute{\mbox{ы}}$х характеристик 
+и показателей качества обслуживания.
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-gor}
+\Au{Xiong K., Perros H.} Service performance and analysis in cloud computing~// 
+5th IEEE World Congress on Services (Services-1 '09) Proceedings.~--- Los 
+Angeles: IEEE, 2009. P.~693--700.
+\bibitem{3-gor} %2
+\Au{Buyya R., Broberg J., Goscinski~A.\,M.} Introduction to cloud computing~// Cloud 
+computing: Principles and paradigms.~--- John Wiley\,\&\,Sons, 2011. P.~3--42.
+\bibitem{2-gor} %3
+\Au{Satyanarayana А., Suresh Varma~P., Rama Sundari~M.\,V., Sarada Varma~P.} 
+Performance analysis of cloud computing under non homogeneous conditions~// 
+Int. J.~Adv. Res. Comput. Sci. Softw. Eng., 2013. Vol.~3. P.~969--974.
+
+\bibitem{4-gor}
+\Au{Khazae H., Misic J., Misic~V.\,B.} A~fine-grained performance model of cloud 
+computing centers~// IEEE Trans. Parall. Distr. Syst., 
+2012. Vol.~24. P.~2138--2147.
+\bibitem{5-gor}
+\Au{Мокров Е.\,В., Самуйлов~К.\,Е.} Модель системы облачных вычислений в~виде 
+системы массового обслуживания с~несколькими очередями и~с групповым 
+поступлением заявок~// T-comm~--- Телекоммуникации и~транспорт, 2013. Т.~7. 
+№\,11. С.~139--141.
+\bibitem{6-gor}
+\Au{Basharin G.\,P., Gaidamaka~Yu.\,V., Samouylov~K.\,E.}
+Mathematical theory of 
+teletraffic and its application to the analysis of multiservice communication of 
+next generation networks~// Autom. Control Comp. Sci., 2013. 
+Vol.~47. No.\,2. P.~62--69.
+\bibitem{7-gor}
+\Au{Kemper B., Mandjes~M.} Mean sojourn time in two-queue fork-join systems: Bounds 
+and approximations~// OR Spectrum, 2012. Vol.~34. P.~723--742.
+\bibitem{8-gor}
+\Au{Ko S.\,S., Serfozo R.\,F.} 
+Response times in $M/M/s$ Fork-join networks~// Adv. 
+Appl. Probab., 2004. Vol.~36. No.\,3. P.~854--871.
+\bibitem{9-gor}
+\Au{Nelson R., Tantawi A.\,N.} Approximate analysis of fork/join synchronization in 
+parallel queues~// IEEE Trans. Comput., 1988. Vol.~37. P.~739--743.
+\bibitem{10-gor}
+\Aue{Baccelli F., Makowski~A.\,M., Shwartz~A.} The fork-join queue and related 
+systems with synchronization constraints: Stochastic ordering and computable 
+bounds~// Adv. Appl. Probab., 1989. Vol.~21. No.\,3. P.~629--660.
+\bibitem{11-gor}
+\Au{Kness C.} On the diffusion approximation to a fork and join queueing model~// 
+\textit{SIAM J. Appl. Math.}, 1991. Vol.~51. P.~160--171.
+\bibitem{12-gor}
+\Au{Ивановская И.\,А., Моисеева~С.\,П.} Исследование математической модели 
+параллельного обслуживания заявок смешанного типа~// Известия Томского 
+политехнического ун-та. Управление, вычислительная техника и~информатика, 2010. 
+Т.~317. №\,5. С.~32--34.
+\bibitem{13-gor}
+\Au{Ивановская И.\,А., Моисеева~С.\,П.} Исследование модели параллельного 
+обслуживания кратных заявок в~нестационарном режиме~// Вестник Томского 
+гос. ун-та. Управление, вычислительная техника 
+и~информатика, 2010. №\,3(12). С.~21--28.
+\bibitem{14-gor}
+\Au{Thomasian A.} Analysis of fork-join and related queueing systems~// ACM 
+Comput. Surv. (CSUR), 2014. Vol.~47. No.\,2. P.~1--71.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 21.07.15}}
+
+\newpage
+
+\vspace*{-24pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{12pt}
+
+\def\tit{THE APPROXIMATION OF RESPONSE TIME OF~A~CLOUD COMPUTING SYSTEM}
+
+\def\titkol{The approximation of response time of a cloud computing system}
+
+\def\aut{A.\,V.~Gorbunova$^1$, I.\,S.~Zaryadov$^1$, S.\,I.~Matyushenko$^1$, 
+K.\,E.~Samouylov$^1$,  and~S.\,Ya.~Shorgin$^2$}
+
+\def\autkol{A.\,V.~Gorbunova, I.\,S.~Zaryadov, S.\,I.~Matyushenko, et al.}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+\noindent
+$^1$Peoples' Friendship University of Russia,
+6 Miklukho-Maklaya Str., Moscow 117198, Russian Federation
+
+
+\noindent
+$^2$Federal Research Center ``Computer Science and Control'' of
+the Russian Academy of Sciences, 44-2 Vavilov\linebreak
+$\hphantom{^1}$Str., Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2015\ \ \ volume~9\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2015\ \ \ volume~9\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+\Abste{Cloud computing is an evolutionary technology that allows a~remote 
+user to gain access to resources through Internet services. The article discusses 
+the cloud computing system, which receives complex user queries consisting of several 
+subqueries. The allocation of one unit of the resource is required for processing 
+each subquery. Accurate assessment of effectiveness of cloud computing resources is 
+a~prerequisite to ensure the required quality of service. Response time, i.\,e., 
+the maximum of subqueries service times, is chosen as an indication of effectiveness 
+of a~cloud computing system. To analyze the characteristics of response time, 
+a~simplified mathematical model of a~cloud system was constructed as 
+a~queuing system with single Poisson input flow of requests and several subsystems 
+(a~buffer and a~server). Each request at the instant of arrival is divided into 
+several parts, each of which is served by its queuing subsystem with unlimited 
+storage capacity with exponentially distributed service time. The analytical formulas 
+for approximation of mean response time and its variance are presented. To assess the 
+accuracy of the approximation, a~GPSS (General Purpose Simulation System) 
+model was constructed.}
+
+\KWE{cloud computing system; response time; complex queries processing; 
+queueing system; approximation; simulation}
+
+
+\DOI{10.14357/19922264150304}
+
+\Ack
+\noindent
+This work is partially supported by the Russian Foundation for Basic
+Research (grant No.\,15-07-03051).
+
+
+
+%\vspace*{3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+\bibitem{1-gor-1}
+\Aue{Xiong, K., and H. Perros}. 2009. 
+Service performance and analysis in cloud computing. 
+\textit{5th IEEE World Congress on Services (Services-1'09) Proceedings}. 
+Los Angeles. 693--700.
+
+\bibitem{3-gor-1} %2
+\Aue{Buyya, R., J. Broberg, and A.\,M.~Goscinski}. 2011. \textit{Cloud computing: 
+Principles and paradigms}. 1st ed. John Wiley\,\&\,Sons. 664~p.
+
+\bibitem{2-gor-1} %3
+\Aue{Satyanarayana, А., P.~Suresh Varma, M.\,V.~Rama Sundari, and P.~Sarada Varma}. 
+2013. Performance analysis of cloud computing under non homogeneous conditions. 
+\textit{Int. J.~Adv. Res. Comput. Sci. Softw. Eng.} 3:969--974.
+
+\bibitem{4-gor-1}
+\Aue{Khazae, H., J. Misic, and V.\,B.~Misic}. 2012. 
+A~fine-grained performance model of cloud computing centers. 
+\textit{IEEE Trans. Parall. Distr. Syst.} 24:2138--2147.
+\bibitem{5-gor-1}
+\Aue{Mokrov, E.\,V., and K.\,E.~Samuylov}. 2013. 
+Model' sistemy oblachnykh vychisleniy v~vide sistemy massovogo obsluzhivaniya 
+s~neskol'kimi ocheredyami i~s~gruppovym postupleniem zayavok [Modeling of cloud 
+computing as a~queueuing system with batch arrival]. 
+\textit{T-Comm~--- Telecommunications and Transport} 7(11):139--141.
+\bibitem{6-gor-1}
+\Aue{Basharin, G.\,P., Yu.\,V. Gaidamaka, and K.\,E.~Samouylov}. 
+2013. Mathematical theory of teletraffic and its application to the analysis 
+of multiservice communication of next generation networks. 
+\textit{Autom. Control Comp. Sci.} 47(2):62--69.
+\bibitem{7-gor-1}
+\Aue{Kemper, B., and M. Mandjes}. 2012. Mean sojourn time in two-queue fork-join systems: 
+Bounds and approximations. \textit{OR Spectrum} 34:723--742.
+\bibitem{8-gor-1}
+\Aue{Ko, S.\,S., and R.\,F. Serfozo}. 2004. Response times in $M/M/s$ fork-join networks. 
+\textit{Adv. Appl. Probab.} 36(3):854--871.
+\bibitem{9-gor-1}
+\Aue{Nelson, R., and A.\,N. Tantawi}. 1988. 
+Approximate analysis of fork/join synchronization in parallel queues. 
+\textit{IEEE Trans. Comput.} 37:739--743.
+\bibitem{10-gor-1}
+\Aue{Baccelli, F., A.\,M. Makowski, and A.~Shwartz}. 1989. 
+The fork-join queue and related systems with synchronization constraints: 
+Stochastic ordering and computable bounds. 
+\textit{Adv. Appl. Probab.} 21(3):629--660.
+\bibitem{11-gor-1}
+\Aue{Kness, C.} 1991. On the diffusion approximation to a fork and join 
+queueing model. \textit{SIAM J.~Appl. Math.} 51:160--171.
+\bibitem{12-gor-1}
+\Aue{Ivanovskaya, I.\,A., and S.\,P.~Moiseeva}. 2010. Issledovanie
+ matematicheskoy modeli parallel'nogo obsluzhivaniya zayavok smeshannogo tipa 
+ [Studying of mathematical model of mixed type claim parallel service]. 
+\textit{Bulletin of the Tomsk Polytechnic University} 317(5):32--34.
+\bibitem{13-gor-1}
+\Aue{Ivanovskaya, I.\,A., and S.\,P.~Moiseeva}. 2010. Issledovanie modeli 
+parallel'nogo obsluzhivaniya kratnykh zayavok v~nestatsionarnom rezhime [Analysis of 
+the parallel service model of multiple service requests operating in unsteady mode]. 
+\textit{Vestnik Tomskogo gos. un-ta. Upravlenie, vychislitel'naya 
+tekhnika i~informatika} [Tomsk State University J.~Control and Computer Science] 
+3(12):21--28.
+\bibitem{14-gopr-1}
+\Aue{Thomasian, A.} 2014. Analysis of fork-join and related queueing systems. 
+\textit{ACM Comput. Surv. (CSUR)} 47(2):1--71.
+ 
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Received July 21, 2015}}
+
+
+\Contr
+
+
+\noindent
+\textbf{Gorbunova Anastasiya V.} (b.\ 1986)~---
+PhD student, %Applied Probability and Informatics Department, 
+Peoples' Friendship University of Russia,
+6 Miklukho-Maklaya Str., Moscow 117198, Russian Federation; 
+avgorbunova@rambler.ru
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Zaryadov Ivan S.} (b.\ 1981)~---
+Candidate of Science (PhD) in physics and mathematics, associate professor, 
+%Applied Probability and Informatics Department, 
+Peoples' Friendship University of Russia,
+6 Miklukho-Maklaya Str., Moscow 117198, Russian Federation;  
+izaryadov@sci.pfu.edu.ru
+
+ 
+\vspace*{3pt}
+
+\noindent
+\textbf{Matyushenko Sergey I.} (b.\ 1963)~---
+Candidate of Science (PhD) in physics and mathematics, associate professor, 
+%Applied Probability and Informatics Department, 
+Peoples' Friendship University of Russia,
+6 Miklukho-Maklaya Str., Moscow 117198, Russian Federation;  
+matushenko@list.ru
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Samuylov Konstantin E.} (b.\ 1955)~---
+Doctor of Science in technology, professor, Head of Department, 
+%Applied Probability and Informatics Department, 
+Peoples' Friendship University of Russia,
+6 Miklukho-Maklaya Str., Moscow 117198, Russian Federation;  
+ksam@sci.pfu.edu.ru
+ 
+\vspace*{3pt}
+
+\noindent
+\textbf{Shorgin Sergey Ya.} (b.\ 1952)~---
+Doctor of Science in physics and mathematics, professor, 
+Deputy Director, Federal Research Center ``Computer Science and Control'' of 
+the Russian Academy of Sciences, 44-2 Vavilov Str., 
+Moscow 119333, Russian Federation; sshorgin@ipiran.ru 
+
+ 
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература}

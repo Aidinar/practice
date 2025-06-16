@@ -1,0 +1,896 @@
+
+%\newcommand{\p}{{\sf P}}
+%\newcommand{\e}{{\sf E}}
+%\newcommand{\D}{{\sf D}}
+%\newcommand{\cov}{{\sf cov}}
+%\newcommand{\corr}{{\sf corr}}
+%\newcommand{\G}{{\sf Ge}}
+%\newcommand{\IG}{{\sf Gi}}
+%\newcommand{\abs}[1]{\left|#1\right|}
+%\renewcommand{\Re}{{\sf Re} }
+%\newcommand{\sgn}{{\rm sgn}}
+
+\def\stat{kudr+shest}
+
+\def\tit{РАВНОМЕРНЫЕ ОЦЕНКИ СКОРОСТИ СХОДИМОСТИ ДЛЯ~ИНТЕГРАЛЬНОГО ИНДЕКСА 
+БАЛАНСА$^*$}
+
+\def\titkol{Равномерные оценки скорости сходимости для~интегрального индекса 
+баланса}
+
+\def\aut{А.\,А.~Кудрявцев$^1$, О.\,В.~Шестаков$^2$}
+
+\def\autkol{А.\,А.~Кудрявцев, О.\,В.~Шестаков}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Кудрявцев А.\,А.}
+\index{Шестаков О.\,В.}
+\index{Kudryavtsev A.\,A.}
+\index{Shestakov O.\,V.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при финансовой поддержке РНФ (проект 
+№\,22--11--00212).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет 
+имени М.\,В.~Ломоносова, факультет вычислительной математики и~кибернетики; 
+Московский центр фундаментальной и~прикладной математики, 
+\mbox{aakudryavtsev@cs.msu.ru}}
+\footnotetext[2]{Московский государственный университет 
+имени М.\,В.~Ломоносова, факультет вычислительной математики и~кибернетики; 
+Московский центр фундаментальной и~прикладной математики; Федеральный 
+исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{oshestakov@cs.msu.ru}}
+
+\vspace*{-6pt}
+
+
+\Abst{Рассматривается байесовская модель баланса, в~рамках которой 
+исследуется скорость слабой сходимости нормированного интегрального индекса 
+баланса к~ди\-гам\-ма-распре\-де\-ле\-нию в терминах равномерной мет\-ри\-ки. 
+Рассматриваются интегральные факторы, негативно и~позитивно влияющие на 
+функционирование сис\-те\-мы, и~их отношение~--- интегральный индекс баланса сис\-те\-мы. 
+Предполагается, что чис\-ло факторов априори не известно и~описывается смешанным 
+пуассоновским распределением со структурным обобщенным гам\-ма-рас\-пре\-де\-ле\-ни\-ем. 
+Исследуется ско\-рость слабой сходимости в~описанной схеме к ди\-гам\-ма-рас\-пре\-де\-ле\-нию. В~качестве вспомогательного приводится утверж\-де\-ние о~ско\-рости 
+слабой сходимости нормированной случайной суммы с~индексом, имеющим обобщенное 
+отрицательное биномиальное распределение, к~предельному обобщенному гам\-ма-рас\-пре\-де\-ле\-нию. Результаты работы могут быть востребованы при исследовании 
+моделей, использующих для описания процессов распределения с~неограниченным 
+неотрицательным носителем.}
+
+\KW{дигамма-распределение; смешанные распределения;  
+индекс баланса; случайное суммирование; слабая сходимость; оценки скорости
+сходимости}
+
+\DOI{10.14357/19922264240105}{WNUUHY}
+  
+\vspace*{-4pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+
+Большинство аспектов современной жизни усложнилось настолько, что определение 
+критериев эффективности путем детерминированного анализа стало практически 
+невозможным. По этой причине активно применяются разного рода показатели, 
+индексы и~рейтинги, дающие возможность оперативного принятия решений.
+
+В основе построения рейтингов и~индексов\linebreak обычно лежит условное разделение 
+факторов, влияющих на эффективность функционирования сис\-те\-мы, на два класса. 
+Первый класс включает па\-ра\-мет\-ры, способствующие функционированию \mbox{целевого} 
+объекта и~позитивно влия\-ющие на ис\-сле\-ду\-емый процесс (\textit{p-фак\-то\-ры}); второй 
+класс включает па\-ра\-мет\-ры, препятствующие и~негативно вли\-я\-ющие (\textit{n-фак\-то\-ры}).
+
+Вполне естественно, что функционирование исследуемой системы в итоге зависит не 
+столько от значений n- и~p-фак\-то\-ров, сколько от их соотношения. При этом большое 
+расхождение между величинами факторов обычно свидетельствует либо о чрезмерных 
+затратах на борьбу с негативным влиянием, либо о недооценке негативного 
+воздействия. Таким образом, для того чтобы система была сбалансированной, имеет 
+смысл стремиться уравновесить n- и~p-фак\-то\-ры. Для этой цели было предложено 
+использовать и~исследовать свойства \textit{индекса баланса}~--- 
+отношения n-фак\-то\-ра к~p-фак\-то\-ру~\cite{Ku2018}. В~\cite{Ku2018,KuShe2021_1} приводится ряд 
+примеров применения моделей баланса в политологии, науке о безопасности 
+жизнедеятельности, медицине, экономике, демографии, физике, теории массового 
+обслуживания и~надежности.
+
+С течением времени n- и~p-фак\-то\-ры, а~следовательно, и~индексы баланса 
+претерпевают изменения. Это связано с неустойчивостью среды, в~которой 
+происходит функционирование,~--- изменяется экономическая ситуация, политическая 
+сис\-те\-ма, технологии производства, пристрастия населения и~т.~д. Такие изменения 
+зачастую невозможно предугадать. Измерения при помощи приборов и~методик нельзя 
+считать точными, ввиду неизбежно вносимых погрешностей, име\-ющих в~большинстве 
+случаев изменчивый (случайный) характер. Это дает предпосылки для рассмотрения 
+факторов и~индексов как случайных величин. При этом стоит учитывать, что 
+глобальные изменения окружающей среды происходят достаточно редко, поэтому 
+законы, влияющие на значения факторов, можно считать (в~рамках конкретной 
+модели) неизменными. Из этого следует, что распределения рассматриваемых 
+случайных величин следует полагать заданными априорно.
+Приведенные рассуждения обусловливают применение к~моделям баланса байесовского 
+метода, а~исследование рандомизированных индексов баланса, таким образом, имеет 
+смысл осуществлять при помощи метода анализа масштабных смесей априорных 
+распределений негативных и~позитивных факторов.
+Кроме того, точное число факторов, оказывающих влияние на\linebreak функционирование 
+сис\-те\-мы, невозможно определить ап\-ри\-ори. Это приводит к естественному 
+обоб\-ще\-нию~\cite{KuShe2022_1_ru} байесовских моделей баланса, за\-клю\-ча\-юще\-му\-ся 
+в~использовании интегральных \mbox{характеристик}, основанных на случайном суммировании.
+
+В статье обсуждается асимптотика интегрального индекса баланса и~приводятся 
+равномерные оценки скорости его сходимости к предельному распределению.
+
+\section{Математическое описание моделей баланса}
+
+Рассмотрим некоторую сложную систему, на функционирование которой влияют 
+негативные n-фак\-то\-ры $\xi_1,\xi_2,\ldots$ и~позитивные p-фак\-то\-ры 
+$\eta_1,\eta_2,\ldots$ Поскольку априори невозможно предугадать чис\-ло влияющих 
+на систему в данный момент времени~$t$ негативных и~позитивных факторов, имеет 
+смысл говорить о том, что их случайное чис\-ло, которое будем соответственно 
+обозначать~$N_\xi(t)$ и~$N_\eta(t)$. Таким образом, интегральные величины n- и~p-фак\-то\-ров сис\-те\-мы 
+пред\-став\-ля\-ют собой случайные суммы, а~интегральный индекс 
+баланса сис\-те\-мы~--- их отношение.
+
+При моделировании наступления случайного числа событий и~исследовании априори 
+неизвестного числа наблюдений широко используются смешанные пуассоновские 
+процессы
+и~процессы Кокса
+с~соответствующими непрерывными структурными распределениями, имеющими смысл 
+соответственно рандомизированных интенсивностей и~накопленных интенсивностей.
+Для проекции процесса Кокса $N(t)\hm=N_1(\Lambda (t))$ в точке $t\hm>0$ справедливо
+\begin{multline*}
+%\label{MPP_distrib}
+{\sf P}(N(t)=n)={\sf P}\left(N_1(\Lambda (t))=n\right)={}\\
+{}=\int\limits_0^\infty e^{-y}\fr{y^n}{n!}\, 
+d{\sf P}(\Lambda(t)<y),\enskip n=0,1,\ldots
+\end{multline*}
+В случае когда проекция независимой от стандартного пуассоновского процесса 
+$N_1(t)$ случайной меры $\Lambda(t)$ имеет обобщенное гам\-ма-рас\-пре\-де\-ле\-ние~\cite{KrMe1946,KrMe1948} 
+$\mathrm{GG}\,(\nu,p,\delta (t))$ с функцией распределения
+\begin{multline*}
+%\label{GG_df}
+{\cal G}_{\nu,p,\delta(t)}(x)=\int\limits_0^x\fr{|\nu| y^{\nu p -1}e^{-(y/\delta(t))^\nu}}
+{(\delta(t))^{\nu p}\Gamma(p)}\,dy\,, \\
+\nu\neq0\,, \ \ p>0\,, \ 
+\ \delta(t)>0\,, \ \ t>0\,,\ \ x>0\,,
+\end{multline*}
+говорят, что проекции процесса Кокса~$N(t)$ имеют обобщенное 
+отрицательное биномиальное распределение~\cite{Ku2019_2}.
+Такие распределения широко применяются в страховании, финансовой математике, 
+физике и~других областях~\cite{KoZe2019,WaZhSu2019,KoGo2020,ZhWaYa2020,BhAh2021,MaThMoVePa2020}.
+
+Предположим, что n-фак\-то\-ры $\xi_1,\xi_2,\ldots$ и~\mbox{p-фак}\-то\-ры 
+$\eta_1,\eta_2,\ldots$ суть неотрицательные и~одинаково распределенные внутри 
+каждой последовательности случайные величины, имеющие \mbox{конечные} положительные 
+математические ожидания ${\sf E}\xi_1\hm=a$ и~${\sf E}\eta_1\hm=b$.
+Пусть $N_{1,1}(t)$ и~$N_{1,2}(t)$~--- стандартные пуассоновские процессы 
+и~$N_{1,1}(t),N_{1,2}(t),\Lambda_1(t),\Lambda_2(t),\xi_1,\xi_2,\ldots,\eta_1,\eta_
+2,\ldots$ независимы, а~$\Lambda_1(t)$ и~$\Lambda_2(t)$ имеют соответственно 
+обобщенные гам\-ма-рас\-пре\-де\-ле\-ния $\mathrm{GG}\,(\nu_1, p, \delta_1(t))$ и~$\mathrm{GG}\,(\nu_2, q, 
+\delta_2(t))$.
+Предположим, что число негативных факторов~$N_\xi(t)$ и~число позитивных 
+факторов $N_\eta(t)$ случайны и~имеют вид:
+$$
+N_\xi(t)=N_{1,1}\left(\Lambda_1(t)\right)+1\,;\enskip N_\eta(t)=N_{1,2}\left(\Lambda_2(t)\right)+1\,,
+$$
+т.\,е.\ в каждой группе присутствует хотя бы один фактор.
+
+Определим интегральные n- и~p-фак\-то\-ры и~интегральный индекс баланса:
+$$
+\xi(t)=\sum\limits_{k=1}^{N_\xi(t)}\xi_k;\enskip
+\eta(t)=\sum\limits_{k=1}^{N_\eta(t)}\eta_k;\enskip
+\rho(t)=\fr{\xi(t)}{\eta(t)}.
+$$
+
+\section{Вспомогательные утверждения}
+
+Поскольку на систему влияет случайное число случайных факторов, вопрос 
+о~сбалансированности ее функционирования следует рассматривать при помощи 
+исследования распределения интегрального индекса баланса. Классический подход 
+теории вероятностей при исследовании такого рода объектов основан на предельных 
+теоремах и~фактической замене анализа исходного распределения на анализ 
+предельного.
+
+Основные результаты работы базируются на приведенном в данном разделе аналоге 
+результата, доказанного в~\cite{KuShe2022_1_ru}, для формулирования которого 
+понадобится следующее распределение \cite{KuNeShe2022}.
+
+\smallskip
+
+\noindent
+\textbf{Определение~1.}\ 
+Будем говорить, что случайная величина ${\hat \rho}$ имеет ди\-гам\-ма-рас\-пре\-де\-ле\-ние 
+$\mathrm{DiG}\,(r,\nu,p,q,\delta)$ с характеристическим показателем $r\hm\in\mathbb{R}$ и
+параметрами формы $\nu\hm\neq0$, концентрации $p,q\hm>0$ и~масштаба $\delta\hm>0$, если 
+ее преобразование Меллина задается соотношением:
+\begin{multline}
+\mathcal{M}_{{\hat \rho}}(z) = 
+\fr{\delta^z\Gamma\left(p+{z}/{\nu}\right)\Gamma\left(q-{rz}/{\nu}\right)}{\Gamma(p)\Gamma(q)}, \\
+ p+\fr{\mathrm{Re}\,(z)}{\nu}>0, \ \ q-\fr{r\mathrm{Re}\,(z)}{\nu}>0.
+  \label{DG_Mellin}
+\end{multline}
+
+
+\noindent
+\textbf{Замечание~1.}
+Случайная величина~${\hat \rho}$, имеющая распределение~(\ref{DG_Mellin}), 
+представима в виде масштабной смеси обобщенных гам\-ма-за\-ко\-нов $\mathrm{GG}\,(\nu,p,\delta)$ 
+и~$\mathrm{GG}\,(\nu/r,q,1)$:
+\begin{equation*}
+\label{lambda_over_mu}
+{\hat \rho}\stackrel{d}{=}\delta\left(\fr{\lambda}{\mu^r}\right)^{1/\nu},
+\end{equation*}
+где независимые случайные величины~$\lambda$ и~$\mu$ соответственно имеют гам\-ма-рас\-пре\-де\-ле\-ния $\mathrm{GG}\,(1,p,1)$ и~$\mathrm{GG}\,(1,q,1)$.
+
+\smallskip
+
+Аналогично работе~\cite{KuShe2022_1_ru} можно показать справедливость следующего 
+утверж\-де\-ния.
+
+\smallskip
+
+\noindent
+\textbf{Лемма~1.}
+\textit{Пусть $\delta_i(t){\longrightarrow}\infty$ при $t\hm\to\infty$, $i\hm=1,2$.
+При введенных в разд.~$2$ предположениях}
+\begin{equation*}
+\label{Balace_limit}
+\fr{\rho(t)}{\delta_1(t)/\delta_2(t)}\Longrightarrow {\hat \rho},\enskip
+t\to\infty,
+\end{equation*}
+\textit{где} ${\hat \rho}\sim \mathrm{DiG}\,(\nu_1/\nu_2,\nu_1,p,q,a/b)$.
+
+
+\smallskip
+
+Поскольку интегральный индекс баланса, асимптотическое поведение которого 
+описано в лемме~1, представляет собой отношение двух 
+независимых случайных сумм, вопрос об оценивании ско\-рости его сходимости 
+к~предельному закону можно свес\-ти к~вопросу о~ско\-рости сходимости числителя 
+и~знаменателя к~соответствующим предельным распределениям. Для получения 
+необходимых оценок понадобится сле\-ду\-ющее утверж\-де\-ние из~\cite{ShTs2021}.
+
+\smallskip
+
+\noindent
+\textbf{Лемма~2.}
+\textit{Если $\nu\hm\in(0,1]$, $p\hm\in(0,1)$, то обобщенное гам\-ма-рас\-пре\-де\-ле\-ние~--- это 
+смешанное показательное распределение}:
+\begin{multline*}
+{\cal G}_{\nu,p,\delta}(x)={}\\
+{}=\int\limits_0^x\int\limits_0^1\fr{y}{1-y}e^{-{y}z/({1-y})} 
+h_{\nu,p,\delta}(y)\,dydz,\enskip x>0\,,
+\end{multline*}
+где
+\begin{multline}
+h_{\nu,p,\delta}(y)=
+\fr{ \delta^2}{\Gamma(1-p)\Gamma(p)}\fr{1}{(1-y)^2}\times{}\\
+{}\times
+\int\limits_1^\infty\fr{f_{\nu,1}(\delta^\nu y(1-y)^{-1}x^{-1/\nu})\,dx}
+{(x-1)^px^{1+2/\nu}},\enskip 0< y<1\,;
+\label{h_density}
+\end{multline}
+$f_{\nu,1}(x)$, $0<\nu<1$,~--- плотность одностороннего строго устойчивого 
+закона, сосредоточенного на положительной полуоси, с характеристической функцией
+$$
+\phi_{\nu,1}(t)=\exp\left\{-|t|^\nu\exp\left\{-\fr{1}{2}i\pi\nu\, \mathrm{sgn}\,t\right\}\right\}.
+$$
+
+
+
+Воспользуемся леммой~2 для доказательства аналога тео\-ре\-мы~1 из~\cite{ShTs2021}.
+
+\smallskip
+
+\noindent
+\textbf{Лемма~3.}
+\textit{Предположим, что $\nu_1\hm\in(0,1]$, $p\hm\in(0,1)$.
+Тогда для интегрального n-фак\-то\-ра $\xi(t)$ имеет место оценка}
+
+\vspace*{-4pt}
+
+\noindent
+\begin{multline*}
+\Delta_\xi\equiv\sup\limits_{x>0}\left|{\sf P}\left( \fr{\xi(t)}{\delta_1 (t)}< x\right)-
+{\cal G}_{\nu_1,p,a}(x)\right|\le{}
+\\
+{}
+\le
+\int\limits_0^1
+\min\left\{1,
+\fr{y}{1-y}\,\fr{{\sf E} \xi_1^2}{a^2}\max\left\{1-y,\fr{1}{2}\right\}
+\right\}\times{}\\
+{}\times
+h_{\nu_1,p,\delta_1 (t)}(y)\,dy,
+\end{multline*}
+\textit{где плотность $h_{\nu,p,\delta}(y)$ определена в}~(\ref{h_density}).
+
+
+\smallskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ 
+Имеем
+
+\vspace*{-4pt}
+
+\noindent
+\begin{multline*}
+\Delta_\xi\equiv\sup\limits_{x>0}\left|\vert
+{\sf P}\left( \fr{\xi(t)}{\delta_1 (t)}< x\right)-
+{\cal G}_{\nu_1,p,a}(x)\right|={}
+\\
+{}=\sup\limits_{x>0}\left|{\sf P}\left( \fr{\xi(t)}{\delta_1 (t)}< ax\right)-{\cal  G}_{\nu_1,p,a}(ax)\right|={}
+\\
+{}=\sup\limits_{x>0}\left|{\sf P}\left(\xi(t)<x\right)-
+{\cal G}_{\nu_1,p,\delta_1 (t)}\left(\fr{x}{a}\right)\right|.
+\end{multline*}
+
+Рассмотрим геометрическую сумму
+$$
+S_{p,0}=\sum\limits_{k=1}^{N_{p,0}}\xi_k,
+$$
+где
+$$
+{\sf P} (N_{p,0}=n)=p(1-p)^{n},\enskip n=0,1,\ldots, \enskip p\in(0,1)\,.
+$$
+В работе~\cite{KuShe2023_math_zeta} было показано, что
+$$
+{\sf P}\left(\xi(t)<x\right)=
+\int\limits_0^1 {\sf P}\left(S_{y,0}<x\right)h_{\nu_1,p,\delta_1 (t)}(y)\,dy,
+$$
+поэтому по  лемме~2
+\begin{multline*}
+\Delta_\xi=
+\sup\limits_{x>0}\Bigg\vert
+\int\limits_0^1 {\sf P}\left(S_{y,0}<x\right)h_{\nu_1,p,\delta_1 (t)}(y)\,dy-{}\\
+{}-
+\int\limits_0^{x/a}
+\int\limits_0^1\fr{y}{1-y}e^{-{yz}/({1-y})}  h_{\nu_1,p,\delta_1 (t)}(y)\,dy
+\,dz
+\Bigg\vert\le{}
+\end{multline*}
+
+\noindent
+\begin{multline*}
+{}\le
+\int\limits_0^1\sup\limits_{x>0}\left| 
+{\sf P}\left(S_{y,0}<x\right)-
+{\cal G}_{1,1,({1-y})/{y}}\left(\fr{x}{a}\right)
+\right|\times{}\\
+{}\times
+h_{\nu_1,p,\delta_1 (t)}(y)\,dy
+={}
+\\
+{}=\int\limits_0^1\sup\limits_{x>0}\left| {\sf P}\left(\fr{yS_{y,0}}{(1-y)a}<x\right)-{}\right.\\
+\left.{}-
+{\cal G}_{1,1,({1-y})/{y}}\left(\fr{(1-y)x}{y}\right)
+\right|
+h_{\nu_1,p,\delta_1 (t)}(y)\,dy
+={}
+\\
+{}=
+\int\limits_0^1\sup\limits_{x>0}\left|{\sf P}\left(\fr{yS_{y,0}}{(1-y)a}<x\right)-
+{\cal G}_{1,1,1}\left(x\right)
+\right|\times{}\\
+{}\times
+h_{\nu_1,p,\delta_1 (t)}(y)\,dy.
+\end{multline*}
+Используя оценку из~\cite{ShTs2021}, получаем
+\begin{multline*}
+\Delta_\xi\le
+\int\limits_0^1
+\min\left\{1, y \fr{{\sf E} X_1^2}{a^2}\max\left\{1,\fr{1}{2(1-y)}\right\}
+\right\}\times{}\\
+{}\times h_{\nu_1,p,\delta_1 (t)}(y)\,dy
+={}
+\\
+{}=
+\int\limits_0^1 \min\left\{1, \fr{y}{1-y}\,\fr{{\sf E} X_1^2}{a^2}\max\left\{1-y,\fr{1}{2}\right\}
+\right\}\times{}\\
+{}\times
+h_{\nu_1,p,\delta_1 (t)}(y)\,dy.
+\end{multline*}
+Лемма доказана.
+
+\smallskip
+
+\noindent
+\textbf{Замечание~2.}
+Поскольку интегральный p-фак\-тор $\eta(t)$ имеет ту же структуру, что и~$\xi(t)$, 
+справедлива аналогичная оценка
+\begin{multline*}
+\Delta_\eta\equiv\sup\limits_{x>0}\left|{\sf P}\left( \fr{\eta(t)}{\delta_2 (t)}< 
+x\right)-{\cal G}_{\nu_2,q,b}(x)\right|\le{}
+\\
+{}\le
+\int\limits_0^1
+\min\left\{1,
+\fr{y}{1-y}\,\fr{{\sf E} \eta_1^2}{b^2}\max\left\{1-y,\fr{1}{2}\right\}
+\right\}\times{}\\
+{}\times
+h_{\nu_2,q,\delta_2 (t)}(y)\,dy.
+\end{multline*}
+
+\section{Оценивание скорости сходимости нормированного интегрального индекса 
+баланса к~дигамма-распределению}
+
+Рассмотрим оценки ско\-рости схо\-ди\-мости в лемме~1 в терминах 
+равномерной мет\-ри\-ки. Справедливо сле\-ду\-ющее утверж\-дение.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~1.}\
+\textit{Предположим, что $\nu_1,\nu_2\hm\in(0,1]$, $p,q\hm\in(0,1)$. Пусть интегральные n- и
+p-фак\-то\-ры удовле\-тво\-ря\-ют условиям разд.~$2$. Тогда}
+
+\noindent
+\begin{multline}
+\Delta\equiv\sup\limits_{x>0}\left|{\sf P}\left(\fr{\rho(t)}{\delta_1(t)/\delta_2(t)}<x\right)-{\sf P}({\hat \rho}<x)\right|\le{}
+\\
+{}\le
+\int\limits_0^1
+\min\left\{1,
+\fr{y}{1-y}\,\fr{{\sf E} \xi_1^2}{a^2}\max\left\{1-y,\fr{1}{2}\right\}
+\right\}\times{}\\
+{}\times
+h_{\nu_1,p,\delta_1 (t)}(y)\,dy
++{}
+\\
+{}+
+\int\limits_0^1
+\min\left\{1,
+\fr{y}{1-y}\,\fr{{\sf E} \eta_1^2}{b^2}\max\left\{1-y,\fr{1}{2}\right\}
+\right\}\times{}\\
+{}\times
+h_{\nu_2,q,\delta_2 (t)}(y)\,dy.
+\label{delta_speed}
+\end{multline}
+
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ 
+Согласно замечанию~1 предельная случайная величина ${\hat \rho}$ в 
+лемме~1 может быть представлена в виде
+
+\noindent
+$$
+{\hat \rho}\stackrel{d}{=}\fr{\hat\xi}{\hat\eta},
+$$
+
+\vspace*{-3pt}
+
+\noindent
+где случайные величины ${\hat\xi}$ и~${\hat\eta}$ соответственно имеют 
+распределения $\mathrm{GG}\,(\nu_1,p,a)$ и~$\mathrm{GG}\,(\nu_2,q,b)$.
+
+Рассмотрим равномерное расстояние между допредельными и~предельными величинами. 
+Имеем
+\begin{multline*}
+\Delta=\sup\limits_{x>0}\left|{\sf P}\left(\fr{\rho(t)}{\delta_1(t)/\delta_2(t)}<x\right)-
+{\sf P}\left(\fr{\hat \xi}{\hat\eta}<x\right)\right|={}
+\\
+{}=\sup\limits_{x>0}\left|
+\vphantom{\left(\ln\fr{\hat \xi}{\hat\eta}<\ln x\right)}
+{\sf P}\left(\ln \fr{\rho(t)}{\delta_1(t)/\delta_2(t)}<\ln 
+x\right)-{}\right.\\
+\left.{}-{\sf P}\left(\ln\fr{\hat \xi}{\hat\eta}<\ln x\right)\right|={}
+\\
+{}=\sup\limits_{x\in\mathbb{R}}\left|{\sf P}\left(\ln \fr{\xi(t)}{\delta_1 (t)}-\ln 
+\fr{\eta(t)}{\delta_2 (t)}< x\right)-{}\right.\\
+\left.{}-{\sf P}(\ln{\hat \xi}-\ln{\hat\eta}< 
+x)
+\vphantom{\left(\ln \fr{\xi(t)}{\delta_1 (t)}-\ln 
+\fr{\eta(t)}{\delta_2 (t)}< x\right)}
+\right|.
+\end{multline*}
+Поскольку равномерная метрика обладает свойством регулярности~\cite{Senatov1998}, имеем
+\begin{multline*}
+\Delta\le\sup\limits_{x\in\mathbb{R}}\left|{\sf P}\left(\ln \fr{\xi(t)}{\delta_1 (t)}< 
+x\right)-{\sf P}(\ln{\hat \xi}< x)\right|+{}\\
+{}+
+\sup\limits_{x\in\mathbb{R}}\left|{\sf P}\left(\ln \fr{\eta(t)}{\delta_2 (t)}< x\right)-
+{\sf P}(\ln{\hat\eta}< x)\right|={}
+\\
+{}=\sup\limits_{x>0}\left|{\sf P}\left( \fr{\xi(t)}{\delta_1 (t)}< x\right)-{\sf P}({\hat \xi}< 
+x)\right|+{}\\
+{}+
+\sup\limits_{x>0}\left|{\sf P}\left( \fr{\eta(t)}{\delta_2 (t)}< x\right)-{\sf P}({\hat\eta}< 
+x)\right|=\Delta_\xi+\Delta_\eta.
+\end{multline*}
+
+Таким образом, утверждение теоремы следует из леммы~3 и
+замечания~2. Теорема доказана.
+
+\smallskip
+
+В качестве примера применения оценки~(\ref{delta_speed}) рассмотрим случай, 
+когда  $a\hm=b\hm=1$ и~проекции управ\-ля\-ющих процессов Кокса, отвечающих за число 
+негативных и~позитивных факторов, имеют гам\-ма-рас\-пре\-де\-ле\-ния с па\-ра\-мет\-ра\-ми 
+масштаба 
+
+\pagebreak
+
+\noindent
+$$
+\delta_i(t)=\fr{1-\theta_i(t)}{\theta_i(t)}\,,
+$$
+ где 
+$\theta_i(t)\to 0$ при $t\hm\to\infty$, $i\hm=1,2$. Для этого  
+воспользуемся соответствующим результатом из работы~\cite{ShTs2021}:
+\begin{multline*}
+\sup\limits_{x>0}\left|{\sf P}\left( \xi(t)< x\right)-{\cal G}_{1,p,(1-
+\theta_1(t))/\theta_1(t)}(x)\right|\le{}\\
+{}\le
+\fr{(\theta_1(t))^p(2{\sf E}\xi_1^2+p^{-1}+1)}{\Gamma(p)\Gamma(2-p)}.
+\end{multline*}
+Из последнего неравенства получаем
+\begin{multline*}
+\sup\limits_{x>0}\left| {\sf P}\left( \fr{\xi(t)}{\delta_1(t)}< x\right)-{\cal  G}_{1,p,1}(x)\right|\le{}\\
+{}\le
+\fr{(\theta_1(t))^p(2\e\xi_1^2+p^{-1}+1)}{\Gamma(p)\Gamma(2-p)}.
+\end{multline*}
+Поскольку интегральный p-фактор $\eta(t)$ имеет структуру, аналогичную $\xi(t)$, 
+окончательно для интегрального индекса баланса получаем оценку:
+\begin{multline*}
+\sup\limits_{x>0}\left|{\sf P}\left(\fr{\rho(t)}{\delta_1(t)/\delta_2(t)}<x\right)-
+{\sf P}({\hat \rho}<x)\right|\le{}
+\\
+{}\le \fr{(\theta_1(t))^p(2{\sf E}\xi_1^2+p^{-1}+1)}{\Gamma(p)\Gamma(2-p)}+{}\\
+{}+
+\fr{(\theta_2(t))^q(2{\sf E}\eta_1^2+q^{-1}+1)}{\Gamma(q)\Gamma(2-q)}.
+\end{multline*}
+
+\vspace*{-14pt}
+
+\section{Заключение}
+
+\vspace*{-3pt}
+
+
+В работе доказана теорема о скорости слабой сходимости нормированного 
+интегрального индекса баланса к ди\-гам\-ма-распре\-де\-ле\-нию. Получена верхняя 
+оценка равномерного расстояния между функциями распределения допредельного 
+и~предельного законов. Предполагается, что интегральный индекс баланса 
+представляет собой отношение двух случайных сумм, индексы которых описываются 
+обобщенными отрицательными биномиальными распределениями. Результаты работы 
+могут найти применение при исследовании масштабных смесей в схеме случайного 
+суммирования, в~частности при анализе байесовских моделей баланса.
+
+\vspace*{-12pt}
+
+
+{\small\frenchspacing
+ {\baselineskip=10.51pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{Ku2018}
+\Au{Кудрявцев~А.\,А.}
+Байесовские модели баланса~// Информатика и~её применения, 2018. Т.~12. Вып.~3. С.~18--27.
+doi: 10.14357/19922264180303. EDN: YAMDHF.
+
+\bibitem{KuShe2021_1}
+\Au{Kudryavtsev~A.\,A., Shestakov~O.\,V.}
+Asymptotically normal estimators for the parameters of the gamma-exponential 
+distribution~// Mathematics, 2021. Vol.~9. Iss.~3. Art.~273. 13~p. doi: 10.3390/math9030273. 
+
+\bibitem{KuShe2022_1_ru}
+\Au{Кудрявцев~А.\,А., Шестаков~О.\,В.}
+Ди\-гам\-ма-рас\-пре\-де\-ле\-ние как предельное для интегрального индекса баланса~// Вестн. Моск. ун-та. Сер~15. Вычисл. матем. и~киберн., 2022. №\,3. 
+С.~26--32.
+
+\bibitem{KrMe1946}
+\Au{Крицкий~С.\,Н., Менкель~М.\,Ф.}
+О~приемах исследования случайных колебаний речного стока~// Труды НИУ ГУГМС. Сер.~IV, 1946. Вып.~29. С.~3--32.
+%. Труды Гос. гидрологического ин-та, вып. 29, 1946.
+
+\bibitem{KrMe1948}
+\Au{Крицкий~С.\,Н., Менкель~М.\,Ф.}
+Выбор кривых распределения вероятностей для расчетов речного стока~// Известия АН СССР. Отд. техн. наук, 1948. №\,6. С.~\mbox{15--21}.
+
+\bibitem{Ku2019_2}
+\Au{Кудрявцев~А.\,А.}
+О~представлении гам\-ма-экс\-по\-нен\-ци\-аль\-но\-го и~обобщенного отрицательного 
+биномиального распределений~// Информатика и~её применения, 2019. Т.~13. Вып.~4. С.~76--80.
+doi: 10.14357/ 19922264190412. EDN: YTZLNY.
+
+\bibitem{KoZe2019}
+\Au{Korolev~V.\,Yu., Zeifman~A.\,I.}
+Generalized negative binomial distributions as mixed geometric laws and related 
+limit theorems~// Lith. Math. J., 2019. Vol.~59. Iss.~3. P.~366--388.
+10.1007/s10986-019-09452-x.
+
+\bibitem{WaZhSu2019} %8
+\Au{Wang~X., Zhao~X., Sun~J.}
+A compound negative binomial distribution with mutative termination conditions 
+based on a change point~// J. Comput. Appl. Math., 2019. Vol.~351. P.~237--249.
+doi: 10.1016/j.cam.2018.11.009.
+
+\bibitem{KoGo2020}
+\Au{Korolev~V.\,Yu., Gorshenin~A.\,K.\/}
+Probability models and statistical tests for extreme precipitation based on 
+generalized negative binomial distributions~// Mathematics, 2020. Vol.~8. Iss.~4. Art.~604. 30~p. doi: 10.3390/math8040604.
+
+
+\bibitem{ZhWaYa2020} %10
+\Au{Zhang~J., Wang~D., Yang~K.}
+A study of RCINAR(1) process with generalized negative binomial marginals~// Commun. Stat. B~--- Simul., 2020. Vol.~49. Iss.~6. P.~1487--1510.
+doi: 10.1080/03610918.2018.1498891.
+
+\bibitem{BhAh2021} %11
+\Au{Bhati~D., Ahmed~I.\,S.}
+On uniform-negative binomial distribution including Gauss hypergeometric 
+function and its application in count regression modeling~// Commun. Stat.~--- Theor.~M., 2021. Vol.~50. Iss.~13. P.~3106--3122.
+doi: 10.1080/03610926.2019.1682163.
+
+\bibitem{MaThMoVePa2020} %12
+\Au{Mangiola~S., Thomas~E.\,A., Modr$\acute{\mbox{a}}$k~M., Vehtari~A., Papenfuss~A.\,T.}
+Probabilistic outlier identification for RNA sequencing generalized linear 
+models~// NAR Genomics Bioinformatics, 2021. Vol.~3. Iss.~1. Art.~lqab005. 9~p.
+doi: 10.1093/nargab/lqab005.
+
+\bibitem{KuNeShe2022}
+\Au{Кудрявцев~А.\,А., Недоливко~Ю.\,Н., Шестаков~О.\,В.}
+Оновные вероятностные характеристики ди\-гам\-ма-рас\-пре\-де\-ле\-ния и~метод оценивания 
+его параметров~// Вестн. Моск. ун-та. Сер~15. Вычисл. матем. и~киберн., 2022. №\,3. 
+С.~22--29.
+
+\bibitem{ShTs2021}
+\Au{Shevtsova~I., Tselishchev~M.}
+On the accuracy of the generalized gamma approximation to generalized negative 
+binomial random sums~// Mathematics, 2021. Vol.~9. Iss.~13. Art.~1571. 8~p. doi: 10.3390/math9131571.
+
+\bibitem{KuShe2023_math_zeta}
+\Au{Kudryavtsev~A.\,A., Shestakov~O.\,V.}
+Estimates of the convergence rate in the generalized Renyi theorem with 
+a~structural digamma distribution using zeta metrics~// Mathematics, 2023. Vol.~11. Iss.~21. Art.~4477. 10~p. doi: 10.3390/math11214477.
+
+\bibitem{Senatov1998}
+\Au{Senatov~V.\,V.}
+Normal approximation: New results, methods, and problems.~--- Utrecht, The Netherland: VSP, 1998. 363~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-10pt}
+
+\hfill{\small\textit{Поступила в~редакцию 15.01.24}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+
+
+\def\tit{UNIFORM CONVERGENCE RATE ESTIMATES\\ FOR~THE~INTEGRAL BALANCE INDEX}
+
+
+\def\titkol{Uniform convergence rate estimates for~the~integral balance index}
+
+
+\def\aut{A.\,A.~Kudryavtsev$^{1,2}$ and~O.\,V.~Shestakov$^{1,2,3}$}
+
+\def\autkol{A.\,A.~Kudryavtsev and~O.\,V.~Shestakov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-10pt}
+
+
+\noindent
+$^{1}$Department of Mathematical Statistics, Faculty of Computational Mathematics and Cybernetics, M.\,V.~Lomo-\linebreak
+$\hphantom{^1}$nosov Moscow State University, 1-52~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation
+
+\noindent
+$^{2}$Moscow Center for Fundamental and Applied Mathematics, M.\,V.~Lomonosov Moscow State University,\linebreak
+$\hphantom{^1}$1~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation
+
+\noindent
+$^{3}$Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov\linebreak
+$\hphantom{^1}$Str., Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{4pt}
+
+
+
+
+\Abste{The paper considers the Bayesian balance model in which the rate of weak convergence of the normalized integral 
+balance index to the digamma distribution is studied in terms of a uniform metric. The integral factors negatively 
+and positively influencing the functioning of the system and their ratio, the integral balance index of the system, 
+are considered. It is assumed that the number of factors is not known \textit{a~priori} and is described by 
+a~mixed Poisson distribution with a~structural generalized gamma distribution. The rate of weak convergence to the digamma 
+distribution in the described scheme is studied. As an auxiliary statement, the rate of weak convergence of 
+a~normalized random sum with an index having a~generalized negative binomial distribution to a limiting generalized gamma distribution is estimated.
+ The results of the work may be in demand in the study of models used to describe processes with distributions having an unlimited nonnegative support.}
+
+\KWE{digamma distribution; mixed distributions; balance index; random summation; weak convergence; estimates of convergence rate}
+
+
+
+
+\DOI{10.14357/19922264240105}{WNUUHY}
+
+\vspace*{-12pt}
+
+\Ack
+
+
+\vspace*{-3pt}
+
+\noindent
+The research was supported by the Russian Science Foundation, project No.\,22-11-00212.
+
+\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{Ku2018-1}
+\Aue{Kudryavtsev, A.\,A.} 2018. 
+Bayesovskie modeli ba\-lan\-sa [Bayesian balance models].
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 12(3):18--27.
+doi: 10.14357/ 19922264180303. EDN: YAMDHF.
+
+
+\bibitem{KuShe2021_1-1}
+\Aue{Kudryavtsev, A.\,A., and O.\,V.~Shestakov.} 2021. 
+Asymptotically normal estimators for the parameters of the gamma-exponential distribution.
+\textit{Mathematics} 9(3):273. 13~p. doi: 10.3390/math9030273.
+
+\bibitem{KuShe2022_1_ru-1}
+\Aue{Kudryavtsev, A.\,A., and O.\,V.~Shestakov.} 2022.
+Digamma distribution as a~limit for the integral balance index. 
+\textit{Moscow University Computational Mathematics Cybernetics} 46:133--139.
+doi: 10.3103/S0278641922030062.
+
+\bibitem{KrMe1946-1}
+\Aue{Kritskiy, S.\,N., and M.\,F.~Menkel'.} 1946. 
+O~priemakh issledovaniya sluchaynykh kolebaniy rechnogo stoka [Methods
+of investigation of random fluctuations of river flow]. \textit{Trudy
+NIU GUGMS Ser.~IV} [Proceedings of GUGMS Research
+Institutions Ser.~IV] 29:3--32.
+
+\bibitem{KrMe1948-1}
+\Aue{Kritsky, S.\,N., and M.\,F.~Menkel'}. 1948. Vybor krivykh
+raspredeleniya veroyatnostey dlya raschetov rechnogo stoka [Selection of probability distribution curves for river
+flow calculations]. \textit{Izvestiya AN SSSR. Otd. tekhn. nauk}
+[Herald of the Russian Academy of Sciences. Technical
+Sciences] 6:15--21.
+
+\bibitem{Ku2019_2-1}
+\Aue{Kudryavtsev, A.\,A.} 2019. 
+O~predstavlenii gamma-eksponentsial'nogo i~obobshchennogo otritsatel'nogo binomial'nogo raspredeleniy 
+[On the representation of gamma-exponential and generalized negative binomial distributions].
+\textit{Informatika i~ee Primeneniya~--- Inform. \mbox{Appl}.} 13(4):76--80.
+doi: 10.14357/19922264190412. EDN: YTZLNY.
+
+
+\bibitem{KoZe2019-1}
+\Aue{Korolev, V.\,Yu., and A.\,I.~Zeifman.} 2019. 
+Generalized negative binomial distributions as mixed geometric laws and related limit theorems.
+\textit{Lith. Math. J.} 59(3):366--388. doi: 10.1007/s10986-019-09452-x.
+
+\bibitem{WaZhSu2019-1}
+\Aue{Wang, X., X.~Zhao, and J.~Sun.} 2019.  
+A compound negative binomial distribution with mutative termination conditions based on a~change point.
+\textit{J. Comput. Appl. Math.} 351:237--249. doi: 10.1016/j.cam.2018.11.009.
+
+\bibitem{KoGo2020-1}
+\Aue{Korolev, V.\,Yu., and A.\,K.~Gorshenin.} 2020.
+Probability models and statistical tests for extreme precipitation based on generalized negative binomial distributions.
+\textit{Mathematics} 8(4):604. 30~p. doi: 10.3390/math8040604.
+
+\bibitem{ZhWaYa2020-1}
+\Aue{Zhang, J., D.~Wang, and K.~Yang.} 2020. 
+A study of RCINAR(1) process with generalized negative binomial marginals.
+\textit{Commun. Stat. B~--- Simul.} 49(6):1487--1510.
+doi: 10.1080/03610918.2018.1498891.
+
+\bibitem{BhAh2021-1}
+\Aue{Bhati, D., and I.\,S.~Ahmed.} 2021. 
+On uniform-negative binomial distribution including Gauss hypergeometric function and its application in count regression modeling.
+\textit{Commun. Stat.~--- Theor. M.} 50(13):3106--3122. doi: 10.1080/03610926.2019.1682163.
+
+\bibitem{MaThMoVePa2020-1}
+\Aue{Mangiola, S., E.\,A.~Thomas, M. Modr$\acute{\mbox{a}}$k, A.~Vehtari, and A.\,T.~Papenfuss.}  2021.
+Probabilistic outlier identification for RNA sequencing generalized linear models
+\textit{NAR Genomics Bioinformatics} 3(1):lqab005. 9~p. doi: 10.1093/nargab/lqab005.
+
+\bibitem{KuNeShe2022-1}
+\Aue{Kudryavtsev, A.\,A., Yu.\,N.~Nedolivko, and O.\,V.~Shestakov.} 2022. 
+Main probabilistic characteristics of the digamma distribution and the method of estimating its parameters.
+\textit{Moscow University Computational Mathematics Cybernetics} 46:81--88. doi: 10.3103/S0278641922020054.
+
+\bibitem{ShTs2021-1}
+\Aue{Shevtsova, I., and M.~Tselishchev.} 2021.
+On the accuracy of the generalized gamma approximation to generalized negative binomial random sums.
+\textit{Mathematics} 9(13):1571. 8~p. doi: 10.3390/math9131571.
+
+\bibitem{KuShe2023_math_zeta-1}
+\Aue{Kudryavtsev, A.\,A., and O.\,V.~Shestakov.} 2023.
+Estimates of the convergence rate in the generalized Renyi theorem with a structural digamma distribution using zeta metrics.
+\textit{Mathematics} 11(21):4477. 10~p. doi: 10.3390/math11214477.
+
+\bibitem{Senatov1998-1}
+\Aue{Senatov, V.\,V.} 1998. 
+\textit{Normal approximation: New results, methods, and problems}.
+Utrecht, The Netherland: VSP. 363~p.
+
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received January 15, 2024}} 
+
+\vspace*{-18pt}
+ 
+      \Contr
+
+\vspace*{-3pt}
+
+
+\noindent
+\textbf{Kudryavtsev Alexey A.} (b.\ 1978)~--- Candidate of Science (PhD) in physics and mathematics, associate professor, 
+Department of Mathematical Statistics, Faculty of Computational Mathematics and Cybernetics, M.\,V.~Lomonosov Moscow State University, 
+1-52~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation; senior scientist, Moscow Center for Fundamental and Applied Mathematics, 
+M.\,V.~Lomonosov Moscow State University,
+1~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation; \mbox{aakudryavtsev@cs.msu.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Shestakov Oleg V.} (b.\ 1976)~--- Doctor of Science in physics and mathematics, professor, 
+Department of Mathematical Statistics, Faculty of Computational Mathematics and Cybernetics, M.\,V.~Lomonosov Moscow State University, 
+1-52~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation; senior scientist, Federal Research Center ``Computer Science and Control'' 
+of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; leading scientist, 
+Moscow Center for Fundamental and Applied Mathematics, M.\,V.~Lomonosov Moscow State University, 
+1~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation; \mbox{oshestakov@cs.msu.su}
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}

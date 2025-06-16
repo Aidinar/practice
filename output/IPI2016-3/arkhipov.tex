@@ -1,0 +1,701 @@
+\def\stat{arkhipov}
+
+\def\tit{ВАРИАНТ СОЗДАНИЯ ЛОКАЛЬНОЙ СИСТЕМЫ КООРДИНАТ 
+ДЛЯ~СИНХРОНИЗАЦИИ ИЗОБРАЖЕНИЙ ВЫБРАННЫХ СНИМКОВ}
+
+\def\titkol{Вариант создания локальной системы координат 
+для~синхронизации изображений выбранных снимков}
+
+\def\aut{О.\,П.~Архипов$^1$, П.\,О.~Архипов$^2$, И.\,И.~Сидоркин$^3$}
+
+\def\autkol{О.\,П.~Архипов, П.\,О.~Архипов, И.\,И.~Сидоркин}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Архипов О.\,П.}
+\index{Архипов П.\,О.}
+\index{Сидоркин И.\,И.}
+\index{Arkhipov O.\,P.}
+\index{Arkhipov P.\,O.}
+\index{Sidorkin I.\,I.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнена при частичной поддержке РФФИ (проект 16-07-00272 А).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Орловский филиал Федерального исследовательского центра <<Информатика и~управление>> 
+Российской академии наук, \mbox{arkhipov12@yandex.ru}}
+\footnotetext[2]{Орловский филиал Федерального исследовательского центра <<Информатика и~управление>> 
+Российской академии наук, \mbox{arpaul@mail.ru}}
+\footnotetext[3]{Орловский филиал Федерального исследовательского центра <<Информатика и~управление>> 
+Российской академии наук, \mbox{voronecburgsiti@mail.ru}}
+
+\Abst{Рассмотрены проблемы сравнения пар изображений, имеющих 
+искажения поворота и~сдвига сцен друг относительно друга. Разработан 
+алгоритм создания локальной системы координат (ЛСК) для пар сравниваемых 
+изображений.}
+
+\KW{алгоритм; методика; локальная система координат; цветное 
+изображение; синхронизация; пиксель; цветное пятно; фильтрация}
+
+\DOI{10.14357/19922264160312} 
+
+
+\vskip 12pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+  \section{Введение}
+  
+  Важным этапом обработки кадров видеопотока является построение 
+ЛСК для синхронизации обрабатываемых 
+изображений. Под синхронизацией понимается процедура совмещения пары 
+обрабатываемых кадров путем смещения одного изображения относительно 
+другого для достижения совпадения одинаковых устойчивых робастных 
+структур. В качестве общих робастных структур могут выступать границы 
+объектов, имеющихся на полутоновых изображениях, и~центры одинаковых 
+по площади цветных пятен соответствующих цветных изображений. 
+В~случае необходимости сравнения пары кадров, полученных с~различных 
+точек съемки либо с~отличным углом съемки, в~результате чего изображения 
+оказались смещены относительно друг друга, синхронизация может стать 
+единственно возможным решением для осуществления возможности 
+машинного сравнения изображений. 
+
+В~данной статье описывается процесс 
+создания ЛСК для синхронизации пар 
+обрабатываемых изоб\-ра\-же\-ний. Актуальность работы обусловлена 
+необходимостью сравнения пар изоб\-ра\-же\-ний, которые были получены 
+с~разных точек съемки, что привело к~искажениям поворота и~смещения. 
+
+Целью данной работы является разработка варианта создания 
+ЛСК для синхронизации пар изображений выбранных 
+снимков. Основная идея работы состоит в~том, что для синхронизации двух 
+изображений необходимо отыскать на этих изображениях робастные 
+структуры, которые повторялись бы на каждом из этих изображений, а~затем 
+выполнить создание ЛСК с~сохранением лишь 
+общей части обрабатываемой пары изображений. Предполагается, что даже 
+будучи смещенными друг относительно друга и/или повернутыми на 
+произвольный угол, данные изображения, имеющие общую сов\-па\-да\-ющую 
+часть, могут быть синхронизированы путем создания ЛСК
+ и~преобразованием одного из изображений. Независимо от угла 
+поворота и~смещения изображений, имеющих общую часть, робастные 
+структуры данных изображений будут сов\-падать. 
+
+\vspace*{-6pt}
+
+  \section{Обзор аналогов}
+  
+  \vspace*{-2pt}
+  
+  Одними из наиболее распространенных методов определения 
+геометрического рассогласования изображений являются корреляционные 
+методы~[1, 2]. Данные методы позволяют рассчитать коэффициент 
+корреляции для всех возможных вариантов смещения изображений друг 
+относительно друга и~выбрать одно пиковое значение, которое будет 
+соответствовать наибольшему совпадению двух сравниваемых изображений. 
+Еще одним примером определения взаимного сдвига изображений являются 
+статические методы, в~основе которых лежит процесс вычисления 
+евклидовой меры взаимного рассогласования изображений~[3]. Однако 
+данные методы являются весьма чувствительными к~шумам на 
+изображениях, которые являются их неотъем-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+лемой частью, и,~что более 
+существенно, они не позволяют выполнить согласование изображений, 
+имеющих искажение поворота. 
+  
+  Так как при съемке изображений нестационарной камерой получаемые 
+изображения имеют именно искажения сдвига и~поворота, то пе\-ре\-чис\-лен\-ные 
+выше методы не могут быть использованы для синхронизации таких 
+изображений. В~данной статье предлагается метод, основанный на 
+выявлении робастных характеристик, имеющих сходство на обоих 
+обрабатываемых изображениях, который позволит выполнять 
+синхронизацию изображений, подвергнутых искажениям сдвига и~поворота. 
+
+\vspace*{-6pt}
+
+  \section{Создание локальной системы координат 
+для~синхронизации изображений выбранных снимков}
+
+\vspace*{-2pt}
+  
+  Цветное изображение представляется в~виде двумерной 
+последовательности пикселей вида
+  \begin{multline*}
+  \mathrm{Image}_i = \!\left\{\!
+  \begin{matrix}
+  p_{i,1,1}(\mathrm{R,G,B}), & p_{i,1,2}(\mathrm{R,G,B}), &\ldots\\ 
+  \ldots  &\ldots  &\ldots\\
+  p_{i,h,1}(\mathrm{R,G,B}), & p_{i,h,2}(\mathrm{R,G,B}), &\ldots\end{matrix}\right.\\ 
+\hspace*{40mm}\left.\begin{matrix}\ldots, &p_{i,1,w}(\mathrm{R,G,B})\\
+\ldots &\ldots\\
+\ldots, &p_{i,h,w}(\mathrm{R,G,B})
+  \end{matrix}\!
+  \right\}\!\!,\hspace*{-0.7966pt}\\
+   i\in [1, 2]\,,\enskip
+  w\in [1, W_i]\,,\enskip h\in [1, H_i]\,,
+%  \label{e1-ar}
+  \end{multline*}
+где Image$_i$~--- изображение снимка~$i$;
+$p$~--- пиксели с~цветовыми координатами (R, G, B);
+$W_i$ и~$H_i$~--- ширина и~высота изображения снимка~$i$ в~пикселях. 
+
+  Для сравнения цветных изображений предлагается использовать цветные 
+пятна изображений и~робастные характеристики этих изображений. Для 
+этого необходимо выполнить процедуру получения полутоновых 
+изображений для получения наборов робастных характеристик каждого из 
+обра\-ба\-ты\-ва\-емых изображений вида
+
+\noindent
+  \begin{multline*}
+  \mathrm{Im}_i ={}\\
+  {}=Q\left(\varphi_{a,1}(\mathrm{Image}_i),   
+\varphi_{a,2 }(\mathrm{Image}_i), 
+\varphi_{a,3}(\mathrm{Image}_i)\right)\,,\\
+  i\in [1, 2]\,,
+%  \label{e2-ar}
+  \end{multline*}
+где Im$_i$~--- полутоновое изоб\-ра\-же\-ние снимка~$i$;
+$Q$~--- функция объединения полутоновых преобразований;
+$\varphi$~--- функция выполнения полутоновых преобразований~\cite{4-ar}.
+  
+  Перед выполнением сегментации цветных изоб\-ра\-же\-ний необходимо 
+выполнить огрубление цветовых составляющих изображений до~256~цветов, 
+что позволит получить более удобные для сегментации
+изображения 
+с~четким контрастированием цвето-\linebreak\vspace*{-12pt}
+
+\columnbreak
+
+\noindent вых пятен~\cite{5-ar}. Процедура 
+аппроксимации изображений выполняется в~два этапа:
+\begin{enumerate}[(1)]
+\item  аппроксимация 
+изображений до~4096~цветов вида
+
+\noindent
+  \begin{equation*}
+  \mathrm{Img}_i=\left\{
+  \Psi_{\mathrm{app}_{4096}} (\mathrm{Image}_i ,
+\mathrm{Pal}_{4096})\right\}\,,\enskip i\in [1, 2]\,,
+%  \label{3-ar}
+  \end{equation*}
+где Img$_i$~--- аппроксимированное до~4096~цветов изображение 
+снимка~$i$;
+$\Psi_{\mathrm{app}_{4096}}$~--- функция получения множества  
+(R, G, B)-пик\-се\-лей в~результате аппроксимации к~4096~цветам;
+$\mathrm{Pal}_{4096}$~--- палитра~4096~цветов;
+\item 
+аппроксимация изображений до~256~цветов вида
+
+\noindent
+\begin{equation*}
+\mathrm{Img}_i=\left\{
+\Psi_{\mathrm{app}_{256}}(\mathrm{Image}_i, 
+\mathrm{Pal}_{256})\right\}\,,\enskip i\in [1, 2]\,,
+%\label{e4-ar}
+\end{equation*}
+где $\Psi_{\mathrm{app}_{256}}$~--- функция получения множества  
+(R, G, B)-пик\-се\-лей в~результате аппроксимации к~256~цветам;
+Pal$_{256}$~--- палитра 256~цветов.
+\end{enumerate}
+  
+  Полученные в~результате выполнения двух этапов аппроксимации 
+изображения должны быть сегментированы с~целью формирования 
+последовательности цветных пятен каждого изображения. 
+Последовательность цветных пятен изображений можно представить в~виде: 
+  \begin{multline*}
+  \hspace*{-5pt}\Psi_{\mathrm{segm}_i}=\{\Psi_{i,j}\} = \left\{
+  \begin{matrix}
+  \psi_{i,1}(p_{i,1,1}),&\ldots,& \psi_{i,1}(p_{i,1,t}),\ldots\\
+  \ldots&\ldots&\ldots\\
+  \psi_{i,n}(p_{i,h,1}),&\ldots, &\psi_{i,n}(p_{i,h,t}),\ldots\end{matrix}\right.\\
+\left.\begin{matrix}
+\ldots, &\psi_{i,u}(p_{i,1,w-g}),&\ldots ,& \psi_{i,k}(p_{i,1,w})\\
+  \ldots&\ldots&\ldots&\ldots\\
+\ldots,& \psi_{i,j}(p_{i,h,w-d}),&\ldots ,& \psi_{i,j}(p_{i,h,w})
+  \end{matrix} \right\}
+%  \label{e5-ar}
+  \end{multline*}
+  
+  \vspace*{-12pt}
+  
+  \noindent
+  \begin{gather*}
+  i\in [1,  2]\,,\enskip
+  j\in [0,  J_j]\,,\enskip
+  t\in [1, T_i]\,,\\
+  d\in [1, D_i]\,,\enskip
+  g\in [1, G_i]\,,\enskip u\in [1, U_i]\,,\\
+  w\in [1, W_i]\,,\enskip h\in [1, H_i]\,,\enskip
+  n\in [1, N_i]\,,\\
+  N_i\leq J_i\,,\enskip U_i\leq J_i\,, \enskip T_i\leq J_i\,,\enskip
+  D_i<W_i\,,
+  \end{gather*}
+где $\Psi_{\mathrm{segm}_i}$~--- множество сегментов изоб\-ра\-же\-ния 
+снимка~$i$;
+$\psi_{i,j}$~--- сегмент с~номером~$j$ цветного изоб\-ра\-же\-ния снимка~$i$;
+$J_i$~--- максимальное количество цветных сегментов изоб\-ра\-же\-ния 
+снимка~$i$.
+  
+  Полученное множество цветных пятен представляет собой 
+последовательность из всех цветоразличимых сегментов обрабатываемых 
+изоб\-ра\-же\-ний~[6--8]. Для осуществления синхронизации 
+изображений путем определения и~сопоставления робастных структур пары 
+обрабатываемых изображений необходимо выполнить фильтрацию 
+полученного множества цветных пятен. Сравнительно маленькие и~большие 
+по площади пятна на изоб\-ра\-же\-ни\-ях не позволяют выполнить синхронизацию 
+изображений из-за того, что маленькие пятна могут с~большой вероятностью 
+повторяться на паре обрабатываемых изоб\-ра\-же\-ний либо вовсе пропа-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+дать, 
+а~большие пятна могут оказаться на границах изоб\-ра\-же\-ний, что приведет 
+к~невозможности точного определения их центров. Следовательно, 
+необходимо выбрать для дальнейшего рассмотрения только цветные пятна 
+средних размеров, имеющих граничные точки, полученные в~результате 
+полутоновых преобразований.
+  
+  Средняя величина пятен определяется как суммарная величина значений 
+площадей всех цветных пятен изображения, деленная на количество цветных 
+пятен данного изображения. 
+  
+  Ввиду того что точное совпадение размеров пятен маловероятно, выбирать 
+следует при фильт\-ра\-ции пятна, площадь которых будет принадлежать 
+промежутку от $\mathrm{AveSize}/2$ до 3AveSize, где\linebreak AveSize~--- средний 
+размер цветного пятна изоб\-ра\-же\-ния. Выбор данного интервала увеличивает 
+количество цветных пятен, подлежащих рассмотрению, и~повышает 
+вероятность успешной синхронизации изображений.
+  
+  Отфильтрованная последовательность цветных пятен обрабатываемых 
+изображений может быть представлена в~виде:
+
+\noindent
+  \begin{multline*}
+  \theta_{\mathrm{segm}_i}= \{\theta_{i,k}\}\subset \Psi_{\mathrm{segm}_i}:\ i\in 
+[1, 2]\,,\\
+  k\in [0,  K]\,,\enskip j\in [0,  J_i]\,,\enskip K_i\leq J_i\,,
+%  \label{e6-ar}
+  \end{multline*}
+где $\theta_{\mathrm{segm}_i}$~--- множество цветных сегментов, оставшихся 
+после фильтрации цветных сегментов изоб\-ра\-же\-ния снимка~$i$.
+
+  После того как получена последовательность цветных пятен, 
+удовлетворяющая всем условиям фильтрации: площадь и~наличие граничных 
+точек, необходимо выполнить процедуру сравнения множеств~$\theta_{\mathrm{segm}_i}$ 
+для первого и~второго изображений. Сравнение 
+производится путем определения совпадения площадей цветных пятен 
+и~взаимного удаления данных пятен от других на каждом изоб\-ра\-же\-нии. При 
+этом, найдя цветное пятно $\theta_{1,b}:\ b\hm\leq K_1$, принадлежащее 
+первому изображению, и~цветное пятно $\theta_{2,v}:\ v\hm\leq K_2$, 
+площадь которого соответствует~$\theta_{1,b}$, необходимо выполнить 
+проверку удаленности от всех цветных пятен на каждом изображении 
+относительно данных пятен. Если $Y_{\mathrm{segm}}\hm=\emptyset$, то данная пара 
+заносится в~множество как совпадающие друг с~другом сегменты. Если 
+расстояния до большей части пятен, которые были занесены в~$Y_{\mathrm{segm}}$, 
+совпадают, то необходимо добавить в~множество~$Y_{\mathrm{segm}}$ данную пару 
+цветных пятен, иначе они будут признаны как ошибочно выбранные 
+совпадающими друг с~другом. Получа\-емую последовательность  можно 
+представить в~виде:
+  \begin{multline*}
+  Y_{\mathrm{segm}} =\{\tau_m\}\subset \theta_{\mathrm{segm}_i}:\
+  i\in [1, 2]\,,\\
+  m\in [0,M_i]\,,\enskip K_1\geq M_i\leq K_2\,,
+%  \label{e7-ar}
+  \end{multline*}
+  
+  \columnbreak
+  
+\noindent
+где $Y_{\mathrm{segm}}$~--- множество цветных сегментов, выбранных в~качестве 
+совпадающих на паре изображений выбранных снимков.
+
+  Поскольку первый элемент множества~$Y_{\mathrm{segm}}$ не может быть 
+проверен на удаленность от других цветных пятен, а второй и~последующий 
+сравниваются только с~предыдущими элементами, то необходимо выполнить 
+дополнительную проверку\linebreak уда\-лен\-ности каждого элемента 
+множества~$Y_{\mathrm{segm}}$ для каждого изоб\-ра\-же\-ния, тем самым исключив 
+возможные случайные ошибки. Результирующее множество сегментов, 
+имеющих соответствие на паре обрабатываемых изоб\-ра\-же\-ний, может быть 
+представлено в~виде:
+  \begin{equation*}
+  S_{\mathrm{segm}}= \{s_c\}\subset Y_{\mathrm{segm}}:\ c\in [0,C_i]\,,\ K_1\geq C_i\leq K_2\,,
+%  \label{e8-ar}
+  \end{equation*}
+  
+  \vspace*{-2pt}
+  
+  \noindent
+где $S_{\mathrm{segm}}$~--- множество цветных сегментов, оставшихся после 
+фильтрации цветных сегментов, выбранных в~качестве совпадающих на паре 
+изображений выбранных снимков.
+
+  Успешная синхронизация изображений возможна, если имеется три 
+и~более сегментов, име\-ющих соответствие на паре обрабатываемых 
+изоб\-ра\-же\-ний. При этом чем дальше данные цветовые\linebreak пятна будут 
+располагаться друг от друга, тем выше точность синхронизации и~создания 
+ЛСК. Если число соответствующих друг другу 
+сегментов три и~более, то выполняется процедура создания 
+ЛСК для обрабатываемой пары изображений путем 
+определения угла поворота одного изображения относительно другого 
+и~вычисления расстояний до краев общей области с~переносом пикселей 
+каждого из изображений. Таким образом, при выполнении условия наличия 
+минимум трех цветных пятен, которые совпадают на паре обрабатываемых 
+изображений, за счет выполнения процедуры
+
+\vspace*{2pt}
+
+\noindent
+  \begin{equation*}
+  \mathrm{Im}\_s_i= \mathrm{Qs}_i(\mathrm{Image}, S_{\mathrm{segm}})\,,\enskip i\in [1, 
+2]\,,
+%  \label{e9-ar}
+  \end{equation*}
+  
+  \vspace*{-2pt}
+  
+  \noindent
+где Im\_s$_i$~--- изображения, преобразованные к~ЛСК;
+Qs$_i$~--- процедура построения ЛСК для 
+изоб\-ра\-же\-ния снимка~$i$;
+получаем два новых изображения, которые будут иметь новые 
+ЛСК, совпадающие на обоих изоб\-ра\-же\-ниях.
+  
+  На рис.~1 приведена схема алгоритма создания 
+ЛСК для синхронизации изображений выбранных кадров.
+
+
+
+  Процессы на рис.~1:
+{1}~--- получение полутоновых представлений изоб\-ра\-же\-ний
+Image$_1$ и~Image$_2$;
+  {2}~--- аппроксимация изоб\-ра\-же\-ний Image$_1$ и~Image$_2$
+  к~палитре~4096~цветов;
+  {3}~--- аппроксимация изобра\-же\-ний Img$_1$ и~Img$_2$ 
+к~палитре~256~цветов;
+  {4}~---  сегментация изоб\-ра\-же\-ний Img$_1$ и~Img$_2$;
+  {5}~--- фильт\-ра\-ция цветных сегментов $\Psi_\mathrm{segm_1}$ 
+и~$\Psi_\mathrm{segm_2}$;\linebreak\vspace*{-12pt} 
+
+  
+  \pagebreak
+  
+  \end{multicols}
+  
+  \begin{figure} %fig1
+\vspace*{1pt}
+ \begin{center}  
+\mbox{%
+ \epsfxsize=140.988mm
+ \epsfbox{arh-1.eps}
+ }
+\end{center} 
+\vspace*{-9pt}
+\Caption{Схема алгоритма создания ЛСК для синхронизации 
+изображений выбранных кадров}
+\end{figure}
+  
+  \begin{multicols}{2}
+  
+  \noindent
+  {6}~--- определение соответствия цветных сегментов 
+$\theta_{\mathrm{segm}_1}$ и~$\theta_{\mathrm{segm}_2}$ пары изоб\-ра\-же\-ний
+Img$_1$ и~Img$_2$ вне зависимости от угла поворота и~смещения;
+  {7}~--- фильт\-ра\-ция обнаруженных сегментов множества~$Y_{\mathrm{segm}}$;
+  {8}~--- определение числа совпадающих пятен на паре сравниваемых 
+изоб\-ра\-же\-ний и~возможности построения ЛСК;
+  {9}~--- построение ЛСК;
+  {10}~--- выдача ошибки построения ЛСК;
+  {11}~--- завершение работы.
+  
+\vspace*{-6pt}
+
+    \section{Результаты вычислительных экспериментов}
+    
+  Для тестирования предлагаемого варианта создания 
+ЛСК для синхронизации изображений выбранных снимков была 
+выбрана пара кадров, представленных на рис.~2. 
+     
+\begin{figure*} %fig2
+\vspace*{1pt}
+ \begin{center}  
+\mbox{%
+ \epsfxsize=156.221mm
+ \epsfbox{arh-2.eps}
+ }
+\end{center} 
+\vspace*{-9pt}
+      \Caption{Изображения первого~(\textit{а}) и~второго~(\textit{а}) снимков}
+      \end{figure*}
+      
+  После выполнения сегментации и~фильтрации сегментов оставшиеся 
+сегменты на изображениях первого и~второго снимков выделены зеленым 
+цветом. Для наглядности вручную были отмечены красными линиями 
+и~стрелками части изображений, по которым наиболее отчетливо видно 
+относительное смещение изображений (рис.~3).
+  
+\begin{figure*} %fig3
+\vspace*{1pt}
+ \begin{center}  
+\mbox{%
+ \epsfxsize=156.304mm
+ \epsfbox{arh-3.eps}
+ }
+\end{center} 
+\vspace*{-9pt}
+  \Caption{Сегменты для синхронизации, визуализация относительного смещения 
+изображений}
+  \end{figure*}
+  
+  После выполнения вышеописанных процедур было 
+обнаружено~6~совпадающих цветных сегментов, за счет которых была 
+построена ЛСК и~преобразованы оба изображения к~виду, пригодному для 
+сравнения. Полученные изображения пред\-став\-ле\-ны на
+рис.~4,\,\textit{а} и~4,\,\textit{б}.
+  
+  \begin{figure*} %fig4
+  \vspace*{1pt}
+ \begin{center}  
+\mbox{%
+ \epsfxsize=162.337mm
+ \epsfbox{arh-4.eps}
+ }
+\end{center} 
+\vspace*{-9pt}
+  \Caption{Преобразованные изображения первого~(\textit{а}) и~второго~(\textit{б}) снимков}
+  \end{figure*}
+  
+  \vspace*{-12pt}
+     
+  \section{Заключение}
+  
+  В данной статье был предложен вариант создания 
+ЛСК для синхронизации изображений выбранных снимков.
+  %
+  В результате его тестирования были получены положительные результаты 
+для изображений, имеющих искажение сдвига и~поворота. 
+  
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+
+\bibitem{2-ar}
+\Au{Прэтт У.} Цифровая обработка изображений~/ Пер. с~англ.~--- М.: Мир, 
+1982. (Pratt~W.\,K. Digital image processing.~---Wiley-Interscience Publication, 
+1978. 750~p.)
+\bibitem{1-ar}
+\Au{Форсайт Д., Понс Ж.} Компьютерное зрение. Современный подход.~--- 
+М.: Вильямс, 2004. 928~с. 
+\bibitem{3-ar}
+\Au{Гонсалес Р., Вудс Р.} Цифровая обработка изображений~/ Пер. с~англ.~--- 
+М.: Техносфера, 2005. 1070~с. (Gonzalez~R.\,C.,  Woods~R.\,E. Digital image 
+processing.~--- Wiley-Interscience Publication, 2002. 793~p.)
+\bibitem{4-ar}
+\Au{Архипов О.\,П., Зыкова З.\,П.} Применение полутоновых представлений 
+при анализе изменений цветных изоб\-ра\-же\-ний~// Информатика и~её 
+применения, 2014. Т.~8. Вып.~3. С.~90--99.
+\bibitem{5-ar}
+\Au{Архипов О.\,П., Зыкова З.\,П.} Интеграция гетерогенной информации 
+о~пикселях и~их цветовосприятии~// Информатика и~её применения, 2010. 
+T.~4. Вып.~4. С.~14--25.
+\bibitem{6-ar}
+\Au{Архипов О.\,П., Зыкова З.\,П.} Функциональное описание 
+индивидуального цветовосприятия~// Известия ОрелГТУ. Сер. 
+Информационные системы и~технологии, 2010. №\,5. С.~5--12.
+\bibitem{7-ar}
+\Au{Архипов О.\,П., Зыкова З.\,П.} RGB-ха\-рак\-те\-ри\-за\-ция пространства 
+цветовосприятия~// Системы и~средства информатики, 2010. Вып.~20. №\,1. 
+С.~72--89.
+\bibitem{8-ar}
+\Au{Архипов О.\,П., Зыкова З.\,П.} Равноконтрастные градационные 
+преобразования ступенчатых тоновых шкал~// Информационные системы 
+и~технологии, 2011. №\,4. С.~39--46.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 12.07.16}}
+
+\vspace*{10pt}
+
+%\newpage
+
+%\vspace*{-24pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{8pt}
+
+
+
+\def\tit{THE OPTION TO CREATE A~LOCAL COORDINATE SYSTEM 
+FOR~SYNCHRONIZATION OF~SELECTED IMAGES}
+
+\def\titkol{The option to create a~local coordinate system 
+for~synchronization of selected images}
+
+\def\aut{O.\,P.~Arkhipov, P.\,O.~Arkhipov, and~I.\,I.~Sidorkin}
+
+\def\autkol{O.\,P.~Arkhipov, P.\,O.~Arkhipov, and~I.\,I.~Sidorkin}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+\noindent
+Orel Branch of the 
+Federal Research Center ``Computer Science and Control'' of the Russian Academy 
+of Sciences, 137~Moskovskoe Sh., Orel 302025, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2016\ \ \ volume~10\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2016\ \ \ volume~10\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{9pt}
+
+
+
+\Abste{While comparing pairs of images, in most cases, the problem of 
+misalignment of images arises in which one image is distortion of translation and 
+rotation relative to another image. Such an image is quite difficult to compare in 
+automatic mode. Existing methods of image pairs  synchronize a~large 
+number of constraints due to which most of them are rarely used. The proposed 
+option to create a~local coordinate system for synchronizing images is based on the 
+analysis of color spots presented on the images. It is assumed that successful 
+synchronization of two images on their total amount of colored spots is to be 
+found that match on the data images. For comparison, it is suggested to use
+colored spots and 
+distances between spots. In order to successfully synchronize, one needs at 
+least three colored spots, which would coincide in all modes of filtration. The 
+experiments show acceptable results of synchronization.}
+
+\KWE{algorithm; local coordinate system; color image; synchronization; pixel; 
+colored spot; filtration}
+
+\DOI{10.14357/19922264160312} 
+
+\vspace*{9pt}
+
+%\Ack
+%\noindent
+
+
+
+%\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+  
+\bibitem{2-ar-1}
+\Aue{Pratt, W.\,K.} 1978. \textit{Digital image processing}. Wiley-Interscience 
+Publication. 750~p.
+\bibitem{1-ar-1}
+  \Aue{Forsyth, D.\,A., and J.~Ponce}. 2002. \textit{Computer vision: A~modern 
+approach}. Prentice Hall Professional Technical Reference. 720~p.
+\bibitem{3-ar-1}
+\Aue{Gonzalez, R.\,C., and R.\,E.~Woods}. 2002. \textit{Digital image 
+processing}. Wiley-Interscience Publication. 793~p.
+  \bibitem{4-ar-1}
+  \Aue{Arhipov, O.\,P., and Z.\,P.~Zykova}. 2014. Primenenie polutonovykh 
+predstavleniy pri analize izmeneniy tsvetnykh izobrazheniy [The use of half-tone 
+representations in the analysis of changes in color images]. \textit{Informatika i~ee 
+Primeneniya~--- Inform. Appl.} 8(3):90--99.
+  \bibitem{5-ar-1}
+  \Aue{Arhipov, O.\,P., and Z.\,P.~Zykova}. 2010. Integratsiya geterogennoy 
+informatsii o pikselyakh i~ikh tsvetovospriyatii [Integration of heterogeneous 
+information about pixels and their color perception]. \textit{Informatika i~ee 
+Primeneniya~--- Inform. Appl.} 4(4):14--25.
+  \bibitem{6-ar-1}
+  \Aue{Arhipov, O.\,P., and Z.\,P.~Zykova}. 2010. Funktsional'noe opisanie 
+individual'nogo tsvetovospriyatiya [Characteristics of color perceptual space]. 
+\textit{Izvestiya OrTGU. Ser. Informatsionnye sistemy i~tekhnologii} [Herald
+of Oryol Technical State University. Ser. 
+information systems and technologies] 5:5--12.
+
+\pagebreak
+
+  \bibitem{7-sr-1}
+  \Aue{Arhipov, O.\,P., and Z.\,P.~Zykova}. 2010. RGB-kharakterizatsiya 
+prostranstva tsvetovospriyatiya [RGB-characterization of color space]. 
+\textit{Sistemy i~Sredstva Informatiki~--- Systems and Means of Informatics} 
+1(20):\linebreak 72--89.
+  \bibitem{8-ar-1}
+  \Aue{Arhipov, O.\,P., and Z.\,P.~Zykova}. 2011. Ravnokontrastnye 
+gradatsionnye preobrazovaniya stupenchatykh tonovykh shkal [Equal contrast 
+graded transformation of step tinted scales]. \textit{Informatsionnye Sistemy 
+i~Tekhnologii} [Information Systems and Technologies] 4:39--46.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received July 12, 2016}}
+
+\vspace*{-3pt}
+
+
+\Contr
+
+\noindent
+\textbf{Arkhipov Oleg P.}\ (b.\ 1948)~--- Candidate of Science (PhD) in technology, Director, Oryol Branch of  
+Federal Research Center  ``Computer Science  and Control'' of the 
+Russian Academy of Sciences, 137~Moskovskoe Sh., Oryol 
+302025, Russian Federation; \mbox{arkhipov12@yandex.ru}
+
+\vspace*{4pt}
+
+\noindent
+\textbf{Arkhipov Pavel O.}\ (b.\ 1979)~--- Candidate of Science (PhD) in technology, senior scientist, Oryol Branch 
+of  Federal Research Center  ``Computer Science  and Control'' of the Russian 
+Academy of Sciences, 137~Moskovskoe Sh., Oryol 
+302025, Russian Federation; \mbox{arpaul@mail.ru}
+
+\vspace*{4pt}
+
+\noindent
+\textbf{Sidorkin Ivan I.}\ (b.\ 1990)~--- engineer-researcher, Orel Branch of the 
+Federal Research Center ``Computer Science and Control'' of the Russian Academy 
+of Sciences, 137~Moskovskoe Sh., Orel 302025, Russian Federation; 
+\mbox{voronecburgsiti@mail.ru}
+  \label{end\stat}
+  
+  
+  \renewcommand{\bibname}{\protect\rm Литература}

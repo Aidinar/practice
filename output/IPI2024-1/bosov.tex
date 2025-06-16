@@ -1,0 +1,947 @@
+\def\stat{bosov}
+
+\def\tit{УПРАВЛЕНИЕ ЛИНЕЙНЫМ ВЫХОДОМ АВТОНОМНОЙ ДИФФЕРЕНЦИАЛЬНОЙ 
+СИСТЕМЫ ПО~КВАДРАТИЧНОМУ КРИТЕРИЮ НА~БЕСКОНЕЧНОМ 
+ГОРИЗОНТЕ$^*$}
+
+\def\titkol{Управление линейным выходом автономной дифференциальной 
+системы по квадратичному критерию} % на бесконечном  горизонте}
+
+\def\aut{А.\,В.~Босов$^1$}
+
+\def\autkol{А.\,В.~Босов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Босов А.\,В.}
+\index{Bosov A.\,V.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнялась с использованием инфраструктуры Центра коллективного пользования 
+<<Высокопроизводительные вы\-чис\-ле\-ния и~большие данные>> (ЦКП <<Информатика>>) ФИЦ ИУ 
+РАН (г.\ Москва).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и управление>> Российской академии наук, 
+\mbox{ABosov@frccsc.ru}}
+
+\vspace*{-6pt}
+
+
+  
+
+\Abst{Решена задача оптимального управления линейным выходом 
+стохастической дифференциальной сис\-те\-мы на бесконечном горизонте. Решение 
+получено как предельная форма оптимального управ\-ле\-ния в~со\-от\-вет\-ст\-ву\-ющей 
+задаче с~конечным горизонтом. Приведены достаточные условия существования 
+управления, состоящие из требований стационарности нелинейной динамики, 
+конечности квад\-ра\-тич\-но\-го целевого функционала, стабилизируемости линейного 
+выхода и~существования предела в~формуле Фейн\-ма\-на--Ка\-ца, опи\-сы\-ва\-ющей 
+нелинейную часть управ\-ле\-ния. Условия для линейной час\-ти управления связаны 
+с~классическими результатами существования решения автономного урав\-не\-ния 
+Риккати. Существование предела в формуле Фейн\-ма\-на--Ка\-ца~--- с~решением 
+параболического уравнения, за\-да\-юще\-го коэффициенты для нелинейной части 
+управления. Рас\-смот\-рен част\-ный случай линейного сноса, при котором 
+сохраняется нелинейный характер задачи, но оптимальное управ\-ле\-ние 
+оказывается линейным и по выходу, и~по переменной со\-сто\-яния. Приведены 
+результаты численного эксперимента, поз\-во\-ля\-юще\-го проанализировать 
+переходный процесс в~задаче с~конечным горизонтом и~эргодическим процессом 
+в~динамике. Для коэффициентов управ\-ле\-ния проиллюстрирован предельный 
+переход к~оптимальным значениям соответствующего оптимального автономного 
+управ\-ле\-ния.}
+
+\KW{стохастическая дифференциальная система Ито; управление по выходу; 
+оптимальное управ\-ле\-ние; квад\-ра\-тич\-ный критерий; параболическое уравнение; 
+формула Фейн\-ма\-на--Каца}
+
+\DOI{10.14357/19922264240103}{UEESFO}
+  
+%\vspace*{-6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+     Типовым вариантом классической задачи управ\-ле\-ния~[1] линейной 
+дифференциальной гауссовской системой по квад\-ра\-тич\-но\-му критерию 
+качества (LQG, linear-quadratic-Gaussian) стала \mbox{постановка} с~бесконечным горизонтом  
+управ\-ле\-ния~[2, 3]. Естественно, что на сис\-те\-му управ\-ле\-ния в этом 
+случае накладываются жесткие ограничения, обес\-пе\-чи\-ва\-ющие ее 
+существование бесконечное время. Прежде всего это автономность, т.\,е.\ 
+независимость от времени всех функций в~модели динамики и~в~целевом 
+функционале, устой\-чи\-вость и~ста\-би\-ли\-зи\-ру\-емость. Последние свойства 
+обеспечивают принципиальную воз\-мож\-ность управ\-ле\-ния и~ко\-неч\-ность 
+квадратичного критерия. Кроме того, вполне <<понятным>> элементом 
+постановки варианта LQG с бесконечным горизонтом становится поиск 
+оптимального автономного управ\-ле\-ния в~виде линейной функции выхода. 
+Линейный класс допустимых управ\-ле\-ний сводит исследование задачи 
+управления к~изуче\-нию свойств уравнения Риккати, так что решение задачи 
+управления существует, если имеет решение предельное уравнения Риккати. 
+Постановка задачи управ\-ле\-ния, ис\-поль\-зу\-емая в~данной статье, похожа на 
+модель LQG, т.\,е.\ используется квад\-ра\-тич\-ный целевой функционал 
+и~линейный выход, дающий в~оптимальном решении типовое, т.\,е.\ 
+линейное по выходу, сла\-га\-емое. Принципиальное отличие заключается 
+в~нелинейной не\-управ\-ля\-емой динамике, из-за которой в оптимальном 
+управ\-ле\-нии в~варианте с~конечным горизонтом появляется нелинейная 
+часть, для вы\-чис\-ле\-ния которой нужно решать параболическое 
+дифференциальное урав\-не\-ние в~част\-ных производных. 
+
+Подробно эта задача 
+исследована в~[4], а~цель данной статьи~--- пред\-ста\-вить решение 
+аналогичной задачи в~постановке с~бесконечным горизонтом. Эта 
+постановка сформулирована в~сле\-ду\-ющем разделе статьи, а~в~разд.~3 
+сформулирован основной результат. Ровно так же, как управ\-ле\-ние~[4], 
+<<похожее>> на LQG, все-та\-ки оказывается нелинейным, полученное 
+оптимальное автономное управ\-ле\-ние также остается нелинейным, но 
+вместо параболического урав\-не\-ния описывается теперь обыкновенным 
+дифференциальным уравнением, хотя и~нелинейным. Чтобы посмотреть, как 
+на практике применится автономное управ\-ле\-ние, в~разд.~4 рассмотрен 
+част\-ный случай линейного сноса, когда управ\-ле\-ние оказывается линейным, 
+несмотря на оста\-ющу\-юся нелинейной задачу. Этот вариант интересен тем, 
+что поз\-во\-ля\-ет еще и посмотреть, как чис\-лен\-ные решения параболического 
+уравнения традиционным методом сеток~[5] и~методом имитационного 
+моделирования формулы Фейн\-ма\-на--Ка\-ца~[6], которые <<не знают>> 
+о~наличии точного линейного решения, ведут себя в~связке при переходе 
+обычного решения в~автономный режим.
+
+\vspace*{-3pt}
+
+\section{Постановка задачи}
+
+\vspace*{-3pt}
+
+     На каноническом вероятностном пространстве $(\Omega, 
+\mathcal{F},\mathcal{P},\mathcal{F}_t)$, $t\hm\in [0,\infty)$, рас\-смот\-рим 
+автономную сто\-ха\-сти\-че\-скую динамическую сис\-те\-му, со\-сто\-яние которой 
+пред\-став\-ля\-ет диффузионный процесс $y_t\hm\in \mathbb{R}^{n_y}$, 
+опи\-сы\-ва\-емый сис\-те\-мой нелинейных сто\-ха\-сти\-че\-ских дифференциальных 
+уравнений Ито:
+     \begin{equation}
+     dy_t= A(y_t)\,dt+\Sigma(y_t)\,dv_t\,,\enskip y_0=Y,\enskip t\in [0,\infty),
+     \label{e1-bos}
+     \end{equation}
+   где $v_t\in \mathbb{R}^{n_v}$~--- стандартный векторный винеровский 
+процесс; $Y\hm\in \mathbb{R}^{n_y}$~--- случайная величина с~конечным 
+вторым моментом; векторная функция $A\hm= A(y): \mathbb{R}^{n_y}\hm\to 
+\mathbb{R}^{n_y}$ и~мат\-рич\-ная функция $\Sigma\hm= \Sigma(y): 
+\mathbb{R}^{n_y}\hm\to \mathbb{R}^{n_y\times n_v}$ удовле\-тво\-ря\-ют 
+условиям Ито:
+\begin{align*}
+\vert A(y)\vert +\vert \Sigma(y)\vert &\leq C(1+\vert y\vert);\\
+\vert A(y_1)- A(y_2)\vert +\vert \Sigma(y_1) -\Sigma(y_2)\vert&\leq C\vert y_1-
+y_2\vert,\\
+& \hspace*{5mm}y_1,y_2\in\mathbb{R}^{n_y}\,,
+\end{align*}
+обеспечивающим существование единственного потраекторного решения 
+уравнения~(1) на любом конечном интервале $t\hm\in [0,T]$~\cite{7-bos} 
+(здесь и~далее $\vert\cdot\vert$ обозначает евклидову норму вектора или 
+мат\-ри\-цы). Чтобы рассматривать решения~(1) на интервале $[0,\infty)$, 
+дополнительно по\-тре\-бу\-ем от процесса~$y_t$ стационарности в широком и 
+узком смысле~[8]. Это предположение избыточно, пока рассматривается 
+задача с~полной информацией, т.\,е.\ состояние~$y_t$ предполагается 
+известным. Но в~дальнейшем при переходе к~постановке задачи 
+с~косвенными наблюдениями за~$y_t$ ста\-ци\-о\-нар\-ность примет вполне 
+содержательный смысл.
+
+     Состоянием $y_t$ формируется управ\-ля\-емый выход, опи\-сы\-ва\-емый 
+процессом $z_t\hm\in\mathbb{R}^{n_z}$, линейно связанным с~со\-сто\-я\-нием:
+
+\vspace*{-3pt}
+
+\noindent
+     \begin{multline}
+     dz_t=ay_t\, dt +bz_t \,dt+c u_t\, dt+\sigma\, dw_t,\\
+     z_0=Z,\ t\in [0,\infty),
+     \label{e2-bos}
+     \end{multline}
+     
+     \vspace*{-3pt}
+
+\noindent
+где $a\in \mathbb{R}^{n_z\times n_y}$, $b\hm\in \mathbb{R}^{n_z\times n_z}$, 
+$c\hm\in \mathbb{R}^{n_z\times n_u}$ и~$\sigma\hm\in \mathbb{R}^{n_z\times n_w}$~--- известные матрицы; $w_t\hm\in \mathbb{R}^{n_w}$~--- не 
+зависящий от $v_t$, $Y$ и~$Z$ стандартный векторный винеровский процесс; 
+$Z\hm\in \mathbb{R}^{n_z}$~---случайная величина с~конечным вторым 
+моментом, не зависящая от $v_t$ и~$Y$; $u_t\hm\in \mathbb{R}^{n_u}$~--- 
+управление, целью которого ставится стабилизация выхода~$z_t$ около 
+некоторой траектории, формируемой со\-сто\-яни\-ем~$y_t$. Цель управ\-ле\-ния 
+формализуется ниже квад\-ра\-тич\-ным критерием качества общего вида.
+
+     Задача управления формулируется в предположении наличия полной 
+информации о~со\-сто\-янии~$y_t$ и~выходе~$z_t$ (со\-от\-вет\-ст\-ву\-ющая  
+$\sigma$-ал\-геб\-ра обозначается $\mathcal{F}_t^{y,z}$ и~выполнено 
+$\mathcal{F}_t^{y,z}\hm\subseteq \mathcal{F}_t\hm\subseteq \mathcal{F}$), 
+т.\,е.\ управ\-ле\-ние~$u_t$ предполагается  
+$\mathcal{F}_t^{y,z}$-из\-ме\-ри\-мым. Класс~$U_0^\infty$ допустимых 
+управ\-ле\-ний составляют автономные (не зависящие прямо от времени) 
+управ\-ле\-ния с~пол\-ной обратной связью, т.\,е.\ функции вида\linebreak $u_t\hm= 
+u(y,z)\hm\in\mathbb{R}^{n_u}$, $y\hm\in \mathbb{R}^{n_y}$ и~$z\hm\in 
+\mathbb{R}^{n_z}$, в~предположении, что со\-от\-вет\-ст\-ву\-ющая реализация 
+$u_t\hm= u(y_t,z_t)$ обеспечивает выполнение условий существования~$y_t$ 
+и~$z_t$ для $u_t\hm\in U_0^\infty$. Поскольку \mbox{со\-сто\-яние}~$y_t$  не зависит
+от  управ\-ле\-ния~$u_t$, а~выход~$z_t$ описывается линейным 
+автономным уравнением с~винеровским процессом, то данное формальное 
+требование ограничивает допустимые управ\-ле\-ния процессами второго 
+порядка, что обеспечивает существование решения~(2) на любом конечном 
+интервале $t\hm\in [0,T]$. Для управ\-ле\-ния на интервале $[0,\infty)$ 
+дополнительно потребуются типовые условия ста\-би\-ли\-зи\-ру\-емости~[2], 
+обсуж\-да\-емые далее.
+     
+     Качество управления~$U_0^\infty$ определяется целевым 
+функционалом сле\-ду\-юще\-го вида:
+     \begin{multline}
+     \!\! J(U_0^\infty) =\lim\limits_{T\to\infty} J\left(U_0^{{T}}\right),\\
+      J\left(U_0^{{T}}\right) =\mathbb{E}\left\{ \fr{1}{T}\int\limits_0^{{T}} \left\| Py_t+Qz_t+Ru_t\right\|_S^2 
+dt\right\},
+     \label{e3-bos}
+     \end{multline}
+где $P\in \mathbb{R}^{n_J\times n_y}$, $Q\hm\in \mathbb{R}^{n_J\times n_z}$, $R\hm\in \mathbb{R}^{n_J\times k_u}$ 
+и~$S\hm\in \mathbb{R}^{n_J\times n_J}$ ($S\hm\geq 0$, $S\hm= S^\prime$)~--- заданные 
+матрицы, весовая функция $\| x\|_S^2\hm= x^\prime Sx$, единичной матрице 
+$S\hm= E$ соответствует евклидова норма $\| x\|_E^2\hm= \vert x\vert^2$, 
+<<${}^\prime$>>~--- операция транспонирования; $\mathbb{E}\{\cdot\}$~--- 
+оператор математического ожидания (далее еще используется обозначение 
+$\mathbb{E}\{ \cdot\vert\mathcal{F}\}$ для условного математического 
+ожидания относительно $\sigma$-ал\-геб\-ры~$\mathcal{F}$). Кроме того, 
+предполагается выполненным обычное условие не\-вы\-рож\-ден\-ности, в данных 
+обозначениях принимающее вид $R^\prime SR\hm>0$.
+     
+     Задача состоит, таким образом, в поиске 
+     $(U^*)_0^\infty \hm= \{ u^*(y,z), y\hm\in \mathbb{R}^{n_y}, z\hm\in 
+\mathbb{R}^{n_z}\}$, допустимого управления с обратной связью, 
+реализации $u_t^*\hm= u^*(y_t, z_t^*)$, $t\hm\in [0,\infty)$, которого 
+доставляют минимум квад\-ра\-тич\-но\-му функционалу $J(U_0^\infty)$: 
+     \begin{equation}
+     (U^*)_0^\infty =\argmin\limits_{u_t\in U_0^\infty} J(U_0^\infty).
+     \label{e4-bos}
+     \end{equation}
+     
+     Далее через~$z_t^*$ обозначается решение~(2), от\-ве\-ча\-ющее~$u_t^*$, 
+и~учитывается, что $y_t$ от~$u_t$ не зависит.
+     
+     Следует обратить внимание на некоторые отличия данной постановки 
+от классической задачи LQG с бесконечным горизонтом (хорошее описание 
+которой дано в~[2]). В~классическом варианте вопрос с~определением класса 
+допустимых управ\-ле\-ний однозначно решается его описанием линейными 
+функциями со\-сто\-яния и~выхода, а~именно: если обозначить через $u_t^\# 
+\hm= u_t^\# (y_t, z_t^\#, T)$ решение (неавтономное, поэтому $u_t^\#(y,z,T)$ 
+с~нижним индексом~$t$) LQG-за\-да\-чи с конечным горизонтом $t\hm\in 
+[0,T]$, оптимальное на классе нелинейных до\-пус\-ти\-мых управ\-ле\-ний, то оно 
+получится линейным: 
+$$
+u_t^\# = L_t^{y\#} y_t + L_t^{z\#} z_t^\# +  l_t^\#.
+$$ 
+%
+Здесь, как и аналогично выше, через~$z_t^\#$  обозначено 
+решение~(2), от\-ве\-ча\-ющее~$u_t^\#$. Соответственно, в описании класса 
+допустимых управ\-ле\-ний в~задаче с~бесконечным горизонтом будут 
+фигурировать только линейные управ\-ления 
+$$
+u_t= u\left(y_t,z_t\right)= L^y  y_t+ L^z z_t+l\,,
+$$
+ что естественным образом вытекает из оп\-ти\-маль\-ности 
+в задаче с конечным горизонтом именно линейного управ\-ле\-ния. 
+В~рас\-смат\-ри\-ва\-емой задаче этого нет, поскольку и~со\-сто\-яние~(1), 
+и,~главное, решение задачи с~конечным горизонтом, полученное в~[4], 
+нелинейные. Так что, хотя искомое решение и~находится в~виде предельной 
+формы оптимального управ\-ле\-ния с~конечным горизонтом, оно не будет 
+относиться к~классу линейных.
+     
+\section{Основной результат}
+
+     Очевидно, что основу для решения задачи~(\ref{e4-bos}) обеспечивает 
+решение со\-от\-вет\-ст\-ву\-ющей задачи с~конечным горизонтом, которое получено 
+в~[4]. Для корректного предельного перехода от постановки с~конечным 
+горизонтом к~бесконечному времени требуется выполнение ряда условий, 
+объединенных в~сле\-ду\-ющем утверж\-де\-нии.
+     
+     \smallskip
+     
+     \noindent
+     \textbf{Теорема.} \textit{Решение задачи}~(\ref{e4-bos}) \textit{может 
+быть записано в~виде}
+
+\vspace*{-4pt}
+
+\noindent
+     \begin{multline}
+     u^*(y,z)=-\fr{1}{2}\left( R^\prime SR\right)^{-1} \left( c^\prime(2\alpha_* z+\beta_*(y))+{}\right.\\
+    \left. {}+2R^\prime S(Py+Qz)\right),
+     \label{e5-bos}
+     \end{multline}
+     
+     \vspace*{-4pt}
+     
+     \noindent
+\textit{где симметричная неотрицательно определенная мат\-ри\-ца 
+$\alpha_*\hm\in \mathbb{R}^{n_z\times n_z}$ и~век\-тор-функ\-ция 
+$\beta_*\hm=\beta_*(y)\hm= (\beta_*^{(1)}(y),\ldots , \beta_*^{(n_z)}(y))^\prime\hm\in 
+\mathbb{R}^{n_z}$ пред\-став\-ля\-ют собой решения уравнений}
+
+\noindent
+\begin{multline}
+\left( b^\prime -Q^\prime SR (R^\prime SR)^{-1} c^\prime\right) \alpha_* 
++{}\\[2pt]
+{}+\alpha_* \left(b-c(R^\prime SR)^{-1} R^\prime SQ\right)+{}\\[2pt]
+{}+
+Q^\prime \left(S-SR(R^\prime SR)^{-1} R^\prime S\right)Q -{}\\[2pt]
+{}- \alpha_* c\left(R^\prime SR\right)^{-1} 
+c^\prime \alpha_*=0\,;
+\label{e6-bos}
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\fr{1}{2}\mathrm{tr}\left\{ \Sigma^{\prime} \fr{\partial^2\beta_*^{(i)}}{\partial y^2}\,\Sigma\right\} +A^\prime \fr{\partial\beta_*^{(i)}}{\partial y} +{}\\
+{}+\displaystyle\sum\limits_{j=1}^{n_y} y^{(i)} [M_*]^{(ji)} +\sum\limits_{j=1}^{n_z} 
+\beta_*^{(j)} [N_*]^{(ji)} =0\,,
+\label{e7-bos}
+\end{multline}
+где
+\begin{align*}
+M_*&=2\left( \left( a^\prime -P^\prime SR(R^\prime SR)^{-1} c^\prime 
+\right)\alpha_*+{}\right.\\[2pt]
+&\hspace*{20mm}\left.{}+ P^\prime (S-SR(R^\prime SR)^{-1} R^\prime S)Q\right);\\[2pt]
+N_*&= b-c(R^\prime SR)^{-1}R^\prime SQ -c(R^\prime SR)^{-1} c^\prime \alpha_*,\\[2pt]
+&\hspace*{50mm}i=\overline{1, n_z}\,,
+\end{align*}
+\textit{если для параметров системы}~(1), (2) \textit{и целевого 
+функционала}~(3) \textit{выполнены сле\-ду\-ющие условия}:
+\begin{enumerate}[(1)]
+\item \textit{матрица $b$ устойчива};
+\item \textit{матрицы $(K_b, c)$ стабилизируемы}, $K_b\hm= b\hm- 
+c(R^\prime SR)^{-1} R^\prime SQ$;
+\item \textit{матрицы ($K_b^\prime, K_Q$) стабилизируемы}, $K_Q\hm= Q^\prime S^{1/2}(E\hm- S^{1/2}R(R^\prime SR)^{-1} R^\prime S^{1/2})$;
+\item \textit{для любого $y\hm\in \mathbb{R}^{n_y}$ существует и не 
+зависит от~$t$ конечный предел}
+\begin{equation}
+\lim\limits_{T\to\infty} \mathbb{E}\left\{ I^{-1}(t)\int\limits_t^{{T}} I^{-1}(\tau)M^\prime_* y_\tau\,d\tau \vert \mathcal{F}_t^y \right\},
+\label{e8-bos}
+\end{equation}
+\textit{где $I^{-1}(\tau)\hm=\exp \{ N_*^\prime \tau\}$; $y_\tau$~--- 
+решение уравнения}~(1) \textit{с~переменной времени $\tau\hm\in 
+[t,\infty)$ и~начальным условием} $y_t\hm= y$.
+\end{enumerate}
+
+     \textit{Уравнение}~(\ref{e7-bos}) \textit{записано с~использованием 
+обозначений $y\hm= (y^{(1)}, \ldots , y^{(n_y)})^\prime$ для элементов 
+вектора~$y$, $[A]^{(ji)}$~--- для элемента $j$-й строки $i$-го столб\-ца 
+мат\-ри\-цы~$A$, $\mathrm{tr}\{A\}$~--- для следа мат\-ри\-цы~$A$.}
+     
+     \smallskip
+     
+     \noindent
+     Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ Перечисленные в теореме 
+условия обеспечивают существование предельного решения 
+соответствующей~(4) задачи с конечным горизонтом, т.\,е.\ управ\-ле\-ния 
+     $(U^\#)_0^{{T}}\hm= \min_{u_t\in U_0^{{T}}} J(U_0^{{T}})$, где $U_0^{{T}}\hm= \{ 
+u_t(y,z,T)$,\linebreak $y\hm\in \mathbb{R}^{n_y},\ z\hm\in \mathbb{R}^{n_z},\ t\hm\in 
+[0,T]\}$. Оптимальное управ\-ле\-ние $u_t^\#\hm= u_t^\# (y_t, z_t^\#, T)$ 
+получено в~[4] в~виде:
+     \begin{multline}
+     u_t^\#= u_t^\# (y,z,T) =-\fr{1}{2}(R^\prime SR)^{-1} \times{}\\
+     {}\times \left( c^\prime 
+(2\alpha_t z+\beta_t)+2R^\prime S(Py+Qz)\right),
+     \label{e9-bos}
+     \end{multline}
+где матричный коэффициент $\alpha_t\hm= \alpha_t(T)\hm\in 
+\mathbb{R}^{n_z\times n_z}$ представляет собой решение задачи Коши для 
+уравнения Риккати
+
+\vspace*{-3pt}
+
+\noindent
+\begin{multline}
+\fr{d\alpha_t}{dt} +\left( b^\prime -Q^\prime SR(R^\prime SR)^{-1} c^\prime 
+\right)\alpha_t +{}\\[-3pt]
+{}+\alpha_t \left (b-c(R^\prime SR)^{-1} R^\prime SQ\right)+{}\\
+{}+
+Q^\prime \left(S-SR(R^\prime SR)^{-1} R^\prime S\right) Q - {}\\
+{}- \alpha_t c 
+(R^\prime SR)^{-1}c^\prime \alpha_t=0\,,\enskip \alpha_T=Q^\prime SQ\,,
+\label{e10-bos}
+\end{multline} 
+
+%\vspace*{-3pt}
+
+\noindent
+а векторный коэффициент $\beta_t\hm= \beta_t(y,T)\hm= 
+(\beta_t^{(1)}(y,T),\ldots , \beta_t^{(n_z)}(y,T))^\prime \hm\in 
+\mathbb{R}^{n_z}$~--- задачи Коши для сис\-те\-мы дифференциальных 
+уравнений в~част\-ных производных 
+
+\vspace*{-3pt}
+
+\noindent
+\begin{multline}
+\fr{\partial \beta_t^{(i)}}{\partial t}+\fr{1}{2}\mathrm{tr}\left\{ \Sigma^{\prime} 
+\fr{\partial^2\beta_t^{(i)}}{\partial y^2}\, \Sigma\right\}+A^\prime 
+\fr{\partial\beta_t^{(i)}}{\partial y} +{}\\
+{}+\displaystyle \sum\limits_{j=1}^{n_y} 
+y^{(j)} [M_t]^{(ji)} +\sum\limits^{n_z}_{j=1} \beta_t^{(j)} 
+[N_t]^{(ji)}=0\,,
+\label{e11-bos}
+\end{multline}
+
+\vspace*{-3pt}
+
+\noindent
+где
+\begin{align*}
+M_t&=M_t(T)=2\left((a^\prime - P^\prime SR(R^\prime SR)^{-1} c^\prime)\alpha_t+{}\right.\\
+&\hspace*{20mm}\left.{}+P^\prime (S-SR(R^\prime SR)^{-1} R^\prime S)Q\right);\\
+N_t&=N_t(T) =b-c(R^\prime SR)^{-1} R^\prime SQ -{}\\[3pt]
+&\hspace*{40mm}{}-c(R^\prime SR)^{-1} c^\prime \alpha_t\,;\\
+\beta_T^{(i)} &=\displaystyle 2\sum\limits_{j=1}^{n_y} y^{(j)} [Q^\prime SP]^{(ji)},\enskip i=\overline{1, n_z}\,.
+\end{align*}
+     
+     Перечисленные в теореме условия вместе с~исходным предположением 
+о~ста\-ци\-о\-нар\-ности~$y_t$ обеспечивают, во-пер\-вых, ко\-неч\-ность целевого 
+функционала~(3). Во-вто\-рых, из~(\ref{e10-bos}) для коэффициента 
+оптимального управ\-ле\-ния~$\alpha_*$ получается уравнение~(\ref{e6-bos}) 
+как предел $\alpha_*\hm= \lim_{T\to\infty} \alpha_t(T)$. Предельное решение 
+мат\-рич\-но\-го уравнения Риккати~(\ref{e10-bos}) существует, не зависит от 
+граничного условия и~является неотрицательно определенным, поскольку 
+сформулированные в~тео\-ре\-ме условия ста\-би\-ли\-зи\-ру\-емости приводят 
+коэффициенты уравнения Риккати к~формулировкам условий 
+тео\-ре\-мы~12.2~[2]. Действительно, ста\-би\-ли\-зи\-ру\-емость пары мат\-риц $(K_b, 
+c)$ ~--- это условие ста\-би\-ли\-зи\-ру\-емости наблюдений, ста\-би\-ли\-зи\-ру\-емость 
+пары $(K_b^\prime, K_Q)$ ~--- это условие де\-тек\-ти\-ру\-емости. Последнее 
+основано на том факте, что мат\-ри\-ца~$K_Q$ обеспечивает пред\-став\-ление 
+$$
+Q^\prime \left(S- SR\left(R^\prime SR\right)^{-1} R^\prime S\right)Q= K_Q K_Q^\prime,
+$$ 
+так как
+
+\vspace*{-3pt}
+
+\noindent
+     \begin{multline*}
+     \left( E-S^{1/2} R(R^\prime SR)^{-1} R^\prime S^{1/2}\right)\times{}\\
+     {}\times \left( E-S^{1/2} R(R^\prime SR)^{-1} R^\prime S^{1/2}\right)^\prime={}\hspace*{10mm}
+     \end{multline*}
+     
+     
+     \noindent
+     \begin{multline*}
+     {}=
+     \left( E-S^{1/2} R(R^\prime SR)^{-1} R^\prime S^{1/2}\right)^2 ={}\\
+     {}=E- S^{1/2} R(R^\prime SR)^{-1} R^\prime S^{1/2}.
+     \end{multline*}
+     %
+     
+     \vspace*{-3pt}
+     
+     \noindent
+     Кроме того, эта же теорема гарантирует устой\-чи\-вость мат\-ри\-цы~$N_*$, 
+тре\-бу\-емую для выполнения~(\ref{e8-bos}).
+     %
+     И~последним из~(\ref{e11-bos}) получается коэффициент~$\beta_*$, 
+для которого предельный переход\linebreak $\beta_*(y)\hm= \lim_{T\to\infty} 
+\beta_t(y,T)$ обеспечивается условием~4 тео\-ре\-мы. Действительно, 
+поскольку решение~(\ref{e11-bos}) может быть представлено с~по\-мощью 
+формулы Фейн\-ма\-на--Ка\-ца~[9],
+
+\vspace*{-3pt}
+     
+     \noindent
+     \begin{multline}
+     \beta_t(y,T) =\mathbb{E}\left\{ 
+     \vphantom{\int\limits_y^{{T}}}
+     2I^{-1}(t) I^{-1}(T) Q^\prime SPy(T)+{}\right.\\
+\left.     {}+ I^{-1}(t)\int\limits_y^{{T}} I^{-1}(\tau) M^\prime(\tau) y(\tau)d\tau\vert 
+\mathcal{F}_t^y\right\},\\
+     I^{-1}(t)=\exp \{ N_t^\prime t\}.
+     \label{e12-bos}
+     \end{multline}
+     
+     \vspace*{-3pt}
+     
+     
+     Поскольку матрица $N_*\hm= \lim_{T\to\infty} N_t(T)$ (предел 
+существует и не зависит от~$t$, так как $N_t(T)$ выражается линейно через 
+$\alpha_t(T)$) устойчива, первое сла\-га\-емое в~(\ref{e12-bos}) обращается 
+в~ноль, что вместе с~условием~4 тео\-ре\-мы обеспечивает существование 
+предела при $T\hm\to \infty$ в~(\ref{e11-bos}), не зависящего от~$t$ 
+и~граничного условия $\beta_T^{(i)}(y,T)$, что и дает  
+уравнения~(\ref{e7-bos}), завершая доказательство.
+     
+     \smallskip
+     
+     Отметим, что использованный результат в~[4] включает еще 
+соотношения, опи\-сы\-ва\-ющие решение задачи с~конечным горизонтом 
+полностью, т.\,е.\ опре\-де\-ля\-ющие функцию Беллмана. Эти соотношения 
+можно трансформировать и~для рассматриваемой задачи~(\ref{e4-bos}), но 
+ничего практически содержательного они не дадут, поэтому не 
+используются.
+     
+     Принципиально важно в полученном решении то, что оптимальное 
+управление~(\ref{e5-bos}) остается нелинейным, как и~в~допредельной 
+по\-ста\-нов\-ке, что и~является, как уже упоминалось, главным отличием 
+классической задачи LQG от рас\-смат\-ри\-ва\-емой. Другой вопрос, что 
+к~условиям существования решения ничего конструктивного, кроме 
+традиционных требований к~коэффициентам уравнения Риккати, добавить не 
+удается. Это ожидаемо, так как даже конструктивные условия существования 
+решения сис\-те\-мы параболических уравнений~(\ref{e11-bos}) представляют 
+проб\-ле\-му, тем более затруднительно изучение свойств самих решений. 
+С~другой стороны, аналитические исследования можно впол\-не успеш\-но 
+заменить практическими расчетами. В~работах~[5, 6] предложены два 
+эффективных метода численного решения~(\ref{e11-bos}), а~при наличии 
+готовых расчетов анализ схо\-ди\-мости $\lim_{T\to\infty} \beta_t(y,T)$ тру-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+  да не 
+составляет. Другой вопрос, что реальные возможности реализации 
+нелинейного управ\-ле\-ния для общей модели со\-сто\-яния~(1) пред\-став\-ля\-ют\-ся 
+весьма ограниченными. Более практически интересным будет част\-ный 
+случай линейного сноса или сводящийся к~нему случай косвенных 
+наблюдений за со\-сто\-яни\-ем дискретной цепи Маркова, которому планируется 
+по\-свя\-тить будущую работу.
+     
+\section{Частный случай линейного сноса}
+
+     Итак, практическая реализация управ\-ле\-ния $(U^*)_0^\infty$ сведена 
+к~решению алгебраического уравнения~(\ref{e6-bos}) и~сис\-те\-мы 
+обыкновенных дифференциальных уравнений~(\ref{e7-bos}) вместо 
+уравнения Риккати~(\ref{e10-bos}) и~сис\-те\-мы параболических  
+уравнений~(\ref{e11-bos}). При этом если упро\-ще\-ние в~час\-ти отказа от 
+решения уравнения Риккати не представляется сколь-ли\-бо значимым, так 
+как с~эффективными численными методами для него нет проб\-лем, то замена 
+параболических уравнений на обыкновенные~--- это действительно большое 
+упрощение. Тем не менее работа с системой~(\ref{e7-bos}) все еще остается 
+довольно слож\-ной, поскольку решать требуется хоть и~обыкновенные 
+дифференциальные уравнения второго порядка, но для сетки, по\-кры\-ва\-ющей 
+об\-ласть воз\-мож\-ных значений вектора $y\hm\in \mathbb{R}^{n_y}$, что даже 
+для значений $n_y\hm= 3, 4$ (это минимальные раз\-мер\-но\-сти для моделей, 
+име\-ющих практический смысл) становится уже крайне ресурсоемким. 
+Вместе с~тем заменять уравнение~(1) линейным неинтересно, так как тогда 
+задача сведется к~классической LQG. Интерес, таким образом, пред\-став\-ля\-ет 
+случай линейного сноса, т.\,е.\ линейной функции $A(y)$, а~не\-ли\-ней\-ность 
+задачи останется за счет диффузии~$\Sigma(y)$.
+      
+     Случай неавтономной сис\-те\-мы с~линейным сносом $A_t(y)\hm= A_t^a 
+y\hm+ A_t^b$, где мат\-ри\-ца $A_t^a\hm\in \mathbb{R}^{n_y\times n_y}$ и~вектор $A_t^b\hm\in \mathbb{R}^{n_y}$ не зависят от~$y$, рас\-смот\-рен в~[4]. 
+В~этом случае $\beta_t(y,T)\hm= \beta_t^a(T)y \hm+ \beta_t^b(T)$ и~для 
+коэффициентов получены уравнения:
+     \begin{equation}
+     \left.
+     \begin{array}{c}
+     \fr{d\beta_t^a}{dt} +\beta_t^a A^a +M^\prime_* +N^\prime_* \beta_t^a 
+=0\,;\\[3pt]
+     \fr{d\beta_t^b}{dt} +\beta_t^a A^b +N^\prime_* \beta_t^b=0\,;\\[3pt]
+     \beta_T^a(T) =2Q^\prime SP\,;\enskip \beta_T^b(T)=0\,.
+     \end{array}
+     \right\}
+     \label{e13-bos}
+     \end{equation}
+     
+     В условиях сформулированной тео\-ре\-мы существуют пределы 
+$\beta_*^a\hm= \lim_{T\to\infty} \beta_t^a$ и~$\beta_*^b\hm= \lim_{T\to \infty} 
+\beta_t^b$, не зависящие от~$t$ и~от начального условия $\beta_T^a(T), 
+\beta_T^b(T)$ в~задаче Коши, опи\-сы\-ва\-емые уравнениями:
+     \begin{equation}
+     \beta_*^a A^a +M^\prime_* +N^\prime_* \beta_*^a =0\,;\
+     \beta_*^a A^b +N^\prime_* \beta_*^b=0\,.
+     \label{e14-bos}
+     \end{equation}
+     
+     Соответственно, коэффициент $\beta_*(y)\hm= \beta_*^a y \hm+ 
+\beta_*^b$, а~оптимальное управ\-ле\-ние~(\ref{e5-bos}) принимает вид:
+     \begin{multline}
+     u^*(y,z) =-\fr{1}{2}\left( R^\prime SR\right)^{-1} \left(2(c^\prime \alpha_* 
++R^\prime SQ)z +{}\right.\\
+\left.{}+\left(c^\prime \beta_*^a +2R^\prime SP\right)y +c^\prime 
+\beta_*^b\right).
+     \label{e15-bos}
+     \end{multline}
+     
+     \vspace*{-6pt}
+
+\section{Численный анализ стационарного режима}
+
+     Для иллюстрации перехода неавтономного управ\-ле\-ния~(\ref{e9-bos}) 
+$u_t^\#\hm= u_t^\# (y,z,T)$ в~автономный режим~(\ref{e5-bos}) $u^*\hm= 
+u^*(y,z)$, который должен иметь мес\-то при достаточно больших~$T$, 
+используем пример, детально рас\-смот\-рен\-ный в~[1]. Простая модель 
+эволюции процентных ставок Кок\-са--Ин\-гер\-сол\-ла--Рос\-са  
+(Cox--Ingersoll--Ross model)~[10], при\-ме\-ня\-емая так\-же для описания 
+показателя RTT (Round-Trip Time) сетевого протокола TCP (Transmission 
+Control Protocol)~\cite{11-bos}, имеет вид:
+     \begin{equation}
+     dy_t=(1-y_t)\,dt+2{,}5\sqrt{y_t}\,dv_t,\ y_0=Y\sim \mathbb{N}(15{,}9). \!
+     \label{e16-bos}
+     \end{equation}
+     
+     Выход и целевой функционал описываются уравнениями:
+     \begin{gather*}
+     dz_t = y_t\,dt-z_t\,dt+u_t\,dt+2{,}5\,dw_t, \ z_0=Z\sim \mathbb{N}(9{,}9);\hspace*{-0.48953pt}\\
+     J(U_0^{{T}}) = \mathbb{E}\left\{ \int\limits_0^{{T}} \left( (y_t-z_t)^2 
++z_t^2+u_t^2\right)dt +{}\right.\\
+\left.{}+(y_T-z_T)^2 +z_T^2
+\vphantom{\int\limits_0^{{T}}}
+\right\},\ T=5\,.
+     \end{gather*}
+     
+      \begin{figure*} %fig1
+     \vspace*{1pt}
+     \begin{minipage}[t]{80mm}
+      \begin{center}
+     \mbox{%
+\epsfxsize=79mm 
+\epsfbox{bos-1.eps}
+}
+\end{center}
+\vspace*{-9pt}
+     \Caption{Коэффициенты оптимального управ\-ле\-ния: \textit{1}~--- $\alpha_t$; 
+\textit{2}~--- $\beta_t^a$;
+  \textit{3}~--- $\beta_t^b$}
+  \vspace*{3pt}
+  \end{minipage}
+     % \end{figure*}
+   \hfill   
+      %\begin{figure*} %fig2
+\vspace*{1pt}
+\begin{minipage}[t]{80mm}
+      \begin{center}
+     \mbox{%
+\epsfxsize=79.055mm 
+\epsfbox{bos-2.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Примеры сечений поверхности $\beta_t(y,T)$ для разных значений~$y$: сверху вниз~--- 
+$y\hm=0; 1; \ldots$; $y\hm=15$}
+\vspace*{3pt}
+  \end{minipage}
+\end{figure*}
+
+ 
+     
+     Процессы $y_t$, $z_t$ и~$u_t$ и~возмущения~$v_t$ и~$w_t$~--- 
+скалярные, $\mathbb{N}(M,{\sf D})$ обозначает нормальное распределение со 
+средним~$M$ и дисперсией~${\sf D}$. Известно, что траектории~$y_t$ 
+неотрицательны, т.\,е.\ $y_t\hm>0$, процесс~--- эргодический, известны 
+предельное распределение и~переходная ве\-ро\-ят\-ность. При этом начальные 
+условия в~(\ref{e15-bos}) выбраны так, что $M$ и~${\sf D}$ значительно отличаются 
+от предельных моментов, так что динамика ис\-сле\-ду\-ет\-ся в~переходном 
+процессе. Соответственно, в~стационарном режиме процесс удовле\-тво\-ря\-ет 
+предположениям модели~(1), а~также имеет линейный снос, т.\,е.\ мож\-но 
+аналитически вычислить коэффициенты~(\ref{e13-bos}) и~оптимальное 
+автономное управ\-ле\-ние~(\ref{e14-bos}). Также очевидна устой\-чи\-вость~$z_t$, 
+так что вопрос остается только к~выполнению условия~4 тео\-ре\-мы, т.\,е.\ 
+к~характеру по\-верх\-ности $\beta_t(y,T)$, опре\-де\-ля\-емой  
+уравнением~(\ref{e11-bos}) (в~данном скалярном случае~--- од-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+ним 
+параболическим уравнением, а~не сис\-те\-мой) или формулой  
+Фейн\-ма\-на--Ка\-ца~(\ref{e12-bos}).
+
+     
+     Отметим сначала, что в~рас\-смат\-ри\-ва\-емом примере не\-труд\-но найти 
+точное решение уравнения Риккати~(\ref{e10-bos}), а~именно: 
+    \begin{multline*}
+     \alpha_t= \fr{C_\alpha e^{2\sqrt{3}\,t} (1+\sqrt{3})-1+\sqrt{3}}{1-
+C_\alpha e^{2\sqrt{3}t}}\,,\\
+     C_\alpha =\fr{3-\sqrt{3}}{3+\sqrt{3}}\,e^{-10\sqrt{3}}\,.
+    \end{multline*}
+     Уравнение~(\ref{e6-bos}) дает $\alpha_*\hm= \sqrt{3}\hm-1\hm\approx 
+0{,}73$, что, как нетрудно видеть, совпадает с $\lim_{t\to -\infty} \alpha_t$. 
+Для решения~(\ref{e11-bos}) есть три варианта: не учитывать част\-ный случай 
+линейного сноса и~решать~(\ref{e11-bos}) традиционным сеточным методом 
+(как предлагается в~\cite{5-bos}), или методом имитационного 
+моделирования формулы Фейн\-ма\-на--Ка\-ца (как предлагается в~[4]), или 
+решать обыкновенные дифференциальные уравнения~(\ref{e7-bos}). Все три 
+расчета пред\-став\-ле\-ны в~[4]. Применительно к~рас\-смат\-ри\-ва\-емой автономной 
+задаче все три метода под\-тверж\-да\-ют схо\-ди\-мость $\beta_t(y,T)$ и~дают 
+$\beta_*(y)\hm= \beta_*^a y\hm+ \beta_*^b$, где $\beta_*^a\hm\approx -
+0{,}19$, $\beta_*^b\hm\approx -0{,}11$, т.\,е.\ при любом варианте расчета 
+$\beta_*^a y\hm= \lim_{t\to-\infty} \beta_t^a(y,5)$, $\beta_*^b\hm= \lim_{t\to-
+\infty} \beta_t^b(5)$. Значения~$y$ определялись в~результате 
+предварительного моделирования~(\ref{e16-bos}) и~заданы отрезком $[0,40]$. 
+Иллюстрируют эти сходимости рис.~1 и~2.
+     
+  
+\section{Заключение}
+
+     Представленное исследование дополняет ранее\linebreak решенную задачу 
+оптимального управления линейным выходом стохастической сис\-те\-мы по 
+квад\-ра\-тич\-но\-му критерию традиционным автономным вариантом 
+с~бесконечным временем. Основной \mbox{результат} эксплуатирует классические 
+методы исследования уравнения Риккати, как и~в~традиционной 
+ LQG-за\-да\-че. Важное отличие при этом заключается в том, что решение 
+остается в~классе нелинейных управ\-ле\-ний, что было также важным\linebreak 
+свойством задачи с~конечным горизонтом. Завершить изучение данной 
+задачи должен случай \mbox{косвенных} наблюдений и~практический анализ 
+качества автономного управ\-ле\-ния в~сравнении с~оптимальным на 
+конечном горизонте. Эти исследования запланированы на будущее.
+     
+{\small\frenchspacing
+ { %\baselineskip=10.6pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-bos}
+      \Au{Athans M.} The role and use of the stochastic linear-quadratic-Gaussian problem in 
+control system design~// IEEE T. Automat. Contr., 1971. Vol.~16. No.\,6. P.~529--552. doi: 
+10.1109/TAC.1971.1099818.
+
+\bibitem{2-bos}
+\Au{Wonham W.\,M.} Linear multivariable control. A~geometric approach.~--- Lecture notes in 
+economics and mathematical systems ser.~--- Berlin: Springer-Verlag, 1974. Vol.~101. 347~p.
+\bibitem{3-bos}
+\Au{Девис М.\,Х.\,А.} Линейное оценивание и~сто\-ха\-сти\-че\-ское управ\-ле\-ние~/ Пер. с англ.~--- 
+М.: Наука, 1984. 206~с. (\Au{Davis~M.\,H.\,A.} Linear estimation and stochastic control.~--- 
+London: Chapman and Hall, 1977. 224~p.)
+\bibitem{4-bos}
+\Au{Босов А.\,В.} Задача управления линейным выходом нелинейной не\-управ\-ля\-емой 
+стохастической дифференциальной сис\-те\-мы по квад\-ра\-тич\-но\-му критерию~// Известия 
+РАН. Теория и~сис\-те\-мы управ\-ле\-ния, 2021. №\,5. C.~52--73. doi: 
+10.31857/S000233882104003X.
+\bibitem{5-bos}
+\Au{Босов А.\,В., Стефанович~А.\,И.} Управ\-ле\-ние выходом стохастической 
+дифференциальной сис\-те\-мы по квад\-ра\-тич\-но\-му критерию. II. Численное решение 
+уравнений динамического программирования~// Информатика и её применения, 2019. 
+Т.~13. Вып.~1. С.~9--15. doi: 10.14357/19922264190102. EDN: ZASZFR.
+\bibitem{6-bos}
+\Au{Босов А.\,В., Стефанович~А.\,И.} Управление выходом стохастической 
+дифференциальной сис\-те\-мы по квад\-ра\-тич\-но\-му критерию. IV. Альтернативное численное 
+решение~// Информатика и~её применения, 2020. Т.~14. Вып.~1. С.~24--30. doi: 
+10.14357/19922264200104. EDN: XNHVFT.
+\bibitem{7-bos}
+\Au{Флеминг У., Ришел~Р.} Оптимальное управление детерминированными 
+и~стохастическими сис\-те\-ма\-ми~/ Пер. с~англ.~--- М.: Мир, 1978. 316~с. 
+(\Au{Fleming~W.\,H., Rishel~R.\,W.} Deterministic and stochastic optimal control.~--- New 
+York, NY, USA: Springer-Verlag, 1975. 222~p.)
+\bibitem{8-bos}
+\Au{Ширяев А.\,Н.} Вероятность.~--- 2-е изд.~--- М.: Наука, 1989. 640~с.
+\bibitem{9-bos}
+\Au{{\ptb{\O}}\,\,ksendal~B.} Stochastic differential equations. An introduction with 
+applications.~--- New York, NY, USA: Springer-Verlag, 2003. 324~p.
+\bibitem{10-bos}
+      \Au{Cox J.\,C., Ingersoll~J.\,E., Ross~S.\,A.} A~theory of the term structure of interest 
+rates~// Econometrica, 1985. Vol.~53. Iss.~2. P.~385--407. doi: 10.2307/1911242.
+\bibitem{11-bos}
+      \Au{Bohacek S., Rozovskii~B.} A~diffusion model of roundtrip time~// Comput. 
+Stat. Data An., 2004. Vol.~45. Iss.~1. P.~25--50. doi:  
+10.1016/S0167-9473(03)00114-2.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-10pt}
+
+\hfill{\small\textit{Поступила в~редакцию 07.12.23}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+
+
+\def\tit{AUTONOMOUS DIFFERENTIAL SYSTEM LINEAR OUTPUT 
+CONTROL BY~SQUARE CRITERION ON~AN~INFINITE HORIZON\\[-5pt]}
+
+
+\def\titkol{Autonomous differential system linear output 
+control by~square criterion on~an~infinite horizon}
+
+
+\def\aut{A.\,V.~Bosov}
+
+\def\autkol{A.\,V.~Bosov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-15pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of 
+Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{1pt}
+
+      
+      
+     
+     \Abste{The problem of optimal control of the stochastic differential system 
+linear output on an infinite horizon is solved. The solution is considered as the 
+limit form of optimal control in the corresponding problem with a~finite horizon. 
+Sufficient conditions for the existence of control are given. They consist of the 
+requirements of the stationarity of nonlinear dynamics, the finiteness of the 
+quadratic target functional, the stabilizability of the linear output, and the existence 
+of a limit in the Feynman--Katz formula describing the nonlinear part of control. 
+The conditions for the linear part of the control are related to the classical results of 
+the existence of a~solution to the autonomous Riccati equation. The existence of 
+a~limit in the Feynman--Katz formula is associated with the solution of a~parabolic 
+equation that sets the coefficients for the nonlinear part of the control. A~special 
+case of linear drift is considered in which the nonlinear nature of the problem is 
+preserved but optimal control turns out to be linear both in output and in the state 
+variable. The results of a numerical experiment are presented which makes it 
+possible to analyze the transient process in a~problem with a~finite horizon and an 
+ergodic process in dynamics. For the control coefficients, the limiting transition to 
+the optimal values of the corresponding optimal autonomous control is illustrated.}
+     
+     \KWE{stochastic differential Ito system; output control; optimal control; 
+quadratic criterion; parabolic equation; Feynman--Katz formula}
+     
+     
+
+
+\DOI{10.14357/19922264240103}{UEESFO}
+
+\vspace*{-22pt}
+
+\Ack
+
+\vspace*{-3pt}
+
+
+     \noindent
+     The research was carried out using the infrastructure of the Shared Research 
+Facilities ``High Performance Computing and Big Data'' (CKP ``Informatics'') of 
+FRC CSC RAS (Moscow).
+
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99} 
+\bibitem{1-bos-1}
+      \Aue{Athans, M.} 1971. The role and use of the stochastic 
+ linear-quadratic-Gaussian problem in control system design. \textit{IEEE T. 
+Automat. Contr.} 16(6):529--552. doi: 10.1109/TAC.1971.1099818.
+\bibitem{2-bos-1}
+      \Aue{Wonham, W.\,M.} 1974. \textit{Linear multivariable control. 
+A~geometric approach.} Lecture notes in economics and mathematical systems 
+ser. Berlin: Springer-Verlag. 347~p.
+\bibitem{3-bos-1}
+      \Aue{Davis, M.\,H.\,A.} 1977. \textit{Linear estimation and stochastic 
+control}. London: Chapman and Hall. 224~p.
+
+
+
+\bibitem{4-bos-1}
+      \Aue{Bosov, A.\,V.} 2021. The problem of controlling the linear output of 
+a~nonlinear uncontrollable stochastic differential system by the square criterion. 
+\textit{J.~Comput. Sys. Sc. Int.} 60(5):719--739. doi: 
+10.1134/S1064230721040031.
+
+%\vspace*{-1pt}
+
+\bibitem{5-bos-1}
+      \Aue{Bosov, A.\,V., and A.\,I.~Stefanovich.} 2019. Upravlenie vykhodom 
+stokhasticheskoy differentsial'noy sistemy po kvadratichnomu kriteriyu. II. 
+Chislennoe reshenie uravneniy dinamicheskogo programmirovaniya [Stochastic 
+differential system output control by the quadratic criterion. II. Dynamic 
+programming equations numerical solution]. \textit{Informatika i~ee 
+Primeneniya~--- Inform. \mbox{Appl.}} 13(1):9--15. doi: 10.14357/19922264190102. EDN: 
+\mbox{ZASZFR}.
+
+
+
+%\vspace*{-1pt}
+
+\bibitem{6-bos-1}
+      \Aue{Bosov, A.\,V., and A.\,I.~Stefanovich.} 2020. Upravlenie vykhodom 
+sto\-kha\-sti\-che\-skoy differentsial'noy sistemy po
+kvadratichnomu kriteriyu. IV. 
+Al'ternativnoe chislennoe\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+  reshenie [Stochastic differential system output control 
+by the quadratic criterion. IV. Alternative numerical decision]. \textit{Informatika 
+i~ee Primeneniya~--- Inform. \mbox{Appl.}} 14(1):24--30. doi: 
+10.14357/19922264200104. EDN: \mbox{XNHVFT}.
+\bibitem{7-bos-1}
+      \Aue{Fleming, W.\,H., and R.\,W.~Rishel}. 1975. \textit{Deterministic and 
+stochastic optimal control}. New York, NY: Springer-Verlag. 222~p.
+\bibitem{8-bos-1}
+      \Aue{Shiryaev, A.\,N.} 1996. \textit{Probability}. New York, NY: Springer 
+Verlag. 624~p.
+
+
+
+\bibitem{9-bos-1}
+      \Aue{{\ptb{\O}}ksendal,~B.} 2003. \textit{Stochastic differential equations. An 
+introduction with applications}. New York, NY: Springer-Verlag. 324~p.
+\bibitem{10-bos-1}
+      \Aue{Cox, J.\,C., J.\,E.~Ingersoll, and S.\,A.~Ross.} 1985. A~theory of the 
+term structure of interest rates. \textit{Econometrica} 53(2):385--407. doi: 
+10.2307/1911242.
+\bibitem{11-bos-1}
+      \Aue{Bohacek, S., and B.~Rozovskii.} 2004. A~diffusion model of roundtrip 
+time. \textit{Comput. Stat. Data An.} 45(1):25--50. doi:  
+10.1016/S0167-9473(03)00114-2.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received December 7, 2023}} 
+
+%\vspace*{-18pt}
+     
+     \Contrl
+     
+     \vspace*{-3pt}
+     
+     \noindent
+     \textbf{Bosov Alexey V.} (b.\ 1969)~--- Doctor of Science in technology, 
+principal scientist, Federal Research Center ``Computer Science and Control'' of 
+the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian 
+Federation; \mbox{avbosov@ipiran.ru}
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

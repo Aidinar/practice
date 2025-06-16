@@ -1,0 +1,932 @@
+\def\stat{melnikov}
+
+\def\tit{ОБОБЩЕННЫЙ СТАТИСТИЧЕСКИЙ МЕТОД АНАЛИЗА ТЕКСТОВ, ОСНОВАННЫЙ 
+НА~РАСЧЕТЕ РАСПРЕДЕЛЕНИЙ ВЕРОЯТНОСТЕЙ ЗНАЧЕНИЙ СТАТИСТИК}
+
+\def\titkol{Обобщенный статистический метод анализа текстов, основанный на 
+расчете распределений вероятностей %значений 
+статистик}
+
+\def\aut{А.\,К.~Мельников$^1$, А.\,Ф.~Ронжин$^2$}
+
+\def\autkol{А.\,К.~Мельников, А.\,Ф.~Ронжин}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Мельников А.\,К.}
+\index{Ронжин А.\,Ф.}
+\index{Melnikov A.\,K.}
+\index{Ronzhin A.\,F.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнена при финансовой поддержке РФФИ (проект 16-37-00485).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{НТЦ ЗАО <<ИнформИнвестГрупп>>, \mbox{ak@iigroup.ru}}
+\footnotetext[2]{Институт точной механики и~вычислительной техники 
+им.\ С.\,А.~Лебедева РАН, \mbox{raf@zao-zt.ru}}
+
+  
+
+     \Abst{Рассмотрены возможности применения точных и~предельных 
+распределений вероятностей значений статистик для построения критериев согласия 
+в~рамках анализа текстовой информации. Исследованы значения граничных 
+параметров, для которых возможен расчет точных распределений на современном 
+этапе. Разработан обобщенный статистический метод анализа (ОСМА) текстов, применимый 
+при широком спектре значений параметров текстов.}
+     
+     \KW{вероятность; точное распределение; предельное распределение; статистика; 
+критерий; частота; сложность алгоритма; производительность многопроцессорной 
+вычислительной системы; метод анализа}
+
+\DOI{10.14357/19922264160409} 
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+   
+\section{Введение}
+
+    Различные задачи автоматической обработки результатов наблюдений 
+сводятся к~обработке потоков данных, которые далее будем называть 
+текстами.
+    
+    Тексты представляют собой последовательности знаков длины~$n$ 
+в~некотором алфавите мощности~$N$. В~данных имеются тексты, 
+которые являются реализациями случайных последовательностей 
+с~равномерным распределением на множестве всех своих значений, или, 
+другими словами, случайными выборками длины~$n$ из равновероятного 
+распределения на алфавите мощности~$N$, и~тексты с~уникальными 
+свойствами. Такие тексты, во-пер\-вых, не являются выбором из 
+равномерного распределения; во-вто\-рых, обладают структурными 
+зависимостями внутри последовательности.
+    
+     Алгоритмы определения структурных зависимостей сложны 
+и~требуют значительного вычислительного ресурса, поэтому предлагается 
+двухэтапная процедура. На первом этапе выбираются самые 
+неравновероятные тексты, а~затем применяются алгоритмы поиска 
+структурных зависимостей.
+    
+    В ряде случаев, когда данные образуют непрерывный поток 
+и~имеются естественные ограничения на ресурс памяти, нет возможности 
+накопить тексты, выбрать из них самые неравновероятные и~обработать их 
+по алгоритмам поиска структурных зависимостей. Тогда по критериям 
+согласия с~равновероятным распределением отсеивают тексты без 
+уникальных свойств и~к оставшимся текстам применяют алгоритмы поиска 
+структурных зависимостей. В~этом случае размер критерия согласия 
+определяет долю ложно принятых текстов без уникальных свойств или 
+объем лишней работы по поиску текстов с~уникальными свойствами. Для 
+вычисления размера критерия согласия необходимо знать вероятностные 
+распределения при\-ме\-ня\-емых в~критериях согласия статистик. 
+    
+    Целью данной работы является описание границ, для которых 
+возможно вычисление точных значений вероятностных распределений на 
+современных многопроцессорных вычислительных сис\-те\-мах~[1], 
+и~построение ОСМА текстов, применимого для всех значений их параметров.
+    
+\section{Статистический анализ текстов, критерии согласия}
+
+    Сосредоточимся на первом этапе анализа текстов. 
+    
+    Задача состоит в~том, чтобы относительно $\nu$-го текста $T_n(\nu)$ 
+длины~$n$
+    $$
+T_n(\nu) = \{t_1(\nu), \ldots, t_n(\nu)\}
+$$
+проверить простую гипотезу~$H_0$, состоящую в~том, что все знаки 
+текста (испытания) $t_i(\nu)$, $i \hm= 1, \ldots, n$, принимают значения из 
+множества (алфавита) $A_N \hm=\{a_1, \ldots, a_N\}$ мощности~$N$ 
+c~равными вероятностями ${\sf P}\{t_i(\nu) \hm= a_j\} \hm= 1/N$ для $i \hm= 1, 
+\ldots, n$, $j \hm= 1, \ldots, N$, т.\,е.\ наблюдается выборка из 
+равновероятного полиномиального распределения.
+    
+    В качестве альтернативы выступает сложная гипотеза~$H$, которая 
+заключается в~том, что текст $T_n(\nu)$ не является выборкой из 
+равновероятного полиномиального распределения в~том смысле, что 
+существует такое~$j$, что ${\sf P}\{t_i(\nu) \hm= a_j\} \not= 1/N \vert  i \hm= 1, \ldots, 
+n$.
+    
+    Будем отвергать гипотезу~$H_0$ при $S_n(T_n(\nu)) \hm\geq c$, 
+где~$S_n$~--- функция от текста~$T_n(\nu)$ (статистика), а~константа~$c$ 
+выбирается исходя из заданного размера критерия~$\alpha$: ${\sf P}\{S_n 
+\hm\geq c\} \hm= \alpha$.
+    
+\section{Расчет точных распределений значений статистик}
+
+    Не ограничивая общности приводимых рас\-суж\-де\-ний, в~качестве 
+статистики~$S_n$ критерия будем рассматривать введенную 
+более~100~лет назад Карлом Пирсоном~[2, 3] статистику хи-квад\-рат~$\chi_n$:
+    $$
+    \chi_n=\sum\limits_{i=1}^N \fr{(h_i-np_i)^2}{np_i}\,,
+    $$
+где $h_i$~--- частота встречаемости знака (исхода)~$a_i$ 
+в~первых~$n$~испытаниях; $n$~--- длина текста (объем выборки); $N$~--- 
+число исходов полиномиальной схемы (мощность алфавита~--- $A_N$); 
+$p_i$~--- вероятность $a_i$-го исхода.
+
+    Для расчета точного распределения вероятности ${\sf P}\{S_n\hm\geq c\}$ 
+методом <<полного перебора>> необходимо проделать следующие шаги.
+    \begin{description}
+    \item[Шаг~1:] cгенерировать множество $\overline{\sf T}(n, A_N)$ всех 
+неповторяющихся текстов длины~$n$, состоящих только из знаков, 
+принадлежащих алфавиту $A_N\hm = \{a_1,\ldots, a_N\}$ мощности~$N$:
+$$
+\overline{\sf T}(n,A_N) = \left\{T_n(\nu)\vert  \nu= 1, \ldots, N^n\right\}\,.
+$$
+    \item[Шаг~2:] получить множество $H(n,N)$ массивов 
+час\-тот встречаемости $h(\nu)$ знаков алфавита~$A_N$ в~текстах $T_n (\nu)$:
+    \begin{multline*}
+    H(n, N) ={}\\
+    {}= \left\{h(\nu)= \left(h_1(\nu), \ldots, h_N 
+(\nu)\right)\vert  \nu= 1, \ldots, N^n\right\}\,,\hspace*{-4.2pt}
+    \end{multline*}
+где $h_i(\nu)$~--- частота встречаемости знака~$a_i$ алфавита~$A_N$ 
+в~$\nu$-м тексте $T_n(\nu)$ массива текстов~$H(n, N)$.
+    \item[Шаг~3:] получить множество значений статистик 
+{\textbf{\ptb{\v{S}}}}$_n(N)$ на множестве массивов частот встре\-ча\-емости знаков 
+$H(n, N)$:
+    $$
+    \mbox{{\textbf{\ptb{\v{S}}}}}_n(N)= \left\{S_n\left(h(\nu)\right) \vert \nu= 1, \ldots, N^n\right\}\,,
+    $$
+применяя формулу выбранной статистики~$S_n$ и~учитывая 
+равновероятность исходов полиномиальной схемы. 
+    \item[Шаг~4:] получить распределение вероятностей значений 
+статистики~$S_n$~--- ${\sf P}_T\{S_n \hm\geq c\}$. Для этого надо провести 
+маркировку множества значений статистик~{\!\textbf{\ptb{\v{S}}}}$_n(N)$ в~интервалы 
+значений $[c, +\infty)$, где, например, $c\hm = 1(1)100$.
+    \end{description}
+    
+%    \vspace*{3pt}
+
+{\small
+ \begin{center} 
+\parbox{64mm}{{{\tablename~1}\ \ \small{Максимальные значения па\-ра\-мет\-ров рассчитанных точных распределений 
+статистик $S_n$}}
+}
+
+\vspace*{6pt}
+
+ %
+% \tabcolsep=7pt
+ \begin{tabular}{|c|c|}
+\hline
+\tabcolsep=0pt\begin{tabular}{c}Объем выборки\\ (длина текста)  $n$\end{tabular}&\tabcolsep=0pt\begin{tabular}{c}Число исходов\\
+ полиномиальной схемы\\ 
+(мощность алфавита) $N$\end{tabular}\\
+\hline
+50& 2\\
+30&3\\
+27&4\\
+22&5\\
+19&6\\
+16&7\\
+15&8\\
+14&9\\
+11&10\hphantom{9}\\
+\hphantom{9}8&16\hphantom{9}\\
+\hphantom{9}6&26\hphantom{9}\\
+\hphantom{9}4& 32\hphantom{9}\\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{-9pt}
+}
+
+   
+
+{ \begin{center}  %fig1
+% \vspace*{6pt}
+ \mbox{%
+\epsfxsize=75.812mm
+\epsfbox{mel-1.eps}
+}
+\end{center}
+
+\vspace*{-5pt}
+
+\noindent
+{{\figurename~1}\ \ \small{Диаграмма параметров рассчитанных точных распределений 
+статистик~$S_n$}}
+}
+
+\vspace*{8pt}
+    
+    Методом <<полного перебора>> в~XX~в.\ были получены таблицы 
+точного распределения статистики $S_n\hm = \chi_n$ для~$n$ и~$N$, 
+максимальные значения которых приведены в~табл.~1 и~на рис.~1.
+
+
+
+
+    Необходимо указать, что, применяя некоторые свойства статистик 
+(симметричность и~пр.)\ и~рекуррентные соотношения, математикам 
+прошлых веков удалось рассчитать таблицы точных распределений,  
+точ\-ность которых~10$^{-5}$, для следующих критических значений 
+параметров: $N\hm= 2(1)4$, $n\hm=$\linebreak\vspace*{-12pt}
+
+
+
+\pagebreak
+
+
+%\vspace*{12pt}
+
+
+
+\addtocounter{figure}{1}
+\addtocounter{table}{1}
+
+\noindent
+$=26(1)50$; $N\hm= 5$, $n\hm= 26(1)40$; 
+$N\hm=6(1)10$, $n\hm= 26(1)30$; $N\hm=10$, $n\hm=1(1)30$; $N\hm=16$, 
+$n\hm=1(1)30$; $N\hm=26$, $n=1(1)30$; $N\hm=32$, $n\hm=1(1)30$.
+    
+    Отметим некоторую универсальность алгоритма расчета точных 
+распределений методом <<полного перебора>>. 
+    
+    Алгоритм может применяться <<последовательно>> 
+и~<<параллельно>>:
+    \begin{itemize}
+    \item при <<последовательном>> применении алгоритма вначале 
+генерируем все множество текстов $\overline{\sf T}(n, A_N)$ (шаг~1), затем 
+получаем все множество векторов частот встречаемости 
+$H(n, N)$ (шаг~2), далее вычисляем все множество 
+значений статистик $\mbox{{\textbf{\ptb{\v{S}}}}}_n(N)$ (шаг~3) и, обрабатывая все значения 
+множества~$\mbox{{\textbf{\ptb{\v{S}}}}}_n(N)$ (шаг~4), получаем точное распределение 
+вероятностей значений статистики~$S_n$~--- ${\sf P}\{S_n \hm\geq c\}$;
+    \item при <<параллельном>> применении алгоритма на шаге~1 
+выполняем генерацию только одного\linebreak текста~$T_n(\nu)$ из 
+множества~$\overline{\sf T}(n, A_N)$ всех непо\-вторяющихся текстов, далее 
+для сгенерированного текста вычисляем вектор встре\-ча\-емости 
+знаков~$h(\nu)$ (шаг~2) и~значение статистики~$S_n(h(\nu))$ (шаг~3), 
+полученное значение статистики заносим в~массив интервалов значений 
+$[c, +\infty)$ (шаг~4), после чего возвращаемся к~генерации следующего 
+неповторяющегося текста на шаге~1; алгоритм заканчивает свою работу 
+тогда, когда на шаге~1 исчерпаны все неповторяющиеся тексты 
+рассматриваемой длины.
+    \end{itemize}
+    
+    <<Последовательное>> применение алгоритма требует достаточных 
+ресурсов памяти для хранения множеств, <<параллельное>> применение 
+не требует больших ресурсов памяти для хранения всех элементов 
+множеств и~позволяет распараллеливать выполнение алгоритма по 
+данным, что дает возможность применять для его выполнения кластерные 
+многопроцессорные вычислительные системы.
+    
+    Предположим, что в~течение~30~дней (1~месяц) доступен 
+вычислительный ресурс производительностью~10$^{15}$ операций 
+в~секунду, т.\,е.\ за отведенное время можно произвести для решения 
+задачи расчета точных распределений $2{,}59\cdot10^{21}$ операций:
+    \begin{multline*}
+10^{15}~\mbox{оп./с}\cdot (30~\mbox{дн.} \cdot 24~\mbox{ч}\cdot 
+60~\mbox{мин}\cdot 60~\mbox{с})~\mbox{с} 
+={}\\
+{}=2{,}59\cdot10^{21}~\mbox{оп.}
+\end{multline*}
+    
+    Предположим также, что для расчета одного значения статистики 
+$S_n(h(\nu))$ и~маркировки его значения в~интервале $[c,+\infty)$ 
+необходимо про\-из\-вести $(5n \hm+ 3N \hm+ 50)$ операций, где
+    $5n$~--- число операций на маркировку текста длины~$n$;
+    $3N$~--- число\linebreak\vspace*{-12pt}
+    
+    \columnbreak
+    
+    {\small
+ \begin{center} 
+\parbox{66mm}{{{\tablename~2}\ \ \small{Максимальные значения па\-ра\-мет\-ров, для которых на современном этапе 
+могут быть рассчитаны точные распределений статистик}}
+}
+
+\vspace*{6pt}
+
+ %
+% \tabcolsep=7pt
+ \begin{tabular}{|c|c|}
+\hline
+\tabcolsep=0pt\begin{tabular}{c}Объем выборки\\ (длина текста)  $n$\end{tabular}&\tabcolsep=0pt\begin{tabular}{c}Число исходов\\
+ полиномиальной схемы\\ 
+(мощность алфавита) $N$\end{tabular}\\
+\hline
+58&\hphantom{9}2\\
+29&\hphantom{9}4\\
+19&\hphantom{9}8\\
+17&10\\
+12&26\\
+11&36\\
+\hphantom{9}9&64\\
+\hphantom{9}8&128\hphantom{9}\\
+\hphantom{9}7& 256\hphantom{9}\\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{6pt}
+}
+
+   
+
+{ \begin{center}  %fig2
+% \vspace*{6pt}
+ \mbox{%
+\epsfxsize=78.132mm
+\epsfbox{mel-2.eps}
+}
+\end{center}
+
+\vspace*{-3pt}
+
+\noindent
+{{\figurename~2}\ \ \small{Диаграмма параметров, для которых на современном этапе могут быть 
+рассчитаны точные распределения статистик: \textit{1}~--- область возможного 
+расчета точных распределений на современном этапе;
+\textit{2}~--- область рассчитанных точных распределений}}
+}
+
+
+
+\vspace*{18pt}
+
+
+
+\addtocounter{figure}{1}
+\addtocounter{table}{1}
+
+    
+    
+    \noindent
+     операций на вычисление статистики~$S_n$ на 
+равновероятном распределении с~$N$~исходами;
+    50~--- число вспомогательных операций.
+ Тогда параметры~$n$ и~$N$ должны удовлетворять следующему 
+соотношению: $N^n\hm\leq2{,}59\cdot10^{21}/(5n \hm+ 3N \hm+ 50)$.
+ 
+    Используя указанные выше предположения, были рассчитаны 
+максимальные значения па\-ра\-мет\-ров, для которых на современном этапе за 
+приемлемое время (1~мес.)\ могут быть рассчитаны точные 
+распределения статистик. Значения параметров приведены в~табл.~2 и~на 
+рис.~2.
+
+
+    Диаграмма на рис.~2 определяет область~$O_1$, в~которой находятся 
+параметры текстов $(n, N)$ множеств~$\overline{\sf T}(n, A_N)$, для 
+которых на современном этапе могут быть рассчитаны точные 
+распределения статистик~$S_n$. Линию, ограничивающую эту область 
+сверху, обозначим через~$G_1$.
+     
+    Определим множество $M_1\overline{\sf T}(n, A_N)$ как множество текстов, 
+являющееся объединением непересе-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+{ \begin{center}  %fig3
+ \vspace*{-6pt}
+ \mbox{%
+\epsfxsize=78.137mm
+\epsfbox{mel-3.eps}
+}
+\end{center}
+
+\vspace*{-3pt}
+
+\noindent
+{{\figurename~3}\ \ \small{Диаграмма параметров точных распределений статистик}}
+}
+
+
+
+\vspace*{12pt}
+
+
+
+\addtocounter{figure}{1}
+
+
+\noindent
+кающихся подмножеств~$\overline{\sf 
+T}(j, A_k)$ c параметрами~$j$ и~$k$ из области~$O_1$ на рис.~2:
+    \begin{multline*}
+    M_1\overline{\sf T}(n,A_N) =\left\{ \cup \overline{\sf T} (j,A_k)\left\vert 
+j=1,\ldots, n\,;\right.\right.\\ 
+\left.\left.k=1,\ldots, N \right\vert (n,N)\subset O_1\right\}\,.
+    \end{multline*}
+    
+    Анализируя значения параметров на рис.~2, можно сделать вывод 
+о~том, что значительный рост производительности вычислительных 
+средств не дает сколь\-ко-ни\-будь заметного увеличения значений 
+параметров~$n$ и~$N$ в~решении задачи расчета точных распределений 
+и,~соответственно, эффективного решения задач анализа текстов.
+    
+    Назовем область~$O_1$ областью точных распределений. 
+Соответствующая диаграмма приведена на рис.~3.
+
+
+
+\section{Расчет {\boldmath{$\Delta$}}-точных распределений 
+значений статистик}
+
+    Для преодоления возникшего барьера и~создания возможности 
+анализа длинных текстов в~алфавитах большой мощности был разработан 
+метод расчета $\Delta$-точ\-ных  
+распределений~${\sf P}_\Delta\{S_n\hm\geq c\}$~--- распределений, отличающихся 
+от точных распределений не более чем на заранее заданную 
+величину~$\Delta$.
+    
+    Для $\Delta=10^{-5}$ по методу расчета $\Delta$-точ\-ных 
+распределений были проведены расчеты~${\sf P}_\Delta\{S_n\hm\geq c\}$ для 
+параметров~$n$ и~$N$, значения которых приведены в~табл.~3 и~на 
+рис.~4.
+    
+
+
+    Диаграмма на рис.~4 определяет линию, ограничивающую область 
+возможности расчета $\Delta$-точ\-ных распределений сверху~--- $G_2$. 
+Область, заключенную между границами~$G_1$ и~$G_2$, в~которой 
+находятся параметры текстов $(n, N)$ множеств~$\overline{\sf T}(n,A_N)$,\linebreak\vspace*{-12pt}
+
+\columnbreak
+
+\noindent
+ {\small
+ \begin{center} 
+\parbox{66mm}{{{\tablename~3}\ \ \small{Значения параметров, для которых проведены расчеты $\Delta$-точ\-ных 
+распределений статистик~$S_n$ для $\Delta\hm=10^{-5}$}}
+}
+
+\vspace*{6pt}
+
+ %
+% \tabcolsep=7pt
+ \begin{tabular}{|c|c|}
+\hline
+\tabcolsep=0pt\begin{tabular}{c}Объем выборки\\ (длина текста)  $n$\end{tabular}&\tabcolsep=0pt\begin{tabular}{c}Число исходов\\
+ полиномиальной схемы\\ 
+(мощность алфавита) $N$\end{tabular}\\
+\hline
+150\hphantom{9}&\hphantom{9}2\\
+80&\hphantom{9}4\\
+70&\hphantom{9}8\\
+60&10\\
+50&26\\
+50&32\\
+45&128\hphantom{9}\\
+40&256\hphantom{9}\\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{6pt}
+}
+
+   
+
+{ \begin{center}  %fig4
+% \vspace*{6pt}
+ \mbox{%
+\epsfxsize=79.137mm
+\epsfbox{mel-4.eps}
+}
+\end{center}
+
+\vspace*{-3pt}
+
+\noindent
+{{\figurename~4}\ \ \small{Значения параметров, для которых рассчитаны $\Delta$-точ\-ные 
+распределения~$S_n$:
+\textit{1}~--- область $\Delta$-точ\-ных распределений~$O_2$;
+\textit{2}~--- область точных распределений~$O_1$}}
+}
+
+
+
+\vspace*{18pt}
+
+
+
+\addtocounter{figure}{1}
+\addtocounter{table}{1}
+
+\noindent 
+для которых рассчитаны $\Delta$-точ\-ные распределения 
+статистик~$S_n$, определим как~$O_2$.
+
+         
+    По аналогии с~$M_1\overline{\sf T}(n, A_N)$ определим 
+множество~$M_2\overline{\sf T}(n, A_N)$ как множество текстов, явля\-юще\-еся 
+объединением непересекающихся подмножеств~$\overline{\sf T}(j, A_k)$ 
+c~параметрами~$j$ и~$k$ из области~$O_2$ на рис.~4:
+   \begin{multline*}
+M_2(n, A_N)=\left\{\cup \overline{\sf T}(j, A_k) \left\vert j = 1, \ldots, n;\right.\right.\\ 
+\left.\left.k = 1,\ldots, N \right\vert (n, N) \subset O_2\right\}\,.
+\end{multline*}
+
+    Сложность\ алгоритма расчета $\Delta$-точ\-ных рас\-пределений 
+статистик~${\sf P}_\Delta\{S_n\hm\geq c\}$~--- $C({\sf P}_\Delta\{S_n\hm\geq c\})$~--- 
+определяется как чис\-ло целочисленных решений системы уравнений:
+    \begin{align*}
+    \mu_0+\mu_1+\cdots +\mu_k &=N\,;\\
+    1\mu_1+2\mu_2+\cdots + k \mu_k&=n\,,
+    \end{align*}
+в которой $\mu_\nu$~--- число значений частот исходов~$h_i$, 
+равных~$\nu$. 
+ 
+ Вектор $(\mu_0, \ldots, \mu_N)$ получил название вектора вторых 
+маркировок. 
+ 
+ Значение $k$ подбирается из условия ${\sf P}\{M_n\hm>k\}\hm\leq\Delta$, 
+в~котором~$M_n$~--- статистика максимальной частоты: $M_n\hm = 
+\max\limits_{i=1}^N h_i$. 
+ 
+ Вероятность ${\sf P}\{M_n \hm> k\}$ вычисляется с~помощью рекуррентной 
+формулы, предложенной Б.\,И.~Селивановым:
+ $$
+{\sf P}\left\{M_{n+1} < m\right\} =\sum\limits_{\nu=0}^n \begin{pmatrix}
+n\\ \nu\end{pmatrix}  P\left\{ M_{n-\nu} < m\right\}  d_{\nu+1}^{(m)}  
+\fr{1}{N^\nu}
+$$
+с начальным условием ${\sf P}\{M_0\hm<m\} \hm= 1$, 
+коэффициенты~$d_{\nu+1}^{(m)}$ вычисляются по рекуррентной формуле 
+$$
+d_{h+1}^{(m)}= -\sum\limits_{\nu=1}^{m-1}\begin{pmatrix}
+n\\ \nu\end{pmatrix} d^{(m)}_{n-\nu+1}
+$$
+с начальными условиями $d_1^{(m)}\hm= 1$, $d_2^{(m)}\hm=\cdots $\linebreak
+$\cdots = 
+d^{(m)}_{n-1}\hm= 0$, $d_m^{(m)}\hm=-1$, $d^{(m)}_{m+1}\hm= m$.
+
+    Сложность алгоритма расчета $\Delta$-точ\-ных рас\-пределений 
+статистик $C({\sf P}_\Delta\{S_n\hm\geq c\})$ может быть оценена сверху как
+    $$
+    C({\sf P}_\Delta\{S_n\hm\geq c\})\leq \begin{pmatrix}
+    \vert n-N\vert+k\\ 
+    \vert n-N\vert
+    \end{pmatrix}\,,
+    $$
+    где $\vert x\vert$ обозначает модуль числа~$x$.
+    
+\section{Предельные распределения значений статистик} 
+    
+    Одним из замечательных свойств статистики~$\chi_n$ является то, что 
+при $m\hm =\min\limits_{i=1}^N np_i\hm\to\infty$ ее предельное распределение 
+не зависит от $p_i, \ldots, p_N$ и~совпадает  
+с~$\chi^2$-рас\-пре\-де\-ле\-ни\-ем с~($N\hm-1$) степенью  
+свободы~\cite{4-mel}. 
+    
+    Вопрос о том, начиная с~какого~$m$ можно пользоваться предельным 
+распределением, задавали себе многие авторы, и~не всегда их мнения 
+совпадали. Фишер~\cite{5-mel} рекомендует ограничение $m\hm\geq5$, 
+Крамер~\cite{4-mel}~--- $m\hm\geq30$, Кендалл и~Стьюарт~\cite{6-mel}~--- 
+$m\hm\geq20$.
+    
+    Следует напомнить, что теоретическая оценка остаточного члена 
+в~предельной теореме, приведенная в~\cite{7-mel}, имеет вид~$O(n^{-(N-1)/N})$ и~мало что дает для практического использования. Поэтому расчет 
+непредельных распределений значений статистик для анализа тексов еще 
+долго будет оставаться актуальной проблемой для специалистов в~области 
+математической статистики, вычислительной математики 
+и~программирования.
+
+{ \begin{center}  %fig5
+% \vspace*{6pt}
+ \mbox{%
+\epsfxsize=79.137mm
+\epsfbox{mel-5.eps}
+}
+\end{center}
+
+\vspace*{-9pt}
+
+\noindent
+{{\figurename~5}\ \ \small{Область предельных распределений, ограниченная снизу~$G_2$:
+     \textit{1}~--- область предельных распределений;
+     \textit{2}~--- область $\Delta$-точных распределений~$O_2$;
+     \textit{3}~--- область точных распределений~$O_1$}}
+}
+
+
+
+\vspace*{10pt}
+
+
+
+\addtocounter{figure}{1}
+
+        
+    Областью предельных распределений назовем область параметров 
+$(n, N)$, для которой при современной производительности 
+вычислительных средств невозможно рассчитать точные  
+и~$\Delta$-точ\-ные распределения. Эта область ограничена снизу~$G_2$. 
+Отметим, что граница~$G_2$ рассчитанных $\Delta$-точ\-ных 
+распределений на рис.~4 совпадает с~границей~$G_2$ области предельных 
+распределений на рис.~5.
+
+\vspace*{-9pt}
+    
+
+\section{Обобщенный статистический метод анализа текстов}
+
+\vspace*{-1pt}
+
+    После проведенного анализа возможностей расче\-та и~применения 
+точных, $\Delta$-точ\-ных и~предельных распределений вероятностей 
+значений статистки~$S_n$ для построения статистического критерия 
+согласия с~равновероятным распределением, используемого для отбора 
+текстов без уникальных свойств, построим обобщенный метод анализа 
+текстов без ограничений на его параметры, такие как длина и~мощность 
+алфавита входящих в~него знаков.
+{\looseness=-1
+
+}
+    
+    Пусть необходимо проанализировать текст $T_i(n, A_N)$ длины~$n$ 
+из алфавита~$A_N$ мощности~$N$\linebreak и~определить, обладает ли он 
+уникальными свойствами. Тогда его стоит дальше исследовать с~по\-мощью 
+трудоемких алгоритмов выявления структурных зависимостей. Либо 
+данный текст не\linebreak обладает уникальными свойствами и~не представляет 
+дальнейшего интереса. 
+    
+     Обобщенный статистический метод анализа текстов~$T_i(n, A_N)$ 
+с~выводом $\mathrm{ОСМА}\{T_i(n, A_N)\}$ будем строить следующим 
+образом:
+     \begin{enumerate}[(1)]
+     \item в~зависимости от значений параметров $(n, N)$ выберем 
+распределение ${\sf P}\{S_n \hm\geq c\}$:
+
+\noindent
+     \begin{multline*}
+     {\sf P}\{S_n \hm\geq c\}={}\\
+\hspace*{-3.8mm} {}= \begin{cases}
+     {\sf P}_T\{S_n\geq c\}\,, & \hspace*{-39mm}\mbox{если\ } (n, N) \subset O_1,\\ 
+&\hspace*{-39mm}\mbox{ограниченной } G_1\ \mbox{сверху};\\
+{\sf P}_\Delta\{Sn\geq c\}\,, & \hspace*{-39mm}\mbox{если}\ (n, N) \subset O_2,\\
+&\hspace*{-109pt}\mbox{ограниченной } G_1\  \mbox{снизу} \\
+&\hspace*{-109pt}\mbox{и\ } G_2\ \mbox{сверху};\\
+  {\sf P}\{\chi^2\geq c\}\ \mbox{с}\  (N-1)\ \mbox{степенью\ свободы} &\\
+& \hspace*{-39mm}\mbox{в\ противном\ случае};
+  \end{cases}
+  \end{multline*}
+     \item в~соответствии с~выбранным распределение ${\sf P}\{S_n\hm\geq c\}$ 
+и~задаваемым размером критерия~$\alpha$ получаем разделяющую 
+константу~$c$: ${\sf P}\{S_n\hm\geq c\} \hm= \alpha$;
+     \item рассчитываем значение статистики $S_n(T_i(n, A_N))$ от 
+анализируемого текс\-та~$T_i(n, A_N)$;
+     \item сравниваем значение статистики $S_n(T_i(n, A_N))$ 
+с~разделяющей константой~$c$ и~делаем вывод 
+($\mathrm{ОСМА}\{T_i(n, A_N)\}$) о~наличии или отсутствии у текста 
+$T_i(n, A_N)$ уникальных свойств:
+     \begin{itemize}
+\item    если $S_n(T_i(n, A_N)) \hm\geq c$, то 
+$\mathrm{ОСМА}\{T_i(n, A_N)\}\hm = \mbox{текст}\ T_i(n, A_N)$ обладает 
+уникальными свойствами;
+  \item  
+    если $S_n(T_i(n, A_N)) 
+    \hm < c$, то $\mathrm{ОСМА}\{T_i(n, A_N)\} \hm= \mbox{текст}\ 
+T_i(n, A_N)$ не обладает уникальными свойствами.
+\end{itemize}
+    \end{enumerate}
+    
+    Построение обобщенного метода анализа текстов окончено.
+    
+    Необходимо отметить, что значения~$G_1$ и~$G_2$ по построению 
+определяются алгоритмами расчета точных и~$\Delta$-точ\-ных 
+распределений и~производительностью имеющихся на момент 
+времени~$\tau$ вычислительных средств~$p(\tau)$, а следовательно, могут 
+быть определены как функции от~$\tau$: $G_1(\tau)$ и~$G_2(\tau)$.
+    
+    Придерживаясь закона Мура, считаем функцию~$p(\tau)$ 
+возрастающей, т.\,е.\ при $\tau_1\hm<\tau_2$ $p(\tau_1)\hm \leq p(\tau_2)$. 
+Тогда функции~$G_1(\tau)$ и~$G_2(\tau)$ должны обладать сле\-ду\-ющи\-ми 
+свойствами:
+    \begin{itemize}
+    \item  $G_1(\tau) < G_2(\tau)$ по построению;
+    \item  если $\tau_1\hm<\tau_2$, то  $G_1(\tau_1)\hm\leq G_1(\tau_2)$;
+    \item если $\tau_1\hm<\tau_2$, то $G_2(\tau_1)\hm\leq G_2(\tau_2)$.
+    \end{itemize}
+    
+    Увеличение значений~$G_2(\tau)$~ при росте~$p(\tau)$ поз\-во\-ля\-ет при 
+использовании ОСМА для большего чис\-ла значений параметров $(n, N)$ 
+применять \mbox{$\Delta$-точ}\-ные распределения вместо предельных, что 
+в~несколько раз уменьшает чис\-ло лож\-но отобранных как обладающих 
+уникальными свойствами текс\-тов (ошибка первого рода).
+    
+    Увеличение значений $G_1(\tau)$ при росте~$p(\tau)$ позволяет при 
+применении ОСМА для большего чис\-ла значений параметров $(n, N)$ 
+применить точ\-ные распределения вместо $\Delta$-точ\-ных, что упрощает 
+процедуру проведения анализа текс\-та и~уменьшает его трудоемкость.
+    
+    Таким образом, предложенный обощенный метод анализа текстов 
+ОСМА при росте производительности~$p(\tau)$ вычислительных средств 
+позволяет увеличить точность анализа и~снизить его трудоемкость.
+    
+    
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+    \bibitem{1-mel}
+    \Au{Каляев В.\,А., Левин~И.\,И., Семерников~Е.\,А., Шмойлов~В.\,И.} 
+Реконфигурируемые мультиконвейерные вычислительные структуры.~--- 
+Ростов-на-Дону: ЮНЦ РАН, 2008. 397~с.
+    \bibitem{2-mel}
+    \Au{Pearson K.} On the criterion that a given system of deviations from 
+the probable in the case of a~correlated system of variables is such that it can be 
+reasonably supposed to have arisen from random sampling~// Philos. 
+Mag. Ser.~5, 1900. Vol.~50. No.\,302. P.~157--175.
+    \bibitem{3-mel}
+    \Au{Smith~P.\,F., Rae~D.\,S., Manderscheid~R.\,W., Silbergeld~S.} Exact 
+and approximate distributions of the chi-squared statistic for equiprobability~// 
+Commun. Stat., 1979. Vol.~8. No.\,2. P.~131--149.
+%    \bibitem{3-mel}
+ %   \Au{Neyman J., Pearson~E.\,S.} On the use and interpretation of certain 
+%test criteria for purposes of statistical inference~// Biometrika, 1928. Vol.~20A. 
+%No.\,1/2. P.~175--240, 264--299.
+    \bibitem{4-mel}
+    \Au{Крамер Г.} Математические методы статистики~/
+    Пер. с~англ.~--- М.: Мир, 
+1975. 648~с. (\Au{Cramer~G.} {Mathematical methods of statistics}.~--- 
+Princeton, NJ, USA: Princeton University Press, 1946. 592~p.)
+    \bibitem{5-mel}
+    \Au{Фишер~Р.\,А.} Статистические методы для исследователей~/
+    Пер. с~англ.~--- 
+М.: Госстатиздат, 1958. 73~с.
+(\Au{Fisher~R.\,A.} {Statistical methods for research 
+workers}.~--- 12th ed.~--- Edinburgh: Oliver and Boyd, 1954. 356~p.)
+    \bibitem{6-mel}
+    \Au{Кендалл М.\,Г., Стьюарт~А.} Теория распределений.~--- М.: 
+Наука, 1966. 302~с.
+\bibitem{7-mel}
+\Au{Hutchinson T.\,P.} 1979. The validity of the chi-squared test when expected
+frequencis are small: A~list of recent research references~//
+{Commun. Stat.~A Theor.} Vol.~8. No.\,4. P.~327--335.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 02.02.16}}
+
+%\vspace*{8pt}
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{8pt}
+
+
+\def\tit{GENERALIZED STATISTICAL METHOD OF~TEXT 
+ANALYSIS\\ BASED ON~CALCULATION OF~PROBABILITY 
+DISTRIBUTIONS OF~STATISTICAL VALUES}
+
+\def\titkol{Generalized statistical method of~text 
+analysis based on~calculation of~probability 
+distributions of~statistical values}
+
+\def\aut{A.\,K.~Melnikov$^1$ and A.\,F.~Ronzhin$^2$}
+
+\def\autkol{A.\,K.~Melnikov and A.\,F.~Ronzhin}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+ 
+\noindent
+$^1$STC CLSC ``InformInvestGroup;'' 125, Bld.~17~Varshavskoye Shosse, Moscow 117587, 
+Russian Federation 
+
+\noindent
+$^2$S.\,A.~Lebedev Institute of Precision Mechanics and Computer Engineering of 
+the Russian Academy of Sciences,\linebreak
+$\hphantom{^1}$51~Leninsky  Prosp., Moscow 119991, Russian Federation
+
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2016\ \ \ volume~10\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2016\ \ \ volume~10\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+    
+    
+\Abste{A lot of data streams are a~mixture of random and unique 
+data. One of the properties of unique data is the nonuniform 
+distribution of probability of encountering the data on the set of the 
+values. The procedure of two steps is implemented for distinguishing 
+unique data. On the first step of candidate selection, the criterion of 
+consensus with the uniform distribution is implemented. On the 
+second step, resource-intensive calculation in a~condition of 
+indeterminacy is performed in order to check other unique attributes 
+of the candidates. The choice of the size of the criterion depends on 
+the amount of resources given for the second step. The accuracy of 
+calculation determines the quantity of overhead of the second term for 
+processing random data and, therefore, a~part of unique data loss. The 
+paper analyzes the values of boundary parameters for which at the current 
+level of computer technology, one can calculate the exact distribution. 
+A~generalized statistical method of text analysis, which can be used 
+for a~wide spectrum of text parameters, is developed.}
+
+\KWE{probability; exact distribution; limit distribution; statistics; 
+criterion; frequency; algorithm complexity; performance of 
+multiprocessor computer system; analysis method}
+    
+\DOI{10.14357/19922264160409} 
+
+%\vspace*{-9pt}
+
+%\Ack
+%\noindent
+
+
+
+
+%\vspace*{3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+    \bibitem{1-mel-1}
+    \Aue{Kalyaev, I.\,A., I.\,I.~Levin, E.\,A.~Semernikov, and 
+V.\,I.~Shmoylov}. 2008. \textit{Rekonfiguriruemye mul'tikonveyernye 
+vychislitel'nye struktury} [Reconfigurable multiconference computational 
+patterns]. Rostov-on-Don: YuNTs RAN. 397~p.
+    \bibitem{2-mel-1}
+    \Aue{Pearson, K.} 1900. On the criterion that a given system of deviations 
+from the probable in the case of a correlated system of variables is such that it 
+can be reasonably supposed to have arisen from random sampling. 
+\textit{Philos. Mag. Ser.~5} 50(302):157--175.
+    \bibitem{3-mel-1}
+    \Aue{Smith, P.\,F., D.\,S.~Rae, R.\,W.~Manderscheid, and S.~Silbergeld}. 
+1979. Exact and approximate distributions of the chi-squared statistic for 
+equiprobability. \textit{Commun. Stat.} 8(2):131--149.
+    %\bibitem{4-mel-1}
+%    \Aue{Neyman, J., and E.\,S.~Pearson}. 1928. On the use and interpretation 
+%of certain test criteria for purposes of statistical inference. \textit{Biometrika} 
+%20A(1-2):175--240, 264--299.
+    \bibitem{4-mel-1}
+    \Aue{Cramer, G.} 1946. \textit{Mathematical methods of statistics}. 
+Princeton, NJ: Princeton University Press. 592~p.
+    \bibitem{5-mel-1}
+    \Aue{Fisher, R.\,A.} 1954. \textit{Statistical methods for research 
+workers}. 12th ed. Edinburgh: Oliver and Boyd. 356~p.
+    \bibitem{6-mel-1}
+    \Aue{Kendall, M.\,G., and A.~Stuart.} 1967. \textit{The advanced theory 
+of statistics. Vol.~1: Distribution theory}. 3rd ed. London: Charles Griffin 
+Co. 439~p.
+\bibitem{7-mel-1}
+\Aue{Hutchinson, T.\,P.} 1979. The validity of the chi-squared test when expected
+frequencis are small: A~list of recent research refernces.
+\textit{Commun. Stat.~A Theor.} 8(4):327--335.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Received February 2, 2016}}
+
+\Contr
+
+\noindent
+\textbf{Melnikov Andrey K.} (b.\ 1956)~--- Candidate of Science (PhD) in technology, associate 
+professor, principal scientist, STC CLSC ``InformInvestGroup;'' 125, Bld.~17~Varshavskoye 
+Shosse, Moscow 117587, Russian Federation; \mbox{ak@iigroup.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Ronzhin Alexander F.} (b.\ 1954)~--- Doctor of Science in physics and mathematics, 
+professor, S.\,A.~Lebedev Institute of Precision Mechanics and Computer Engineering of 
+the Russian Academy of Sciences, 51~Leninsky 
+Prosp., Moscow 119991, Russian Federation; {\mbox{raf@zao-zt.ru}
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература} 

@@ -1,0 +1,794 @@
+
+
+%\usepackage{bm}                     % полужирные греческие буквы
+%\usepackage{upgreek}                % прямые греческие буквы
+
+\newcommand{\sgn}{\textrm{sgn}}
+\newcommand{\cov}{\textrm{cov}}
+
+
+
+\newcommand{\indYilT}{\Ik_{|Y_i|\leq T}}
+\newcommand{\indYigT}{\Ik_{|Y_i|>T}}
+
+\newcommand{\indYighT}{\Ik_{|Y_i|>\hat T}}
+
+\newcommand{\expct}{\textrm{E}}
+\newcommand{\prbblty}{\textrm{P}}
+\newcommand{\varnce}{\textrm{D}}
+\newcommand{\Obig}{\textrm{O}}
+\newcommand{\osml}{\textrm{o}}
+\newcommand{\hsig}{\hat\sigma^2}
+\newcommand{\ovrV}{\overline{V}}
+
+
+\def\stat{markin}
+
+
+\def\tit{ПРЕДЕЛЬНОЕ РАСПРЕДЕЛЕНИЕ ОЦЕНКИ РИСКА ПРИ~ПОРОГОВОЙ ОБРАБОТКЕ ВЕЙВЛЕТ-КОЭФФИЦИЕНТОВ}
+\def\titkol{Предельное распределение оценки риска при пороговой обработке вейвлет-коэффициентов} 
+
+\def\autkol{А.\,В. Маркин}
+\def\aut{А.\,В. Маркин$^1$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}}\footnotetext[1]
+%{Работа выполнена при частичной поддержке РФФИ, проекты 08-07-00152-а и
+%      09-07-12032-офи-м.}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет им.~М.\,В.~Ломоносова, 
+ кафедра математической статистики факультета ВМиК, artem.v.markin@mail.ru}
+
+\Abst{Исследованы асимптотические свойства оценки риска при пороговой обработке 
+коэффициентов разложения функции сигнала по вейвлет-базису. Приведены условия, при 
+которых будет иметь место сходимость по распределению к нетривиальному пределу разности 
+теоретического риска и его оценки. Работа является продолжением статьи~[1].}
+
+\KW{вейвлеты; пороговая обработка; оценка риска; предельное распределение}
+
+      \vskip 18pt plus 9pt minus 6pt
+
+      \thispagestyle{headings}
+
+      \begin{multicols}{2}
+
+      \label{st\stat}
+
+
+\section{Введение}
+
+Рассмотрена следующая задача: имеются на\-блю\-де\-ния~$X$, состоящие из полезного сигнала~$f$ 
+и аддитивного белого гауссовского шума~$\epsilon$ с нулевым средним и  дисперсией~$\sigma^2$:
+\begin{equation*}
+%\label{eq_theSignalModel}
+X=f+\epsilon\,.
+\end{equation*}
+Необходимо оценить~$f$ по~$X$. Параметр~$\sigma$ практически всегда неизвестен, 
+для него существует лишь некоторый разумный диапазон. Сигнал дискретный, размер 
+равен $N=2^J$. К наблюдениям применяется вейвлет-преобразование вида
+\begin{equation}
+\label{eq_DiscreteWaveletTrans}
+y=\langle y,\phi_{0,0}\rangle\phi_{0,0}+\sum_{j=0}^{J-1}\sum_{n=0}^{2^j-1}\langle y,\psi_{j,n}\rangle\psi_{j,n}\,,
+\end{equation}
+где $\phi(t)$~--- отцовский вейвлет; $\psi(t)$~--- материнский вейвлет; $\phi_{j,n}(t)=2^{j/2}\phi\left(2^jt-n\right)$; 
+$\psi_{j,n}(t)=$\linebreak 
+$=2^{j/2}\psi\left(2^jt-n\right)$. Преобразование~(\ref{eq_DiscreteWaveletTrans}) 
+справедливо для любой функции $y(t)\in\mathbf{L}^2(\mathbb{R})$~\cite{3mar, 4mar}.
+
+После применения вейвлет-преобразования получим
+\begin{equation*}
+%\label{eq_theSignalModelWavelet}
+X_W=f_W+\epsilon_W,
+\end{equation*}
+где~$\epsilon_W$ также будет белым гауссовским шумом с нулевым средним и дисперсией~$\sigma^2$. 
+Предположим, что сигнал гладкий по Липшицу с параметром $\alpha>1/2$ (см.\ ниже). 
+Будем считать, что существует константа~$C$ такая, что $|f_W|<C$ для любого~$N$. Можно показать, 
+что число коэффициентов, для которых последнее неравенство не выполнено, мало, и эти коэффициенты 
+не повлияют на приведенные ниже результаты.
+
+Для удаления шума используется пороговая обработка коэффициентов. Коэффициенты, не 
+превышающие некоторого порога, считаются коэффициентами шума. Величина порога определяется 
+параметрами шума и свойствами полезного сигнала. Простейшая пороговая обработка~--- \textit{жесткая пороговая обработка}:
+%\noindent
+\begin{equation*}
+%\label{eq_hardTreshold}
+\rho_H(x, T)=\begin{cases}
+x & \text{при } |x|>T\,;\\
+0 & \text{при } |x|\leq T\,.
+\end{cases}
+\end{equation*}
+Однако функция~$\rho_H$ разрывна и дает смещенные оценки~[1]. 
+Поэтому на практике обычно используют \textit{мягкую пороговую обработку}:
+\begin{equation*}
+%\label{eq_softTreshold}
+\rho_S(x, T)=
+\begin{cases}
+x-T & \text{при } x>T\,;\\
+x+T & \text{при } x<-T\,;\\
+0 & \text{при } |x|\leq T\,.
+\end{cases}
+\end{equation*}
+
+Риск пороговой обработки~$r(f,T)$ определяется следующим образом:
+\begin{equation*}
+%\label{eq_idealRiskDef}
+r(f,T)=\sum_{i=1}^{N}\expct\left\{f_W[i]-\rho(X_W[i])\right\}^2\,.
+\end{equation*}
+Однако вычислить явно~$r(f,T)$ нельзя, так как в выражении присутствуют неизвестные величины~$f_W[i]$, 
+поэтому вместо теоретического риска используют его оценку. Например, можно использовать такую оценку:
+\begin{equation}
+\label{eq_estimRiskDef}
+\tilde{r}(f,T)=\sum_{i=1}^{N}\Phi\left((X_W[i])^2\right)\,,
+\end{equation}
+где $\Phi(x)$ для мягкой пороговой обработки равна
+\begin{equation*}
+%\label{eq_riskPhiFuncDef}
+\Phi_S(x)=
+\begin{cases}
+x-\sigma^2 & \text{при } x\leq T^2\,;\\
+\sigma^2+T^2 & \text{при } x> T^2\,,
+\end{cases}
+\end{equation*}
+а для жесткого порога
+\begin{equation*}
+%\label{eq_riskPhiFuncDefHard}
+\Phi_H(x)=
+\begin{cases}
+x-\sigma^2 & \text{при } x\leq T^2\,;\\
+\sigma^2 & \text{при } x> T^2\,.
+\end{cases}
+\end{equation*}
+\pagebreak
+
+Можно представить пороговую функцию в виде $\rho(x)=x-g(x)$. Имеем для жесткого и мягкого порога соответственно
+\begin{align*}
+%\label{eq_gHard}
+g_H(x)&=x\Ik_{|x|\leq T}\,;\\
+%\label{eq_gSoft}
+g_S(x)&=T\sgn\,x+(x-T\sgn\, x)\Ik_{|x|\leq T}\,.
+\end{align*}
+При этом функция~$g_S(x)$ почти дифференци\-ру\-ема (в смысле Стейна~\cite{6mar}), 
+а потому оценка~$\tilde{r}_S(f,T)$ будет несмещенной оценкой риска~$r_S(f,T)$ (SURE-оценка~--- Stein
+Unbiased Risk Estimator~--- несмещенная оценка Стейна для риска)~\cite{3mar, 5mar}:
+\begin{equation*}
+\expct\{\tilde{r}_S(f,T)\}=r_S(f,T)\,.
+\end{equation*}
+Оценка риска жесткой пороговой обработки будет смещенной~\cite{3mar}:
+\begin{multline*}
+\!\!\expct\{\tilde{r}_H(f,T)\}=r_H(f,T)-{}\\
+{}-2T\sigma^2\sum_{i=1}^N
+\left(\varphi_\sigma(T-f_W[i])+\varphi_\sigma(T+f_W[i])\right)\,,
+\end{multline*}
+где $\varphi_\sigma(u)=\varphi\left(u/\sigma\right)$.
+В качестве порога будем использовать универсальный порог $T =\sqrt{2 \ln N}$, 
+обла\-да\-ющий хорошими асимптотическими свойствами~\cite{2mar}.
+
+В работе~\cite{1mar} показано, что для $\delta>0$ и любого $\alpha>0$ 
+при использовании универсального порога для мягкой и жесткой пороговой обработки выполнено
+\begin{equation*}
+\prbblty\left(\fr{\left|\tilde{r}(f,T)-r(f,T)\right|}{N^{\alpha+1/2}}>\delta\right)\rightarrow 0\,.
+\end{equation*}
+Естественно поставить вопрос о том, что будет в случае $\alpha=0$, т.\,е.\ когда знаменатель имеет порядок~$\sqrt{N}$.
+
+На практике дисперсия шума заранее не известна, и ее необходимо оценить. В этом случае в выражении~(\ref{eq_estimRiskDef}) 
+для оценки риска будут использоваться функции
+\begin{equation*}
+%\label{eq_riskPhiFuncEstDef}
+\hat\Phi_S(x)=\begin{cases}
+x-\hat\sigma^2 & \text{при } x\leq \hat T^2\,;\\
+\hat\sigma^2+\hat T^2 & \text{при } x> \hat T^2
+\end{cases}
+\end{equation*}
+и
+\begin{equation*}
+%\label{eq_riskPhiFuncEstDefHard}
+\hat\Phi_H(x)=\begin{cases}
+x-\hat\sigma^2 & \text{при } x\leq \hat T^2\,;\\
+\hat\sigma^2 & \text{при } x> \hat T^2\,.
+\end{cases}
+\end{equation*}
+Соответствующие оценки риска обозначим через~$\hat{r}_S(f,\hat T)$ и~$\hat{r}_H(f,\hat T)$. 
+Известно~\cite{1mar}, что ес\-ли~$\hsig$~--- оценка дисперсии, 
+$\expct\hsig\sigma^2+\nu_N$, $\nu_N=\osml(1)$, 
+$\varnce\hsig=\theta_N=\Obig(N^{-\beta})$, $\beta>0$, 
+то для любого $\delta>0$ при использовании порога $\hat T=\hat\sigma\sqrt{2\ln N}$ вы\-пол\-нено
+\begin{equation}
+\label{eq_ConsistencyUnknownSigma}
+\prbblty\left(\fr{\left|\hat{r}(f,\hat T)-r(f,T)\right|}{N}>\delta\right)\rightarrow 0\,.
+\end{equation}
+Вопрос о сходимости при более низком порядке знаменателя в~(\ref{eq_ConsistencyUnknownSigma}) 
+также рассмотрен в настоящей статье.
+
+\section{Предельное распределение оценки риска при известной дисперсии шума}
+
+\noindent
+\textbf{Теорема 1.} \textit{ %\label{theo_knownSweak}
+При мягкой или жесткой пороговой обработке с порогом $T=\sigma\sqrt{2\ln N}$ имеет место сходимость по распределению
+\begin{equation*}
+\fr{\tilde{r}(f,T)-r(f,T)}{D_N}\Rightarrow \mathcal{N}(0,1)\,,
+\end{equation*}
+где $D_N^2=2\sigma^2\left(N\sigma^2+2\sum\limits_{i=1}^N \left(f_W[i]\right)^2\right)$.
+}
+
+\smallskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ 
+Введем обозначения: $X_W[i]\equiv$\linebreak $\equiv Y_i$, $f_W[i]\equiv \mu_i$. 
+Тогда $\expct Y_i^2=\mu_i^2+\sigma^2$ и $\varnce Y_i^2 =$\linebreak 
+$= 2\sigma^2\left(\sigma^2+2\mu_i^2\right)$. 
+Для мягкой пороговой обработки имеем
+\begin{multline}
+\label{eq_riskMainComponentSknown}
+\tilde{r}_S(f,T)-r_S(f,T)=\sum_{i=1}^N\left(Y_i^2-\sigma^2\right)\indYilT+{}\\
+{}+\sum_{i=1}^N\left(\sigma^2+T^2\right)\indYigT- %{}\\
+%{}-
+\sum_{i=1}^N\expct\left(Y_i^2-\sigma^2\right)\indYilT-{}\\
+{}-\left(\sigma^2+T^2\right)\sum_{i=1}^N\prbblty(\left|Y_i\right|>T)={}\\
+{}=\sum_{i=1}^N\left(Y_i^2-\expct Y_i^2\right)-\sum_{i=1}^N\left(Y_i^2-\sigma^2\right)\indYigT+{}\\
+{}+\sum_{i=1}^N\expct\left(Y_i^2-\sigma^2\right)\indYigT+ %{}\\
+%{}+
+\sum_{i=1}^N\left(\sigma^2+T^2\right)\indYigT-{}\\
+{}-\left(\sigma^2+T^2\right)\sum_{i=1}^N\prbblty(\left|Y_i\right|>T).
+\end{multline}
+Достаточно показать, что при делении на~$D_N$ первая сумма в~(\ref{eq_riskMainComponentSknown}) 
+сходится по распределению к стандартному нормальному закону, а все оставшиеся суммы сходятся к нулю по вероятности.
+
+Понятно, что случайные величины $Y_i^2$ независимы и
+\begin{equation*}
+D_N^2=\sum_{i=1}^N\varnce Y_i^2=\varnce\sum_{i=1}^N Y_i^2\,.
+\end{equation*}
+Для обеспечения указанной сходимости по распределению достаточно выполнения условия Линдеберга~\cite{7mar}. 
+Проверим, что для любого $\delta>0$
+
+\noindent
+\begin{multline}
+\label{eq_LindSknown}
+\fr{1}{D_N^2}\sum_{i=1}^N\expct\left\{
+\left(Y_i^2-\mu_i^2-\sigma^2\right)^2\Ik_{\left|Y_i^2-\mu_i^2-\sigma^2\right|\geq \delta D_N}\right\}\rightarrow\\
+{}\rightarrow 0\,.
+\end{multline}
+Имеем
+\begin{equation*}
+D_N^2=2\sigma^2\left(N\sigma^2+2\sum_{i=1}^N \mu_i^2\right)\geq 2\sigma^4N=\Obig(N)\,,
+\end{equation*}
+поэтому $D_N\rightarrow\infty$, и в силу ограниченности дис\-пер\-сии~$Y_i^2$ получаем для любого~$i$
+\begin{equation*}
+\expct\left\{\left(Y_i^2-\mu_i^2-\sigma^2\right)^2\Ik_{\left|Y_i^2-\mu_i^2-\sigma^2\right|\geq \delta D_N}\right\}=\osml(1)\,.
+\end{equation*}
+Значит, условие~(\ref{eq_LindSknown}) выполнено и
+\begin{equation*}
+\fr{\sum\limits_{i=1}^N\left(Y_i^2-\expct Y_i^2\right)}{D_N}\Rightarrow \mathcal{N}(0,1)\,.
+\end{equation*}
+
+В работе~[1] показано, что
+\begin{multline*}
+\expct\indYigT=\expct\left(\indYigT\right)^2=
+\prbblty\left(\left|Y_i\right|>T\right)={}\\
+{}=\Obig\left(\fr{1}{N\sqrt{\ln N}}\right)\,.
+\end{multline*}
+Тогда по неравенствам Чебышёва и Коши--Бу\-ня\-ков\-ско\-го
+\begin{multline*}
+\prbblty\left(\fr{\left|\sum\limits_{i=1}^N\left(Y_i^2-\sigma^2\right)\indYigT\right|}{D_N}>\delta\right) \leq {}\\
+{}\leq
+\fr{\expct\left|\sum\limits_{i=1}^N\left(Y_i^2-\sigma^2\right)\indYigT\right|}{\delta D_N}\leq{}\\
+{}\leq\fr{\sum\limits_{i=1}^N\expct\left|\left(Y_i^2-\sigma^2\right)\indYigT\right|}{\delta\sigma^2\sqrt{2N}}\leq{}\\
+{}\leq\fr{\sum\limits_{i=1}^N\sqrt{\expct\left(Y_i^2-\sigma^2\right)^2\prbblty\left(\left|Y_i\right|>T\right)}}{\delta\sigma^2\sqrt{2N}}\rightarrow 0\,.
+\end{multline*}
+Для трех оставшихся сумм в~(\ref{eq_riskMainComponentSknown}) рассуждения проводятся аналогично. 
+Таким образом, для мягкой пороговой обработки теорема доказана.
+
+Учитывая суть отличий~$\Phi_H(x)$ от~$\Phi_S(x)$, доказательство 
+для жесткого порога практически повторяет рассуждения для случая 
+мягкого порога. Остается только добавить, что порядок смещения 
+оценки риска при жестком пороге равен $\Obig \left(\sqrt{\ln N}\right)$~[1], 
+стало быть, при делении на~$D_N$ смещение будет стремиться к нулю.
+
+\section{Риск в случае использования оценки дисперсии}
+\vspace*{-2pt}
+
+В работе~[1] (теоремы~3 и~6) показано, что выполнено~(\ref{eq_ConsistencyUnknownSigma}), 
+при этом ограничения на~$\hsig$ носят довольно общий характер. Например, от~$\nu_N$ 
+требуется лишь бесконечная малость, т.\,е.\ стремление к нулю может быть как угодно 
+медленным. Возникает вопрос: можно ли понизить степень~$N$ в знаменателе, наложив 
+некоторые более сильные ограничения на свойства моментов~$\hsig$?
+
+В доказательстве теоремы~3 из статьи~[1] есть такая оценка:
+\vspace*{-6pt}
+
+\noindent
+\begin{multline*}
+E_{ij}={}\\
+\!\!{}=\expct\left(Y_i^2-\hsig-\expct Y_i^2+\sigma^2\right)\left(Y_j^2-\hsig-\expct Y_j^2+\sigma^2\right)={}\\
+{}=-\cov\left(\hsig,Y_i^2+Y_j^2\right)+\nu_N^2+\theta_N=\osml(1)\,.
+\end{multline*}
+Число элементов~$E_{ij}$ равно $N^2-N$, поэтому сумма всех этих элементов имеет порядок~$\osml(N^2)$. 
+Понятно, что эту оценку можно улучшить, если потребовать, скажем, $\nu_N=\Obig\left(N^{-\upsilon}\right)$.
+
+Помимо этого, из доказательства той же теоремы можно получить следующую оценку~$\expct\indYighT$:
+\vspace*{-3pt}
+
+\noindent
+\begin{equation*}
+\expct\indYighT=\max\left\{ \Obig\left(\fr{1}{N^{(1-\gamma)^2}\sqrt{\ln N}}\right), 
+\Obig\left(N^{-\beta}\right) \right\}\,,
+\end{equation*}
+где $\gamma$~--- фиксированное сколь угодно малое положительное число. 
+Принимая, что $\nu_N=\Obig\left(N^{-\upsilon}\right)$, $\upsilon>0$, эту оценку также можно улучшить.
+
+Представим разность оценки риска и самого риска при мягком пороге в таком виде:
+\vspace*{-6pt}
+
+\noindent
+\begin{multline}
+\label{eq_hrSmrSsplit}
+\hat r_S-r_S=\sum_{i=1}^{N}\left(Y_i^2-\sigma^2\right)-N\left(\hsig-\sigma^2\right)-{}\\
+{}-\sum_{i=1}^{N}\left(Y_i^2-\hsig\right)\indYighT+\sum_{i=1}^{N}\left(\hsig+\hat T^2\right)\indYighT-{}\\
+{}-\sum_{i=1}^{N}\expct\left(Y_i^2-\sigma^2\right)+\sum_{i=1}^{N}\expct\left(Y_i^2-\sigma^2\right)\indYigT-{}\\
+{}-\sum_{i=1}^{N}\expct\left(\sigma^2+T^2\right)\indYigT\,.
+\end{multline}
+Вопрос о невырожденном предельном распределении 
+\vspace*{-3pt}
+
+\noindent
+$$
+\sum\limits_{i=1}^{N}\left(Y_i^2-\sigma^2\right)-\sum\limits_{i=1}^{N}\expct\left(Y_i^2-\sigma^2\right)
+$$ 
+решен в предыдущем разделе, а в статье~[1] показано, что при делении на~$N^{\alpha+1/2}$ 
+будет иметь мес\-то сходимость к нулю по вероятности при любом $\alpha>0$.
+\pagebreak
+
+Асимптотика $N\left(\hsig-\sigma^2\right)$ зависит в том чис\-ле и от 
+скорости убывания~$\nu_N$ и~$\theta_N$. Если $\nu_N=\Obig\left(N^{-1/2}\right)$ и 
+$\theta_N=\Obig\left(N^{-1}\right)$, то при $\alpha>0$
+\begin{equation}
+\label{eq_hsigConsist}
+\fr{N\left(\hsig-\sigma^2\right)}{N^{\alpha+1/2}}\stackrel{\prbblty}{\longrightarrow} 0\,.
+\end{equation}
+Это можно показать с помощью неравенства Чебышёва. Более того, 
+если $\nu_N=\Obig\left(N^{-\upsilon}\right)$, $\theta_N=$\linebreak $=\Obig\left(N^{-\beta}\right)$, 
+то~(\ref{eq_hsigConsist}) справедливо для
+\begin{equation*}
+\alpha>\fr{1}{2}-\min\left\{\upsilon, \fr{\beta}{2}\right\}\,.
+\end{equation*}
+
+Покажем теперь, что если справедливы последние предположения о~$\nu_N$ и~$\theta_N$, 
+то все суммы с индикаторами в~(\ref{eq_hrSmrSsplit}) при делении на~$\sqrt{N}$ 
+сходятся по вероятности к нулю. По формуле полной вероятности имеем
+\begin{multline}
+\label{eq_fullProbForGammaN}
+\prbblty\left(\sum_{i=1}^{N}\indYighT>\delta\right)={}\\
+{}=\prbblty\left(\sum_{i=1}^{N}\indYighT>\delta\,, \enskip\hat T>(1-\gamma_N)\sigma\sqrt{2\ln N}\right)+{}\\
+{}+\prbblty\left(\sum_{i=1}^{N}\indYighT>\delta|\hat T\leq(1-\gamma_N)\sigma\sqrt{2\ln N}\right)\times{}\\
+{}\times \prbblty\left(\hat T\leq(1-\gamma_N)\sigma\sqrt{2\ln N}\right)\,,
+\end{multline}
+где
+\begin{equation*}
+\gamma_N=\fr{1}{\ln N}\gg |\nu_N|\,;\enskip \gamma_N^2\gg\theta_N\,.
+\end{equation*}
+При этом
+\begin{multline*}
+\prbblty\left(|Y_i|>(1-\gamma_N)\sigma\sqrt{2\ln N}\right)={}\\
+=\Obig\left(\fr{1}{N^{(1-\gamma_N)^2}\sqrt{\ln N}}\right)=
+\Obig\left(\fr{1}{N\sqrt{\ln N}}\right)\,,
+\end{multline*}
+так как
+\begin{multline*}
+N^{2\gamma_N-\gamma_N^2}=
+\exp\left(\ln N\left(2\gamma_N-\gamma_N^2\right)\right)={}\\
+{}=\exp\left(2-\fr{1}{\ln N}\right)=\Obig(1)\,.
+\end{multline*}
+
+Далее, пользуясь неравенством Чебышёва, получаем
+$$
+\prbblty\left(\sum_{i=1}^{N}\indYighT>\delta, \quad\hat T>(1-\gamma_N)\sigma\sqrt{2\ln N}\right)\leq{}
+$$$$%\\
+{}\leq \prbblty\left(\sum_{i=1}^{N}\Ik_{|Y_i|>(1-\gamma_N)\sigma\sqrt{2\ln N}}>\delta\right)\leq{}$$
+%\columnbreak
+
+\noindent
+$${}\leq \fr{\sum\limits_{i=1}^{N}\prbblty\left(|Y_i|>(1-\gamma_N)\sigma\sqrt{2\ln N}\right)}{\delta}={}$$
+\vspace*{-6pt}
+
+\noindent
+$$%\\
+\hspace*{120pt}{}=\Obig\left(\fr{1}{\sqrt{\ln N}}\right)\rightarrow 0\,.
+$$%\end{multline*}
+Теперь воспользуемся свойствами моментов~$\hsig$ для оценки второго слагаемого в~(\ref{eq_fullProbForGammaN}):
+\vspace*{-6pt}
+
+\noindent
+\begin{multline*}
+\prbblty\left(\hat T\leq(1-\gamma_N)\sigma\sqrt{2\ln N}\right)={}\\
+{}=
+\prbblty\left(\hsig\leq(1-\gamma_N)^2\sigma^2\right)={}\\
+{}=\prbblty\left(\hsig+\nu_N\leq\nu_N+\sigma^2-2\sigma^2\gamma_N+\gamma_N^2\sigma^2\right)\leq{}\\
+{}\leq\prbblty\left(\left|\hsig-\nu_N-\sigma^2\right|\geq\nu_N+2\sigma^2\gamma_N-\gamma_N^2\sigma^2\right)\,.
+\end{multline*}
+Последнее неравенство справедливо, так как для достаточно большого~$N$ 
+$$
+\nu_N+2\sigma^2\gamma_N-\gamma_N^2\sigma^2>0
+$$ 
+в силу выбора~$\gamma_N$. Далее по неравенству Чебышёва
+\vspace*{-3pt}
+
+\noindent
+\begin{multline*}
+\prbblty\left(\left|\hsig-\nu_N-\sigma^2\right|\geq\nu_N+2\sigma^2\gamma_N-\gamma_N^2\sigma^2\right)\leq{}\\
+{}\leq
+\fr{\varnce\hsig}{\left(\nu_N+2\sigma^2\gamma_N-\gamma_N^2\sigma^2\right)^2}\sim{}\\
+{}\sim\fr{\varnce\hsig}{\gamma_N^2}=\Obig\left(\fr{\ln^2 N}{N^\beta}\right)\rightarrow 0\,.
+\end{multline*}
+Таким образом,
+\begin{equation*}
+\prbblty\left(\sum_{i=1}^{N}\indYighT>\delta\right)\rightarrow 0\,.
+\end{equation*}
+
+Опять же пользуясь неравенством Чебышёва, имеем
+\vspace*{-6pt}
+
+\noindent
+\begin{multline*}
+\prbblty\left(\sum_{i=1}^{N}\indYigT>\delta\right)\leq
+\fr{\sum\limits_{i=1}^{N}\prbblty\left(|Y_i|>T\right)}{\delta}={}\\
+{}=
+\Obig\left(\fr{1}{\sqrt{\ln N}}\right)\rightarrow 0\,.
+\end{multline*}
+Теперь перейдем непосредственно к суммам в~(\ref{eq_hrSmrSsplit}):
+\begin{equation*}
+\fr{\sum\limits_{i=1}^{N}Y_i^2\indYighT}{\sqrt{N}} \leq \sqrt{ \fr{\sum\limits_{i=1}^{N}Y_i^4}{N}
+\sum\limits_{i=1}^{N}\indYighT }\xrightarrow{P}0\,,
+\end{equation*}
+так как
+\begin{equation*}
+\fr{\sum\limits_{i=1}^{N}\left(Y_i^4-\expct Y_i^4\right)}{N}\xrightarrow{P}0\,;\enskip
+0\leq\fr{\sum\limits_{i=1}^{N}\expct Y_i^4}{N}\leq C
+\end{equation*}
+для некоторой константы~$C$.\ 
+Далее
+\pagebreak
+
+\noindent
+\begin{equation*}
+\left(2\ln N+1\right)\fr{\sum\limits_{i=1}^{N}\hsig\indYighT}{\sqrt{N}}\xrightarrow{P}0\,,
+\end{equation*}
+так как
+
+\noindent
+\begin{equation*}
+\fr{\left(2\ln N+1\right)}{\sqrt{N}}\hsig\xrightarrow{P}0\,.
+\end{equation*}
+Суммы с~$\indYigT$ оцениваются аналогично. При жестком пороге приведенные оценки тоже верны, 
+смещение оценки риска при делении на~$\sqrt{N}$ стремится к нулю. Обобщая полученные результаты, 
+можно сформулировать следующую теорему.
+
+\smallskip
+
+\noindent
+\textbf{Теорема 2.} \textit{Пусть~$\hsig$~--- оценка дисперсии, 
+$\expct\hsig=$\linebreak $=\sigma^2+\Obig\left(N^{-\upsilon}\right)$ и 
+$\varnce\hsig=\Obig(N^{-\beta})$, $\upsilon>0$, $\beta>0$, 
+а константа $c=\min\left\{1/2, \upsilon, \beta/2 \right\}$. 
+Пусть выбран порог $\hat T=\hat\sigma\sqrt{2\ln N}$. 
+Тогда для любого $\delta>0$ и любого $\alpha > 1/2-c$ при мягком и жестком пороге выполнено
+\begin{equation*}
+\prbblty\left(\fr{\left|\hat r(f,\hat T)-r(f,T)\right|}{N^{\alpha+1/2}}>\delta\right)\rightarrow 0\,.
+\end{equation*}
+}
+
+%\smallskip
+\vspace*{-4pt}
+
+Как видно из приведенных выше рассуждений, предельное распределение 
+$\left(\hat r-r\right)/\sqrt N$ определяется предельным распределением
+
+\noindent
+\begin{equation*}
+\fr{\sum\limits_{i=1}^{N}\left(Y_i^2-\expct Y_i^2\right)}{\sqrt{N}}-\sqrt{N}\left(\hsig-\sigma^2\right)\,.
+\end{equation*}
+
+%\smallskip
+\vspace*{-2pt}
+
+\noindent %\label{theo_unknSweak}
+\textbf{Теорема 3.} \textit{Пусть $\hsig$~--- оценка дисперсии, 
+$\expct\hsig=$\linebreak $=\sigma^2+\Obig\left(N^{-\upsilon}\right)$ и 
+$\varnce\hsig=\Obig(N^{-\beta})$, $\upsilon>0$, $\beta>$\linebreak $>0$. 
+Пусть~$\hsig$ не зависит от~$X_W[i]$ и выполнено
+$\sqrt{\mathcal{N}}\left ( \hat{\sigma}^2-\sigma^2\right )\rightarrow \mathcal{N}\left (0,\Sigma^2\right)$.
+%асимптотически нормальна с параметрами~$\sigma^2$ и~$\Sigma^2/N$: 
+%$\hsig\sim\mathcal{N}\left(\sigma^2,\Sigma^2/N\right)$ и . 
+Пусть выбран порог $\hat T=\hat\sigma\sqrt{2\ln N}$. Тогда при мягком и жестком пороге выполнено}
+\vspace*{3pt}
+
+\noindent
+\begin{equation*}
+\fr{\hat{r}(f,\hat{T})-r(f,T)}{D_N}\Rightarrow \mathcal{N}\left(0,1+\fr{\Sigma^2}{2\sigma^2\left(\sigma^2+2R\right)}\right)\,,
+\end{equation*}
+\textit{где}
+
+\noindent
+\begin{align*}
+D_N^2 &= 2\sigma^2\left(N\sigma^2+2\sum_{i=1}^N \left(f_W[i]\right)^2\right)\,;\\
+R &= \lim\limits_{N\rightarrow\infty}\sum\limits_{i=1}^N\fr{\left(f_W[i]\right)^2}{N}\,.
+\end{align*}
+
+
+\noindent
+Теорема элементарно доказывается c помощью метода характеристических функций и свойства 
+воспроизводимости нормального закона. Понятно, что если распределение оценки дисперсии слабо 
+сходится к некоторому пределу, но при нормировочном множителе порядка $0<\alpha<1/2$, то 
+распределение оценки риска при делении на $N^{1-\alpha}$ будет слабо сходиться к 
+тому же пределу. Причем в этом случае даже не требуется независимости~$X_W[i]$ и~$\hsig$.
+
+\section{Оценки дисперсии шума}
+
+В работе~[1] рассмотрены два примера оценок: 
+$\hsig_1=S^2$ как оценка дисперсии и интерквартильный размах~$\hat\sigma_2$ как оценка стандартного отклонения. 
+Пусть $Z_1, Z_2, \ldots, Z_M$~--- наблюдения, по которым вычисляется оценка, $\overline{Z}$~--- выборочное среднее, 
+$Z_{M,p}$~--- выборочная квантиль порядка~$p$, $0\leq p\leq 1$:
+\begin{equation*}
+Z_{M,p}=
+\begin{cases}
+Z_{\left([Mp]+1\right)} & \text{при } Mp~\text{ дробном}\,;\\
+Z_{\left(Mp\right)} & \text{при } Mp~\text{ целом}\,.
+\end{cases}
+\end{equation*}
+Тогда
+\begin{equation*}
+\hsig_1=\fr{1}{M}\sum_{i=1}^M(Z_i-\overline{Z})^2\,;\enskip
+\hat\sigma_2=\fr{Z_{M,3/4}-Z_{M,1/4}}{2\zeta_{3/4}}
+\end{equation*}
+будут соответственно состоятельными оценками дисперсии и стандартного отклонения, 
+если~$Z$~--- выборка из нормального распределения с нулевым средним и дисперсией~$\sigma^2$, а 
+$\zeta_{3/4}=F^{-1}\left(3/4\right)$~--- квантиль порядка~3/4 стандартного 
+нормального распределения~[1]. Известно, что в этом случае~$\hsig_1$ асимптотически нормальна~\cite{8mar}:
+\begin{equation*}
+\sqrt{M}\left(\hsig_1-\sigma^2\right)\Rightarrow\mathcal{N}\left(0,2\sigma^4\right)\,.
+\end{equation*}
+Оценка $\hat\sigma_2$ тоже является асимптотически нормальной~\cite{9mar}:
+\begin{equation}
+\label{eq_weaklimIQR}
+\sqrt{M}\left(\hat\sigma_2-\sigma\right)\Rightarrow\mathcal{N}\left(0,\fr{1}{\left\{4\zeta_{3/4}\phi_\sigma
+\left(\zeta_{\sigma,3/4}\right)\right\}^2}\right)\,,
+\end{equation}
+где $\zeta_{\sigma,3/4}=F_\sigma^{-1}\left(3/4\right)$, а~$F_\sigma$ и~$\phi_\sigma$~--- 
+функция распределения и плотность распределения~$\mathcal{N}\left(0,\sigma^2\right)$ соответственно. 
+Обозначив предельную дисперсию в~(\ref{eq_weaklimIQR}) через~$d^2$, получим, что
+\begin{multline}
+\label{eq_weaklimIQR2}
+\sqrt{M}\left(\hat\sigma_2^2-\sigma^2\right)={}\\
+{}=\sqrt{M}\left(\hat\sigma_2-\sigma\right)\left(\hat\sigma_2+\sigma\right)\Rightarrow\mathcal{N}\left(0,4\sigma^2d^2\right)
+\end{multline}
+в силу сходимости $\hat\sigma_2$ к~$\sigma$ по вероятности. Значит, если $M$ имеет порядок роста~$N$, 
+то для оценок~$\hsig_1$ и~$\hsig_2$ справедлива теорема~3. 
+Заметим, что~(\ref{eq_weaklimIQR2}) можно показать, используя одну из теорем непрерывности~\cite{8mar}: 
+$y\left(\hat\sigma_2\right)=\hsig_2$, $y'(\sigma)=2\sigma$, 
+$\sqrt{M}\left(y(\hat\sigma_2)-y(\sigma)\right)\Rightarrow\mathcal{N}\left(0,\left(y'(\sigma)\right)^2d^2\right)$. 
+В англоязычной литературе эти теоремы носят название Delta method (см., например,~\cite{10mar}).
+
+Рассмотрим теперь случай, когда дисперсия оценивается по выборке~$X$, а точнее по ее части. 
+Можно считать, что вейвлет-коэффициенты на самом мелком масштабе являются коэффициентами шума~\cite{2mar}. 
+Ниже это предположение будет обобщено. Пусть $Y_{N/2+1},\ldots,Y_N$ имеют распределение 
+$\mathcal{N}\left(0,\sigma^2\right)$. Оценка~$\hsig_1$ принимает вид
+\begin{equation*}
+\hsig_1=S^2=\fr{1}{N/2}\sum\limits_{i=N/2+1}^N Y_i^2-\left(\fr{2}{N}\sum\limits_{i=N/2+1}^N Y_i\right)^2\,.
+\end{equation*}
+Тогда
+\begin{multline*}
+\sum\limits_{i=1}^N \left(Y_i^2-\hsig_1\right)=
+\sum\limits_{i=1}^{N/2} Y_i^2 -{}\\
+{}- \sum\limits_{i=N/2+1}^N Y_i^2 + N\left(\fr{2}{N}\sum\limits_{i=N/2+1}^N Y_i\right)^2\,.
+\end{multline*}
+При делении на~$\sqrt{N}$ получаем
+\begin{equation*}
+%\label{eq_weaklimAver2}
+\sqrt{N}\left(\fr{2}{N}\sum\limits_{i=N/2+1}^N Y_i\right)^2 \rightarrow 0
+\end{equation*}
+по вероятности, так как последовательность $\lambda_N\equiv$\linebreak $\equiv \sqrt{N}\left(2/N\sum_{i=N/2+1}^N Y_i\right)$ 
+сходится по распределению к нормальному закону~\cite{8mar}, а следовательно, в силу теоремы 
+непрерывности последовательность~$\lambda_N^2/\sqrt{N}$ сходится по вероятности к нулю.
+
+Обобщая вышесказанное, получаем, что
+\begin{multline}
+\label{eq_weaklimriskS2}
+\fr{\hat{r}(f,\hat{T})-r(f,T)}{D_N}\Rightarrow{}\\
+{}\Rightarrow \mathcal{N}\left(0,1+\fr{2\sigma^4}{2\sigma^2\left(\sigma^2+2R\right)}\right)\,,
+\end{multline}
+где
+\begin{equation}
+\label{eq_DNforS2}
+D_N^2=2\sigma^2\left(\fr{N}{2}\sigma^2+2\sum_{i=1}^{N/2} \left(f_W[i]\right)^2\right)\,.
+\end{equation}
+
+Используя результаты работы~\cite{11mar}, для совместного распределения второго выборочного момента~$\overline{Z^2}$ 
+и интерквартильного размаха $\mathrm{IQR}=Z_{M,3/4}\;-$\linebreak $-\;Z_{M,1/4}$ имеем
+
+\noindent
+\begin{multline}
+\label{eq_jointDistrIQR_S2}
+\sqrt{M}\left(\left(\begin{array}{c}\overline{Z^2}\\\mathrm{IQR}\end{array}\right)-
+\left(
+\begin{array}{c}
+\sigma^2\\2\sigma\zeta_{3/4}\end{array}
+\right)\right)
+\Rightarrow{}\\
+{}\Rightarrow  \mathcal{N}
+\left(0,\left(
+\begin{array}{cc} 2\sigma^4 & 2\sigma^3\zeta_{3/4} \\[3pt]
+2\sigma^3\zeta_{3/4} & 
+\displaystyle\fr{\sigma^2}{4\phi^2\left(\zeta_{3/4}\right)} \end{array}
+\right)\right)\,.
+\end{multline}
+Здесь учтено, что $\expct Z_i=0$ и $\phi_\sigma\left(\zeta_{\sigma,3/4}\right)=
+\phi\left(\zeta_{3/4}\right)/\sigma$, $\phi(\cdot)$~--- плотность распределения~$\mathcal{N}(0,1)$. 
+Применим к $\left(\overline{Z^2},\mathrm{IQR}\right)$ преобразование~$z$ с матрицей частных производных~$W$, вычисленных в
+точ\-ке~$\left(\sigma^2, 2\sigma\zeta_{3/4}\right)^T$:
+\begin{equation*}
+z(x,y)=\left(x,\fr{y^2}{4\zeta^2_{3/4}}\right)^T\,, 
+\quad W=\left(
+\begin{array}{cc}
+1 & 0\\0 & \displaystyle\fr{\sigma}{\zeta_{3/4}}
+\end{array}\right)\,.
+\end{equation*}
+Если обозначить матрицу ковариаций в~(\ref{eq_jointDistrIQR_S2}) через~$\Omega^2$, то 
+по векторному варианту теоремы непрерывности
+\begin{equation*}
+\sqrt{M}\left(z\left(\overline{Z^2},\mathrm{IQR}\right)-\left(\begin{array}{c}\sigma^2\\\sigma^2\end{array}\right)\right)
+\Rightarrow \mathcal{N}\left(0,W\Omega^2W^T\right)\,,
+\end{equation*}
+где
+\begin{equation*}
+W\Omega^2W^T=\left(\begin{array}{cc} 2\sigma^4 & 2\sigma^4 \\ 2\sigma^4 & \fr{\sigma^4}{4\zeta_{3/4}^2\phi^2\left(\zeta_{3/4}\right)} 
+\end{array}\right)\,.
+\end{equation*}
+Дисперсия разности~$\overline{Z^2}$ и нормированного интерквартильного размаха равна
+\begin{equation*}
+\varnce\left(\overline{Z^2}-\fr{\mathrm{IQR}^2}{4\zeta_{3/4}^2}\right)=
+\fr{\sigma^4}{4\zeta_{3/4}^2\phi^2\left(\zeta_{3/4}\right)}-2\sigma^4\equiv\Sigma^2\,.
+\end{equation*}
+Теперь, полагая $M=N/2$, $Z_i=Y_{N/2+i}$, получаем для~$\hat\sigma_2$:
+\begin{multline}
+\label{eq_weaklimriskIQR}
+\fr{\hat{r}(f,\hat{T})-r(f,T)}{D_N}\Rightarrow{}\\
+{}\Rightarrow \mathcal{N}\left(0,1+\fr{\Sigma^2}{2\sigma^2\left(\sigma^2+2R\right)}\right)\,,
+\end{multline}
+где~$D_N$ определена в~(\ref{eq_DNforS2}).
+
+Предполагалось, что $Y_{N/2+1},\ldots,Y_N$ имеют распределение 
+$\mathcal{N}\left(0,\sigma^2\right)$, т.\,е.\ коэффициенты разложения на самом 
+мелком масштабе содержат только\linebreak информацию о шуме. Однако такой подход несколько 
+нестрогий, поэтому рассмотрим такое обобщение. Пусть~$Y_{N/2+i}$ имеет распределение 
+$\mathcal{N}\left(\mu_i,\sigma^2\right)$, $i=\overline{N/2+1,N}$, при этом $\mu_i=\osml(1)$. 
+Какой конкретно порядок малости достаточно потребовать, чтобы результаты для $\mu_i=0$ 
+остались справедливыми, будет выяснено ниже. Такое обобщение вполне обосновано, так как, если функция~$f$ 
+достаточно гладкая, вейвлет-коэффициенты убывают к нулю достаточно быстро~\cite{3mar}.
+
+Функция~$f$ называется гладкой по Липшицу с параметром~$\alpha$ на от\-рез\-ке~$[a,b]$, 
+если существуют константа~$K$ и полином~$p_x$ степени $m=\lfloor\alpha\rfloor$ такие, 
+что для любого $x\in[a,b]$ и любого $t\in\mathbb{R}$
+\begin{equation*}
+\left| f(t)-p_x(t) \right|\leq K|t-x|^\alpha\,,
+\end{equation*}
+где
+\begin{equation*}
+p_x(t)=\sum\limits_{k=0}^{m}c_k(t-x)^k\,.
+\end{equation*}
+Понятно, что если~$f$ является $m$~раз дифференцируемой, то 
+$c_k=f^{(k)}(x)/k!$, $k=\overline{0,m-1}$. 
+При $0\leq\alpha<1$ имеем $p_x(t)=f(x)$. Известно~\cite{3mar}, что если~$f$ гладкая по 
+Липшицу с параметром~$\alpha$ на отрезке~$[a,b]$, то существует константа~$\Upsilon$ такая, что
+\begin{equation}
+\label{eq_aiBound}
+|\mu_i|\leq\fr{\Upsilon}{N^{\alpha}}\,,\quad i=\overline{\fr{N}{2}+1,N}\,,
+\end{equation}
+причем~$\Upsilon$ не зависит от~$N$.
+
+Обозначим $V_i=Y_{N/2+i}-\mu_{N/2+i}$, $i=\overline{1,N/2}$, 
+$\ovrV=2/N\sum\limits_{i=1}^{N/2}V_i$, $\mu=2/N\sum\limits_{i=N/2+1}^{N}\mu_i$. Тогда
+\begin{multline}
+\label{eq_Yi2Vi}
+\fr{1}{\sqrt{N/2}}\sum\limits_{i=N/2+1}^N Y_i^2 = 
+\fr{1}{\sqrt{N/2}}\sum\limits_{i=1}^{N/2}V_i^2 + {}\\
+{}+
+\fr{1}{\sqrt{N/2}}\sum\limits_{i=1}^{N/2}V_i\mu_{N/2+i} +
+\fr{1}{\sqrt{N/2}}\sum\limits_{i=N/2+1}^N \mu_i^2\,.
+\end{multline}
+Допустим, что выполнено условие~(\ref{eq_aiBound}), тогда $\mu=\Obig(N^{-\alpha})$. 
+В этом случае последняя сумма в~(\ref{eq_Yi2Vi}) стремится к нулю при $\alpha>1/4$. Далее,
+\begin{multline*}
+\!\!\left|\fr{1}{\sqrt{N/2}}\sum\limits_{i=1}^{N/2}V_i\mu_{N/2+i}\right| \leq 
+\fr{1}{\sqrt{N/2}}\sum\limits_{i=1}^{N/2}|V_i\mu_{N/2+i}| \leq {}\\
+{}\leq
+\sqrt{\fr{\sum\limits_{i=1}^{N/2}V_i^2}{N/2}\sum\limits_{i=N/2+1}^N\mu_i^2}
+\end{multline*}
+сходится к нулю по вероятности при $\sum\limits_{i=N/2+1}^N\mu_i^2\rightarrow 0$, т.\,е.\ 
+при $\alpha>1/2$. Кроме того,
+
+\noindent
+\begin{multline*}
+\sqrt{N/2}\left(
+\fr{1}{N/2}\sum\limits_{i=N/2+1}^N Y_i\right)^2 = \sqrt{\fr{N}{2}}\left(\ovrV\right)^2 +{}\\
+{}+ 2\mu\sqrt{\fr{N}{2}}\ovrV + \sqrt{\fr{N}{2}}\mu^2
+\end{multline*}
+сходится к нулю по вероятности при $\mu\rightarrow 0$ $\left(\alpha>0\right)$. 
+Итак, получаем достаточное требование на~$\alpha$: при $\alpha>1/2$ остается справедливым~(\ref{eq_weaklimriskS2}). 
+При переходе от~$Y_i$ к~$V_i$ и при введенных ограничениях предельные распределения совпадают.
+
+Теперь рассмотрим случай использования интерквартильного размаха. 
+Пусть $Z_{N/2,p}$~--- выборочная квантиль порядка~$p$, построенная по $Y_{N/2+1},\ldots,Y_N$, 
+а $Z_{N/2,p}'$~--- выборочная квантиль порядка~$p$, построенная по $V_1,\ldots,V_{N/2}$. Заметим, что почти всюду
+\begin{equation}
+\label{eq_quanDiff}
+\left| Z_{N/2,p} - Z_{N/2,p}' \right| \leq 5 \max_{N/2+1\leq i\leq N} |\mu_i| \leq \fr{5\Upsilon}{N^{\alpha}}\,.
+\end{equation}
+Нужно, чтобы правая часть в~(\ref{eq_quanDiff}) стремилась к нулю при умножении на~$\sqrt{N/2}$. 
+Тогда~$Z_{N/2,p}'$ можно использовать вместо~$Z_{N/2,p}$, и с учетом~(\ref{eq_Yi2Vi}) все сводится к 
+случаю $\mu_i=0$, для которого уже все доказано (см.\ формулу~(\ref{eq_weaklimriskIQR})). 
+Таким образом, достаточно потребовать $\alpha>1/2$.
+
+Итак, если функция гладкая по Липшицу с положительным параметром  $\alpha>1/2$, 
+то при использовании оценок дисперсии на основе~$S^2$ и интерквартильного размаха 
+предельные распределения оказываются такими же, как и в случае $\mu_i=0$, $i=\overline{N/2+1,N}$.
+
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\addcontentsline{toc}{section}{Литература}
+\begin{thebibliography}{99}    
+
+\bibitem{1mar}
+\Au{Маркин А.\,В., Шестаков О.\,В.} 
+О состоятельности оценки риска при пороговой обработке вейвлет-коэффициентов~// 
+Вестник Моск.\ ун-та. Серия~15: Вычислительная математика и кибернетика (в пе\-чати).
+
+
+\bibitem{3mar} %2
+\Au{Mallat S.} 
+A wavelet tour of signal processing.~--- Academic Press, 1999.
+
+\bibitem{4mar} %3
+\Au{Добеши И.} 
+Десять лекций по вейвлетам.~--- Ижевск: НИЦ <<Регулярная и хаотическая динамика>>, 2001.
+
+\bibitem{6mar} %4
+\Au{Stein C.\,M.} 
+Estimation of the mean of a multivariate normal distribution~// Annals Statistics, 1981. Vol.~9. No.\,6. P.~1135--1151.
+
+\bibitem{5mar} %5
+\Au{Donoho D.\,L., Johnstone I.\,M.}
+ Adapting to unknown smoothness via wavelet shrinkage~// J. Amer. Statistical Association, 1995. 
+ Vol.~90. P.~1200--1224.
+
+ \bibitem{2mar} %6
+\Au{Donoho D.\,L., Johnstone I.\,M.} 
+Ideal spatial adaptation via wavelet shrinkage~// Biometrika, 1994. Vol.~81. No.\,3. P.~425--455.
+
+
+\bibitem{7mar}
+\Au{Ширяев А.\,Н.} Вероятность-1.~--- М.: МЦНМО, 2004.
+
+\bibitem{8mar}
+\Au{Боровков А.\,А.}
+ Математическая статистика.~--- М.: Наука, 1984.
+
+\bibitem{9mar}
+\Au{Serfling R.} 
+Approximation theorems of mathematical statistics.~--- John Wiley \& Sons, 1980.
+
+\bibitem{10mar}
+\Au{Van der Vaart A.\,W.} 
+Asymptotic statistics.~--- Cambridge University Press, 2000.
+
+\label{end\stat}
+
+\bibitem{11mar}
+\Au{DasGupta A.} 
+Asymptotic values and expansions for the correlation between different measures of spread~// 
+J.\ Statistical Planning Inference, 2006. Vol.~136. No.\,7. P.\,2197--2212.
+ \end{thebibliography}
+}
+}
+\end{multicols}

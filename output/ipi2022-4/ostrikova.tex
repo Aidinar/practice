@@ -1,0 +1,936 @@
+\def\stat{ostrikova}
+
+\def\tit{ОБ ОПТИМАЛЬНОМ РАСПОЛОЖЕНИИ АНТЕНН ДЛЯ~V2X-СОЕДИНЕНИЙ 
+В~СУБТЕРАГЕРЦЕВОМ ДИАПАЗОНЕ$^*$}
+
+\def\titkol{Об оптимальном расположении антенн для~V2X-соединений 
+в~субтерагерцевом диапазоне}
+
+\def\aut{Е.\,А.~Мачнев$^1$, В.\,А.~Бесчастный$^2$, Д.\,Ю.~Острикова$^3$, 
+Ю.\,В.~Гайдамака$^4$, С.\,Я.~Шоргин$^5$}
+
+\def\autkol{Е.\,А.~Мачнев, В.\,А.~Бесчастный, Д.\,Ю.~Острикова и~др.}
+%$^3$,  Ю.\,В.~Гайдамака$^4$, С.\,Я.~Шоргин$^5$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Мачнев Е.\,А.}
+\index{Бесчастный В.\,А.}
+\index{Острикова Д.\,Ю.}
+\index{Гайдамака Ю.\,В.}
+\index{Шоргин С.\,Я.}
+\index{Machnev E.\,A.}
+\index{Beschastnyi V.\,A.}
+\index{Ostrikova D.\,Yu.}
+\index{Gaidamaka Yu.\,V.}
+\index{Shorgin S.\,Ya.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Исследование выполнено за счет гранта Российского научного фонда № 22-29-00694.}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Российский университет дружбы народов, 1042200071@pfur.ru}
+\footnotetext[2]{Российский университет дружбы народов, beschastnyy-va@rudn.ru}
+\footnotetext[3]{Российский университет дружбы народов, ostrikova-dyu@rudn.ru}
+\footnotetext[4]{Российский университет дружбы народов; Федеральный исследовательский центр <<Информатика и~управ\-ле\-ние>> 
+Российской академии наук, \mbox{gaydamaka-yuv@rudn.ru}}
+\footnotetext[5]{Федеральный исследовательский центр <<Информатика и~управление>> 
+Российской академии наук, sshorgin@ipiran.ru}
+
+\vspace*{-6pt}
+
+  
+  \Abst{Субтерагерцевая (суб-ТГц, 100--300~ГГц) связь должна обеспечить огромную  
+ско\-рость передачи данных в~сис\-те\-мах~6G. Однако зона покрытия базовых станций 
+(БС) ограничена, так как сигнал существенно затухает с~увеличением дистанции, а~также 
+легко блокируется различными объектами, встречающимися на пути распространения 
+сигнала. Таким образом, БС необходимо располагать достаточно часто, что делает такое 
+решение дорогостоящим. Для снижения плотности развертывания БС можно использовать 
+механизм ретрансляции сигнала с~помощью транспортных средств (ТС). Данный способ 
+в~большой степени зависит от зоны размещения приемо-пе\-ре\-да\-ющей антенны на 
+кузове ТС, что ставит вопрос о поиске расположения антенны, при котором механизм 
+ретрансляции будет эффективным с~точки зрения скорости передачи данных и~расстояния 
+между ТС-источником и~БС. В~данной работе на основе спецификации IEEE 802.15.3d 
+и~экспериментальных данных о~распространении сигнала на частоте 300~ГГц 
+предложена математическая модель для анализа многозвеньевой системы ретрансляции 
+сигнала для трех зон размещения антенны на кузове ТС. Полученные результаты 
+показывают, что расположение передатчика в~зоне лобового стекла характеризуется более 
+низкой скоростью передачи данных, но при этом гораздо большим покрытием, чем 
+расположение в~зонах бампера и~двигателя.}
+  
+  \KW{5G; <<новое радио>>; V2V; V2X; ретрансляция}
+  
+  \DOI{10.14357/19922264220407} 
+  
+%\vspace*{-3pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+
+
+     Системы 5G New Radio (NR), \mbox{ра\-бо\-та\-ющие} в~мик\-ро\-вол\-но\-вом 
+($\mu$Wave) и~миллиметровом (mmWave) диапазонах, уже вышли на рынок. 
+В~то же время исследователи приступили к~изучению субтерагерцевых  
+(100--300~ГГц) диапазонов в~контексте сис\-тем~6G~[1, 2]. Однако 
+чрезвычайно высокое затухание сигнала, эффекты динамической 
+блокировки~[3], а~также микромобильность~[4, 5] ограничивают дальность 
+действия таких систем несколькими сотнями метров.
+     
+     Одна из серьезных проблем для сотовых операторов~--- обеспечение 
+расширенного мобильного широкополосного доступа (Enhanced mobile 
+broadband, eMBB) для пользователей в~движущихся ТС.\linebreak
+ Эта услуга требует не только постоянного подключения, но и~высокой 
+ско\-рости передачи данных. Одним из решений могут стать 
+высокопроизводительные сис\-те\-мы~5G NR, работающие в~\mbox{диапазоне} 
+миллиметровых волн, или 6G в~субтерагерцевом диапазоне. Однако высокое 
+затухание в~субтерагерцевом диапазоне и~другие особенности 
+распространения сигнала, такие как блокировка прямой видимости, 
+ограничивают зону покрытия расположенных по краям дороги БС 
+несколькими сотнями метров, что требует высокой плотности развертывания, 
+а~значит, ставит вопрос о~рен\-та\-бель\-ности сис\-темы.
+
+\begin{figure*}[b] %fig1
+\vspace*{-4pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=163mm
+\epsfbox{mac-1.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Схема моста из одного ТС-ре\-транс\-ля\-то\-ра с~учас\-ти\-ем  
+ТС-от\-ра\-жа\-теля}
+\end{figure*}
+
+     
+     Для обеспечения постоянной связи и~снижения финансовых затрат 
+сетевых операторов можно использовать механизм ретрансляции 
+сигнала~[6]. Чтобы обеспечить поддержку этого механизма, консорциум 
+3GPP недавно стандартизировал технологию интегрированного доступа 
+и~транспортной сети (Integrated Access and Backhaul, IAB)~[7]. В~рамках 
+этой технологии ТС-ретрансляторы с~высокоскоростными передатчиками 
+в~диапазоне субтерагерцевых частот могут организовать так называемые 
+<<мосты>>, пересылая по цепочке данные от ТС, которые в~настоящее время 
+не имеют прямого подключения к~БС. Эффективность механизма 
+многозвеньевой ретрансляции сигнала оценивается на основании ско\-рости 
+передачи данных по установленному мосту и~длины моста, т.\,е.\ расстояния 
+между ТС-источником сигнала и~БС. При этом расположение  
+при\-емо-пе\-ре\-да\-ющей антенны на кузове ТС влияет на оба указанных 
+показателя. 
+     
+     Конечная цель данного исследования~--- выработать рекомендации по 
+выбору зоны размещения антенны на ТС, при котором механизм 
+ретрансляции обеспечит минимальную плотность развертывания БС для 
+заданного набора параметров и~условий дорожного движения, включая 
+плотность ТС на дороге и~ско\-рости их движения. Разработанная 
+математическая модель основана на недавних исследованиях 
+распространения сигнала в~субтерагерцевом диапазоне в~среде~V2V 
+(Vehicle-to-Vehicle) и~использует реалистичные параметры связи из стандарта 
+IEEE~802.15.3d~[8].
+     
+\section{Системная модель}
+
+     Рассматривается участок автомагистрали, например городская улица 
+или скоростное шоссе, покрытие которого беспроводной связью 
+обеспечивается БС~6G, работающими в~субтерагерцевом 
+диапазоне. Предполагается, что БС установлены по обеим сторонам дороги 
+в~шахматном порядке, например на фонарных столбах, на постоянной 
+высоте~$h_A$. Расстояние между БС по одной стороне дороги равно~$d$, 
+таким образом, БС образуют равнобедренные треугольники 
+с~основанием~$d$, т.\,е.\ БС на противоположных сторонах сдвинуты друг 
+относительно друга на расстояние $d/2$. Эти БС служат точками доступа 
+в~интернет для пользователей, находящихся в~ТС, например в~автомобилях 
+(рис.~1).
+     
+
+
+     Предполагается, что дорога имеет четное чис\-ло~$N_l$~полос, при этом 
+возможно движение ТС в~противоположных направлениях. Ширина полос 
+постоянна и~равна~$w$. Ско\-рость ТС предполагается равной~$v$. 
+Расположение ТС на дорожной полосе определяется пуассоновским 
+процессом ин\-тен\-сив\-ности~$\lambda$, согласно которому расположены 
+центры ТС. Далее предположим, что автомобили имеют 
+одинаковую постоянную длину~$l_v$, а~дорожный просвет равен~$h_C$. 
+Дорожное движение предполагается однородным на каждой полосе, т.\,е.\
+     $v$, $\lambda$ и~$l_v$ не зависят от рассматриваемой полосы. 
+     
+     Согласно~[9], новые технологии V2V обеспечат\linebreak эффективный 
+и~безопасный контроль над мобильностью ТС при минимально допустимом 
+расстоянии между любыми двумя транспортными средствами $d_s\hm= t_s 
+v$, где $t_s\hm=0{,}5$~с~--- минимальное\linebreak время, необходимое сис\-те\-мам 
+автоматического управ\-ле\-ния для оценки условий движения в~режиме 
+реального времени и~принятия превентивных мер.
+     
+     Для снижения капитальных затрат за счет увеличения расстояния 
+между БС предполагается, что доля ТС~$P_E$ оснащена устройствами 
+ретрансляции сигнала. Параметр~$P_E$ называется <<сте\-пенью внед\-ре\-ния 
+технологии>>. Транспортные средства обору\-до\-ва\-ны двумя при\-емо-пе\-ре\-да\-ющи\-ми антеннами:
+одна в~передней и~одна в~задней части ТС. Возможность подключения 
+приемопередатчиков к~высокоскоростной внут\-рен\-ней шине со ско\-ростью 
+\mbox{передачи} данных, достаточной для обработки {ретранслируемого} трафика, 
+под\-тверж\-да\-ет\-ся последними разработками~[10].
+     
+     Транспортные средства, оснащенные средствами связи, нуждаются 
+в~услугах eMBB, предостав\-ля\-емых через БС. Если прямое соединение 
+невозможно из-за того, что ТС находится вне зоны действия ближайшей БС, 
+они используют ретрансляцию для формирования моста, состоящего из 
+одной или нескольких точек ретрансляции, в~качестве которых выступают 
+ТС-ре\-транс\-ля\-то\-ры. Длина этого моста и~скорость передачи данных по 
+нему существенно зависят от плотности развертывания БС, характеристик 
+окружающей среды, влияющих на распространение сигнала, включая 
+плотность ТС на дороге и~сценарий дорожного движения, а~также зоны 
+размещения антенны.
+     
+     В работе рассмотрены следующие потенциальные варианты 
+расположения антенны: на уровне бампера (0,3--0,4~м), на уровне двигателя 
+(0,4--1,0~м) и~на лобовом стекле (1,0--1,5~м). Определим параметр~$\sigma$ 
+для обозначения зоны размещения антенны, т.\,е.\ $\sigma\hm\in \{B,E,W\}$ 
+соответственно.
+     
+     Значение отношения уровня сигнала к~уровню шума (Signal to 
+Interference plus Noise Ratio, SINR) на ТС на расстоянии~$x$ от БС 
+записывается в~виде
+     \begin{equation*}
+     S(x)= P_T G_A G_U \fr{x^{-\gamma}}{(N_0+I)L_A (f,x) 
+L_B}\,,
+    % \label{e1-ost}
+     \end{equation*}
+где $P_T$~--- излучаемая мощность; $G_A$ и~$G_U$~--- коэффициенты 
+усиления на стороне приема и~передачи; $\gamma$~--- коэффициент потерь 
+на пути сигнала; $N_0$~--- тепловой шум; $I$~--- помехи; $L_A(f,x)$~--- 
+коэффициент затухания сигнала; $L_B$~--- потери, вызванные блокировкой 
+или отражениями от других объектов.
+
+\section{Математическая модель установления соединения 
+для~механизма многозвеньевой ретрансляции сигнала}
+
+     Построение модели начнем с~анализа прямых подключений между  
+ТС-ис\-точ\-ни\-ком сигнала и~БС, а именно: с~определения максимальной 
+дистанции прямого подключения и~скорости передачи данных. Чтобы 
+вычислить данные параметры, используем набор схем модуляции 
+и~кодирования, указанных в~стандарте IEEE 802.15.3d~[8].
+     
+     Следуя~[11], максимальное расстояние подключения  
+ав\-то\-мо\-би\-ля-ис\-точ\-ни\-ка к~БС с~допустимой мощ\-ностью  
+при\-ни\-ма\-емо\-го сигнала~$S$ можно записать как
+     \begin{equation}
+     d_\xi(S)= \left( \fr{P_T \sqrt[10]{10^{G_A+G_U}}} 
+{\sqrt[10]{10^{N_0+S}}\,10^{2\log_{10} f_c-14{,}86+L_B}} 
+\right)^{1/\gamma}\,,
+     \label{e2-ost}
+     \end{equation}
+где $P_T$~--- мощность передачи; $G_A$ и~$G_U$~--- коэффициенты 
+усиления на приеме и~передаче; $f_c$~--- 
+несущая частота.
+
+     Если следующий автомобиль не поддерживает ретрансляцию, 
+расположение антенны на уровне бампера в~дополнение к~прямой видимости 
+($L$) может использовать пути отражения под ТС ($U$) и~от соседнего 
+автомобиля ($R$). Если антенна расположена на уровне двигателя или 
+лобовом стекле, отражение сигнала под автомобилем недоступно ввиду 
+геометрических ограничений, при этом отражение от соседнего автомобиля 
+доступно. Для расположения на стекле существует также возможность 
+прохождения сигнала сквозь стекло следующего автомобиля ($W$), но 
+затухание сигнала при этом будет в~несколько раз выше затухания при 
+прямой видимости. Для обозначения типов распространения сигнала 
+используем параметр $\xi \hm\in \{L,U,R,W\}$.
+     
+     Следует обратить внимание, что минимальная требуемая мощность 
+сигнала приема $S\hm= S_{\min}$ позволяет получить максимальное 
+расстояние для связи между соседними автомобилями, далее обозначаемое 
+как $d_\xi^{\max}$, $\xi\hm\in \{L,U,R,W\}$.
+     
+     Функции плотности вероятности расстояния до $i$-го соседнего 
+ТС~[12] в~случае распределения цент\-ров ТС согласно процессу Пуассона 
+подчиняются распределению Эрланга~[13]:
+     \begin{equation*}
+     f_i(x)=\fr{2(\pi\lambda)^i}{(i-1)!}\,x^{2i-1} e^{-\pi \lambda x^2} ,\enskip 
+x>0\,,\enskip i=1,\ldots , N.
+     %\label{e3-ost}
+     \end{equation*}
+     
+     \textbf{Подключение в~зоне прямой видимости.} Связь в~зоне прямой 
+видимости на расстоянии~$r$ возможна для всех рассматриваемых зон 
+размещения антенны, если расстояние между вза\-и\-мо\-дей\-ст\-ву\-ющи\-ми ТС 
+меньше, чем максимальное расстояние связи в~условиях прямой видимости 
+$d^{\max}$ из~(\ref{e2-ost}), и~сле\-ду\-ющее ТС оборудовано при\-е\-мо-пе\-ре\-да\-ющей антенной. Таким образом, вероятность успешного подключения в~условиях прямой видимости на расстоянии~$r$ имеет вид:
+     \begin{equation*}
+     f_{H,\mathrm{LoS}}(r) =I\left( r<d^{\max}\right) P_E f_0(r)\,,
+     \label{e4-ost}
+     \end{equation*}
+где $f_0(r)$ вычисляется как
+\begin{equation*}
+f_0(r)= 0{,}5 f_1(r) +0{,}5 f_2(r)\,.
+%\label{e5-ost}
+\end{equation*}
+     
+     \textbf{Отражение от соседнего автомобиля.} На\-пом\-ним, что боковое 
+отражение доступно для всех рас\-смат\-ри\-ва\-емых зон размещения антенны. 
+В~случае блокировки прямой видимости, т.\,е.\ когда следующее ТС не 
+оборудовано приемо-передающей антенной, предполагаем, что 
+расстояние~$d_0$ до блокирующего ТС (см.\ рис.~1) равновероятно 
+подчиняется распределению расстояния либо до первого соседа, либо до 
+второго. Соответственно, плот\-ность ве\-ро\-ят\-ности расстояния с~обходом 
+блокирующего автомобиля определяется как свертка расстояний до двух 
+ближайших соседей блокирующего ТС, т.\,е.
+     \begin{equation*}
+     f_B(r)=\left(f_1*f_2\right) (r)=\int\limits_0^\infty f_1(s) f_2(r-s)\,ds\,.
+%     \label{e6-ost}
+     \end{equation*}
+     
+     \begin{figure*}[b] %fig2
+\vspace*{-6pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=118.5mm
+\epsfbox{mac-2.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Схема отражения под автомобилем}
+\end{figure*}
+     
+     В модели предполагается, что возможен обход не более одного 
+блокирующего ТС через одно боковое отражение (см.\ рис.~1). При этом  
+ав\-то\-мо\-биль-<<от\-ра\-жа\-тель>> должен находиться на таком участке 
+соседней полосы, где сигнал от <<передатчика>> не будет заблокирован  
+ав\-то\-мо\-би\-лем-<<бло\-ки\-ра\-то\-ром>>, находящимся слишком близ\-ко 
+либо к~<<передатчику>>, либо к~<<ретранслятору>>. Вероятность 
+незаблокированного отражения может быть выражена~как
+     \begin{equation*}
+     \delta_R(r)=\fr{w_v}{\eta(r)}= \fr{w_v r}{2(w-w_v)}\,,
+    % \label{e7-ost}
+     \end{equation*}
+где $\eta(r)\hm= 2(w\hm- w_v)/r$~--- тангенс угла отклонения луча~$\beta$; 
+$w_v$~--- половина ширины ТС.
+
+     Вероятность ${\sf P}_R(r)$ наличия на соседней полосе ТС, 
+обеспечивающего незаблокированное отражение сигнала, можно получить, 
+используя свойство независимости процесса Пуассона. Предполагая, что 
+точка центра отражателя на соседней полосе равномерно распределена на 
+отрезке, соответствующем расстоянию между передатчиком 
+и~ретранслятором~[14], искомую вероятность можно выразить в~следующем 
+виде:
+     \begin{equation}
+     {\sf P}_R(r)=\begin{cases}
+     \left( \fr{N_l}{2}-1\right) 
+\fr{\delta_R(r)\lambda}{[l_v+2\Delta_\alpha(r)]^{-1}}\,, & \\
+& \hspace*{-20mm}2d_s<r<d_R^{\max}\,;\\
+     0 & \hspace*{-20mm}\mbox{в\ других\ случаях},
+     \end{cases}
+     \label{e8-ost}
+     \end{equation}
+где $\Delta_\alpha$~--- допустимое смещение соседнего~ТС.
+     
+     \textbf{Отражение под автомобилем.} В~отличие от зон лобового 
+стекла и~двигателя, при размещении антенны в~зоне бампера становится 
+возможной передача сигнала под ТС за счет отражения от дорожного 
+полотна. Из-за свойства симметричности отраженного пути (рис.~2) 
+минимальное расстояние между бампером блокиратора и~бампером 
+с~антенной с~обеих сторон одинаково и~определяется выражением
+     \begin{equation*}
+     \delta_U(r)= \fr{r}{2}\left( 1-\fr{h_C}{h_B}\right)-\Delta_\alpha\,,
+    % \label{e9-ost}
+     \end{equation*}
+где $h_C$~--- дорожный просвет; $h_B$~--- высота размещения антенны; 
+$\Delta_\alpha$~--- смещение, допускаемое для бло\-ки\-ру\-юще\-го~ТС.
+
+
+
+     Вероятность передачи сигнала под ТС можно найти 
+аналогично~(\ref{e8-ost}):
+
+\noindent
+     \begin{multline}
+     {\sf P}_{B,B}(r)={}\\
+     {}= \begin{cases}
+     \delta_U(r) \left( \fr{h_C}{h_B}+\fr{\Delta_\alpha}{r}\right), & 2d_s< r< 
+d_U^{\max}\,;\\
+     0 & \mbox{в\ других\ случаях}.
+     \end{cases}
+     \label{e10-ost}
+     \end{multline} 
+     
+     \textbf{Прохождение сигнала сквозь стекло.} Наконец, найдем 
+вероятность установления соединения через стекла бло\-ки\-ру\-юще\-го~ТС:
+     \begin{equation*}
+     {\sf P}_{B,W}(r)= \begin{cases}
+     1, & 2d_s<r<d_W^{\max}\,;\\
+     0 & \mbox{в\ других\ случаях}\,.
+     \end{cases}
+    % \label{e11-ost}
+     \end{equation*}
+     
+     \textbf{Вероятность успешного многозвеньевого подключения.} 
+С~учетом вышеизложенных возможностей установления соединения для 
+механизма многозвеньевой ретрансляции сигнала вероятность успешного 
+подключения на расстоянии~$r$, $f_{H,\sigma}(r)$, $\sigma\hm\in \{B,E,W\}$, 
+определяется как сумма вероятностей двух событий: либо следующее ТС 
+оснащено антенной и~можно использовать подключение в~условиях прямой 
+видимости, либо следующее ТС на полосе не имеет передающего устройства 
+с~ве\-ро\-ят\-ностью $1\hm- {\sf P}_E$ и~единственный вариант~--- обойти его 
+с~по\-мощью описанных выше способов. Таким образом, 
+расширяя~(\ref{e10-ost}), приходим к~сле\-ду\-ющей формуле для плот\-ности 
+вероятности успешного подключения на расстоянии~$r$:
+     \begin{multline}
+     f_{H,\sigma}(r) = I\left( r< d^{\max}\right) {\sf P}_E f_0(r)+
+     \left( {\sf P}_E-{\sf P}_E^2\right)\times{}\\
+     {}\times \left( {\sf P}_R(r)+{\sf P}_{B,\sigma}(r) - {\sf P}_R(r) 
+{\sf P}_{B,\sigma}(r)\right) f_B(r)\,.
+     \label{e12-ost}
+     \end{multline}
+     
+       \begin{table*}[b]\small
+       \vspace*{-12pt}
+  \begin{center}
+  \Caption{Параметры дорожного движения}
+  \vspace*{2ex}
+  
+  \begin{tabular}{|l|c|c|}
+  \hline
+\multicolumn{1}{|c|}{Сценарий}&\tabcolsep=0pt\begin{tabular}{c}Скорость\\ автомобиля $v$, км/ч \end{tabular}& 
+\tabcolsep=0pt\begin{tabular}{c}Расстояние между\\ автомобилями $d_0$, м\end{tabular}\\
+\hline
+ Пробка& 20 &10\\
+Нормальный городской трафик& 60&30\\
+Шоссе& 120\hphantom{9} & 60\\
+\hline
+\end{tabular}
+\end{center}
+%\end{table*}
+%\begin{table*}\small
+%\vspace*{4pt}
+  \begin{center}
+  \Caption{Входные параметры системы}
+  \vspace*{2ex}
+  
+  \begin{tabular}{|c|c|l|}
+  \hline
+Обозначение&Значение&\multicolumn{1}{c|}{Описание}\\
+\hline
+$l_v$&4,5~м&Длина автомобиля\\
+$\lambda$&0,02~авт/м&Средняя плотность автомобилей\\
+$h_A$&3~м&Высота БС\\
+$h_B$&0,4/0,7/1,2~м&Высота антенны\\
+$h_C$&0,2~м&Дорожный просвет автомобиля\\
+$v$&25~м/с&Скорость автомобиля\\
+$f_C$&304,2~ГГц&Несущая частота\\
+$P_T$&$4{,}2\cdot 10^{-6}$~Вт &Мощность передатчика БС/автомобиля\\
+$N_0$&$-$84~дБ&Мощность шума\\
+ $S$&$-$56~дБ&Минимальный SINR\\
+$G_A$, $G_U$&17,58~дБ&Коэффициенты усиления на приеме и~на передаче\\
+$\gamma$&2,1&Коэффициент затухания сигнала\\
+\hline
+\end{tabular}
+\end{center}
+\end{table*}
+     
+     Определив вероятность многозвеньевого подключения  
+в~(\ref{e12-ost}), можно перейти к~описанию показателей эффективности. 
+В~част\-ности, вероятность того, что мост из~$n$ ТС-ре\-транс\-ля\-то\-ров 
+обеспечит передачу данных на расстояние~$r$, может быть получена  
+с~по\-мощью $n$-крат\-ной свертки~(\ref{e12-ost}):
+
+\noindent
+     \begin{equation*}
+     p_{C,\sigma}(n,r) =\int\limits^\infty_{r-d^{\max}} f^{(n)}_{H,\sigma} 
+(y)\,dy\,.
+    % \label{e13-ost}
+     \end{equation*}
+     Если допустить возможность бесконечного чис\-ла 
+ ТС-ре\-транс\-ля\-то\-ров в~соединении, вероятность того, что длина моста 
+окажется не меньше расстояния~$r$ от ТС-ис\-точ\-ни\-ка сигнала до БС, 
+может быть получена следующим образом:
+
+\noindent
+     \begin{multline*}
+     p_{S,\sigma} (r)= \sum\limits^\infty_{n=1} p_{C,\sigma} (n,r) 
+\prod\limits_{j=1}^{n-1} \left( 1-p_{C,\sigma}(j,r)\right)\,,\\
+     \sigma\in \{B,E,W\}\,.
+     %\label{e14-ost}
+     \end{multline*}
+     
+     Скорость передачи по установленному мос\-ту~[14] определяется звеном 
+с~наихудшими условиями канала. Тогда, имея пороговые значения~$s_i$, 
+$i\hm=1,\ldots , N_C$, чувствительности приемника, соответствующие набору 
+показателей качества канала $\{1,\ldots , N_C\}$, можно найти вероятность 
+использования схемы кодирования~$i$ в~звене для каждого типа 
+распространения сигнала $\xi\hm\in \{L,U,R,W\}$:
+     \begin{equation*}
+     q_{\xi,i} =\int\limits_{d_\xi(s_i)}^{d_\xi(s_{i+1})} f_{H,\xi}(r)\,dr\,,\enskip 
+i=1,\ldots , N_C\,,
+    % \label{e15-ost}
+     \end{equation*}
+где $d_\xi(S_{N_C+1})\hm=\infty$.
+
+     Теперь определим среднюю скорость передачи данных по 
+установленному мосту, включающему~$n$ ТС-ре\-транс\-ля\-то\-ров, 
+используя биномиальное распределение
+
+\noindent
+     \begin{equation*}
+     \rho_{\xi,n}=\sum\limits_{i=1}^{N_C} \omega_i \left( 
+\sum\limits_{k=i}^{N_C} q_{\xi,k}\right)^n\,,\enskip \xi\in \{L,U,R,W\}\,,
+     %\label{e16-ost}
+     \end{equation*}
+где $\omega_i$~--- спектральная эффективность канала согласно схеме~$i$.
+
+     Тем не менее в~целях контроля качества соединения имеет смысл 
+ограничивать максимальное число ТС-ре\-транс\-ля\-то\-ров некоторым 
+заданным значением~$N$, $N\hm\geq 1$:
+     \begin{multline*}
+     \rho_{S,\sigma}(r)={}\\
+     {}= \!\!\!\sum\limits_{\xi\in \{L,R,U,W\}}\!\!\!\!\!\!\! {\sf P}_\xi 
+\sum\limits_{n=1}^N \rho_{\xi,n} p_{C,\sigma} (n,r) \prod\limits^n_{j=1} \left( 
+1-p_{C,\sigma} (j,r)\right)\,,\\
+     \sigma\in\{B,E,W\}\,.
+   %  \label{e17-ost}
+     \end{multline*}
+     
+     \vspace*{-18pt}
+
+\section{Численный анализ}
+
+\vspace*{-3pt}
+
+     В качестве исходных данных для численного эксперимента 
+рассматриваются три сценария дорожного движения: проб\-ка, нормальные 
+условия движения в~городе и~скоростное шоссе. Сценарии различаются  
+ско\-ростью ТС и~средним расстоянием между ними, как показано в~табл.~1. 
+Остальные па\-ра\-мет\-ры сис\-те\-мы приведены в~табл.~2.
+
+\begin{figure*} %fig3
+\vspace*{1pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=84.218mm
+\epsfbox{mac-3.eps}
+}
+\end{center}
+\vspace*{-11pt}
+\Caption{Средняя длина моста (залитые значки) и~скорость передачи (пустые значки) в~зависимости от 
+плотности ТС: \textit{1}~--- бампер; \textit{2}~--- стекло; \textit{3}~--- 
+двигатель}
+\vspace*{-5pt}
+\end{figure*}
+
+
+\begin{figure*}[b] %fig4
+  \vspace*{-6pt}
+    \begin{minipage}[t]{80mm}
+\begin{center}
+   \mbox{%
+\epsfxsize=78.898mm
+\epsfbox{mac-4-a.eps}
+}
+\end{center}
+\vspace*{-9pt}
+  \Caption{Вероятность подключения в~зависимости от расстояния между БС и~степени 
+внедрения технологии (черные кривые~--- $P_E\hm= 0{,}7$; серые кривые~--- $P_E\hm= 0{,}9$): (\textit{1}~--- бампер; 
+  \textit{2}~--- стекло; \textit{3}~--- двигатель}
+  \end{minipage}
+  %\end{figure*}
+   \hfill  
+%  \begin{figure*} %fig5
+  \vspace*{-6pt}
+  \begin{minipage}[t]{80mm}
+\begin{center}
+   \mbox{%
+\epsfxsize=79mm
+\epsfbox{mac-4-b.eps}
+}
+\end{center}
+\vspace*{-9pt}
+  \Caption{Вероятность подключения в~зависимости от расстояния между БС и~сценариев дорожного движения
+  (пунктирные кривые~--- пробка; штриховые~--- нормальный городской трафик; сплошные кривые~--- шоссе): 
+  \textit{1}~--- бампер; \textit{2}~--- стекло; \textit{3}~--- двигатель}
+    \end{minipage}
+  \end{figure*}
+  
+  
+
+     Начнем с~исследования основных зависимостей между средней длиной 
+мос\-та и~ско\-ростью передачи данных, показанных на рис.~3, для различных 
+зон размещения антенны в~за\-ви\-си\-мости от плот\-ности ТС
+на полосе дорожного движения, где максимальное чис\-ло  
+ТС-ре\-транс\-ля\-то\-ров~$N$установлено рав\-ным~10, а~степень внед\-ре\-ния 
+технологии $P_E\hm= 0{,}7$.
+     
+
+
+     По результатам эксперимента мож\-но отметить, что средняя длина 
+моста уменьшается по мере увеличения плот\-ности ТС на дороге для всех 
+рас\-смот\-рен\-ных вариантов расположения антенны. Это объясняется тем, что 
+с~увеличением плот\-ности уменьшается среднее расстояние между ТС. 
+Обратный эффект наблюдается для ско\-рости передачи данных, и~это связано 
+с~более короткими расстояниями меж\-ду автомобилями, а~следовательно, 
+лучшим качеством канала.
+     
+     Анализируя влияние зоны размещения антенны, можно сделать вывод, 
+что расположение у~лобового стекла обеспечивает 
+б$\acute{\mbox{о}}$льшую сред\-нюю длину мос\-та почти для всех 
+рассмотренных плотностей ТС. Однако этот выигрыш достигается за счет 
+гораздо меньшей ско\-рости передачи данных. Обоснование данного 
+наблюдения заключается в~том, что экраны в~виде заднего и~переднего стекол 
+блокирующего автомобиля создают высокие потери при передаче сигнала.
+     
+     Одной из характеристик, отвечающих за гарантии производительности 
+для пользователей коммерческих систем, служит до\-ступ\-ность подключения 
+к~БС посредством моста. Рас\-смот\-рим \mbox{до\-ступ\-ность} подключения как 
+функцию от рас\-сто\-яния между БС (Inter-site distance, ISD), показанную на 
+рис.~4, для различных значений степени внед\-ре\-ния технологии 
+и~нормальных условий городского трафика ($\lambda\hm= 1/30$). При 
+достижении 1250~м наблюдается резкий спад, ха\-рак\-те\-ри\-зу\-ющий расстояние, 
+на котором начинает работать механизм ре\-транс\-ля\-ции сигнала. Из всех 
+рас\-смот\-рен\-ных зон размещения антенны лобовое стек\-ло показывает 
+наилучшую до\-ступ\-ность~0,95 при степени внед\-ре\-ния технологии~0,9.
+     
+     Влияние условий дорожного движения на ве\-ро\-ят\-ность подключения 
+для различных зон размещения антенны показано на рис.~5. Здесь 
+можно заметить, что наихудший возможный сценарий~--- пробки, где не 
+только все рас\-смот\-рен\-ные зоны приводят к~одному и~тому же значению 
+параметра ISD, но и~связанное с~этим улучшение ISD незначительно. 
+Причина в~том, что ТС расположены очень плот\-но, блокируя сразу несколько 
+вариантов отражений, в~том чис\-ле под ТС. Тем не менее для нормального 
+и~шоссейного сценариев наилучшая зона размещения антенны с~точ\-ки 
+зрения длины установленного мос\-та~--- на лобовом стекле.
+
+  
+      
+
+  
+\section{Заключение}
+
+     В работе предложена математическая модель для оценки 
+производительности механизма мно\-го\-звень\-евой ретрансляции сигнала для 
+V2X-со\-еди\-не\-ний в~частотных диапазонах субтерагерцевых волн при 
+различных условиях распространения сигнала. Рассматриваемые метрики 
+включают среднее расстояние подключения к~БС и~скорость передачи 
+данных с~учетом возможной многозвеньевой ретрансляции сигнала, а~также 
+критический параметр качества обслуживания~--- доступность сети.
+     
+     Представленные численные результаты для типичных сценариев 
+предоставления услуг связи по технологии 6G с~использованием механизма 
+многозвеньевой ретрансляции сигнала показывают, что можно 
+рекомендовать размещение антенны в~зоне лобового стекла, которое, 
+несмотря на более низкую скорость передачи данных, значительно менее 
+чувствительно к~степени внедрения технологии и,~как правило, 
+характеризуется гораздо б$\acute{\mbox{о}}$льшим покрытием сети.
+     
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-ost}
+\Au{Moltchanov D., Gaidamaka~Y., Ostrikova~D., Beschastnyi~V., Koucheryavy~Y., Samouylov~K.} 
+Ergodic outage and capacity of terahertz systems under micromobility and blockage impairments~// 
+IEEE T. Wirel. Commun., 2021. Vol.~21. Iss.~5. P.~3024--3039. doi: 
+10.1109/ TWC.2021.3117583.
+\bibitem{2-ost}
+\Au{Moltchanov D., Beschastnyi~V., Ostrikova~D., Gaidamaka~Y., Koucheryavy~Y.} 
+Uninterrupted connectivity time in THz systems under user micromobility and blockage~//  
+Global Communications Conference Proceedings.~--- Piscataway, NJ, USA: 
+IEEE, 2021. Art. 9685384. 6~p. doi: 10.1109/GLOBECOM46510.2021.9685384.
+\bibitem{3-ost}
+\Au{Gapeyenko M., Samuylov~A., Gerasimenko~M., Moltchanov~D., Singh~S., Akdeniz~M.\,R., 
+Aryafar~E., Himayat~N., Andreev~S., Koucheryavy~Y.} On the temporal effects of mobile 
+blockers in urban millimeter-wave cellular scenarios~// IEEE T. Veh. Technol., 
+2017. Vol.~66. Iss.~11. P.~10124--10138. doi: 10.1109/TVT.2017.2754543.
+\bibitem{4-ost}
+\Au{Stepanov N.\,V., Moltchanov~D., Begishev~V., Turlikov~A., Koucheryavy~Y.} Statistical 
+analysis and modeling of user micromobility for THz cellular communications~// IEEE T. 
+Veh. Technol., 2021. Vol.~71. Iss.~1. P.~725--738. doi: 10.1109/TVT.2021.3124870.
+\bibitem{5-ost}
+\Au{Beschastnyi V., Ostrikova~D., Moltchanov~D., Gaidamaka~Y., Koucheryavy~Y., 
+Samouylov~K.} Balancing latency and energy efficiency in mmWave 5G NR systems with 
+multiconnectivity~// IEEE Commun. Lett., 2022. Vol.~26. Iss.~8. P.~1952--1956. doi: 
+10.1109/LCOMM. 2022.3175663.
+\bibitem{6-ost}
+\Au{Petrov V., Moltchanov~D., Andreev~S., Heath~R.\,W.} Analysis of intelligent vehicular 
+relaying in urban 5G\;+\;millimeter-wave cellular deployments~// Global Communications 
+Conference Proceedings.~--- Piscataway, NJ, USA: IEEE, 2019. Art.~05946. 
+6~p. doi: 10.48550/arXiv.1908.05946.
+\bibitem{7-ost}
+Study on integrated access and backhaul (Release 17): Technical Specification 38.874 
+V17.0.0. 3GPP, 2020. {\sf  
+https://www.3gpp.org/ftp/Specs/archive/38\_series/38.\linebreak 874/38874-g00.zip}.
+\bibitem{8-ost}
+\Au{Petrov V., Kurner~T., Hosako~I.} IEEE 802.15.3d: First standardization efforts for  
+sub-terahertz band communications toward 6G~// IEEE Commun. Mag., 2020. 
+Vol.~58. No.\,11. P.~28--33. doi: 10.1109/MCOM.001.2000273.
+\bibitem{9-ost}
+\Au{Ozpolat M., Bhargava~K., Kampert~E., Higgins~M.\,D.} Multi-lane urban mmWave V2V 
+networks: A path loss behavior dependent coverage analysis~// Vehicular Communications, 
+2021. Vol.~30. Art.~100348. 11~p. doi: 10.1016/ j.vehcom.2021.100348.
+\bibitem{10-ost}
+\Au{Wang J., Liu~J., Kato~N.} Networking and communications in autonomous driving: 
+A~survey~// IEEE Commun. Surv. Tut., 2018. Vol.~21. No.\,2. P.~1243--1274. doi: 
+10.1109/COMST.2018.2888904.
+\bibitem{11-ost}
+\Au{Eckhardt J.\,M., Petrov~V., Moltchanov~D., Koucheryavy~Y., K$\ddot{\mbox{u}}$rner~T.} 
+Channel measurements and modeling for low-terahertz band vehicular communications~// IEEE 
+J.~Sel. Area. Comm., 2021. Vol.~39. No.\,6. P.~1590--1603. doi: 
+10.1109/JSAC.2021.3071843.
+\bibitem{12-ost}
+\Au{Moltchanov D.} Distance distributions in random networks~//  Ad Hoc Netw., 
+2012. Vol.~10. P.~1146--1166. doi: 10.48550/arXiv.0804.4204. 
+\bibitem{13-ost}
+\Au{Basharin G., Gaidamaka~Y.\,V., Samouylov~K.\,E.} Mathematical theory of teletraffic and 
+its application to the analysis of multiservice communication of next generation networks~// 
+Autom. Control Comp.~S., 2013. Vol.~47. No.\,2. P.~62--69. doi: 
+10.3103/S0146411613020028.
+\bibitem{14-ost}
+\Au{Kingman J.\,F.\,C.} Poisson processes.~--- Oxford studies in probability ser.~--- Claredon Press, 1993. 112~p. doi: 
+10.1002/0470011815.B2A07042.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 15.10.22}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{ON THE OPTIMAL ANTENNA DEPLOYMENT FOR~SUBTERAHERTZ V2X 
+COMMUNICATIONS}
+
+
+\def\titkol{On the optimal antenna deployment for~subterahertz V2X 
+communications}
+
+
+\def\aut{E.\,A.~Machnev$^1$, V.\,A.~Beschastnyi$^1$, D.\,Yu.~Ostrikova$^1$, 
+Yu.\,V.~Gaidamaka$^{1,2}$, and~S.\,Ya.~Shorgin$^2$}
+
+\def\autkol{E.\,A.~Machnev, V.\,A.~Beschastnyi, D.\,Yu.~Ostrikova, et al.} 
+%Yu.\,V.~Gaidamaka$^{1,2}$, and~S.\,Ya.~Shorgin$^2$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-8pt}
+
+
+\noindent
+    $^1$Peoples' Friendship University of Russia (RUDN University), 6~Miklukho-Maklaya Str., 
+Moscow 117198, Russian\linebreak
+$\hphantom{^1}$Federation
+    
+    \noindent
+    $^2$Federal Research Center ``Computer Science and Сontrol'' of the Russian Academy of 
+Sciences, 44-2~Vavilov\linebreak
+$\hphantom{^1}$Str., Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+  
+  
+    \Abste{Subterahertz (sub-THz, 100--300~GHz) communication should provide huge data 
+transfer rates in 6G systems. However, the coverage area of base stations (BS) will be very 
+limited, since the signal is quite strongly attenuated from the distance and is also easily blocked 
+by the presence of any objects in the signal path. Thus, the BS will need to be located too often 
+which is a costly process. To reduce the deployment density of the BS, a~mechanism was 
+proposed for relaying the signal using vehicles (V2V). This relaying method is characterized by 
+various options for the location of the antenna on vehicles which raises the question of finding 
+the optimal location. In this work, guided by the IEEE 802.15.3d specification and measurements 
+of the signal propagation level at a~frequency of 300~GHz, the authors developed 
+a~mathematical model for comparing multihop signal relay systems with different antenna 
+locations. The authors consider the following quality of service indicators: coverage, BS 
+availability, and data transfer rate. The results show that the windshield transmitter location has 
+a~lower data rate but more coverage while the bumper and engine levels show similar 
+performance. A~windshield location is recommended as it is less sensitive to the rate of 
+technology integration and has a~larger coverage area.}
+  
+  \KWE{5G; New Radio; V2V; V2X; multihop communications}
+  
+ 
+  
+  \DOI{10.14357/19922264220407} 
+
+\vspace*{-8pt}
+
+ \Ack
+  \noindent
+  The reported study was funded by the Russian Science Foundation, project number 22-29-00694 ({\sf 
+https://rscf.ru/en/project/22-29-00694}). 
+
+
+\vspace*{12pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-ost-1}
+  \Aue{Moltchanov, D., Y.~Gaidamaka, D.~Ostrikova, V.~Bes\-chast\-nyi, Y.~Koucheryavy, and 
+K.~Samouylov.} 2021. Ergodic outage and capacity of terahertz systems under micromobility 
+and blockage impairments. \textit{IEEE T. Wirel. Commun.} 21(5):3024--3039. 
+doi: 10.1109/TWC. 2021.3117583.
+\bibitem{2-ost-1}
+  \Aue{Moltchanov, D., V.~Beschastnyi, D.~Ostrikova, Y.~Gai\-da\-ma\-ka, and Y.~Koucheryavy.} 
+2021. Uninterrupted connectivity time in THz systems under user micromobility and blockage. 
+\textit{Global Communications Conference Proceedings}. Piscataway, NJ: IEEE. 
+9685384. 6~p. doi: 10.1109/GLOBECOM46510.2021.9685384.
+\bibitem{3-ost-1}
+  \Aue{Gapeyenko, M., A.~Samuylov, M.~Gerasimenko, D.~Mol\-tcha\-nov, S.~Singh, 
+M.\,R.~Akdeniz, E.~Aryafar, N.~Himayat, S.~Andreev, and Y.~Koucheryavy.} 2017. On the 
+temporal effects of mobile blockers in urban millimeter-wave cellular scenarios. \textit{IEEE 
+T. Veh. Technol.} 66(11):10124--10138. doi: 10.1109/TVT.2017.2754543.
+\bibitem{4-ost-1}
+  \Aue{Stepanov, N.\,V., D.~Moltchanov, V.~Begishev, A.~Turlikov, and Y.~Koucheryavy.} 
+2021. Statistical analysis and modeling of user micromobility for THz cellular communications. 
+\textit{IEEE T. Veh. Technol.} 71(1):725--738. doi: 10.1109/TVT.2021.3124870.
+\bibitem{5-ost-1}
+  \Aue{Beschastnyi, V., D.~Ostrikova, D.~Moltchanov, Y.~Gai\-da\-ma\-ka, Y.~Koucheryavy, and 
+K.~Samouylov.} 2022. Balancing latency and energy efficiency in mmWave 5G NR systems 
+with multiconnectivity. \textit{IEEE Commun. Lett.} 26(8):1952--1956. doi: 
+10.1109/LCOMM.2022.3175663.
+\bibitem{6-ost-1}
+\Aue{Petrov, V., D.~Moltchanov, S.~Andreev, and R.\,W.~Heath.} 2019. Analysis of intelligent 
+vehicular relaying in urban 5G\;+\;millimeter-wave cellular deployments. \textit{Global 
+Communications Conference Proceedings}. Piscataway, NJ: IEEE. 05946. 6~p. doi: 
+10.48550/arXiv.1908.05946.
+  
+\bibitem{7-ost-1}
+  3GPP. 2020. NR. Study on integrated access and backhaul (Release 17): Technical Specification 38.874 
+V17.0.0. Available at: 
+{\sf https://www.3gpp.org/ftp/Specs/\linebreak archive/38\_series/38.874/38874-g00.zip} (accessed 
+November~28, 2022).
+\bibitem{8-ost-1}
+  \Aue{Petrov, V., T.~Kurner, and I.~Hosako.} 2020. IEEE 802.15.3d: First standardization 
+efforts for sub-terahertz band communications toward 6G. \textit{IEEE Commun. 
+Mag.} 58(11):28--33. doi: 10.1109/MCOM.001.2000273
+\bibitem{9-ost-1}
+  \Aue{Ozpolat, M., K.~Bhargava, E.~Kampert, and M.\,D.~Higgins.} 2021. Multi-lane urban 
+mmwave V2V networks: A~path loss behavior dependent coverage analysis. \textit{Vehicular 
+Communications} 30:100348. 11 p. doi: 10.1016/ j.vehcom.2021.100348.
+
+
+\bibitem{10-ost-1}
+  \Aue{Wang, J., J.~Liu, and N.~Kato.} 2018. Networking and communications in autonomous 
+driving: A~survey. \textit{IEEE Commun. Surv. Tut.} 21(2):1243--1274. doi: 
+10.1109/ COMST.2018.2888904.
+\bibitem{11-ost-1}
+\Aue{Eckhardt, J.\,M., V.~Petrov, D.~Moltchanov, Y.~Koucheryavy, and T.~Kurner.} 2021. 
+Channel measurements and modeling for low-terahertz band vehicular communications. 
+\textit{IEEE J.~Sel. Area. Comm.} 39(6):1590--1603. doi: 
+10.1109/JSAC.2021.3071843.
+  
+\bibitem{12-ost-1}
+\Aue{Moltchanov, D.} 2012. Distance distributions in random networks. \textit{Ad Hoc 
+Netw.} 10(6):1146--1166. doi: 10.48550/arXiv.0804.4204. 
+\bibitem{13-ost-1}
+\Aue{Basharin, G.\,P., Yu.\,V.~Gaidamaka, and K.\,E.~Samouylov.} 2013. Mathematical theory 
+of teletraffic and its application to the analysis of multiservice communication of next generation 
+networks. \textit{Autom. Control Comp.~S.} 47(2):62--69. doi: 10.3103/S0146411613020028.
+  
+\bibitem{14ost-1}
+  \Aue{Kingman, J.\,F.\,C.} 1993. \textit{Poisson processes}. Oxford studies in probability ser. Claredon Press. 112~p. 
+doi: 10.1002/0470011815.B2A07042.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received October 15, 2022}}
+
+\vspace*{-12pt}
+
+  
+  \Contr
+  
+  \vspace*{-3pt}
+  
+  \noindent
+  \textbf{Machnev Egor A.} (b.\ 1996)~--- PhD student, Department of Applied Probability and 
+Informatics, Peoples' Friendship University of Russia (RUDN University),  
+6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation; \mbox{1032143100@rudn.ru}
+  
+  \vspace*{3pt}
+  
+  \noindent
+  \textbf{Beschastnyi Vitalii A.} (b.\ 1992)~--- Candidate of Science (PhD) in physics and 
+mathematics, assistant professor, Department of Applied Probability and Informatics, Peoples' 
+Friendship University of Russia (RUDN University), 6~Miklukho-Maklaya Str., Moscow 
+117198, Russian Federation; \mbox{beschastnyy-va@rudn.ru}
+  
+  
+  \vspace*{3pt}
+  
+  \noindent
+  \textbf{Ostrikova Daria Yu.} (b.\ 1988)~--- Candidate of Science (PhD) in physics and 
+mathematics, associate professor, Department of Applied Probability and Informatics, Peoples' 
+Friendship University of Russia (RUDN University), 6~Miklukho-Maklaya Str., Moscow 
+117198, Russian Federation; \mbox{ostrikova-dyu@rudn.ru}
+  
+  
+  
+  \vspace*{3pt}
+  
+  \noindent
+  \textbf{Gaidamaka Yuliya V.} (b.\ 1971)~--- Doctor of Science in physics and mathematics, 
+professor, Department of Applied Probability and Informatics, Peoples' Friendship University of 
+Russia (RUDN University), 6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation; 
+senior scientist, Institute of Informatics Problems, Federal Research Center ``Computer Science 
+and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian 
+Federation; \mbox{gaydamaka-yuv@rudn.ru}
+  
+  
+  \vspace*{3pt}
+  
+  \noindent
+  \textbf{Shorgin Sergey Ya.} (b.\ 1952)~--- Doctor of Science in physics and mathematics, 
+professor, principal scientist, Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., 
+Moscow 119133, Russian Federation; \mbox{sshorgin@ipiran.ru}
+  
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}    
+  

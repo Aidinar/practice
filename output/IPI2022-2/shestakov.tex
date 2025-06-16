@@ -1,0 +1,991 @@
+%\newcommand{\bb}[1]{\boldsymbol{#1}}
+%\newcommand{\I}{\,\bb{{1}}}
+
+\def\stat{shestakov-p}
+
+\def\tit{ИСПОЛЬЗОВАНИЕ FDR-МЕТОДА МНОЖЕСТВЕННОЙ ПРОВЕРКИ ГИПОТЕЗ
+ПРИ~ОБРАЩЕНИИ ЛИНЕЙНЫХ ОДНОРОДНЫХ ОПЕРАТОРОВ$^*$}
+
+\def\titkol{Использование FDR-метода множественной проверки гипотез
+при~обращении линейных однородных операторов}
+
+\def\aut{С.\,И.~Палионная$^1$. О.\,В.~Шестаков$^2$}
+
+\def\autkol{С.\,И.~Палионная. О.\,В.~Шестаков}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Палионная С.\,И.}
+\index{Шестаков О.\,В.}
+\index{Palionnaya S.\,I.}
+\index{Shestakov O.\,V.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Статья опубликована 
+при финансовой поддержке Минобрнауки РФ в~рамках реализации программы 
+Московского центра фундаментальной и~прикладной математики по соглашению 
+№\,075-15-2019-1621.}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет 
+имени М.\,В.~Ломоносова, факультет вычислительной математики и~кибернетики; 
+Московский центр фундаментальной и~прикладной математики, \mbox{sofiko-10@yandex.ru}}
+\footnotetext[2]{Московский государственный университет 
+имени М.\,В.~Ломоносова, факультет вычислительной математики и~кибернетики; 
+Федеральный исследовательский центр <<Информатика и~управление>> Российской 
+академии наук; Московский центр фундаментальной и~прикладной математики, 
+\mbox{oshestakov@cs.msu.ru}}
+
+%\vspace*{-6pt}
+
+
+
+
+
+
+
+
+\Abst{Одной из актуальных задач при работе с~большими массивами 
+данных является задача их экономного представления, для решения которой 
+необходимо выявить значимые признаки и~удалить шумовые. Такие задачи встречаются 
+в~самых различных областях, таких как генетика, биология, астрономия, 
+компьютерная графика, обработка аудио- и~видеоданных и~т.\,д.
+В современных исследованиях в~этой области описаны различные методы фильтрации, 
+основанные на разреженном представлении по\-лу\-ча\-емых экспериментальных данных. Для 
+построения статистических оценок на основе наблюдаемых данных широко 
+используется процедура множественной проверки гипотез о значимости наблюдений. 
+В~данной работе рассмотрен FDR (False Discovery Rate) метод, основанный на 
+контроле ожидаемой доли ложных отклонений нулевой гипотезы, и~алгоритм 
+Бен\-жа\-ми\-ни--Хоч\-бер\-га для множественной проверки гипотез.
+Зачастую информация, доступная для наблюдения, представляет собой некоторое 
+преобразование интересующих исследователя данных. При этом дополнительно 
+возникает задача обращения этого преобразования. В~работе рассмотрен случай, 
+когда исходный вектор данных подвергается действию линейного однородного 
+преобразователя. Такие ситуации типичны, например, в~астрофизических 
+и~томографических приложениях.}
+
+\KW{вейвлеты; пороговая обработка; множественная проверка 
+гипотез; однородный линейный оператор; несмещенная оценка риска}
+
+\DOI{10.14357/19922264220206}
+  
+%\vspace*{-3pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+Рассмотрим постановку задачи множественной проверки гипотез. Пусть имеются~$n$ 
+различных выборок, каждой их которых соответствует своя нулевая гипотеза 
+$\{H_{0_i},\, i \hm= 1,\ldots,n\}$ и~альтернатива $\{H_{1_i},\, i \hm= 1,\ldots,n\}$. 
+Гипотезы проверяются статистиками $T_i$ с~заданными нулевыми распределениями. 
+После вычисления достигаемых уровней значимости $\{p_i,\, i \hm= 1,\ldots, n\}$ 
+принимается решение об отвержении нулевой гипотезы~$\{H_{0_i}\}$ для каждого~$i$. 
+Обозначим через $M_0$ множество индексов верных нулевых гипотез, а через 
+$R$~--- множество индексов отвергаемых гипотез. Тогда $V \hm= |M_0\hm \cap R|$~--- число 
+ошибок первого рода. Задача заключается в~минимизации числа ошибок первого рода 
+за счет изменения параметра~$R$.
+
+Существует множество статистических процедур, предлагающих различные способы 
+решения задачи множественной проверки гипотез. Одной из первых предложенных мер, 
+обобщающих ошибку первого рода, была групповая вероятность ошибки первого рода 
+FWER (Family-Wise Error Rate)~\cite{Storey}. Эта величина определяется как 
+вероятность совершения хотя бы одной ошибки первого рода. Однако при большом 
+числе проверяемых гипотез контроль такого строгого условия приводит 
+к~значительному увеличению числа ошибок второго рода. Поэтому в~ситуациях, когда 
+число проверяемых гипотез очень велико, предпочтительнее допустить некоторое 
+количество ошибок первого рода с~целью увеличения статистической мощности.
+
+С этой целью рассмотрим меру FDR. Эта мера была 
+предложена в~работе~\cite{Benjamini-Hochberg} и~предполагает контроль ожи\-да\-емой 
+доли ложных отклонений 
+$$ \mathrm{FDR} =   \mathbb{E}\left(\fr{V}{\max\left(R,1\right)}\right).
+$$
+
+Для контроля FDR чаще всего используется алгоритм множественной проверки гипотез 
+Бен\-жа\-ми\-ни--Хоч\-бер\-га~\cite{Benjamini-Hochberg}, который при условии независимости 
+статистик, проверяющих гипотезы, позволяет ограничить сверху значение FDR 
+па\-ра\-мет\-ром~$\alpha$, т.\,е. 
+$$
+\mathbb{E}\left(\fr{V}{\max\left(R,1\right)}\right) \le \alpha\,.
+$$ в~этой процедуре уровни значимости меняются линейно и~определяются 
+следующим образом: 
+$$
+\alpha_i = \fr{\alpha  i}{n},\enskip i = 1,\ldots,n\,.
+$$
+
+Для применения метода Бен\-жа\-ми\-ни--Хоч\-бер\-га строится вариационный ряд из 
+достигаемых уровней значимости:
+$$
+p_{(1)} \le p_{(2)} \le \cdots \le p_{(n)}.
+$$
+Отвергаются все гипотезы $H_{0_1}, \ldots, H_{0_k}$, где $k \hm\in [1,n]$~--- 
+максимальный индекс, такой что для него выполнено условие
+\begin{equation*}
+p_{(i)} \le \alpha_i.
+\end{equation*}
+
+\section{Дискретное вейвлет-разложение}
+
+Рассмотрим задачу оценивания математического ожидания гауссова вектора
+\begin{equation*}
+\label{data_model}
+X_i=(Kf)_i+\varepsilon_i,\enskip i=1,\ldots,n\,,
+\end{equation*}
+где $f$~--- функция исходных данных; $\varepsilon_i$~--- независимые нормально 
+распределенные случайные величины с~нулевым математическим ожиданием 
+и~дисперсией~$\sigma^2$; $K$~--- линейное однородное \mbox{преобразование} с~показателем~$\beta$, 
+т.\,е.\ для любого $a\hm>0$
+$$
+K[f(ax)] = a^{-\beta}(Kf)[a x].
+$$
+Заметим, что из однородности линейного преобразования~$K$ с~показателем~$\beta$ 
+вытекает однородность преобразования~$K^{-1}$ с~показателем~$-\beta$.
+
+Пусть исходная функция~$f$ и~ее линейное преобразование~$Kf$ заданы в~точках~$i/N$, 
+где $N\hm=2^J$ и~$i\hm=1,\ldots,N$. Рассмотрим дискретное вейв\-лет-раз\-ло\-же\-ние 
+преобразованной функции~$Kf$. При практическом применении метода вейв\-лет-раз\-ло\-же\-ния 
+аппроксимация исходной функции~$Kf$ записывается в~виде суммы из 
+сдвигов и~растяжений некоторой вейв\-лет-функ\-ции~$\psi$:
+% ; $\psi$ - вейвлет функция.
+$$
+Kf = \sum\limits_{j=0}^{J-1}\sum\limits_{l=0}^{2^j-1}\left\langle Kf, \psi_{j,l}\right\rangle \psi_{j,l}\,,
+$$
+где $\psi_{j,l}(x) \hm= 2^{j/2}\psi(2^jx-l).$ Функция~$\psi$ должна удовлетворять 
+определенным требованиям~\cite{Mallat}. Не уточняя их в~данной работе, будем 
+полагать, что она обладает всеми необходимыми свойствами.
+
+Обозначим $\beta_{j,l} \hm= ||K^{-1}\psi_{j,l}||$. Тогда
+\begin{multline*}
+\beta_{j,l} = \left(\,\int\limits_{-\infty}^{\infty} \left(K^{-1}[2^{j/2} 
+\psi(2^jx-l)]\right)^2 dx\right)^{1/2} ={}\\
+{}= 2^{j/2} \left(\,\int\limits_{-\infty}^{\infty} 
+2^{\beta j}\left(K^{-1}\psi[2^jx-l]\right)^2 dx\right)^{1/2} =
+{}\\
+{}=  2^{(1/2+\beta)j} \left(\,\int\limits_{-\infty}^{\infty} \left(K^{-1}\psi[2^jx-
+l]\right)^2 dx\right)^{1/2} ={}\\
+{}= 2^{\beta j} \left(\,\int\limits_{-\infty}^{\infty} 
+\left(K^{-1}\psi[y]\right)^2 dy\right)^{1/2} = 2^{\beta j} \beta_{0,0}.
+\end{multline*}
+Аппроксимация исходной функции~$f$ представима в~виде~\cite{AS98}:
+\begin{equation}
+\label{wavelet_decomp}
+    F = \sum\limits_{j=0}^{J-1}\sum\limits_{l=0}^{2^j-1}2^{\beta j} \beta_{0,0}\left\langle Kf, 
+\psi_{j,l}\right\rangle u_{j,l}\,,
+\end{equation}
+где $u_{j,l} = K^{-1}\psi_{j,l}/\beta_{j,l}$.
+
+Дискретное вейвлет-пре\-об\-ра\-зо\-ва\-ние пред\-став\-ля\-ет собой умножение вектора значений 
+функции на ортогональную матрицу, по\-рож\-да\-емую вейв\-лет-функ\-ци\-ей~$\psi$. Обозначим 
+через~$\mu_{j,l}$ со\-от\-вет\-ст\-ву\-ющие коэффициенты, полученные после дискретного 
+вейв\-лет-пре\-об\-ра\-зо\-ва\-ния. Коэффициенты~$\mu_{j,l}$ образуют вектор~$\bm{\mu}$.
+Для каж\-до\-го уров\-ня $j \hm\in [0, J-1]$ рас\-смот\-рим  упорядоченные по абсолютной 
+величине значения $\mu_{j,(k)}$, $k\hm=1,\ldots, 2^j$:
+$$
+\left\vert \mu_{j,(1)}\right\vert \geq\cdots\geq\left\vert \mu_{j, (2^j)}\right\vert\,.
+$$
+
+
+Обозначим $\bm{\eta}  \hm= (\eta_0, \eta_1, \ldots, \eta_{J-1})$.
+Далее будем рассматривать векторы~$\bm{\mu}$, которые принадлежат классу~$L_p$ 
+для $0\hm<p\hm<2$:
+\begin{multline*}
+L_p(\bm{\eta})=\left\{\left\vert \mu_{{j,(k)}}\right\vert\leq\eta_j \cdot 2^{j/p} k^{-1/p}\; 
+\mbox{для всех}\right.\\ 
+\left. k=1,\ldots, 2^j,\; j=0,\ldots, J-1
+\vphantom{\left\{2^{j/p}\right\}}
+\right\}.
+\end{multline*}
+Заметим, что класс~$L_p$ достаточно широк и~включает в~себя, например, классы 
+непрерывных по Липшицу функций, определенных на конечном отрезке, причем 
+параметр регулярности по Липшицу не зависит от~$\eta$. Такие функции были 
+рассмотрены, в~частности, в~работе~\cite{KaaSh}. Также класс~$L_p$ включает 
+в~себя некоторые классы Бесова~\cite{Besov}.
+
+\section{Среднеквадратичный риск}
+
+Процедура множественной проверки гипотез, описанная выше, сводится к~методам 
+пороговой обработки. Такой подход был использован, в~частности, в~статье~\cite{ABDJ06}.
+
+В случае жесткой пороговой обработки компонента вектора обнуляется, если ее 
+абсолютное значение не превосходит заданного порога $T_{j}$, т.\,е.
+\begin{equation*}
+\label{hard_thresholding}
+\rho_{H}(X_{j,k}^W,T_{j})=
+\begin{cases}
+X_{j,k}^W & \mbox{при } \abs{X_{j,k}^W}>T_{j}; \\[6pt]
+0 & \mbox{при } \abs{X_{j,k}^W}\leq T_{j}
+\end{cases}
+\end{equation*}
+для каждого $j\hm \in [0, J-1]$, где $X_{j,k}^W$~--- зашумленные вейв\-лет-ко\-эф\-фи\-ци\-ен\-ты 
+из разложения~\eqref{wavelet_decomp}.
+
+Эта процедура эквивалентна проверке гипотез о~равенстве нулю математического 
+ожидания каж\-дой компоненты вектора данных. В~случае использования FDR-ме\-то\-да 
+пороговое значение~$T_{j}$ выбирается следующим образом: по исходной выборке 
+строится вариационный ряд убывающих по абсолютному значению величин 
+$\abs{X}_{j}^{(1)} \ge \abs{X}_{j}^{(2)} \ge \cdots\linebreak \cdots \ge \abs{X}_{j}^{(2^j)}$
+ и~$\abs{X}_{j}^{(k)}$ сравнивается с~квантилями Гауссова распределения $t_k\hm=\sigma 
+z(\alpha/2\cdot k/2^j)$. Пусть $k_F$~--- наибольший индекс~$k$ для которого 
+$\abs{X}_{j}^{(k)}\hm\geq t_k$, тогда выбирается порог $T_{j}^F\hm=t_{k_F}$.
+
+Наряду с~жесткой пороговой обработкой широко используется метод мягкой пороговой 
+обработки, при котором оценки компонент вектора вы\-чис\-ля\-ют\-ся по правилу:
+\begin{equation*}
+\label{soft_thresholding}
+\rho_{S}(X_{j,k}^W,T_{j})=
+\begin{cases}
+X_{j,k}^W-T_{j} & \mbox{при } X_{j,k}^W>T_{j};\\[3pt]
+ X_{j,k}^W+T_{j} & \mbox{при }X_{j,k}^W<-T_{j}; \\[3pt]
+  0 & \mbox{при } \abs{X_{j,k}^W}\leq T_{j}.
+\end{cases}
+\end{equation*}
+В этом случае получаемая функция~$\rho_S$ оказывается непрерывной.
+
+Среднеквадратичная погрешность (риск) рассмотренных процедур в~случае 
+дискретного вейв\-лет-раз\-ло\-же\-ния определяется сле\-ду\-ющим образом:
+\begin{equation}
+\label{risk_estimate}
+R(\bm{T}) = \sum\limits_{j=0}^{J-1}\sum\limits_{k=1}^{2^j}\beta_{j,k}^2 \mathbb{E} 
+\left(\rho(X_{j,k}^W, T_j) - \mu_{j,k}\right)^2,
+\end{equation}
+где $\bm{T} = (T_0, T_1, \ldots , T_{J-1})$;  $\rho$~--- функция исполь\-зу\-емой 
+пороговой обработки.
+
+Методы выбора порогового значения, как правило, ориентированы на минимизацию 
+риска. Значение порога, при котором риск достигает минимума, обозначим 
+$\bm{T^{\min}} = (T_0^{\min}, T_1^{\min}, \ldots , T_{J-1}^{\min})$:
+\[\bm{T^{\min}}:\; R(\bm{T^{\min}})=\min\limits_{\bm{T}}R(\bm{T}).\]
+В~выражении~$R(\bm{T})$ присутствуют неизвестные величины $\mu_{j,k}$, и~вычислить значения~$R(\bm{T})$ и~$\bm{T^{\min}}$ на практике нельзя. Однако можно 
+построить оценку риска, которая вычисляется на основе только наблюдаемых данных. 
+Эта оценка определяется выражением~\cite{Mallat}:
+$$
+\hat{R}(\bm{T}) = \sum\limits_{j=0}^{J-1}\sum\limits_{k=1}^{2^j} 2^{2 \beta j} \beta_{0,0} 
+F\left[X_{j,k}^W,T_j\right],
+$$
+где 
+\begin{multline*}
+F\left[X_{j,k}^W,T_j\right]={}\\
+{}=\begin{cases}
+\left(\left(X_{j,k}^W\right)^2-\sigma^2\right)\cdot\mathbf{1}\left(\left\vert X_{j,k}^W\right\vert \leqslant 
+T_j\right)+{}\\[6pt]
+{}+\sigma^2\cdot\mathbf{1}\left(\left\vert X_{j,k}^W\right\vert >T_j\right) &\hspace*{-24mm}
+\mbox{в~случае\ жесткой} \\[3pt]
+&\hspace*{-24mm}\mbox{пороговой\ обработки}\,;\\
+\left(\left(X_{j,k}^W\right)^2- \sigma^2\right)\cdot\mathbf{1}\left(\left\vert X_{j,k}^W\right\vert \leqslant 
+T_j\right)+{}\\[6pt]
+\left(\sigma^2+T_j^2\right)\cdot\mathbf{1}\left(\left\vert X_{j,k}^W\right\vert >T_j\right) & \hspace*{-17mm}\mbox{в~случае\ мягкой}\\[3pt]
+&\hspace*{-17mm}\hspace*{-24pt}\mbox{пороговой\ обработки}.
+\end{cases}\hspace*{-5.67357pt}
+\end{multline*}
+
+При применении методов пороговой обработки для решения обратных статистических 
+задач за\-час\-тую используют универсальный порог 
+$$
+\bm{T^U}: T_j^U = \sigma \sqrt{2  \log 2^j}\,.
+$$ 
+Популярность этого порога обуслов\-ле\-на тем, что он в~определенном 
+смысле близок к~максимальному и~его можно использовать при самых слабых 
+ограничениях на векторы наблюдений~\cite{Jan01}. Кроме того, исследования 
+в~работах~\cite{DonJ95, J99, MAJ98} показывают, что можно не рассматривать $T_j \hm> 
+T_j^U$. В~связи с~этим всюду далее будем считать, что $T_j \leq T_j^U$, 
+$j\hm=0,\ldots,J-1$. 
+
+\section{Основные результаты}
+
+В данном разделе будут доказаны некоторые асимптотические свойства оценки~\eqref{risk_estimate}, 
+аналогичные результатам работ~\cite{KaaSh, PS20}.
+
+Для удобства дальнейшего изложения введем ряд обозначений:
+\begin{multline}
+\label{aux_param1}
+\gamma_j= \fr{1}{\log \log \left({2^j}\right)}; \enskip
+\tau_j=\sigma\left(2 \log \eta_j^{-p}\right)^{1/2};\\
+ \kappa_j= \fr{{2^j}  \eta^p_j\tau^{-p}_j}{1 - \alpha_j - 
+\gamma_j} \ \mbox{для } L_p(\eta_j).
+\end{multline}
+
+\noindent
+\textbf{Теорема~1.}
+\textit{Пусть $\mu\hm\in L_p(\bm{\eta}),$ $\eta_j \hm\in [2^{-j}(\log 2^j)^5,2^{-j\cdot\gamma}],$ 
+$1/2\hm<\gamma\hm<1$. Пусть $\bm{T^{F}}$~---}\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent \textit{вектор FDR-по\-ро\-гов 
+с~управ\-ля\-ющи\-ми па\-ра\-мет\-ра\-ми $\bm{\alpha} \hm= (\alpha_0, \alpha_1,\ldots , \alpha_{J-1})$ 
+и~$\alpha_j \hm\to 0$, ${\alpha_j \kappa_j  \gamma_j^2}/{\log 2^j}\hm\to\infty$ 
+при $j\to\infty,$ где $\kappa_j$ и~$\gamma_j$ определены в}~\eqref{aux_param1}. 
+\textit{Тогда}
+\begin{equation*}
+    \fr{\hat{R}(\bm{T^F}) - {R}\left(\bm{T^{\min}}\right)}{\sigma^2\sqrt{2^{J+4\beta J} 
+\beta_{0,0}^4}} \Rightarrow N(0,1).
+\end{equation*}
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ Докажем теорему для метода мягкой пороговой 
+обработки. В~случае жесткой пороговой обработки доказательство аналогично.
+Обозначим
+\begin{equation*}
+  W(\bm{T})=\hat{R}(\bm{T}) -\hat{R}\left(\bm{T}^{\mathbf{min}}\right)=\sum\limits_{j=0}^{J-1}2^{2\beta j} 
+\beta_{0,0}  U_j(T_j),
+\end{equation*}
+где
+$$
+U_{j}(T_j)= \sum\limits_{k=1}^{2^j} \left(F\left[X_{j,k}^W,T_j\right]-
+F\left[X_{j,k}^W,T_j^{\min}\right]\right),
+$$
+и запишем
+\begin{multline*}
+  \hat{R}\left(\bm{T^F}\right) -{R}\left(\bm{T^{\min}}\right) + \hat{R}\left(\bm{T^{\min}}\right) - 
+\hat{R}\left(\bm{T^{\min}}\right) ={}\\
+{}= \hat{R}\left(\bm{T^{\min}}\right) - {R}\left(\bm{T^{\min}}\right) + W\left(\bm{T^F}\right).
+\end{multline*}
+
+Покажем, что
+\begin{equation}
+\label{Rm_norm}
+  \fr{\hat{R}\left(\bm{T^{\min}}\right) - {R}\left(\bm{T^{\min}}\right)}{\sigma^2\sqrt{2^{J+4\beta J} 
+\beta_{0,0}^4}} \Rightarrow N(0,1)\,.
+\end{equation}
+
+При мягкой пороговой обработке $\hat{R}(\bm{T^{\min}})$ является несмещенной 
+оценкой ${R}(\bm{T^{\min}})$, а~при жесткой пороговой обработке и~выполнении 
+условий теоремы смещение стремится к~нулю при делении на $\sqrt{2^{J+4\beta J}}$~\cite{Mallat}. 
+Для дисперсии числителя имеем~\cite{M09}:
+\begin{multline}
+\label{Var_Lim1}
+\lim\limits_{j\to\infty}
+\left(\!\left( \mathbb{D}\sum\limits_{j=0}^{J-1}
+\sum\limits_{k=1}^{2^j}2^{2\beta j}\beta_{0,0}
+\left(F\left[X_{j,k}^W,T_j^{\min}\right]-{}\right.\right.\right.\\
+\hspace*{-7pt}\left.\left.\left.{}-
+{\sf E} F\left[X_{j,k}^W,T_j^{\min}\right]\!
+\right)\!\!\!
+\vphantom{\sum\limits_{k=1}^{2^j}}
+\right)\!\!\!\Bigg/\!\!\!
+\left(\!{\mathbb{D}\sum\limits_{j=0}^{J-1}
+\sum\limits_{k=1}^{2^j}2^{2\beta j}\beta_{0,0}(X_{j,k}^W)^2}\!\right)\!\!\right)\!={}\hspace*{-0.89912pt}\\
+{}=1.
+\end{multline}
+
+Кроме того, поскольку $X_{j,k}^W$ независимы, $\mathbb{D} 
+(X_{j,k}^W)^2\hm=2\sigma^4\hm+4\sigma^2 \mu^2_{j,k}$, и~в~силу определения класса~$L_p(\bm{\eta})$ 
+получаем:
+\begin{equation}
+\label{Var_Lim2}
+\lim\limits_{j\to\infty}\fr{\mathbb{D}\sum\nolimits_{j=0}^{J-1}
+\sum\nolimits_{k=1}^{2^j}2^{2\beta j}\beta_{0,0}\left(X_{j,k}^W\right)^2}{\sigma^4 
+\left({2^{J+4\beta J} \beta_{0,0}^4}\right)}=1\,.
+\end{equation}
+
+Наконец, выполнено условие Линдеберга: для любого $\varepsilon\hm>0$ при $J\hm\to\infty$
+\begin{multline}
+\label{Norm_Cond}
+\fr{1}{V^2_j}\sum\limits_{j=0}^{J-1}\sum\limits_{k=1}^{2^j} {\sf E} 
+\big[\left(2^{2\beta j}\beta_{0,0} F\left[X_{j,k}^W,T_j^{\min}\right]-{}\right.\\
+\left.{}- {\sf E} F\left[X_i,T_j^{\min}\right]\right)^2\cdot
+\mathbf{1}
+\left( 2^{2\beta j}\beta_{0,0}\left\vert F\left[X_{j,k}^W,T_j^{\min}\right]-{}\right.\right.\\
+\left.\left.{}-{\sf E} 
+F\left[X_{j,k}^W,T_j^{\min}\right]\right\vert >\varepsilon V_j\right)\big]\rightarrow 0,
+\end{multline}
+где
+\begin{multline*}
+V^2_j=\mathbb{D}\sum\limits_{j=0}^{J-1}\sum\nolimits_{k=1}^{2^j}2^{2\beta j}
+\beta_{0,0}\left(F\left[X_{j,k}^W,T_j^{\min}\right]-{}\right.\\
+\left.{}-{\sf E} F\left[X_{j,k}^W,T_j^{\min}\right]\right),
+\end{multline*}
+поскольку
+\begin{multline}
+\label{term}
+    \left\vert F\left[X_{j,k}^W,T_j^{\min}\right]-{\sf E} F\left[ X_{j,k}^W,T_j^{\min}\right]\right\vert \le {}\\
+    {}\le 2\left(\left(T_j^U\right)^2+\sigma^2\right),
+\end{multline} 
+и~в силу~\eqref {Var_Lim1}, \eqref{Var_Lim2} и~\eqref{term} 
+начиная с~некоторого~$j$ все индикаторы в~\eqref{Norm_Cond} обращаются в~нуль. 
+Таким образом, справедливо~\eqref{Rm_norm}.
+
+Осталось показать, что
+\begin{equation}
+\label{WTF}
+  \fr{W\left(\bm{T^F}\right)}{\sqrt{2^{J+4\beta J} \beta_{0,0}^4}} \xrightarrow{\mathbb{P}} 0.
+\end{equation}
+
+Разобьем $W(\bm{T^F})$ на две компоненты:
+\begin{multline}
+\label{w_f}
+W(\bm{T^F}) = \sum\limits_{j=0}^{J-1}2^{2\beta j} \beta_{0,0}U_j(T_{j}^F) ={}\\
+{}=
+\sum\limits_{j=0}^{Jt}2^{2\beta j} \beta_{0,0}U_j(T_{j}^F) + 
+\sum\limits_{j=Jt}^{J-1}2^{2\beta j} \beta_{0,0}U_j\left(T_{j}^F\right)
+\end{multline}
+для некоторого $t\hm\in (0,1/2)$.
+
+Рассмотрим вторую сумму от~$Jt$ до~$J\hm-1$ (для сокращения записи будем считать, 
+что $Jt$~--- целое число). Для любого $\varepsilon\hm>0$
+\begin{multline*}
+\mathbb{P}\left(\fr{\abs{\sum\nolimits_{j=Jt}^{J-1} 2^{2\beta j} \beta_{0,0} 
+U_j\left(T_{j}^F\right)}}{{\sqrt{2^{J+4\beta J} \beta_{0,0}^4}}}>\varepsilon\right) \leq {}\\
+{}\leq
+\sum\limits_{j=Jt}^{J-1}\mathbb{P}\left(\fr{\left\vert 2^{2\beta j} \beta_{0,0} 
+U_j\left(T_{j}^F\right)\right\vert }{{\sqrt{2^{J+4\beta J} \beta_{0,0}^4}}}>\fr{\varepsilon}{J}\right)\leq
+{}\\
+{}\leq
+\sum\limits_{j=Jt}^{J-1}\left(
+\vphantom{\left(\fr{2^{2\beta j} 
+\beta_{0,0}\sup\nolimits_{T_{j}\in[\tau_j,T_{j}^U]}\abs{U_j(T_{j})}}{\sqrt{2 ^{J+4\beta J} \beta_{0,0}^4}}>\fr{\varepsilon}{J}\right)}
+\mathbb{P}\left(T_{j}^F\leq \tau_j\right) +  {}\right.\\
+\left.{}+
+\mathbb{P}\left(\fr{2^{2\beta j} 
+\beta_{0,0}\sup\nolimits_{T_{j}\in[\tau_j,T_{j}^U]}\abs{U_j(T_{j})}}{\sqrt{2
+^{J+4\beta J} \beta_{0,0}^4}}>\fr{\varepsilon}{J}\right)\!\!\right)\leq
+{}
+\end{multline*}
+
+\noindent
+\begin{multline}
+{}\leq 
+\sum\limits_{j=J t}^{J-1}\Bigg(
+\mathbb{P}\left(T_{j}^F\leq \tau_j\right) + {}\\
+\left.{}+
+\mathbb{P}\left(\!\left(
+2^{2\beta j} 
+\beta_{0,0}\left(\sup\limits_{T_{j}\in[\tau_j,T_{j}^U]}\abs{U_j(T_{j})-{\sf E} 
+U_j(T_{j})}+{}\right.\right.\right.\right.\\
+\!\!\!\!\!\!\!\!\left.\left.\left.{}+\!\!\!\sup\limits_{T_{j}\in[\tau_j,T_{j}^U]}\abs{{\sf E}
+U_j(T_{j})}\right)\!\right)\!\Bigg/\! {\sqrt{2^{J+4\beta J} 
+\beta_{0,0}^4}}>\fr{\varepsilon}{J}\right)\!\!\Bigg).\!\!
+\label{second_term}
+\end{multline}
+
+
+Пусть $U_j(T_{j})= S'_{j}(T_{j})\hm+ S''_{j}(T_{j})$, $T_{j}\hm\in[\tau_j,T_{j}^U]$, 
+где $S''_{j}(T_{j})$ состоит из слагаемых, для которых $\abs{\mu_{j,(k)}}\hm\leq 
+C/\tau_j$, а~$S'_{j} (T_{j})$ содержит все остальные.
+
+По определению класса~$L_p(\eta_j)$ число слагаемых в~$S'_{j}(T_{j})$ не 
+превосходит
+\begin{multline*}
+C\cdot 2^j  T_{j}^p \eta^p_j  = \left\{T_{j}^p \sim (\log 2^j)^{{p}/{2}}\right\} ={}\\
+{}= C  \cdot 2^j(\log 2^j)^{{p}/{2}} \eta_j^p\equiv m_j.
+\end{multline*}
+Так как каждое слагаемое из~$S'_{j}(T_{j})$ не превосходит по модулю 
+$2\left((T_j^U)^2+\sigma^2\right)$,
+$$
+\abs{S'_{j}(T_{j})}\leq C \cdot 2^j(\log 2^j)^{1+{p}/{2}}  \eta^p_j.
+$$
+Следовательно,
+\begin{multline}
+    \fr{2^{2\beta j} \beta_{0,0}  
+\sup\nolimits_{T_{j}\in[\tau_j,T_{j}^U]}\abs{S'_{j}(T_{j}) - {\sf E} S'_{j}(T_{j})} }
+{\sqrt{2^{J+4\beta J} \beta_{0,0}^4}} \le{}\\
+{}\le \fr{C \eta_j^p \cdot 2^{j(2\beta + 1)} (\log 2^j)^{1+p/2}}
+{\sqrt{2^{J+4\beta J} \beta_{0,0}^4}} \le {}\\
+{}\le \fr{C \cdot  2^{j(2\beta -\gamma + 1)} (\log 2^J)^{1+p/2}}{\sqrt{2^{J+4\beta J} 
+\beta_{0,0}^4}}.
+\label{sum_1}
+\end{multline}
+
+Далее, в~силу определения $T_j^{\min}$, 
+$$
+\abs{{\sf E} S''_{j}(T_{j})} \leq C  \abs{{\sf E} S'_{j}(T_{j})}.
+$$
+
+Таким образом, 
+$$
+\sup\limits_{T\in[\tau_j,T_{j}^U]}\abs{{\sf E} U_j(T)}\leq C \cdot 2^j
+(\log 2^j)^{1+{p}/{2}}  \eta^p_j 
+$$
+и
+\begin{multline}
+\label{S_1}
+\fr{2^{2\beta j}\beta_{0,0}  \sup\nolimits_{T_{j}\in[\tau_j,T_{j}^U]}
+\abs{{\sf E} U_j(T_{j})} }{\sqrt{2^{J+4\beta J} 
+\beta_{0,0}^4}} \le{}\\
+{}\le  \fr{C\eta_j^p \cdot 2^{j(2\beta + 1)} (\log 2^j)^{1+p/2}}
+{\sqrt{2^{J+4\beta J} \beta_{0,0}^4}} \le{}\\
+{}\le \fr{C \cdot 2^{j(2\beta -\gamma + 1)} (\log 2^J)^{1+p/2}}{\sqrt{2^{J+4\beta J} \beta_{0,0}^4}}.
+\end{multline}
+
+При $\gamma>1/2$ полученные выражения~\eqref{sum_1} и~\eqref{S_1} начиная 
+с~некоторого~$J$ меньше, чем $\varepsilon/J$, при всех $j \hm\in [Jt, J-1]$.
+
+Рассмотрим теперь сумму~$S''_{j}(T)$. При больших значениях~$2^j$ число 
+слагаемых в~этой сумме равно $2^j\hm-m_j\hm\approx 2^j$. Для удобства будем считать, 
+что~$S''_{j}(T)$ содержит слагаемые с~номерами от $m_j\hm+1$ до~$2^j$.
+Повторяя рассуждения из~\cite{Jan01,KS16-1,KS16-2}, можно показать, что
+$T_j^{\min}\hm\geq \tau_j\hm-\alpha_j$, где $\abs{\alpha_j}\hm\leq C 
+({\log\log\,{2^j}})/{\sqrt{\log 2^j}}$, причем без ущерба для доказательства 
+можно опус\-тить~$\alpha_j$ и~считать, что $T_j^{\min}\hm\geq \tau_j$. Разобьем 
+отрезок $[\tau_j, T_{j}^U]$ на одинаковые части: 
+$T_j^l\hm=\tau_j\hm+l\delta_{2^j}\hm \in [\tau_j, T_{j}^U]$, $l\hm=1,\ldots,2^j-1$, 
+$\delta_{2^j}\hm=(T_{j}^U\hm-\tau_j)/2^j$. Обозначим
+\begin{align*}
+Z''_{j}(T)&=S''_{j}(T)-{\sf E} S''_{j}(T);\\
+N''_{j}(T,T') &= \sum\limits_{i=m_j+1}^{2^j}\mathbf{1}\left(T < \left\vert X_{j,k}^W\right\vert  \leq T'\right).
+\end{align*}
+Тогда
+\begin{multline*}
+A_j=\Bigg\{\fr{2^{2\beta j} \sup\nolimits_{T\in[\tau_j,T_{j}^U]} 
+|S''_{j}(T)-{\sf E} S''_{j}(T)|}{2^{J( 2\beta + 1/2)}} \geq{}\\
+{}\geq  5 \fr{\varepsilon}{J} \Bigg\}\subset D_j\cup E_j,
+\end{multline*}
+где
+$$
+D_j=\left\{\sup\limits_{l}\abs{Z''_{j}(T^l_j)}> 2^{2\beta (J - j) + J/2}  \fr{\varepsilon}{J} \right\},
+$$
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+E_j = \left\{\sup\limits_{l} \sup\limits_{T\in[T^l_j,T^l_j + \delta_{2^j})} 
+|Z''_{j}(T)-Z''_{j}(T^l_j)| \geq\right.\\
+\left.{}\geq 4 \cdot 2^{2\beta (J - j) + J/2} 
+\fr{\varepsilon}{J} 
+\vphantom{\sup\limits_{T\in[T^l_j,T^l_j + \delta_{2^j})}}
+\right\}.
+\end{multline*}
+Обозначим $q_j \hm= 2^{2\beta (J - j) + J/2}$. Учитывая определение класса~$L_p(\bm{\eta})$
+и~вид~$\tau_j$, можно показать, что дисперсии слагаемых в~$S''_{j}(T)$ 
+(а~значит, и~$Z''_{j}(T)$) не превосходят
+$C\left(\log ({2^j}/\left(\log 2^j\right)^5)\right)^{3/2}\cdot 2^{-j\gamma}$. Применяя 
+неравенство Бернштейна~\cite{B62} для~$D_j$, получим
+\begin{multline*}
+\mathbb{P}(D_j)\leq\sum\limits_l\mathbb{P}\left(\abs{Z''_{j}(T^l_j)}>\fr{q_j\varepsilon}{J}\right)\leq 2^{j+1}\!\times {}\\
+{}\times \exp\!\Bigg\{\!-J^{-2} C \varepsilon^2  q_j^2 \!\!\Bigg/\!\!\!
+\left(\!2^{1+j(1-\gamma)}\!\left(\!\log\left(\fr{2^{j}}{(\log 2^j)^5}\right)^{\!3/2}\!\!\!+{}\right.\right.\\
+\left.{}+
+2^{1+j/2}\left(\left(T_j^U\right)^2+\sigma^2\right)
+\vphantom{\left(\fr{2^{j}}{(\log 2^j)^5}\right)^{\!3/2}}
+\right)\Bigg\}.
+\end{multline*}
+
+Далее, повторяя рассуждения из~\cite{PS20}, получаем:
+\begin{multline*}
+E_j \subset{}\\
+\subset
+ \left\{
+\vphantom{\fr{2^{j/2} q_j \varepsilon }{\sigma^2}}
+\sup\limits_{l} \abs{N''_{j}(T^l_j, T^l_j+\delta_{2^j}) - {\sf E} 
+N''_{j}(T^l_j, T^l_j+\delta_{2^j})} \geq{}\right.\\
+\left.{}\geq \fr{q_j \varepsilon }{J\sigma^2} - 
+\fr{2^j T_{j}^U\delta_{2^j}}{\sigma^2} - \fr{2^j C 
+\delta_{2^j}}{\sigma^2}\right\} = E_j^{'}.
+\end{multline*}
+
+Дисперсия слагаемых в~$N''_{j}(T^l_j, T^l_j+\delta_{2^j})$ ограничена величиной 
+$C\left(\log({2^j}/{(\log 2^j)^5})\right)^{1/2}\cdot 2^{-j\gamma}$.
+Снова применяя неравенство Бернштейна, получаем:
+\begin{multline*}
+\mathbb{P}(E_l^{''}) ={}\\
+{}= \mathbb{P} \left(
+\vphantom{\fr{2^{j/2} q_j \varepsilon}{\sigma^2}}
+\left\vert N''_j\left(T_j^l, T_j^l+\delta_{2^j}\right) - {\sf E} N''_j(T^l_j, 
+T_j^l+\delta_{2^j})\right\vert  \geq{}\right.\\
+\left.{}\geq \fr{q_j \varepsilon}{J\sigma^2} - \fr{2^j 
+T_{j}^U\delta_{2^j}}{\sigma^2} - \fr{2^j C \delta_{2^j}}{\sigma^2}\right) \leq{}
+\\
+{}\leq\!
+2\exp\left\{\!-\fr{J^{-2} C\varepsilon^2 q_j^2}{2^{1+j(1-\gamma)}\!
+\left(\log({2^j}/{(\log 2^j)^5})\!\right)^{\!1/2}\!+\!2^{1+j/2}}\!\right\}\!.\hspace*{-7pt}
+\end{multline*}
+Следовательно,
+\begin{multline*}
+\mathbb{P}(E_l^\prime) \leq \sum\limits_l \mathbb{P}\left(E_l^{''}\right) \leq 
+2^{j+1}\times{}\\
+{}\times\exp \left\{\!-\fr{J^{-2} C \varepsilon^2 q_j^2}{2^{1+j(1-\gamma)}
+\left(\log({2^j}/{(\log 2^j)^5})\right)^{1/2}+2^{1+j/2}}\!\right\}\!.\hspace*{-3.74884pt}
+\end{multline*}
+Таким образом, для произвольного $\varepsilon>0$
+\begin{equation*}
+\label{S2_conv}
+\sum\limits_{j=Jt}^{J-1}\mathbb{P}\!\left(\sup\limits_{T\in[\tau_j,T_{j}^U]}\fr{2^{2 \beta j} 
+ \abs{S''_{j}(T)-{\sf E} S''_{j}(T)}}{2^{J( 2\beta + 
+1/2)}}>\fr{\varepsilon}{J}\!\right)\!\to\! 0
+\end{equation*}
+при $J\to\infty$.
+
+Для первого слагаемого из~\eqref{w_f} в~силу~\eqref{term} имеем
+$$
+\abs{\sum\limits_{j=0}^{Jt}2^{2\beta j} \beta_{0,0}U_j(T_{j}^F)}\leq C \cdot 
+2^{(2\beta+1) tJ}  \log2^J\,.
+$$
+Следовательно, при $J\hm\to \infty$
+\begin{equation}
+\label{S_1_1}
+\fr{\abs{\sum\nolimits_{j=0}^{Jt} 2^{2\beta j} \beta_{0,0} 
+U_j\left(T_{j}^F\right)}}{{\sqrt{2^{J+4\beta J} \beta_{0,0}^4}}} \to 0\;\;\mbox{п.~в.}
+\end{equation}
+
+Для оценки $\mathbb{P}(T_j^F <\tau_j)$ воспользуемся результатом, полученным в~\cite{ABDJ06}. Имеем
+\begin{equation*}
+\label{Lower_bound}
+    \sum\limits_{j=J t}^{J-1} \sup\limits_{L_p(\bm{\eta})} \mathbb{P}(T_j^F <\tau_j) \leq 
+\sum\limits_{j=J t}^{J-1} 2^{j+1} \exp\left\{-c\, \alpha_j \kappa_j \gamma_j^2\right\}.
+\end{equation*}
+
+Объединяя полученные выше оценки, для выражения~\eqref{second_term} будем иметь:
+\begin{multline*}
+\sum\limits_{j=J t}^{J-1}\Bigg(\mathbb{P}\left(T_{j}^F\leq \tau_j\right) + {}\\
+{}+
+\mathbb{P}\left(
+2^{2\beta j} \beta_{0,0}\left(\sup\limits_{T_{j}\in[\tau_j,T_{j}^U]}\abs{U_j(T_{j})-{\sf E} 
+U_j(T_{j})}+{}\right.\right.\\
+\left.\left.\left.{}+\sup\limits_{T_{j}\in[\tau_j,T_{j}^U]}\abs{{\sf E}U_j(T_{j})}\right)\!\bigg/\!
+{\sqrt{2^{J+4\beta J} 
+\beta_{0,0}^4}}>\fr{\varepsilon}{J}\right)\right) \le{}
+\\
+{}\le \sum\limits_{j=J t}^{J-1}\Bigg(2^{j+1} \exp\{-c\, \alpha_j \kappa_j \gamma_j^2\}  +2^{j+1}\times {}\\
+{}\times
+ \exp\left\{\!-J^{-2} C \varepsilon^2 q_j^2\!\Bigg/\!\!\Bigg( 2^{1+j(1-
+\gamma)}\left(\!\log\fr{2^j}{(\log 2^j)^5}\right)^{1/2}\!\!+{}\right.\\
+{}+2^{1+j/2}\Bigg)\Bigg\} +
+2^{j+1}\exp\Bigg\{-J^{-2} C \varepsilon^2  q_j^2\!\Bigg/\!\!
+ \Bigg(2^{1+j(1-\gamma)}\times{}\\
+\!\! {}\times\left(\log\fr{2^{j}}{(\log 
+2^j)^5}\right)^{3/2}\!+\!2^{1+j/2}\left(\left(T_j^U\right)^2\!+\!\sigma^2\right)\!\Bigg)\!\Bigg\}\!\Bigg).\hspace*{-7.33551pt}
+\end{multline*}
+Когда $J\to\infty$, при выполнении условий тео\-ре\-мы полученное выражение 
+стремится к~нулю, и,~учитывая~\eqref{S_1_1}, получаем, что справедливо~\eqref{WTF}.
+
+Объединяя, получаем утверждение теоремы.
+
+\smallskip
+
+Оценка риска~\eqref{risk_estimate} также является сильно состоятельной.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~2.}\
+\textit{Пусть $\mu\hm\in L_p(\bm{\eta}),$ $\eta_j \hm\in [2^{-j}(\log 2^j)^5,2^{-
+j\cdot\gamma}],$ $1/2\hm<\gamma\hm<1$. Пусть $\bm{T^{F}}$~--- вектор FDR-по\-ро\-гов 
+с~управ\-ля\-ющи\-ми па\-ра\-мет\-ра\-ми $\bm{\alpha}\hm = (\alpha_0, \alpha_1,\ldots , \alpha_{J-1})$ и~$\alpha_j \hm\to 0$, ${\alpha_j \kappa_j  \gamma_j^2}/{\log 2^j}\hm\to\infty$ 
+при $J\to\infty,$ где $\kappa_j$ и~$\gamma_j$ определены в}~\eqref{aux_param1}. 
+\textit{Тогда при} $J \hm\to \infty$
+\begin{equation*}
+    \fr{\hat{R}(\bm{T^F}) - {R}(\bm{T^{\min}})}{2^{\lambda J}} \to 0 \  \mbox 
+{\it п.~в.}
+\end{equation*}
+\textit{при любом $\lambda > 1/2 + 2\beta$.}
+
+\smallskip
+
+Теорема~2 доказывается аналогично соответствующему утверждению из работы~\cite{Palionnaya}.
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{Storey} %1
+\Au{Storey J.} A~direct approach to false discovery rates~// J.~Roy. Stat. Soc.~B, 
+2002. Vol.~64. No.\,3. P.~479--498.
+
+\bibitem{Benjamini-Hochberg} %2
+\Au{Benjamini Y., Hochberg~Y.} Controlling the false discovery rate: 
+A~practical and powerful approach to multiple testing~// J.~Roy. 
+Stat. Soc.~B, 1995. Vol.~57. P.~289--300.
+
+
+
+\bibitem{Mallat} %3
+\Au{Mallat S.} A~wavelet tour of signal processing.~--- New York, NY, 
+USA: Academic Press, 1999. 857~p.
+
+\bibitem{AS98} %4
+\Au{Abramovich F., Silverman~B.\,W.} Wavelet decomposition approaches to 
+statistical inverse problems~// Biometrika, 1998. Vol.~85. No.\,1. P. 115--129.
+
+\bibitem{KaaSh} %5
+\Au{Кудрявцев А.\,А., Шестаков~О.\,В.} Асимптотика оценки риска при 
+вейг\-лет-вейв\-лет разложении наблюдаемого сигнала~// T-Comm: Телекоммуникации и~транспорт, 
+2011. №\,2. С.~54--57.
+
+\bibitem{Besov} %6
+\Au{Бесов О.\,В., Ильин~В.\,П., Никольский~С.\,М.} Интегральные 
+представления функций и~тео\-ре\-мы вложения.~--- М.:~Наука, 1996. 480~c.
+
+\bibitem{ABDJ06} %7
+\Au{Abramovich F., Benjamini~Y., Donoho~D., Johnstone~I.\,M.} Adapting to 
+unknown sparsity by controlling the false discovery rate~// Ann. Stat., 2006. 
+Vol.~34. P.~584--653.
+
+\bibitem{Jan01} %8
+\Au{Jansen M.} Noise reduction by wavelet thresholding.~--- Lecture notes in 
+statistics ser.~--- New York, NY: Springer Verlag, 2001. Vol.~161. 217~p.
+
+\bibitem{DonJ95} %9
+\Au{Donoho D., Johnstone~I.\,M.} Adapting to unknown smoothness via wavelet 
+shrinkage~// J.~Am. Stat. Assoc., 1995. Vol.~90. P.~1200--1224.
+
+\bibitem{MAJ98} %10
+\Au{Marron  J.\,S., Adak~S., Johnstone~I.\,M., Neumann~M.\,H., Patil~P.} 
+Exact risk analysis of wavelet regression~// J.~Comput. Graph. Stat., 1998. 
+Vol.~7. P.~278--309.
+
+\bibitem{J99} %11
+\Au{Johnstone I.\,M.} Wavelet shrinkage for correlated data and inverse 
+problems adaptivity results~// Stat. Sinica, 1999. Vol.~9. P.~51--83.
+
+
+
+\bibitem{PS20} %12
+\Au{Palionnaya S.\,I., Shestakov~O.\,V.} Asymptotic properties of MSE 
+estimate for the false discovery rate controlling procedures in multiple 
+hypothesis testing~// Mathematics,  2020. Vol.~8. No.\,11. Art.~1913. 11~p.
+
+\bibitem{M09}
+\Au{Маркин А.\,В.} Предельное распределение оценки риска при пороговой 
+обработке вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов~// Информатика и~её применения, 2009. Т.~3. 
+Вып.~4. С.~57--63.
+
+\bibitem{KS16-1}
+\Au{Кудрявцев А.\,А., Шестаков О.\,В.} Асимптотическое поведение порога, 
+минимизирующего усредненную вероятность ошибки вычисления вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов~// 
+Докл. Акад. наук, 2016. Т.~468. №\,5. С.~487--491.
+
+\bibitem{KS16-2}
+\Au{Кудрявцев А.\,А., Шестаков~О.\,В.} Асимптотически оптимальная пороговая 
+обработка вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов в~моделях с~негауссовым распределением шума~// 
+Докл. Акад. наук, 2016. Т.~471. №\,1. С.~11--15.
+
+\bibitem{B62}
+\Au{Bennett G.} Probability inequalities for the sum of independent random 
+variables~// J.~Am. Stat. Assoc., 1962. Vol.~57. P.~33--45.
+
+\bibitem{Palionnaya}
+\Au{Палионная С.\,И.} Сильная состоятельность оценки риска при множественной 
+проверке гипотез с~FDR-по\-ро\-гом~// Вестн. Моск. ун-та. Сер.~15: Вычисл. матем. 
+и~киберн., 2020. №\,4. C.~34--39.
+\end{thebibliography}
+
+ }
+ }
+ 
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 14.02.22}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{THE USE OF THE FDR METHOD OF~MULTIPLE HYPOTHESIS TESTING 
+WHEN INVERTING LINEAR HOMOGENEOUS OPERATORS}
+
+
+\def\titkol{The use of the FDR method of multiple hypothesis testing when inverting linear homogeneous operators}
+
+
+\def\aut{S.\,I.~Palionnaya$^{1,2}$ and O.\,V.~Shestakov$^{1,2,3}$}
+
+\def\autkol{S.\,I.~Palionnaya and O.\,V.~Shestakov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-8pt}
+
+
+\noindent
+$^1$Department of Mathematical Statistics, Faculty of Computational Mathematics and Cybernetics, 
+M.\,V.~Lomo-\linebreak
+$\hphantom{^1}$nosov Moscow State University, 1-52~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation
+
+\noindent
+$^2$Moscow Center for Fundamental and Applied Mathematics, M.\,V.~Lomonosov Moscow State University,\linebreak
+$\hphantom{^1}$1~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation
+
+
+\noindent
+$^3$Federal Research Center ``Computer Science and Control''
+ of the Russian Academy of Sciences, 44-2~Vavilov\linebreak
+ $\hphantom{^1}$Str., Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+ 
+\Abste{One of the important tasks when processing large data arrays is their economical representation. 
+To solve this task, it is necessary to identify significant features and remove noise. 
+Such problems are found in a wide variety of fields such as genetics, biology,
+ astronomy, computer graphics, audio and video data processing, etc. Modern research 
+ in this area describes various filtering methods based on a~sparse representation 
+ of the obtained experimental data. To construct statistical estimates based on the observed data, 
+ the procedure of multiple testing of hypotheses about the significance of observations is widely used. 
+ The present authors consider the FDR (false discovery rate) method based on the control of 
+ the expected proportion of false rejections of the null hypothesis and the Benjamin--Hochberg 
+ algorithm for multiple hypothesis testing. Often, the information available for observation is 
+ some kind of transformation of the data of interest. This additionally raises the problem of 
+ inverting this transformation. The present authors consider the case when the original 
+ data vector is subjected to some linear homogeneous transformation. Such situations are typical, 
+for example, in astrophysical and tomographic applications.}
+
+\KWE{wavelets; thresholding; multiple hypothesis testing; linear homogeneous operator; 
+unbiased risk estimate}
+
+
+ 
+\DOI{10.14357/19922264220206}
+
+%\vspace*{-16pt}
+
+\Ack
+\noindent
+The paper was published with the financial support of the Ministry of Education and Science of the
+ Russian Federation as a~part of the Program of the Moscow Center for Fundamental 
+ and Applied Mathematics under the agreement No.\,075-15-2019-1621.
+
+%\vspace*{4pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-pal-1}
+\Aue{Storey, J.} 2002. A~direct approach to false discovery rates. 
+\textit{J.~Roy. Stat. Soc.~B} 64(3):479--498.
+\bibitem{2-pal-1}
+\Aue{Benjamini, Y., and Y.~Hochberg.}
+ 1995. Controlling the false discovery rate: A~practical and powerful approach to multiple testing.
+ \textit{J.~Roy. Stat. Soc.~B} 57:289--300.
+
+\bibitem{4-pal-1}
+\Aue{Mallat, S.} 1999. \textit{A~wavelet tour of signal processing}. New York, NY: Academic Press. 857~p.
+
+\bibitem{3-pal-1}
+\Aue{Abramovich, F., and B.\,W.~Silverman.}
+ 1998. Wavelet decomposition approaches to statistical inverse problems. \textit{Biometrika} 85(1):115--129.
+ 
+\bibitem{5-pal-1}
+\Aue{Kudryavtsev, A.\,A., and O.\,V.~Shestakov.}
+ 2011. Asimptotika otsenki riska pri veyglet-veyvlet razlozhenii na\-blyu\-da\-emo\-go signala
+  [The average risk assessment of the wavelet decomposition of the signal].
+  \textit{T-Comm~--- Telekommunikatsii i~transport} [T-Comm~--- Telecommunications and Transport] 2:54--57.
+\bibitem{6-pal-1}
+\Aue{Besov, O.\,V., V.\,P.~Il'in, and S.\,M.~Nikol'skiy.}
+ 1996. \textit{Integral'nye predstavleniya funktsiy i~teoremy vlozheniya} 
+ [Integral representations of functions and embedding theorems]. Moscow: Nauka. 480~p.
+\bibitem{7-pal-1}
+\Aue{Abramovich, F., Y.~Benjamini, D.~Donoho, and I.\,M.~Johnstone.}
+ 2006. Adapting to unknown sparsity by controlling the false discovery rate. 
+ \textit{Ann. Stat.} 34:584--653.
+\bibitem{8-pal-1}
+\Aue{Jansen, M.} 2001. \textit{Noise reduction by wavelet thresholding}. 
+Lecture notes in statistics ser. New York, NY: Springer Verlag. Vol.~161. 217~p.
+\bibitem{9-pal-1}
+\Aue{Donoho, D., and I.\,M.~Johnstone.} 1995. Adapting to unknown smoothness via wavelet shrinkage. 
+\textit{J.~Am. Stat. Assoc.} 90:1200--1224.
+
+
+ 
+
+
+\bibitem{11-pal-1}
+\Aue{Marron, J.\,S., S.~Adak, I.\,M.~Johnstone, M.\,H.~Neumann, and P.~Patil.}
+ 1998. Exact risk analysis of wavelet regression. \textit{J.~Comput. Graph. Stat.} 7:278--309.
+ 
+  \bibitem{10-pal-1}
+\Aue{Johnstone, I.\,M.} 1999. Wavelet shrinkage for correlated data and inverse problems: 
+Adaptivity results. \textit{Stat. Sinica} 9(1):51--83.
+\bibitem{12-pal-1}
+\Aue{Palionnaya, S.\,I., and O.\,V.~Shestakov.}
+ 2020. Asymptotic properties of MSE estimate for the false discovery rate controlling procedures 
+ in multiple hypothesis testing. \textit{Mathematics} 8(11):1913. 11~p.
+\bibitem{13-pal-1}
+\Aue{Markin, A.\,V.} 2009. Predel'noe raspredelenie otsenki riska pri porogovoy obrabotke 
+veyvlet-koeffitsientov [Limit distribution of risk estimate of wavelet coefficient thresholding]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 3(4):57--63.
+\bibitem{14-pal-1}
+\Aue{Kudryavtsev, A.\,A., and O.\,V.~Shestakov.}
+ 2016. Asymptotic behavior of the threshold minimizing the average probability of error in calculation
+  of wavelet coefficients. \textit{Dokl. Math.} 93(3):295--299.
+\bibitem{15-pal-1}
+\Aue{Kudryavtsev, A.\,A., and O.\,V.~Shestakov.}
+ 2016. Asymptotically optimal wavelet thresholding in the models with non-Gaussian noise distributions. 
+ \textit{Dokl. Math.} 94(3):615--619.
+\bibitem{16-pal-1}
+\Aue{Bennett, G.}
+ 1962. Probability inequalities for the sum of independent random variables. 
+ \textit{J.~Am. Stat. Assoc.} 57:33--45.
+\bibitem{17-pal-1}
+\Aue{Palionnaya, S.\,I.}
+ 2020. Strong consistency of the risk estimator in multiple hypothesis testing with the FDR threshold. 
+ \textit{Moscow Univ. Comput. Math. Cybern.} 44(4):190--195.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received February 14, 2022}}   
+
+\Contr
+
+\noindent
+\textbf{Palionnaya Sofia I.} (b.\ 1995)~--- 
+PhD student, Department of Mathematical Statistics, Faculty of Computational Mathematics and Cybernetics,
+ M.\,V.~Lomonosov Moscow State University, 1-52~Leninskie Gory, GSP-1, Moscow 119991, 
+ Russian Federation; junior scientist, Moscow Center for Fundamental and Applied Mathematics, 
+ M.\,V.~Lomonosov Moscow State University, 1~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation;
+ \mbox{sofiko-10@yandex.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Shestakov Oleg V.} (b.\ 1976)~--- 
+Doctor of Science in physics and mathematics, professor, Department of Mathematical Statistics, 
+Faculty of Computational Mathematics and Cybernetics, M.\,V.~Lomonosov Moscow State University, 
+1-52~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation; 
+senior scientist, Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., 
+Moscow 119333, Russian Federation; 
+leading scientist, Moscow Center for Fundamental and Applied Mathematics, 
+M.\,V.~Lomonosov Moscow State University, 1~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation; 
+\mbox{oshestakov@cs.msu.su}
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}   

@@ -1,0 +1,752 @@
+\renewcommand{\bibname}{\protect\rmfamily References}
+\renewcommand{\figurename}{\protect\bf Figure}
+
+\def\stat{dolev}
+
+\def\tit{PROBABILISTIC METHODS FOR SELF-CORRECTING HARDWARE DESIGN$^*$}
+
+\def\titkol{Probabilistic methods for self-correcting hardware design}
+
+\def\autkol{S.~Dolev,  S.~Frenkel, and D.\,E.~Tamir}
+
+\def\aut{S.~Dolev$^1$,  S.~Frenkel$^{2,3}$, and D.\,E.~Tamir$^4$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\footnotetext[1] {Extended abstract of this work was presented at the 13th International Conference
+on Applied Stochastic Models and Data Analysis (ASMDA), 2009. This research is 
+partially supported by the Russian 
+Foundation for Basic Research (Grant RFBR 12-07-00109) and by the Rita Altura Trust Chair in
+Computer Sciences, Lynne and William Frankel Center for Computer Science, Israel Science Foundation
+(Grant No.\,428/11), Cabarnit Cyber Security MAGNET Consortium, Grant from the
+Institute for Future Defense Technologies Research named for the Medvedi of the Technion,
+and the Israeli Internet Association.}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Department of Computer Science, Ben-Gurion University,  
+Beer-Sheva 84105, Israel} 
+\footnotetext[2]{Institute of Informatics 
+Problems, Russian Academy of Sciences, Moscow 119333, Russian Federation}
+\footnotetext[3]{Moscow Institute of Radio, Electronics, and Automation
+``MIREA,'' Moscow 119454, Russian Federation} 
+\footnotetext[4]{Department of Computer Science, Texas State University, San Marcos, TX 78666, 
+USA} 
+
+%\vspace*{6pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2013\ \ \ volume~7\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2013\ \ \ volume~7\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+ 
+
+\Abste{This paper presents several ways for extending the scope of program self-correction 
+methods, based on the ``random self-reducibility'' property, to hardware design. The 
+concept can be utilized for both 
+analog and digital hardware-design. The extension is based on sampling, 
+polynomial-interpolation, and error-correcting codes. In particular, the authors suggest 
+using the well-known reconstruction of real-numerical functions for correcting faults 
+remaining in analog and digital hardware, e.\,g., arithmetic logic units (ALU), after 
+manufacturing testing. 
+The present approach can complement the state-of-the-art technique of program self-correction 
+by uniformly testing samples of operations and verifying the results of these samples.}
+
+%\vspace*{2pt}
+
+
+\KWE{self-correcting; real function computation; data analysis; interpolation}
+
+%\vspace*{2pt}
+
+\DOI{10.14357/19922264130413}
+
+
+\vskip 20pt plus 9pt minus 6pt
+
+      \thispagestyle{myheadings}
+
+      \begin{multicols}{2}
+
+            \label{st\stat}
+
+
+\section{Introduction}
+
+\noindent
+The reliability of computation in the presence of errors is an important research topic. 
+In particular, it is crucial in the 
+scope of Digital Signal Processors (DSP) based classification tasks
+and for embedded devices of safety-critical systems. 
+Robust methods for identifying incoming waveforms, referred to as Modulation 
+Classification~[1] are  some 
+examples of this type of classification problems. The objective in these computation tasks is to minimize the error 
+probability.
+
+Since it is very difficult to test and detect all of the possible manufacturing faults in the stage of fabrication of modern 
+hardware, there is an increasing interest in methods for self-correction~[2]. The 
+methods presented in the literature (cf.~[2]), 
+however, require knowledge related to the logical structure of the target design 
+as well as sophisticated models to 
+analyze their reliability.
+
+In addition, the task of verifying the correctness of information processing devices 
+such as microprocessors is a very 
+challenging task since, typically, an exhaustive verification is an exponential function 
+of the device complexity. 
+
+   Generally, self-correction is based on simple estimation of the error probability using sampling rather than proving 
+correctness or exhaustive evaluation.  Sampling can be used to efficiently identify the probability of a given ``black-box'' 
+device to correctly compute the results for uniformly selected inputs. 
+   
+   Originally, the scope of self-correction has involved a program that computes functions-over-finite-fields, overcoming 
+computation errors on a small fraction ($\varepsilon$) of their input~ [3, 4]. 
+In this paper, however, it is shown that the 
+random reducibility-based self-correction approach, originally suggested to \textit{amplify} the reliability of 
+programs~[3, 4], can be used in the scope of nonfinite fields for self-correcting hardware. 
+   
+   One of the main contributions of the current paper is the introduction of novel ways 
+   to extend the software-based self-correction 
+paradigm to digital and analog hardware. 
+   
+The proposed approach can complement state-of-the-art techniques 
+by uniformly testing samples of operations and verifying 
+the results of these samples. Hence, it enables tolerating a small percentage of incorrect results due to manufacturing defects,
+thereby facilitating the use of nonperfect hardware. In 
+operation mode when an operation op$_i$ has to be executed, a uniformly chosen set of operations op$_j$, op$_k$  that 
+can imply the result of the operation in hand are executed in order to maintain a verified result.
+
+It is essential to note that the domain/range of computed functions cannot be restricted to 
+finite fields and, by using some 
+techniques~\cite{4-dol, 12-dol}, can include the real numbers. In addition,  sampling, error correction codes, 
+polynomial interpolation, and segmentation are used
+to increase the efficiency of self-correction for any given function over 
+the real numbers. 
+
+   The paper, which is an extended version of paper~\cite{14-dol}, is organized as follows. Section~2 provides the 
+problem definition and surveys related research. Section~3 presents a methodology for increasing the computation 
+accuracy by polynomial interpolation with error correction. Section~4 considers possible ways to reconstruct real 
+functions using interpolation and section~5 presents a synopsis of approaches to possible implementation of 
+self-correcting based hardware. Conclusions and proposals for future work 
+are included in section~6.
+
+\section{Problem Analysis and~Related Work}
+   
+   \noindent
+   The following aspects of self-correcting computations
+   are considered in this section:  ($i$)~incorrect function on a small 
+fraction of the inputs; and ($ii$)~sampling-based self-correcting. 
+
+\subsection{Incorrect function on~a~small fraction of~the~inputs}
+    
+\noindent
+    Consider a hardware computation device, such as an ALU, designed to compute a function 
+$f(x)$ of input values from the domain~$X$; and assume that the device produces incorrect results $f^*(x)\not= f(x)$ 
+for a small fraction of~$X$. That is, $f^*(x)\not= f(x)$ for $x\in X_C\subset X$, such that $\vert X_C\vert \ll \vert 
+X\vert$ where $\vert A\vert$ denotes the rank of a set~$A$. This is depicted in Fig.~1.
+
+    Generally, the correctness of general-purpose and application-specific 
+    microprocessors is verified by manufacturer-testing 
+    at production time and/or self-checking procedures which are 
+    based on online detection.
+    
+     The detection of all possible permanent faults through testing at the manufacturing cycle, however, is not feasible; 
+and self-checking covers only a small fraction of erroneous bits. Hence, it requires specific knowledge about the logical 
+structure of the target design. 
+
+\begin{center}  %fig1
+\vspace*{6pt}
+\mbox{%
+ \epsfxsize=40mm
+ \epsfbox{dol-1.eps}
+ }
+  \end{center}
+ \vspace*{6pt}
+{{\figurename~1}\ \ \small{Incorrect results of the computation of the target function $f(x)$}}
+
+
+
+\addtocounter{figure}{1}
+
+
+The Floating Point divide instruction on the Pentium$^\registered$ processor 
+is one of the well-known 
+examples for this phenomenon. Despite more than
+ 10~years of debugging and enhancements, the Pentium$^\registered$ 
+processor Floating Point divide instructions have produced inaccurate results for a fraction of 
+inputs~\cite{5-dol}.
+    
+    Nevertheless, sampling can be used to efficiently identify the probability of a given device to correctly compute the 
+results for inputs selected consistently according to a probability distribution such as uniform distribution. Indeed, 
+sampling-based self-correction along with testing and self-checking is suggested in 
+literature~\cite{3-dol, 4-dol}.
+
+\subsection{Sampling-based self-correction}
+
+\noindent
+     A function is \textit{random self-reducible} of order~$k$ over a set~$D$ if its value at a given point can be 
+efficiently reconstructed from its evaluation at   random points~[3, 4]. The reconstruction is possible if, and only if, 
+there exists a function~$\varphi$ and a set of random functions $\sigma_1, \sigma_2,\ldots , \sigma_n$ such that 
+$f(x)=\varphi(x,r,f(\sigma_1(x,r),\ldots , f(\sigma_n(x,r)))$ for $x,r\in D$. This property allows reconstruction of the 
+value of a function~$f$ using a finite number of elements taken from its domain without requiring any knowledge about 
+the implementation of the device that implements the function, e.\,g., a hardware operational block or a program, which 
+performs the computation. Note that polynomials of degree~$d$ over a finite field are random self-reducible using 
+$d+1$ random points~\cite{4-dol}.
+     
+     Consider a function with no input/output domain restrictions. For example, these domains might include integer 
+values, real numbers, vectors, etc. In order to use the \textit{reliability amplification} technique 
+utilizing the random 
+self-reducible property~\cite{3-dol, 6-dol}, it is necessary to provide a specific number of 
+\textit{batches} that yield sufficient 
+probability for the majority of the batches to be correct; thereby, enabling using majority vote procedures for self-
+correction. In this context, the term \textit{batch} denotes a
+\textit{set of program input/output instances}.
+In other words, in the context of this paper, reliability amplification denotes the increase of correct 
+computation probability due to computation reorganization, for example, using the fact that the functions are random 
+self-reducible to reorganize the functions.
+       
+       Let $n$ be the number of batches and let $p$ denote a fraction of the inputs for which the computations can be 
+incorrect. The probability of correct computation can be calculated as the probability that the outputs obtained for more 
+than $n/2$  of the batches are correct. This is given by:
+       \begin{equation}
+       \mathrm{Pr}\left( k\geq \left\lfloor \fr{n}{2}\right\rfloor+1\right)=1-\sum\limits_{k=1}^L C_n^k p^k q^{n-k}
+       \label{e1-dol}
+       \end{equation}
+where $k$ is the number of correct outputs; $p=1-q$; $L=\lfloor 
+n/2\rfloor +1$ is the probability of correct computation for each batch; and
+$C_n^k$ is the Binomial coefficient. 
+
+   The reliability of the computations depends on the number of batches and on the 
+   choice of the reliability-parameter (or confidence level)~$r$ which is the probability 
+   of obtaining a majority of wrong results.  
+     
+   According to the Chernoff inequality, the required number of batches can be expressed as
+   \begin{equation}
+   n\geq \fr{1}{(p-1/2)^2}\,\ln\left( \fr{1}{\sqrt{1-r}}\right)\,.
+   \label{e2-dol}
+   \end{equation}
+   
+   For example, if the function computed is a quadratic polynomial then 
+   $p=(1-r)^3$ as each batch 
+must include at least three input points (vectors). Equations~(1) and~(2) show that the use of majority-vote based choice 
+among the results obtained from uniformly chosen batches can ``amplify'' the original reliability of devices if  
+enough batches are used. Nevertheless, the minimum number of batches required for obtaining a correct computation results with 
+a confidence level~$r$ might be very large, even when the device has a small probability of errors. For example, more than 
+10,000 batches are required in the case of quadratic polynomials for $\varepsilon=0.2$ and $r=0.05$, where 
+$\varepsilon$ is the small fraction the inputs and~$r$  is the reliability parameter. On the other hand, according to Eq.~(1), the 
+probability of correct computation with a reasonable number of batches is less than the original $\varepsilon =0.2$. 
+Hence, there is no amplification of the computation reliability, that is, 
+using the Chernoff majority rule~(1) will not lead 
+to an increase in correct computations. Consequently, in this example,
+given~$r$, it is impossible to provide correct 
+computations on the basis of the majority vote rule, if the number of inputs is less than 10,000 batches, as the 
+computations are erroneous on a fraction of inputs that is greater than~$\varepsilon$.                               
+    
+    A function over a group $G$ is \textit{linear} if it maps the group~$G$ to a 
+    group~$H$ so that $(x_1\oplus 
+x_2)=f(x_1)\otimes f(x_2)$ where $\oplus$ and~$\otimes$ are the
+group operations. Integer multiplication and modular 
+multiplication are some examples for such functions. 
+From the point of view of the computation overhead, one benefit of 
+the linearity is that given the values $f(x_1)$ and $f(x_2)$ and given that $x=x_1\oplus x_2$, the function $f(x)$ can be 
+computed as $f(x_1)\otimes f(x_2)$ which might be an easier computation task. An important aspect of the 
+self-correction methods proposed in this paper is that the linearity properties of functions 
+defined over finite fields can be 
+utilized to increase the probability of success of a batch and, therefore, 
+reduce the required number of batches. Error 
+correcting codes can be used to obtain a better success rate for a batch result~\cite{6-dol}. This approach, referred to as 
+\textit{batch self-corrector}, has been applied to the function $f(x)=x\,\mathrm{mod}\, R$ over the positive integers 
+domain~\cite{6-dol}. In addition, it has been used for self-testing, which is a part of the self-correction techniques. For 
+example, Spielman suggested using the result of encoding functions defined over a finite field in order to 
+increase the probability of correct computations of batches~\cite{7-dol}. 
+    
+    Assume that one is able to digitize (discretize) the input domain~$X$  
+    for a set of integer or rational 
+    values~\cite{8-dol}, thereby transforming the given function to the domain/range of finite fields. Then, if the 
+function is a polynomial, it becomes an integer function. Furthermore, if one is able to use the linearity properties to 
+reduce the number of batches, then only the ``improved'' integer function has to be applied to the final real computation. 
+This results in the following stages for computing $f(x)$:
+    \begin{enumerate}[(1)]
+\item digitize the original function to a finite field (cf.~\cite{8-dol, 9-dol});
+\item select a polynomial interpolation function over the finite field; 
+\item use error correction (e.\,g., the Berlekamp--Welch algorithm~\cite{9-dol}) to correct 
+a batch, leading to a reduction 
+of the necessary number of batches according to the Chernoff-bound; and
+\item reconstruct the digitized real number function from the discrete domain to the real domain using polynomial 
+interpolation such as Tailor, Chebyshev, etc. Alternatively, 
+this stage can be implemented by checking whether the 
+original result of the device is close to the discrete value obtained.
+\end{enumerate}
+
+\begin{figure*} %fig2
+   \vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=150.174mm
+ \epsfbox{dol-2.eps}
+ }
+ \end{center}
+ \vspace*{-6pt}
+\Caption{Correctness probability vs.\ correction rate~(\textit{a})
+and vs.\ the logarithm of the number of batches~(\textit{b}) for different ALU error rates: 
+\textit{1}~--- 0.2; \textit{2}~--- 0.3; and 
+\textit{3}~--- 0.4}
+\end{figure*}
+
+\section{Amplification by~Polynomial Interpolation with~Error Correction}
+
+\noindent
+   Error correcting codes can be used to exploit linearity~\cite{8-dol}. For example, the 
+   Reed--Solomon (RS) code of a 
+polynomial over a finite field has linear properties~\cite{7-dol}. Let $(E,D)$ be an encoding-decoding pair for an error-
+correcting code of a code-word of length~$n$ with rate~$T$ (that is, a code that can correct~$T$ bits or symbols) for a 
+polynomial function. For example, consider the Berlekamp--Welch algorithm, of RS codes polynomials 
+computation in the presence of errors of interpolation over a finite field~\cite{9-dol}.  The polynomial~$P$  is unknown; 
+and the only information about~$P$ is that it is of degree of~$l$ (say, $l=2$). The polynomial~$E$ is unknown as well. 
+Using the relationship defined above, one can produce a linear system whose solutions are the coefficients of~$P$ 
+and~$E$.  This is shown in the following equations.
+   
+   Let $Q(X)=aX^3+bX^2+cX+d=P(X) E(X)$ where $a$, $b$, $c$, and~$d$ are unknown coefficients. 
+Substituting $P(X)$ by $R(X)=P(X)/Q(X)$,  one obtains:
+
+\noindent
+   $$
+   aX^3+bX^2+cX+d=R(X) E(X)=R(X) (X-e)
+   $$
+   which can be rewritten as: 
+   $$
+   aX^3+bX^2+cX+d+R(X) e =R(X) X\,.
+   $$ 
+   Now, one can substitute $X$ by $\{0,1,2,3,4\}$  to obtain five linear equations in five unknowns. Solving this linear 
+system for $a$, $b$, $c$, $d$, and~$e$ provides the polynomials $Q(X)$ and $E(X)$ which enable finding $P(X)$ by 
+computing the quotient $Q(X)/E(X)$, and from~$P$ it is possible to recover the original (uncorrupted) values. In this 
+case, the computation correctness probability can be defined as the probability that the number of incorrect symbols 
+(from the specific finite field) is at most~$T$. This probability is given by:  
+   \begin{equation}
+   P_{\mathrm{corr}}=\sum\limits_{i=0}^T C_N^i \varepsilon^i (1-\varepsilon)^{N-i}
+   \label{e3-dol}
+   \end{equation}
+where $N$ is the degree of the polynomials, which is the 
+number of points used for interpolation, referred to as the 
+block size ($N=2$ in the case of a quadratic interpolating 
+polynomials), and $\varepsilon$ corresponds to the probability of a symbol error. Obviously, the code distance is $T=(n-
+k)/2$, where $k$ is the number of data symbols that has to be maintained. That is, for $T=1$,  a (5,3) code is obtained, 
+$T=2$ results in a (7,3) code, and $T=3$ provides a (9,3) code, where the left value in a pair of numbers that describe a 
+code is the code-word length, and the right value is the number of data symbols. 
+
+   Figure~2\textit{a} shows the batches correctness probability ($P_{\mathrm{corr}}$) 
+   computed using Eq.~(2) vs.\ the correction 
+rate~$T$ (the $x$ axis) for different device errors. 
+
+   As seen in the figure, the probability of a correct result can be increased using the data correction encoding (e.\,g., the 
+RS codes).   Correspondingly, in some cases, 
+due to this encoding, one can afford to work with greater 
+fraction of erroneously computed inputs. This means that amplification of the original probability (by using 3-symbols 
+error correction) is possible even when the error probability of the device is approximately 0.3; moreover, such a 
+correction is essential in the case that the error probability is around 0.4. Thus, if one deals with a discrete function 
+(whose domain is a finite field) where RS-encoding can be used, it is possible to improve the probability of correct 
+computation by repeating the computation using uniform random inputs (from this finite field), interpolating them, and 
+choosing the result according to a majority vote rule.
+   
+   Figure~2\textit{b} presents an example of the computation of correctness probability vs.\ the logarithm (log base~10 is denoted 
+as ``lg'') of the number of batches for different ALU error rates with RS (7,3). This corresponds to RS encoding that 
+corrects two symbols ($T=2$), when the probability of a symbol error, which is equal in this instance to the erroneous 
+fraction of inputs~$\varepsilon$, is $P_s=0.3$; and $P_{\mathrm{corr}}=0.647$. In this case, the amplification of the correct 
+probability starts when 21~batches are used, a considerably lower number of batches than for the case of noncoded batches. In 
+comparison, in the case of $\varepsilon=0.3$, error correction is impossible for noncoded batches as $(1-r)^3<1/2$ and 
+is irrelevant for the majority-vote-based choice algorithm. One should take into account, however, the need for 4~extra 
+points for each batch (7~instead of~3) to achieve this improvement. 
+{ %\looseness=1
+
+}
+   
+   Nevertheless, adding points to a batch can significantly reduce the required number 
+   of batches even when~$p$  is 
+only slightly larger than~$1/2$.  
+   
+   
+\section{Real Function Reconstruction}
+
+\noindent
+   The feasibility of implementation of the self-correcting algorithm proposed in this paper
+    for an error correction in analog hardware
+    depends on existence of appropriate transformation of real signals input (numbers) to finite fields.  
+As shown below, the state-of-the-art of analog-digital design allows finding proper solutions of this problem.   
+   
+       Note that the explicit reconstructing polynomials and rational functions over finite fields are presented by Sigal 
+\textit{et al}.\ in~\cite{3-dol}. 
+Sigal \textit{et al}.\ use the fact that multiplication of any fixed element of 
+finite fields by a random uniformly distributed element of the field gives a result that is uniformly distributed over the 
+field. Therefore, in order to use the random self-reducibility-based approach to self-correction of real functions, one 
+should consider discrete transformation of these functions to finite fields and commence with reconstruction of the 
+functions. 
+   
+   In general, the reconstruction of real continuous function from digital data is governed by the \textit{Nyquist 
+sampling theorem}~\cite{6-dol}, which requires that a band-limited continuous function is sampled with a frequency 
+equal to, or greater than, twice the maximum frequency of the signal. This digitization-reconstruction model, however, is 
+not suitable in the context of self-correction, since the function is interpolated by algebraic polynomials.  Moreover, the 
+batches include randomly generated points. Hence, nonuniform discretization is required. This raises additional 
+difficulties in the reconstruction~\cite{8-dol}. In addition, the \textit{quantization} of function values implies 
+representation by a finite number of bits (say, $n$~bits). Due to the finite precision representation of real numbers in 
+computational devices; roundoff errors might occur during the calculations. The problem is finding the minimum 
+accuracy necessary to ensure that the inverse quantization transformation that is a part of the 
+digital-to-analog 
+transformation can perform rounding and roundoff. This would make the function result equivalent to the rounding of 
+the exact result (which could be obtained by the device) for all possible inputs. Since real-valued polynomial 
+interpolations, say, Tailor polynomials, are defined over input variables given as real numbers, they cannot be used to 
+express the finite bit-width limitations. Thus, one should coordinate the number of Tailor series 
+terms and the number of bits in 
+the aforementioned finite numbers representation. In order to resolve this problem, it is possible to use the technique 
+presented in~\cite{12-dol}, where the coefficients of the series are expressed in terms of a finite number of bits referred 
+to as fractional bits (FB). Several techniques for finding the necessary numbers of the Tailor series coefficients given a 
+specific number of FBs are suggested in~\cite{12-dol}.
+     
+     Another mean for increasing the accuracy is segmentation, which refers to dividing the input into subintervals, 
+slices, or segments~\cite{10-dol}. Generally, a set of coefficients of a low-degree polynomial can be used to evaluate 
+each segment, and the error probability is computed independently for each segment~\cite{10-dol}. Note that the degree 
+is an important parameter since a small degree enables correcting more errors using the 
+Berlekamp--Welch algorithm. An 
+evaluation of the obtained accuracy can be controlled by varying the number of segments and/or the polynomial degree. 
+Using online segmentation requires predicting the interpolation error for each segment. For several differential 
+functions, this error depends on the first $d+1$ derivatives $f^{(d+1)}(x)$, where $d$ is the
+ degree of the interpolation 
+polynomial, can be calculated during a preprocessing stage~[13]. 
+     
+\section{Synopsys}
+
+\noindent
+The computation of the value of $f(x)$ at a given point   by evaluation at several random points can be implemented via 
+interpolation of $f(x)$ using samples of~$x$. For example, the input data of an ALU, which can be faulty with some known 
+probability, can be considered as a set or series of batches, each of which is a series of~$k$  randomly generated 
+arguments $r_{i,j}$ where $i=1,\ldots ,m$  is the number of the ALU random inputs 
+needed for interpolation; for example, $m=2$ 
+for the linear interpolation and $k=l+1$ in the case of the interpolating polynomial 
+of degree~$l$. The variable $j=1,\ldots ,n$ is the 
+number of interpolations (number of batches of computations). The series quantity must provide a reliable choice of result of 
+interpolation by majority in the sequence of results of interpolation obtained from the batches. 
+    
+    The model suggested in~[3, 4] which uses uniform batches of random inputs is practical only in the case of 
+relatively small error probability~$\varepsilon$. Nevertheless, even in the relatively simple case of the quadratic 
+polynomial, the batch correctness probability defined by the Chernoff-bound success probability of~0.512 for 
+$\varepsilon=0.2$ might imply a much smaller success probability for all polynomials of degrees $d>2$.
+    
+    Computation in a finite field is one possible way to increase the batches' correctness probability. This means 
+operating with encoded data using coding methods such as RS codes and the Berlekamp--Welch 
+algorithm~\cite{7-dol}. This coding is an interpolation as it provides computation of polynomials in all the required 
+points, using several points where the polynomial is known. In fact, the building of polynomials in the Berlekamp-Welch 
+decoding algorithm is similar to Lagrange interpolation. Note that, in effect, different types of errors of 
+computation (referred to as ``ALU\_errors'') are considered in the compared approaches. While the symbol (bit) error relates to a specific 
+error rate~$T$ (say, $T=3$), the error considered in self-correcting program theory (e.\,g., in~\cite{3-dol}) is only a 
+small fraction~$\varepsilon$ of erroneous computed  inputs. This means that  for the $(1-\varepsilon)$ fraction of 
+inputs $\mu(f(x),f_C(x))\leq \sigma$ where $f_C(x)$ is the function $f(x)$ computed by the ALU;
+$\mu (f(x), f_C(x))$ 
+is the measure of distance between the exact value $f(x)$ and the computed function $f_C(x)$;
+and $\sigma$ is the threshold 
+error value. In general, $\sigma$ corresponds to other erroneous quantities of bits. 
+    
+     As for DSP-based classification tasks, mentioned above as a prospective field of the self-correcting approach 
+application, many current approaches use various polynomials to compute the classification characteristics, e.\,g., spline 
+approximation in image processing. Therefore, in the event that the DSP computes the characteristics correctly on all but 
+a small fraction~$\varepsilon$ of inputs, the algorithms mentioned above are suitable, and implementation of the 
+computation schema, presented in sections~2--4, can essentially improve the classification reliability in comparison with the 
+DSP characteristic~$\varepsilon$.
+     
+Since the error correction can be interpreted as a ``decoding of code-words,'' one can 
+borrow  several ideas from Locally 
+Decodable Codes (LDC)~\cite{13-dol}. Locally decodable codes are the correcting codes where in order to retrieve the correct value of 
+just one position of the input with high probability, it is sufficient to read a small number of positions of the 
+corresponding possibly corrupted code-word. The locally decodable code can recover from a much higher 
+     error-rate~\cite{4-dol}. One of the reasons for using LDC is that the previously used RS code consists 
+of complete evaluations of polynomials of total degree up to~$d$. In particular, there are LDCs which provide reduction 
+of the error rate of the code with the number of queries which can be essentially 
+higher than the polynomial degree~$d$. 
+Hence, the polynomial 
+degree is not a limiting factor for the fraction of erroneous results reduction. 
+In this context, the term \textit{query} is a measure of complexity computed by the
+number of bits that need to be read from a corrupted code-word in order to recover
+a single bit of the encoded word~[14]. It should be noted that LDCs are based on the classical Reed--Muller
+(RM) codes, which have rather simple and fast hardware implementation~[15].
+     
+     
+\section{Concluding Remarks and~Proposals for~Future Research}
+     
+\noindent
+In this paper, recent results in self-correcting computations have been presented.
+     As the results show, in spite of essential reduction in the number of batches needed for suitable computation 
+accuracy, this number might be rather significant. The complexity of the proposed
+approach depends on the number of\, batches as 
+well as on the complexity of decoding the codes used for increasing correct computation probability for each batch. 
+Feasible ways  for improving the  amplification have been proposed
+and it has been demonstrated that these methods can minimize the number of 
+batches of the computation function used to correct the computed value and provide a significant decrease in the error 
+probability with the number of the batches used. 
+Furthermore, a hardware implementation of this approach to self-correction can be
+derived from hardware implementation of the coding methods such as RS and RM~[15, 16].
+     
+     In the future, both the theory of random self-reducibility and new results in LDC 
+will be explored for the problem of reconstruction of real numerical functions for correcting faults remaining in hardware after 
+manufacturing testing. In addition, the authors plan to explore nonuniform sampling methods such as compressive sensing. 
+Furthermore, a study of technical details of hardware implementation as well as DSP-based solutions will be performed.
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\begin{thebibliography}{99}
+\bibitem{1-dol}
+\Aue{Bil$\acute{\mbox{e}}$n,~S., and A. Price}.  2007. 
+Modulation classification for radio interoperability via SDR. \textit{SDR 07 Technical Conference and Product Exposition 
+Proceedings}. {\sf http://www.slideshare.net/kirill443/12-4-5647963} (accessed November~7, 2013).
+\bibitem{2-dol}
+\Aue{Lala,~P.} 2000. 
+\textit{Self-checking and fault-tolerant digital design}. Morgan Kaufmann Publs. 400~p.
+\bibitem{3-dol}
+\Aue{Sigal,~A., R.~Lipton, R.~Rubinfeld, and M.~Sudan}. 1990. Reconstructing algebraic functions from mixed data. \textit{33rd 
+Annual Symposium on Foundations of Computer Science.} 503--512.
+\bibitem{4-dol} %4
+\Aue{Gemmell,~P., R. Lipton, R.~Rubinfeld, M.~Sudan, and A.~Wigderson}. 1991.
+Self-testing/correcting for polynomials and for approximate functions. \textit{23rd Annual ACM Symposium on Theory of 
+Computing Proceedings}. 32--34.
+\bibitem{12-dol} %5
+\Aue{Lee, D.\,U., R.~Cheung, W. Luk, and J.~Villasenor}. 2008.  Hardware implementation trade-offs of polynomial 
+approximations and interpolations. \textit{IEEE Trans. Comput.}  57(5):686--701.
+
+\bibitem{14-dol} %14
+\Aue{Dolev,~Sh., and  S.~Frenkel}. 2009. Extending the scope of self-correcting. 
+\textit{13th Conference (International) on Applied 
+Stochastic Models and Data Analysis (ASMDA2009)  Proceedings}. 458--462. 
+
+\bibitem{5-dol} %6
+\Aue{Nicely, T.\,R.} {Some results of computational research in prime numbers (Computational number theory)}.
+{\sf  http://www.trnicely.net/pentbug/pentbug.html} (accessed December 2010).
+
+\bibitem{6-dol} %7
+\Aue{Rubinfeld,~R.} 1992. Batch checking with applications to linear functions. 
+\textit{Inform. Process. Lett.} 42:77--80.
+\bibitem{7-dol} %8
+\Aue{Spielman, D. } 1996. Highly fault-tolerant parallel computation. \textit{37th IEEE  Annual Symposium on Foundations of 
+Computer Science Proceeding}.  154--163.
+\bibitem{8-dol} %9
+\Aue{Oppenheim, A.\,V.,  R.\,W.~Schafer, and J.\,R.~Buck}. 1999.  
+\textit{Discrete-time signal processing}. Upper Saddle River, 
+NJ: Prentice-Hall. 871~p.
+\bibitem{9-dol} %10
+\Aue{Berlekamp,~E., and L.~Welch}. 1986.  Error correction  of algebraic block codes. U.S. Patent No.\,4,633,470. 
+\bibitem{10-dol} %11
+\Aue{Tertinek,~S., and C.~Vogel}. 2008. Reconstruction of nonuniformly sampled bandlimited  signals using a 
+differentiator-multiplier cascade. \textit{IEEE Trans. Circuits  Syst.} 55(8):2273---2286.
+\bibitem{11-dol}
+\Aue{Pang,~Y., and K. Radecka}. 2008. Optimizing imprecise fixed-point arithmetic circuits specified by Taylor series through 
+arithmetic transform. \textit{Design Automation Conference  DAC'08 Proceedings}. 397--402.
+
+\bibitem{13-dol} %12
+\Aue{Yekhanin, S.} 2011. Locally decodable codes. \textit{Foundations Trends Theoretical Computer Sci.} 7(1):1--117.
+
+\bibitem{14-1-dol}
+\Aue{Rahardja,~S., and B.\,J.~Falkowski}. 2001. Efficient algorithm to calculate Reed--Muller
+expansions over GF(4). \textit{IEE Proceedings~--- Circuits, Devices and  
+Systems}. 148(6):289, 297.
+
+\bibitem{14-2-dol}
+\Aue{Leroux,~C., G.~Le Mestre, C.~Jego, P.~Adde, and M.~Jezequel.}
+2008. A~5-Gbps FPGA prototype of a (31,29)$^2$ Reed--Solomon turbo decoder.
+\textit{5th Symposium (International) on Turbo Codes and Related Topics Proceedings}.
+67--72.
+
+
+
+\end{thebibliography} } }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received October 23, 2013}}
+
+\vspace*{-12pt}
+
+\Contr
+
+\noindent
+\textbf{Dolev Shlomi} (b.\ 1958)~--- professor, Doctor of Science in computer science, Dean 
+of the Faculty of Natural Sciences, Ben-Gurion University of the Negev, 
+Beer-Sheva 84105, Israel; dolev@cs.bgu.ac.il 
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Frenkel Sergey L.} (b.\ 1951)~--- Candidate of Science (PhD) in 
+technology, senior scientist, Institute of Informatics Problems, Russian 
+Academy of Sciences, Moscow 119333, Russian Federation; associate professor, Moscow Institute of Radio, 
+Electronics, and Automation (MIREA), Moscow 119454, Russian Federation;
+fsergei@mail.ru
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Tamir Dan E.} (b.\ 1955)~---PhD-CS, 
+associate professor in the Department of Computer Science, Texas State 
+University, San Marcos, TX 78666, USA; dt19@txstate.edu
+
+
+
+
+\vspace*{12pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\newpage
+
+\def\tit{ВЕРОЯТНОСТНЫЙ ПОДХОД К~САМОКОРРЕКТИРУЮЩИМСЯ ВЫЧИСЛЕНИЯМ 
+В~ПРОЕКТИРОВАНИИ АППАРАТУРЫ}
+
+\def\aut{Ш.~Долев$^1$,  С.~Френкель$^2$, Д.\,Е.~Тамир$^3$}
+
+
+\def\titkol{Вероятностный подход к~самокорректирующимся вычислениям 
+в~проектировании аппаратуры}
+
+\def\autkol{Ш.~Долев,  С.~Френкель, Д.\,Е.~Тамир}
+
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-12pt}
+
+\noindent $^1$Университет им.\ Бен-Гуриона в Негаве, Беэр-Шева, Израиль, dolev@cs.bgu.ac.il\\ 
+\noindent $^2$Институт проблем информатики Российской академии наук;
+Московский государственный технический\linebreak
+$\hphantom{^1}$университет радиотехники,
+электроники и автоматики (МГТУ МИРЭА), Москва, Россия,\linebreak
+$\hphantom{^1}$fsergei@mail.ru\\
+\noindent
+$^3$Университет Техаса, г.\ Сан-Маркос, США,  dt19@txstate.edu
+
+\vspace*{6pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 7\ \ \ выпуск\ 4\ \ \ 2013}
+}%
+ \def\rightfootline{\small{ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 7\ \ \ выпуск\ 4\ \ \ 2013
+\hfill \textbf{\thepage}}}
+ 
+
+\Abst{Описаны некоторые подходы к распространению метода самокоррекции 
+программ, основанного на свойстве <<случайной самосокращаемости>> (random 
+self-reducibility), на задачи проектирования  аппаратной части вычислительных систем.
+Данная концепция может быть использована для проектирования как цифровой, так и 
+аналоговой аппаратуры. Расширение метода основано на использовании случайных 
+выборок, полиномиальной интерполяции и теории самокорректирующихся кодов.
+В~частности, предлагается использовать известные методы реконструкции числовых 
+функций для коррекции ошибок, вызываемых неисправностями, остающимися в 
+аппаратуре после производственного контроля. 
+Предлагаемый подход может дополнять известные методы тестирования цифровых и 
+аналоговых  приборов посредством использования равновероятной выборки операций 
+и верификации результатов их выполнения, обеспечивая приемлемый уровень (небольшую 
+долю) неправильных результатов.} 
+
+\KW{самокоррекция; вычисление действительных функций; анализ данных; интерполяция}
+
+
+\DOI{10.14357/19922264130413}
+
+%\vspace*{9pt}
+
+%\Ack
+%\noindent
+Расширенные тезисы данной статьи были представлены на 13-й Международной конференции
+по прикладным стохастическим моделям и анализу данных (ASMDA-2009).
+Работа выполнена при час\-тич\-ной поддержке Российского фонда фундаментальных исследований 
+(грант №\,12-07-00109),  Фонда главы отделения информатики Риты Алтура, Центра
+вычислительной техники им.\ Линне и Уильяма Франкелей, Израильского научного фонда
+(грант №\,428/11), Кабарнит кибербезопасности консорциума <<Магнит>>, гранта
+Института перспективных оборонных технологий им.\ Медведи (Технион) и
+Израильской Интернет ассоциации.
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily Литература}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\addcontentsline{toc}{section}{References}
+\begin{thebibliography}{99}
+
+\bibitem{1-dol-1}
+\Au{Bil$\acute{\mbox{e}}$n~S., Price~A.}
+Modulation classification for radio interoperability via SDR~// {SDR 07 Technical Conference and Product Exposition 
+Proceedings},  2007. {\sf http://www.slideshare.net/kirill443/12-4-5647963} (accessed November~7, 2013).
+\bibitem{2-dol-1}
+\Au{Lala~P.} Self-checking and fault-tolerant digital design.~--- Morgan Kaufmann Publs., 2000.
+400~с.
+\bibitem{3-dol-1}
+\Au{Sigal~A., Lipton~R., Rubinfeld~R.,  Sudan~M}.  Reconstructing algebraic functions from mixed data~// {33rd Annual 
+Symposium on Foundations of Computer Science}, 1990. P.~503--512.
+\bibitem{4-dol-1}
+\Au{Gemmell~P., Lipton~R., Rubinfeld~R., Sudan~M., Wigderson~A}.
+Self-testing/correcting for polynomials and for approximate functions~// {23rd Annual ACM Symposium on Theory of Computing 
+Proceedings},  1991. P.~32--34.
+
+\bibitem{12-dol-1} %5
+\Au{Lee D.\,U., Cheung~R., Luk~W., Villasenor J.}  Hardware implementation trade-offs of polynomial approximations and 
+interpolations~// {IEEE Trans. Comput.}, 2008.  Vol.~57. No.\,5. P.~686--701.
+
+\bibitem{14-dol-1}
+\Au{Dolev~Sh., Frenkel~S}.  Extending the scope of self-correcting~// {13th 
+Conference (International) on Applied Stochastic Models 
+and Data Analysis (ASMDA2009)  Proceedings}, 2009.  С.~458--462.
+
+\bibitem{5-dol-} %6
+\Au{Nicely T.\,R.} {Some results of computational research in prime numbers (Computational number theory)}.
+{\sf  http://www.trnicely.net/pentbug/pentbug.html} (last retrieved December 2010).
+
+\bibitem{6-dol-1} %7
+\Au{Rubinfeld~R.} Batch checking with applications to linear functions~// 
+{Inform. Process. Lett.}, 1992. Vol.~42. P.~77--80.
+\bibitem{7-dol-1} %8
+\Au{Spielman D.} Highly fault-tolerant parallel computation~// {37th IEEE  Annual Symposium on Foundations of Computer 
+Science Proceeding}, 1996. P.~ 154--163.
+\bibitem{8-dol-1} %9
+\Au{Oppenheim A.\,V.,  Schafer R.\,W., Buck~J.\,R.}  {Discrete-time signal processing}.~--- Upper Saddle River, NJ: Prentice-
+Hall, 1999. 871~p.
+\bibitem{9-dol-1} %10
+\Au{Berlekamp~E., Welch L.}  Error correction  of algebraic block codes. U.S. Patent No.\,4,633,470, 1986. 
+\bibitem{10-dol-1} %11
+\Au{Tertinek~S., Vogel~C}.  Reconstruction of nonuniformly sampled bandlimited  signals using a 
+differentiator-multiplier cascade~// {IEEE Trans. Circuits  Syst.}, 2008. Vol.~55. No.\,8. P.~2273--2286.
+\bibitem{11-dol-1}
+\Au{Pang~Y., Radecka~K}.  Optimizing imprecise fixed-point arithmetic circuits specified by Taylor series through arithmetic 
+transform~// {Design Automation Conference  DAC'08 Proceedings}, 2008.  P.~397--402.
+
+\bibitem{13-dol-1} %12
+\Au{Yekhanin S.}  Locally decodable codes~// {Foundations  Trends Theoretical Computer Sci.}, 
+2011. Vol.~7. Iss.~1.  P.~1--117.
+
+\bibitem{14-1-dol-1}
+\Au{Rahardja~S., Falkowski B.\,J.} Efficient algorithm to calculate Reed--Muller
+expansions over GF(4)~// IEE Proceedings~--- Circuits, Devices and  
+Systems, 2001. Vol.~148. No.\,6. P.~289, 297.
+
+\bibitem{14-2-dol-1}
+\Au{Leroux~C., Le Mestre~G., Jego~C., Adde~P., Jezequel~M.}
+ A~5-Gbps FPGA prototype of a (31,29)$^2$ Reed--Solomon turbo decoder~//
+5th Symposium (International) on Turbo Codes and Related Topics Proceedings, 2008.
+P.~67--72.
+
+
+ 
+
+\end{thebibliography}
+} }
+
+\end{multicols}
+
+ \label{end\stat}
+
+\hfill{\small\textit{Поступила в редакцию 23.10.13}}
+%\renewcommand{\bibname}{\protect\rm Литература}  
+\renewcommand{\figurename}{\protect\bf Рис.}

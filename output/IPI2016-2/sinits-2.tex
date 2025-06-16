@@ -1,0 +1,1475 @@
+\def\yhxt{({\hat X}_t,Y_t, t)}
+\def\hx{\hat X}
+\def\yutt{(Y_t, {\hat X}_t,t)}
+\def\yxtt{(X_t,Y_t, t)}
+\renewcommand\mm{{\sf M}}
+
+
+\def\stat{SIN-2}
+
+\def\tit{НОРМАЛЬНЫE  УСЛОВНО-ОПТИМАЛЬНЫЕ
+ФИЛЬТРЫ И~ЭКСТРАПОЛЯТОРЫ ПУГАЧЁВА
+ ДЛЯ~СТОХАСТИЧЕСКИХ СИСТЕМ, 
+ ЛИНЕЙНЫХ ОТНОСИТЕЛЬНО СОСТОЯНИЯ}
+
+\def\titkol{Нормальныe  условно-оптимальные
+фильтры и~экстраполяторы Пугачёва
+ для стохастических систем} %,  линейных относительно состояния}
+
+\def\aut{И.\,Н.~Синицын$^1$, Э.\,Р.~Корепанов$^2$}
+
+\def\autkol{И.\,Н.~Синицын, Э.\,Р.~Корепанов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Синицын И.\,Н.}
+\index{Корепанов Э.\,Р.}
+\index{Sinitsyn I.\,N.}
+\index{Korepanov E.\,R.}
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Исследование частично поддержано РФФИ (проекты 16-07-00677 
+%и~15-37-20611-мол\_а\_вед).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского
+центра <<Информатика и~управление>> Российской академии наук, sinitsin@dol.ru}
+\footnotetext[2]{Институт проблем информатики Федерального исследовательского
+центра <<Информатика и~управление>> Российской академии наук, ekorepanov@ipiran.ru}
+
+
+\Abst{Рассматривается теория аналитического синтеза непрерывных (дифференциальных) 
+и~дискретных (разностных) суб-  и~услов\-но-оп\-ти\-маль\-ных фильтров и~экстраполяторов 
+Пугачёва для обработки процессов в~гауссовских и~негауссовских стохастических
+ системах (СтС), 
+линейных относительно вектора состояния. Первые работы по фильтрации и~экстраполяции 
+для таких гауссовских систем были выполнены Липцером и~Ширяевым, а для негауссовских~--- 
+Пугачёвым и~Синицыным. Приведены алгоритмы нормальных суб- 
+и~услов\-но-оп\-ти\-маль\-ных фильтров для непрерывных
+и~дискретных систем. Пред\-став\-ле\-ны алгоритмы нормальных суб- и~услов\-но-оп\-ти\-маль\-ных 
+экстраполяторов. Разработанные алгоритмы положены в~основу программного обеспечения 
+(StS-Filter, 2016). Результаты допускают развитие на случай автокоррелированных шумов 
+в~наблюдениях, а~так\-же систем с~мультипликативными шумами.}
+
+\KW{дискретные СтС; дифференциальная СтС;
+метод нормальной аппроксимации (МНА) апостериорной плотности;
+метод статистической линеаризации (МСЛ);
+нормальный услов\-но-оп\-ти\-маль\-ный фильтр  Пугачёва (НФП);
+нормальный услов\-но-оп\-ти\-маль\-ный экстраполятор Пугачёва (НЭП);
+стохастическая система (СтС); СтС, линейная относительно состояния;
+условия Лип\-це\-ра--Ширяева; фильтр Лип\-це\-ра--Ши\-ряева (ФЛШ)}
+
+\DOI{10.14357/19922264160202} 
+
+\vspace*{-6pt}
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+Многие практические задачи обработки информации в~статистических научных 
+исследованиях основаны на использовании теории фильтрации процессов в~СтС, 
+линейных относительно состояния~[1--5]. 
+
+Первые работы в~этом 
+направлении для гауссовских СтС выполнены Липцером и~Ширяевым~\cite{2-s2}, 
+а~для негауссовских СтС на основе субоптимальной фильтрации~--- 
+Пугачёвым и~Синицыным~\cite{3-s2, 4-s2}.
+В~\cite{1-s2} рассмотрены вопросы синтеза алгоритмов нормальных 
+услов\-но-оп\-ти\-маль\-ных 
+фильтров  Пугачёва (НФП) для обработки информации в~дифференциальных 
+гауссовских и~негауссовских СтС, линейных относительно состояния 
+(условия Лип\-це\-ра--Ши\-ря\-ева). Особое внимание уделено синтезу НФП для СтС 
+при условиях Лип\-це\-ра--Ши\-ря\-ева
+ на основе аппроксимации апостериорного распределения нормальным субоптимальным 
+ квазилинейным НФП, основанным на статистической линеаризации нелинейных функций, 
+ зависящих от наблюдений. Для СтС высокой размерности  путем выбора структурных 
+ функций, отражающих аналитическую природу наблюдаемой системы, синтезированы НФП, 
+ прос\-тые в~компьютерной реализации и~ способные работать в~режиме реального времени. 
+ Алгоритмы положены 
+ в~основу модуля инструментального программного обеспечения (StS-Filter, 2016).
+
+Настоящая статья  посвящена вопросам синтеза непрерывных и~дискретных нормальных 
+фильтров и~экстраполяторов Пугачёва (НФП и~НЭП) для непрерывных и~дискретных СтС, 
+линейных относительно состояния. 
+В~разд.~2 приведены уравнения,\linebreak описывающие 
+процессы дифференциальных и~разностных СтС. Раздел~3 для гауссовских СтС посвящен 
+нормальным фильтрам (НФ) на основе мето-\linebreak дов нормальной 
+аппроксимации (МНА) и~метода\linebreak 
+статистической линеаризации (МСЛ). В~разд.~4 приводятся алгоритмы НФП на основе 
+тео\-рии услов\-но-оп\-ти\-маль\-ной фильтрации Пугачёва. Для дифференциальных 
+негауссовских СтС алгоритмы НФП даны в~разд.~5. Обобщение НФ для дискретных СтС 
+приведено в~разд.~6. Алгоритмы нормальных услов\-но-оп\-ти\-маль\-ных 
+экстраполяторов Пугачёва представлены в~разд.~7. В~заключении приведены основные 
+выводы и~возможные обобщения.
+
+\section{Непрерывные и~дискретные стохастические системы, линейные относительно состояния}
+
+Рассмотрим сначала нелинейную дифференциальную СтС~\cite{1-s2}:
+  \begin{alignat}{2}
+  \dot X_t &=\vrp \left(X_t, Y_t, t\right) + \psi \left(X_t, Y_t, t\right) V\,,
+  &\enskip 
+  X_{t_0} & = X_0\,;\label{e2.1-s2}\\
+  \dot Y_t &=\vrp_1 \left(X_t, Y_t, t\right) + \psi_1 \left(X_t, Y_t, t\right) V
+  \,,&\enskip 
+  Y_{t_0}& = Y_0\,.\label{e2.2-s2}
+  \end{alignat}
+ Здесь $X_t$ и~$Y_t$~--- векторы состояния и~наблюдения размерности~$n_x$ и~$n_y$; 
+ $V\hm= \dot W$, $W$~--- векторный стохастический процесс (СтП) с~независимыми 
+ приращениями, состоящий из винеровской $W_0(t)$ и~пуассоновской частей:
+\begin{equation}
+\left.
+\begin{array}{rl}
+W&= \displaystyle W_0 (t) +\iii_{R_0^q} c(\rho) P^0 (t, d\rho)\,;\\[6pt]
+\nu^W &=\displaystyle \nu^{W_0} + \iii_{R_0^q} c(\rho) c(\rho)^{\mathrm{T}} 
+\nu_P (t, \rho) \,d\rho\,, 
+\end{array}
+\right\}
+\label{e2.3-s2}
+\end{equation}
+где $c=c(\rho)$~--- векторная функция (той же размерности~$q$, что и~$W$) 
+аргумента~$\rho$, а~интеграл при\linebreak любом $t\hm\ge t_0$ представляет собой 
+стохастический интеграл по центрированной пуассоновской мере  $P^0 (t, A)$, 
+независимой от~$W_0$  и~име\-ющей независимые значения на попарно 
+непересе\-ка\-ющих\-ся множествах;  $A$~--- борелевское множество\linebreak
+ пространства~$R_0^q$ 
+с~выколотым началом~0; $\nu^W$, $\nu^{W_0}$ и~$\nu_P$~--- интенсивности~$W$,
+$W_0$ и~$P^0$;
+$\vrp\hm=\vrp (X_t, Y_t, t)$, $\psi\hm=\psi (X_t, Y_t, t)$, 
+$\vrp_1\hm=\vrp_1 (X_t, Y_t, t)$ и~$\psi_1\hm=\psi_1 (X_t, Y_t, t)$~--- 
+известные функции раз\-мер\-ности $(n_x\times 1)$, $(n_x\times n_v)$, $(n_y \times 1)$
+и~$(n_y\times n_v)$, удовлетворяющие следующим условиям Лип\-це\-ра--Ши\-ря\-ева~\cite{2-s2}:
+\begin{itemize}
+\item функции $\vrp$ и~$\vrp_1$ линейны относительно состояния~$X_t$:
+        \begin{equation}
+        \left.
+        \begin{array}{rl}
+        \vrp \left(X_t, Y_t, t\right) &= a_1 \left(Y_t, t\right) X_t + a_0 \left(Y_t, t\right) \,;\\[6pt]
+        \vrp_1 \left(X_t, Y_t, t\right) &= b_1 \left(Y_t, t\right) X_t +
+         b_0 \left(Y_t, t\right) \,;
+         \end{array}
+         \right\}
+         \label{e2.4-s2}
+         \end{equation}
+
+\item функции $\psi$ и~$\psi_1$  не зависят от состояния~$X_t$:
+\begin{multline}
+\hspace*{-1pt}\psi \left(X_t, Y_t, t\right) = \bar\psi \left(Y_t, t\right) ;\  
+\psi_1 \left(X_t, Y_t, t\right) ={}\\
+{}= \bar\psi_1  \left(Y_t, t\right).
+\label{e2.5-s2}
+\end{multline}
+    \end{itemize}
+
+Предполагается, что уравнения СтС~(\ref{e2.1-s2}) и~(\ref{e2.2-s2}) 
+понимаются в~смысле Ито и~имеют решение в~среднем квадратическом (с.к.)~\cite{3-s2}.
+
+Систему~(\ref{e2.1-s2})--(\ref{e2.5-s2}) будем называть гауссовской, 
+если  $V\hm=\dot W_0$, а~$X_0$ и~$Y_0$~--- гауссовские случайные величины (с.в.).
+
+Важный частный случай~(\ref{e2.1-s2})--(\ref{e2.5-s2}) 
+составляют уравнения с~аддитивными шумами, когда
+ \begin{equation}
+ \bar\psi\left(Y_t, t\right) = \psi_0 (t)\,;\enskip 
+ \bar\psi_1 \left(Y_t, t\right) = \psi_{10} (t)\,.
+ \label{e2.6-s2}
+ \end{equation}
+
+Для случая, когда в~уравнения~(\ref{e2.1-s2}), (\ref{e2.2-s2}) 
+входят независимые белые шумы~$V_1$ и~$V_2$, следует принять:
+ \begin{alignat*}{2}
+% \left.
+% \begin{array}{c}
+ V&= \displaystyle\lk V_1^{\mathrm{T}} V_2^{\mathrm{T}}\rk^{\mathrm{T}}\,,&\enskip 
+ \nu&=\begin{bmatrix}
+    \nu_1&0\\
+    0&\nu_2\end{bmatrix}\,;\\[6pt] 
+    \psi V &=\psi' V_1\,,&\enskip \psi_1 V &= \psi_1' V_2\,.
+    %\end{array}
+%    \right\}
+%    \label{e2.7-s2}
+    \end{alignat*}
+
+Для дискретных СтС, линейных относительно состояния, уравнения состояния и~наблюдения 
+имеют следующий вид~\cite{3-s2}:
+\begin{align}
+X_{k+1}&=\vrp_k \left(X_k, Y_k\right)+ \psi_k' \left(X_k, Y_k\right) V_{k}^d= {}\notag\\
+&{}=a_k \left(Y_k\right)X_k + a_{0k} \left(Y_k\right) + c_{0k}\left(Y_k\right)  
+V_{k}^d\,,\notag\\ 
+&\hspace*{40mm}X_1 = X_{10}\,;\label{e2.8-s2}\\
+Y_{k}&=\vrp_{1k} \left(X_k, Y_k\right)+ \psi_{1k} \left(X_k, Y_k\right) V_{k}^d={}\notag\\ 
+&{}=b_k \left(Y_k\right)X_k + b_{0k} \left(Y_k\right) + l_{0k} \left(Y_k\right) 
+ V_{k}^d\,,\notag\\
+ & \hspace*{40mm}Y_1 = Y_{10}\,.\label{e2.9-s2}
+ \end{align}
+Здесь $n=n_x\hm=n_y$; $V_k^d$~--- дискретный белый шум с~известным 
+в~общем случае негауссовским распределением.
+
+Для дискретных СтС с~аддитивными шумами следует в~(\ref{e2.8-s2}), (\ref{e2.9-s2}) принять:
+\begin{equation*}
+c_{0k} \left(Y_k\right) = c_{0k0}\,; \enskip l_{0k} \left(Y_k\right) = l_{0k0}\,.
+%\label{e2.10-s2}
+\end{equation*}
+
+\section{Дифференциальные гауссовские стохастические системы. 
+Фильтры Липцера--Ширяева и~их~субоптимальная аппроксимация}
+
+Для гауссовской СтС~(\ref{e2.1-s2})--(\ref{e2.5-s2})  
+известны следу\-ющие точные уравнения нелинейной фильтрации по критерию минимума с.к.\ 
+ошибки~\cite{2-s2, 3-s2}:
+\begin{multline}
+{\dot{\hat X}}_t= \left[a_1 \left(Y_t,t\right) \hat X_t + a_0 \left(Y_t,t\right)\right] +{}\\
+{}+ \left[R_tb_1 \left(Y_t,t\right)^{\mathrm{T}} +
+\left(\bar \psi\nu_0\bar \psi_1^{\mathrm{T}}\right)
+    \left(Y_t,t\right)\right]\times{}\\
+{}\times \left(\bar \psi_1\nu_0\bar \psi_1^{\mathrm{T}}\right)^{-1} \left(Y_t,t\right) 
+\!\left\{ \dot Y_t -\left[ b_1\left(Y_t,t\right) \hat X_t +b_0\left(Y_t,t\right)\right] 
+\!\right\},\hspace*{-0.84221pt}\\ 
+    \hat X_{t_0} = \hat X_0\,;\label{e3.1-s2}
+    \end{multline}
+    
+    
+    \noindent
+\begin{multline}
+\dot R_t =  a_1\left(Y_t,t\right) R_t + R_t a_1 
+\left(Y_t,t\right)^{\mathrm{T}} +{}\\
+{}+\left(\bar \psi\nu_0\bar \psi^{\mathrm{T}}\right) 
+\left(Y_t,t\right) -
+    \left[ R_t b_1 \left(Y_t,t\right)^{\mathrm{T}}+{}\right.\\
+\left.{}+\left(\bar \psi\nu_0\bar \psi_1^{\mathrm{T}}\right) \left(Y_t,t\right)
+\vphantom{\left(Y_t,t\right)^{\mathrm{T}}}
+\right] 
+\left(\bar\psi_1\nu_0\bar\psi_1^{\mathrm{T}}\right)^{-1} \left(Y_t,t\right) \times{}\\
+\!\!\!\!{}\times
+\left[ b_1 \left(Y_t,t\right) R_t+ \left(\bar \psi_1 \nu_0 \bar \psi^{\mathrm{T}}\right)
+    \left(Y_t,t\right)\right]\,,\enskip R_{t_0} = R_0\,,
+\!    \label{e3.2-s2}
+    \end{multline}
+где $\hx_t$~--- с. к.\ оценка; $R_t$~--- ковариационная матрица ошибки 
+фильтрации $X_t\hm- \hx_t$.
+
+Таким образом, имеет место утверждение.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~3.1.}\
+\textit{Пусть в~гауссовской системе}~(\ref{e2.1-s2})--(\ref{e2.5-s2}) 
+\textit{диффузионная матрица  $\sigma_1\hm= \sigma_1 (Y_t, t) \hm=
+\bar \psi_1\nu_0\bar \psi_1^{\mathrm{T}} (Y_t, t)$ не вырождена. Тогда алгоритм с.к.\ 
+оптимального фильтра определяется уравнением}~(\ref{e3.1-s2}), 
+\textit{а~его точность оценивается согласно}~(\ref{e3.2-s2}).
+
+\smallskip
+
+Как и~в случае линейной фильтрации при аддитивных шумах~\cite{3-s2}, 
+уравнения дифференциального фильтра Лип\-це\-ра--Ши\-ря\-ева (ФЛШ)  
+пред\-став\-ля\-ют собой замкнутую систему
+уравнений,\linebreak опре\-де\-ля\-ющую~$\hat X_t$ и~$R_t$. Поэтому с.к.\  
+оптимальную
+оценку~$\hat X_t$ вектора состояния системы~$X_t$ и~его\linebreak
+апостериорную ковариационную матрицу~$R_t$, ха\-рак\-те\-ри\-зу\-ющую
+точность с.к.\ оптимальной оценки~$\hat X_t$, можно вычислять по
+мере получения результатов наблюдений совместным интегрированием\linebreak
+уравнений~(\ref{e3.1-s2}) и~(\ref{e3.2-s2}). Однако в~противоположность 
+линейной фильт\-ра\-ции для ФЛШ нельзя вычислить~$R_t$ заранее, до
+получения результатов наблюде\-ний, так как от последних зависят
+коэффициенты уравнения~(\ref{e3.2-s2}). Поэтому ФЛШ 
+в~данном случае должен выполнять интегрирование обоих уравнений~(\ref{e3.1-s2}) 
+и~(\ref{e3.2-s2}). Это приводит к~существенному повышению
+порядка оптимального фильтра. Если линейный фильтр  всегда
+описывается уравнениями  порядка~$n_x$, то в~рассматриваемом более общем случае с.к.\
+оптимальный фильтр описывается уравнениями порядка
+\begin{equation}
+Q_{\mathrm{ФЛШ}}=n_x+\fr{n_x(n_x+1)}{2}= \fr{n_x(n_x+3)}{2}\,.
+\label{e3.3-s2}
+\end{equation}
+
+Очевидно, что ФЛШ будет совпадать с~обобщенным (приближенным) 
+фильт\-ром Кал\-ма\-на--Бью\-си, 
+фильтрами второго порядка, гауссовыми фильтрами~\cite{3-s2, 6-s2}.
+
+Так как гауссовское (нормальное) распреде\-ление, аппроксимирующее
+апостериорное рас\-пре\-деление вектора~$X_t$, полностью определяется
+апостериорными математическим ожиданием~$\hat X_t$ 
+и~ковариацион\-ной матрицей~$R_t$ вектора~$X_t$, то согласно 
+тео\-рии нелинейной приближенной субоптимальной фильтрации при аппроксимации
+апостериорного распределения вектора~$X_t$ нормальным
+распределением будут иметь место следующие 
+стохастические дифференциальные уравнения,
+определяющие~$\hat X_t$ и~$R_t$~\cite{3-s2, 1-s2}:
+
+\noindent
+\begin{multline}
+\dot{\hat X}_t = f \left(\hat X_t, Y_t,R_t,t\right)+{}\\
+{}+
+    h\left(\hat X_t,Y_t, R_t,t\right)\lk \dot Y_t - f^{(1)} \left(\hat X_t,Y_t,
+    R_t,t\right)\rk\,;\label{e3.4-s2}
+    \end{multline}
+    
+\vspace*{-12pt}
+
+    \noindent
+\begin{multline}
+\dot R_t=\left\{ 
+\vphantom{\left({\hat X}_t, Y_t,R_t,t\right)^{\mathrm{T}}}
+f^{(2)}\left(\hat X_t, Y_t,R_t,t\right)-h\left(\hat
+    X_t, Y_t,R_t,t\right)\times{}\right.\\
+\left.{}{}\times\bar \psi_1\nu_0\bar \psi_1^{\mathrm{T}} 
+    \left(Y_t,t\right)  
+    h \left({\hat X}_t, Y_t,R_t,t\right)^{\mathrm{T}}\right\} +{}\\
+   \hspace*{-3.6mm} {}+\!
+\sss_{r=1}^{n_y} \rho_r \left({\hat X}_t,Y_t, R_t,t\right)\!\lk
+    \dot Y_r -f_r^{(1)}\left({\hat X}_t,Y_t, R_t,t\right) \!\rk\!,\!\!\!\!
+    \label{e3.5-s2}
+    \end{multline}
+где
+   \begin{multline*}
+    f\left(\hat X_t, Y_t,R_t,t\right)= \mm^N\lk \vrp \left(Y_t, X,t\right)\rk= {}\\
+    {}=
+    a_1 \left(Y_t, t\right) \hat X_t + a_0 \left(Y_t, t\right)\,;
+  \end{multline*}
+    
+    
+    \vspace*{-12pt}
+    
+    \noindent
+    \begin{multline*}
+    f^{(1)}\left(\hat X_t, Y_t,R_t,t\right)=\left\{ f_r^{(1)} 
+    \left( \hat X_t, Y_t, R_t, t\right)\right\}={}\\
+    {}=
+    \mm^N\lk \vrp_1\left(Y_t, X,t\right)\rk=b_1 \left(Y_t, t\right) \hat X_t+ 
+    b_0 \left(Y_t, t\right)\,;
+    \end{multline*}
+    
+    \vspace*{-12pt}
+    
+    \noindent
+    \begin{multline*}
+h\left(\hat X_t, Y_t,R_t,t\right)={}\\
+{}=\mm^N \left\{
+\vphantom{\hat X_t f^{(1)}\left(\hat X_t, Y_t,R_t,t\right)^{\mathrm{T}}}
+\left[ X\varphi_1\left(
+Y_t,X,t\right)^{\mathrm{T}} + \bar \psi\nu_0\bar \psi_1^{\mathrm{T}} 
+\left(Y_t,X,t\right)\right]-{}\right.\\
+\left.{}-
+    \hat X_t f^{(1)}\left(\hat X_t, Y_t,R_t,t\right)^{\mathrm{T}}\right\}
+\left(\bar \psi_1\nu_0\bar \psi_1^{\mathrm{T}}\right)^{-1} \left(Y_t,t\right)= {}\\
+{}=
+\lk R_t b_1 \left(Y_t, t\right)^{\mathrm{T}} + 
+\left(\bar \psi\nu_0\bar \psi_1^{\mathrm{T}}\right)\left(Y_t, t\right)
+\rk \times{}\\
+{}\times\left(\bar \psi\nu_0\bar \psi_1^{\mathrm{T}}\right)^{-1} \left(Y_t, t\right)\,;
+\end{multline*}
+
+\vspace*{-12pt}
+    
+    \noindent
+    \begin{multline*}
+\hspace*{-2.52pt}f^{(2)}\left(\hat X_t, Y_t,R_t,t\right)=
+\mm^N\biggl\{  \left(X-\hat X_t\right)\varphi\left(Y_t,X,t\right)^{\mathrm{T}} + {}\\
+{}+
+\varphi \left(Y_t,X,t\right) \left(X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right) +
+\bar\psi\nu_0\bar\psi^{\mathrm{T}} \left(Y_t,X,t\right)\biggr\}={}\\
+{}=\lk 
+R_t b_1 \left(Y_t, t\right)^{\mathrm{T}} + 
+\left(\bar \psi\nu\bar \psi_1^{\mathrm{T}}\right)
+\left(Y_t, t\right)\rk \times{}\\
+{}\times
+\left(\bar \psi_1\nu_0\bar \psi_1^{\mathrm{T}}\right)^{-1}\!\! \left(Y_t, t\right)
+ \lk 
+b_1 \left(Y_t, t\right) R_t + 
+\left(\bar \psi_1\nu_0\bar \psi^{\mathrm{T}}\right)\left(Y_t, t\right)
+\rk;\hspace*{-8.054pt}
+\end{multline*}
+
+\vspace*{-12pt}
+    
+    \noindent
+    \begin{multline*}
+    \rho_r\left(\hat X_t,Y_t, R_t,t\right)={}\\
+    {}=
+    \mm^N \biggl\{  
+    \left(X-\hat X_t\right)\left(X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right) 
+    a_r \left(Y_t,X,t\right)+{}\\
+{}+ \left(X-\hat X_t\right) b_r\left(Y_t,X,t\right)^{\mathrm{T}} 
+\left(X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right)+ {}\\
+{}+
+b_r \left(Y_t,X,t\right) \left(X^{\mathrm{T}}-\hat X_t^{\mathrm{T}}\right)\biggr\} =0 
+\enskip (r=1\tr n_y)\,.
+%\label{e3.6a-s2}
+\end{multline*}
+Здесь функции $\vrp$, $\vrp_1$, $\bar \psi$ и~$\bar \psi_1$ 
+определены~(\ref{e2.4-s2}) и~(\ref{e2.5-s2}); 
+$a_r$~--- $r$-й элемент мат\-ри\-цы-стро\-ки
+    $A_{\vrp_1} \hm= (\vrp_1^{\mathrm{T}} \hm- \hat\vrp_n^{\mathrm{T}})(\bar \psi_1 \nu_0\bar \psi_1^{\mathrm{T}})^{-1};$
+$B_{kr}^{\bar \psi\bar \psi_1}$~--- элемент $k$-й строки и~$r$-го столб\-ца матрицы
+    $B^{\bar \psi\bar \psi_1} \hm= (\bar \psi\nu_0\bar \psi_1^{\mathrm{T}})
+    (\bar \psi_1\nu_0\bar \psi_1^{\mathrm{T}})^{-1};$
+$b_r$~--- $r$-й столбец матрицы $B^{\bar \psi\bar \psi_1}$,
+    $b_r^{\bar \psi\bar \psi_1} \hm= \lk b_{1r}^{\bar \psi\bar \psi_1}\cdots 
+    b_{n_x r}^{\bar \psi\bar \psi_1}\rk^{\mathrm{T}},$
+$\mm^N$~--- символ математического ожидания по $X\hm=X_t$.
+
+Число уравнений МНА одномерного апостериорного распределения
+определяется по формуле~(\ref{e3.3-s2}).
+
+
+За начальные значения $\hat X_t$ и~$R_t$  при интегрировании
+уравнений~(\ref{e3.4-s2}) и~(\ref{e3.5-s2}), естественно, следует принять
+условные математическое ожидание $\hat X_0$ и~ковариационную матрицу~$R_0$ с.~в.~$X_0$ 
+относительно~$Y_0$:
+\begin{align*}
+%\left.
+%\begin{array}{rl}
+\hat X_0 &= \mm^N\lk X_0 \mid Y_0\rk\,;\\
+R_0 &= \mm^N \lk \left(X_0 -\hat X_0\right) 
+\left(X_0^{\mathrm{T}} -\hat X_0^{\mathrm{T}}\right)\mid
+Y_0\rk\,.
+%\end{array}
+%\right\}
+%\label{e3.6-s2}
+\end{align*}
+Если нет
+информации об условном распределении~$X_0$ относительно~$Y_0$, то
+начальные условия можно взять в~виде:
+\begin{align*}
+%\left.
+%\begin{array}{rl}
+\hat X_0 &= \mm^N  X_0\,; \\ %[6pt]
+    R_0&= \mm^N  \left(X_0 - \mm^N X_0\right) 
+    \left(X_0^{\mathrm{T}} - \mm^N X_0^{\mathrm{T}}\right)\,.
+    %\end{array}
+%    \right\}
+%    \label{e3.7-s2}
+    \end{align*}
+Если же и~об этих величинах нет никакой информации, то начальные
+значения $\hat X_t$ и~$R_t$ приходится задавать произвольно.
+
+Сравнивая  уравнения~(\ref{e3.4-s2}), (\ref{e3.5-s2}) с~уравнениями ФЛШ 
+(теорема~3.1), 
+имеем следующий результат~\cite{1-s2}.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~3.2.}\
+\textit{Для гауссовской СтС}~(\ref{e2.1-s2})--(\ref{e2.5-s2}) 
+\textit{субоптимальные НФ на основе МНА для одномерной апостериорной плотности 
+и~ФЛШ совпадают.}
+
+
+\section{Дифференциальные гауссовские стохастические системы. Нормальные фильтры Пугачёва}
+
+Следуя~\cite{3-s2, 1-s2}, будем искать фильтр для оценки~$\hat X_t$ в~виде 
+следующего уравнения:
+ \begin{multline}
+ d\hx_t =\alp_t \xi \yhxt\, dt + {}\\
+ {}+\beta_t\eta \yhxt\, dY_t +
+    \gamma_t \,dt\,.
+    \label{e4.1-s2}
+    \end{multline}
+Здесь  $\xi =\xi \yhxt$ и~$\eta\hm=\eta\yhxt$~--- некоторые известные 
+структурные функции
+текущих значений оценки наблюдаемого процесса~$Y_t$, $\hx_t$ и~времени~$t$; 
+$\alp_t$, $\beta_t$ и~$\gamma_t$~--- неизвестные функции времени.
+Если бы коэффициенты  $\alp_t$, $\beta_t$ и~$\gamma_t$ в~(\ref{e4.1-s2})
+были известными функциями времени, то уравнение~(\ref{e4.1-s2}) определило
+бы фильтр того же  порядка~${n_x}$, что и~ уравнение~(\ref{e2.1-s2}), 
+описывающее поведение системы. Поэтому, естественно,
+возникает мысль попытаться непосредственно определить коэффициенты~$\alp_t$, 
+$\beta_t$ и~$\gamma_t$ в~уравнении~(\ref{e4.1-s2}) как функции
+времени из условия минимума с.к.\ ошибки  при всех  $t\hm>t_0$. Это приводит к~теории
+услов\-но-оп\-ти\-маль\-но\-го фильтра Пугачева (ФП), когда в~уравнения
+ФП задаются заранее и~оптимизируются только коэффициенты этого уравнения.
+Итак, приходим к~идее на\-хож\-де\-ния оптимального фильтра
+в~некотором классе допустимых фильтров,
+определяемом условием, что поведение фильтра описывается
+дифференциальным уравнением заданного порядка и~заданной формы.
+Таким образом, мы отказываемся от абсолютной оптимизации 
+и~ограничиваемся условной оптимизацией в~заданном ограниченном классе фильтров.
+
+Определив класс допустимых фильтров, следует решить вопрос о том,
+какой фильтр в~этом классе считается оптимальным. Следуя~\cite{3-s2}, 
+будем считать оптимальным такой фильтр, который дает 
+в~известном смысле наилучшую оценку при всех $t\hm>t_0$. Иными словами, 
+задача оптимизации фильтра при всех
+$t\hm>t_0$ является  задачей многокритериальной оптимизации. Такие
+задачи, как правило, не имеют решения. Фильтр Кал\-ма\-на--Бью\-си, да\-ющий
+оптимальную линейную оценку состояния линейной системы в~каждый
+момент $t\hm>t_0$, является исключением~\cite{3-s2}. Значит, надо
+определить такую оптимальность фильтра, при которой возможно решение
+задачи. Будем считать оптимальным
+такой допустимый фильтр, который на каждом бесконечно малом
+интервале времени совершает оптимальный переход из того состояния,
+в котором он был в~начале этого интервала, в~новое состояние.
+Такой допустимый фильтр будем называть услов\-но-оп\-ти\-маль\-ным. 
+Тогда задачи фильтрации сведутся к~нахождению оптимальных значений~$\alp_t$, 
+$\beta_t$ и~ $\gamma_t$, в~любой момент  $t\ge t_0$ обеспечивающих минимум
+с.к.\ ошибки фильтрации в~бесконечно близкий будущий момент  $s\hm> t$, $s\hm\to t$.
+
+Отметим, что ФП обладает тем свойством, что в~данном
+классе допустимых фильт\-ров не существует фильт\-ра, который при
+данном начальном распределении~$Y_t$, $X_t$ и~$\hx_t$ в~момент~$t_0$ 
+был бы лучше услов\-но-оп\-ти\-маль\-но\-го при всех  $t\hm>t_0$. Это
+значит, по терминологии теории многокритериальной оптимизации, что
+ФП пред\-став\-ля\-ет собой один из мно\-жества
+допустимых фильт\-ров~---  оптимальный по Парето~\cite{3-s2}.
+Общая теория ФП по с.к.\ критерию развита для урав\-не\-ний~(\ref{e2.1-s2}), (\ref{e2.2-s2})
+и подробно изложена в~\cite{3-s2}.
+Теория ФП обладает двумя несомненными преимуществами по сравнению с~методами
+субоптимальной фильт\-ра\-ции. Во-пер\-вых, она позволяет
+получать фильт\-ры более низкого порядка и,~следовательно, более
+простые в~реализации. Во-вто\-рых, она дает возможность получать
+фильт\-ры не меньшей, а~при желании даже большей точности, чем
+фильт\-ры, даваемые методами субоптимальной нелинейной фильт\-рации.
+
+Применяя теорию ФП~\cite{3-s2} 
+к~нормальным процессам в~гауссовской СтС~(\ref{e2.1-s2})--(\ref{e2.5-s2}) 
+при  $V\hm=V_0$, придем к~нормальному ФП  вида~(\ref{e4.1-s2}). 
+Входящие в~(\ref{e4.1-s2}) коэффициенты~$\alp_t$, $\beta_t$ и~$\gamma_t$ 
+определяются следующими уравнениями:
+    \begin{equation}
+    \alp_t m_1 + \beta_t m_2 + \gamma_t=m_0\,;
+    \label{e4.2-s2}
+    \end{equation}
+        \begin{equation}
+m_0 = \mm^N  [\varphi]\,,\enskip m_1 = \mm^N  [\xi]\,,\enskip m_2 = 
+    \mm^N [\eta]\,;
+    \label{e4.3-s2}
+    \end{equation}
+    \begin{equation}
+    \beta_t =\kappa_{02} \kappa_{22}^{-1};\label{e4.4-s2}
+    \end{equation}
+    
+    \vspace*{-12pt}
+    
+    \noindent
+    \begin{multline}
+    \kappa_{02} = \mm^N \left[\left(X_t - \hx_t\right) 
+    \left(a_1 X_t + a_0\right)^{\mathrm{T}} \eta^{\mathrm{T}}\right]+{}\\
+    {}+ \mm^N 
+    \left[\bar \psi  \nu_0\bar \psi_1^{\mathrm{T}} \eta^{\mathrm{T}} \right];
+    \label{e4.5-s2}
+    \end{multline}
+    \begin{equation}
+    \kappa_{22} = \mm^N \lk\eta\bar\psi_1\nu_0 \bar \psi_1^{\mathrm{T}} 
+    \eta^{\mathrm{T}}\rk;\label{e4.6-s2}
+    \end{equation}
+    
+    
+    \vspace*{-9pt}
+    
+    \noindent
+    \begin{multline}
+\alp_t\kappa_{11} + \mm^N \lk \left(\hx_t-X_t\right)\left(\xi^{\mathrm{T}} 
+\alp_t^{\mathrm{T}} +\gamma_t^{\mathrm{T}}\right)
+    \fr{\partial \xi^{\mathrm{T}}}{\partial \hat X_t}\rk={}\\
+    {}=
+    \kappa_{01}'-\beta_t\kappa_{21}';\label{e4.7-s2}
+    \end{multline}
+    \begin{equation}
+    \kappa_{21}' = \mm^N \left\{\lk \eta\left(b_1X_t+b_0\right)-m_2\rk 
+    \xi\right\}^{\mathrm{T}};\label{e4.8-s2}
+    \end{equation}
+    
+    \vspace*{-9pt}
+    
+    \noindent
+    \begin{multline}
+\kappa_{01}' =\kappa_{01} + \mm^N \left[ \left(X_t-\hx_t\right)  
+\fr{\partial \xi^{\mathrm{T}}}{\partial t} \right]+{}\\
+{}+
+     \mm^N \Bigl\{ \left(X_t-\hx_t\right) \left(b_1 X_t+b_0\right)^{\mathrm{T}} +{}\\
+     {}+
+    \bar \psi\nu_0\bar \psi_1^{\mathrm{T}} - \beta_t\eta\bar \psi_1\nu_0\bar 
+    \psi_1^{\mathrm{T}}\Bigr\} \left(
+    \fr{\partial}{\partial Y_t}+\eta^{\mathrm{T}}\beta_t^{\mathrm{T}} 
+    \fr{\partial}{\partial \hat X_t}\right)\xi^{\mathrm{T}}+{}\\
+{}+\fr{1}{2}\, \mm^N\left[ \left(X_t-\hx_t\right)\times{}\right.\\
+{}\times \biggl\{ \mathrm{tr} 
+\biggl[ \bar \psi_1\nu_0\bar \psi_1^{\mathrm{T}}
+    \left( \fr{\partial}{\partial Y_t}+2 \eta^{\mathrm{T}}\beta_t^{\mathrm{T}} 
+    \fr{\partial}{\partial \hat X_t}\right)
+    \fr{\partial^{\mathrm{T}}}{\partial Y_t}\biggr]+{}\\
+{}+\left.\mathrm{tr}\left[ \beta_t\eta\bar \psi_1\nu_0\bar \psi_1^{\mathrm{T}}
+\eta^{\mathrm{T}}\beta_t^{\mathrm{T}} \fr{\partial }{\partial \hat X_t}
+\,\fr{\partial^{\mathrm{T}}}{\partial \hat X_t}\right]\biggr\} 
+\xi^{\mathrm{T}}\right] \,,\label{e4.9-s2}
+\end{multline}
+
+\vspace*{-8pt}
+
+\begin{equation}
+\left.
+\begin{array}{rl}
+\kappa_{11} &= \mm^N \lf \lk \xi - m_1\rk \xi^{\mathrm{T}}\rf;\\[6pt]
+    \kappa_{21} &= \mm^N \lf\lk b_1 X_t + b_0  - m_2\rk \xi^{\mathrm{T}} \rf;\\[6pt]
+\kappa_{01} &= \mm^N\lf \lk a_1 X_t + a_0  - m_0\rk \xi^{\mathrm{T}} \rf.
+\end{array}
+\right\}
+\label{e4.10-s2}
+\end{equation}
+
+Точность НФП определяется уравнением:
+\begin{multline}
+\dot R_t = \mm^N \left[\left( X_t -\hx_t\right) 
+\left(a_1 X_t + a_0\right)^{\mathrm{T}} +{}\right.\\
+{}+\left(a_1 X_t + a_0\right)  
+\left(X_t^{\mathrm{T}} -\hx_t^{\mathrm{T}}\right)-{}\\
+{}-\beta_t \eta \yutt \bar\psi_1 \nu_0 \bar\psi_1^{\mathrm{T}} 
+\eta \yutt^{\mathrm{T}} \beta_t^{\mathrm{T}} +{}\\
+\left.{}+\bar\psi \nu_0 \bar\psi^{\mathrm{T}}
+\vphantom{\left(a_1 X_t + a_0\right)^{\mathrm{T}}}
+\right],\enskip R_{t_0} = R_0\,.
+\label{e4.11-s2}
+\end{multline}
+
+Таким образом, справедливо следующее утверж\-де\-ние~\cite{1-s2}.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~4.1.}\
+\textit{Пусть для гауссовской системы}~(\ref{e2.1-s2}), (\ref{e2.2-s2}) 
+\textit{при условиях Лип\-це\-ра--Ши\-ря\-ева выполнены условия невырожденности 
+матрицы  $\kappa_{22}$}~(\ref{e4.6-s2}) 
+\textit{и конечности величин~$\kappa_{ij}$ $(i,j\hm=0,1,2)$. Тогда алгоритм НФП 
+определяется уравнением}~(\ref{e4.1-s2}),  
+\textit{а~коэффициенты~$\alp_t$, $\beta_t$ и~$\gamma_t$}~--- 
+(\ref{e4.2-s2})--(\ref{e4.11-s2}).
+
+\smallskip
+
+
+Отметим, что в~качестве услов\-но-оп\-ти\-маль\-ных НФП могут служить 
+субоптимальные фильтры, определяемые теоремой~3.2.
+
+
+\section{Дифференциальные негауссовские стохастические системы. 
+Нормальный  фильтр Пугачёва}
+
+Для негауссовской СтС в~уравнениях теоремы~4.1 следует заменить~$\nu_0$ 
+на~$\nu$ согласно~(\ref{e2.3-s2}), а~в~выражении~(\ref{e4.9-s2}) 
+учесть два дополнительных интегральных члена:
+\begin{multline}
+\kappa_{01}'  =\kappa_{01} + \mm^N  \left[ \left(X_t - \hat X_t\right) 
+\fr{\partial\xi^{\mathrm{T}}}{\partial t} \right] +{}\\
+{}+
+\mm^N  \biggl\{ 
+\left(X_t -\hat X_t\right) 
+\bigg[ \vrp_1^{\mathrm{T}} -\iii_{R_0^q} c(\rho)^{\mathrm{T}} \nu_P (t,\rho)\, d\rho 
+\psi_1^{\mathrm{T}} \bigg] +{}\\
+{}+ \bar\psi \nu \bar\psi_1^{\mathrm{T}} - \beta_t \eta \bar \psi_1 
+\nu\bar\psi_1^{\mathrm{T}} \biggr\} \left( 
+\fr{\partial}{\partial Y_t} + \eta^{\mathrm{T}} \beta_t^{\mathrm{T}} 
+\fr{\partial}{\partial \hat X_t}\right) \xi^{\mathrm{T}}+ {}\\
+{}+
+\fr{1}{2}\, \mm^N \biggl\{ \lk \left(X_t -\hat X_t\right)\rk \times{}\\
+{}\times\biggl\{ 
+\mathrm{tr}\, \lk \bar\psi_1 \nu \bar\psi_1^{\mathrm{T}} \left( 
+\fr{\partial}{\partial Y_t} + 2 \eta^{\mathrm{T}} \beta_t 
+\fr{\partial}{\partial \hat X_t} \right) 
+\fr{\partial^{\mathrm{T}}}{\partial Y_t} \rk+{}\\
+{}+
+   \mathrm{tr}\, \lk 
+   \beta_t \eta \bar\psi_1 \nu\bar\psi_1^{\mathrm{T}} \eta^{\mathrm{T}} 
+   \beta_t^{\mathrm{T}} \fr{\partial}{\partial \hat X_t}\,
+   \fr{\partial^{\mathrm{T}}}{\partial \hat X_t} \rk 
+   \biggr\} \xi^{\mathrm{T}} \biggr\}+{}\\
+{}+ \mm^N \biggl\{ \iii_{R_0^q}  \big[ 
+X_t -\hat X_t + 
+\left(\bar\psi -\beta_t \eta \bar\psi_1\right) c (\rho)\times{}\\
+{}\times \xi 
+\left(Y_t +\bar\psi c(\rho), \hat X_t + \beta_t \eta \bar\psi_1 c(\rho), t\right) -{}\\
+{}-
+\xi^{\mathrm{T}}
+\big]^{\mathrm{T}} \nu_P (t, d\rho) d\rho\biggr\}\,.
+\label{e5.1-s2}
+\end{multline}
+Здесь функции $\vrp$, $\vrp_1$, $\bar\psi$ и~$\bar\psi_1$ удовлетворяют 
+условиям~(\ref{e2.4-s2})--(\ref{e2.5-s2}). В~результате имеем следующее утверждение.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~5.1.} 
+\textit{Пусть для негауссовской СтС}~(\ref{e2.1-s2})--(\ref{e2.5-s2}) 
+\textit{матрица  $\kappa_{22}$}~(\ref{e4.5-s2}) \textit{не вырождена, 
+а~интегралы}~(\ref{e4.2-s2}), (\ref{e4.3-s2}), (\ref{e4.6-s2}), (\ref{e4.8-s2}), 
+(\ref{e4.10-s2}) \textit{и}~(\ref{e5.1-s2}) \textit{конечны.
+Тогда алгоритм НФП определяется уравнением}~(\ref{e4.1-s2}), 
+\textit{а коэффициенты}~$\alp_t$, $\beta_t$ и~$\gamma_t$~--- 
+(\ref{e4.2-s2})--(\ref{e4.10-s2}).
+
+\smallskip
+
+Теория НФП  не позволяет получить нормальные с.к.\ оптимальные
+фильтры. Можно получить только ФП,
+которые в~общем случае хуже с.к.\ оптимальных, но зато легко реализуемы.
+Однако если с.к.\ оптимальная оценка~$\hx_t$ вектора~$X_t$
+удовлетворяет уравнению допустимого фильтра~(\ref{e4.1-s2}) 
+при ка\-ких-ли\-бо коэффициентах времени~$\alp_t$,
+$\beta_t$ и~$\gamma_t$, то уравнения теорем~4.1 и~5.1, 
+конечно, определяют именно эти~$\alp_t$, $\beta_t$
+и~$\gamma_t$ и~НФП будет  с.к.\ оптимальным
+(последний в~данном случае будет допустимым и,~следовательно,
+оптимальным в~классе допустимых фильтров).
+
+Как известно~\cite{3-s2}, теория НФП дает возможность оценивать не все
+компоненты вектора состояния системы (в общем случае расширенного),
+а~только некоторые из них. Для этого достаточно взять структурные
+функции~$\xi$ и~$\eta$ в~(\ref{e4.1-s2}) зависящими лишь от соответствующих
+компонент вектора~$\hx_t$. К~примеру, взяв~$\xi$ и~$\eta$ в~(\ref{e4.1-s2})
+зависящими лишь от~$Y_t$, $t$ и~оценок неизвестных параметров
+системы, можно оценивать только параметры системы, не оценивая ее
+со\-сто\-яния. В~таких случаях будут получаться НФП, порядок которых
+меньше размерности~$n_x$ расширенного вектора со\-сто\-яния.
+
+Особое практическое значение имеет случай~(\ref{e2.1-s2})--(\ref{e2.6-s2}) 
+с~аддитивными (в~общем случае негауссовскими) шумами.
+Следуя~\cite{3-s2}, проведем статистическую линеаризацию нелинейных функций:
+\begin{align*}
+a_1 \left(Y_t, t\right) X_t &\approx 
+\left(k_{0x}^{a_1 x} - k_{1x}^{a_1 x}\right) m_t^x +{}\\
+&{}+ \left( k_{0y}^{a_1 x} - k_{1y}^{a_1 x}\right) m_t^y + 
+k_x^{a_1 y} X_t + k_{0y}^{a_1 x} Y_t\,;\\
+b_1 \left(Y_t, t\right) X_t &\approx 
+\left(k_{0x}^{b_1 x} - k_{1x}^{b_1 x}\right) m_t^x +{}\\
+&{}+ \left( k_{0y}^{b_1 x} - k_{1y}^{b_1 x}\right) m_t^y + 
+k_x^{b_1 y} X_t + k_{0y}^{b_1 x} Y_t\,;\\
+a_0 \left(Y_t , t\right) &\approx
+\left( k_{0y}^{a_0} - k_{1y}^{a_0}\right) m_t^y +
+ k_{0y}^{a_0} Y_t\,; \\
+b_0 \left(Y_t , t\right) &\approx \left( k_{0y}^{b_0} - k_{1y}^{b_0}\right) m_t^y + 
+k_{0y}^{b_0} Y_t)\,.
+\end{align*}
+Тогда~(\ref{e2.1-s2})--(\ref{e2.6-s2}) приводятся к~эквивалентной 
+гауссовской системе,
+линейной относительно~$X_t^0, Y_t^0$ и~нелинейной относительно
+$m_t^x, m_t^y$:
+    \begin{align*}
+    \dot X_t &= \bar a Y_t + \bar a_1 X_t + \bar a_0 +\bar\psi V\,;
+    %\label{e5.2-s2}
+    \\
+\dot Y_t &= \bar b Y_t + \bar b_1 X_t + \bar b_0 +\bar\psi_1 V\,.
+%\label{e5.3-s2}
+\end{align*}
+Здесь введены обозначения:
+    \begin{equation}
+    \left.
+    \begin{array}{c}
+    \bar a = k_y^{a_1x} + k_y^{a_0}\,; \quad 
+    \bar a_1 = k_x^{a_1 x}\,;\\[4pt]
+    a_0 = (k_{0y}^{a_0} - k_{1y}^{a_0}) m_t^y\,;\\[4pt]
+\bar b = k_y^{b_1x}\,; \ \ \ \bar b_1 = k_x^{b_1 x}\,;\ \ \ \bar b_0 = (k_{0y}^{b_0} - k_{1y}^{b_0}) m_t^y\,.
+\end{array}
+\right\}
+\label{e5.4-s2}
+\end{equation}
+Правые части уравнений~(\ref{e5.4-s2}) 
+зависят от вероятностных моментов первого и~второго порядка и~определяются 
+из следующей линейной дифференциальной системы для составного вектора  
+$Z_t \hm=\lk X_t^{\mathrm{T}} Y_t^{\mathrm{T}}\rk^{\mathrm{T}}$:
+\begin{equation}
+\dot{\bar m}_t^z = cm_t^z + c_0\,;\enskip
+%\eqno(5.5)$$
+ \dot  K_t^{\bar z} = c K_t^z +K_t^z c^{\mathrm{T}} + l\nu l^{\mathrm{T}}\,,
+ \label{e5.6-s2}
+ \end{equation}
+где
+    \begin{equation*}
+    c=\begin{bmatrix}
+    \bar a_1&\bar a\\
+    \bar b_1&\bar b\end{bmatrix}\,; \enskip
+    c_0=\begin{bmatrix}
+    \bar a_o\\
+    \bar b_0\end{bmatrix}\,;\enskip
+    l=\begin{bmatrix}
+    \bar \psi_t\\
+    \bar\psi_{1t}\end{bmatrix}\,.
+%    \label{e5.7-s2}
+    \end{equation*}
+
+Применяя теорию квазилинейной фильтрации~\cite{3-s2} 
+к~уравнениям~(\ref{e5.6-s2}), 
+получим сле\-ду\-ющие уравнения субоптимального квазилинейного НФП:
+    \begin{multline}
+    \dot{\hat X}_t = \bar a Y_t +\bar a_1 \hat X_t + \bar a_0 + {}\\
+    {}+
+    \beta_t \lk \dot Y_t - \left( \bar b Y_t +\bar b_1 \hx_t + \bar b_0\right) \rk\,;
+    \label{e5.8-s2}
+    \end{multline}
+\begin{equation}
+\beta_t = R_t \bar b_1^{\mathrm{T}} +
+\left(\bar\psi\nu\bar\psi_1^{\mathrm{T}}\right) 
+\left(\bar \psi_1 \nu \bar \psi_1^{\mathrm{T}}\right)^{-1}\,;
+\label{e5.9-s2}
+\end{equation}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+ \dot R_t = \bar a_1 R_t + R_t \bar a_1^{\mathrm{T}} +
+ \bar\psi\nu\bar\psi^{\mathrm{T}} -{}\\
+ \hspace*{-3mm}{}- 
+ \left(R_t \bar b_1^{\mathrm{T}} +\bar\psi\nu\bar\psi_1\right)
+ \left(\bar\psi_1 \nu\bar\psi_1^{\mathrm{T}}\right)^{-1} 
+ \left( \bar b R_t +\bar\psi_1\nu\bar\psi_1^{\mathrm{T}}\right).
+ \label{e5.10-s2}
+ \end{multline}
+
+Таким образом, имеем следующий результат~\cite{1-s2}.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~5.2.}\
+\textit{Пусть уравнения негауссовской СтС}~(\ref{e2.1-s2})--(\ref{e2.6-s2}) 
+\textit{с~аддитивными шумами  допускают применение МСЛ. Тогда уравнения алгоритма 
+квазилинейного НФП имеют вид}~(\ref{e5.8-s2})--(\ref{e5.10-s2}).
+
+%\smallskip
+
+\section{Обобщения нормальных фильтров на случай дискретных стохастических систем}
+
+
+Теоремы разд.~3--5 допускают обобщение на случай 
+дискретных СтС~(\ref{e2.8-s2}), (\ref{e2.9-s2}). Для
+ дискретных гауссовских СтС~(\ref{e2.8-s2}) и~(\ref{e2.9-s2}) 
+ при $V_k^d\hm= V_{0k}^d$ алгоритм НФ на основе МНА определяется уравнениями 
+ (\textbf{теорема~6.1}):
+\begin{multline*}
+\hx_{k+1} = f_k \left(\hx_{k+1\mid k}, Y_k, R_{k+1\mid k}\right) +{}\\
+   {}+ h_k \left(\hx_{k+1\mid k}, Y_k, R_{k+1\mid k}\right)\times{}\\
+   {}\times
+\lk Y_{k+1} - f_k^{(1)} \left(\hx_{k+1\mid k}, Y_k, R_{k+1\mid k}\right)\rk;
+%\label{e6.1-s2}
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+R_{k+1}=\biggl\{ f_k^{(2)} \left(\hx _{k+1\mid k}, Y_k, R_{k+1\mid k}\right) -{}\\
+{}- h_k \left(\hx_{k+1\mid k}, Y_k, R_{k+1\mid k}\right)
+    \left(\psi_{1,k}\nu_{0k}\psi_{1,k}^{\mathrm{T}}\right)\times{}\\
+    {}\times h \left(\hx_{k+1\mid k}, Y_k, R_{k+1\mid k}\right)^{\mathrm{T}}\biggr\} +{}\\[-20pt]
+\end{multline*}
+
+%\pagebreak
+
+\noindent
+\begin{multline*}
+{}+\sum\limits_{r=1}^{n_y}\rho_r \left(\hat X_{k+1\mid k} , Y_k, R_{k+1\mid k}\right)\times{}\\
+{}\times
+\lk Y_{r, k+1} - f_{r,k}^{(1)}
+    \left(\hx_{k+1\mid k}, Y_k,R_{k+1\mid k}\right)\rk.
+%    \label{e6.2-s2}
+    \end{multline*}
+Здесь введены следующие обозначения:
+    $$
+    f_k=f_k \left(\hat X_{k+1\mid k}, Y_k, R_{k+1\mid k}\right) =
+    \mm^N \lk\vrp_k\rk\,;\\
+    $$
+    $$
+    f_k^1 = f_k^{(1)} \left(\hx_{k+1\mid k}, Y_k, R_{k+1\mid k}\right) = 
+    \mm^N \lk \vrp_{1k}\rk\,;
+    $$
+    
+    \vspace*{-12pt}
+    
+    \noindent
+    \begin{multline*}
+    h_k = h_k \left(\hx_{k+1\mid k}, Y_k, R_{k+1\mid k}\right) ={}\\
+    {}=
+     \mm^N \lk X\vrp_{1k} (Y_k,X)+ \bar\psi_k\nu_{0k}\bar\psi_{1k}^{\mathrm{T}} 
+     \left(Y_k,X\right)\rk\,;
+    \end{multline*}
+    
+    \vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+    f_k^{(2)}= f_k^{(2)} \left(\hx_{k+1\mid k}, Y_k, R_{k+1\mid k}\right) ={}\\
+    {}=
+    \mm^N \biggl[ \left(X- \hx_{k+1\mid k}\right) \vrp_k \left(Y_k, X\right)^{\mathrm{T}}+{}\\
+{}+\vrp_k \left(Y_k,X\right) 
+\left(X^{\mathrm{T}} - \hx_{k+1\mid k}\right)+
+\bar\psi_k\nu_{0k}\bar\psi_{1,k}^{\mathrm{T}} \left(Y_k,X\right)\biggr];
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+\rho_r \left(\hx_{k+1\mid k}, Y_k, R_{k+1\mid k}\right)={}\\
+{}=
+\mm^N \biggl[ \left(X- \hx_{k+1\mid k}\right) 
+\left(X^{\mathrm{T}}-\hx_{k+1\mid k}^{\mathrm{T}}\right) a_r (Y_k, X)+{}\\
+{}+ \left(X-\hx_{k+1\mid k}\right) b_r \left(Y_k,X\right)^{\mathrm{T}} 
+\left(X^{\mathrm{T}} -\hx_{k+1\mid k}^{\mathrm{T}}\right)+{}\\
+{}+
+b_r \left(Y_k,X\right) 
+\left(X^{\mathrm{T}}-\hx_{k+1\mid k}^{\mathrm{T}}\right)\biggr],
+%\label{e6.3-s2}
+\end{multline*}
+где $a_r$~--- $r$-й элемент мат\-ри\-цы-стро\-ки $(\vrp_{1k}^{\mathrm{T}}
+\hm-\hat\vrp_{1k}^{\mathrm{T}})(\bar\psi_{1k}\nu_{0k}\bar\psi_{1k}^{\mathrm{T}})^{-1}$; 
+$b_r \hm= \lk b_{1r}\cdots b_{n_x r}\rk^{\mathrm{T}}$; $ b_{lr}$~--- элемент $l$-й
+строки и~$r$-го столб\-ца мат\-ри\-цы $(\bar\psi_k
+\nu_{0k}\bar\psi_{1k}^{\mathrm{T}}) 
+(\bar\psi_{1k}\nu_k\bar\psi_{1k}^{\mathrm{T}})^{-1}$.
+
+В качестве начальных условий принимаются
+    \begin{align*}
+%    \left.
+%    \begin{array}{rl}
+    \hx_{1\mid 1} &= \hx_1 =\mm^N\lk X_1\mid Y_1\rk ;
+    \\ 
+    R_{1\mid 1} &= R_1 = \mm^N \lk \left(X_1 -X_1^0\right) 
+    \left(X_1-{X_1^0}^{\mathrm{T}}\right)\vert Y_1\rk, 
+%    \end{array}
+%    \right\}
+%    \label{e6.4-s2}
+    \end{align*}
+определяющие начальное нормальное распределение.
+
+
+Алгоритм дискретного НФП для дискретных СтС~(\ref{e2.8-s2}), (\ref{e2.9-s2}), 
+основываясь на~\cite{3-s2}, представим в~следующем виде (\textbf{теорема~6.2}):
+    \begin{equation*}
+    \hx_{k+1} = \alp_k \xi_k \left(\hx_k\right) + 
+    \beta_k\eta_k\left(\hx_k\right) Y_k +\gamma_k.
+%    \label{e6.5-s2}
+    \end{equation*}
+Здесь $\xi_k =\xi_k(\hx_k)$ и~$\eta_k=\eta_k (\hx_k)$~--- известные
+структурные функции НФП; неизвестные коэффициенты фильтра~$\alp_k$, 
+$\beta_k$ и~$\gamma_k$ определяются из уравнений:
+\begin{gather*}
+ \alp_k \kappa_{11}^{(k)} +\beta_k \kappa_{21}^{(k)} =\kappa_{01}^{(k)};\quad 
+ \alp_k \kappa_{12}^{(k)} +
+ \beta_k \kappa_{22}^{(k)} = \kappa_{02}^{(k)};
+\\ 
+ \gamma_k =\rho_0^{(k)} - \alp_k \rho_1^{(k)} - \beta_k \rho_2^{(k)};\\[-20pt]
+\end{gather*}
+
+\noindent
+ $$ 
+ \rho_k=\lk \rho_1^{(k)T}\rho_2^{(k)T}\rk^{\mathrm{T}};$$
+ $$
+ \rho_1^{(k)} = \mm^N \lk \xi_k\rk ;\enskip 
+ \rho_2^{(k)}=\mm^N\lk \eta_k  \varphi_{1k}\rk;
+ $$
+ $$
+ B_k=\begin{bmatrix}
+ \kappa_{11}^{(k)}&\kappa_{12}^{(k)}\\
+ \kappa_{21}^{(k)}&\kappa_{22}^{(k)}\end{bmatrix}\,,
+ \enskip \det \lv B_k\rv \ne 0;
+ $$
+ $$
+ \kappa_{11}^{(k)} =\mm^N \left\{\lk \xi_k  -\rho_1^{(k)}\rk 
+ \xi_k^{\mathrm{T}}\right\};
+ $$
+ $$
+ \kappa_{12}^{(k)} =\kappa_{21}^{(k)T}=\mm^N \left\{\lk \xi_k  -\rho_1^{(k)}\rk \varphi_{1k}^{\mathrm{T}} \eta_k^{\mathrm{T}} \right\};
+ $$
+ 
+ \vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+ \kappa_{22}^{(k)} = \mm^N \lf\lk \eta_k  \varphi_{1k}  -\rho_2^{(k)} \rk 
+ \varphi_{1k}^{\mathrm{T}} \eta_k^{\mathrm{T}} \rf+{}\\
+ {}+
+ \mm^N \lf \eta_k \bar\psi_{1k} \nu_k \bar\psi_{1k}^{\mathrm{T}} \eta_k^{\mathrm{T}}\rf;
+\end{multline*}
+ $$
+  D_k =\lk \kappa_{01}^{(k)} \kappa_{02}^{(k)}\rk;\enskip  
+  \kappa_{01}^{(k)} =\mm^N \lf\lk \varphi_k - m_{k+1}\rk \xi_k^{\mathrm{T}}\rf;
+  $$
+  
+  \vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+ \kappa_{02}^{(k)} = \mm^N \lf\lk \varphi_{k}  - 
+ m_{k+1}\rk \varphi_{1k}^{\mathrm{T}} \eta_k^{\mathrm{T}}\rf+{}\\
+ {}+\mm^N\lk 
+ \bar\psi_k  \nu_k \bar\psi_{1k}^{\mathrm{T}} \eta_k^{\mathrm{T}}\rk;
+\end{multline*}
+
+\vspace*{-6pt}
+
+\noindent
+ \begin{equation*}
+ m_{k+1}=\rho_0^{(k)}\,,\enskip \rho_0^{(k)}= \mm^N \left[\varphi_k\right],
+% \label{e6.6-s2}
+ \end{equation*}
+где функции $\vrp_k$, $\vrp_{1k}$, $\bar\psi_k$ и~$\bar\psi_{1k}$ 
+определены~(\ref{e2.8-s2}), (\ref{e2.9-s2}); 
+$\mm^N V_k^d \hm=0$, $\mm^N V_k^d V^{dT}=\nu_k$~--- ковариация белого шума~$V_k^d$. 
+
+\vspace*{-5pt}
+
+\section{Нормальные экстраполяторы Пугачёва}
+
+\vspace*{-1pt}
+
+Будем считать услов\-но-оп\-ти\-маль\-ным (по Пугачёву~\cite{3-s2}) такой
+экстраполятор из класса до\-пус\-тимых, который при любом совместном
+распределении величин $X_t$, $\hat X_t$ и~$Y_t$ в~момент $t\hm\ge t_0$ 
+в~дифференциаль\-ной СтС~(\ref{e2.1-s2})--(\ref{e2.5-s2}) дает наилучшую оценку вектора
+$X_{s+\Delta}$, в~бесконечно близкий момент $s\hm>t$, $s\hm\to t$,
+реализующую минимум с.к.\ ошибки. Тогда задача услов\-но-оп\-ти\-маль\-ной
+экстраполяции сведется к~нахождению оптимальных значений~$\alp_t$,
+$\beta_t$ и~$\gamma_t$ в~(\ref{e4.1-s2}) в~любой момент времени $t\hm\ge t_0$,
+обеспечивающих минимум с.к.\ ошибки экстраполяции в~бесконечно близкий
+будущий момент $s\hm>t$, $s\hm\to t$.
+
+Для решения задачи экстраполяции необходимо ограничиться случаем~(\ref{e2.1-s2})--(\ref{e2.5-s2}),
+когда функции~$\varphi$ и~$\psi$ не зависят от наблюдаемого
+вектора~$Y_t$, процесс $W(t)$ состоит из двух независимых блоков
+$W_1 (t)$ и~$W_2(t)$ и~соответственно матрицы~$\psi$ и~$\psi_1$
+имеют блочную структуру  $\psi\hm = \lk \psi'\, 0\rk$; $ \psi_1\hm = \lk
+0\,\psi_1'\rk$, так что $\psi \,dW \hm= \psi' \,dW_1$ и~$\psi_1 \,dW\hm=
+\psi_1'\, dW_2$. Теперь, отбросив штрихи у функций~$\psi'$ и~$\psi_1'$, 
+запишем уравнения~(\ref{e2.1-s2}) и~(\ref{e2.2-s2}) в~следующем виде:
+\begin{equation}
+\left.
+\begin{array}{rl}
+    \dot X_t &= \varphi \left(X_t,Y_t,t\right) dt + \psi \left(X_t,t\right)V_1\,;\\[5pt]
+    & V_1 = \dot W_1\,;\quad X_{t_0} = X_0\,;\\[5pt]
+    \dot Y_t &= \varphi \left(X_t,Y_t,t\right) dt + \psi_1 \left(X_t,Y_t,t\right) V_2\,;\\[5pt]
+    &V_2 =\dot W_2\,;\quad Y_{t_0} = Y_0\,,
+    \end{array}
+    \right\}
+    \label{e7.1-s2}
+\end{equation}
+где $W_1 = W_1 (t)$ и~$W_2 \hm= W_2 (t)$~--- независимые процессы 
+с~независимыми приращениями и~нулевыми математическими функциями:
+\begin{align*}
+%\left.
+%\begin{array}{rl}
+    K_{w_i} (t_1, t_2)  &= k_i (\min (t_1, t_2))\,;\\ %[6pt]
+    k_i(t) &= \displaystyle k_i(t_0) + \int\limits_{t_0}^t \nu_i (\tau)
+   \, d\tau.
+ %   \end{array}
+%    \right\}
+%    \label{e7.3-s2}
+    \end{align*}
+
+Совершенно так же, как в~случае услов\-но-оп\-ти\-маль\-ной нелинейной фильтрации, 
+решается задача услов\-но-оп\-ти\-маль\-ной экстраполяции. Разница будет
+лишь в~том, что в~случае экстраполяции~$\hx_t$ представляет собой
+оценку будущего состояния системы  $X_{t+\Delta}$, $\Delta \hm>0$, которое
+определяется стохастическим дифференциальным
+уравнением следующего вида:
+\begin{multline}
+\dot X_{t+\Delta}=\varphi \left(X_{t+\Delta}, t+\Delta\right) +{}\\
+{}+\psi \left(X_{t+\Delta}, t+\Delta \right) V(t+\Delta)\,,\enskip 
+V=\dot V\,.\label{e7.4-s2}
+\end{multline}
+Заменив этим уравнением второе уравнение~(\ref{e2.9-s2}) и~повторив все
+выкладки ФП, получим уравнения, определяющие коэффициенты 
+в~уравнениях нормального услов\-но-оп\-ти\-маль\-но\-го экстраполятора Пугачёва
+(НЭП). Приведем окончательные  результаты:
+\begin{equation}
+\left.
+\begin{array}{l}
+\kappa_{02} ={}\\[6pt]
+{}= \mm^N\left[ \left(X_{t+\Delta} - \hat X_t\right) \varphi_1 
+    \yxtt^{\mathrm{T}} \times{}\right.\\
+   \left. \hspace*{35mm}{}\times \eta\yutt^{\mathrm{T}}\right]\,;
+\\[6pt]
+    \kappa_{22} = \mm^N
+    \left[\eta\yutt\psi_1\yxtt\nu_1(t)\times{}\right.\\[6pt]
+    \left.{}\hspace*{15mm}\times \psi_1\yxtt^{\mathrm{T}} 
+    \eta\yutt^{\mathrm{T}}\right]\,;
+\\[6pt]
+\mm^N \lk \hx\rk = \mm^N \lk X_{t+\Delta}\rk;\\[6pt] 
+\mm^N\lk\left(\hx - X_{t+\Delta}\right)\xi_t^{\mathrm{T}} \rk=0;
+\end{array}
+\right\}
+\label{e7.5-s2}
+\end{equation}
+\begin{equation}
+\left.
+\begin{array}{rl}
+m_0 &= \mm^N\lk \varphi \left(X_{t+\Delta}, t+\Delta\right)\rk \,;\\[6pt]
+\kappa_{01} &= \mm^N\left\{ 
+\vphantom{\xi\yutt^{\mathrm{T}}}
+\left[ \varphi \left(X_{t+\Delta}, t+\Delta\right)-{}\right.\right.\\[6pt]
+&\hspace*{25mm}\left.\left.{}- m_0\right] \xi\yutt^{\mathrm{T}}\right\};
+\end{array}
+\right\}
+\label{e7.6-s2}
+\end{equation}
+
+\vspace*{-6pt}
+
+\noindent
+\begin{multline*}
+\kappa_{01}' = \kappa_{01} + \mm^N\left[ \left(X_{t+\Delta}- \hat X_t\right) 
+\fr{\partial \xi^{\mathrm{T}}}{\partial t}\right] +{}\\
+{}+ \mm^N\!\bigg\{\! \!\left(X_{t+\Delta}-\hat X_t\right)\!\! \bigg[ 
+\varphi_1^{\mathrm{T}} -\!\iii_{R_0^q}\! c_2(\rho)^{\mathrm{T}}
+    \nu_{sP} (t,\rho) d\rho \bar\psi_1^{\mathrm{T}}\bigg] - {}\\
+    {}-
+    \beta_t\eta\bar\psi_1\nu_{20}\bar\psi_1^{\mathrm{T}}\bigg\}
+\left(\fr{\partial}{\partial Y_t} + \eta^{\mathrm{T}} \beta_t^{\mathrm{T}} 
+\fr{\partial}{\partial \hat X_t}\right)\xi^{\mathrm{T}}+{}\\
+{}+
+    \fr{1}{2}\, \mm^N \bigg\{ 
+    \left(X_{t+\Delta} - \hat X_t\right) \times{}
+    \end{multline*}
+
+
+\noindent
+\begin{multline}
+ {}\times
+    \biggl\{ 
+    \mathrm{tr}\biggl[ 
+    \bar\psi_1 \nu_{20} \bar\psi_1^{\mathrm{T}} \left(
+\fr{\partial }{\partial Y_t} + 2\eta^{\mathrm{T}} \beta_t^{\mathrm{T}} 
+\fr{\partial}{\partial\hat X_t}\right)
+    \fr{\partial^{\mathrm{T}}}{\partial Y_t}\biggr] +{}\\
+       {}+
+    \mathrm{tr}\left[ \beta_t \eta \bar\psi_1 \nu_{20} \bar\psi_1^{\mathrm{T}} 
+    \eta^{\mathrm{T}}\beta_t^{\mathrm{T}}
+    \fr{\partial}{\partial \hat X_t} \,
+    \fr{\partial^{\mathrm{T}}}{\partial \hat X_t}\right]\biggr\}
+    \xi^{\mathrm{T}}\biggr\}+{}\\
+{}+\iii_{R_0^q} \mm^N \bigg\{
+\vphantom{\left[ \xi \left(X_t+\bar\psi_1 c_2(\rho), \hat X_t +
+\beta_t \eta \bar\psi_1 c_2 (\rho),t\right)^{\mathrm{T}} -
+    \xi^{\mathrm{T}}\right]} 
+\left[ X_{t+\Delta} - \hat X_t-\beta_t\eta\bar\psi_1 c_2(\rho)\right]\times{}\\
+{}\times\left[ \xi \left(X_t+\bar\psi_1 c_2(\rho), \hat X_t +
+\beta_t \eta \bar\psi_1 c_2 (\rho),t\right)^{\mathrm{T}} -{}\right.\\
+\left.{}-
+    \xi^{\mathrm{T}}\right]\bigg\} \nu_{2P}(t,\rho)\, d\rho\,.
+    \label{e7.7-s2}
+    \end{multline}
+Здесь  $c_2 (\rho)$, $\nu_{20}$ и~ $\nu_{2P}$~--- соответствующие
+величины в~представлении интенсивности~$\nu_2$ процесса  $W_2(t)$
+формулой вида~(\ref{e2.3-s2}).
+
+В случае винеровского процесса  $W_2(t)$ имеем $c_2(\rho)\hm =0$,
+$\nu_{20}\hm=\nu_2$ и~формула~(\ref{e7.7-s2}) принимает вид:
+ \begin{multline*}
+ \kappa_{01}' = \kappa_{01} + \mm^N\left[ \left(X_{t+\Delta}- \hat X_t\right) 
+ \fr{\partial \xi^{\mathrm{T}}}{\partial t} \right]+{}\\
+    {}+ \mm^N\bigg\{\left[
+    \vphantom{\fr{\partial^{\mathrm{T}}} {\partial \hat X_t}}
+     \left(X_{t+\Delta}-\hat X_t\right)  \varphi_1^{\mathrm{T}} - 
+    \beta_t\eta\bar\psi_1\nu_{2}\bar\psi_1^{\mathrm{T}}\right]\times{}\\
+    {}\times
+    \left(\fr{\partial}{\partial Y_t} + \eta^{\mathrm{T}} \beta_t^{\mathrm{T}} 
+    \fr{\partial}{\partial \hat X_t}\right)\xi^{\mathrm{T}}\bigg\}+{}\\
+{} + \fr{1}{2}\, \mm^N\bigg\{ \left(X_{t+\Delta} - \hat X_t\right) \times{}\\
+{}\times
+\biggl\{ \mathrm{tr}\biggl[ 
+\bar\psi_1 \nu_{2} \bar\psi_1^{\mathrm{T}}
+    \left(\fr{\partial }{\partial Y_t} + 
+    2\eta^{\mathrm{T}} \beta_t^{\mathrm{T}} \fr{\partial}{\partial \hat X_t}\right)
+    \fr{\partial^{\mathrm{T}}}{\partial Y_t}\biggr]+{}\\
+{}+\mathrm{tr}\left[ \beta_t\eta \bar\psi_1 \nu_{2} \bar\psi_1^{\mathrm{T}}
+\eta^{\mathrm{T}}\beta^{\mathrm{T}}
+    \fr{\partial}{\partial \hat X_t}\,  \fr{\partial^{\mathrm{T}}}
+    {\partial \hat X_t}\right]\biggr\}\xi^{\mathrm{T}}\biggr\},
+%    \label{e7.8-s2}
+    \end{multline*}
+при этом точность экстраполятора Пугачёва определяется, согласно~\cite{3-s2}, формулой:
+ \begin{multline}
+ \dot R_t = \mm^N
+ \left[\left( X_{t+\Delta} -\hx\right) \varphi 
+ \left(X_{t+\Delta}, t+\Delta\right)^{\mathrm{T}} +{}\right.\\
+ {}+\varphi\left(X_{t+\Delta}, t+\Delta\right) 
+ \left(X_{t+\Delta}^{\mathrm{T}} -\hx^{\mathrm{T}}\right)-{}\\
+{}-\beta_t\eta \yutt \psi_1 \yxtt \nu_2(t) \psi_1\yxtt^{\mathrm{T}}\times{}\\ 
+{}\times\eta \yutt^{\mathrm{T}} \beta_t^{\mathrm{T}} +{}\\
+\hspace*{-5mm}\left.{}+\psi \left(X_{t+\Delta}, t+\Delta\right) 
+ \nu_1(t+\Delta) \psi \left(X_{t+\Delta}, t+\Delta\right)^{\mathrm{T}}
+ \right].\!
+ \label{e7.9-s2}
+ \end{multline}
+
+Для вычисления математических ожиданий в~(\ref{e7.5-s2})--(\ref{e7.9-s2}) 
+недостаточно знать
+одномерное нормальное распределение составного случайного процесса  $\lk
+X_t^{\mathrm{T}} Y_t^{\mathrm{T}}  \hat X_t^{\mathrm{T}}\rk^{\mathrm{T}}$, необходимо также знать совместное нормальное
+распределение величин~$ X_t$,  $X_{t+\Delta}$, $Y_t$ и~$\hat X_t$ при каждом~$t$.
+
+
+Таким образом, приходим к~следующим результатам.
+
+\pagebreak
+
+%\smallskip
+
+\noindent
+\textbf{Теорема~7.1.}\
+\textit{Пусть векторный стохастический процесс  
+$\lk X_t^{\mathrm{T}} Y_t^{\mathrm{T}}\rk^{\mathrm{T}}$ определяется 
+негауссовскими уравнениями}~(\ref{e7.1-s2}) \textit{и~обладает 
+конечными  двумерными вероятностными моментами. Тогда алгоритм НЭП определяется 
+формулами}~(\ref{e7.4-s2})--(\ref{e7.7-s2}), (\ref{e7.9-s2}).
+
+\smallskip
+
+\noindent
+\textbf{Теорема~7.2.}\ \textit{Для гауссовской СтС}~(\ref{e7.1-s2}) 
+\textit{алгоритм НЭП определяется}~(\ref{e7.4-s2})--(\ref{e7.7-s2}), (\ref{e7.9-s2}).
+
+\smallskip
+
+
+Аналогично получаются уравнения алгоритмов НЭП для дискретных СтС.
+
+Таким образом, теория условно-оптимальной экстраполяции стохастических процессов дает
+возможность строить экстраполяторы Пугачёва для одновременного
+оценивания состояния и~параметров системы и~экстраполяции ее
+состояния на несколько различных интервалов времени в~реальном
+масштабе времени. Все сложные расчеты, необходимые для
+проектирования таких экстраполяторов, не опираются на результаты
+наблюдения и~могут быть выполнены по априорным данным в~процессе
+проектирования. Практическое применение таких экстраполяторов
+сводится к~одновременному интегрированию уравнений~(\ref{e4.1-s2}) 
+для оценивания текущего и~будущих состояний системы.
+
+
+\section{Заключение}
+
+Разработана теория аналитического синтеза непрерывных и~дискретных нормальных 
+суб- и~услов\-но-оп\-ти\-маль\-ных фильтров и~экстраполяторов\linebreak Пугачёва для обработки 
+процессов в~гауссовских и~негаус\-совских СтС, линейных относительно 
+состояния.  Результаты допускают обобщение на случай автокоррелированных шумов 
+в~наблюдениях. Алгоритмы положены в~основу программного обеспечения StS-Filter  
+(version 2016) для стохастических информационных технологий~\cite{7-s2}.
+
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+
+
+\bibitem{2-s2}
+\Au{Липцер Р.\,Ш., Ширяев~А.\,Н.} 
+Статистика случайных процессов.~--- М.: Наука, 1974. 476~с.
+
+\bibitem{3-s2}
+\Au{Синицын И.\,Н.}
+Фильтры Калмана и~Пугачёва.~--- 2-е изд.~--- М.: Логос, 2007. 776~с.
+
+\bibitem{4-s2}
+\Au{Синицын И.\,Н., Синицын~В.\,И.} 
+Лекции по нормальной и~эллипсоидальной аппроксимации в~стохастических системах.~--- 
+М.: ТОРУС ПРЕСС, 2013. 476~с.
+
+\bibitem{5-s2}
+\Au{Синицын И.\,Н.}  
+Параметрическое статистическое и~аналитическое моделирование распределений 
+в~нелинейных стохастических системах на многообразиях~// 
+Информатика и~её применения, 2013. Т.~7. Вып.~2. С.~4--16.
+
+\bibitem{1-s2} %5
+\Au{Синицын И.\,Н., Корепанов~Э.\,Р.}
+Нормальные услов\-но-оп\-ти\-маль\-ные фильтры Пугачёва для дифференциальных 
+стохастических систем, линейных относительно состояния~// Информатика и~её 
+применения, 2015. Т.~9. Вып.~2. С.~30--38.
+
+\bibitem{6-s2}
+\Au{Ройтенберг Я.\,Н.} Автоматическое управление.~---
+ 3-е изд., перераб. и~доп.~--- М.: Наука, 1992. 576~с.
+
+\bibitem{7-s2}
+\Au{Корепанов Э.\,Р.} 
+Стохастические информационные технологии на основе фильтров Пугачёва~// 
+Информатика и~её применения, 2011. Т.~5. Вып.~2. С.~36--57.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 02.02.16}}
+
+\vspace*{8pt}
+
+%\newpage
+
+%\vspace*{-24pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{8pt}
+
+
+
+\def\tit{NORMAL PUGACHEV CONDITIONALLY-OPTIMAL
+FILTERS  AND~EXTRAPOLATORS FOR~STATE
+LINEAR STOCHASTIC SYSTEMS}
+
+\def\titkol{Normal Pugachev conditionally-optimal
+filters  and~extrapolators for~state
+linear stochastic systems}
+
+\def\aut{I.\,N.~Sinitsyn and E.\,R.~Korepanov}
+
+\def\autkol{I.\,N.~Sinitsyn and E.\,R.~Korepanov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+\noindent
+Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences,
+44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2016\ \ \ volume~10\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2016\ \ \ volume~10\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+\Abste{The analytical synthesis theory of continuous and discrete sub- and Pugachev 
+conditionally optimal filters and extrapolators for information processing in linear 
+state stochastic systems (StS) is presented. For Gaussian  StS,
+ Liptzer and Shiraev 
+performed the first works for filters and extrapolators synthesis. For 
+non-Gaussian StS, the first works belong to Pugachev and Sinitsyn. 
+Stochastic equatuins 
+for state and observation of continuous and discrete StS are given. 
+Algorithms for continuous normal sub- and conditionally optimal filters 
+and extrapolators are presented. The corresponding algorithms for discrete StS 
+are also given. The developed algorithms are the basis of the
+software tool ``StS-Filter, 2016.''
+The results may be developed for autocorrelated noises and multiplicative noises.}
+
+\KWE{Liptser--Shiraev filter (LSF);
+Liptser--Shiraev conditions;
+normal approximation method (NAM) for \textit{a~posteriori} density;
+normal conditionally optimal Pugachev filter (NPF);
+stochastic systems (StS); state linear StS; statistical linearization method (SLM)}
+
+\DOI{10.14357/19922264160202}
+
+%\vspace*{-12pt}
+
+%\Ack
+%\noindent
+
+
+
+%\vspace*{3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+
+
+
+\bibitem{2-s2-1}
+\Aue{Liptser, R.\,Sh., and A.\,N.~Shiryaev}. 1974. 
+\textit{Statistika sluchaynykh protsessov} [Statistics of stochastic proesses].~--- 
+Moscow: Nauka. 476~p.
+
+\bibitem{3-s2-1}
+\Aue{Sinitsyn, I.\,N.} 2007.
+\textit{Fil'try Kalmana i~Pugacheva} [Kalman and Pugachev filters]. 2nd ed. Moscow: Logos. 776~p.
+
+\bibitem{4-s2-1}
+\Aue{Sinitsyn, I.\,N., and V.\,I.~Sinitsyn}. 2013. 
+\textit{Lektsii po normal'noy i ellipsoidal'noy approksimatsii 
+v~stokhasticheskikh sistemakh}  [Lectures on normal and ellipsoidal approximation 
+of distributions in stochastic systems].  Moscow: TORUS PRESS. 476~p.
+
+\bibitem{5-s2-1}
+\Aue{Sinitsyn, I.\,N.} 2013. 
+Parametricheskoe statisticheskoe i~analiticheskoe modelirovanie raspredeleniy 
+v~nelineynykh stokhasticheskikh sistemakh na mnogoobraziyakh [Parametric statistical 
+and analytical modeling of distributions in stochastic systems on manifolds].
+\textit{Informatika i~ee Primeneniya}~--- \textit{Inform Appl.} 7(2):4--16.
+
+\bibitem{1-s2-1} %5
+\Aue{Sinitsyn, I.\,N., and E.\,R.~Korepanov}. 2015.
+Nor\-mal'\-nye uslovno optimal'nye fil'try Pugacheva dlya dif\-fe\-ren\-tsi\-al'\-nykh 
+stokhasticheskikh sistem, lineynykh otnositel'no so\-sto\-yaniya [Normal Pugachev 
+filters and extrapolators for state linear stochastic systems].
+\textit{Informatika i~ee Primeneniya}~--- \textit{Inform. Appl}  9(2):30--38.
+
+\bibitem{6-s2-1}
+\Aue{Roytenberg, Ya.\,N.} 1992. 
+\textit{Avtomaticheskoe upravlenie} 
+[Automatic control]. 3rd ed. Moscow: Nauka. 576~p.
+
+\bibitem{7-s2-1}
+\Aue{Korepanov, E.\,R.} 2011. 
+Stokhasticheskie informatsionnye tekhnologii na osnove fil'trov Pugacheva 
+[Stochastic informational technologies based on Pugachev filters].
+\textit{Informatika i~ee Primeneniya}~--- \textit{Inform. Appl}. 5(2):36--57.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Received February 2, 2016}}
+
+\Contr
+
+\noindent
+\textbf{Sinitsyn Igor N.} (b.\ 1940)~---
+Doctor of Science in technology, professor,
+Honored scientist of RF, Head of Department, Institute of Informatics Problems, Federal Research Center ``Computer Science and
+Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str.,
+Moscow 119333, Russian Federation; sinitsin@dol.ru
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Korepanov Eduard R.} (b.\ 1966)~---
+Candidate of Science (PhD) in technology, 
+Head of Laboratory, Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119333, Russian Federation; ekorepanov@ipiran.ru 
+
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература}

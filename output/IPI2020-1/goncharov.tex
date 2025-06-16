@@ -1,0 +1,1029 @@
+\def\stat{goncharov}
+
+\def\tit{ВЫРАВНИВАНИЕ ДЕКАРТОВЫХ ПРОИЗВЕДЕНИЙ УПОРЯДОЧЕННЫХ МНОЖЕСТВ$^*$}
+
+\def\titkol{Выравнивание декартовых произведений упорядоченных множеств}
+
+\def\aut{А.\,В.~Гончаров$^1$, В.\,В.~Стрижов$^2$}
+
+\def\autkol{А.\,В.~Гончаров, В.\,В.~Стрижов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Гончаров А.\,В.}
+\index{Стрижов В.\,В.}
+\index{Goncharov A.\,V.}
+\index{Strijov V.\,V.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при частичной финансовой поддержке РФФИ 
+(проекты 19-07-1155 и~19-07-00885). Настоящая статья содержит 
+результаты проекта <<Статистические методы машинного обучения>>, 
+выполняемого в~рамках реализации Программы Центра компетенций 
+Национальной технологической инициативы <<Центр хранения 
+и~анализа больших данных>>, поддерживаемого Министерством науки 
+и~высшего образования Российской Федерации по договору МГУ им.\ 
+М.\,В.~Ломоносова  с~Фондом поддержки проектов Национальной 
+технологической инициативы от 11.12.2018 №\,13/1251/2018.}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский физико-технический институт, alex.goncharov@phystech.edu}
+\footnotetext[2]{Вычислительный центр им.\ А.\,А.~Дородницына Федерального исследовательского 
+центра <<Информатика и~управ\-ле\-ние>> Российской академии наук; 
+Московский фи\-зи\-ко-тех\-ни\-че\-ский институт, \mbox{strijov@ccas.ru}}
+
+%\vspace*{-12pt}
+
+
+
+\Abst{Работа посвящена исследованию метрических методов анализа 
+объектов сложной структуры. Предлагается обобщить метод динамического 
+выравнивания двух временных рядов на случай объектов, определенных на 
+двух и~более осях времени. В~дискретном представлении такие объекты 
+являются матрицами. Метод динамического выравнивания временных рядов 
+обобщается как метод динамического выравнивания матриц. Предложена 
+функция расстояния, устойчивая к~монотонным нелинейным деформациям 
+декартова произведения двух и~более временных шкал. Определен выравнивающий 
+путь между объектами. В~дальнейшем объектом называется матрица, 
+в~которой строки и~столбцы соответствуют осям времени. Исследованы 
+свойства предложенной функции расстояния. Для иллюстрации метода 
+решаются задачи метрической классификации объектов на модельных 
+данных и~данных из набора MNIST.}
+
+\KW{функция расстояния; динамическое выравнивание; расстояние между матрицами; 
+нелинейные деформации времени; про\-стран\-ст\-вен\-но-вре\-мен\-ные ряды}
+
+\DOI{10.14357/19922264200105} 
+  
+\vspace*{-3pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+\section{Введение}
+
+Временн$\acute{\mbox{ы}}$е ряды представляют собой набор измерений, упорядоченных 
+по оси времени. Анализ временн$\acute{\mbox{ы}}$х рядов производится при решении задач, 
+связанных с~классификацией активности человека по измерениям акселерометра 
+телефона, поиском паттернов в~EEG-сиг\-на\-лах (электроэнцефалограмма), 
+кластеризации набора ECoG (электрокортикограмма) данных и~во многих других 
+задачах~\cite{0}. Рассматриваются объекты, для которых время между измерениями 
+фиксированно. В~данной работе для построения адекватной функции 
+расстояния между объектами требуется учесть нелинейные деформации 
+относительно оси времени: глобальные и~локальные сдвиги, растяжения 
+и~сжатия~\cite{1}.
+
+В~\cite{2} приводятся различные методы решения задач анализа 
+временн$\acute{\mbox{ы}}$х рядов: классификации, детектирования паттернов, 
+кластеризации и~др. В~\cite{3} описание временных рядов 
+строится с~по\-мощью анализа параметров моделей, в~\cite{4} 
+используется их признаковое описание, в~\cite{5} анализируется их форма. 
+Комбинации этих подходов описаны в~\cite{2}.
+
+Метрические методы находят схожие объекты в~наборе. Используются 
+функции расстояния над временн$\acute{\mbox{ы}}$ми рядами: расстояние Хаусдорфа~\cite{10}, 
+MODH~\cite{11}, расстояние, основанное на HMM
+(hiden Markov model)~\cite{6}, евклидово расстояние 
+в~исходном пространстве или в~пространстве сниженной размерности~\cite{5}, 
+\mbox{LCSS} (longest common\linebreak subsequence)~\cite{7}. Показано~\cite{8}, что в~случае локальных или глобальных 
+деформаций времени при решении задач, требующих анализа исходной формы 
+временн$\acute{\mbox{о}}$го ряда, метод динамического выравнивания оси времени 
+DTW (Dynamic Time Warping) 
+превосходит другие функции расстояния~\cite{9} по качеству итогового 
+решения задачи, так как при наличии смещений двух объектов относительно 
+друг друга требуется выравнивать их оптимальным образом для вычисления 
+расстояния между ними.
+
+В данной работе предлагается перейти от рас\-смот\-ре\-ния объекта~$\textbf{s}(t)$, 
+временн$\acute{\mbox{о}}$го ряда, к~более общему случаю $\textbf{s}(\textbf{t})$, 
+в~котором компоненты вектора~$\textbf{t}$~--- оси времени. Из-за 
+существенного рос\-та вы\-чис\-ли\-тель\-ной слож\-ности при увеличении чис\-ла 
+осей времени предлагается рас\-смот\-реть объекты $\textbf{s}(t_1, t_2)$, 
+определенные на двух осях времени. Оси времени считаются независимыми. 
+В~случае единственной дискретной и~ограниченной сверху шкалы времени 
+объект представим вектором фиксированной размерности. 
+Аналогично объект настоящего исследования представим мат\-ри\-цей.
+
+Вводятся ограничения на зависимости осей времени в~декартовом 
+произведении для таких объектов. Определена гипотеза порождения данных: 
+объекты одного класса эквивалентности получены при помощи допустимых 
+преобразований, а~именно: локальных деформаций (растяжений и~сжатий) 
+каждой из осей времени по отдельности. В~дискретном случае преобразование 
+представимо дуп\-ли\-ци\-ро\-ва\-ни\-ем строк и~столбцов матриц. 
+В~число допустимых преобразований попадают и~глобальные деформации: 
+сдвиги по осям времени, представимые добавлением и~удалением крайних 
+строк и~столбцов исходных матриц. Для каждой из осей времени выполняются 
+свойства времени: монотонность и~непрерывность. Похожими на описанные 
+свойствами обладает, например, частотный спектр сигнала, где одна ось 
+определяет время, а другая~--- частоту, величину, обратную времени.
+
+
+Между двумя объектами, матрицами, в~случае допустимых преобразований 
+требуется определить инвариантную к~преобразованиям осей времени функцию 
+расстояния, которая сможет выделить классы эквивалентности множества 
+преобразованных объектов. Работа посвящена определению такой функции 
+расстояния, как обобщения метода динамического выравнивания временных рядов 
+DTW для матриц.
+
+Цель данной работы~--- построение метода, основанного на динамическом 
+выравнивании осей времени для матриц. Метод динамического выравнивания 
+временн$\acute{\mbox{ы}}$х рядов~\cite{33} определен только для объектов с~одной осью времени, 
+что делает его неприменимым для описанного случая. Однако концепции, 
+используемые на каждой стадии вы\-чис\-ле\-ния оптимального выравнивания, обобщены 
+на рассматриваемый случай. Работа исследует свойства предложенного 
+метода и~сравнивает результаты применения метода к~задачам классификации 
+изображений~\cite{12} с~результатами функции расстояния~$L_2$.
+
+Для иллюстрации и~анализа результатов решается задача метрической 
+классификации объектов (матриц низкой размерности). Используются наборы данных: 
+модельные данные, которые согласуются с~выдвинутой гипотезой порождения 
+данных для временн$\acute{\mbox{ы}}$х рядов, подмножество набора MNIST сниженной 
+размерности и~частотный спектр сигнала.
+
+\vspace*{-10pt}
+
+\section{Постановка задачи построения функции расстояния}
+
+\vspace*{-2pt}
+
+Рассмотрим задачу построения функции расстояния между объектами. 
+Функция расстояния инвариантна к~допустимым преобразованиям осей времени: 
+глобальным и~локальным линейным и~нелинейным деформациям временн$\acute{\mbox{о}}$й шкалы. 
+Ниже приведены две постановки задачи, с~помощью которых определены свойства 
+предложенной функции расстояния, оценено ее качество и~проведено сравнение 
+нескольких функций расстояния: предложенной и~$L_2$.
+
+Первая постановка задачи использует общее свойство функций расстояния: 
+объединение схожих объектов и~разделение непохожих объектов. 
+Вводится определение свойства инвариантности функции расстояния к~допустимым 
+преобразованиям осей времени.
+Вторая постановка задачи уточняет первую и~заключается в~проведении метрической 
+классификации методом ближайшего соседа.
+
+\textbf{Постановка задачи выбора функции расстояния между двумя объектами.}
+На двух временн$\acute{\mbox{ы}}$х осях заданы объекты вида 
+$\textbf{A}(t_1,t_2)\hm \in \mathbb{R}^{n \times n}$. 
+Функция $G_w(\textbf{A}):\mathbb{R}^{n \times n} \hm\rightarrow 
+\mathbb{R}^{\hat{n} \times \hat{n}}$ задает допустимые преобразования 
+исходного объекта~$\textbf{A}$: глобальные сдвиги, локальные линейные 
+и~нелинейные деформации, а~именно: растяжения и~сжатия оси времени, 
+сдвиги значений по оси времени. Скалярный параметр $w \hm\in \mathbb{R}^+$
+ функции~$G$ фиксирует набор этих преобразований.
+
+Допустимым элементарным преобразованием матрицы~$\textbf{A}$ назовем 
+дуплицирование случайных строк и~столбцов исходной матрицы, добавление 
+или удаление крайних строк и~столбцов. Допустимым преобразованием 
+примем некоторую последовательность допустимых элементарных 
+преобразований матрицы~$\textbf{A}$ и~обозначим как~$G_w(\textbf{A})$.
+
+Будем называть объект~$\textbf{B} \hm\in \mathbb{R}^{\hat{n} \times \hat{n}}$ 
+полученным из объекта~$\textbf{A}$ при помощи допустимых 
+преобразований~$G_{\hat{w}}$, если существует $\hat{w}\hm\in \mathbb{R}^+ : 
+\textbf{B} \hm= G_{\hat{w}}(\textbf{A})$.
+
+Функцию расстояния между двумя объектами $\rho: 
+\mathbb{R}^{{n} \times {n}} \times \mathbb{R}^{\hat{n} \times \hat{n}} 
+\hm\rightarrow  \mathbb{R}^+$ оценим на выборке $\mathfrak{D } \hm= 
+\{ \textbf{A}_i \}_{i=1}^m$ объектов вида $\textbf{A}_i \hm\in 
+\mathbb{R}^{n \times n}$.
+
+Для каждого объекта выборки~$\textbf{A}_i$ и~объекта~$\textbf{B}_j$ его 
+класса эквивалентности $\{\textbf{B}_j\}_i \hm= \{  \textbf{B} 
+\hm\in \mathfrak{D} | \exists w_i,w_j: G_{w_i}(\textbf{A}_i) \hm= G_{w_j}
+(\textbf{B}_j)   \}$ заданы допустимые трансформации с~параметрами~$w_i$ 
+и~$w_j$, такие что $G_{w_i}(\textbf{A}_i)\hm = G_{w_j}(\textbf{B}_j)$. 
+Для каждого объекта выборки~$\textbf{A}_i$ и~объекта~$\textbf{C}_j$ 
+из других классов эквивалентности $\{ \textbf{C}_k\}_i \hm= 
+\{  \textbf{C} \hm\in \mathfrak{D} | \nexists w_i,w_k: G_{w_i}(\textbf{A}_i)
+\hm = G_{w_k}(\textbf{C})   \}$ не существует таких $ w_i, w_k : G_{w_i}
+(\textbf{A}_i) \hm= G_{w_k}(\textbf{C}_k)$.
+
+Решается задача поиска функции расстояния~$\rho$, значение
+ которой на паре объектов одного класса эквивалентности меньше, 
+ чем на любой паре объектов из разных: для любых $i,j,k \hm\in 
+ \{1,\dots,m\}$ $\quad \rho(\textbf{A}_i,\textbf{B}_j) \hm< 
+ \rho(\textbf{A},\textbf{C}_k)$. Функцию расстояния, обладающую 
+ таким свойством, назовем инвариантной на классах эквивалентности.
+
+Критерием качества для функции расстояния~$\rho$ на выборке~$\mathfrak{D}$ 
+примем долю объектов, для которых указанное неравенство выполняется:
+$$
+S_{\rho}(\mathfrak{D}) = \fr{1}{m} \sum\limits_{i=1}^m 
+\prod\limits_{\{ \textbf{B}_j\}_i} 
+\prod\limits_{\{ \textbf{C}_k\}_i}  
+\left[  \rho(\textbf{A}_i,\textbf{B}_j) < \rho(\textbf{A}_i,\textbf{C}_k)  
+ \right].
+ $$
+Постановка задачи выбора функции расстояния~$\rho$ 
+сводится к~задаче максимизации критерия качества.
+
+\textbf{Прикладное использование функции расстояния.}
+Задана выборка $\mathfrak{D}\hm = \{(\textbf{A}_i,y_i)\}^m_{i=1}$, 
+состоящая из пар объ\-ект--от\-вет. Объектами служат объекты сложной 
+структуры: $\textbf{A}_i\hm \in \mathbb{R}^{n\times n}$, 
+а~ответами выступают метки класса~---~$y_i\hm \in Y \hm= \{1,\ldots,E\}$, 
+где $E \hm\ll m$. Выборка разделена на обучение $\mathfrak{D}_l \hm= 
+\{(\textbf{A}_i,y_i)\}^{m_1}_{i=1}$ и~контроль $\mathfrak{D}_t \hm= 
+\{(\textbf{A}_i,y_i)\}_{m_1}^{m_1+m_2}$.
+
+Модель классификации~$f$ принадлежит множеству моделей метрической 
+классификации 1NN, которые классифицируемому объекту ставят 
+в~соответствие метку класса ближайшего объекта из обучающей 
+выборки по заданной функции расстояния~$\rho$:
+$$ 
+\hat{y} = f(\textbf{B} | \rho) = y \argmin\limits_{i = 1,\dots, m_1} 
+\rho\left(B,A_i\right)\,.
+$$
+Критерий качества $S$ модели~$f$ для задачи классификации~--- 
+доля правильно проставленного класса на контрольной выборке:
+ $$ 
+ S(f | \rho) = \fr{1}{m_2}\sum\limits_{i=m_1}^{m_1+m_2} 
+ \left[f(\textbf{A}_i | \rho) = y_i\right].
+ $$
+
+Требуется выбрать функцию расстояния~$\rho$ для модели 
+классификации~$f:~\mathbb{R}^{n\times n} \hm\rightarrow~Y$, 
+максимизируюшую критерий качества~$S$ на контрольной выборке:
+\begin{equation*}
+f =  \argmax\limits_{\rho \in \{\mathrm{mDTW}, L_2\}}\left(S(f | \rho)\right).
+\end{equation*}
+
+\section{Вычисление матричного расстояния mDTW}
+
+Предлагается использовать функцию расстояния DTW, 
+модифицированную для случая выравнивания двойной шкалы времени.
+
+\smallskip
+
+\noindent
+\textbf{Определение~1.} {Даны два объекта~$\textbf{A},\textbf{B}\hm \in 
+\mathbb{R}^{n\times n}$. Тензор 
+невязок~$\boldsymbol{\Omega}^{n \times n \times n \times n}$~--- 
+такой тензор, что его элемент~$\boldsymbol{\Omega}(i,j,k,l)$ 
+равен квадрату разности между элементами~$\textbf{A}(i,j)$ и~$\textbf{B}(k,l)$:}
+\begin{equation*}
+\boldsymbol{\Omega}(i,j,k,l)=(\textbf{A}(i,j) - \textbf{B}(k,l))^2.
+\end{equation*}
+
+\noindent
+\textbf{Определение 2.} {Путем~$\boldsymbol{\pi}$ между двумя 
+объектами $\textbf{A},\textbf{B} \hm\in \mathbb{R}^{n\times n}$ 
+назовем множество индексов тензора~$\boldsymbol{\Omega}$: }
+$$
+\boldsymbol{\pi} = \{(i,j,k,l)\},\quad i,j,k,l \in \{1,\ldots,n\} ,
+$$
+\textit{удовлетворяющее следующим условиям:}
+
+{\bfseries\textit{Частичный порядок.}}
+Для элементов пути~$\boldsymbol{\pi}$ с~фиксированными значениями~$i,k$ 
+задан порядок: выравнивающий путь для фиксированных строк двух 
+матриц упорядочен~--- $\{(i,j_r,k,l_r))\}_{r=1}^{R} \hm\subset 
+\boldsymbol{\pi}$ мощностью~$R$. Аналогично для фиксированных столбцов 
+с~индексами~$j,l$.
+
+{\bfseries\textit{Граничные условия.}}
+ Пусть $(i,j,k,l) \in \boldsymbol{\pi}$, тогда $(1,j,1,l) \hm\in 
+ \boldsymbol{\pi}$ и~$(i,1,k,1) \hm\in \boldsymbol{\pi}$.
+Путь $\boldsymbol{\pi}$ содержит элементы тензора~$\boldsymbol{\Omega}$: 
+$(1,1,1,1) \hm\in \boldsymbol{\pi}$ и~$(n,n,n,n) \hm\in \boldsymbol{\pi}$.
+
+{\bfseries\textit{Непрерывность по направлению.}}
+Для упорядоченного подмножества пути $\{(i,j_r,k,l_r)\}_{r=1}^{R}
+\hm\subset\boldsymbol{\pi}$ выполняется условие непрерывности:
+$$
+j_{r}-j_{r-1}\leq1\,,\quad l_r-l_{r-1}\leq1\,, \quad r = 2,\ldots,R\,.
+$$
+На~шаге пути~$\boldsymbol{\pi}$ по фиксированному направлению времени~$i,k$ 
+встречаются только соседние элементы матрицы (включая соседние по диагонали). 
+Аналогично для фиксированных~$j,l$.
+
+{\bfseries\textit{Монотонность по направлению.}}
+Для упорядоченного подмножества пути  $\{(i,j_r,k,l_r)\}_{r=1}^{R}
+\hm\subset\boldsymbol{\pi}$ выполняется хотя бы одно из условий 
+монотонности функции выравнивания времени: 
+$$
+j_{r}-j_{r-1}\geq1\,,\quad l_r-l_{r-1}\geq1\,, \quad r = 2,\ldots,R\,.
+$$
+
+Свойства пути между матрицами обобщают свойства пути между двумя 
+временными рядами.
+
+\smallskip
+
+\noindent
+\textbf{Определение~3.}\ {Стоимость 
+$\mathrm{Cost}\,(\textbf{A},\textbf{B},{\boldsymbol{\pi}})$ пути $\boldsymbol{\pi}$ 
+между объектами $\textbf{A}, \textbf{B}$:
+\begin{equation*}
+\mathrm{Cost}\,(\textbf{A},\textbf{B},{\boldsymbol{\pi}}) = 
+\sum\limits_{(i,j,k,l) \in \boldsymbol{\pi}}{\boldsymbol{\Omega}}(i,j,k,l).
+\end{equation*}}
+
+\noindent
+\textbf{Определение~4.}\ 
+{Выравнивающий путь~$\hat{\boldsymbol{\pi}}$ между 
+объектами $\textbf{A},\textbf{B}$~--- путь наименьшей стоимости 
+среди всех возможных путей между объектами:
+\begin{equation*}
+\hat{\boldsymbol{\pi}} = 
+\argmin\limits_{{\boldsymbol{\pi}}} \mathrm{Cost}
+\left(\textbf{A},\textbf{B},{\boldsymbol{\pi}}\right).
+\end{equation*}}
+Функция расстояния~$\rho (\textbf{A},\textbf{B})\hm = \mathrm{mDTW}\,
+(\textbf{A},\textbf{B})$ между объектами~$\textbf{A}$ и~$\textbf{B}$ 
+рассчитывается как стоимость выравнивающего пути~$\hat{\boldsymbol{\pi}}$:
+\begin{equation}
+\mathrm{mDTW}(\textbf{A},\textbf{B}) = \mathrm{Cost}\left(\textbf{A},
+\textbf{B},\hat{\boldsymbol{\pi}}\right).
+\end{equation}
+
+\setcounter{figure}{1}
+\begin{figure*}[b] %fig2
+{\small 
+\begin{center}
+\begin{tabular}{l}
+\hline
+DTW(\textbf{s},\textbf{c}):\\
+\hspace*{3mm}$\boldsymbol{D}$(1:n+1,1:m+1) = inf;\\
+\hspace*{3mm}$\boldsymbol{D}$(1,1) = 0;\\
+\hspace*{3mm}for $i = 2$: $n+1$\\
+\hspace*{6mm}for $j = 2$ : $m+1$\\
+\hspace*{9mm}$d = (\textbf{s}(i-1)-\textbf{c}(j-1))^2$;\\
+\hspace*{9mm}$\boldsymbol{D}(i,j) = d + \min( 
+[ \boldsymbol{D}(i-1,j), \boldsymbol{D}(i,j-1), \boldsymbol{D}(i-1,j-1) ])$;\\
+return\ sqrt$(\boldsymbol{D}(n+1,m+1))$\\
+\hline
+\end{tabular}
+\end{center}}
+\vspace*{-9pt}
+
+\Caption{Алгоритм вычисления DTW для временных рядов
+\label{ris:dtwts}}
+%\end{figure*}
+%\begin{figure*} %fig3
+\vspace*{6pt}
+{\small 
+\begin{center}
+\begin{tabular}{l}
+\hline
+\\[-9pt]
+Correction $(\overline{i,j,k,l}, \boldsymbol{\pi}(\overline{i,j,k,l})):$\\
+\hspace*{3mm}if $\overline{i,j,k,l} \in \{ (i-1, j, k,l)  ;  
+(i, j, k-1, l)  ;  (i-1, j, k-1, l) \}$:\\
+\hspace*{6mm}$ \widehat{\pi} = \{ (\overline{i}, r, \overline{k}, f) \in 
+\boldsymbol{\pi}(\overline{i, j, k, l}) \vert r, f \in \mathbb{N} \}$\\
+\hspace*{3mm}elif $\overline{i,j,k,l}\in \{  
+(i, j-1, k, l); (i, j, k, l-1); (i, j-1, k, l-1) \}$:\\
+\hspace*{6mm}$\widehat{\pi} = \{ (r, \overline{j}, f, \overline{l}) 
+\in \boldsymbol{\pi}(\overline{i, j, k, l}) \vert r, f \in \mathbb{N} \}$\\
+\hspace*{3mm}elif $\overline{i,j,k,l} =  i-1,j-1,k-1,l-1:$\\
+\hspace*{6mm}$\widehat{\pi} = \{ (\overline{i}, r, \overline{k}, f) 
+\in \boldsymbol{\pi}(\overline{i, j, k, l}) \vert r,f \in \mathbb{N} \} \cup$\\
+\hspace*{6mm}$\cup \{ (r, \overline{j}, f, \overline{l}) \in \boldsymbol{\pi}
+(\overline{i, j, k, l}) \vert r,f \in \mathbb{N} \}$\\
+\hspace*{3mm}$\boldsymbol{d\pi} = \{ \mathrm{element} \in \widehat{\pi}: 
+\mbox{произведены\ замены\ индексов } 
+\overline{i} = i,\ \overline{j} = j,\ \overline{k} = k,\ \overline{l} = l \}$\\
+return $\boldsymbol{d\pi}$\\
+\hline
+\end{tabular}
+\end{center}
+}
+\vspace*{-9pt}
+
+\Caption{Алгоритм вычисления поправки $\boldsymbol{d\pi}$ 
+пути $\boldsymbol{\pi}$
+\label{ris:codedpi}}
+\end{figure*}
+
+
+\textbf{Алгоритм вычисления значения расстояния~(4).}
+Построение алгоритма вычисления значения функции расстояния 
+между матрицами основан на алгоритме расчета функции расстояния 
+между временн$\acute{\mbox{ы}}$ми рядами. В~случае выравнивания одной\linebreak\vspace*{-12pt}
+
+{ \begin{center}  %fig1
+ \vspace*{-3pt}
+    \mbox{%
+ \epsfxsize=79mm 
+ \epsfbox{gon-1.eps}
+ }
+
+
+\end{center}
+
+
+\noindent
+{{\figurename~1}\ \ \small{Матрица стоимости оптимального выравнивания, по обеим 
+осям отложены временные отсчеты}}
+}
+
+\vspace*{12pt}
+
+
+\noindent 
+временн$\acute{\mbox{о}}$й шкалы
+ итоговая матрица расстояний~$\boldsymbol{D}$ (рис.~1) в~каждом 
+ элементе~$\boldsymbol{D}(i,j)$ содержит рас\-сто\-яние между подрядом 
+ первого временн$\acute{\mbox{о}}$го ряда и~подрядом второго временн$\acute{\mbox{о}}$го ряда. 
+ Рас\-смот\-рим алгоритм динамического выравнивания двух временн$\acute{\mbox{ы}}$х 
+ рядов $\textbf{s} \hm\in R^n$ и~$\textbf{c} \hm\in R^m$ на рис.~2.
+ 
+ 
+
+Элемент $\boldsymbol{D}(i,j)$ матрицы~$\boldsymbol{D}$ соответствует 
+стоимости выравнивающего пути между подпоследовательностями 
+исходных временн$\acute{\mbox{ы}}$х рядов: $\textbf{s}(1:i) \hm= \textbf{s}(t)$, 
+$t \hm= 1,\ldots,i,$ и~$\textbf{c}(1:j) \hm= \textbf{c}(t)$, $t \hm= 1,\ldots,j$. 
+Алгоритм построения наилучшего выравнивания времени 
+подразумевает, что выравнивающий путь между этими 
+подпоследовательностями получен одним из трех способов~--- 
+если стоимость выравнивающего пути между 
+подпоследовательностями~$\textbf{s}(1:\overline{i}) $ 
+и~$\textbf{c}(1:\overline{j})$ минимальна для~$\overline{i,j}$ из множества
+$$
+\overline{i,j} \in \left\{ \{i-1,j\},\{i,j-1\},\{i-1,j-1\} \right\},$$
+тогда выравнивающий путь между $\textbf{s}(1:i)$ и~$\textbf{c}(1:j)$ получен добавлением пары~$(i,j)$ к~выбранному 
+выравнивающему пути с~минимальной стоимостью из трех.
+
+
+
+Предложенный алгоритм переносит эти рас\-суж\-де\-ния на случай 
+выравнивания двух матриц~$\textbf{A}$ и~$\textbf{B}$. 
+Элемент~$\boldsymbol{D}(i,j,k,l)$ четырехиндексного
+ тензора расстояний~$\boldsymbol{D}$ соответствует стоимости выравнивающего 
+ пути между $\textbf{A}(1:i,1:j) \hm= \textbf{A}(t_1,t_2)$, 
+ $t_1 \hm= 1,\ldots, i$, $t_2 \hm= 1,\ldots, j,$ 
+ и~$\textbf{B}(1:k,1:l) \hm= \textbf{B}(t_1,t_2)$, $t_1 \hm= 1,\ldots, k$,
+ $t_2 \hm= 1,\ldots, l$. Выравнивающий путь между этими 
+ подматрицами получен одним из семи способов~--- 
+ если стоимость выравнивающего пути между 
+ подматрицами $\textbf{A}(1:\overline{i},1:\overline{j})$ 
+ и~$\textbf{B}(1:\overline{k},1:\overline{l})$ 
+ минимальна для~$\overline{i,j,k,l}$ из множества
+\begin{multline*} 
+\overline{i,j,k,l} \in 
+\left\{ \{i-1,j,k,l\},\{i,j-1,k,l\},\right.\\
+\{i,j,k-1,l\},
+\{i,j,k,l-1\}, \{i-1,j,k-1,l\},\\
+\left.
+\{i,j-1,k,l-1\},\{i-1,j-1,k-1,l-1\}\right\},
+\end{multline*}
+
+\setcounter{figure}{3}
+\begin{figure*} %fig4
+{\small 
+\begin{center}
+\begin{tabular}{l}
+\hline
+$\mathrm{mDTW}\left(\textbf{A},\textbf{B}\right):$\\
+\hspace*{3mm}$\textbf{D}(1:n+1,1:n+1, 1:n+1, 1:n+1) = inf$;\\
+\hspace*{3mm}$\textbf{D}(1,1,1,1) = 0;$\\
+\hspace*{3mm}$\boldsymbol{\pi}(1,1,1,1) = ((1,1),(1,1))$\\
+\hspace*{3mm}$for\ i,j,k,l  \in \mathbb{N}^{2 : n+1} \times 
+\mathbb{N}^{2 : n+1} \times \mathbb{N}^{2 : n+1} \times \mathbb{N}^{2 : n+1}:$\\
+\hspace*{6mm}$\overline{i,j,k,l} = \argmin($ [ \textbf{D}(i-1, j, k, l), 
+\textbf{D}(i, j-1, k, l), \textbf{D}(i, j, k-1, l), 
+\textbf{D}(i, j, k, l-1),    \\
+\hspace*{9mm}$\textbf{D}(i-1, j, k-1, l), \textbf{D}(i, j-1, k, l-1), 
+\textbf{D}(i-1, j-1, k-1, l-1) ])$;\\
+\hspace*{3mm}$\boldsymbol{d \pi} = \mathrm{Correction}\,(\overline{i,j,k,l}, 
+\boldsymbol{\pi}(\overline{i,j,k,l}))$\\
+\hspace*{3mm}$\boldsymbol{\pi}(i, j, k, l) = \boldsymbol{d \pi} \cup 
+\{(\overline{i,j,k,l})\}$\\
+\hspace*{3mm}$\mathrm{cost} = (\textbf{A}(i, j)-\textbf{B}(k, l))^2 + 
+\sum\nolimits_{(r,f,t,g) \in \boldsymbol{d \pi}}
+(\textbf{A}(r, f)-\textbf{B}(t, g))^2$;\\
+\hspace*{3mm}$\textbf{D}(i,j,k,l) = \mathrm{cost} + \textbf{D}
+(\overline{i,j,k,l})$\\
+return  sqrt$(\textbf{D}(n+1,n+1,n+1,n+1))$\\
+\hline
+\end{tabular}
+\end{center}
+}
+\vspace*{-9pt}
+
+\Caption{Алгоритм вычисления расстояния между матрицами
+\label{ris:matrixdtw}}
+\end{figure*}
+
+\begin{table*}[b]\small
+\begin{center}
+\begin{tabular}{|l|c|c|c|c|}
+\multicolumn{5}{c}{Снижение расстояний при выполнении преобразований 
+для различных наборов данных}\\
+\multicolumn{5}{c}{\ }\\[-6pt]
+\hline
+ &\multicolumn{4}{c|}{Метод}\\
+ \cline{2-5}
+\multicolumn{1}{|c|}{Данные}  & \multicolumn{2}{c|}{$L_2$} & \multicolumn{2}{c|}{MatrixDTW} \\
+\cline{2-5}
+& $S(f|p)$  &  $S_{\rho}(\mathfrak{D})$ &  $S(f|p)$ & $S_{\rho}(\mathfrak{D})$ \\
+\hline
+Модельные данные без преобразований& 92\% & 78\% & 100\%\hphantom{9} & 85\% \\
+Модельные данные с~преобразованиями & 86\% & 65\% &  100\%\hphantom{9} & 82\% \\
+Модельные данные с~преобразованиями и~шумом& 69\% & 61\% &  92\% & 78\% \\
+MNIST без преобразований& 95\% & --- & 95\% & --- \\
+MNIST с~преобразованиями & 53\% & --- & 92\% & --- \\
+Спектр сигнала& 83\% & --- & 96\% & --- \\
+\hline
+\end{tabular}
+\end{center}
+\end{table*}
+
+\noindent
+то к~выравнивающему пути между этими под\-мат\-ри\-ца\-ми 
+добавляется элемент пути $(i,j,k,l)$ и~поправка~$\boldsymbol{d\pi} $ 
+пути~$\boldsymbol{\pi}$, алгоритм вычисления которой приведен ниже.
+
+Обозначим выравнивающий путь между $\textbf{A}(1:i,\linebreak 1:j)$
+ и~$\textbf{B}(1:k,1:l)$ как~$\boldsymbol{\pi}(i,j,k,l)$, тогда 
+ поправка~$\boldsymbol{d\pi} $ пути~$\boldsymbol{\pi}(i,j,k,l)$ 
+ при фиксированных~$\overline{i,j,k,l}$ вычисляется приведенным на рис.~3 
+ образом.
+
+
+
+
+
+Алгоритм динамического выравнивания двух матриц и~вычисления 
+расстояния $\mathrm{mDTW}$ между ними с~учетом приведенного выше 
+алгоритма примет вид, представленный на рис.~4.
+
+
+
+
+
+\begin{figure*} %fig5
+\vspace*{1pt}
+    \begin{center}  
+  \mbox{%
+ \epsfxsize=161.412mm 
+ \epsfbox{gon-5.eps}
+ }
+\end{center}
+\vspace*{-12.5pt}
+\Caption{Выравнивание модельных данных: (\textit{а})~один класс без шума; 
+(\textit{б})~разные классы без шума; 
+(\textit{в})~один класс с~шумом; (\textit{г})~разные классы с~шумом
+\label{ris:random}}
+%\end{figure*}
+%\begin{figure*} %fig6
+\vspace*{1pt}
+    \begin{center}  
+  \mbox{%
+ \epsfxsize=163mm 
+ \epsfbox{gon-6.eps}
+ }
+\end{center}
+\vspace*{-12.5pt}
+\Caption{Выравнивание данных MNIST: левый столбец~--- один класс; 
+правый столбец~--- разные 
+классы;
+(\textit{а})~$\mathrm{mDTW}\hm=720{,}1$; 
+(\textit{б})~948,6;
+(\textit{в})~2017,0;
+(\textit{г})~$\mathrm{mDTW}\hm=2071{,}4$
+\label{ris:mnist}}
+\end{figure*}
+
+
+Следует отметить, что алгоритм~\cite{15} имеет\linebreak высокую сложность 
+вычисления~--- $O(n^4)$. Предполагается ускорение метода 
+с~использованием ограниче\-ния Sakoe-Chiba band, что сократит 
+вычислительную сложность алгоритма до $O(n^2k^2)$, где~$k$~--- 
+параметр ограничения.
+
+
+\section{Вычислительный эксперимент}
+
+Вычислительный эксперимент проведен на модельных данных с~допустимыми 
+преобразованиями и~на реальных данных: объектах коллекции MNIST с~допустимыми 
+преобразованиями и~на спектрограммах зашумленных сигналов.
+
+
+
+
+
+Решается задача метрической классификации методом ближайшего соседа. В~таблице 
+приведены значения критерия качества функции расстояния 
+$S_{\rho}(\mathfrak{D})$ и~критерия качества метрической классификации $S(f|p)$ 
+при использовании двух функций расстояния: предложенной в~работе $\mathrm{mDTW}$ 
+и~$L_2$.
+
+Модельные данные~--- это нулевые матрицы со случайными ненулевыми 
+строками, столбцами, подпрямоугольниками с~наложенным шумом. 
+К~ним применены допустимые преобразования, согласованные с~гипотезой 
+наличия локальных и~глобальных искажений. На рис.~\ref{ris:random} 
+показан пример оптимального выравнивания двух объектов. 
+Линиями показаны элементы пути~$\boldsymbol{\pi}$.
+
+Подготовлена подвыборка набора данных MNIST. Она 
+состоит из~100 объектов классов 0 и~1 сниженной размерности
+ с~допустимыми преобразованиями. На рис.~\ref{ris:mnist} 
+ показан пример оптимального выравнивания объектов.
+
+
+Аналогичный эксперимент проведен для решения задачи метрической 
+классификации спектров различных сигналов, пример которых приведен на 
+рис.~\ref{ris:spectr}. На рисунке показаны примеры Фурье-спект\-ров 
+этих сигналов. Спектр получен путем применения быстрого преобразования 
+Фурье к~исходному сигналу для различных окон с~фиксированным размером и~сдвигом. 
+Исходные временн$\acute{\mbox{ы}}$е ряды обладали свойством периодичности, период выбирался 
+случайным образом.
+
+
+
+Тестирование проведено на разного рода данных: исходных 
+модельных данных без наложения\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\end{multicols}
+
+\begin{figure*} %fig7
+\vspace*{1pt}
+    \begin{center}  
+  \mbox{%
+ \epsfxsize=149.062mm 
+ \epsfbox{gon-7.eps}
+ }
+\end{center}
+\vspace*{-8pt}
+\Caption{Данные спектров сигнала: (\textit{а})~класс~1; (\textit{б})~спектр 
+класса~1; (\textit{в})~класс~2; (\textit{г})~спектр класса~2; 
+(\textit{д})~класс~3; (\textit{е})~спектр класса~3
+\label{ris:spectr}}
+\vspace*{9pt}
+\end{figure*}
+
+\begin{multicols}{2}
+
+\noindent допустимых преобразований, с~ними, а~также 
+на модельных данных с~наложенным поверх объектов случайным шумом.
+
+
+
+В каждом из проведенных экспериментов была продемонстрирована 
+устойчивость предложенного подхода к~допустимым преобразованиям. 
+Наилучшее значение критерия качества задачи классификации было 
+достигнуто при использовании предложенной функции расстояния.
+
+\vspace*{-5pt}
+
+\section{Заключение}
+
+В работе предложено обобщение метода динамического выравнивания
+ временн$\acute{\mbox{ы}}$х рядов для случая объектов, определенных на двух осях времени. 
+ Существует теоретическое обобщение предлагаемых методов на случай 
+ конечного множества осей времени. Вычислительный эксперимент позволил 
+ проанализировать свойства подхода: устойчивость к~допустимым 
+ преобразованиям и~разделяющая способность функции расстояния как 
+ на реальных, так и~на модельных данных. Качество решения задачи 
+ метрической классификации выше решения, основанного на евклидовом 
+ расстоянии. Вычислительная сложность метода высокая, что ограничивает 
+ его применимость на объектах высокой размерности.
+
+\vspace*{-2pt}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+%\bibitem{Karasikov2016}
+%\Au{Карасиков~М.\,Е., Стрижов~В.\,В.} Классификация временных рядов 
+%в~пространстве параметров по\-рож\-да\-ющих моделей~// Информатика и~её 
+%применения,~2016. T.~10. Вып.~4. С.~121--131.
+
+\bibitem{0}
+\Au{Hill~N.\,J., Lal~T.\,N., Schroder~M., Hinterberger~T., 
+Wilhelm~B., Nijboer~F., Mochty~U., Widman~G., Elger~C., 
+Scholkopf~B., Kubler~A., Birbaumer~N.} Classifying EEG and 
+ECoG signals without subject training for fast BCI implementation: 
+Comparison of nonparalyzed and completely paralyzed subjects~//  
+IEEE~T. Neur. Sys. Reh., 2006. Vol.~14. 
+Iss.~2. P.~183--186.
+
+\bibitem{1}
+\Au{Sakoe~H., Chiba~S.} 
+A~dynamic programming approach to continuous speech recognition~// 
+7th  Congress (International) on Acoustics Proceedings, 1971. Vol.~3. P.~65--69.
+
+\bibitem{2} %3
+\Au{Aghabozorgi~S., Ali~S.\,S., Wah~T.\,Y.} 
+Time-series clustering~--- a~decade review~// Inform. Syst., 
+2015. Vol.~53. P.~16--38.
+
+\bibitem{3} %4
+\Au{Warrenliao~T.} Clustering of time series data~--- a~survey~// 
+Pattern Recogn., 2005. Vol.~38. Iss.~11. P.~1857--1874.
+
+
+
+\bibitem{4} %5
+\Au{Hautamaki~V., Nykanen~P., Franti~P.} 
+Time-series clustering by approximate prototypes~// 
+19th  Conference (International) on Pattern Recognition Proceedings, 2008. No.\,D. 
+P.~1--4.
+
+\bibitem{5} %6
+\Au{Faloutsos~C., Ranganathan~M., Manolopoulos~Y.} 
+Fast subsequence matching in time-series databases~// \mbox{SIGMOD} Rec., 1994. 
+Vol.~23. Iss.~2. P.~419--429.
+
+\bibitem{10} %7
+\Au{Basalto~N., Bellotti~R., Carlo~F.\,D., Facchi~P., 
+Pascazio~S.} Hausdorff clustering of financial time series~// 
+Physica~A, 2007. Vol.~379. Iss.~2. P.~635--644.
+
+\bibitem{11} %8
+\Au{Gorelick~L., Blank~M., Shechtman~E., Irani~M., Basri~R.} 
+Actions as space-time shapes~// IEEE~T. Pattern Anal., 
+2007. Vol.~29. Iss.~12. P.~2247--2253.
+
+\bibitem{6} %9
+\Au{Smyth~P.} Clustering sequences with hidden Markov models~// 
+Adv. Neural In., 1997. Vol.~9. P.~648--654.
+
+\bibitem{7} %10
+\Au{Banerjee~A., Ghosh~J.} Clickstream clustering using weighted 
+longest common subsequences~// 
+Workshop on Web Mining, SIAM Conference on Data Mining
+Proceedings, 2001. P.~33--40.
+
+\bibitem{8} %11
+\Au{Aach~J., Church~G.M.} Aligning gene expression time series
+ with time warping algorithms~// Bioinformatics, 2001. Vol.~17. Iss.~6. P.~495--508.
+
+\bibitem{9} %12
+\Au{Yi~B.\,K., Faloutsos~C.} Fast time sequence indexing 
+for arbitrary $\mathcal{L}_p$ norms~// 
+26th  Conference (International) on Very Large Data Bases Proceedings, 2000. P.~385--394.
+
+\bibitem{33} %13
+\Au{Goncharov~A.\,V., Strijov~V.\,V.} 
+Analysis of dissimilarity set between time series~// Computational 
+Mathematics Modeling, 2018. Vol.~29. Iss.~3. P.~359--366.
+
+\bibitem{12} %14
+\Au{Alon~J., Athitsos~V., Sclaroff~S.}
+ Online and offline character recognition using alignment to prototypes~// 
+ 8th  Conference (International) on Document Analysis and Recognition, 2005. 
+ Vol.~2. P.~839--843.
+
+\bibitem{15} %15
+\Au{Гончаров~А.\,В.} 
+Выравнивания декартовых произведений упорядоченных множеств mDTW. 
+Про\-грам\-мная реализация алгоритма, 2019. 
+{\sf https://github.
+com/Intelligent-Systems-Phystech/PhDThesis/tree/\linebreak  master/Goncharov2019/MatrixDTW/code}.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Поступила в~редакцию 24.04.19}}
+
+\vspace*{6pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+\vspace*{-4pt}
+
+\def\tit{ALIGNMENT OF~ORDERED SET CARTESIAN PRODUCT\\[-5pt]}
+
+
+\def\titkol{Alignment of~ordered set cartesian product}
+
+\def\aut{A.\,V.~Goncharov$^1$ and~V.\,V.~Strijov$^{1,2}$}
+
+\def\autkol{A.\,V.~Goncharov and~V.\,V.~Strijov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-13pt}
+
+
+\noindent
+$^1$ Moscow Institute of Physics and Technology, 
+9~Institutskiy Per., Dolgoprudny, Moscow Region 141700, Russian\linebreak
+$\hphantom{^1}$Federation
+
+
+\noindent
+$^2$A.\,A.~Dorodnicyn Computing Center, Federal Research Center 
+``Computer Science and Control'' of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 
+40~Vavilov Str., Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{2pt} 
+
+
+
+\Abste{The work is devoted to the study of metric methods for analyzing 
+objects with complex structure. It proposes to generalize the dynamic 
+time warping method of two time series for the case of objects defined 
+on two or more time axes. Such objects are matrices in the discrete 
+representation. The DTW (Dynamic Time Warping) method of time series is generalized as 
+a~method of matrices dynamic alignment. The paper proposes 
+a~distance function resistant to monotonic nonlinear deformations of the 
+Cartesian product of two time scales. The alignment path between objects is 
+defined. An object is called a~matrix in which the rows and columns correspond 
+to the axes of time. The properties of the proposed distance function 
+are investigated. To illustrate the method, the problems of metric 
+classification of objects are solved on model data and data from the 
+MNIST dataset.}
+
+\KWE{distance function; dynamic alignment; distance between matrices; 
+nonlinear time warping; space--time series}
+
+
+
+\DOI{10.14357/19922264200105} 
+
+%\vspace*{-14pt}
+
+\Ack
+\noindent
+This work was supported by the Russian Foundation for Basic
+Research (projects 19-07-1155 and 19-07-00885). 
+The paper contains results of the project Statistical 
+methods of machine learning, which is carried out within the 
+framework of the Program ``Center of Big Data Storage and Analysis'' 
+of the National Technology Initiative Competence Center. 
+It is supported by the Ministry of Science and Higher Education 
+of the Russian Federation according to the agreement between the
+ M.\,V.~Lomonosov Moscow State University and the Foundation 
+ of project support of the National Technology Initiative from 11.12.2018, 
+ No.\,13/1251/2018.
+ 
+
+
+%\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+ \bibitem{0-1}   
+\Aue{Hill, N.\,J., T.\,N.~Lal, M.~Schroder, T.~Hinterberger, B.~Wilhelm, 
+F.~Nijboer, U.~Mochty, G.~Widman, C.~Elger, B.~Scholkopf, A.~Kubler, and 
+N.~Birbaumer.} 2006. Classifying EEG and ECoG signals without subject 
+training for fast BCI implementation: Comparison of nonparalyzed and completely 
+paralyzed subjects. \textit{IEEE~T. Neur. Sys. 
+Reh.} 14(2):183--186.
+
+\bibitem{1-1}   
+\Aue{Sakoe, H., and S.~Chiba.} 1971. A~dynamic programming approach 
+to continuous speech recognition. \textit{7th 
+ Congress (International) on Acoustics Proceedings}. 3:65--69.
+
+\bibitem{2-1}    %2
+\Aue{Aghabozorgi,~S., S.\,S.~Ali, and T.\,Y.~Wah.} 2015. 
+Time-series clustering~--- a~decade review.  \textit{Inform. Syst.} 
+53:16--38.
+
+\bibitem{3-1}   %4 
+\Aue{Warrenliao,~T.} 2005. Clustering of time series data~--- a~survey. 
+\textit{Pattern Recogn.}
+38(11):1857--1874.
+
+
+
+\bibitem{4-1}    %5
+\Aue{Hautamaki,~V., P.~Nykanen, and P.~Franti.} 2008. 
+Time-series clustering by approximate prototypes. 
+ \textit{19th  Conference (International) on Pattern Recognition Proceedings}. 
+ D:1--4.
+
+\bibitem{5-1}    %6
+\Aue{Faloutsos,~C., M.~Ranganathan, and Y.~Manolopoulos.} 1994. 
+Fast subsequence matching in time-series databases.  \textit{SIGMOD Rec}. 
+23(2):419--429.
+
+\bibitem{10-1}    %7
+\Aue{Basalto, N., R.~Bellotti, F.\,D.~Carlo, P.~Facchi, and S.~Pascazio.} 
+2007. Hausdorff clustering of financial time series. 
+\textit{Physica~A} 379(2):635--644.
+
+\bibitem{11-1}   %8
+\Aue{Gorelick, L., M.~Blank, E.~Shechtman, M.~Irani, and R.~Basri.} 
+2007. Actions as space-time shapes.
+\textit{IEEE~T. Pattern Anal.} 29(12):2247--2253.
+
+\bibitem{6-1}    %9
+\Aue{Smyth, P.} 1997. 
+Clustering sequences with hidden Markov models. \textit{Adv. Neural In.} 9:648--654.
+
+\bibitem{7-1}    %10
+\Aue{Banerjee,~A., and J.~Ghosh.} 2001. 
+Clickstream clustering using weighted longest common subsequences.  
+\textit{Workshop on Web Mining, SIAM Conference 
+on Data Mining Proceedings.} 33--40.
+
+\bibitem{8-1}    %11
+\Aue{Aach, J., and G.\,M.~Church.} 2001. 
+Aligning gene expression time series with time warping algorithms. 
+\textit{Bioinformatics} 17(6):495--508.
+
+\bibitem{9-1}   %12
+\Aue{Yi, B.\,K., and C.~Faloutsos.} 2000. 
+Fast time sequence indexing for arbitrary $\mathcal{L}_p$ norms. 
+\textit{26th  Conference (International) 
+on Very Large Data Bases Proceedings}. 385--394.
+
+\bibitem{33-1}   %13 
+\Aue{Goncharov,~A.\,V., and V.\,V.~Strijov.} 2018. 
+Analysis of dissimilarity set between time series. 
+\textit{Computational Mathematics Modeling } 29(3):359--366.
+
+
+
+\bibitem{12-1}    %14
+\Aue{Alon, J., V.~Athitsos, and S.~Sclaroff.} 2005.
+ Online and offline character recognition using alignment to prototypes. 
+ \textit{8th  Conference (International) on Document Analysis and Recognition}. 
+ 2:839--843.
+
+\bibitem{15-1}    %15
+\Aue{Goncharov, A.\,V.} Alignment of 
+Ordered Set Cartesian Product mDTW. Software implementation of the algorithm. 
+Available at: {\sf https://github.com/Intelligent-\linebreak 
+Systems-Phystech/PhDThesis/tree/master/Goncharov\linebreak 2019/MatrixDTW/code} 
+(accessed December~27, 2019).
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+%\vspace*{-7pt}
+
+\hfill{\small\textit{Received April 24, 2019}}
+
+%\pagebreak
+
+%\vspace*{-22pt}
+
+
+
+\Contr
+
+\noindent
+\textbf{Goncharov Alexey V.} (b.\ 1995)~--- 
+PhD student, Moscow Institute of Physics and Technology, 
+9~Institutskiy Per., Dolgoprudny, Moscow Region 141701, 
+Russian Federation; \mbox{alex.goncharov@phystech.edu}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Strijov Vadim V.} (b.\ 1967)~--- 
+Doctor of Science in physics and mathematics, leading scientist, 
+A.\,A.~Dorodnicyn Computing Centre, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 
+40~Vavilov Str., Moscow 119333, Russian Federation;
+ professor, Moscow Institute of Physics and Technology, 
+ 9~Institutskiy Per., Dolgoprudny, Moscow Region 141701, Russian Federation; 
+ \mbox{strijov@ccas.ru}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}

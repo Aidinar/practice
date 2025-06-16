@@ -1,0 +1,676 @@
+\def\stat{grusho}
+
+\def\tit{О БЕЗОПАСНОЙ АРХИТЕКТУРЕ ВЫЧИСЛИТЕЛЬНОЙ СИСТЕМЫ НА~ОСНОВЕ 
+МИКРОСЕРВИСОВ}
+
+\def\titkol{О безопасной архитектуре вычислительной системы на~основе 
+микросервисов}
+
+\def\aut{А.\,А.~Грушо$^1$, Н.\,А.~Грушо$^2$, М.\,И.~Забежайло$^3$, 
+Д.\,В.~Смирнов$^4$,  Е.\,Е.~Тимонина$^5$,\\ С.\,Я.~Шоргин$^6$}
+
+\def\autkol{А.\,А.~Грушо, Н.\,А.~Грушо, М.\,И.~Забежайло и~др.}
+%$^3$,  Д.\,В.~Смирнов$^4$,  Е.\,Е.~Тимонина$^5$, С.\,Я.~Шоргин$^6$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Грушо А.\,А.}
+\index{Грушо Н.\,А.}
+\index{Забежайло М.\,И.}
+\index{Смирнов Д.\,В.}
+\index{Тимонина Е.\,Е.}
+\index{Шоргин С.\,Я.}
+\index{Grusho A.\,A.}
+\index{Grusho N.\,A.}
+\index{Zabezhailo M.\,I.}
+\index{Smirnov D.\,V.}
+\index{Timonina E.\,E.}
+\index{Shorgin S.\,Ya.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнена при поддержке РФФИ (проект 20-07-00804).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук,
+\mbox{grusho@yandex.ru}}
+\footnotetext[2]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук,
+\mbox{info@itake.ru}}
+\footnotetext[3]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук,
+\mbox{m.zabezhailo@yandex.ru}}
+\footnotetext[4]{ПАО Сбербанк России, \mbox{dvlsmirnov@sberbank.ru}}
+\footnotetext[5]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук,
+\mbox{eltimon@yandex.ru}}
+\footnotetext[6]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук,
+\mbox{sshorgin@ipiran.ru}}
+
+
+\vspace*{-10pt}
+
+
+
+
+  \Abst{Рассматривается сетецентрическая система микросервисной архитектуры, в~которой 
+для простоты все микросервисные вычислители (МВ) одинаковы. В~каждом 
+МВ может произойти сбой или он может получить вредоносный код (ВК). Максимальное 
+негативное воздействие на МВ заключается в~ошибке вычислений 
+и~предоставлении потребителю неправильного результата. 
+  Рассмотрены задачи выявления сбойных МВ и~МВ с~ВК. В~решении поставленных задач 
+используются элементы обучения. Правильно решенные задачи (условия, исходные данные 
+и~правильные ответы) накапливаются в~памяти управляющей сис\-те\-мы. Это означает, что 
+есть возможность повторного запуска любой задачи с~уже известным правильным 
+результатом. При этом в~статье используются идеи и~результаты авторов по обеспечению 
+информационной безопас\-ности с~по\-мощью метаданных. 
+  В~зависимости от предположений о~возможных действиях ВК построены два 
+класса алгоритмов безопасных вычислений в~условиях его возможного воздействия на 
+промежуточные результаты в~потоке решаемых задач. Второй класс алгоритмов работает 
+в~предположении, что ВК может с~вероятностью~$p$ правильно вычислять 
+решение текущей задачи и~с~вероятностью $1\hm-p$ вносить в~результат искажение. 
+Рассмотрены три вида искажений, которые может вносить ВК и~которые 
+позволяют находить истинное решение точно или с~некоторой, сколь угодно малой 
+вероятностью ошибки.}
+  
+  \KW{информационная безопасность; безопасные вычисления в~условиях вредоносного кода; 
+микросервисная архитектура}
+
+ \DOI{10.14357/19922264220413} 
+  
+%\vspace*{-3pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+   
+  \section{Введение }
+  
+  \vspace*{-2pt}
+  
+  Безопасным архитектурам вычислительных сис\-тем посвящено много 
+исследований. Основную часть научной литературы в~об\-ласти безопасных 
+архитектур составляют руководства по внедрению различных наборов средств 
+и~механизмов защиты в~распределенных информационных системах. Сюда 
+относится большинство книг и~статей, таких как фундаментальные труды~[1--3] 
+и~др. Один из основных принципов в~создании безопасных архитектур~--- 
+изоляция бизнес-функций и~связанная с~ней изоляция информационной 
+поддержки этих функций~[4, 5].
+  
+  В последнее время наблюдается изменение архитектур вычислительных систем, 
+позволяющее полностью или частично изолировать поддержку различных 
+функций информационных технологий (ИТ). Здесь необходимо выделить два 
+базовых направления: виртуализация и~контейнеризация.
+  
+  Виртуализация базируется на создании множества виртуальных компьютеров на 
+базе одного вычислительного устройства. Создание виртуальных компьютеров 
+основано на гипервизоре, который, опираясь на основную операционную систему 
+(ОС) вычислительного устройства, реализует виртуальные компьютеры и~их 
+функционирование на том же сервере~[6, 7]. Виртуальные машины с~различными 
+ОС работают на одном физическом сервере.
+
+  Контейнеризация~--- это технология, которая позволяет запускать приложения 
+изолированно от основной ОС. Приложение упаковывается в~специальный 
+контейнер, внутри которого развернута среда, необходимая для работы. 
+Контейнеры устанавливаются на физический сервер и~его ОС. Вместе с~тем 
+проверена возможность удаленной контейнеризации, когда необходимые 
+дополнения для создания облегченной ОС, необходимой для работы конкретного 
+приложения, достаточно быст\-ро передаются по сети и~обеспечивают полную 
+изоляцию работы контейнера и~приложения в~нем.
+  
+  Одной из перспективных тенденций пред\-став\-ля\-ет\-ся введение микросервисных 
+архитектур, поз\-во\-ля\-ющих диверсифицировать и~ускорить решения многих задач 
+и~ИТ~[8--10]. Среда для выполнения 
+микросервисов состоит из сис\-те\-мы контейнеризованных вычислителей. В~этом 
+случае каждый из\linebreak микросервисов, как правило, изолируется в~отдельный 
+контейнер или небольшую группу контейнеров, до\-ступ\-ную по сети, 
+контролируется и~управ\-ля\-ет\-ся сис\-те\-мой оркестрации или центром \mbox{управления}.
+  
+  В работе рассматривается сетецентрическая сис\-те\-ма микросервисной 
+архитектуры, в~которой для простоты все МВ 
+одинаковы. 
+  
+  Центр управления состоит из двух блоков~$I_1$ и~$I_2$. Блок~$I_1$ имеет 
+прямые соединения со всеми МВ, случайно выбирает свободный МВ и~направляет 
+ему задачу с~исходными данными. Каждый МВ может быть занят решением 
+только одной задачи и~освобождается только после передачи блоку~$I_1$ 
+результатов решения своей очередной задачи. После этого ему может быть 
+назначена следующая задача. Блок~$I_2$ содержит метаданные о~порядке 
+решения задач и~использовании полученных от~$I_1$ результатов их 
+решения~[11--14]. 
+  
+  В каждом МВ может произойти сбой или МВ может получить ВК. Предположим, что максимальное негативное воздействие на МВ состоит 
+в~ошибке вычислений и~предоставлении~$I_1$ неправильного результата. Задача 
+состоит в~выявлении сбойных МВ и~МВ с~ВК. 
+  
+  Пусть правильно решенные задачи накапливаются в~памяти~$I_2$ (условия, 
+исходные данные и~правильные ответы). Это означает, что имеется возможность 
+повторного запуска любой задачи с~уже известным правильным результатом.
+  
+  \section{Алгоритм $A_1$ поиска сбойного микросервисного 
+вычислителя}
+  
+  Рассмотрим следующую модель. Пусть имеются~$M$~МВ
+ $\{ \beta_1, \beta_2, \ldots , \beta_M\}$, из которых~$m$~МВ 
+оказываются сбойными или пораженными ВК. Система решает задачи $\alpha_1, 
+\alpha_2, \ldots , \alpha_N$ в~потоке.
+  
+  Рассмотрим решение задачи в~ситуации, когда сбой МВ неустраним, а~ВК 
+портит решение каждой задачи. Тогда можно воспользоваться результатами 
+правильно решенных задач из памяти~$I_2$ сле\-ду\-ющим образом. 
+  
+  Алгоритм~$A_1$ берет любую правильно решенную задачу и~последовательно 
+пробует решать ее каждым МВ. При этом считается, что сложность решения 
+любой задачи равна~1. Если сбой или поражение ВК происходит только в~одном 
+МВ, то среднее число шагов поиска сбоя равно $(M\hm-1)/2$. Если число сбойных 
+МВ или МВ, содержащих ВК, неизвестно, то число шагов до выявления их всех 
+алгоритмом~$A_1$ равно~$M$. После фильтрации всех сбойных МВ или МВ, 
+зараженных ВК, система будет решать все задачи правильно.
+  
+  Предположим, что ВК способен маскироваться в~том смысле, что любую 
+решаемую задачу он решает правильно с~вероятностью~$p$ независимо от других 
+задач и~с~вероятностью $(1\hm-p)$ решает ее заведомо неправильно. Рассмотрим 
+возможности применения алгоритма~$A_1$ для выявления ВК. 
+  
+  Для фиксированного ВМ пробуем решить известную задачу, но получение 
+правильного ответа в~этом случае не гарантирует отсутствие ВК в~данном МВ. 
+Если предполагать, что проведены~$n$~испытаний одного МВ, то вероятность 
+невыявления ВК равна~$p^n$. Это означает, что вероятность выявления ВК 
+за~$n$~шагов равна $1\hm- p^n$. 
+  
+  Эта вероятность может быть сделана близкой к~1. Однако может возникнуть 
+эффект больших уклонений за счет потока задач. Вероятность выявления ВК на 
+данной задаче равна $1\hm-p^n$, но вероятность выявления алгоритмом~$A_1$ 
+всех МВ с~ВК равна\linebreak $(1\hm- p^n)^M$. Тогда вероятность пропустить хотя бы одну 
+МВ с~ВК равна $1\hm- (1\hm-p^n)^M$, что может оказаться не совсем малой 
+величиной, т.\,е.\ алгоритм~$A_1$ не гарантирует правильного решения всех 
+задач в~потоке.
+  
+  \section{Алгоритм $A_2$ обеспечения защиты от~вредоносного кода 
+в~микросервисном вычислителе}
+  
+  Можно построить алгоритм~$A_2$, гарантирующий правильное решение всех 
+задач и~выявление ВК в~сформулированных выше предположениях при 
+допущении случайного включения повреждения результата с~помощью ВК. Для 
+этого введем понятие <<отказ>>, которое означает, что алгоритм~$A_2$ не может 
+точно указать наличие ВК в~трех выбранных МВ. 
+  
+  Алгоритм~$A_2$ строится следующим образом. Каж\-дый раз, когда~$I_2$ 
+передает для~$I_1$ очередную задачу, $I_1$ случайно и~независимо выбирает не 
+одну МВ, а~сразу три различных МВ. Далее~$I_1$ передает всем трем МВ одну 
+и~ту же задачу, которую он получил от~$I_2$. В~результате с~учетом 
+воз\-мож\-ности наличия ВК получаем три результата решения одной и~той же 
+задачи. Если все три результата одинаковые, то считаем, что получено правильное 
+решение, а все три МВ не портят результат, даже если в~них есть~ВК. 
+  
+  Предположим, что на одном МВ получен ответ, не совпадающий с~двумя 
+одинаковыми ответами  двух других МВ. Это означает, что правильный ответ дают 
+два МВ, так как случайное совпадение двух ложных ответов, полученных 
+независимо друг от друга, считаем невозможным событием. Одновременно 
+выявляется МВ, в~котором сработал механизм ВК, порождающий неправильный 
+ответ. 
+{\looseness=1
+
+}
+  
+  Рассмотрим случай, когда все три ответа на одну и~ту же поставленную задачу 
+различны. Этот случай соответствует понятию отказ, так как в~этом случае 
+невозможно выделить правильный ответ, даже если он существует в~полученных 
+результатах. Возможен также случай, когда сработал ВК во всех трех МВ. 
+В~случае получения отказа алгоритм~$A_2$ повторно запускает независимый 
+выбор трех новых МВ и~поручает им заново решать ту же задачу. Если опять 
+получены разные результаты, то $A_2$ сравнивает их с~предыдущей тройкой. 
+Если получены два одинаковых результата, по одному в~первой и~второй тройке, то 
+этот результат считается правильным, а~все несовпадающие с~ним определяют 
+МВ, зараженные ВК. Если одинаковых результатов нет, то опять выбирается новая 
+тройка МВ и~т.\,д.
+{\looseness=1
+
+}
+  
+  Отметим, что в~алгоритме~$A_2$ выявление МВ с~ВК происходит 
+непосредственно в~процессе решения потока задач и~допускает безопасную работу 
+в~условиях наличия небезопасных МВ. При этом не ставится задача выявления 
+всех зараженных~МВ.
+{\looseness=1
+
+}
+  
+  \section{Вероятностный анализ алгоритма~$A_2$}
+  
+  Еще раз отметим, что в~основе эффективной работы алгоритма~$A_2$ лежит 
+предположение о~малой вероятности случайного совпадения неправильных 
+ответов, порожденных ВК, между собой и~между неправильными и~настоящими 
+ответами.
+  
+  В сделанных предположениях найдем оценки отказов. Случайность выбора МВ 
+для решения конкретной задачи позволяет допустить гипергеометрическое 
+распределение вариантов появления МВ. Для двух МВ, содержащих ВК, которые 
+породили две ошибки, и~одном правильном решении получаем следующую 
+вероятность отказа:
+  $$
+{\sf  P}_0(2)=\left(1-p\right)^2 \fr{(M-m)\begin{pmatrix} m\\ 2\end{pmatrix} }{\begin{pmatrix} 
+M\\ 3\end{pmatrix}}+p(1-p)^2 \fr{\begin{pmatrix} m \\ 3\end{pmatrix}} 
+{\begin{pmatrix} M\\ 3\end{pmatrix}}\,.
+  $$
+    Если все три МВ дали неправильные результаты, то вероятность этого события 
+равна
+  $$
+  {\sf P}_0(3)=(1-p)^3 \fr{\begin{pmatrix} m\\ 3\end{pmatrix}}{\begin{pmatrix} M\\ 
+3\end{pmatrix}}\,.
+  $$
+   Тогда суммарная вероятность отказа при решении данной задачи составит
+  $$
+  {\sf P}_0={\sf P}_0(2)+{\sf P}_0(3)\,.
+  $$
+    Среднее число отказов в~потоке задач длины~$N$ равно $N{\sf P}_0$.
+  
+  Оказывается, что алгоритм~$A_2$ с~большой вероятностью не сможет находить 
+правильное решение одной задачи, если число зараженных МВ велико. В~самом 
+деле, если $m\hm=M$, то
+  $$
+  {\sf P}_0=(1-p)^2\,.
+  $$
+    Тогда вероятность получить правильное решение данной задачи равна $1\hm- 
+(1\hm- p)^2$ и~среднее число правильно решенных задач в~потоке длины~$N$ 
+равно $N(1\hm- (1\hm-p)^2)$. 
+  
+  \section{Работа алгоритма~$A_2$ в~различных предположениях 
+о~вредоносном коде}
+  
+  Рассмотрим наихудший случай, когда в~результате решения МВ очередной 
+задачи получается чис\-ло\-вой вектор, а~ВК осуществляет одинаковую замену 
+некоторого значения в~этом векторе на \mbox{фиксированное} неизвестное 
+значение~$\gamma$. Пусть все остальные предположения, рассмотренные ранее, 
+остаются в~силе. В~этом случае алгоритм~$A_2$ перестает работать. В~самом 
+деле, рассмотрим различные сочетания результатов применения 
+алгоритма~$A_2$.
+  
+  Если получены все три одинаковых результата решения одной задачи тремя 
+МВ, то все три из них могут оказаться одинаково испорченными с~вероятностью 
+$(1\hm-p)^3$. Два одинаковых результата и~один отличный от них создают 
+неопределенность: либо два ложных решения, либо одно ложное. Три различных 
+результата в~указанных условиях возникнуть не могут.
+  
+  В то же время наличие базы правильно решенных задач позволяет найти 
+неизвестное значение~$\gamma$. Для этого надо запустить несколько ранее 
+правильно решенных задач и~дождаться нескольких различий правильных 
+и~неправильных ответов. Тогда значение~$\gamma$ восстанавливается 
+однозначно.
+  
+   При известном значении~$\gamma$ сочетания ответов по алгоритму~$A_2$ по 
+новой, ранее не решенной задаче оцениваются по-дру\-гому.
+  
+  Если получены все три одинаковых ответа без значения~$\gamma$ в~них, то 
+полученное решение~--- правильное. Если получены два ответа без 
+значения~$\gamma$ в~них и~один ответ со значением~$\gamma$ в~нем, то два 
+одинаковых ответа определяют истинное решение. Если получены два ответа со 
+значением~$\gamma$ в~них и~один ответ без значения~$\gamma$, то этот один 
+ответ определяет истинное решение. Если все три ответа со значением~$\gamma$ 
+одинаковые, то получаем отказ, так как как все три могут быть получены 
+с~по\-мощью~ВК. Вероятность такого события равна
+  $$
+  {\sf P}_0(3)=(1-p)^3\fr{\begin{pmatrix} m\\ 3\end{pmatrix}} {\begin{pmatrix} M\\ 
+3\end{pmatrix}}\,.
+  $$
+    В этом случае необходимо повторять решение этой же задачи до тех пор, пока 
+на появится ответ без значения~$\gamma$. Поскольку вероятность ошибки 
+известна, то, аппроксимируя повторные испытания гео\-мет\-ри\-че\-ским 
+распределением, придется принять решение с~присутствием значения~$\gamma$ с~заданной вероятностью ошибки.
+  
+  Пусть ВК может использовать несколько значений $\Gamma\hm= \{ \gamma_2, 
+\gamma_2, \ldots , \gamma_k\}$ для нарушения правильности ответа. Тогда, используя базу 
+данных правильных решений различных задач, можно \mbox{восстановить}~$\Gamma$. 
+При этом все три решения с~по\-мощью алгоритма~$A_2$, не содержащие 
+элементов~$\Gamma$, определяют правильное решение текущей задачи. 
+  
+  Если одно решение не содержит элементов~$\Gamma$, а~два содержат, то 
+истинным считается решение без элементов~$\Gamma$. Если два одинаковых 
+решения не содержат элементов~$\Gamma$, то это истинное решение. Если все 
+три содержат элементы~$\Gamma$, то это отказ и~надо повторять процедуру 
+алгоритма~$A_2$. Если при повторах возникают другие элементы~$\Gamma$, то 
+их можно сразу отсеять. Постоянно повторяющееся значение элемента 
+из~$\Gamma$ определяет истинное решение с~заданной вероятностью ошибки.
+
+%\vspace*{-5pt}
+  
+  \section{Заключение }
+  
+ % \vspace*{-3pt}
+  
+  В работе рассмотрены все варианты решения задачи преодоления ошибки 
+вычисления, порожденного ВК, в~сетецентрической архитектуре вы\-чис\-ли\-тель\-ной 
+системы. Построены два класса \mbox{алгоритмов} решения задачи поиска сбоя и~ВК 
+в~такой архитектуре. В~отличие от алгоритма~$A_1$, алгоритм~$A_2$ 
+предоставляет больше примеров однозначного выявления истинного решения 
+каждой текущей задачи. В~тех случаях когда истинное решение определяется 
+с~ненулевой вероятностью ошибки, рассчитаны все необходимые вероятности.
+  
+  Построен пример архитектуры, позволяющей обеспечивать безопас\-ные 
+решения задач в~условиях наличия небезопасных компонентов в~вычислительной 
+сис\-теме.
+
+\vspace*{-5pt}
+  
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+ \vspace*{-2pt}
+ 
+\bibitem{1-gr}
+\Au{Ramachandran J.} Designing security architecture solutions.~--- John Wiley \& Sons Singapore 
+Pte. Ltd., 2002. 452~p.
+
+\bibitem{3-gr}
+\Au{Sherwood J., Clark~A., Lynas~D.} Enterprise security architecture, 2009. 25~p. {\sf 
+https://sabsacourses.com/wp-content/uploads/2021/02/TSI-W100-SABSA-White-Paper.pdf}.
+
+\bibitem{2-gr}
+\Au{Wang S.,  Ledley~R.\,S.} Computer architecture and security fundamentals of designing secure 
+computer systems.~--- John Wiley \& Sons Singapore Pte. Ltd., 2013. 342~p.
+
+\bibitem{4-gr}
+\Au{Тимонина Е.\,Е.} Анализ угроз скрытых каналов и~методы построения гарантированно 
+защищенных распределенных автоматизированных систем: Дисс.\ \ldots\  докт. техн. наук.~--- 
+М.: РГГУ, 2004. 204~с.
+\bibitem{5-gr}
+\Au{Грушо А.\,А., Грушо~Н.\,А., Тимонина~Е.\,Е., Шоргин~С.\,Я.} Возможности построения 
+безопасной архитектуры для динамически изменяющейся информационной сис\-те\-мы~//  
+Сис\-те\-мы и~средства информатики, 2015. Т.~25. №\,3. С.~78--93. 
+\bibitem{6-gr}
+\Au{Lacoste M.} Architecture for secure computation infrastructure and self-management of VM 
+security~// Zenodo, 2015. 97~p. doi: 10.5281/zenodo.49743.
+\bibitem{7-gr}
+\Au{Grusho A., Nikolaev~A., Piskovski~V., Sentchilo~V., Timonina~E.} Endpoint cloud terminal as an 
+approach to secure the use of an enterprise private cloud~// Scientific and Technical Conference 
+(International) on Modern Computer Network Technologies Proceedings.~--- Piscataway, NJ, USA: 
+IEEE, 2020. Art.\ 9258244. 4~p. doi: 10.1109/MoNeTeC49726.2020.9258244.
+\bibitem{8-gr}
+\Au{D$\ddot{\mbox{u}}$llmann T.\,F.} Performance anomaly detection in microservice architectures 
+under continuous change: Master's Thesis, 2017. {\sf 
+https://elib.uni-stuttgart.de/\linebreak bitstream/11682/9083/1/MScThesis-TFDuellmann.pdf}.
+\bibitem{9-gr}
+\Au{Mayer B., Weinreich~R.} Dashboard for microservice monitoring and management //  
+Conference (International) on Software Architecture Workshops.~--- Piscataway, NJ, USA: IEEE, 
+2017. Р.~66--69. doi: 10.1109/\linebreak ICSAW.2017.44.
+\bibitem{10-gr}
+\Au{Brand$\acute{\mbox{o}}$n~$\acute{\mbox{A}}$., Sol$\acute{\mbox{e}}$~M., 
+Hu$\acute{\mbox{e}}$lamo~A., Solans~D., P$\acute{\mbox{e}}$rez~M.\,S.,  
+Munt$\acute{\mbox{e}}$s-Mulero~V.} Graph-based root cause analysis for service-oriented and 
+microservice architectures~// J.~Syst. Software, 2020. Vol.~159. Art.\ 110432. 17~p.
+
+\bibitem{12-gr} %11
+\Au{Grusho A.\,A., Timonina~E.\,E., Shorgin~S.\,Ya.} Modelling for ensuring information security of 
+the distributed information systems~// 31st European Conference on Modelling and Simulation 
+Proceedings.~--- Dudweiler, Germany: Digitaldruck Pirrot GmbH, 2017. P.~656--660.
+\bibitem{13-gr} %12
+\Au{Grusho A., Grusho~N., Zabezhailo~M., Zatsarinny~A., Timonina~E.} Information security of 
+SDN on the basis of meta data~// Computer network security~/
+Eds. J.~Rak, J.~Bay, I.~V. Kotenko, \textit{et al}.~--- Lecture notes in computer science ser.~--- Springer, 2017. Vol.~10446. P.~339--347.
+
+\bibitem{11-gr} %13
+\Au{Грушо А.\,А., Забежайло~М.\,И., Грушо~Н.\,А., Тимонина~Е.\,Е.} Информационная 
+безопасность на основе метаданных в~ком\-по\-нент\-но-ин\-тег\-ра\-ци\-он\-ных архитектурах 
+информационных сис\-тем~// Сис\-те\-мы и~средства информатики, 2018. Т.~28. №\,2. С.~34--41.
+
+\bibitem{14-gr}
+\Au{Grusho~A., Grusho~N., Zabezhailo~M., Timonina~E.} Generation of metadata for network 
+control~// Distributed computer and communication networks~/
+Eds. V.\,M.~Vishnevskiy, K.\,E.~Samouylov, D.\,V.~Kozyrev. ~--- Lecture notes in 
+computer science ser.~--- Cham: Springer, 2020. Vol.~12563. P.~723--735. doi: 
+ 10.1007/978-3-030-66471-8\_55. 
+ 
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 11.10.22}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{ABOUT THE SECURE ARCHITECTURE OF~A~MICROSERVICE-BASED 
+COMPUTING SYSTEM}
+
+
+\def\titkol{About the secure architecture of~a~microservice-based 
+computing system}
+
+
+\def\aut{A.\,A.~Grusho$^1$, N.\,A.~Grusho$^1$, M.\,I.~Zabezhailo$^1$, D.\,V.~Smirnov$^2$, 
+E.\,E.~Timonina$^1$,\\ and~S.\,Ya.~Shorgin$^1$}
+
+\def\autkol{A.\,A.~Grusho, N.\,A.~Grusho, M.\,I.~Zabezhailo, et al.}
+%D.\,V.~Smirnov$^2$,  E.\,E.~Timonina$^1$, and~S.\,Ya.~Shorgin$^1$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-8pt}
+
+
+\noindent
+$^1$Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov\linebreak
+$\hphantom{^1}$Str., Moscow 119333, Russian Federation
+
+\noindent
+$^2$Sberbank of Russia, 19~Vavilov Str., Moscow 117999, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+
+
+
+\Abste{The paper discusses a network-centric microservice architecture system in 
+which all microservice computers are the same for simplicity. Each microservice 
+computer may fail or receive malicious code. The maximum negative impact on the 
+microservice computer is a calculation error and providing the consumer with the wrong 
+result. The tasks of detecting failed microservice computers and detecting microservice 
+computers with malicious code are considered. In solving the set tasks, elements of 
+training are used. Correctly solved problems (conditions, source data,  and correct 
+answers) are accumulated in the memory of the control system. This means that one can 
+restart any task with an already known correct result. At the same time, the article uses 
+the ideas and results of the present authors to ensure information security while using metadata. 
+Depending on the assumptions about the possible actions of malicious code, two classes 
+of secure computing algorithms are built in the context of its possible impact on 
+intermediate results in the flow of solved problems. The second class of algorithms 
+works in the assumption that malicious code can correctly calculate the solution to the 
+current problem with probability~$p$ and introduce distortion into the result with 
+probability $1-p$. The authors consider three types of distortions that malicious code can 
+introduce and which allow one to either find the true solution accurately or with low 
+probability of error.}
+
+\KWE{information security; secure computing under malicious code conditions; 
+microservice architecture}
+
+ \DOI{10.14357/19922264220413} 
+
+%\vspace*{-16pt}
+
+% \Ack
+ %  \noindent
+  
+
+
+%\vspace*{5pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-gr-1}
+\Aue{Ramachandran, J.} 2002. \textit{Designing security architecture solutions}. John 
+Wiley \& Sons Singapore Pte. Ltd. 452~p.
+
+\bibitem{3-gr-1}
+\Aue{Sherwood, J., A.~Clark, and D.~Lynas.} 2009. Enterprise security architecture. 
+25~p. Available at: {\sf  
+https:// sabsacourses.com/wp-content/uploads/2021/02/TSI-W100-SABSA-White-Paper.pdf} (accessed 
+November~16, 2022).
+
+\bibitem{2-gr-1}
+\Aue{Wang, S., and R.\,S.~Ledley.} 2013. \textit{Computer architecture and security 
+fundamentals of designing secure computer systems.} John Wiley \& Sons Singapore 
+Pte. Ltd. 342~p.
+\bibitem{4-gr-1}
+\Aue{Timonina, E.\,E.} 2004. Analiz ugroz skrytykh kanalov i~metody postroeniya 
+garantirovanno zashchishchennykh raspredelennykh avtomatizirovannykh sistem [The 
+analysis of threats of covert channels and methods of creation of guaranteed protected 
+distributed automated systems]. Moscow: Russian State University for the Humanities. 
+D.Sc. Diss. 204~p. 
+\bibitem{5-gr-1}
+\Aue{Grusho, A.\,A., N.\,A.~Grusho, E.\,E.~Timonina, and S.\,Ya.~Shorgin.} 2015. 
+Vozmozhnosti postroeniya bezopasnoy arkhitektury dlya dinamicheski 
+izmenyayushcheysya informatsionnoy sistemy [Regarding capabilities of secured 
+architecture creation for dynamic changing information system]. \textit{Sistemy 
+i~Sredstva Informatiki~--- Systems and Means of Informatics} 25(3):78--93. 
+\bibitem{6-gr-1}
+Lacoste, M., ed. 2015. \textit{Architecture for secure computation infrastructure and 
+self-management of VM security}. Zenodo. 97~p. doi: 10.5281/zenodo.49743.
+
+\bibitem{7-gr-1}
+\Aue{Grusho, A., A.~Nikolaev, V.~Piskovski, V.~Sentchilo, and E.~Timonina}. 2020. 
+Endpoint cloud terminal as an approach to secure the use of an enterprise private cloud. 
+\textit{Scientific and Technical Conference (International) on Modern Computer 
+Network Technologies Proceedings}. Piscataway, NJ: IEEE. 9258244. 4~p. doi: 
+10.1109/\linebreak MoNeTeC49726.2020.9258244.
+\bibitem{8-gr-1}
+\Aue{D$\ddot{\mbox{u}}$llmann, T.\,F.} 2017. Performance anomaly detection in 
+microservice architectures under continuous change. Master's Thesis. Available at: {\sf  
+https://elib.\linebreak  uni-stuttgart.de/bitstream/11682/9083/1/MScThesis-TFDuellmann.pdf} 
+(accessed November~16, 2022).
+\bibitem{9-gr-1}
+\Aue{Mayer, B., and R.~Weinreich.} 2017. Dashboard for microservice monitoring and 
+management. \textit{Conference (International) on Software Architecture Workshops 
+Proceedings}. Piscataway, NJ: IEEE. 66--69.  doi: 10.1109/ \mbox{ICSAW}.2017.44.
+
+\bibitem{10-gr-1}
+\Aue{Brandon, $\acute{\mbox{A}}$., M.~Sol$\acute{\mbox{e}}$, A.~Hu$\acute{\mbox{e}}$lamo, D.~Solans, M.\,S.~P$\acute{\mbox{e}}$rez, and  
+V.~Munt$\acute{\mbox{e}}$s-Mulero.} 2020. Graph-based root cause analysis for service-oriented and 
+microservice architectures. \textit{J.~Syst. Software} 159:110432. 17~p. 
+
+\bibitem{12-gr-1} %11
+\Aue{Grusho, A.\,A., E.\,E.~Timonina, and S.\,Ya.~Shorgin.} 2017. Modelling for 
+ensuring information security of the distributed information systems. \textit{31st 
+European Conference on Modelling and Simulation Proceedings}. Dudweiler, 
+Germany: Digitaldruck Pirrot GmbHP. 656--660.
+\bibitem{13-gr-1} %12
+\Aue{Grusho, A., N.~Grusho, M.~Zabezhailo, A.~Zatsarinny, and E.~Timonina.} 2017. 
+Information security of SDN on the basis of meta data. \textit{Computer network security}. Eds. 
+J.~Rak, J.~Bay, I.\,V.~Kotenko, \textit{et al}. Lecture notes in computer science ser. Springer. 
+10446:339--347.
+\bibitem{11-gr-1} %13
+\Aue{Grusho,~A.\,A., M.\,I.~Zabezhailo, N.\,A.~Grusho, and E.\,E.~Timonina}. 2018.
+Informatsionnaya bezopasnost' na osnove metadannykh  
+v~komponentno-integratsionnykh arkhitekturakh informatsionnykh sistem [Information 
+security on the basis of meta data in enterprise application integration architecture of 
+information systems]. \textit{Sistemy i~Sredstva Informatiki~--- Systems and Means of 
+Informatics} 28(2):34--41.
+\bibitem{14-gr-1}
+\Aue{Grusho, A., N.~Grusho, M.~Zabezhailo, and E.~Timonina.} 2020. Generation of 
+metadata for network control. \textit{Distributed computer and communication 
+networks}. Eds. V.\,M.~Vishnevskiy, K.\,E.~Samouylov, and D.\,V.~Kozyrev. Lecture 
+notes in computer science ser. Cham: Springer. 12563:723--735. 
+doi: 10.1007/978-3-030-66471-8\_55. 
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received October 11, 2022}}
+
+\Contr
+
+
+\noindent
+\textbf{Grusho Alexander A.} (b.\ 1946)~--- Doctor of Science in physics and 
+mathematics, professor, principal scientist, Institute of Informatics Problems, Federal 
+Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{grusho@yandex.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Grusho Nikolai A.} (b.\ 1982)~--- Candidate of Science (PhD) in physics and 
+mathematics, senior scientist, Institute of Informatics Problems, Federal Research 
+Center ``Computer Science and Control'' of the Russian Academy of Sciences,  
+44-2~Vavilov Str., Moscow 119133, Russian Federation; \mbox{info@itake.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Zabezhailo Michael I.} (b.\ 1956)~--- Doctor of Science in physics and 
+mathematics, principal scientist, A.\,A.~Dorodnicyn Computing Center, Federal 
+Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 
+40~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{m.zabezhailo@yandex.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Timonina Elena E.} (b.\ 1952)~--- Doctor of Science in technology, professor, 
+leading scientist, Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov 
+Str., Moscow 119133, Russian Federation; \mbox{eltimon@yandex.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Smirnov Dmitry V.} (b.\ 1984)~--- business partner for IT security department, 
+Sberbank of Russia, 19~Vavilov Str., Moscow 117999, Russian Federation; 
+dvlsmirnov@sberbank.ru
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Shorgin Sergey Ya.} (b.\ 1952)~--- Doctor of Science in physics and 
+mathematics, professor, principal scientist, Institute of Informatics Problems, Federal 
+Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119133, Russian Federation; \mbox{sshorgin@ipiran.ru}
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}    
+   

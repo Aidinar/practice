@@ -1,0 +1,686 @@
+\renewcommand{\figurename}{\protect\bf Figure}
+\renewcommand{\tablename}{\protect\bf Table}
+\renewcommand{\bibname}{\protect\rmfamily References}
+
+\def\stat{koz}
+
+\def\tit{THE STRATEGIES OF~SYNTACTIC ANALYSIS BASED~ON~HEAD-DRIVEN GRAMMARS AND~THE~METHODS 
+OF~THEIR~IMPLEMENTATION IN~INFORMATION 
+SYSTEMS$^*$}
+
+\def\titkol{The strategies of~syntactic analysis based 
+on~head-driven grammars and~the~methods 
+of~their implementation} % in~information  systems}
+
+\def\autkol{E.\,B.~Kozerenko and P.\,V.~Ermakov}
+\def\aut{E.\,B.~Kozerenko$^1$ and P.\,V.~Ermakov$^2$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}}\footnotetext[1]
+{This research is partially funded by the Russian Foundation for Basic
+Research, Grant No.\,11-06-00476-a.}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Institute of Informatics Problems, Russian Academy of Sciences, kozerenko@mail.ru}
+\footnotetext[2]{Institute of Informatics Problems, Russian Academy of Sciences, petcazay@mail.ru}
+
+\vspace*{2pt}
+
+    
+\Abste{The paper deals with the problems of design and development of syntactic parses 
+in multilingual natural language processing systems, machine translation, and knowledge 
+extraction from texts.  The grammar formalisms and approaches to parses construction 
+are considered that take into account such challenges of translation as language 
+transformations. The approach based on the hybrid grammar catching the functional 
+parameters of language structures is proposed.}
+
+\KWE{formal grammars; machine translation; syntactic analysis; statistical models; 
+functional approach}
+
+\vspace*{6pt}
+
+       \vskip 14pt plus 9pt minus 6pt
+
+      \thispagestyle{headings}
+
+      \begin{multicols}{2}
+
+      \label{st\stat}
+
+    
+\section{Introduction}
+
+     \noindent
+     The paper is focused on discovering the ways of combining the solutions 
+from the two research paradigms for design of an optimum parsing technique, i.\,e., 
+a syntactic analyzer featuring both rule-based and statistical methods with the view 
+of enhancing the existing language processing technologies.  The present 
+state-of-the-art requires capturing human language intuition in statistical translation models 
+and multilingual knowledge extraction systems\footnote[3]{ The reseach presented in the 
+paper is further developed within the framework of the MRASP International Project for creating 
+the multilingual statistical parser.}.
+     
+     In statistical machine translation (SMT), the task of translating from one 
+natural language into another is treated as a machine learning problem. This means 
+that via training on a very large number of hand-made translation samples, the SMT 
+algorithms master the rules of translation automatically. The application of 
+statistical models has considerably advanced the area of machine translation since 
+the last decade of the previous century; however, now new ideas and methods 
+appear aimed at creating systems that efficiently combine symbolic and statistical 
+approaches comprising different models.   Both the paradigms move towards each 
+other: more and more linguistics is being introduced into stochastic   models of 
+machine translation, and the rule-based systems include statistics into their 
+linguistic rule systems for disambiguation of language structures.  The main 
+method for solving numerous problems, including the part of speech establishment 
+and tagging, is the Bayesian approach. The architecture of stochastic systems is 
+based on the dynamic programming algorithm. 
+     
+     Machine learning is rooted in the stochastic research paradigm.  The object 
+of machine learning is the automatic inference of the model for some subject area 
+based on the data from this area. Thus, a system learning, for example, syntactic 
+rules should be supplied with a basic set of phrase structure rules. The widely used 
+methods lately have been the N-grams of variable length, in particular, introduction 
+of semantic information into N-grams. In~[1], a detailed description is given of the 
+approach to creating a statistical machine translation based on N-grams of bilingual 
+units called ``tuples'' and the four special attribute functions.  
+     
+     The statistical models are built on the data obtained from the parallel corpora 
+in different languages. Usually, the texts are compared within language pairs. The 
+text in the language from which the translation should be done is called the source 
+text, and the text which is its translation is called the target text. 
+
+\section{Techniques for Handling Syntactic Structures}
+
+     \noindent
+     Segmentation and unification of utterances in the course of translation is a 
+major task for human professional interpreters. They would even say that syntax is 
+``interpreter's enemy.'' The selectivity of languages as to the choice of specific 
+characteristics of description of one and the same situation results in numerous 
+distinctions, and one of the most crucial of them is the degree of particularity in 
+conveying a referential situation. Therefore, a situation which in one language is 
+described by means of one specific feature, in another language may require two or 
+more characteristics. Thus, in many cases the English language is more economical 
+(about 30\%, according to the reports of simultaneous interpreters)~[2, 3] 
+in expressing a thought than Russian. In practice, the technique applied to 
+overcome this problem is \textit{utterance segmentation} which consists in 
+sectioning a source Russian sentence into two or more utterances in the resulting 
+English sentence.
+     
+     Another important rule is the least possible change of word order. But this 
+inflicts other unavoidable transformations, and not all of them can be implemented 
+within the framework of machine translation. For example, the general rule for 
+interpreters: a Russian noun which appears at the very beginning of a sentence and 
+has the form of an oblique case, i.\,e., indirect object standing at the beginning of a 
+Russian sentence, should be transformed into the subject of an English sentence 
+notwithstanding its initial syntactic role. For example, 
+{ %\looseness=1
+
+}
+
+     %\smallskip
+     
+\begin{center}\textit{Na vstreche dogovorilis'\ldots(At the meeting agreed\ldots) }
+\end{center}
+     %\smallskip
+     
+     \noindent
+     should be translated as 
+     
+    %\smallskip
+  \begin{center}
+          \textit{The meeting reached an agreement}\ldots
+          \end{center}
+     
+          %\smallskip
+     
+     The requirement of denotational equivalence involves numerous lexical 
+grammatical shifts which cause transformations of the semantic structure of an 
+utterance~[2, 3]. 
+     
+     Thus, it is obvious that the search for equivalence should be carried out 
+starting from the establishment of semantic equivalence of patterns notwithstanding 
+their structural dissimilarity. 
+
+\section{Establishment of Cross-Language Matches and Structural 
+Synonymy}
+     
+     \noindent
+     Translation activity involves the search for equivalence between structures 
+of different languages. However, to establish whether the structures and units are 
+equal or not, one needs some general equivalent against which the language 
+phenomena would be matched. The authors' approach based on the principle ``from the 
+meaning to the form'' focusing on Functional Syntax would yield the necessary 
+basis for equivalence search.  The following types of structural semantic matches 
+have been observed:
+    \begin{gather*}
+     \mbox{\textit{word}}\;\rightarrow\;\mbox{\textit{word}}\,,\enskip
+     \mbox{\textit{phrase structure}}\;\rightarrow\;\mbox{\textit{phrase 
+structure}}\,,\\
+     \mbox{\textit{word}}\;\rightarrow\;\mbox{\textit{phrase 
+structure}}\,,\enskip
+     \mbox{\textit{morpheme}}\;\rightarrow\;\mbox{\textit{word}}\,,\\
+     \mbox{\textit{morheme}}\;\rightarrow\;\mbox{\textit{phrase structure}}\,.
+     \end{gather*}
+     
+     Syntactically, languages are most different in the basic word order of verbs, 
+subjects, and objects in declar-\linebreak\vspace*{-12pt}
+\columnbreak
+
+\noindent
+ative clauses. English is an SVO (i.\,e., 
+\textit{Subject--Verb--Object}) language, while Russian has a comparatively flexible 
+word order. The syntactic distinction is connected with a semantic distinction in 
+the way languages map underlying cognitive structures onto language patterns, 
+which should be envisaged in MT implementations.
+     
+     The basis of Cognitive Transfer Grammar (CTG) is composed of the 
+     prototypical structures of the languages (in the initial model Russian and 
+English) being investigated, their most probable positions in a sentence, statistical 
+data about the distributive characteristics of structures (the information about the 
+contextual conditions of the use of the investigated objects, i.\,e., the information 
+about the structural contexts), the schemes of the complete parse of sentences.
+     
+The authors' studies are based on the concepts of the functional approach, which 
+is used for the multilingual situation. The basic design unit of the spaces of 
+cognitive transfer is a \textit{transfeme}, i.\,e., 
+a unit of cognitive transfer which implies a 
+semantic element embodied in a translatable semantically relevant language 
+segment taken  in the unity of its categorial and functional characteristics. It 
+establishes the semantic correspondence between the language structures which 
+belong to different language levels and systems~\cite{4-koz}. 
+
+\section{Some Particulars of~the~English--Russian Transfer}
+     
+     \noindent
+     The machine translation technique employed presupposes three stages: 
+analysis, transfer, and generation. The stage of analysis results in parse representing 
+the structure of the input sentences. Transfer is a bridge between the parse structure 
+of the source language and the input to the generation procedure for the target 
+language. At this stage, the transformation is performed of one parse tree 
+(applicable for the source language presentation) into another tree (presenting the 
+target language). Thus, syntactic transformations imply the mapping of one tree 
+structure to another. 
+     
+     It is very important that \textit{a parse for MT differs from parses required 
+for other purposes}. Thus, the grammar formalisms developed for a unilingual 
+situation (phrase stucture rules systems for the English language)~\cite{5-koz} 
+would give an untransferable parse in many crucial situations. The segmentation of 
+phrase patterns used for the input language parse was carried out with the 
+consideration of semantics to be reproduced via the target language means. Both 
+the most important universals such as enumeration, comparison, modality patterns, 
+etc.\ and less general structures were singled out and assigned corresponding target 
+language equivalents. 
+
+\section{Generalized Cognitive Structures Underlying Transfemes}
+
+\noindent
+     Actually, the process of transfer goes across the functional-categorial 
+values of language units. A~language structure which can be subjected to transfer 
+has to be semantically complete from the point of view of its function. The cases of 
+categorial shifts, in particular, when the technique of conversion is employed, 
+require special treatment: the categorial shift of a syntax unit is determined by the 
+functional role of this unit in a sentence (e.\,g., noun as a 
+modifier\;$\rightarrow$\;adjective). \textit{Only by creating the centaur concepts\ldots
+`constituency-dependency,' `linearity-nonlinearity,' `form-function,' etc.\ can we 
+get a reasonably clear picture of linguistic reality}~\cite{6-koz}.
+     
+     The starting idea for the language structures segmentation strategy was the 
+notion of functional semantic fields. The system of grammar units, classes, and 
+categories with generalized content supplementary to the content of lexical units, 
+together with the rules of their functioning, is a system which in the end serves for 
+transmission of generalized categories and structures of mental content which make 
+the foundation of utterance sense and constitute the basis of language grammar 
+formation~\cite{7-koz}. 
+     
+     As it was exhibited in~\cite{8-koz}, language coding technique is to a great 
+extent determined by the deep semantic structure, and of considerable advantage is 
+such a presentation method that takes  semantic level for the starting point 
+and particular semantic units are confronted with the coding devices expressing 
+them. The approach of functional semantics concords in many aspects with the 
+categorial grammar. The system of sentence members (functional roles) is being 
+modified, but its essence is preserved in the new facts qualification via the 
+traditional categories~\cite{9-koz}. 
+     
+     The formalism developed employs feature-based parse, and head-feature 
+inheritance for phrase structures which are singled out on the basis of functional 
+identity in the source and target languages. To implement the feature-valued 
+inheritance, sometimes broader contexts are taken. 
+
+\section{The Existing Formalisms Influence}
+
+\noindent
+     At present, basic instruments of formal and natural languages analysis are 
+context-free grammars. Analytical engine for context-free grammars is a one-sided 
+nondeterministic automaton with stack outer memory. In the most trivial case of 
+such automaton's algorithm implementation, it is characterized by an exponential 
+complexity. But iterative upgrade of the algorithm may lead to its polynomial 
+time value depending on the length of the input set of symbols and necessary for its 
+analysis. Among the existing context-free languages, one can distinguish a class of 
+deterministic context-free languages, which are interpreted by deterministic 
+automaton with stack outer memory. The principal feature of these languages is 
+their unambiguity: it is proved that one can always build an unambiguous grammar 
+for any deterministic context-free language. Since the languages are unambiguous, 
+they are most useful when it comes to building compilers. Moreover, among all the 
+deterministic context-free languages, there exist such classes of languages which allow 
+building a linear recognizer for them. This is the recognizer which time value 
+related to the time for decision-making about a set of symbols belonging to a 
+language has a linear dependency on the chain length. Syntactic constructions in 
+the majority of the existing programming languages might be classified as ones of 
+the class mentioned. This aspect is very important when developing up-to-date 
+high-speed compilers. 
+     
+     As a rule, the more complex from the mathematical perspective an analytical 
+engine is, the more challenging is its technical implementation. Case with finite 
+state automata (both with memory and without it) is not an exception. For instance, 
+rules of natural language include a plenty of features of natural language structures 
+which are attributive by their nature. Processing of such transformation rules 
+implemented using finite-state automaton may lead to the increase of the 
+automaton states and to the growth of amount of the transformation rules when 
+changing the states. Moreover, when implementing the above mentioned 
+transformation rules, one needs to create a problem-oriented analytical engine to 
+handle processing of the input set of symbols of the natural language structures and 
+to apply interpreting rules to them.
+     
+The present implementation formalism was developed taking into account the 
+apparata of phrase structure and unification grammars: Head-Driven Phrase 
+Structure Grammars (HPSG)~\cite{10-koz}, Generalized Phrase Structure 
+Grammars (GPSG)~\cite{11-koz}, and Revised Generalized Phrase Structure 
+Grammars (RGPSG)~\cite{12-koz}. Categorial and Dependency~\cite{13-koz} 
+grammars were also considered. Important was the strict lexicalism principle 
+of the HPSG, i.\,e., word and phrase structures are governed by 
+independent principles. Roles are determined by verbal valences; utterances are a 
+blend of categorial meanings and role meanings and their structural projections 
+which are specific for every particular language.
+     
+     The technique of categorization, i.\,e., generation of a backbone grammar of 
+atomic categories from distinct sets of feature bindings was first suggested 
+in~\cite{14-koz}. It was used for building a shift-reduce table for the Alvey 
+grammar~\cite{5-koz}, but there it was necessary to subsume each category into 
+its most general unifying category, so reducing the overall number of categories.
+     
+     Generally, for the Russian language, dependency grammars have been 
+applied. And phrase structure approach seemed to be less applicable here. Hence, 
+of particular interest were the study and comparison of both the formal 
+approaches, so that practical algorithmic solutions could be worked out. 
+     
+     A certain key was suggested in the coexisting systems of Immediate 
+Dominance (ID) rules and phrase structure (PS) rules in ANLT 
+(Alvey Natural Language Tools)~\cite{5-koz} based 
+on a variant of GPSG. The ID rules encode unordered dependency relations and 
+further are subjected to linearization to be applied for the parse. Generalized
+phrase structure grammar may be 
+thought of as a grammar for generating a context-free grammar. The generation 
+process begins with ID rules which are context-free 
+productions with unordered right-hand sides. An important feature of ID rules is 
+that nonterminals in the rules are not atomic symbols (e.\,g., NP~---
+Not Present). Rather, GPSG 
+nonterminals are sets of [feature, feature-value] pairs. For example, [N+] is a 
+[feature, feature-value] pair, and the set \{[N+], [V-], [BAR~2]\} is the GPSG 
+representation of a noun phrase. Next, metarules are applied to the ID rules
+that results in 
+an enlarged set of ID rules. In the RGPSG, the finite closure problem is used to 
+determine the cost of metarule application. Principles of universal feature 
+instantiation (UFI) are applied to the resulting enlarged set of ID rules, defining a set of 
+phrase structure trees of depth one (local trees). One principle of UFI is the head 
+feature convention which ensures that phrases are projected from lexical heads. 
+Finally, linear precedence statements are applied to the instantiated local trees. The 
+final result is a set of ordered local trees, and these are equivalent to the 
+     context-free productions in a context-free grammar. The process of assigning 
+structural descriptions to utterances consists of two steps in GPSG: the projection 
+of ID rules to local trees and the derivation of utterances from nonterminals, using 
+the local trees. 
+     
+     In GPSG, there are three category-valued features: SLASH which marks the 
+path between a gap and its filler with the category of the filler; AGR which marks 
+the path between an argument and a functor that syntactically agrees with it 
+(between the subject and the matrix verb, for example); and WH which marks the path 
+between a wh-word and the minimal clause that contains it with the morphological 
+type of the wh-word. In RGPSG, the revision is unit feature closure: to limit 
+category-valued features to containing only 0-level categories., i.\,e., 0-level 
+categories do not contain any category-valued features. The GPSG's ID/LP format 
+models the head parameter and some free word order information. The HPSG formalism 
+is based on phrase structure rules, but dominance relations are implemented via 
+head elements. Phrasal types are also treated in terms of multiple inheritance 
+hierarchies that allow generalizations about diverse construction types to be 
+factored into various cross-cutting dimensions. 
+     
+     In fact, each nonlinear dependency rule is an encoded potential for 
+actualization of a set of possible linear phrase structures. Therefore, the authors assumed a 
+more computationally practical approach (to our knowledge, never used before in a 
+bilingual situation), that of feature-valued head-driven phrase structures for both 
+English and Russian.
+
+\section{Parse Engines: Viterbi and Early Algorithms}
+     
+     \noindent
+     The \textit{Viterbi algorithm} is a dynamic programming algorithm for 
+finding the most likely sequence of hidden states~--- called the \textit{Viterbi 
+path}~--- that results in a sequence of observed events, especially in the context of 
+Markov information sources, and more generally, hidden Markov models. The 
+algorithm makes a number of assumptions:
+     \begin{itemize}
+\item both the observed events and hidden events must be in a sequence, this 
+sequence often corresponds to time;
+\item these two sequences need to be aligned, and an instance of an observed event 
+needs to correspond to exactly one instance of a hidden event; and
+\item computing the most likely hidden sequence up to a certain point~$t$ must 
+depend only on the observed event at point~$t$, and the most likely sequence at point 
+$t-1$.
+\end{itemize}
+
+     These assumptions are all satisfied in a first-order hidden Markov model.
+     The terms ``Viterbi path'' and ``Viterbi algorithm'' are also applied to 
+related dynamic programming algorithms that discover the single most likely 
+explanation for an observation. For example, in statistical parsing, a dynamic 
+programming algorithm can be used to discover the single most likely context-free 
+derivation (parse) of a string, which is sometimes called the ``Viterbi parse.'' The 
+Viterbi algorithm operates on a state machine assumption. That is, at any time, the 
+system being modeled is in one of a finite number of states. While multiple 
+sequences of states (paths) can lead to a given state, at least one of them is a most 
+likely path to that state, called the ``survivor path.'' This is a fundamental 
+assumption of the algorithm because the algorithm will examine all possible paths 
+leading to a state and only keep the one most likely. This way the algorithm does 
+not have to keep track of all possible paths, only one per state.
+     
+     Another basic assumption is that a transition from a previous state to a new 
+state is marked by an incremental metric, usually a number. This transition is 
+computed from the event. The third fundamental assumption is that the events are 
+cumulative over a path in some sense, usually additive. When an event occurs, the 
+algorithm examines moving forward to a new set of states by combining the metric 
+of a possible previous state with the incremental metric of the transition due to the 
+event and chooses the best. The incremental metric associated with an event 
+depends on the transition possibility from the old state to the new state. For 
+example, in data communications, it may be possible to only transmit half the 
+symbols from an odd numbered state and the other half from an even numbered 
+state.
+     
+     \textit{Earley's parsing algorithm} is a general algorithm, able to handle any 
+context-free grammar~\cite{15-koz}. Earley parsers operate by constructing a 
+sequence of sets, sometimes called Earley sets. Given an input $x_1x_2\ldots x_n$, the 
+parser builds $n+1$ sets: an initial set $S_0$ and one set $S_i$ for each input symbol 
+$x_i$. Elements of these sets are referred to as (Earley) items, which consist of three 
+parts: a grammar rule, a position in the right-hand side of the rule indicating how 
+much of that rule has been seen, and a pointer to an earlier Earley set. Typically, 
+Earley items are written as [$A\rightarrow \alpha\bullet\beta,\,j$] where the 
+position in the rule's right-hand side is denoted by a dot ($\bullet$) and~$j$ is a 
+pointer to set~$S_j$. An Earley set~$S_i$ is computed from an initial set of Earley 
+items in~$S_i$, and $S_i+1$ is initialized, by applying the following three steps to 
+the items in~$S_i$ until no more can be added:
+\begin{align*}
+    &\hspace*{-2mm}\mbox{SCANNER\ }.\ \mbox{If\ } [A \rightarrow \ldots \bullet a \ldots , j]\
+    \mbox{\ is in\ } S_i\\
+    & \mbox{and\ } a = x_i+1\,, \mbox{\ add\ } [A\rightarrow \ldots a \bullet \ldots , j] \mbox{\ to\ } S_i+1\,.\\
+ &    \hspace*{-2mm}\mbox{PREDICTOR\ }.\  \mbox{\ If\ } [A \rightarrow \ldots \bullet B \ldots , j] 
+ \mbox{\ is in\ } S_i,\\
+ & \mbox{add\ } [B \rightarrow \bullet\alpha, i] \mbox{\ to\ } S_i \mbox{\ for all 
+rules\ } B \rightarrow \alpha\,.\\
+& \hspace*{-2mm}\mbox{COMPLETER\ }. \mbox{\ If\ } [A \rightarrow \ldots \bullet, j] \mbox{\ is in\ } S_i,\\ 
+&\mbox{add\ } [B \rightarrow \ldots A \bullet \ldots , k] \mbox{\ to\ } S_i\\
+&\mbox{for all 
+items\ } [B \rightarrow \ldots \bullet  A \ldots , k] \mbox{\ in\ } S_j\,.
+\end{align*}
+     
+     An item is added to a set only if it is not in the set already. The initial 
+set~$S_0$ contains the item [$S\_ \rightarrow \bullet S,\,0$] to begin with~-.
+We 
+assume the grammar is augmented with a new start rule $S\_ \rightarrow S$, and 
+the final set must contain [$S\_\rightarrow S\bullet,\,0$] for the input to be 
+accepted. 
+     
+     Many different metrics exist for evaluating parsing results, including Viterbi, 
+Crossing Brackets Rate, Zero Crossing Brackets Rate, and several others. 
+However, most parsing algorithms, including the Viterbi algorithm, attempt to 
+optimize the same metric, namely, the probability of getting the correct labeled tree. 
+By choosing a parsing algorithm appropriate for the evaluation metric, better 
+performance can be achieved. 
+
+\section{Experiments with Functional Grammars}
+     
+     \noindent
+     Representation of grammar rules, or transformation rules, as mathematical 
+functions has certain advantages in comparison with formal grammar apparatus:
+     \begin{itemize}
+     \item usage of functional programming tools to build systems of transfer 
+immediately; and
+     \item possibility of higher-order function applications.
+     \end{itemize}
+     
+     The approach denoted by the concept \textit{system of transfer} is employed 
+for experimental software implementation of an analytic engine for processing of 
+transformations expressed as functions~\cite{16-koz}.
+     
+     Using $n$-\textit{tuples} as a form of representation of natural language 
+structures enables the system to generalize attributive characteristics of words and 
+use pattern alternations of such structures in prospect, using $n$-\textit{tuples} for 
+storage of attributive features of language structures allows to extract functions 
+according to language structures of various levels of abstraction (for instance, a 
+word, a phrase, a sentence, etc.), any of such language structures has its own set of 
+attributes; hence, there should be functions which have words, phrases, and so on, 
+as their arguments.
+     
+     The second distinctive feature of the functional approach is a technical 
+one. It is essential to design and implement a relevant analytic engine for every 
+information system the tasks of which correlate with natural language structures 
+analysis based on mathematical apparatus of formal grammars. In the case of 
+functional representation of grammar rules as an analytical machine, the 
+environment of the functional programming might be used (for instance, Erlang, 
+Haskell)~\cite{17-koz}.
+
+\section{Implementation Techniques}
+
+\noindent
+     The primary purpose in introducing feature structures and unification was
+to provide a way to express syntactic constraints that would be difficult to 
+express using the mechanisms of context-free grammars alone. The next step was 
+to design a way to integrate feature structures and unification operations into the 
+specification of a grammar.
+     
+     A constraint-based formalism comprising some features of the HPSG was 
+developed. The formalism provides representation mechanisms for the fine-grained 
+information about number and person, agreement, subcategorization, as well as 
+semantics for syntactic representations. The system of rules based on this 
+formalism can be called the Cognitive Transfer Grammar~\cite{18-koz} and 
+consists of transferable phrase structures together with the transfer rules which are 
+combined within the same pattern. Such patterns, or Cognitive Transfer Structures 
+(CTS), are constitutional components of the declarative syntactical processor 
+module and encode both linear precedence and dependency relations within phrase 
+structures. 
+     
+     In the present approach, the direct encoding of possible subcategorization features is 
+made via a verbal CTS. Since the verbs can subcategorize for quite complex 
+frames composed of many different phrasal types, the authors first established a list of 
+possible phrasal types that can make up these frames, e.\,g., VPto ``\textit{I want 
+to know},'' VPing ``\textit{He contemplates using them},'' 
+Sto ``feel themselves to 
+be relatively happy.'' Each verb allows many different subcategorization frames. 
+     
+     If compared with the existing phrasal subcategorization 
+     frames~\cite{19-koz}, in the present authors' system, the emphasis is laid on functional 
+motivation.
+     
+     The above stated methods are being employed for design and development 
+of a linguistic knowledge base Intertext. It is a linguistic resource with semantic 
+grouping of phrase structure patterns provided with the links to synonymous 
+structures at all language levels for the languages included into the linguistic base. 
+     
+The authors' focus on configurations provides high portability to the language 
+processing software designed under these principles: we can operate with a lexicon 
+which has only standard linguistic information including morphological 
+characteristics, part of speech information, and the indication of transitivity for 
+verbs. The Intertext linguistic knowledge base comprises the following 
+components: 
+     \begin{itemize}
+\item the inventory of phrasal configurations (CTS);
+\item the database of semantically aligned parallel texts;  and
+\item structural parse editor (at present, under development). 
+\end{itemize}
+
+\section{Concluding Remarks}
+
+\noindent
+     The functionally motivated approach to natural language parsers design and 
+development provides a sound and extensible platform for simulation of 
+     cross-lingual syntactic-semantic transfer and can be applied to a greater 
+number of languages (especially, with similar categorial feature-value structures). 
+However, the problems of discontinuity, reference resolution, and ambiguity, 
+though partially treated, still remain. Further research is connected with 
+introducing special feature-value augmentations to the existing presentations for 
+tracing the discontinuous structures, specifying the semantic values of particular 
+head features and verbal subcategorization frames, and numerous phrasal units 
+adjustment. 
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+%\addcontentsline{toc}{section}{Литература}
+\begin{thebibliography}{99}
+ 
+       
+       \bibitem{1-koz}
+       \Au{Marino~J.\,B., Banchs~R.\,E., Crego~J.\,M., de~Gispert~A., 
+Lambert~P., Fonollosa~J.\,A.\,R., Costa-Jussa~M.\,R.}
+     N-gram-based machine translation~// Computational Linguistics, 2006. 
+Vol.~32. No.\,4. P.~527--549.
+
+\bibitem{3-koz} %2
+     \Au{Visson L.}
+     Syntactical problems for the Russian--English interpreter. No uncertain 
+terms~// FBIS, 1989. Vol.~4. No.\,2. P.~2--8.
+     
+     \bibitem{2-koz} %3
+     \Au{Visson L.}
+     From Russian into English: An introduction to simultaneous 
+interpretation.~--- Ann Arbor, Michigan: Ardis, 1991.
+     
+     \bibitem{4-koz}
+     \Au{Comrie B.}
+     Language universals and  linguistic typology.~--- 2nd ed.~--- Oxford: Basil 
+Blackwell, 1989.
+     
+     \bibitem{5-koz}
+     \Au{Grover C., Carroll~J., Briscoe~T.}
+     The Alvey natural language tools grammar (4th Release). Technical Report. 
+Computer Laboratory, University of Cambridge, 1993.
+     
+     \bibitem{6-koz}
+     \Au{Shaumyan S.}
+     A semiotic theory of language.~--- Indiana University Press, 1987.
+     
+     \bibitem{7-koz}
+     \Au{Bondarko A.\,V.}
+     Functional grammar principles and aspectology questions.~--- 
+Moscow, 2001. [In Russian.]
+     
+     \bibitem{8-koz}
+     \Au{Kibrik A.\,E.}
+Studies in general and applied linguistics issues.~--- 2nd ed.~--- Moscow, 
+ 2001. [In Russian.]
+     
+     \bibitem{9-koz}
+     \Au{Zolotova G.\,A.}
+Communicative principles of the Russian syntax.~--- Moscow, 2001. [In 
+Russian.]
+     
+     \bibitem{10-koz}
+     \Au{Pollard C., Sag~I.\,A.}
+     Head-driven phrase structure grammar.~--- Chicago: University of Chicago 
+Press, 1994.
+     
+     \bibitem{11-koz}
+     \Au{Gazdar G., Klein E., Pullum~G., Sag~I.}
+     Generalized Phrase Structure Grammar.~--- Oxford: Basil Blackwell, 1985.
+     
+     \bibitem{12-koz}
+     \Au{Ristard E.\,S.}
+     Computational complexity of current GPSG theory~// 24th Annual Meeting 
+of the Association for Computational Linguistics Proceedings.~--- Columbia 
+University, New York: Asociation for Computational Linguistics, 1986. P.~30--39.
+     
+     \bibitem{13-koz}
+     \Au{Mel'cuk I.\,A.}
+     Dependency syntax: Theory and practice.~--- State University of New York 
+Press, 1988.
+     
+     \bibitem{14-koz}
+     \Au{Gazdar G., Mellish~C.}
+     Natural language processing in Prolog.~--- Wokingam, UK: 
+     Addison-Wesley, 1989.
+     
+     \bibitem{15-koz}
+     \Au{Earley J.} 
+     An efficient context-free parsing algorithm // Communications of the ACM, 
+1970. Vol.~13. P.~ 94--102.
+     
+     \bibitem{16-koz}
+     \Au{Ermakov P., Kozhunova O.}
+      Application of the functional programming tools in the tasks of language 
+and interlanguage structures representation~// SYRCoSE 2011.~--- 
+Мoscow--Yekaterinburg, 2011. P.~48--54.     
+
+     \bibitem{17-koz}
+     Web sites for Erlang {\sf http://erlang.org}; Website for Haskell {\sf 
+http://haskell.org}.
+     
+     \bibitem{18-koz}
+     \Au{Kozerenko E.}
+     Features and categories design for the English--Russian transfer model~// 
+Advances in Natural Language Processing and Applications Research in 
+Computing Science, 2008. Vol.~33. P.~123--138.
+     
+     \bibitem{19-koz}
+     \Au{Baker C.\,F., Fillmore C.\,J., Lowe~J.\,B.}
+     The Berkeley FrameNet project~// COLING/ACL-98, 1998. P.~86--90.
+ \end{thebibliography}
+}
+}
+
+
+\end{multicols}
+
+%\hrule
+
+%\smallskip
+
+       
+    
+\def\tit{СТРАТЕГИИ СИНТАКСИЧЕСКОГО АНАЛИЗА 
+НА~ОСНОВЕ ВЕРШИННЫХ ГРАММАТИК И~МЕТОДЫ ИХ~РЕАЛИЗАЦИИ В~ИНФОРМАЦИОННЫХ СИСТЕМАХ}
+
+\def\aut{Е.\,Б.~Козеренко$^1$ , П.\,В.~Ермаков$^2$}
+
+\titelr{\tit}{\aut}
+
+\vspace*{12pt}
+
+\noindent
+$^1$Институт проблем информатики Российской академии наук, 
+kozerenko@mail.ru\\
+\noindent
+$^2$Институт проблем информатики Российской академии наук, petcazay@mail.ru\\
+
+
+%\vspace*{10mm}
+\medskip
+
+    
+\Abst{Рассмотрены задачи проектирования и разработки 
+синтаксических анализаторов (парсеров) в многоязычных системах обработки 
+естественного языка, машинного перевода и извлечения знаний из текстов. 
+Рассмотрены грамматические формализмы и подходы к созданию парсеров, в 
+которых учитываются реальные трудности перевода, такие как языковые 
+трансформации. Предложен подход, учитывающий функциональные параметры 
+языковых структур на основе гибридной грамматики.}
+
+\KW{формальные грамматики; машинный перевод; синтаксический анализ; 
+статистические модели; функциональный подход}
+     
+ 
+\label{end\stat}
+
+
+\renewcommand{\figurename}{\protect\bf Рис.}
+\renewcommand{\tablename}{\protect\bf Таблица}
+\renewcommand{\bibname}{\protect\rmfamily Литература} 
+ 
+ 
+\newpage

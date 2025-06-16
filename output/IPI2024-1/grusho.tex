@@ -1,0 +1,629 @@
+
+\def\stat{grusho}
+
+\def\tit{ЛОГИКА ОБМАНА В~МАШИННОМ ОБУЧЕНИИ}
+
+\def\titkol{Логика обмана в~машинном обучении}
+
+\def\aut{А.\,А.~Грушо$^1$, Н.\,А.~Грушо$^2$, М.\,И.~Забежайло$^3$, 
+В.\,О.~Писковский$^4$, Е.\,Е.~Тимонина$^5$,\\ С.\,Я.~Шоргин$^6$}
+
+\def\autkol{А.\,А.~Грушо, Н.\,А.~Грушо, М.\,И.~Забежайло и~др.}
+%$^3$,  В.\,О.~Писковский$^4$, Е.\,Е.~Тимонина$^5$, С.\,Я.~Шоргин}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Грушо А.\,А.}
+\index{Грушо Н.\,А.}
+\index{Забежайло М.\,И.}
+\index{Писковский В.\,О.}
+\index{Тимонина Е.\,Е.}
+\index{Шоргин С.\,Я.}
+\index{Grusho A.\,A.}
+\index{Grusho N.\,A.}
+\index{Zabezhailo M.\,I.}
+\index{Piskovski V.\,O.} 
+\index{Timonina E.\,E.}
+\index{Shorgin S.\,Ya.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнялась с~использованием инфраструктуры Центра 
+%коллективного пользования <<Высокопроизводительные вычисления и~большие данные>>
+%(ЦКП <<Информатика>>) ФИЦ ИУ РАН.}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{grusho@yandex.ru}}
+\footnotetext[2]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{info@itake.ru}}
+\footnotetext[3]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{m.zabezhailo@yandex.ru}}
+\footnotetext[4]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{vpvp80@yandex.ru}}
+\footnotetext[5]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{eltimon@yandex.ru}}
+\footnotetext[6]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{sshorgin@ipiran.ru}}
+
+%\vspace*{-12pt}
+
+
+
+
+  
+  \Abst{Вопросы потенциального изменения работы искусственных нейронных сетей (ИНС) при 
+различных воздействиях на обучающие данные становятся актуальной задачей. Нарушение 
+правильной работы ИНС при враждебных воздействиях на 
+обучающую выборку получило название <<отравление>> (poisoning). В~работе использована 
+простейшая модель формирования нейронной сети, в~которой признаки, использованные 
+в~обуче\-нии, основаны только на преобладании чис\-ла однородных элементов. Изменения 
+в~образцах обуча\-ющей выборки позволяют строить бэкдоры, которые, в~свою очередь, 
+позволяют реализовывать неправильную классификацию, а~также встраивать в~программную 
+систему ошибки, вплоть до вредоносного кода. В~работе построена корректная модель 
+отравления обучающей выборки, позволяющая реализовать бэкдор и~триггеры для ошибок 
+классификации.
+  Прос\-тей\-ший характер построенной модели функционирования и~формирования обмана 
+поз\-во\-ля\-ет считать, что при\-чин\-но-след\-ст\-вен\-ная логика работы возможной реальной атаки на 
+слож\-ную сис\-те\-му искусственного интеллекта (ИИ) восстановлена правильно. Этот вывод позволяет 
+в~дальнейшем правильно строить под\-сис\-те\-мы мониторинга, анализа аномалий и~управ\-ле\-ния 
+функционалом всей сис\-те\-мы~ИИ.}
+  
+  \KW{задача конечной классификации; причинно-следственные связи; машинное обуче\-ние; 
+атаки на обуча\-ющие выборки}
+
+\DOI{10.14357/19922264240111}{SCDSHX}
+  
+%\vspace*{-6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+  
+  \section{Введение}
+  
+\vspace*{-4pt}
+
+  Как и~другие автоматизированные сис\-те\-мы, сис\-те\-мы 
+ИИ проходят несколько различных этапов жизненного цикла~--- 
+разработку (сбор и~обучение данных), тестирование, эксплуатацию и~техническое 
+обслуживание.
+  
+  Первый шаг в~развитии любой системы ИИ~--- идентификация проблемы 
+и~сбор данных для решения этой проблемы. Огромный объем данных, 
+необходимых для разработки системы ИИ, создает уязвимость. Например, 
+аналитики не имеют возможности убедиться в~том, что каждое  из собранных 
+изображений необходимо для обучения в~системе распознавания изображений.
+  
+  Вторая важнейшая проблема состоит в~качестве данных для обучения. На 
+результаты обучения и, следовательно, на эффективность работы сис\-те\-мы ИИ 
+влияет множество свойств обучающих данных~[1--3]. Например:
+  \begin{enumerate}[(1)]
+\item неправильная метка на данных переносит обуча\-ющий образец 
+в~неправильный класс и~позволяет допустить ошибку классификации 
+в~рабочем режиме сис\-те\-мы~ИИ;\\[-14pt]
+\item данные, полученные в~разное время, могут оказаться неоднородными 
+при изменении характеристик процесса, их по\-рож\-да\-ющих (время суток, 
+изменение вероятностного распределения и~др.), что в~дальнейшем скажется 
+на решении функциональных задач системы ИИ;
+\item возможны враждебные воздействия на обуча\-ющие данные.\\[-14pt]
+\end{enumerate}
+
+  Вопросы потенциального изменения работы ИНС при различных воздействиях на обуча\-ющие данные можно исследовать 
+методом аналитического моделирования потенциального эффекта 
+(counterfactual)~[4]. Нарушение правильной работы ИНС при враждебных 
+воздействиях на обуча\-ющую выборку получило название <<отравление>> 
+(poisoning)~[5, 6]. Для исследования некоторых вопросов в~этой об\-ласти будем 
+использовать простейшие модели. Алгоритмы машинного обучения, питающие 
+системы ИИ, <<учатся>> с~по\-мощью извлечения шаблонов из данных. 
+Например, для системы ИИ, использующей в~качестве исходных данных 
+изображения, закономерности связаны с~тем, какие объекты присутствуют 
+в~исходном множестве изобра\-же\-ний.
+  
+  Сначала рассмотрим принципы построения бэкдора (от \textit{англ}.\ back door~--- 
+черный ход>>, дословно <<задняя дверь>>)~--- уязвимости, да\-ющей 
+несанкционированный доступ. Модель ИНС для дальнейшего исследования мы 
+строим из модели глубокого обуче\-ния (Deep Learning~--- DL)~[7], когда 
+формируются признаки, по которым происходит классификация. Однако не будем 
+углубляться в~вопросы работы сетей, а~используем простейшую модель 
+формирования признаков, основанную на преобладании. Бэкдор характеризуется 
+неправильной классификацией, позволяющей встраивать в~программную систему 
+любые ошибки, вплоть до вредоносного кода.
+
+\vspace*{-6pt}
+  
+  \section{Математическая модель обучения искусственной нейронной сети}
+  
+  \vspace*{-3pt}
+  
+  Данные представляют собой последовательности~$X$ в~алфавите $\{0; 1\}$ 
+одинаковой длины~$N$. Рассматривается задача классификации, в~которой 
+обучение с~учителем происходит на основе обуча\-ющей выборки $X_1, \ldots , 
+X_M$ данного класса~$C$. Для ИНС глубокого обучения (DL) выбор признаков 
+основан на операциях свертки и~пуллинга (pulling), поэтому DL при обучении 
+<<выхватывает>> признаки, которые далее используются для распознавания 
+класса. В~связи с~этим мож\-но считать, что при обуче\-нии (по крайней мере 
+в~задачах классификации изображений) образ для распознавания формируется 
+с~по\-мощью повторения некоторых фрагментов данных на одних и~тех же 
+местах. Можно считать, что данные~$X$ пред\-став\-ля\-ют собой множество 
+пронумерованных бинарных величин. При таком подходе единые свойства 
+формирования шаблонов проявляются через одинаковые подпоследовательности 
+данных. Для их использования при формировании при\-зна\-ков необходимо 
+рассматривать еще некоторую <<ин\-тен\-сив\-ность>>, которую на этом этапе для 
+простоты опускаем. При таком подходе класс будет определяться подмножеством 
+$L^*$ размера~$L$ элементов образцов, которые принимают одинаковые 
+значения на этом подмножестве.
+  
+  Вероятностная модель появления элементов данных в~$X$ определяется 
+вероятностью~$p$ появления единицы на данном месте и~не\-за\-ви\-си\-мостью 
+принимаемых значений в~тех случаях, когда кроме одного~$X$ рассматриваются 
+повторы шаблонов в~других данных обуча\-ющей выборки.
+  
+  Рассмотрим простейшую реакцию на предъявление ИНС образца~$X$. Если 
+этот образец состоит из повторяющегося в~других образцах обуча\-ющей выборки 
+шаблона~$L^*$ и~случайной последовательности длины $N\hm- L$, то ИНС 
+должна распознать в~$X$ класс~$C$, порожденный обуча\-ющей выборкой 
+класса~$C$. В~качестве результата распознавания класса~$C$ ИНС вычисляет 
+действительное число $\alpha(C)$, где $0\hm\leq \alpha(C)\hm\leq 1$, которое для 
+класса~$C$ больше значений функции~$\alpha$ для других классов. Если 
+в~предъявленном образце~$X$ присутствует часть шаблона $L_1^*\hm\subset L^*$, 
+а~все остальное~--- случайное и~не зависит от шаблона, то значение 
+функции~$\alpha(C)$ уменьшится и~при этом увеличатся значения 
+функции~$\alpha$ для других классов. Может так случиться, что наибольшим 
+станет значение функции~$\alpha$ для другого класса. Тогда классификатор 
+совершит ошибку.
+  
+  Если для распознавания ИНС предъявлен элемент другого класса~$C_1$, то 
+считаем, что у него есть свой шаблон~$L_1^*$, используемый в~обуче\-нии, 
+поз\-во\-ля\-ющий распознавать также образцы класса~$C_1$. Если на вход ИНС 
+подается целиком случайная последовательность, построенная по другой схеме, 
+то ИНС отказывается от решения задачи (например, сбой).
+  
+  Для фиксированного места в~образцах обуча\-ющей выборки, не входящего 
+в~$L^*$, вероятность совпадения фиксированного элемента у~всех образцов 
+обуча\-ющей выборки класса~$C$ равна
+  $$
+  q_M= p^M +(1-p)^M.
+  $$
+   
+  Из предположения о независимости следует, что число совпадений на всем 
+множестве образцов обуча\-ющей выборки рав\-но $\xi\hm+L$, где $\xi$~--- 
+случайная величина, распределенная по биномиальному закону 
+с~па\-ра\-мет\-ром~$q_M$ и~чис\-лом испытаний\linebreak $N\hm- L\hm\leq N$.
+  %
+  Тогда среднее число совпадений равно
+  $$
+  E=(N-L)q_M +L =Nq_M+(1-q_M)L\,,
+  $$
+а дисперсия равна
+$$
+  {\sf D}\xi = (N-L) q_M (1-q_M)\,.
+  $$
+  В схеме серий при $(N\hm- L)q_M\hm\to 0$ с~ве\-ро\-ят\-ностью, стремящейся 
+  к~единице, множество совпадений сходится к~$L^*$. Если $Nq_M\hm\to 0$, то 
+такая сходимость будет равномерной для всех $L\hm<N$.
+  
+  Для выполнения этих условий достаточно, чтобы при $N\hm\to \infty$ 
+параметр~$M$ удовлетворял условию $M\hm\geq C\ln N$, где~$C$ должно 
+удовлетворять двум неравенствам:
+  \begin{align}
+  C&>\left( \ln \fr{1}{p}\right)^{-1}\,;
+  \label{e1-gru}
+\\
+C&> \left( \ln \fr{1}{1-p}\right)^{-1}.
+\label{e2-gru}
+\end{align}
+  Отсюда получаем следующую тео\-рему.
+  
+\pagebreak
+  
+  \noindent
+  \textbf{Теорема.} \textit{При размере обучающего образца $N\hm\to \infty$ 
+и~размере обуча\-ющей выборки $M\hm\geq C\ln N$, где~$C$ удовле\-тво\-ря\-ет 
+неравенствам}~(1) \textit{и}~(2), \textit{обучение будет проходить по некоторому 
+шаблону~$L^*$ произвольной длины $L\hm< N$ с~вероятностью, стремящейся 
+к}~1.
+  
+  \smallskip
+  
+  Из этой теоремы можно сделать вывод о~том, что неповторяющиеся фрагменты 
+обуча\-ющих образцов очень слабо влияют на формирование признаков 
+идентификации классов. Искусственная нейронная сеть при обуче\-нии не может <<цепляться>> за 
+фрагменты, содержащие элементы, не принадлежащие~$L^*$, т.\,е.\
+  построенная модель ИНС распознает только наличие в~предъявляемом 
+образце множества $L_1^*\hm\subseteq L^*$ (не меньше некоторой границы). 
+Если множество совпадений больше, то это противоречит выбранной 
+вероятностной схеме.
+  %
+  При этом не учитываются присутствующие в~реальной жизни другие 
+характеристики обуча\-юще\-го шаблона, которые накладывают ограничение снизу 
+на длину шаблона в~за\-ви\-си\-мости от модели ИНС.
+  
+  \section{Модель бэкдора}
+  
+  Используем теорему для объяснения возможности построения бэкдора. 
+Обученная ИНС распознает несколько классов $C_1, \ldots , C_k$. Построенная 
+модель распознает только образцы, \mbox{содержащие} $L_1^*, L_2^*, \ldots , L_k^*$, 
+либо их значимые части. Так как по теореме при больших $N$ случайные части 
+последовательностей почти не оказывают влияния на распознавание класса, то 
+распознавание определяется только наличием значимой части шаблона класса.
+  
+  Пусть для простоты $k\hm=2$. Рассмотрим в~классе~$C_1$ два подкласса: 
+$C_{11}$ и~$C_{12}$, такие что $L_{11}^*$ не пересекается с~$L_{12}^*$, т.\,е.\
+ реально в~задаче имеются три класса, но два из них входят в~$C_1$ и,~по 
+сделанному замечанию, могут распознаваться для всех образцов, которые 
+обладают частями либо $L_{11}^*$, либо $L_{12}^*$. Однако обучающая 
+выборка для~$C_1$ содержит образцы обоих классов~$C_{11}$ и~$C_{12}$. 
+Поэтому данные, которые содержат час\-ти $L_{11}^*$ или $L_{12}^*$, 
+классифицируются как~$C_1$.
+  
+  Предположим, что постановщик задачи не знает о~наличии 
+подкласса~$C_{12}$. Тогда в~образце с~$L_{11}^*$ постановщик задачи уверен 
+в~правильной классификации~$C_1$. Если обуча\-ющая выборка класса~$C_1$ 
+была дополнена образцами класса~$C_{12}$, о~которых постановщик задачи не 
+знает, то противник может предложить для классификации образец с~$L_{12}^*$. 
+Образец будет классифицирован как~$C_1$, но сформирует бэкдор.
+  
+  Приведем простейшие примеры использования построенной схемы для 
+организации атаки на классификацию.
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Пример~1.}\ Пусть атака происходит в~условиях <<белого ящика>>. 
+Тогда противник может найти уязвимость в~реализации ИНС, через которую 
+образец класса~$C_{12}$ с~за\-писью вредоносного кода в~<<случайной>> части 
+образца атакует модель ИНС, т.\,е.\ через уязвимость по специальному 
+идентификатору в~тело программы ИНС образцом с~шаблоном $L_{12}^*$ 
+вносится вредоносный код. В~простейшем случае противник организует в~программном обеспечении 
+сбой.
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Пример~2.}\ Предположим, что $L_{12}^*\hm= L_2^*$. Тогда образец 
+с~$L_{11}^*$ классифицируется правильно как класс~$C_1$. Но образец 
+с~$L_{12}^*$ ошибочно классифицируется и~как класс~$C_1$, и~как 
+класс~$C_2$. При этом при тестировании ИНС всегда подается правильный 
+образец класса~$C_1$ с~$L_{11}^*$. Образец с~$L_{12}^*$ противник будет 
+подавать на вход ИНС с~целью проведения неправильной классификации. Тогда 
+на выходе ИНС будут идентифицироваться класс~$C_2$ и~класс~$C_1$. При этом в~обучающей выборке класса~$C_2$ нет враждебных образцов, как это было 
+описано выше.
+  
+  Аналогично можно сделать так, что противник будет, подсовывая фейковые 
+образцы, переводить ложные обуча\-ющие данные на различные правильные 
+классы. Задача борьбы с~такими обманами в~уже обученной сетке рассматривалась 
+в~работе~[8]. В~этом случае обманные подклассы называются триггерами.
+  
+  \section{Обсуждение результатов и~их~обобщение}
+  
+  Чтобы распознавать образцы с~шаблонами, не совпадающими полностью во 
+всех образцах обуча\-ющей выборки, применяют дополнения обуча\-ющих выборок, 
+образцы которых образуются \mbox{с~по\-мощью} слабых изменений шаблонов, 
+опре\-де\-ля\-ющих распознавание соответствующих классов. Такое построение новых 
+образцов с~целью увеличению объема обуча\-ющей выборки называется 
+аугментацией. Тогда за счет непрерывности функций активизации распознавание 
+происходит для образцов, близ\-ких к~образцам обуча\-ющей выборки, но не 
+входящих в~исходную обуча\-ющую выборку. Если~$C_{12}$ построено по 
+образцам с~$L^*_{12}$, то можно добавлять на некоторые обуча\-ющие 
+правильные образцы класса~$C_1$ также триггер~$L^*_{12}$.
+ % 
+  При таком обучении качество распознавания класса~$C_1$  
+с~по\-мощью~$L_{11}^*$ может понизиться, но вместе со слабым правильным 
+ответом в~задаче классификации будет уверенное распознавание другого класса 
+при предъявлении для распознавания образца, содержащего триггер. Это 
+утверждение следует из сле\-ду\-ющих соображений. Если обучать на подмножестве 
+образцов исходной обучающей выборки с~$L_{11}^*$ вмес\-те с~$L_{12}^*$ 
+(вместо части случайной компоненты), то предъявляемый образец~$X$ должен 
+принадлежать~$C_1$, если у~него присутствует частично~$L_{11}^*$.
+  
+  Если образцы обучающей выборки обуча\-лись на $L_{11}^*$, но потом к~этой 
+части применялась аугментация, то снижалось качество распознавания, но 
+класс~$C_1$ определялся все еще однозначно. Если в~этом случае предъявить 
+образец только с~частью $L_{12}^*$, то это будет означать использование части 
+полного шаблона обуче\-ния $L_{12}^*$ и~он будет идентифицирован как 
+класс~$C_2$ (при $L_{12}^*\hm= L_2^*$). Таким образом, противник может 
+портить обуча\-ющую выборку, добавляя триггер на подмножестве легальных 
+образцов обуча\-ющей выборки другого класса.
+  
+  Отметим, что подобные атаки на распознавание изображений известны давно. 
+Например, вмес\-то распознавания изображения панды однозначно 
+идентифицируется гиббон. Однако проблемы выявления и~борьбы с~атаками 
+бэкдора остаются трудными задачами~[9, 10].
+  
+  \section{Заключение}
+  
+  В работе построена простейшая вероятностная\linebreak модель обмана в~задаче 
+классификации на конечное число классов с~по\-мощью ИНС, ис\-поль\-зу\-ющая 
+модификацию обуча\-ющей выборки. В~построенной модели шаблоны 
+определяются только \mbox{размерами} подпоследовательности повторяющихся во всех 
+образцах элементов. Уже в~такой простейшей модели задача предварительного 
+поиска отравления обуча\-ющей выборки достаточно слож\-на. Вмес\-те с~тем внес\-ти 
+отравление при формировании, например, федеративной обуча\-ющей выборки 
+достаточно просто.
+  
+  Простейший характер построенной модели функционирования и~формирования 
+обмана позволяет считать, что при\-чин\-но-след\-ст\-вен\-ная логика обмана 
+в~работе реальной слож\-ной сис\-те\-мы ИИ правильно восстановлена. Этот вывод 
+позволяет\linebreak в~дальнейшем правильно строить под\-сис\-те\-мы мониторинга, анализа 
+аномалий и~управ\-ле\-ния функционалом всей сис\-те\-мы ИИ. Кроме того, появляется 
+обоснование для дальнейшей работы, \mbox{связанной} с~расширением класса 
+вероятностных моделей описания образцов обуча\-ющих выборок и~услож\-не\-ни\-ем 
+алфавита описания данных.
+  
+{\small\frenchspacing
+ { %\baselineskip=10.6pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+ \bibitem{3-gru} %1
+\Au{Nelson B., Barreno~M., Chi~F.\,J., Joseph~A.\,D., Rubinstein~B.\,I., Saini~U., Sutton~C., 
+Tygar~J., Xia~K.} Misleading learners: Co-opting your spam filter~// Machine learning cyber trust.~--- 
+Boston, MA, USA: Springer, 2009. doi: 10.1007/978-0-387-88735-7\_2.
+
+\bibitem{2-gru}
+\Au{Wang J., Ma~Y., Zhang~L., Gao~R.\,X., Wu~D.} Deep learning for smart manufacturing: methods 
+and applications~// J.~Manuf. Syst., 2018. Vol.~48. P.~144--156. doi: 
+10.1016/j.jmsy.2018.01.003.
+
+\bibitem{1-gru} %3
+\Au{Tripathi S., Muhr~D., Brunner~M., Jodlbauer~H., Dehmer~M., Emmert-Streib~F.} Ensuring the 
+robustness and reliability of data-driven knowledge discovery models in production and 
+manufacturing~// Frontiers Artificial Intelligence, 2021. Vol.~4. Art.~576892. doi: 10.3389/ frai.2021.576892.
+
+\bibitem{4-gru}
+\Au{H$\ddot{\mbox{o}}$fler M.} Causal inference based on counterfactuals~// BMC Med. Res. 
+Methodol., 2005. Vol.~5. Art.~28. doi: 10.1186/1471-2288-5-28.
+\bibitem{5-gru}
+\Au{Baracaldo N., Chen~B., Ludwig~H., Safavi~J.\,A.} Mitigating poisoning attacks on machine 
+learning models: A~data provenance based approach~// 10th ACM Workshop on Artificial 
+Intelligence and Security Proceedings.~--- New York, NY, USA: Association for Computing 
+Machinery, 2017. P.~103--110.
+\bibitem{6-gru}
+\Au{Starck N., Bierbrauer~D., Maxwell~P.} Artificial intelligence, real risks: Understanding~--- and 
+mitigating~--- vulnerabilities in the military use of AI, 2022. {\sf  
+https://mwi.usma.\linebreak edu/artificial-intelligence-real-risks-understanding-and-mitigating-vulnerabilities-in-the-military-use-of-ai}.
+\bibitem{7-gru}
+\Au{Nielsen M.} Neural networks and deep learning. {\sf http://\linebreak neuralnetworksanddeeplearning.com}.
+\bibitem{8-gru}
+\Au{Chen B., Carvalho~W., Baracaldo~N., Ludwig~H., Edwards~B., Lee~T., Molloy~I., 
+Srivastava~B.} Detecting backdoor attacks on deep neural networks by activation clustering.~--- Cornell 
+University, 2018. arXiv:1811.03728v1 [cs.LG]. 10~p.
+
+\bibitem{10-gru}
+\Au{Steinhardt J., Koh~P.\,W., Liang~P.\,S.} Certified defenses for data poisoning attacks.~--- Cornell 
+University, 2017. arXiv:1706.03691v2 [cs.LG]. 15~p.
+
+\bibitem{9-gru}
+\Au{Liu K., Dolan-Gavitt~B., Garg~S.} Fine-pruning: Defending against backdooring attacks on deep 
+neural networks~// Research in attacks, intrusions, and defenses~/ Eds. M.~Bailey, 
+T.~Holz, M.~Stamatogiannakis, S.~Ioannidis.~--- Lecture notes in computer science ser.~--- Cham: 
+Springer, 2018. Vol.~11050. P.~273--294. doi: 10.1007/978-3-030-00470-5\_13.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-10pt}
+
+\hfill{\small\textit{Поступила в~редакцию 15.01.24}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+
+
+\def\tit{LOGIC OF DECEPTION IN~MACHINE LEARNING}
+
+
+\def\titkol{Logic of deception in~machine learning}
+
+
+\def\aut{A.\,A.~Grusho, N.\,A.~Grusho, M.\,I.~Zabezhailo, V.\,O.~Piskovski, 
+E.\,E.~Timonina,\\ and~S.\,Ya.~Shorgin}
+
+\def\autkol{A.\,A.~Grusho, N.\,A.~Grusho, M.\,I.~Zabezhailo, et al.}
+%V.\,O.~Piskovski,  E.\,E.~Timonina, and~S.\,Ya.~Shorgin}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-10pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of 
+Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+\Abste{The issues of potential change in the work of artificial neural networks under 
+various influences on training data is the urgent task. Violation of the correct operation 
+of the artificial neural network with hostile effects on the training sample was called 
+poisoning. The paper provides the simplest model of neural network formation in 
+which the features used in training are based only on the predominance of the number of 
+homogeneous elements. Changes in the samples of the training sample allow one to 
+build Back Doors which, in turn, allow one to implement incorrect classification as well 
+as embed errors into the software system, up to malicious code. The correct model of 
+training sample poisoning which allows one to implement Back Door and triggers for 
+classification errors is constructed in the paper. The simplest nature of the constructed 
+model of functioning and formation of deception allows one to believe that the causal 
+logic of the realization of a~possible real attack on a~complex artificial intelligence 
+system has been restored correctly. This conclusion allows one in the future to correctly 
+build the subsystems of monitoring, anomaly analysis, and control of the functionality of 
+the entire artificial intelligence system.}
+
+\KWE{finite classification task; cause-and-effect relationships; machine learning; 
+poisoning}
+
+\DOI{10.14357/19922264240111}{SCDSHX}
+
+\vspace*{-12pt}
+
+%\Ack
+%\vspace*{-3pt}
+%    \noindent
+ 
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99} 
+ 
+ \bibitem{3-gru-1} %1
+\Aue{Nelson, B., M.~Barreno, F.\,J.~Chi, A.\,D.~Joseph, B.\,I.~Rubinstein, U.~Saini, C.~Sutton, J.~Tygar, and K.~Xia.}
+ 2009. Misleading learners: Co-opting your spam filter. 
+\textit{Machine learning in cyber trust}. Boston, MA: Springer. 17--51. doi: 
+10.1007/978-0-387-88735-7\_2.
+
+\bibitem{2-gru-1}
+\Aue{Wang, J., Y.~Ma, L.~Zhang, R.\,X.~Gao, and D.~Wu.} 2018. Deep learning for 
+smart manufacturing: methods and applications. \textit{J.~Manuf. Syst.} 48:144--156. 
+doi: 10.1016/j.jmsy.2018.01.003.
+
+\bibitem{1-gru-1} %3
+\Aue{Tripathi, S., D.~Muhr, M.~Brunner, H.~Jodlbauer, M.~Dehmer, and  
+F.~Emmert-Streib.} 2021. Ensuring the robustness and reliability of data-driven 
+knowledge discovery models in production and manufacturing. \textit{Frontiers Artificial 
+Intelligence} 4:576892. doi: 10.3389/frai.2021.576892.
+
+\bibitem{4-gru-1}
+\Aue{H$\ddot{\mbox{o}}$fler, M.} 2005. Causal inference based on counterfactuals. 
+\textit{BMC Med. Res. Methodol.} 5:28. doi: 10.1186/1471-2288-5-28.
+\bibitem{5-gru-1}
+\Aue{Baracaldo, N., B.~Chen, H.~Ludwig, and J.\,A.~Safavi.} 2017. Mitigating 
+poisoning attacks on machine learning models: A~data provenance based approach. 
+\textit{10th ACM Workshop on Artificial Intelligence and Security Proceedings}. New 
+York, NY: Association for Computing Machinery. 103--110.
+\bibitem{6-gru-1}
+\Aue{Starck, N., D.~Bierbrauer, and P.~Maxwell.} 2022. Artificial intelligence, real 
+risks: Understanding~--- and mitigating~--- vulnerabilities in the military use of AI. 
+Available at: {\sf  
+https://mwi.usma.edu/artificial-intelligence-real-risks-understanding-and-mitigating-vulnerabilities-in-the-military-use-of-ai} (accessed February~8, 
+2024).
+
+\bibitem{7-gru-1}
+\Aue{Nielsen, M.} 2019. Neural networks and deep learning. Available at: {\sf 
+http://neuralnetworksanddeeplearning.com} (accessed February~8, 2024).
+\bibitem{8-gru-1}
+\Aue{Chen, B., W.~Carvalho, N.~Baracaldo, H.~Ludwig, B.~Edwards, T.~Lee, 
+I.~Molloy, and B.~Srivastava.} 2018. Detecting backdoor attacks on deep neural 
+networks by activation clustering. \textit{arXiv.org}. 10~p. Available at: {\sf 
+https://arxiv.org/abs/1811.03728v1} (accessed February~8, 2024).
+
+\bibitem{10-gru-1}
+\Aue{Steinhardt, J., P.\,W.~Koh, and P.\,S.~Liang.} 2017. Certified defenses for data 
+poisoning attacks. \textit{arXiv.org}. 15~p. Available at: {\sf  
+https://arxiv.org/abs/1706.03691v2} (accessed February~8, 2024).
+\bibitem{9-gru-1}
+\Aue{Liu, K., B.~Dolan-Gavitt, and S.~Garg.} 2018. Fine-pruning: Defending against 
+backdooring attacks on deep neural networks. \textit{Research in attacks, intrusions, 
+and defenses}. Eds. M.~Bailey, T.~Holz, M.~Stamatogiannakis, and S.~Ioannidis. 
+Lecture notes in computer science ser. Cham: Springer. 11050:273--294. doi: 
+10.1007/978-3-030-00470-5\_13.
+
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-8pt}
+
+\hfill{\small\textit{Received January 15, 2024}} 
+
+\vspace*{-26pt}
+
+\Contr
+
+%\vspace*{-3pt}
+
+\noindent
+\textbf{Grusho Alexander A.} (b.\ 1946)~--- Doctor of Science in physics and 
+mathematics, professor, principal scientist, Federal Research Center ``Computer Science 
+and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, 
+Russian Federation; \mbox{grusho@yandex.ru}
+
+%\vspace*{3pt}
+
+\pagebreak
+
+\noindent
+\textbf{Grusho Nikolai A.} (b.\ 1982)~--- Candidate of Science (PhD) in physics and 
+mathematics, senior scientist, Federal Research Center ``Computer Science and 
+Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119133, 
+Russian Federation; \mbox{info@itake.ru}
+
+\vspace*{4pt}
+
+\noindent
+\textbf{Zabezhailo Michael I.} (b.\ 1956)~--- Doctor of Science in physics and 
+mathematics, principal scientist, Federal Research Center ``Computer Science and 
+Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, 
+Russian Federation; \mbox{m.zabezhailo@yandex.ru}
+
+\vspace*{4pt}
+
+\noindent
+\textbf{Piskovski Viktor O.} (b.\ 1963)~--- Candidate of Science (PhD) in physics and 
+mathematics, senior scientist, Federal Research Center ``Computer Science  and 
+Control'' of the Russian Academy of Sciences; 44-2~Vavilov Str., Moscow 119133, 
+Russian Federation; \mbox{vpvp80@yandex.ru}
+
+\vspace*{4pt}
+
+\noindent
+\textbf{Timonina Elena E.} (b.\ 1952)~--- Doctor of Science in technology, professor, 
+leading scientist, Federal Research Center ``Computer Science and Control'' of the 
+Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119133, Russian Federation; 
+\mbox{eltimon@yandex.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Shorgin Sergey Ya.} (b.\ 1952)~--- Doctor of Science in physics and 
+mathematics, professor, principal scientist, Federal Research Center ``Computer Science 
+and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119133, 
+Russian Federation; \mbox{sshorgin@ipiran.ru}
+
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

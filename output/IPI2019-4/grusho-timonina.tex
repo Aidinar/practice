@@ -1,0 +1,566 @@
+\def\stat{gr+timon}
+
+\def\tit{ИСПОЛЬЗОВАНИЕ МЕТАДАННЫХ ДЛЯ~РЕАЛИЗАЦИИ ТРЕБОВАНИЙ ПОЛИТИКИ 
+БЕЗОПАСНОСТИ MLS$^*$}
+
+\def\titkol{Использование метаданных для~реализации требований политики 
+безопасности MLS}
+
+\def\aut{А.\,А.~Грушо$^1$,  Н.\,А.~Грушо$^2$, 
+Е.\,Е.~Тимонина$^3$}
+
+\def\autkol{А.\,А.~Грушо, Н.\,А.~Грушо, 
+Е.\,Е.~Тимонина}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Грушо А.\,А.}
+\index{Грушо Н.\,А.} 
+\index{Тимонина Е.\,Е.}
+\index{Grusho A.\,A.}
+\index{Grusho N.\,A.}
+\index{Timonina E.\,E.}
+
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа частично поддержана РФФИ (проект 18-07-00274).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управление>> 
+Российской академии наук, \mbox{grusho@yandex.ru}}
+\footnotetext[2]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управление>> 
+Российской академии наук, info@itake.ru}
+\footnotetext[3]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управление>> 
+Российской академии наук, eltimon@yandex.ru}
+
+\vspace*{2pt}
+
+   
+
+
+  \Abst{Рассматривается распределенная информационная система, объекты которой содержат 
+как ценную информацию (или сами являются ценными), так и~открытую (не ценную) 
+информацию. Для защиты ценной информации используется политика безопасности (ПБ) MLS
+(Multilevel Security), 
+которая запрещает информационные потоки от объектов с~ценной информацией к~объектам 
+с~открытой информацией. Объекты с~ценной информацией образуют класс объектов уровня High, 
+а~объекты c~открытой информацией образуют класс объектов уровня Low. 
+  Метаданные (МД) создаются для управления соединениями в~сетях. Метаданные являются 
+упрощением математических моделей биз\-нес-про\-цес\-сов и~служат основой разрешительной 
+системы для соединений хостов в~распределенной 
+ин\-фор\-ма\-ци\-он\-но-вы\-чис\-ли\-тель\-ной сис\-те\-ме
+(РИВС).
+  В~работе сформулированы правила ПБ MLS и~на основе 
+инфраструктуры, связанной с~МД, показана возможность реализации этой 
+ПБ в~РИВС. 
+Единственный доверенный процесс, необходимый для реализации ПБ MLS, 
+функционирует на уровне управления соединениями. Этот уровень не связан с~плос\-костью 
+передачи данных и~может быть изолирован с~\mbox{целью} обеспечения его информационной 
+безопасности.}
+  
+  \KW{политика безопасности MLS; информационные потоки; метаданные}
+  
+  \DOI{10.14357/19922264190414} 
+  
+%\vspace*{1pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+  Политика безопасности в~компьютерной системе и~сети~--- это набор 
+требований по ограничению доступа, хранению и~распределению 
+информации~[1]. Обычно ПБ определяет требования по защите 
+конфиденциальности, целостности и~доступности информации. Политика
+безопас\-ности опирается на 
+четкую классификацию ценных информационных ресурсов и~открытых 
+информационных ресурсов. 
+  
+  Один из общих подходов к~описанию требований информационной 
+безопасности к~конкретному информационному ресурсу~--- это неотделимая 
+привязка к~информационному объекту вектора характеристик, определяющих 
+обращение с~этой информацией. Каждый такой вектор содержит результаты 
+классификации объекта, а~именно: требования по конфиденциальности, 
+целостности и~доступности информации. 
+  
+  Для простоты будем классифицировать информацию как конфиденциальную 
+  и~как открытую. Объекты, содержащие конфиденциальную информацию (ценную 
+информацию), будем помечать символом~$(*)$. Это ограничение не умаляет 
+общности, так как легко обобщается на требования защиты целостности 
+и~доступности. 
+  
+  Для защиты конфиденциальности широко используется политика 
+  MLS~[1], которая запрещает информационные потоки от 
+объектов~$(*)$ к~объектам, не помеченным~$(*)$. Объекты с~меткой~$(*)$ 
+образуют класс объектов уровня High, а объекты без метки образуют класс 
+объектов уровня Low. 
+  
+  Метаданные создаются для управления соединениями в~сетях~[2]. Как 
+правило, МД являются упрощением математических моделей  
+биз\-нес-про\-цес\-сов и~служат основой разрешительной системы для соединений 
+хостов в~РИВС. Разрешительная система строится на основе порядка взаимодействий 
+задач, реализующих бизнес-процесс. Для ее работы вводятся две специальные 
+задачи~$\mathcal{M}$ и~$\mathcal{N}$. Задача~$\mathcal{M}$ распределяет 
+задачи по хостам, т.\,е.\ определяет бинарное отношение $H(A)$, где~$A$~--- 
+задача, а~$H$~--- хост сети. Задача~$\mathcal{N}$ реализует разрешительную 
+систему, которая разрешает и~организует соединения хостов $H(A)$ и~$H(B)$, 
+если в~МД отражена необходимость инициализации или взаимодействия 
+задач~$A$ и~$B$. 
+  
+  Как было показано в~[3, 4], МД не несут информации о значениях данных. 
+Поэтому требования ПБ в~МД отражаются косвенно, т.\,е.\ МД могут содержать 
+только информацию о том, куда нельзя направлять информационный поток. 
+  
+  Как правило, информационная технология (ИТ) представима в~виде составной 
+задачи~[5], а~так\-же может описываться DAG (Directed Acyclic Graph)~[6], 
+в~котором вершины~--- это задачи ИТ, а~дуги указывают направления 
+информационных потоков, передающих исходные данные сле\-ду\-ющим задачам ИТ. 
+В~таком представлении возможно существование дуг извне DAG как некоторых 
+внешних информационных потоков с~исходными данными и~дуг, выходящих из 
+DAG, но не входящих в~задачи ИТ (внешнее распределение информации). 
+Передача ценных информационных ресурсов также осуществляется через дуги 
+DAG. Поэтому передача ценного информационного ресурса соответствует 
+метке~$(*)$ на соответствующей дуге. 
+  
+\section{Отражение требований MLS в~графах задач и~метаданных} 
+  
+  Правила MLS могут быть выражены следующим образом. Если в~вершину 
+входит хоть одна дуга, помеченная~$(*)$, то эта вершина уже имеет метку~$(*)$ 
+и~далее все дуги, выходящие из этой вершины, приобретают метку~$(*)$. 
+Возможно, что ценная информация может порождаться в~результате решения 
+задачи. Тогда эта задача помечается~$(*)$. 
+  
+  Справедливо следующее утверждение. 
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Утверждение~1.}\ \textit{При выполнении правил расстановки 
+меток~$(*)$ в~данной ИТ выполняется политика MLS. }
+  
+  \smallskip
+  
+  \noindent
+  Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ Допустим, что существует 
+информационный поток с~уровня High на уровень Low. Тогда вершина, из которой 
+исходит данный поток, имеет метку~$(*)$. По определению любая дуга, 
+выходящая из вершины, помеченной~$(*)$, также имеет метку~$(*)$. Но такая 
+дуга может входить только в~вершину, которая уже помечена (*). Но вершины 
+уровня Low не могут иметь таких меток. Следовательно, предположение о 
+существовании информационного потока с~уровня High на уровень Low неверно. 
+Утверждение~1 доказано.
+  
+  \smallskip
+  
+  Метаданные содержат порядок решения задач, определяемый DAG. Поэтому 
+если задачи в~этом порядке используют или порождают ценную информацию, то 
+они имеют метку~$(*)$. Тогда все дальнейшие задачи также имеют такую метку. 
+При таком дополнении МД несут информацию о требованиях~ПБ. 
+  
+  Ясно, что появление ценой информации означает дополнительные требования 
+  к~хосту, на котором решается эта задача. Поэтому хост, на котором решается задача 
+с~меткой~$(*)$, также должен иметь метку~$(*)$. Задача должна иметь 
+метку~$(*)$, если она будет содержать ценную информацию. Отметим, что 
+протокол управления соединениями в~РИВС основан на криптографии~[7] 
+и~является безопасным. 
+  
+  Особенности хоста с~меткой~$(*)$ основаны на том, что на такой хост должен 
+быть загружен <<чис\-тый>> образ операционной сис\-те\-мы, безопасный агент хоста для связи 
+с~задачей~$\mathcal{N}$, <<чис\-тое>> программное
+обеспечение для задач с~метками~$(*)$, и~на нем 
+реализована процедура доверенной загрузки. В~MLS разрешены информационные 
+потоки от уровня Low к~уровню High. Для предотвращения попадания на 
+хост~$H^*$ вредоносного кода с~уровня Low необходимо обеспечить безопасный 
+однонаправленный канал~[8] с~уровня Low на уровень High. Ясно, что на 
+хосте~$H^*$ могут решаться различные (доверенно загруженные) задачи 
+с~меткой~$(*)$. 
+  
+  Рассмотрим процедуру решения задачи~$A$ на уровне Low. В~этом случае 
+возможны два варианта:
+  \begin{enumerate}[(1)]
+\item задача~$\mathcal{M}$ устанавливает задачу~$A$ на хосте, к~которому не 
+допускается ни один информационный поток с~меткой~$(*)$;
+\item на хосте $H^*(A^*)$ реализуется ИТ очистки от информации 
+с~меткой~$(*)$ (новая доверенная загрузка). 
+\end{enumerate}
+  
+\section{Отражение требований MLS в~инфраструктуре метаданных}
+
+  Поскольку ИТ может использовать информацию с~меткой~$(*)$, то в~МД задача 
+имеет метку~$(*)$. Если ИТ не использует информацию, помеченную~$(*)$, то 
+в~МД отсутствуют задачи с~такой меткой. 
+  
+  Как было отмечено ранее, для передачи ценной информации задаче она должна 
+иметь метку~$(*)$. Тогда хост, на котором находится эта задача, также должен 
+иметь метку~$(*)$. Отсюда получается простейшее решение 
+задачи~$\mathcal{M}$, обеспечивающее выполнение ПБ
+MLS. Так как заранее известны все задачи с~меткой~$(*)$, то 
+задача~$\mathcal{M}$ размещает их на хостах, помеченных~$(*)$, и~по правилам 
+MLS задача~$\mathcal{N}$ реализует разрешительную систему на данных хостах. 
+Это означает, что в~задаче~$\mathcal{N}$ выделяется подзадача~$\mathcal{N}_H$, 
+реа\-ли\-зу\-ющая взаимодействие только на хостах с~меткой~$(*)$. Остальные хосты 
+относятся к~уровню Low, и~задача~$\mathcal{N}$ реализует разрешительную 
+систему только этих хостов. Таким образом, в~задаче~$\mathcal{N}$ выделяется 
+независимая подзадача~$\mathcal{N}_L$, реализующая разрешительную систему 
+взаимодействия хостов на уровне Low. 
+  
+  Отметим, что задачи~$\mathcal{N}_H$ и~$\mathcal{N}_L$ могут 
+рассматриваться как два экземпляра задачи~$\mathcal{N}$, функционирующие на 
+непересекающихся доменах РИВС. 
+  
+  Наиболее сложный вопрос состоит в~безопасной передаче информации с~уровня 
+Low на уровень High. Согласно модели Bell-LaPadula~\cite{9-tt}, такую передачу 
+можно осуществить только с~по\-мощью доверенного процесса, реализующего 
+од\-но\-на\-прав\-лен\-ный канал с~уровня Low на уровень High. Такой однонаправленный 
+канал можно реализовать на базе задачи~$\mathcal{N}$. Этот доверенный канал 
+может быть организован на основе инфраструктуры метаданных следующим 
+образом. 
+  
+  Пусть задача~$A$ запрашивает соединение с~задачей~$B^*$ через 
+задачу~$\mathcal{N}_L$. Исходя из метаданных, задача~$\mathcal{N}$ 
+определяет необходимость передачи исходных данных из задачи~$A$ 
+в~задачу~$B^*$. При получении разрешения эти данные передаются из задачи~$A$ в~задачу~$\mathcal{N}_L$. После проверки их безопасности данные из 
+задачи~$\mathcal{N}_L$ передаются в~задачу~$\mathcal{N}_H$ для дальнейшей 
+передачи данных в~задачу~$B^*$. Отметим, что непосредственного соединения 
+хоста уровня Low с~хостом уровня High не происходит. Отсюда следует 
+утверждение. 
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Утверждение~2.}\ \textit{Пусть выполняются следующие условия}:
+  \begin{enumerate}[(1)]
+  \item \textit{ сформирована подсистема РИВС уровня High с~помощью задач 
+  и~хостов с~метками~$(*)$ и~разрешительная система на основе МД 
+и~задачи}~$\mathcal{N}_H$;
+\item \textit{сформирована подсистема РИВС уровня Low с~помощью задач 
+и~хостов без меток~$(*)$ и~разрешительная система на основе метаданных 
+и~задачи}~$\mathcal{N}_L$;
+  \item \textit{взаимодействие уровней Low и~High осуществляется только через 
+однонаправленное взаимодействие задач~$\mathcal{N}_L$ 
+и~~$\mathcal{N}_H$}. 
+  \end{enumerate}
+  \textit{Тогда в~РИВС выполняется политика MLS}.
+  
+  \smallskip
+  
+  \noindent
+  Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ Метаданные
+   и~задача~$\mathcal{N}_H$ не 
+допускают взаимодействия уровня High с~уровнем Low. Аналогично МД и~задача 
+NL не допускают непосредственного взаимодействия уровня Low с~уровнем High. 
+Безопасный интерфейс уровня Low с~уровнем High реализован 
+однонаправленным каналом между задачами~$\mathcal{N}_L$ 
+и~$\mathcal{N}_H$. Функционал, реализующий этот канал, как и~вся 
+задача~$\mathcal{N}$, могут быть изолированы от остального функционала РИВС и~поэтому могут считаться доверенным субъектом. Таким образом, все условия 
+реализации политики MLS выполнены. Утверждение~2 доказано. 
+  
+  \section{Поиск информации с~уровня High на~уровне Low}
+  
+  Для решения задач с~меткой~$(*)$ может возникнуть необходимость 
+дополнительного поиска информации в~памяти о предшествующих задачах. 
+Метаданные сохраняют информацию о цепочке решенных задач, и~обращение 
+к~ним на уровне High не представляет сложности. 
+  
+  Если задаче~$A^*$ необходимо найти дополнительную информацию на уровне 
+Low, то тогда также можно использовать доверенное взаимодействие между 
+задачами~$\mathcal{N}_H$ и~$\mathcal{N}_L$. Задача~$\mathcal{N}_H$ 
+обращается к~задаче~$\mathcal{N}_L$ с~запросом на поиск данных в~решенных на 
+уровне Low задачах. Задача~$\mathcal{N}_L$, используя обратный обзор 
+решенных на уровне Low задач, ищет искомую информацию. В~данном случае 
+возможен скрытый канал с~уровня High на уровень Low в~задании поиска 
+информации на уровне Low~\cite{8-tt}. Этот канал можно перекрыть с~помощью 
+последовательного опроса задач на уровне Low и~выявления признаков искомой 
+информации уже на уровне задачи~$\mathcal{N}_L$. В~случае появления 
+необходимых признаков задача~$\mathcal{N}_L$ передает 
+задаче~$\mathcal{N}_H$ данные для задачи~$A^*$. 
+  
+  Данный способ не является доказательством перекрытия скрытого канала. 
+Однако обращение с~уровня High на уровень Low считается запрещенным 
+информационным потоком в~политике MLS, и~реализация такого поиска с~учетом 
+возможности скрытого канала является сложной задачей~\cite{10-tt}. 
+  
+  \section{Заключение }
+  
+  В работе рассмотрена РИВС, в~которой управ\-ле\-ние соединениями 
+осуществляется с~помощью МД. Показана возможность реализации 
+ПБ MLS в~рассматриваемой РИВС на основе 
+инфраструктуры, связанной с~МД. Единственный доверенный процесс, 
+необходимый для реализации ПБ MLS, функционирует на 
+уровне управ\-ле\-ния соединениями. Этот уровень не связан с~плос\-костью передачи 
+данных и~может быть изолирован с~\mbox{целью} обеспечения его информационной 
+безопас\-ности. 
+  
+  В работе рассмотрена только одна ИТ, для которой необходимо выполнить 
+требования политики безопасности MLS. Однако рассмотренный метод легко 
+обобщается на случай множества ИТ.
+  
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-tt}
+Department of Defense trusted computer system evaluation criteria.~--- U.S.\ National Institute of 
+Standards and Technology, Department of Defense, 1985. {\sf 
+http://csrc.nist.gov/publications/history/dod85.\linebreak pdf}. 
+\bibitem{2-tt}
+\Au{Grusho A., Grusho N., Zabezhailo~M., Zatsarinny~A., Timonina~E.} Information security of SDN 
+on the basis of meta data~// Computer 
+network security~/ Eds. J.~Rak, J.~Bay, I.~Kotenko, \textit{et al.}~---
+Lecture notes in computer science ser.~--- Springer, 2017. 
+Vol.~10446.  P.~339--347. doi: 10.1007/978-3-319-65127-9\_27.
+\bibitem{3-tt}
+\Au{Грушо А.\,А., Грушо~Н.\,А., Левыкин~М.\,В., Тимонина~Е.\,Е.} Методы идентификации 
+захвата хоста в~распределенной ин\-фор\-ма\-ци\-он\-но-вы\-чис\-ли\-тель\-ной системе, 
+защищенной с~по\-мощью метаданных~// Информатика и~её применения, 2018. Т.~12. Вып.~4. 
+С.~41--45.
+\bibitem{4-tt}
+\Au{Grusho A.\,A., Grusho~N.\,A., Timonina~E.\,E.} 
+Information flow control on the basis of meta 
+data~// Distributed computer and communication networks~/ 
+Eds. V.\,M.~Vishnevskiy, K.\,E.~Samouylov, D.\,V.~Kozyrev.~--- 
+Lecture notes
+in computer science ser.~--- Springer,
+ 2019. Vol.~11965. P.~548--562.
+
+\bibitem{5-tt}
+\Au{Грушо А.\,А., Тимонина~Е.\,Е., Шоргин~С.\,Я.} Иерархический метод порождения 
+метаданных для управления сетевыми соединениями~// Информатика и~её применения, 2018. 
+Т.~12. Вып.~2. С.~44--49.
+\bibitem{6-tt}
+\Au{Грушо А.\,А., Зацаринный~А.\,А., Тимонина~Е.\,Е.} Электронная бухгалтерская книга на базе 
+ситуационных центров для цифровой экономики~// Системы и~средства информатики, 2019. 
+Т.~29. №\,2. С.~4--11.
+\bibitem{7-tt}
+\Au{Grusho A.\,A., Timonina~E.\,E., Shorgin~S.\,Ya.} Modelling for ensuring information security of 
+the distributed information systems~// 31th European Conference on Modelling and Simulation 
+Proceedings.~--- Dudweiler, Germany: Digitaldruck Pirrot GmbH, 2017. P.~656--660. {\sf 
+http://www.scs-europe.net/dlib/2017/\linebreak  
+ecms2017acceptedpapers/0656-probstat\_ECMS2017\_ 0026.pdf}.
+\bibitem{8-tt}
+\Au{Тимонина Е.\,Е.} Анализ угроз скрытых каналов и~методы построения гарантированно 
+защищенных распределенных автоматизированных систем: Дис.\ \ldots\ д-ра техн. наук.~--- 
+М., 2004. 204~с.
+\bibitem{9-tt}
+\Au{Грушо А.\,А., Применко~Э.\,А., Тимонина~Е.\,Е.} Теоретические основы компьютерной 
+безопасности.~--- М.: Академия, 2009. 272~с.
+\bibitem{10-tt}
+\Au{Grusho A.\,A., Grusho~N.\,A., Zabezhailo~M.\,I., Timonina~E.\,E.} Protection of valuable 
+information in public information space~// Communications of the ECMS: 33th European Conference 
+on Modelling and Simulation Proceedings.~--- 
+Dudweiler, Germany: Digitaldruck Pirrot GmbH, 2019. 
+Vol.~33. No.\,1. P.~451--455. 
+{\sf 
+http://www.scs-europe.net/dlib/2019/ecms2019acceptedpapers/0451\_\linebreak pstat\_ecms2019\_0018.pdf}.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 13.10.19}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{USING METADATA TO~IMPLEMENT MULTILEVEL SECURITY POLICY 
+REQUIREMENTS}
+
+
+\def\titkol{Using metadata to~implement multilevel security policy 
+requirements}
+
+\def\aut{A.\,A.~Grusho, N.\,A.~Grusho, and~E.\,E.~Timonina}
+
+\def\autkol{A.\,A.~Grusho, N.\,A.~Grusho, and~E.\,E.~Timonina}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+ \noindent
+   Institute of Informatics Problems, Federal Research Center ``Computer Sciences and 
+Control'' of the Russian Academy of Sciences; 44-2~Vavilov Str., Moscow 119133, 
+Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}  
+ 
+  
+   \Abste{A distributed information computing system which objects contain both valuable 
+information (or are themselves valuable) and open (non-valuable) information is considered. To protect 
+valuable information, multilevel  security (MLS) policy is used that prohibits information flows from objects with 
+valuable information to objects with open information. Objects with valuable information form a~class 
+of high-level objects, and objects with open information form a class of low-level objects.
+   Metadata is created to manage network connections. Metadata is a simplification of mathematical 
+models of business processes and is the basis of a permission system for host connections in 
+a~distributed information computing system.
+   The paper constructs MLS security policy rules, and based on metadata-related infrastructure, 
+shows the ability to implement this security policy in the distributed information computing system. 
+The only trusted process required to implement the MLS security policy is at the connection 
+management level. This layer is unrelated to the data plane and can be isolated to ensure its 
+information security.}
+    
+   \KWE{MLS security policy; information flows; metadata}
+   
+   
+   
+
+\DOI{10.14357/19922264190414} 
+
+%\vspace*{-14pt}
+
+ \Ack
+   \noindent
+   The paper was partially supported by the Russian Foundation for Basic Research (project  
+18-07-00274).
+
+
+%\vspace*{-6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-tt-1}
+U.S.\ National Institute of Standards and Technology, Department of Defence. 1985.
+Department of Defense trusted computer system evaluation criteria. Available at: {\sf 
+http://csrc.nist.gov/publications/history/dod85.pdf} (accessed October~6, 2019).
+\bibitem{2-tt-1}
+\Aue{Grusho, A., N.~Grusho, M.~Zabezhailo, A.~Zatsarinny, and E.~Timonina.} 2017. Information 
+security of SDN on the basis of meta data. 
+\textit{Computer network security}. Eds. J.~Rak, J.~Bay, I.~Kotenko, 
+\textit{et al.}
+Lecture notes in computer science ser. Springer. 
+10446:339--347. doi: 10.1007/978-3-319-65127-9\_27.
+\bibitem{3-tt-1}
+\Aue{Grusho, A.\,A., N.\,A.~Grusho, M.\,V.~Levykin, and E.\,E.~Timonina.} 2018. Metody 
+identifikatsii zakhvata khosta v~raspredelennoy informatsionno-vychislitel'noy sisteme, 
+zashchishchennoy s~pomoshch'yu metadannykh [Methods of identification of host capture in the 
+distributed information system which is protected on the base of meta data]. \textit{Informatika i~ee 
+Primeneniya~--- Inform. Appl.} 12(4):41--45. 
+\bibitem{4-tt-1}
+\Aue{Grusho, A.\,A., N.\,A.~Grusho, and E.\,E.~Timonina.} 2019. Information flow control 
+on the basis of meta data. \textit{Distributed computer and communication networks}.
+ Eds. V.\,M.~Vishnevskiy, 
+K.\,E.~Samouylov, and D.\,V.~Ko\-zy\-rev. 
+Lecture notes
+in computer science ser. Springer. 11965:548--562.
+\bibitem{5-tt-1}
+\Aue{Grusho, A.\,A., E.\,E.~Timonina, and S.\,Ya.~Shorgin.} 2018. Ierarkhicheskiy metod 
+porozhdeniya metadannykh dlya upravleniya setevymi soedineniyami [Hierarchical method of meta 
+data generation for control of network connections]. \textit{Informatika i~ee Primeneniya~--- Inform. 
+Appl.} 12(2):44--49.
+\bibitem{6-tt-1}
+\Aue{Grusho, A.\,A., A.\,A.~Zatsarinny, and E.\,E.~Timonina.} 2019. Elektronnaya bukhgalterskaya 
+kniga na baze situatsionnykh tsentrov dlya tsifrovoy ekonomiki [The electronic ledger on the basis of 
+the situational centers for digital economy]. \textit{Sistemy i~Sredstva Informatiki~--- Systems and 
+Means of Informatics} 29(2):4--11.
+\bibitem{7-tt-1}
+\Aue{Grusho, A.\,A., E.\,E.~Timonina, and S.\,Ya.~Shorgin.} 2017. Modelling for ensuring 
+information security of the distributed information systems. \textit{31th European Conference on 
+Modelling and Simulation Proceedings}. Dudweiler, Germany: Digitaldruck Pirrot GmbH. 656--660. 
+Available at: {\sf  
+http://www.scs-europe.net/dlib/2017/\linebreak ecms2017acceptedpapers/0656-probstat\_ECMS2017\_ 0026.pdf} (accessed 
+October~6, 2019).
+\bibitem{8-tt-1}
+\Aue{Timonina, E.\,E.} 2004. Analiz ugroz skrytykh kanalov i~metody postroeniya garantirovanno 
+zashchishchennykh raspredelennykh avtomatizirovannykh sistem [The analysis of threats of covert 
+channels and methods of creation of guaranteed protected distributed automated 
+systems]. Moscow.  D.Sc. Diss.  204~p.
+\bibitem{9-tt-1}
+\Aue{Grusho, A., E.~Primenko, and E.~Timonina.} 2009. \textit{Teoreticheskie osnovy 
+komp'yuternoy bezopasnosti} [Theoretical bases of computer security]. Moscow: Academy. 272~р.
+\bibitem{10-tt-1}
+\Aue{Grusho, A.\,A., N.\,A.~Grusho, M.\,I.~Zabezhailo, and E.\,E.~Timonina.} 2019. Protection of 
+valuable information in public information space. \textit{Communications of the ECMS:  33th 
+European Conference on Modelling and Simulation Proceedings}. 
+Dudweiler, Germany: Digitaldruck Pirrot GmbH.
+33(1):451--455. Available at: {\sf 
+http://www.scs-europe.net/dlib/2019/ecms2019acceptedpapers/0451\_\linebreak pstat\_ecms2019\_0018.pdf} (accessed 
+October~6, 2019).
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received October 13, 2019}}
+
+%\pagebreak
+
+%\vspace*{-22pt}
+
+
+\Contr
+
+
+\noindent
+\textbf{Grusho Alexander A.} (b.\ 1946)~--- Doctor of Science in physics and 
+mathematics, professor, principal scientist, Institute of Informatics Problems, Federal 
+Research Center ``Computer Sciences and Control'' of the Russian Academy of 
+Sciences; 44-2~Vavilov Str., Moscow 119133, Russian Federation;  
+\mbox{grusho@yandex.ru}
+
+\vspace*{3pt} 
+
+\noindent
+\textbf{Grusho Nikolai A.} (b.\ 1982)~--- Candidate of Science (PhD) in physics 
+and mathematics, senior scientist, Institute of Informatics Problems, Federal 
+Research Center ``Computer Sciences and Control'' of the Russian Academy of 
+Sciences;  
+44-2~Vavilov Str., Moscow 119133, Russian Federation; info@itake.ru 
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Timonina Elena E.} (b.\ 1952)~--- Doctor of Science in technology, 
+professor, leading scientist, Institute of Informatics Problems, Federal Research 
+Center ``Computer Sciences and Control'' of the Russian Academy of Sciences;  
+44-2~Vavilov Str., Moscow 119133, Russian Federation; 
+\mbox{eltimon@yandex.ru}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}  

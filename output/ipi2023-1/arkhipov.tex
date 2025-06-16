@@ -1,0 +1,847 @@
+\def\stat{arkhipov}
+
+\def\tit{РАЗРАБОТКА НОВОЙ МОДЕЛИ СТУПЕНЧАТОЙ СВЕРТОЧНОЙ НЕЙРОННОЙ СЕТИ 
+ДЛЯ~КЛАССИФИКАЦИИ АНОМАЛИЙ НА~ПАНОРАМАХ}
+
+\def\titkol{Разработка новой модели ступенчатой сверточной нейронной сети 
+для~классификации аномалий на~панорамах}
+
+\def\aut{П.\,О.~Архипов$^1$, С.\,Л.~Филиппских$^2$, М.\,В.~Цуканов$^3$}
+
+\def\autkol{П.\,О.~Архипов, С.\,Л.~Филиппских, М.\,В.~Цуканов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Архипов П.\,О.}
+\index{Филиппских С.\,Л.}
+\index{Цуканов М.\,В.}
+\index{Arkhipov P.\,O.}
+\index{Philippskih S.\,L.}
+\index{Tsukanov M.\,V.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнена при поддержке РФФИ (проекты 20-37-90050 и~20-07-00990).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управ\-ле\-ние>> 
+Российской академии наук, \mbox{arpaul@mail.ru}}
+\footnotetext[2]{Федеральный исследовательский центр  
+<<Информатика и~управ\-ле\-ние>> Российской академии наук, \mbox{philippsl@mail.ru}}
+\footnotetext[3]{Федеральный исследовательский центр  
+<<Информатика и~управ\-ле\-ние>> Российской академии наук, \mbox{tsukanov.m.v@yandex.ru}}
+
+%\vspace*{-10pt}
+
+   
+
+\Abst{Описывается разработанная новая модель ступенчатой сверточной нейронной 
+сети для классификации аномалий на панорамах. Вы\-бра\-ны подходящие наборы данных 
+для классификации. Сделан вывод о~неполноте применявшегося ранее авторами метода 
+поиска аномалий особых областей с~высоким цветоразличием на панорамах. Поиск 
+данных областей разработанным ранее методом не ставил перед собой задачу их 
+классификации. Для автоматической идентификации обнаруженных объектов 
+предлагается применить модели глубокого обуче\-ния с~использованием подходящих 
+нейросетей. Особое внимание уделено работе с~данными, содержащими 
+несбалансированные классы и~изображения разного размера. Проводится сравнение 
+результатов классификации изображений популярных архитектур нейронных сетей 
+с~разработанной ступенчатой сверточной нейронной \mbox{сетью}.}
+
+\KW{панорамное изображение; набор данных; многоклассовая классификация; 
+ступенчатая сверточная нейронная сеть; ансамбль; перенос обучения}
+
+\DOI{10.14357/19922264230107} 
+  
+\vspace*{6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+\vspace*{-4pt}
+
+  Применение беспилотных летательных аппаратов (БПЛА) широко 
+пред\-став\-ле\-но во многих сферах производства и~строительства, таких как 
+геодезия, картография, энергетика, инженерия, видеонаблюдение и~т.\,п. 
+В~каж\-дой из этих областей требуется оперативное наблюдение за 
+технологическими процессами и~своевременное вы\-яв\-ле\-ние аномалий, 
+воз\-мож\-ное благодаря аэрофотоснимкам высокого разрешения, полученным 
+с~БПЛА.
+  
+  В рамках выполнения работ по данному на\-прав\-ле\-нию~[1--3] была 
+рассмотрена задача по обнаружению аномалий на сравниваемых 
+разновременных панорамах инспектируемой мест\-ности. Для решения 
+поставленной задачи был разработан метод, основанный на поиске аномалий за 
+счет обнаружения особых областей с~высоким цветоразличием, представленных 
+внешними и~внутренними характеристиками~\cite{4-ark, 5-ark}. Поиск 
+аномалий этим методом не ставил перед собой задачу их классификации. 
+Поэтому дальнейшим развитием метода может стать разработка новой модели 
+ступенчатой сверточной нейронной сети для классификации аномалий на 
+панорамах в~рамках новой парадигмы машинного обуче\-ния.
+  
+  Многоклассовая классификация аномалий, полученных при анализе 
+созданных панорамных изоб\-ра\-же\-ний, предполагает по\-стро\-ение модели 
+глубокого обуче\-ния~\cite{6-ark}. Данная модель должна получать на вход 
+множество примеров изоб\-ра\-же\-ний реальных объектов, проводить их 
+статистический анализ и~выявлять скры\-тую структуру в~дан\-ных.
+{ %\looseness=1
+
+}
+  
+  Обучающая выборка должна содержать изображения разного размера, так как 
+это соответствует реальным условиям работы модели: различная высота съем\-ки 
+БПЛА, реальные размеры объектов разных классов, разрешение 
+видеоаппаратуры и~др. Для классификации изображений с~по\-мощью 
+нейронных сетей их нуж\-но привести к~одному размеру. Нормализация размеров 
+приводит к~потере час\-ти информации (в~случае больших изображений) 
+и~появлению лишних шумов (в~случае маленьких изображений). В~результате 
+точ\-ность классификации может сильно уменьшиться~\cite{7-ark}.
+
+\setcounter{table}{2}
+\begin{table*}[b]\small %tabl3
+\vspace*{-12pt}
+\begin{center}
+\Caption{Оценки площадей изображений в~датасете}
+\vspace*{2ex}
+
+\begin{tabular}{|l|r|r|r|r|r|}
+\hline
+    \multicolumn{1}{|c|}{Оценка}&\multicolumn{1}{c|}{Для всей выборки}&\multicolumn{1}{c|}{0 (bus)}& 
+\multicolumn{1}{c|}{1 (car)}& \multicolumn{1}{c|}{2 (people)}& \multicolumn{1}{c|}{3 
+(truck)}\\
+  \hline
+   Минимальная площадь&25\hphantom{10mm}&25&25&25&25\\
+   Максимальная площадь&328\,640\hphantom{10mm}&324\,300&328\,640&72\,670&315\,202\\
+   Средняя площадь&2\,694\hphantom{10mm}&6\,983&3\,435&718&6\,480\\
+Стандартное отклонение&7\,085\hphantom{10mm}&17\,325&7\,270&1\,419&14\,737\\
+   Медианная площадь&728\hphantom{10mm}&2\,379&1\,152&330&2\,150\\
+  \hline
+  \end{tabular}
+  \end{center}
+  \end{table*}
+  
+  Проблему разных размеров входных изображений можно решить с~по\-мощью 
+ан\-самб\-ля нейронных сетей. Каж\-дое входное изображение масштабируется 
+сразу в~несколько размеров и~подается на вход нейросетевых моделей. После 
+этого результаты работы всех сетей усредняются и~выдается общий результат. 
+Такой подход может быть очень эффективен, но он требует значительных 
+вы\-чис\-ли\-тель\-ных ресурсов, так как придется \mbox{обучать} на одной выборке 
+несколько нейронных сетей~\cite{7-ark}.
+
+\vspace*{-6pt}
+
+\section{Выбор подходящего набора данных}
+
+  Для экспериментов с~моделями машинного обуче\-ния был выбран датасет 
+VisDrone~\cite{8-ark}, так как он довольно объемный и~включает классы, 
+встречающиеся на ана\-ли\-зи\-ру\-емых панорамах. Весь набор данных разделен 
+на три части: train (обучающее подмножество), valid (валидационное 
+подмножество) и~test (тес\-то\-вое под\-мно\-же\-ст\-во) (табл.~1). 
+
+Из получившихся изображений сформирована следующая выборка:
+%\begin{table*} %tabl1
+  %\small %tabl1
+  \vspace*{12pt}
+  
+  \begin{center}
+ \parbox{172pt}{{{\tablename~1}\ \ \small{Сбалансированные подмножества датасета
+}} 
+}
+
+  \vspace*{8pt}
+  
+  {\small 
+  \tabcolsep=8.5pt
+  \begin{tabular}{|l|r|}
+  \hline
+  \multicolumn{1}{|c|}{Подмножество}&\multicolumn{1}{c|}{Число фотографий}\\
+  \hline
+   \hphantom{8mm}train&284\,993\hphantom{10mm}\\
+  \hphantom{8mm}valid&47\,499\hphantom{10mm}\\
+ \hphantom{8mm}test&47\,499\hphantom{10mm}\\
+  \hline
+  \end{tabular}
+  }
+  \vspace*{9pt}
+  
+ \end{center}
+  %\end{table*}
+
+  
+  
+
+
+  
+  %\vspace*{12pt}
+  
+
+%\begin{table*}\small %tabl2
+\begin{center}
+\parbox{172pt}{{{\tablename~2}\ \ \small{Сбалансированные соотношения классов в~датасете
+}}}
+
+\vspace*{8pt}
+
+{\small 
+\begin{tabular}{|l|c|c|c|}
+\hline
+  \multicolumn{1}{|c|}{Класс}&train, \%&valid, \%&test, \%\\
+  \hline
+  0 (bus)&\hphantom{9}2,39&\hphantom{9}2,37&\hphantom{9}2,46\\
+  1 (car)&57,41&57,26&57,36\\
+  2 (people)&35,92&36,10 &35,89\\
+  3 (truck)&\hphantom{9}4,28&\hphantom{9}4,27&\hphantom{9}4,29\\
+  \hline
+  \end{tabular}
+  }
+  %\vspace*{3pt}
+  \end{center}
+ % \end{table*}
+ 
+ \vspace*{9pt}
+
+ { \begin{center}  %fig1
+ %\vspace*{6pt}
+    \mbox{%
+\epsfxsize=78.317mm
+\epsfbox{arh-1.eps}
+}
+
+\end{center}
+
+\vspace*{3pt}
+
+\noindent
+{{\figurename~1}\ \ \small{Гистограмма распределения площадей изображений
+}}}
+
+%\vspace*{9pt}
+
+\addtocounter{figure}{1}
+
+
+
+
+  
+  \noindent
+  \begin{description}
+  \item[\,]  класс 0 (bus): фотографии автобусов;
+  \item[\,] класс 1 (car): фотографии легковых автомобилей и~микроавтобусов;
+  \item[\,] класс 2 (people): фотографии людей и~пешеходов;
+  \item[\,] класс 3 (truck): фотографии грузовиков.
+  \end{description}
+  
+  При работе классификатора в~случае не\-уве\-рен\-ности нейронной сети, 
+к~какому классу следует отнести изображение, чаще всего модель выбирает 
+самый вероятный класс. По этой причине очень\linebreak \mbox{важ\-но} для корректной оценки 
+процесса обуче\-ния иметь одинаково сбалансированную выборку. В~данном 
+случае необходимо про\-вес\-ти перебалансировку датасета. Чис\-ло изображений 
+в~valid и~test долж\-но быть одинаковым и~иметь такое же раз\-би\-ение по классам, 
+как и~train (табл.~2).
+
+Помимо разбиения на классы полезно оценить распределение размеров 
+изображений в~датасете.
+ Для этого по\-стро\-им гистограмму распределения 
+площадей изображений всей выборки (рис.~1).
+  
+  Из гистограммы распределений видно, что в~датасете больше всего 
+небольших изображений размером до~50~пикселей. С~увеличением размера 
+чис\-ло изображений рез\-ко уменьшается. 
+
+Для по\-стро\-ения нейронной сети 
+необходимо получить несколько базовых оценок выборки (табл.~3): 
+стандартное отклонение, 
+минимальную, 
+ максимальную, сред\-нюю и~медианную 
+площади. У~разных классов значения оценок сильно отличаются, и~это еще 
+один фактор, ослож\-ня\-ющий по\-стро\-ение нейросетевой модели 
+и~клас\-си\-фи\-ка\-цию.
+{ %\looseness=1
+
+}
+  
+  
+
+\setcounter{table}{3}
+\begin{table*}[b]\small %tabl4
+\vspace*{-9pt}
+\begin{center}
+\Caption{Результаты классификации трех базовых моделей}
+\vspace*{2ex}
+
+\begin{tabular}{|l|c|c|c|c|c|}
+\hline
+  \multicolumn{1}{|c|}{Модель}&Все классы, \%&0 (bus), \%&1 (car), \%&2 (people), \%&3 (truck), \%\\
+\hline
+  ConvNN&85,3&17,6&90,9&94,0&15,7\\
+  VGG19&82,3&27,9&87,7&89,5&12,7\\
+  Xception&81,5&28,7&82,5&95,1&11,0\\
+  \hline
+  \end{tabular}
+  \end{center}
+  \end{table*}
+
+\vspace*{-3pt}
+
+
+\section{Выбор нейронной сети для~классификации изображений}
+  
+  В качестве базовой оценки (baseline) попробуем классифицировать все 
+изображения датасета \mbox{VisDrone}~\cite{8-ark} с~по\-мощью одной нейронной сети. 
+Для сравнения возьмем три базовые оценки, сделанные с~по\-мощью нейронных 
+сетей разного размера и~глубины: прос\-тая нейронная сеть, со\-сто\-ящая из 
+нескольких сверточных слоев (ConvNN), VGG19~\cite{9-ark}  
+и~Xception~\cite{10-ark}.
+  
+  Для обучения нейронных сетей применяется распространенный алгоритм 
+Adam~\cite{11-ark}~--- метод стохастического градиентного спус\-ка, 
+основанный на адап\-тив\-ной оцен\-ке моментов. Градиентный спуск~--- это один 
+из самых эффективных методов оптимизации, поскольку вы\-чис\-ле\-ние част\-ных 
+производных первого порядка относительно всех па\-ра\-мет\-ров имеет ту же 
+вычислительную сложность, что и~прос\-то вы\-чис\-ле\-ние функции~\cite{11-ark}. 
+Корректировка весов с~по\-мощью градиентного спуска вы\-чис\-ля\-ет\-ся по 
+сле\-ду\-ющей формуле:
+  $$
+  \theta_t= \theta_{(t-1)} -\alpha \nabla_\theta f_t\left( \theta_{(t-1)}\right)\,,
+  $$
+где $\theta$~--- настраиваемый параметр; $t$~--- итерация обуче\-ния;  
+$\alpha$~--- шаг обуче\-ния; $\nabla$~--- градиент ошиб\-ки; $f$~--- функция 
+потерь.
+  
+  Метод Adam~\cite{11-ark} позволяет вычислять индивидуальные скорости 
+адап\-тив\-но\-го обуче\-ния для разных па\-ра\-мет\-ров на основе оценок первого 
+и~второго моментов градиентов~\cite{11-ark}:
+  \begin{align*}
+  m_t&= \beta_1 m_{(t-1}) +\left( 1-\beta_1\right) \nabla_\theta f_t \left(  
+\theta_{(t-1)} \right)\,;\\
+  v_t &= \beta_2 v_{(t-1)} +\left(1-\beta_2\right) \left( \nabla_\theta f_t \left( 
+\theta_{(t-1)}\right)\right)^2\,,
+  \end{align*}
+где $m$~--- первый момент; $v$~--- второй момент;  
+$\beta_1, \beta_2 \hm\in [0; 1)$~--- экспоненциальные скорости затухания для 
+оценок моментов. 
+  
+  В качестве функции потерь используется категориальная перекрестная 
+энтропия (categorical cross-entropy). Это обуслов\-ле\-но тем, что метки ко всем 
+изображениям в~выборке были закодированы в~век\-то\-ры из~0 и~1 (one-hot 
+encoding)~\cite{7-ark}.
+  
+  Для устойчивости результатов обучения моделей применяется метод 
+фиксации генератора случайных значений: перед каж\-дым запуском процесса 
+создания и~обуче\-ния нейронной сети необходимо перезапускать генератор 
+случайных чисел с~фиксированным начальным значением. Это позволяет 
+инициализировать веса моделей одинаковыми значениями, и~данные при 
+обуче\-нии будут по\-сту\-пать в~том же порядке~\cite{7-ark}.
+  
+  Сверточные слои в~многослойной нейронной сети имеют два важных 
+свойства~\cite{6-ark}:
+  \begin{enumerate}[(1)]
+  \item  пространственная ин\-ва\-ри\-ант\-ность признаков~--- любой пат\-терн, 
+вы\-учен\-ный рецептивным полем нейрона, может быть распознан в~любом месте 
+изображения;
+  \item пространственная иерархия паттернов~--- слож\-ность шаб\-ло\-нов, 
+которые рас\-по\-зна\-ют рецептивные поля нейронов, воз\-рас\-та\-ет с~увеличением 
+чис\-ла слоев сети. 
+  \end{enumerate}
+  
+  Эти два свойства позволяют применять очень эффективный метод 
+построения нейронных сетей~--- перенос обуче\-ния (transfer  
+learning)~\cite{7-ark}. Если имеется уже обучен\-ная на большом наборе данных 
+сеть, то найденные паттерны можно применить при решении других задач. 
+Эффективность переноса обуче\-ния возрастает, если исходная обуча\-ющая 
+выборка содержала классы, которые присутствуют в~новой задаче.
+  
+  В качестве первой модели для базовой оценки разработаем свою прос\-тую 
+сверточную нейронную сеть (ConvNN), со\-сто\-ящую из 4~сверточных слоев (8, 
+16, 32 и~64~нейрона), 4~слоев MaxPooling и~одного полносвязного слоя из 
+четырех нейронов с~активационной функцией softmax. Специально выбрано 
+небольшое чис\-ло слоев и~нейронов. Чис\-ло нейронов соответствует степеням 
+двой\-ки для лучшей оптимизации на GPU~\cite{7-ark}.  
+В~сети 24\,788~па\-ра\-мет\-ров, и~все они на\-стра\-и\-ва\-емые.
+  
+  Вторая модель~--- сеть VGG19~\cite{9-ark}. Нейронная сеть строится 
+методом переноса обуче\-ния. Из сети VGG19 возь\-мем только сверточное ядро 
+(14~сверточных слоев и~5~слоев MaxPooling), обучен\-ное на наборе данных 
+ImageNet~\cite{6-ark}. Общее чис\-ло па\-ра\-мет\-ров сети: 20\,156\,740. Чис\-ло 
+на\-стра\-и\-ва\-емых па\-ра\-мет\-ров: 132\,356.
+  
+  Третья модель~--- сеть Xception~\cite{9-ark}. Нейронная сеть строится 
+методом переноса обучения. Из сети Xception возьмем только сверточное ядро, 
+обучен\-ное на наборе данных ImageNet. В~нем около~50~сверточных слоев. 
+Общее чис\-ло па\-ра\-мет\-ров сети: 25\,581\,356. Чис\-ло на\-стра\-и\-ва\-емых па\-ра\-мет\-ров: 
+4\,719\,876.
+  
+  Оценим для каждого класса результаты работы сетей, обучен\-ных на 
+подмножествах train, valid и~test. В~табл.~4 приведены результаты работы 
+базовых моделей на подмножестве test (мет\-ри\-ка--точ\-ность).
+
+
+  
+  \begin{figure*}[b] %fig2
+\vspace*{1pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=115.052mm
+\epsfbox{arh-2.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Пример ступенчатой сверточной нейронной сети из трех модулей}
+\end{figure*}
+  
+  Можно сделать вывод, что результаты классификации мало зависят от 
+слож\-ности архитекту-\linebreak ры нейронных сетей. Модели хорошо классифицируют два 
+больших класса (car, people) и~очень плохо работают на маленьких (bus, truck). 
+Это типичная ситуация для несбалансированной выбор-\linebreak ки с~изоб\-ра\-же\-ни\-ями 
+разного размера: нейронная сеть в~случае спорной ситуации выбирает самые 
+\mbox{распространенные} классы, тем самым максимизируя ве\-ро\-ят\-ность правильной 
+классификации. Такая стратегия хорошо влияет на сред\-нюю оценку, но 
+точ\-ность классификации маленьких классов при этом па\-дает.
+
+\section{Разработка модели ступенчатой сверточной нейронной сети}
+
+  
+  Для того чтобы решить проблему классификации изображений на маленьких 
+классах, построим\linebreak ан\-самбль нейронных сетей, который может работать 
+с~изображениями разного размера. Для уменьшения числа настраиваемых 
+па\-ра\-мет\-ров новая архитектура классификатора будет строиться на \mbox{основе} 
+ступенчатой нейронной сети.
+  
+  Разработанная ступенчатая сверточная нейронная сеть (StepwiseNet) будет 
+иметь два важ\-ных свойства:
+  \begin{enumerate}[(1)]
+  \item способность работать с~изображениями разных размеров;
+  \item использование меньших вы\-чис\-ли\-тель\-ных ресурсов, чем ан\-самбль 
+нейронных сетей.
+  \end{enumerate}
+  
+  При обучении ан\-самбля нейронных сетей первые сверточные слои каж\-дой 
+сети обуча\-ют\-ся поиску самых простых паттернов на изображениях. Таких 
+паттернов не так много, и~они очень похожи во всех сетях ан\-самб\-ля, т.\,е.\ при 
+таком обуче\-нии происходит дуб\-ли\-ро\-ва\-ние вы\-чис\-ле\-ний. Так как обучение 
+ансамбля проходит на одном датасете, то дуб\-ли\-ро\-ва\-ние паттернов встречается 
+и~в~более глубоких сверточных слоях.
+  
+  Основная идея ступенчатой сверточной нейронной сети~--- \mbox{обучить} все слои 
+модели один раз, а~потом при помощи переноса обучения создать ансамбль из 
+нескольких сетей.
+  
+  Ступенчатая сверточная нейронная сеть имеет модульную структуру. Чис\-ло 
+модулей и~их архитектура (чис\-ло слоев и~чис\-ло нейронов в~слое)~--- это 
+гиперпараметры. Они подбираются под каж\-дую задачу. Чис\-ло сетей в~ан\-самб\-ле 
+зависит от числа модулей. Для примера создадим модель из трех модулей. 
+В~дальнейшем она будет развернута в~ан\-самбль из трех нейронных сетей.
+  
+  На первом этапе необходимо создать сеть из трех модулей (рис.~2). 
+Архитектура каждого модуля зависит от задачи и~может со\-сто\-ять из разного 
+чис\-ла слоев. Далее необходимо вы\-брать размер входного слоя. Размер должен 
+соответствовать выбранной архитектуре сети. После этого модель обуча\-ет\-ся на 
+обуча\-ющем подмножестве.
+
+
+  
+  StepwiseNet будет состоять из сле\-ду\-ющих трех модулей:
+  \begin{description}
+  \item[\,]  модуль~1: входной слой $8\times8$~пикселей, 2~сверточных слоя, 
+2~слоя MaxPooling;
+  \item[\,] модуль~2: входной слой $40\times40$~пикселей, 4~слоя свертки 
+с~разделением по глубине (depthwise separable convolution) и~пакетная 
+нормализация (batch normalization) в~конце модуля;
+  \item[\,]  модуль~3: входной слой $70\times70$~пикселей, 7~слоев свертки 
+с~разделением по глубине (depthwise separable convolution) и~пакетная 
+нормализация (batch normalization) в~конце модуля.
+  \end{description}
+  
+  Классификатор состоит из двух полносвязных слоев. В~сети 
+543\,940~параметров, и~все они на\-стра\-и\-ва\-емые. Для обуче\-ния нейронных сетей 
+применяется алгоритм Adam~\cite{11-ark}. В~качестве функции потерь 
+используется категориальная перекрестная энтропия.
+  
+  
+  \begin{figure*} %fig3
+\vspace*{1pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=163mm
+\epsfbox{arh-3.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Пример создания из модульной сети ан\-самб\-ля нейронных сетей}
+\vspace*{-6pt}
+\end{figure*}
+
+  На втором этапе из обученной модульной сети формируется ансамбль. Если 
+в~ступенчатой сверточной нейронной сети три модуля, то первый модуль 
+используется в~качестве сверточного ядра для классификации самых маленьких 
+изображений. Первый и~второй модули используются в~качестве сверточного 
+ядра для классификаций изображений сред\-не\-го размера. \mbox{Третья} сеть 
+формируется на основе сверточного ядра, со\-сто\-яще\-го из первого, второго 
+и~треть\-его модулей.
+
+
+  
+  В результате этих шагов создается ан\-самбль нейронных сетей разной 
+глубины, в~котором повторно используются однократно обученные сверточные   
+ядра (рис.~3). При использовании классификатора на практике изображение, 
+в~за\-ви\-си\-мости от размера, подается на вход только одной из нейронных сетей ансамбля. Такая схема работы экономит ресурсы и~позволяет работать 
+с~изображениями различного размера выборки.
+
+\pagebreak
+
+
+
+
+
+\vspace*{-5pt}
+
+%\begin{table*}\small %tabl5
+  \begin{center}
+  \parbox{142pt}{{{\tablename~5}\ \ \small{Результаты классификации StepwiseNet по классам
+}}
+}
+
+  \vspace*{6pt}
+  
+  {\small \begin{tabular}{|l|c|}
+  \hline
+ \multicolumn{1}{|c|}{Класс}&Точность,~\%\\ 
+\hline 
+0~(bus)&68,3\\ 
+1~(car)&90,1\\ 
+2~(people)&91,0\\ 
+3~(truck)&65,9\\ 
+\hline
+По всем классам&89,4\\
+\hline
+\end{tabular}
+}
+\vspace*{8pt}
+\end{center}
+%\end{table*}
+
+{ \begin{center}  %fig4
+ \vspace*{-2pt}
+    \mbox{%
+\epsfxsize=78.952mm
+\epsfbox{arh-4.eps}
+}
+
+\end{center}
+
+\vspace*{-3pt}
+
+\noindent
+{{\figurename~4}\ \ \small{Диаграмма классификации изображений с~по\-мощью всех нейронных сетей: 
+\textit{1}~--- ConvNN; \textit{2}~--- VGG19; \textit{3}~--- Xception; \textit{4}~--- StepwiseNet
+}}}
+
+\vspace*{9pt}
+
+
+
+
+
+
+
+
+  
+  Для классификации изображений из датасета VisDrone спроектируем 
+ступенчатую сверточную нейронную сеть из трех модулей. Чис\-ло модулей 
+выбрано в~соответствии с~данными, пред\-став\-лен\-ны\-ми ранее на рис.~1. Для 
+каждого модуля необходимо установить размер входного слоя. Эти размеры 
+являются ги\-пер\-па\-ра\-мет\-ра\-ми и~выбираются для каж\-дой задачи отдельно. 
+В~качестве эвристики мож\-но использовать минимальное изменение исходного 
+размера изображения при масштабировании. Для этого нуж\-но разбить всю 
+выборку на несколько диапазонов в~за\-ви\-си\-мости от размеров изображений. Из 
+каж\-до\-го диапазона можно брать медианы или сред\-ние значения выборки.
+  
+  Входной слой для первой сети ан\-самб\-ля~--- $8\times8$~пикселей (медианное 
+значение для первого диапазона выборки). Входной слой для второй сети 
+ан\-самб\-ля~--- $40\times40$~пикселей. Входной слой для третьей сети 
+ан\-самб\-ля~--- $70\times70$~пикселей.
+  
+  В табл.~5 представлены результаты классификации ан\-самб\-ля, по\-стро\-ен\-но\-го 
+на основе ступенчатой
+сверточной нейронной сети. На рис.~4 пред\-став\-ле\-на 
+диаграмма классификации изображений с~по\-мощью всех нейронных сетей.
+  
+  
+\vspace*{-6pt}
+
+\section{Заключение}
+
+  Разработанная ступенчатая сверточная нейронная сеть поз\-во\-ля\-ет гиб\-ко 
+настраивать классификатор под различные задачи. Основные преимущества 
+данного подхода:
+  \begin{itemize}
+  \item использование разных сетей для классификации изображений разного 
+размера позволяет избежать потери информации и~шумов при 
+масштабировании;
+  \item число сетей в~ан\-самб\-ле можно настраивать путем изменения чис\-ла 
+модулей;
+  \item архитектуру каждого модуля можно изменять и~\mbox{обучать} отдельно, 
+фиксируя веса всех остальных слоев;
+  \item повторное использование модулей при формировании сверточных ядер 
+позволяет экономить вы\-чис\-ли\-тель\-ные ресурсы.
+  \end{itemize}
+  
+  Результаты работы ан\-самб\-ля, обучен\-но\-го на подмножествах train, valid и~test, 
+показывают, что с~по\-мощью разработанной ступенчатой сверточной нейронной 
+сети можно существенно улучшить результаты классификации 
+несбалансированной выборки с~изображениями разного размера. Общая 
+точ\-ность классификации по срав\-не\-нию с~моделями ConvNN, VGG19 и~Xception 
+воз\-рос\-ла на 4\%--8\%. При этом точ\-ность распознавания на ма\-ло\-чис\-лен\-ных 
+классах возросла в~2--6~раз (для класса~0 (bus)~--- с~17\%--28\% до~68\%, для 
+класса~3 (truck)~--- с~11\%--15\% до~66\%).
+  
+   Общее число па\-ра\-мет\-ров в~ступенчатой сверточной нейронной сети на два 
+порядка меньше, чем в~сетях VGG19 и~Xception (544~тыс.\ против  
+20--25~млн). Малое чис\-ло па\-ра\-мет\-ров ускоряет обуче\-ние, требует 
+меньше вы\-чис\-ли\-тель\-ных ресурсов и~снижает риск пе\-ре\-обуче\-ния.
+
+%\vspace*{-12pt}
+  
+{\small\frenchspacing
+ {\baselineskip=10.5pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+% \vspace*{-2pt}
+
+\bibitem{2-ark} %1
+\Au{Архипов П.\,О., Цуканов~М.\,В.} Алгоритмическая модель метода детектирования 
+аномалий при аэрофотосъемке объектов жи\-лищ\-но-ком\-му\-наль\-но\-го хозяйства~// 
+Информационные сис\-те\-мы и~технологии, 2019. №\,6(116). С.~39--45.
+
+\bibitem{1-ark} %2
+\Au{Архипов П.\,О., Цуканов~М.\,В.} Информационная модель технологии коррекции яр\-кости и~цвета при создании панорамных изоб\-ра\-же\-ний~// 
+Сис\-те\-мы высокой до\-ступ\-ности, 
+2020. Т.~16. №\,3. С.~46--51. doi: 10.18127/j20729472-202003-04.
+
+\bibitem{3-ark}
+\Au{Архипов П.\,О., Цуканов~М.\,В.} Алгоритмическая модель обнаружения аномалий на 
+разновременных панорамах~// Сис\-те\-мы высокой до\-ступ\-ности, 2021. Т.~17. №\,2.  
+С.~5--10. doi: 10.18127/j20729472-202102-01.
+\bibitem{4-ark}
+\Au{Архипов П.\,О., Колесник~А.\,В., Цуканов~М.\,В.} Программная сис\-те\-ма обнаружения 
+аномалий на разновременных панорамах об\-сле\-ду\-емой мест\-ности (CL\_22). Свидетельство 
+о~государственной регистрации программы для ЭВМ №\,2022615139, опубл. 30.03.2022.
+\bibitem{5-ark}
+\Au{Trofimenkov A.\,K., Tsukanov~M.\,V., Nosova~N.\,Y.} Modification of an algorithmic model for 
+detecting anomalies on panoramas of different times obtained from unmanned aerial vehicles~// 
+Modern informatization problems in simulation and social technologies.~--- Yelm, WA, USA: 
+Science Book Publishing House LLC, 2022. P.~183--186.
+\bibitem{6-ark}
+\Au{Krizhevsky А., Sutskever~I., Hinton~G.} ImageNet classification with deep convolutional 
+neural networks~// Commun. ACM, 2017. Vol.~60. P.~84--90. doi: 10.1145/3065386.
+\bibitem{7-ark}
+\Au{Chollet F.} Deep learning with Python.~--- 2nd ed.~--- Shelter Island, NY, USA: Manning 
+Publications Co., 2021. 504~p.
+\bibitem{8-ark}
+\Au{Zhu P., Wen~L., Du~D., Bian~X., Fan~H., Hu~Q., Ling~H.} Detection and tracking meet 
+drones challenge~// arXiv.org, 2021. 20~p. doi: 10.48550/arXiv.2001.06303.
+\bibitem{9-ark}
+\Au{Simonyan K., Zisserman~A.} Very deep convolutional networks for large-scale image 
+recognition~// arXiv.org, 2015. 14~p. doi: 10.48550/arXiv.1409.1556.
+\bibitem{10-ark}
+\Au{Chollet F.} Xception: Deep learning with depthwise separable convolutions~// arXiv.org, 2017. 8~p. doi: 10.48550/\linebreak arXiv.1610.02357.
+\bibitem{11-ark}
+\Au{Kingma D., Ba~J.} Adam: A~method for stochastic optimization~// arXiv.org, 2017. 15~p. doi: 
+10.48550/arXiv. 1412.6980.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Поступила в~редакцию 06.06.22}}
+
+\vspace*{6pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{DEVELOPMENT OF A~NEW MODEL OF~STEP CONVOLUTIONAL NEURAL 
+NETWORK FOR~CLASSIFICATION OF~ANOMALIES ON~PANORAMAS\\[-3pt]}
+
+
+\def\titkol{Development of a~new model of~step convolutional neural 
+network for~classification of~anomalies on panoramas}
+
+
+\def\aut{P.\,O.~Arkhipov, S.\,L.~Philippskih, and~M.\,V.~Tsukanov}
+
+\def\autkol{P.\,O.~Arkhipov, S.\,L.~Philippskih, and~M.\,V.~Tsukanov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-10pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov
+Str., Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{2pt} 
+
+
+
+
+\Abste{A~new model of a~stepped convolutional neural 
+network for classifying anomalies in panoramas has been developed. Appropriate datasets for classification are 
+selected. The conclusion is made about the incompleteness of the method previously used by the authors 
+to find anomalies in special areas with high color difference in panoramas. The search for 
+these areas by the previously developed method did not set the task of their classification. For 
+automatic identification of detected objects, it is proposed to apply deep learning models using 
+suitable neural networks. Particular attention is paid to work with data containing 
+unbalanced classes and images of different sizes. The results of image classification of popular 
+architectures of neural networks are compared with the newly developed stepped convolutional 
+neural network.}
+
+\KWE{panoramic image; data set; multilabel classification; stepwise convolutional neural 
+network; ensemble; transfer learning}
+
+\DOI{10.14357/19922264230107} 
+
+%\vspace*{-16pt}
+
+%\Ack
+%\noindent
+
+  
+
+\vspace*{-6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+% \vspace*{-6pt}
+  
+
+\bibitem{2-ark-1}
+\Aue{Arkhipov, P.\,O., and M.\,V.~Tsukanov.} 2019. Al\-go\-rit\-mi\-cheskaya mo\-del' me\-to\-da 
+de\-tek\-ti\-ro\-va\-niya ano\-ma\-liy pri aero\-fo\-to\-s"em\-ke ob"\-ek\-tov  
+zhi\-lishch\-no-kom\-mu\-nal'\-no\-go kho\-zyayst\-va [Algorithmic model of the method of 
+detecting anomalies in the aerial photography of objects of housing and communal services]. 
+\textit{In\-for\-ma\-tsi\-on\-nye sis\-te\-my i~tekh\-no\-lo\-gii} [Information Systems and Technologies] 
+6(116):39--45.
+
+\bibitem{1-ark-1}
+\Aue{Arkhipov, P.\,O., and M.\,V.~Tsukanov.} 2020. In\-for\-ma\-tsi\-on\-naya mo\-del' 
+ tekh\-no\-lo\-gii kor\-rek\-tsii yar\-kosti i~tsve\-ta pri so\-zda\-nii pa\-no\-ram\-nykh  
+izo\-bra\-zhe\-niy [Information model of brightness and color correction technology for creating 
+panoramic images]. \textit{Sis\-te\-my vy\-so\-koy do\-stup\-nosti} [Highly Available Systems]  
+16(3):46--51. doi: 10.18127/ j20729472-202003-04.
+
+\bibitem{3-ark-1}
+\Aue{Arkhipov, P.\,O., and M.\,V.~Tsukanov.} 2021. Al\-go\-rit\-mi\-che\-skaya mo\-del'  
+ob\-na\-ru\-zhe\-niya ano\-ma\-liy na raz\-no\-vre\-men\-nykh pa\-no\-ra\-makh [Algorithmic model 
+of anomaly detection on different panoramas]. \textit{Sis\-te\-my vy\-so\-koy do\-stup\-nosti} [Highly 
+Available Systems] 17(2):5--10. doi: 10.18127/ j20729472-202102-01.
+\bibitem{4-ark-1}
+\Aue{Arkhipov, P.\,O., A.\,V.~Kolesnik, and M.\,V.~Tsukanov.} 30.03.2022. Pro\-gram\-mnaya sis\-te\-ma 
+ob\-na\-ru\-zhe\-niya ano\-ma\-liy na raz\-no\-vre\-men\-nykh pa\-no\-ra\-makh ob\-sle\-du\-emoy 
+mest\-nosti (CL\_22) [Software system for detecting anomalies on multitemporal panoramas of the 
+surveyed area (CL\_22)]. Certificate of State Registration No.\,2022615139. 
+\bibitem{5-ark-1}
+\Aue{Trofimenkov, A.\,K., M.\,V.~Tsukanov, and N.\,Y.~Nosova.} 2022. Modification of an 
+algorithmic model for detecting anomalies on panoramas of different times obtained from 
+unmanned aerial vehicles. \textit{Modern informatization problems in simulation and social 
+technologies proceedings}. Yelm, WA: Science Book Publishing House LLC. 183--186.
+\bibitem{6-ark-1}
+\Aue{Krizhevsky, А., I.~Sutskever, and G.~Hinton.} 2017. \mbox{ImageNet} classification with deep 
+convolutional neural networks. \textit{Commun. ACM} 60:84--90.  doi: 10.1145/ 3065386.
+\bibitem{7-ark-1}
+\Aue{Chollet, F.} 2021. \textit{Deep learning with Python.} 2nd ed. Shelter Island, NY: Manning 
+Publications Co. 504~p.
+\bibitem{8-ark-1}
+\Aue{Zhu, P., L.~Wen, D.~Du, X.~Bian, H.~Fan, Q.~Hu, and H.~Ling.} 2021. Detection and 
+tracking meet drones challenge. \textit{arXiv.org}. 20~p. %Available at: {\sf https://arxiv.org/abs/2001.06303} (accessed January~11, 2023).
+doi: 10.48550/arXiv.2001.06303.
+\bibitem{9-ark-1}
+\Aue{Simonyan, K., and A.~Zisserman.} 2015. Very deep convolutional networks for large-scale 
+image recognition. \textit{\mbox{arXiv}.org}. 14~p. %Available at: {\sf https://arxiv.org/abs/1409.1556} (accessed January~11, 2023). 
+doi: 10.48550/arXiv.1409.1556.
+\bibitem{10-ark-1}
+\Aue{Chollet, F.} 2017. Xception: Deep learning with depthwise separable convolutions. 
+\textit{\mbox{arXiv}.org.} 8~p. %Available at: {\sf https://arxiv.org/abs/1610.02357} (accessed January~11, 2023). 
+doi: 10.48550/\linebreak arXiv.1610.02357.
+\bibitem{11-ark-1}
+\Aue{Kingma, D., and J.~Ba.} 2017. Adam: A~method for stochastic optimization. 
+\textit{\mbox{arXiv}.org}. 15~p. % Available at: {\sf https://arxiv.org/abs/1412.6980} (accessed January~11, 2023). 
+doi: 
+10.48550/arXiv.\linebreak 1412.6980.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received June 6, 2022}}
+
+\Contr
+
+\noindent
+\textbf{Arkhipov Pavel O.} (b.\ 1979)~--- Candidate of Science (PhD) in technology, director, Orel 
+Branch of the Federal Research Center ``Computer Science and Control'' of the Russian Academy 
+of Sciences, 137~Moskovskoe Shosse, Orel 302025, Russian Federation; \mbox{arpaul@mail.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Philippskih Sergey L.} (b.\ 1987)~--- junior scientist, Orel Branch of the Federal Research 
+Center ``Computer Science and Control'' of the Russian Academy of Sciences, 137~Moskovskoe 
+Shosse, Orel 302025, Russian Federation; \mbox{philippsl@mail.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Tsukanov Maxim V.} (b.\ 1995)~--- junior scientist, Orel Branch of the Federal Research 
+Center ``Computer Science and Control'' of the Russian Academy of Sciences, 137~Moskovskoe 
+Shosse, Orel 302025, Russian Federation; \mbox{tsukanov.m.v@yandex.ru}
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

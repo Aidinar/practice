@@ -1,0 +1,1078 @@
+\def\stat{agalarov}
+
+
+\def\tit{ПРИБЛИЖЕННЫЙ МЕТОД ВЫЧИСЛЕНИЯ ХАРАКТЕРИСТИК УЗЛА 
+ТЕЛЕКОММУНИКАЦИОННОЙ СЕТИ С~ПОВТОРНЫМИ ПЕРЕДАЧАМИ}
+\def\titkol{Приближенный метод вычисления характеристик узла 
+телекоммуникационной сети с~повторными передачами} 
+
+\def\autkol{Я.\,М.~Агаларов}
+\def\aut{Я.\,М.~Агаларов$^1$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}}\footnotetext[1]
+%{Работа выполнена при поддержке РФФИ, проекты 08--07--00152 и 08--01--00567.}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем
+информатики Российской академии наук, agglar@yandex.ru}
+
+%\vspace*{-6pt}
+
+
+\Abst{Рассмотрена модель узла коммутации пакетов c повторными передачами для двух 
+схем распределения буферной памяти: полнодоступной и полного разделения. Предложен 
+приближенный метод вычисления интенсивностей потоков и вероятностей блокировок узла. 
+Получены необходимые и достаточные условия существования и единственности решения 
+уравнения для потоков в узле при установившемся режиме работы и доказана сходимость 
+итерационного метода решения указанного уравнения.}
+
+\KW{узел коммутации пакетов; буферная память; повторные передачи; вероятности 
+блокировок; итерационный метод}
+
+      \vskip 18pt plus 9pt minus 6pt
+
+      \thispagestyle{headings}
+
+      \begin{multicols}{2}
+
+      \label{st\stat}
+
+
+\section{Введение}
+
+    Одной из основных задач предварительного анализа 
+телекоммуникационных сетей коммутации пакетов с ограниченной буферной 
+памятью является расчет характеристик потоков и вероятностей блокировок в 
+узлах связи. Важность указанных характеристик определяется тем, что от их 
+значений существенным образом зависят другие основные показатели сети 
+(пропускная способность, задержки пакетов и~др.). 
+
+    Существует множество различных моделей узлов коммутации пакетов и 
+методов их расчета (см., например,~[1--6]). Для моделей, рассматривающих 
+узел с ограниченной буферной памятью как систему массового обслуживания 
+(CMO) типа 
+$
+\begin{matrix}
+M \\ \lambda
+\end{matrix}
+\left |
+\begin{matrix}
+M \\ \lambda
+\end{matrix}
+\right |
+\overline{m} \vert N
+$ или  $\vert PH\vert PH\vert 1\vert r$, в предположении отсутствия повторных 
+передач пакетов получены точные методы вычисления характеристик 
+узлов~[1, 3, 4, 6]. Приближенные методы расчета узлов, учитывающие повторные 
+попытки передачи, используют модели типа $\vert PH\vert PH\vert 1\vert r$ или 
+$
+\begin{matrix}
+M \\ \lambda
+\end{matrix}
+\left |
+\begin{matrix}
+M \\ \lambda
+\end{matrix}
+\right |
+1 \vert N
+$ и являются 
+итерационными~[2, 3, 5, 7]. Для моделей типа 
+$BM\!AP\vert PH\vert 1$, $M\vert G\vert 1\vert r$ и $M\!AP\vert 
+(PH,PH)\vert 1$ с повторными заявками получены точные методы вычисления 
+характеристик (например, в работах~[8--10]), которые также могут быть 
+использованы при расчете узлов.
+
+    Ниже будут рассмотрены модели узла коммутации пакетов с повторными 
+передачами для двух схем распределения буферной памяти: с 
+полнодоступными буферами и с полным разделением буферной памяти. 
+Предлагается приближенный метод расчета характеристик, который в качестве 
+модели узла использует СМО типа $
+\begin{matrix}
+M \\ \lambda
+\end{matrix}
+\left |
+\begin{matrix}
+M \\ \lambda
+\end{matrix}
+\right |
+\overline{m} \vert N
+$ с повторными заявками. Доказаны утверждения о 
+достаточных и необходимых условиях существования и единственности 
+решения уравнения для вероятности блокировки в установившемся режиме 
+работы и сходимости предлагаемого итерационного метода. 
+
+\section{Модель узла}
+
+    Математическая модель узла представляется в виде СМО с ограниченной 
+буферной памятью и различными потоками заявок, каждая из которых требует 
+обслуживания только на одной из многоканальных линий связи. 
+
+    Пусть $0<N<\infty$~--- число мест хранения в буферной памяти, $u$~--- 
+узел связи, $v$~--- линия связи, $\Omega_u^+$~--- множество исходящих из 
+узла~$u$ линий, $c_v$~--- канальная емкость линии~$v$. Поток заявок, 
+тре\-бу\-ющих обслуживания на линии~$v$, назовем $v$-по\-то\-ком, заявки этого 
+потока~--- $v$-за\-яв\-ка\-ми.
+
+
+    Пусть выполняются следующие предположения: 
+\begin{enumerate}[1.]
+\item Места в буферной памяти распределяются согласно одной из двух 
+схем:
+\begin{enumerate}[($i$)]
+\item полнодоступная схема~--- каждое свободное место хранения доступно 
+любой заявке;
+\item схема полного разделения памяти~--- $v$-за\-яв\-кам доступны всего 
+$N_v$ мест, где $\sum\limits_{v\in\Omega_u^+} N_v=N$.
+\end{enumerate}
+\item Если в момент поступления $v$-заявки в буферной памяти есть 
+доступное свободное место, то она сразу занимает это место. Если в момент 
+поступления $v$-заявки в системе нет свободного доступного места 
+хранения, то поступившая заявка через некоторое время повторно поступает 
+на систему, оставаясь $v$-заявкой. 
+\item Интенсивности первичных потоков $v$-заявок~--- заданные величины 
+$0<\Lambda_v<\infty$, $v\in \Omega_u^+$. Суммарные потоки первичных и 
+повторных $v$-заявок являются независимыми в совокупности 
+пуассоновскими потоками. Для обслуживания $v$-заявки требуется 
+одновременно одно место хранения и один канал типа~$v$, $v\in 
+\Omega_u^+$.
+\item Первичные нагрузки~--- реализуемые, т.\,е.\ в данном случае 
+интенсивности входных первичных потоков равны интенсивностям 
+выходных потоков выполненных заявок. 
+\item Принятые в СМО $v$-заявки обслуживаются линией~$v$ в порядке 
+поступления. 
+\item Время занятия канала $v$-заявкой~--- экспоненциально 
+распределенная случайная величина с параметром $0<\mu_v<\infty$, 
+$v\in\Omega_u^+$, независимая от других случайных событий в узле.
+\item Выполненная $v$-заявка с вероятностью~$B_v$ повторяется через 
+заданное время~$\tau_v$ (тайм-аут) и с вероятностью $1-B_v$ покидает 
+систему через время~$t_v$ навсегда, сразу освободив занятый канал и место 
+буферной памяти.
+\end{enumerate}
+
+   Будем говорить, что узел блокирован для $v$-за\-яв\-ки, если в буферной 
+памяти отсутствует доступное место хранения. Ставится задача вычисления 
+вероятностей блокировок и интенсивностей потоков в узле.
+
+\section{Вычисление вероятности блокировки и~интенсивностей~потоков} 
+
+   Пусть $\Lambda_v^*$~--- интенсивность суммарного потока внешних 
+заявок, требующих передачи по линии~$v$, $\pi_v$~--- вероятность блокировки 
+узла для заявок, требующих передачи по исходящей из узла линии~$v$. 
+
+    Пусть в узле используется полнодоступная схема распределения 
+буферной памяти. Тогда, как следует из описания модели, $\pi_v 
+=\pi_{v^\prime},\,v,\,v^\prime\in \Omega_u^+$, и для 
+интенсивностей~$\Lambda_v^*$, $v\in\Omega_u^+$, справедливы соотношения:
+\begin{equation*}
+\Lambda_v^* = \fr{\Lambda_v}{1-\pi}\,,
+%\label{e1aga}
+\end{equation*}
+    где
+    $\pi =\pi_v$, $v\in\Omega_u^+$.
+
+    Пусть 
+    $\overline{k} = \{\overline{k}_v$, $v\in\Omega_u^+\}$~--- состояние 
+буферной памяти узла, $\overline{k}_v =\left ( k_v,\,k_v^\prime,\,k_v^{\prime\prime}\right )$; 
+$k_v$~--- число $v$-заявок в буферной 
+памяти, ожидающих выполнения линией~$v$; $k^\prime_v$~--- число 
+$v$-заявок в буферной памяти, ожидающих тайм-аут и неуспешно переданных 
+в последующий узел; $k_v^{\prime\prime}$~--- число $v$-за\-явок в буферной 
+памяти, успешно переданных в последующий узел и ожидающих 
+потверждения; 
+$A_m = \left \{ \overline{k}:\ \sum\limits_{v\in\Omega_u^+} \left ( 
+k_v+k_v^\prime + k_v^{\prime\prime}\right ) =m \right \}$~--- множество различных 
+состояний, при которых в памяти узла занято ровно $m$~буферов. Тогда с 
+учетом введенных выше обозначений и предположений для ве\-ро\-ят\-ности 
+блокировки узла можно написать формулу~\cite{1aga, 2aga}:
+\begin{equation}
+\pi = \fr{1}{G_N}\sum\limits_{\overline{k}\in A_N} 
+p\left (\overline{k},\overline{\rho}^*\right )\,,
+\label{e2aga}
+\end{equation}
+где  
+\begin{gather}
+p(\overline{k},\overline{\rho}^*) = \prod\limits_{v\in\Omega_u^+} z_v (\pi, 
+\rho_v , k_v , k_v^\prime , k_v^{\prime\prime})\,;\\
+z_v (\pi, \rho_v , k_v , k_v^\prime , k_v^{\prime\prime}) ={}\notag\\
+\!\!{}=
+\begin{cases}
+ \fr{\rho_v^{\prime *k_v^\prime}}{k_v^{\prime}!}\,
+\fr{\rho_v^{\prime\prime * k_v^{\prime\prime}}}{ k_v^{\prime\prime}!}  \,
+\fr{\rho_v^{*k_v}}{ k_{v}!} 
+&\mbox{при}\ k_v<c_v\,,\\
+ \fr{\rho_v^{\prime * k_v^\prime}}{k_v^{\prime}!} \,
+\fr{\rho_v^{\prime\prime * k_v^{\prime\prime}}} { k_v^{\prime\prime}!} 
+\fr{\rho_v^{*k_v}}{ c_{v}!c_v^{k_v- c_v}} 
+& \mbox{при}\ k_v\geq c_v\,;
+\end{cases}\\
+G_N = \sum\limits_{m=0}^N\sum\limits_{\overline{k}\in A_m}
+p(\overline{k},\overline{\rho}^*)\,;\\ 
+\overline{\rho}^*=\{\rho_v^*,\,v\in\Omega_u^+\}\,;\\
+\rho_v^* = \fr{\rho_v}{1-\pi}\,;\quad \rho_v =\fr{\Lambda_v}{\mu_v(1- B_v)}\,;\\
+\rho_v^{\prime *} =\rho_v^*\mu_v\tau_vB_v\,;\quad \rho_v^{\prime\prime *}=
+p_v^* \mu_vt_v,\,\quad  v\in \Omega_u^+\,.\label{e3aga}
+\end{gather}
+
+Переобозначив $1-\pi$ через $y$, выражение в правой части равенства~(2)~--- через 
+$p_{\overline{k}}(\overline{\rho},y)$, выражение в правой части равенства~(4)~--- 
+через $g_N(\overline{\rho},y)$, а выражение в правой 
+части равенства~(1)~--- через $1-q_N (\overline{\rho},y)$, 
+где $\overline{\rho} = (\rho_v,\,v\in \Omega_u^+)$, $\rho_v = \rho_v^*y\;=$\linebreak 
+$=\;\Lambda_v/(\mu_v(1-B_v))$, $v\in\Omega_u^+$, получим нелинейное уравнение 
+относительно неизвестной переменной~$y$:
+\begin{equation}
+y=q_N(\overline{\rho},y)\,.
+\label{e4aga}
+\end{equation}
+
+    Решим уравнение~(8). Как следует из~(2)--(7), верно 
+равенство
+\begin{equation}
+q_N(\overline{\rho},y) = \fr{g_{N-1}(\overline{\rho},y )}{g_N(\overline{\rho},y)}\,.
+\label{e5aga}
+\end{equation}
+Введем функцию  $d_n(\overline{\rho} ,y)$ среднего числа заявок в узле с 
+буферной памятью емкости $n\geq 0$:
+$$
+d_n(\overline{\rho} ,y) = 
+\fr{1}{g_n(\overline{\rho},y)}\,\sum\limits_{m=0}^n m\sum\limits_{\overline{k}\in 
+A_m} p_{\overline{k}}(\overline{\rho},y)\,.
+$$
+Заметим, что $g_n$, $d_n$ и $q_n$, 
+$n\geq 0$,~--- непрерывно-дифференцируемые функции по $y\in (0,\,1]$. Взяв 
+производную функции~$g_n$ по~$y$, из~(2)--(7) получим
+\begin{multline}
+\fr{\partial g_n(\overline{\rho},y)}{\partial y} ={}\\
+{}= -\sum\limits_{m=0}^n m 
+\sum\limits_{\overline{k}\in A_m}\fr{\prod\limits_{v\in\Omega_u^+} z_n 
+(0,\rho_v, k_v, k_v^\prime , k_v^{\prime\prime})}{y^{m+1}}={}\\
+{}= -\fr{1}{y}\,g_n (\overline{\rho},y)d_n(\overline{\rho},y)\,.
+\label{e6aga}
+\end{multline}
+Взяв производную функции $q_N$ по $y$, из~(\ref{e5aga}) и~(\ref{e6aga}) 
+получим
+\begin{equation}
+\fr{\partial q_N(\overline{\rho},y)}{\partial y} = \fr{q_N(\overline{\rho},y)}{y}\left 
+[ d_N (\overline{\rho},y)-d_{N-1}(\overline{\rho},y)\right ]\,.
+\label{e7aga}
+\end{equation}
+    Докажем несколько утверждений о свойствах 
+функции~$q_N(\overline{\rho},y)$.
+\medskip
+
+\noindent
+\textbf{Утверждение 1.} \textit{Справедливы неравенства}
+\begin{multline}
+0<d_{n+1}(\overline{\rho},y)-d_n(\overline{\rho},y) <1\,,\\
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ y\in (0,\,1]\,, \ n\geq 0\,.
+\label{e8aga}
+\end{multline}
+
+
+\noindent
+
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ Подставив выражение для функции 
+$d_n(\overline{\rho},y)$ и проведя преобразования, получим
+\begin{multline*}
+d_{n+1}(\overline{\rho},y) -d_n(\overline{\rho},y) = 
+\fr{\sum\limits_{m=0}^{n+1}m\sum\limits_{\overline{k}\in A_m} 
+p_{\overline{k}}(\overline{\rho},y)}
+{\sum\limits_{m=0}^{n+1}
+\sum\limits_{\overline{k}\in A_m} p_{\overline{k}}(\overline{\rho},y)} - {}\\
+{}-
+\fr{\sum\limits_{m=0}^n m \sum\limits_{\overline{k}\in A_m} p_{\overline{k}} 
+(\overline{\rho},y)}{\sum\limits_{m=0}^n
+\sum\limits_{\overline{k}\in A_m}p_{\overline{k}}(\overline{\rho},y)}={}\\
+{}=\fr{\sum\limits_{m=1}^n m \sum\limits_{\overline{k}\in 
+A_m}p_{\overline{k}}(\overline{\rho},y)+(n+1)\sum\limits_{\overline{k}\in 
+A_{n+1}}  p_{\overline{k}}(\overline{\rho},y)}{\sum\limits_{m=0}^n\sum\limits_{\overline{k
+}\in A_m}p_{\overline{k}}(\overline{\rho},y)+\sum\limits_{\overline{k}\in 
+A_{n+1}}p_{\overline{k}}(\overline{\rho},y)} -{}
+\end{multline*}
+\begin{multline}
+{}-
+\fr{\sum\limits_{m=0}^n m 
+\sum\limits_{\overline{k}\in A_m}p_{\overline{k}}(\overline{\rho},y)}
+{\sum\limits_{m=0}^n\sum\limits_{\overline{k}\in A_m} 
+p_{\overline{k}}(\overline{\rho},y)}={}\\
+{}=\fr{(n+1)\sum\limits_{\overline{k}\in 
+A_{n+1}}p_{\overline{k}}(\overline{\rho},y)g_n(\overline{\rho},y)}{g_{n+1}(\overline{\rho},y) g_n(\overline{\rho},y)} -{}\\
+{}-
+\fr{\sum\limits_{\overline{k}\in 
+A_{n+1}}p_{\overline{k}}(\overline{\rho},y)\sum\limits_{m=0}^n  m 
+\sum\limits_{\overline{k}\in A_m} p_{\overline{k}}(\overline{\rho},y) }
+{g_{n+1}(\overline{\rho},y) g_n(\overline{\rho},y)}
+={}\\
+{}=\left [ 1-q_{n+1}(\overline{\rho},y)\right ] \left [n+1-d_n(\overline{\rho},y)\right ]\,.
+\label{e9aga}
+\end{multline}
+
+
+    Докажем утверждение~1 методом индукции. При $n = 0$, как следует 
+из~(\ref{e9aga}), имеем
+$$
+d_2(\overline{\rho},y) - d_1 (\overline{\rho},y) =1-q_1(\overline{\rho},y)\,,
+$$
+    т.\,е.\ утверждение~1 при $n = 0$ справедливо. 
+
+    Пусть неравенства~(\ref{e8aga}) справедливы для некоторого $n > 0$. 
+Докажем, что они справедливы и для $n + 1$. Из~(\ref{e9aga}) получаем
+\begin{multline*}
+d_{n+1}(\overline{\rho},y)- d_n(\overline{\rho},y)={}\\
+{}=\left [ 1-
+q_{n+1}(\overline{\rho},y)\right ] \left [n+1-d_n(\overline{\rho},y)\right ] ={}\\
+{}= \left [ 1-
+1-q_{n+1}(\overline{\rho},y)\right ] \left [ n-{}\right.\\
+{}-\left. d_{n-1}(\overline{\rho},y)+d_{n-1}(\overline{\rho},y)-
+d_n(\overline{\rho},y)+1\right ] ={}\\
+{}=\left [ 1-q_{n+1}(\overline{\rho},y)\right ] 
+\left [ n-d_{n-1}(\overline{\rho},y)-{}\right.\\
+{}-\left. \left ( d_n(\overline{\rho},y)-d_{n-1}(\overline{\rho},y)\right )+1\right] = {}\\
+{}=
+\left [ 1-q_{n+1}(\overline{\rho},y)\right ]
+\left [ 
+\fr{d_n(\overline{\rho},y) -d_{n-1}(\overline{\rho},y)}{1-
+q_n(\overline{\rho},y)}\right.-{}\\
+{}-\left.
+\left ( d_n(\overline{\rho},y)-d_{n-1}(\overline{\rho},y)\right )+1
+\vphantom{\fr{d_n(\overline{\rho})}{(q_n)}}
+\right ]={}\\
+{}=
+\left [ 1-q_{n+1}(\overline{\rho},y)\right ]
+\left [ 
+\vphantom{\fr{d_n(\overline{\rho})}{(q_n)}}
+\left ( d_n(\overline{\rho},y\right)\right. -{}\\
+ {}-\left.
+d_{n-1}\left(\overline{\rho},y)\right )\fr{q_n(\overline{\rho},y)}{1-
+q_n(\overline{\rho},y)}+1\right ]\,.
+\end{multline*}
+Так как по предположению $d_n (\overline{\rho},y) -d_{n-1}(\overline{\rho},y) 
+>0$, то правая часть последнего равенства больше нуля; следовательно, 
+$d_{n+1}(\overline{\rho},y)-d_n(\overline{\rho},y)>0$. 
+
+    Продолжив преобразование правой части последнего равенства и 
+учитывая предположение $d_n(\overline{\rho},y) -d_{n-1}(\overline{\rho},y)<1$, 
+получим
+\begin{multline*}
+d_{n+1}((\overline{\rho},y) -d_n(\overline{\rho},y)<{}\\
+{}< \left [ 1-
+q_{n+1}(\overline{\rho},y)\right ]
+\left ( \fr{q_n(\overline{\rho},y)}{1-q_n(\overline{\rho},y)}+1\right )={}\\
+{}=
+\fr{1-q_{n+1}(\overline{\rho},y)}{1-q_n(\overline{\rho},y)}<1\,,
+\end{multline*}
+так как $0< q_n(\overline{\rho},y)<q_{n+1}(\overline{\rho},y)<1$, $n>0$, $y\in 
+(0,\,1]$.
+
+Следовательно, утверждение~1 доказано.
+
+\medskip
+
+\noindent
+\textbf{Утверждение 2.} $q_N(\overline{\rho},y)$~--- \textit{монотонно-воз\-рас\-та\-ющая 
+функция по $y\in (0,\,1]$. При этом $0< q_N(\overline{\rho},y)\;\leq $\linebreak 
+$\leq\;q_N(\overline{\rho},1) <1$, $y\in (0,\,1]$,  и $\underset{y\rightarrow 
+0}{\mathrm{lim}}\,q_N(\overline{\rho},y) =0$}.
+
+\medskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\  Возрастание функции 
+$q_N(\overline{\rho},y)$ следует непосредственно из~(\ref{e7aga}) и 
+утверж\-де\-ния~1. Доказательство неравенств в условии утверждения очевидно 
+следует из~(\ref{e5aga}) и вида функции $g_n (\overline{\rho},y)$, $n\geq 0$. 
+Для предела имеем:
+\begin{multline*}
+\underset{y\rightarrow 0}{\mathrm{lim}}\,q_N(\overline{\rho},y) 
+=\underset{y\rightarrow 0}{\mathrm{lim}}\,\fr{g_{N- 1}(\overline{\rho},y)}{g_N(\overline{\rho},y)} = {}\\
+{}= \underset{y\rightarrow 0}{\mathrm{lim}}\,\left (
+g_{N-1}(\overline{\rho},y)\Bigg / \left ( 
+\vphantom{\prod\limits_{v\in\Omega_u^+}}
+g_{N-1}(\overline{\rho},y)\right.\right.+{}\\
+{}+\left.\left.\sum\limits_{\overline{k}\in A_N}\prod\limits_{v\in\Omega_u^+} 
+\fr{z_v(0,\rho_v,k_v,k^\prime_v,k^{\prime\prime}_v)}{y^N}\right )\right ) = {}\\
+{}= \underset{y\rightarrow 0}{\mathrm{lim}}\,\left (
+y^N g_{N-1}(\overline{\rho},y)\Bigg / 
+\left ( 
+\vphantom{\prod\limits_{v\in\Omega_u^+}}
+y^N g_{N-1}(\overline{\rho},y)+{}\right.\right.\\
+{}+\left.\left.\sum\limits_{\overline{k}\in A_N}
+\prod\limits_{v\in\Omega_u^+} z_v(0,\rho_v,k_v,k_v^\prime , k_v^{\prime\prime}) 
+\right ) \right )=0\,.
+\end{multline*}
+    
+\medskip
+
+\noindent
+\textbf{Утверждение 3.} \textit{Производная функции~$q_N (\overline{\rho},y)$ по 
+$y\in (0,\,1]$ удовлетворяет следующим соотношениям}:
+\begin{align}
+\underset{y\rightarrow 0}{\mathrm{lim}}\fr{\partial q_N(\overline{p},y)}
+{\partial  y} &= \fr{\sum\limits_{\overline{k}\in A_{N-1}} 
+p_{\overline{k}}(\overline{\rho},1)}{\sum\limits_{\overline{k}\in 
+A_N}p_{\overline{k}}(\overline{\rho},1)}\,;\label{e10aga}\\
+\fr{\partial q_N(\overline{\rho},y)}{\partial y}\Big |_{y=1}&<1\,.\label{e11aga}
+\end{align}
+
+\medskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ Проведя преобразования 
+функции~$q_N(\overline{\rho},y)$, получим:
+\begin{multline*}
+\underset{y\rightarrow 0}{\mathrm{lim}}\fr{q_N(\overline{\rho},y)}{y} = {}\\
+\!\!{}=
+\underset{y\rightarrow 0}{\mathrm{lim}}
+\fr{\sum\limits_{m=0}^{N-1}\sum\limits_{\overline{k}\in A_m}
+\!\!\left (\prod\limits_{v\in\Omega_u^+}\!\! 
+z_v(0,\rho_v,k_v,k_v^\prime , k_v^{\prime\prime})\right )\!\!\Bigg /\!\! y^m}
+{y\sum\limits_{m=0}^{N}\sum\limits_{\overline{k}\in A_m}
+\!\!\left(\prod\limits_{v\in\Omega_u^+}\!\! z_v\left (0,\rho_v,k_v,k_v^\prime , 
+k_v^{\prime\prime}\right )\right )\!\!\Bigg /\!\!y^m} = \!\!\!
+\end{multline*}
+\begin{multline*}
+\!\!\!\!\!\!{}=\underset{y\rightarrow 0}{\mathrm{lim}}\,
+\fr{\sum\limits_{m=0}^{N-1}\sum\limits_{\overline{k}\in A_m}
+y^{N-1-m}\prod\limits_{v\in\Omega_u^+} z_v(0,\rho_v,k_v,k_v^\prime , 
+k_v^{\prime\prime})}{\sum\limits_{m=0}^{N}\sum\limits_{\overline{k}
+\in A_m} y^{N-m}
+\prod\limits_{v\in\Omega_u^+} z_v(0,\rho_v,k_v,k_v^\prime , 
+k_v^{\prime\prime})}={}\!\\
+{}=\fr{\sum\limits_{\overline{k}\in A_{N-1}} p_{\overline{k}}(\overline{\rho},1)}{ 
+\sum\limits_{\overline{k}\in A_{N}} p_{\overline{k}}(\overline{\rho},1)}\,.
+\end{multline*}
+Очевидно, $\underset{y\rightarrow 0}{\mathrm{lim}} \,[d_N (\overline{\rho},y) -
+d_{N-1} (\overline{\rho},y)]=1$, так как $\underset{y\rightarrow 
+0}{\mathrm{lim}}\,d_n (\overline{\rho},y)=n$, $n>0$.
+
+Следовательно, учитывая~(\ref{e7aga}), получаем~(\ref{e10aga}). 
+Справедливость~(\ref{e11aga}) непосредственно следует из~(\ref{e7aga}) и 
+утверждения~1.
+
+\medskip
+
+\noindent
+\textbf{Утверждение 4.} \textit{Пусть $y^*\in (0,\,1]$~--- решение 
+уравнения}~(\ref{e4aga}). \textit{Тогда}
+\begin{equation*}
+\fr{\partial q_N(\overline{\rho},y)}{\partial y}\Big |_{y=y^*}<1\,.
+%\label{e12aga}
+\end{equation*}
+
+\medskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ Доказательство следует из~(\ref{e7aga}), 
+так как $q_N(\overline{\rho},y^*)/y^* =1$.
+\medskip
+
+\noindent
+\textbf{Утверждение 5.} \textit{Уравнение}~(\ref{e4aga}) \textit{имеет решение $y^*\in 
+(0,\,1)$ тогда и только тогда, когда} 
+\begin{equation}
+\fr{\sum\limits_{\overline{k}\in A_{N-1}} p_{\overline{k}}(\overline{\rho},1)}{ 
+\sum\limits_{\overline{k}\in A_{N}} p_{\overline{k}}(\overline{\rho},1)} >1\,.
+\label{e13aga}
+\end{equation}
+\textit{Если уравнение}~(\ref{e4aga}) \textit{имеет решение $y^*\in (0,\,1)$, то оно 
+единственное положительное решение}.
+\medskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ Пусть выполняется 
+неравенство~(\ref{e13aga}). Тогда, как следует из утверждения~3, 
+$\underset{y\rightarrow 0}{\mathrm{lim}} (\partial q_N(\overline{\rho},y)/\partial y) 
+>1$. Кроме того, как следует из утверждения~2, 
+$\underset{y\rightarrow 0}{\mathrm{lim}} q_N(\overline{\rho},y)=0$. Тогда, так 
+как $q_N(\overline{\rho},y)$~--- непрерывно-дифференцируемая функция по 
+$y\in (0,\,1]$, существует значение $y^\prime \in (0,\,1)$ такое, что 
+$q_N(\overline{\rho},y)>y$ для всех $y\in (0,\,y^\prime]$ (следует из теоремы о 
+конечном приращении~\cite{11aga}). В то же время, согласно утверждению~2, 
+$q_N(\overline{\rho},y)<y$ в окрестности точки $y=1$ (рис.~\ref{f1aga},\,\textit{а}). 
+Следовательно, кривая $x=q_N(\overline{\rho},y)$ пересекает прямую $x=y$ 
+хотя бы в одной точке $y=y^*\in (0,\,1)$, т.\,е.\ уравнение~(\ref{e4aga}) имеет 
+хотя бы одно решение $y^*\in (0,\,1)$.
+
+\begin{figure*}
+\vspace*{1pt}
+\begin{center}
+\vspace*{1pt}
+\mbox{%
+\epsfxsize=158mm
+\epsfbox{aga-1.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Примеры кривых $x=q_N(\overline{\rho},y)$ и $x=y$ (\textit{а})~при существовании решения 
+уравнения~(\ref{e5aga}) и (\textit{б})~при выполнении условий~(17)
+\label{f1aga}}
+\vspace*{6pt}
+\end{figure*}
+
+Пусть уравнение~(\ref{e4aga}) имеет решение $y^*\in (0,\,1)$ и 
+\begin{equation}
+\fr{\sum\limits_{\overline{k}\in A_{N-1}}p_{\overline{k}}(\overline{\rho},1)}{ 
+\sum\limits_{\overline{k}\in A_{N}}p_{\overline{k}}(\overline{\rho},1)}\leq 
+1\,.\label{e14aga}
+\end{equation}
+Тогда из условий утверждений~2 и~3 следует, что 
+уравнение~(\ref{e4aga}) в интервале $(0,\,1)$ имеет более одного решения, что 
+может быть только при существовании решения $y^\prime \in (0,\,1)$ такого, 
+что в окрестности точки $y=y^\prime$ выполняются неравенства: 
+$q_N(\overline{\rho},y)<y$ при $y<y^\prime$ и $q_N(\overline{\rho},y)>y$ при 
+$y>y^\prime$, где $y$ принадлежит указанной окрест\-ности точки~$y^\prime$ 
+(рис.~\ref{f1aga},\,\textit{б}). Тогда в точке $y=y^\prime$ производная функции 
+$q_N(\overline{\rho},y)$ по $y$ больше~1, что противоречит утверждению~4. 
+Следовательно, неравенство~(\ref{e13aga}) справедливо.
+
+
+Пусть уравнение~(\ref{e4aga}) имеет более одного положительного 
+решения. Рассуждая точно так же, как и выше (в случае выполнения 
+условий~(\ref{e14aga})), получим противоречие утверждению~4. 
+Следовательно, утверждение~5 справедливо.
+\medskip
+
+\noindent
+\textbf{Следствие.} \textit{Неравенства}
+\begin{gather*}
+\fr{\mu_v c_v (1-B_v)}{\Lambda_v}>1\,,\quad \fr{1-B_v}{\Lambda_v \tau_v B_v}>1\,,\\ 
+\fr{1-B_v}{\Lambda_v t_v}>1\,,\ v\in\Omega_u^+\,,
+\end{gather*}
+\textit{являются необходимым условием существования решения 
+уравнения}~(\ref{e4aga}).
+
+\medskip
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ Пусть $\overline{k}_v$~--- это 
+набор~$\overline{k}$, у которого $k_v=0$. Преобразовав левую 
+часть~(\ref{e13aga}), получим
+
+\noindent
+\begin{multline*}
+\fr{\sum\limits_{\overline{k}\in A_{N-1}} p_{\overline{k}} (\overline{\rho},1)}
+{ \sum\limits_{\overline{k}\in A_{N}} 
+ p_{\overline{k}}(\overline{\rho},1)} 
+={}
+\\
+{}=
+\fr{\sum\limits_{\overline{k}\in A_{N-1}}\prod\limits_{v\in \Omega_u^+} 
+z_v\left(0,\rho_v,k_v,k_v^\prime , k_v^{\prime\prime}\right)}
+{\sum\limits_{\overline{k}\in A_{N}}
+\prod\limits_{v\in \Omega_u^+} z_v\left (0,\rho_v,k_v,k_v^\prime , k_v^{\prime\prime}\right )} \leq{}
+\\
+{}\leq
+\left ( 
+\vphantom{\prod\limits_{v^\prime\in\Omega_u^+\backslash v}}
+\fr{\mu_v c_v(1-B_v)}{\Lambda_v}\right. \times{}\\
+{}\times \sum\limits_{k_v=0}^{N-1}\sum\limits_{\overline{k}_v\in A_{N-1-k_v}} z_v\left(0,\rho_v,k_v+1,k_v^\prime , 
+k_v^{\prime\prime}\right )\times{}\\
+{}\times \left.\prod\limits_{v^\prime\in\Omega_u^+\backslash v} z_v^\prime 
+\left(0,\rho_v,k_v,k_v^\prime , k_v^{\prime\prime}\right) \right)
+\Bigg /{}\\
+\Bigg / \left ( 
+\vphantom{\prod\limits_{v^\prime\in\Omega_u^+\backslash v}}
+\sum\limits_{k_v=0}^{N-1} \sum\limits_{\overline{k}_v\in A_{N-1-k_v}} z_v 
+\left (0,\rho_v,k_v+1,k_v^\prime , 
+k_v^{\prime\prime}\right )\right. \times{}\\
+{}\times \prod\limits_{v^\prime\in\Omega_u^+\backslash v} 
+z_{v^\prime}\left(0,\rho_v,k_v,k^\prime , k_v^{\prime\prime}\right)+{}\\
+{}+
+\sum\limits_{\overline{k}_v\in A_N} z_v\left (0,\rho_v, 0,k_v^\prime , 
+k_v^{\prime\prime}\right)\times{}\\
+\left.{}\times \prod\limits_{v^\prime\in\Omega_u^+\backslash v}z_{v^\prime} 
+\left(0,\rho_v,k_v,k_v^\prime , k_v^{\prime\prime}\right )\right )\,.
+\end{multline*}
+Как следует из правой части последнего неравенства, если 
+$\mu_v c_v (1-B_v)/\Lambda_v \leq 1$, то она меньше~1. Поэтому, чтобы 
+выполнилось условие~(\ref{e13aga}), необходимо выполнение первого 
+неравенства в условии следствия для каждого $v\in\Omega_u^+$. Точно так же 
+доказывается необходимость выполнения второго и третьего неравенств в 
+условии следствия.
+
+    Пусть $y[n]$, $n\geq 0$, последовательность, полученная по формуле 
+$y[n+1]=q_N(\overline{\rho},y[n])$, $y[0]=1$.
+
+\medskip
+
+\noindent
+\textbf{Утверждение 6.} \textit{Пусть $y^*\in (0,\,1)$~--- решение 
+уравнения}~(8). \textit{Тогда последовательность $y[n]$, $n\geq 0$, сходится 
+к решению~$y^*$}.
+
+\medskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ Отметим, что $y[1]<y[0]$ (это следует из 
+утверждения~2, так как $y[0]=1$). Пусть для некоторого $n>1$ выполняется 
+условие $y[n]<y[n-1]$. Тогда, как следует из утверждения~2, указанное условие 
+выполняется и для $n+1$, т.\,е.\ по индукции следует, что последовательность 
+$y[n]$, $n\geq 0$, монотонно убывает. 
+
+    Пусть для некоторого $n>0$ $y[n]>y^*$ (существование такого $n$ 
+следует из равенства $y[0]=1$). Тогда, как следует из утверждения~2, 
+$y[n+1]\;=$\linebreak $=\;q_N(\overline{\rho},y[n])>q_N(\overline{\rho},y^*) =y^*$, т.\,е.\ 
+последовательность ограничена снизу величиной~$y^*$. Значит, существует 
+$\underset{n\rightarrow \infty}{\mathrm{lim}}\,y[n]=y^0\geq y^*$. Так как 
+$q_n(\overline{\rho},y)$~--- непрерывная по~$y$ функция, то можно написать 
+$\underset{n\rightarrow 
+\infty}{\mathrm{lim}}\,q_N(\overline{\rho},y[n])=q_N(\overline{\rho},y^0)=y^0$, 
+т.\,е.\ $y^0$~--- решение уравнения~(\ref{e4aga}). Из единственности 
+положительного решения уравнения~(\ref{e4aga}) получаем $y^0=y^*$.
+
+    Пусть в узле используется схема полного разделения буферной памяти. 
+Тогда для интенсив\-ностей~$\Lambda_v^*$, $v\in\Omega_u^+$, справедливы 
+соотношения:
+$$
+\Lambda_v^* = \fr{\Lambda_v}{1-\pi_v}\,,
+$$
+где $v\in\Omega_u^+$.
+
+
+Фиксируем произвольную линию сети~$v$. Пусть $\overline{k}_v = (k_v, 
+k_v^\prime, k_v^{\prime\prime})$~--- состояние буферной памяти линии~$v$; 
+$k_v$, $k_v^\prime$, $k_v^{\prime\prime}$ определены выше. Тогда с 
+учетом введенных ранее предположений и обозначений для вероятности 
+блокировки линии справедлива формула~\cite{4aga}:
+\begin{equation}
+\pi_v = \fr{1}{G_{N_v}}\sum\limits_{k_v=N_v} 
+z_v(\pi_v,\rho_v,\overline{k}_v)\,,
+\label{e15aga}
+\end{equation}
+где 
+\begin{multline*}
+z_v(\pi_v, \rho_v, \overline{k}_v)={}\\
+{}=
+\begin{cases}
+\fr{\rho_v^{\prime * k_v^\prime}}{k_v^\prime !}\,
+ \fr{\rho_v^{\prime\prime * k_v^{\prime\prime}}}{k_v^{\prime\prime}!}\,
+ \fr{\rho_v^{*k_v}}{k_v !} & \mbox{при}\ k_v<c_v\,,\\
+ \fr{\rho_v^{\prime *k_v^\prime}}{k_v^{\prime }! }
+ \fr{\rho_v^{\prime\prime * k_v^{\prime\prime}}}{k_v^{\prime\prime}!}
+\fr{\rho_v^{*k_v}}{c_v !c_v^{k_v-c_v}} & \mbox{при}\ k_v\geq c_v\,;
+\end{cases}
+\end{multline*}
+\begin{align*}
+G_{N_v} &= \sum\limits_{m=0}^{N_v} z_v (\pi_v ,\rho_v , \overline{k}_v)\,;\\ 
+\rho_v^*&=\fr{\rho_v}{1-\pi_v}\,;
+\end{align*}
+$\rho_v$, $\rho_v^{\prime *}$, 
+$\rho_v^{\prime\prime *}$, $v\in\Omega_u^+$ определены выше.
+    
+Пусть $y_v=1-\pi_v$, а $q_{N_v} (\rho_v, y_v)$~--- выражение в правой 
+части~(\ref{e15aga}). Тогда из равенств~(\ref{e15aga}), взяв~$y_v$ в качестве 
+неизвестной переменной, получим систему независимых уравнений:
+\begin{equation}
+y_v = q_{N_v}(\rho_v, y_v)\,, \quad v\in \Omega_u^+\,.
+\label{e16aga}
+\end{equation}
+    
+    Заметим, что для фиксированной $v$ и заданных параметров $\Lambda_v$, 
+$\mu_v$, $\tau_v$, $t_v$, $N_v$, $v\in\Omega_u^+$, уравнение в~(\ref{e16aga}) 
+является частным случаем уравнения~(\ref{e4aga}) и совпадает с последним, 
+когда число исходящих линий из узла равно~1. Следовательно, для схемы 
+полного разделения памяти также справедливы все приведенные выше 
+утверждения~1--6 и следствие. Заметим, что неравенство~(\ref{e13aga}) в 
+условии утверждения~5 при $B_v=0$ и $t_v=0$ преобразуется в неравенство 
+$\Lambda_v / (\mu_v c_v) >1$, $v\in\Omega_u^+$. Последовательность 
+$\overline{y}[n]$, $n\geq 0$, в утверждении~6 определяется по формуле:
+    \begin{gather*}
+    \overline{y}[n] =\{y_v[n],\ v\in\Omega_u^+\}\,,\
+    y_v[n+1]=q_{N_v} (\rho_v,\,y_v[n])\,,\\
+    y_v[0] =1\,,\quad n\geq 0\,,\quad v\in \Omega_u^+\,.
+    \end{gather*}
+
+
+\section{Алгоритм расчета} %4
+
+    Для вычисления интенсивностей потоков и вероятностей блокировок в 
+узле предлагается следующий алгоритм, описывающий изложенную выше 
+итерационную процедуру. Введем обозначения:
+$y_u^v$~--- вероятность блокировки узла для заявок, направляемых на 
+линию~$v$,
+\begin{gather*}
+y_u^v  = 
+\begin{cases}
+y_u & \mbox{для}\ v\in\Omega_u^+\ \mbox{при}\\
+&\mbox{полнодоступной схеме},\\
+y_v & \mbox{при схеме полного распределения}\\
+&\mbox{памяти};
+\end{cases}
+\\
+q_N^v(\overline{\rho}_u^{-v}, y_u^v)  = 
+\begin{cases}
+q_N(\overline{\rho},y) & \mbox{для}\ v\in\Omega_u^+\ \mbox{при пол-}\\ 
+&\mbox{нодоступной схеме},\\
+q_{N_v}(\rho_v, y_v) & \mbox{при схеме полного}\\
+&\mbox{распределения}\\ 
+&\mbox{памяти},  v\in\Omega_u^+\,.
+\end{cases}
+\end{gather*}
+
+
+
+Тогда уравнения~(\ref{e4aga}) и~(\ref{e16aga}) записываются в виде:
+$$
+y_u^v = q_N^v (\overline{\rho}^v_u, y^v_u)\,,\quad v\in \Omega_u^+\,.
+$$
+Для значений, вычисляемых на $k$-м шаге алгоритма, к 
+обозначениям соответствующих параметров приписывается знак~$[k]$.
+\pagebreak
+
+\textbf{Шаг 0.} 
+\begin{enumerate}[1.]
+\item  \textit{Инициализация}. Вычисление начальных значений 
+параметров~$\rho_v$, $v\in\Omega_u^+$: $\Lambda_v[0]=\Lambda_v$, 
+$\rho_v[0]=\Lambda_v[0]/(\mu_v(1-B_v))$, $y_u^v[0]=1$.
+\item \textit{Проверка условий существования решения}. Если для некоторой 
+линии $v\in\Omega_u^+$ выполняется хотя бы одно неравенство $(c_v\mu_v(1-
+B_v))/\Lambda_v[0]\;\leq$\linebreak $\leq\;1$, или $(1-B_v)/(\Lambda_v\tau_v B_v) \leq 1$, или 
+$(t_v(1\;-$\linebreak $-\;B_v))/\Lambda_v[0] \leq 1$, то алгоритм заканчивает работу с 
+результатом <<нагрузка не реализуема>>. Если в узле используется 
+полнодоступная схема и $(c_v\mu_v(1-B_v))/\Lambda_v[0] > 1$, $(1-
+B_v)/(\Lambda_v\tau_v B_v)\;>$\linebreak $>\;1$, $(t_v(1-B_v))/\Lambda_v[0] > 1$ для всех 
+$v\in\Omega_u^+$, то проверяется условие~(\ref{e13aga}) для $\Lambda_v =
+\Lambda_v[0]$, $v\in\Omega_u^+$, и при невыполнении этого условия алгоритм 
+заканчивает работу с результатом <<нагрузка не реализуема>>.
+\end{enumerate}
+
+    При вычислении левой части неравенства~(\ref{e13aga}) рекомендуется 
+использовать метод свертки Базена (см.~\cite{12aga}), позволяющий 
+производить рекуррентные вычисления (подробно этот метод описан также 
+в~[1, 3--6]).
+
+
+
+\medskip
+\textbf{Шаг~$k$} ($k > 0$):
+\begin{enumerate}[1.]
+\item \textit{Вычисление вероятностей блокировок}. Используя значения 
+параметров $\overline{\rho}_u^v[k-1]$, $y_u^v[k-1]$, $v\in\Omega_u^+$, 
+вычисление с помощью формул~(1)--(7) значений 
+вероятностей $y[k]=1- \pi [k]$~--- в случае полнодоступной памяти, или 
+$y_v[k]=1- \pi_v[k]$, $v\in\Omega_u^+$, с помощью формул~(\ref{e15aga})~--- в 
+случае полного разделения памяти. При вычислении этих значений 
+рекомендуется использовать метод свертки Базена.
+    \item \textit{Проверка условий останова алгоритма}. Если хотя бы для 
+одной $v\in\Omega_u^+$ для заданного значения точности   выполняется 
+условие
+$$
+\fr{\vert \Lambda_v^*[k]-\Lambda_v^*[k-1]\vert}{\Lambda_v^*[k]}> \varepsilon\,,
+$$
+то вычисление параметров $\overline{\rho}_u^v[k]$, $v\in\Omega_u^+$, и 
+переход к шагу~$k$, положив $k$ равным $k+1$, иначе алгоритм завершает 
+работу. 
+\end{enumerate}
+
+    По завершении алгоритма либо выявится, что нагрузка в системе не 
+реализуема, либо будут вычислены интенсивности потоков, поступающих на 
+линии узла, и стационарные вероятности блокировок для заявок каждого типа. 
+    
+\section{Примеры расчета}
+
+    Для проверки точности вычисления результатов с помощью 
+предложенного выше алгоритма и приемлемости введенных предположений 
+были проведены вычислительные эксперименты с использованием 
+аналитических и имитационных моделей. Во всех рассмотренных ниже 
+примерах потоки внешних заявок считаются пуассоновскими. 
+В~табл.~1 приведены значения вероятности блокировок вновь 
+поступивших извне заявок, полученные на основании точной формулы, 
+приведенной в~\cite{4aga} для СМО типа $M\vert M\vert 1\vert 0$ с повторными 
+заявками при экспоненциальном распределении интервала времени между 
+повторными попытками (первая строка таблицы), алгоритма из подраздела~5 
+настоящей статьи (вторая строка) и имитационной модели при постоянном 
+интервале времени между повторными попытками, равном~10 (третья строка). 
+Расчет табл.~1 проведен для узла с одной исходящей одноканальной 
+линией при интенсивности первичного потока $\Lambda =1$ и емкости 
+накопителя $N_v=1$. Таблицы~2 и~3 вычислены с помощью 
+алгоритма из подраздела~5 и имитационной модели соответственно при одной 
+исходящей линии с числом каналов~10.
+
+
+    В табл.~\ref{t4aga} и~\ref{t5aga} приведены значения вероятности 
+блокировки узла с тремя исходящими линиями канальной емкости~10 каждая 
+при $\mu_v =0{,}2$, $v\in\Omega_u^+$,  вычисленные с помощью алгоритма из 
+подраздела~5 и имитационной модели с интервалом повторной попытки, 
+равным~10, соответственно. В табл.~\ref{t4aga} и~\ref{t5aga} знак <<--->> в 
+ячейках означает, что предложенная нагрузка $\Lambda_v$, $v\in\Omega_u^+$, 
+не реализуема.
+
+
+
+В табл.~\ref{t6aga} отражены вероятности блокировки такого же узла с 
+накопителем $N = 35$ при экспоненциальном распределении интервала 
+времени между повторными попытками со средним значением~$\tau$. 
+
+
+Результаты вычислительного эксперимента показывают, что с  увеличением 
+длины интервала между повторными попытками  вероятность блокировки 
+увеличивается и приближается к значению,\linebreak
+вычисленному с помощью 
+алгоритма из подраздела~5 (см.\ табл.~\ref{t4aga} и~\ref{t6aga}), т.\,е.\ при 
+пуассоновском внешнем потоке заявок предположение, что суммарный 
+входной поток заявок  является пуассоновским, вполне приемлемо для 
+предварительного анализа характеристик узла (например, при  $\tau c_v\mu_v > 
+10$). Как показывают табл.~1--3, вероятность блокировки 
+узла существенно зависит от\linebreak 
+
+\vspace*{6pt}
+\noindent
+%\begin{table*}\small %tabl1
+{\small
+{{\tablename~1}\ \ \small{Вероятности блокировок при одной исходящей одноканальной линии}}
+%\label{t1aga}}
+\vspace*{-3pt}
+
+\begin{center}
+{\tabcolsep=7.3pt
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+&\multicolumn{5}{c|}{$\mu$}\\
+\cline{2-6}
+\multicolumn{1}{|c|}{\raisebox{4pt}[0pt][0pt]{№}}&1{,}1&1{,}2&2&3&4\\
+\hline
+1&0,9091&0,8333&0,5000&0,3333&0,2500\\
+2&0,9091&0,8333&0,5000&0,3333&0,2500\\
+3&0,8867&0,8452&0,4944&0,3167&0,2396\\
+\hline
+\end{tabular}}
+\end{center}
+%\vspace*{-6pt}
+%\end{table*}
+}
+%\bigskip
+%\medskip
+\addtocounter{table}{1}
+\pagebreak
+
+\end{multicols}
+
+\renewcommand{\figurename}{\protect\bf Таблица}
+%\renewcommand{\tablename}{\protect\bf Рис.}
+\begin{figure*}
+{\small
+\begin{minipage}[t]{76mm}
+%\begin{table*}\small %tabl2
+\begin{center}
+\Caption{Вероятности блокировок при одной исходящей многоканальной линии ($\varepsilon 
+=0{,}0001$)
+\label{t2aga}}
+\vspace*{2ex}
+
+\tabcolsep=6.5pt
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+&\multicolumn{5}{c|}{$\mu$}\\
+\cline{2-6}
+\multicolumn{1}{|c|}{\raisebox{4pt}[0pt][0pt]{$N$}}&0{,}11&0{,}12&0{,}2&0{,}3&0{,}4\\
+\hline
+10&0,4845&0,2935&0,0204&0,0017&0,0002\\
+15&0,1181&0,0545&0,0006&0,0000&0,0000\\
+20&0,0489&0,0167&0,0000&0,0000&0,0000\\
+\hline
+\end{tabular}
+\end{center}
+%\end{table*}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{76mm}
+%\begin{table*}\small %tabl3
+\begin{center}
+\Caption{Вероятности блокировок при одной исходящей линии
+\label{t3aga}}
+\vspace*{2ex}
+
+\tabcolsep=6.5pt
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+&\multicolumn{5}{c|}{$\mu_v$}\\
+\cline{2-6}
+\multicolumn{1}{|c|}{\raisebox{4pt}[0pt][0pt]{$N$}}&0{,}11&0{,}12&0{,}2&0{,}3&0{,}4\\
+\hline
+10&0,5247&0,3238&0,0219&0,0019&0,0001\\
+15&0,1726&0,0912&0,0004&0,0001&0,0000\\
+20&0,1180&0,0371&0,0000&0,0000&0,0000\\
+\hline
+\end{tabular}
+\end{center}
+%\end{table*}
+\end{minipage}
+}
+\vspace*{6pt}
+\end{figure*}
+
+\renewcommand{\figurename}{\protect\bf Рис.}
+\renewcommand{\tablename}{\protect\bf Таблица}
+\addtocounter{table}{2}
+
+\begin{table}\small %tabl4
+\begin{center}
+\parbox{400pt}{\Caption{Вероятности блокировок при трех исходящих линиях, вычисленные алгоритмом из 
+подраздела~5 ($\varepsilon =0{,}0001$)
+\label{t4aga}}
+}
+
+\vspace*{2ex}
+
+\tabcolsep=8pt
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+\hline
+&\multicolumn{9}{c|}{$\Lambda_v$}\\
+\cline{2-10}
+\multicolumn{1}{|c|}{\raisebox{4pt}[0pt][0pt]{$N$}}&1&1{,}1&1{,}2&1{,}3&1{,}4&1{,}5&1{,}6&1{,}7&1{,}8\\
+\hline
+20&0,0677&0,1423&0,2975&0,7653&---&---&---&---&---\\
+25&0,0065&0,0173&0,0394&0,0827&0.1690&0.3827&---&---&---\\
+30&0,0005&0,0019&0,0059&0,0155&0.0361&0.0790&0.1792&0,7259&---\\
+35&0,0000&0,0002&0,0008&0,0030&0,0089&0,0234&0,0574&0,1505&---\\
+40&0,0000&0,0000&0,0001&0,0005&0,0022&0,0075&0,0220&0,0617&0,2449\\
+\hline
+\end{tabular}
+\end{center}
+%\end{table}
+\vspace*{6pt}
+%\begin{table}\small %tabl5
+\begin{center}
+\parbox{400pt}{\Caption{Вероятности блокировок при трех исходящих линиях, вычисленные с помощью 
+имитационной модели
+\label{t5aga}}
+}
+
+\vspace*{2ex}
+
+\tabcolsep=8pt
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+\hline
+&\multicolumn{9}{c|}{$\Lambda_v$}\\
+\cline{2-10}
+\multicolumn{1}{|c|}{\raisebox{4pt}[0pt][0pt]{$N$}}&1&1{,}1&1{,}2&1{,}3&1{,}4&1{,}5&1{,}6&1{,}7&1{,}8\\
+\hline
+20&0,0786&0,1695&0,3549&0,7056&---&---&---&---&---\\
+25&0,0069&0,0190&0,0441&0,0998&0,2266&0,4583&---&---&---\\
+30&0,0007&0,0024&0,0075&0,0184&0,0462&0,1025&0,2380&0,6931&---\\
+35&0,0000&0,0003&0,0007&0,0040&0,0129&0,0307&0,0890&0,2981&---\\
+40&0,0000&0,0000&0,0000&0,0011&0,0041&0,0095&0,0346&0,0790&0,3179\\
+\hline
+\end{tabular}
+\end{center}
+%\end{table}
+\vspace*{6pt}
+%\begin{table}\small %tabl6
+\begin{center}
+\parbox{356pt}{\Caption{Зависимость вероятности блокировки при трех исходящих линиях, вы\-чис\-лен\-ные с 
+помощью имитационной модели со случайным интервалом между повторными попытками
+\label{t6aga}}
+}
+
+\vspace*{2ex}
+
+\tabcolsep=8pt
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline
+&\multicolumn{8}{c|}{$\Lambda_v$}\\
+\cline{2-9}
+\multicolumn{1}{|c|}{\raisebox{6pt}[0pt][0pt]{$\tau$}}&1&1{,}1&1{,}2&1{,}3&1{,}4&1{,}5&1{,}6&1{,}7\\
+\hline
+\hphantom{9}1&0.0001&0,0001&0,0017&0,0063&0,0210&0,0733&0,1996&0,4222\\
+\hphantom{9}5&0.0000&0,0002&0,0016&0,0036&0,0446&0,0159&0,1360&0,3273\\
+10&0.0000&0,0002&0,0011&0,0036&0,0101&0,0430&0,0818&0,2774\\
+20&0.0000&0,0003&0,0007&0,0029&0,0089&0,0257&0,0863&0,2045\\
+     \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{multicols}{2}
+
+
+\noindent
+числа каналов в линии при равной суммарной 
+производительности. Кроме того, как видно из табл.~\ref{t5aga} и~\ref{t6aga}, 
+вероятность блокировки в большей степени зависит от среднего значения 
+длины интервала между повторными попытками передачи, чем от закона 
+распределения длины интервала. Таким образом, предложенный в работе 
+алгоритм позволяет вы\-чис\-лить с достаточной точностью вероятность 
+блокировки узла, интенсивности повторных передач и предельную величину 
+реализуемой нагрузки. Отметим, что полученные в данной статье результаты 
+могут быть использованы для расчета нагрузок в телекоммуникационной сети с 
+повторами заявок в предыдущем узле или из источника. 
+
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\addcontentsline{toc}{section}{Литература}
+\begin{thebibliography}{99}    
+\bibitem{1aga}
+\Au{Kamoun~F., Kleinrock~L.}
+Analysis of shared finite storage in a computer networks node environment under 
+general traffic conditions~// IEEE Trans. on Commun., 1980. Vol.~28. No.\,7. 
+P.~992--1003.
+
+\bibitem{6aga} %2
+\Au{Агаларов~Я.\,М., Шоргин~С.\,Я.}
+Рекуррентный метод вычисления параметров сетей связи~// Техника средств 
+связи, 1986. Сер. <<Системы связи>>. Вып.~6. С.~42--46.
+
+\bibitem{3aga}
+\Au{Башарин Г.\,П., Бочаров~П.\,П., Коган~Я.\,А.}
+Анализ очередей в вычислительных сетях.~--- М.: Наука, 1989. 
+
+\bibitem{4aga}
+\Au{Бочаров~П.\,П., Печинкин~А.\,В.}
+Теория массового обслуживания.~--- М.: Изд-во РУДН, 1995. 
+
+\bibitem{5aga}
+\Au{Вишневский~В.\,М.} 
+Теоретические основы проектирования компьютерных сетей.~--- М.: 
+Техносфера, 2003. 
+
+\bibitem{2aga} %6
+\Au{Башарин Г.\,П.}
+Лекции по математической теории телетрафика.~--- М.: Изд-во РУДН, 2007. 
+
+\bibitem{7aga}
+\Au{Таранцев~А.\,А.}
+Инженерные методы теории массового обслуживания.~--- М.: Наука, 2007.
+
+\bibitem{9aga} %8
+\Au{D'Apice~C., De~Simone~T., Manzo~R., Rizelian~G.}
+$M\vert G\vert 1\vert r$ retrial queueing system with priority service of primary 
+customers and a customers-searching server~// Distributed Computer and 
+Communication Networks. Stochastic Modelling and Optimization.~--- М.: 
+Техносфера, 2003. P.~106--117.
+
+\bibitem{8aga} %9
+\Au{Klimenok~V.\,I., Kim~C.\,S.}
+$BM\!AP$/$PH$/1 retrial system operating in random environment~// Proceedings of 
+the 5th St.-Petersburg Workshop on Simulation, St.-Petersburg, June~26\,--\,July~2, 
+2005.~--- St.-Petersburg: NII Chemistry St.-Petersburg University Publs., 
+2005. P.~367--372.   
+
+\bibitem{10aga}
+\Au{Krishnamoorthy~A., Babu~S.}
+$M\!AP\vert (PH,PH)/c$ retrial queue with selegeneration of priorities 
+and non-preemptive service~// Proceedings of the 14th International Conference on 
+Analytical and Stochastic Modeling Techniques and Applications, June~4--6, 
+2007. Prague, Czech Republic.~--- Sbr.-Dudweiler: Digitaldruck Pirrot GmbH, 
+2007. P.~70--74.
+
+\bibitem{11aga}
+\Au{Корн~Г., Корн~Т.}
+Справочник по математике.~--- М.: Наука, 1974.
+
+\label{end\stat}
+
+
+\bibitem{12aga}
+\Au{Buzen~J.\,P.}
+Computational algorithm for closed queuing networks with exponential servers~// 
+Communications ACM, 1973. Vol.~16. No.\,9. P.~527--531.
+ \end{thebibliography}
+}
+}
+\end{multicols}
+ 
+ 
+ 

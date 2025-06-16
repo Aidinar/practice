@@ -1,0 +1,679 @@
+\def\stat{bazilebskii}
+
+\def\tit{ОБОБЩЕНИЕ МЕТОДА ВЫПРЯМЛЕНИЯ ИСКАЖЕННЫХ ИЗ-ЗА~МУЛЬТИКОЛЛИНЕАРНОСТИ 
+КОЭФФИЦИЕНТОВ ДЛЯ~РЕГРЕССИОННЫХ МОДЕЛЕЙ С~РАЗЛИЧНОЙ СТЕПЕНЬЮ 
+КОРРЕЛЯЦИИ ОБЪЯСНЯЮЩИХ ПЕРЕМЕННЫХ}
+
+\def\titkol{Обобщение метода выпрямления искаженных из-за~мультиколлинеарности 
+коэффициентов} % для~регрессионных моделей с~различной степенью  корреляции объясняющих переменных}
+
+\def\aut{М.\,П.~Базилевский$^1$}
+
+\def\autkol{М.\,П.~Базилевский}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Базилевский М.\,П.}
+\index{Bazilevskiy M.\,P.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнена при поддержке РФФИ (проект 20-07-00804).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Иркутский государственный университет путей сообщения, кафедра математики, 
+\mbox{mik2178@yandex.ru}}
+
+
+\vspace*{-10pt}
+
+
+
+  \Abst{При построении регрессионных моделей одну из главных проблем представляет 
+мультиколлинеарность. Это негативное явление приводит к~искажению коэффициентов 
+регрессии, в~частности их знаков. Ранее для решения проблемы мультиколлинеарности был 
+разработан метод выпрямления искаженных коэффициентов (МВИК), который основан на 
+построении модели полносвязной линейной регрессии (МПЛР). Одно из условий его  
+применимости~--- тесная корреляция абсолютно всех пар объясняющих переменных. Но при 
+решении реальных прикладных задач это условие выполняется редко. Чаще всего 
+объясняющие переменные коррелируют друг с~другом по-раз\-но\-му. Для этого в~данной 
+статье предложен новый итерационный алгоритм МВИК. Особенность алгоритма заключается в~том, что он сочетает в~себе 
+достоинства как традиционных множественных моделей, так и~новых полносвязных 
+регрессий. Разработанный алгоритм универсален и~может применяться для построения 
+регрессионного уравнения с~любой структурой корреляционной матрицы. Новый алгоритм 
+успешно применен для моделирования грузоперевозок железнодорожного транспорта 
+в~Иркутской области.}
+  
+  \KW{регрессионный анализ; корреляция; мультиколлинеарность; метод выпрямления 
+искаженных коэффициентов; модель полносвязной линейной регрессии}
+
+ \DOI{10.14357/19922264220404} 
+  
+\vspace*{-4pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+  
+\section{Введение}
+
+\vspace*{-4pt}
+  
+  Одной из главных проблем регрессионного анализа~\cite{1-baz} является 
+мультиколлинеарность~--- наличие сильной линейной за\-ви\-си\-мости меж\-ду 
+двумя или более объ\-яс\-ня\-ющи\-ми переменными. Мультиколлинеарность 
+приводит к~искажению оценок регрессии, в~част\-ности их знаков, что 
+затрудняет или вовсе делает невозможным интерпретацию влияния отдельных 
+факторов на выходную переменную. На сегодняшний день проб\-ле\-ма 
+муль\-ти\-кол\-ли\-не\-ар\-ности не до конца решена. Для этого применяются различные 
+приемы: исключение сильно кор\-ре\-ли\-ру\-ющих объ\-яс\-ня\-ющих переменных, метод 
+главных компонент~[2, 3], греб\-не\-вая (ридж) ре\-грес\-сия~[4, 5], до\-бав\-ле\-ние новых 
+наблюдений, преобразование исходных переменных. Современным 
+на\-прав\-ле\-ни\-ем стала разработка новых методов оценивания регрессионных 
+моделей в~условиях муль\-ти\-кол\-ли\-не\-ар\-ности (см., например,~[6, 7]). 
+
+Все 
+пе\-ре\-чис\-лен\-ные приемы имеют свои недостатки. Так, метод исключения 
+приводит к~потере ин\-фор\-ма\-тив\-ности и~воз\-мож\-ности изуче\-ния совместного 
+влияния всех переменных на выходной показатель. Преобразовать исходные 
+переменные в~набор слабо кор\-ре\-ли\-ру\-ющих факторов или найти новые 
+наблюдения удается крайне ред\-ко. При по\-стро\-ении греб\-не\-вой регрессии 
+возникает проб\-ле\-ма с~выбором па\-ра\-мет\-ра регуляризации. Кроме того, 
+оценивание греб\-не\-вой ре\-грес\-сии заключается в~искажении формулы для метода 
+наименьших квад\-ра\-тов (МНК), поэтому для полученного уравнения будут 
+несправедливы коэффициент детерминации, критерий Фишера и~$t$-кри\-те\-рий Стьюдента. 
+То же самое относится и~к~новым методам оценивания в~условиях муль\-ти\-кол\-ли\-не\-ар\-ности. При реализации метода главных компонент 
+возникает проб\-ле\-ма с~интерпретацией главных компонент. Самый же глав\-ный 
+недостаток всех этих методов кроется в~том, что ни один из них не гарантирует 
+со\-гла\-со\-ван\-ность знаков коэффициентов регрессии при объ\-яс\-ня\-ющих 
+переменных с~со\-от\-вет\-ст\-ву\-ющи\-ми знаками их коэффициентов корреляции 
+с~вы\-ход\-ной переменной.
+  
+  В работе~\cite{8-baz} автором были предложены МПЛР, которые строятся при условии сильной 
+корреляции между объясняющими переменными. В~результате оценивания 
+МПЛР формируются линейно зависимые латентные переменные в~виде 
+линейных комбинаций объясняющих переменных. Было установлено, что знаки 
+коэффициентов в~этих линейных комбинациях согласуются 
+с~соответствующими знаками коэффициентов линейной корреляции. На этой 
+основе в~работе~\cite{9-baz} был разработан МВИК, который пол\-ностью решает проб\-ле\-му 
+мультиколлинеарности. Однако МВИК работает только тогда, когда абсолютно 
+все объясняющие переменные тес\-но коррелируют между собой. Если же между 
+всеми ними слабая корреляция, то справедливым будет по\-стро\-ение 
+традиционной модели множественной линейной регрессии (ММЛР). Но не до 
+конца понятно, как поступать в~ситуации, когда объясняющие переменные 
+коррелируют по-раз\-но\-му: одни~--- сильно, вторые~--- слабо, третьи~--- 
+средне. В~этом случае уже нельзя применять ни ММЛР, ни МПЛР. Цель 
+данной работы состоит в~обобщении МВИК для регрессионных моделей 
+с~различной степенью корреляции объясняющих переменных.
+
+\section{Модели множественной и~полносвязной линейной 
+регрессии}
+  
+  Рассмотрим ММЛР
+  \begin{equation}
+  y_i= \alpha_0+\alpha_1 x_{i1} +\alpha_2 x_{i2}+\cdots + \alpha_m 
+x_{im}+\varepsilon_i\,,
+  \label{e1-baz}
+  \end{equation}
+где $y_i$, $i\hm=\overline{1,n}$,\,---\,значения зависимой (объяс\-ня\-емой) 
+переменной~$y$; $x_{i1}, x_{i2}, \ldots , x_{im}$, $i\!\hm=\!\overline{1,n}$,~--- 
+значения~$m$~независимых (объясняющих) пе\-ре\-мен\-ных $x_1, x_2, \ldots , 
+x_m$ ($x$-пе\-ре\-мен\-ные); $\varepsilon_i$, $i\hm= \overline{1,n}$,~--- ошибки 
+аппроксимации; $\alpha_0, \alpha_1, \ldots , \alpha_m$~--- неизвестные 
+параметры; $n$~--- объем выборки.
+
+  При полной коллинеарности между объяс\-ня\-ющи\-ми переменными 
+определитель $\vert X^{\mathrm{T}} X\vert$, где~$X$~--- мат\-ри\-ца наблюдений факторов, 
+равен~0, поэтому МНК-оцен\-ки получить невозможно. При 
+мультиколлинеарности, т.\,е.\ при $\vert X^{\mathrm{T}} X\vert \hm\approx 0$,  
+МНК-оцен\-ки становятся неустойчивыми. Таким образом, из-за 
+мультиколлинеарности ММЛР целесообразно строить только тогда, когда 
+абсолютно все объясняющие переменные слабо коррелируют между собой.
+  
+  Модель полносвязной линейной регрессии~\cite{8-baz, 9-baz} имеет 
+следующий вид:
+  \begin{equation}
+  \left.
+  \begin{array}{rl}
+  x_{ij} &= x_{ij}^* +\varepsilon_i^{(x_j)}\,, \enskip i=\overline{1,n}\,,\ 
+j=\overline{1,m}\,;
+ \\[6pt]
+  x_j^* &= a_j +b_jx_m^*\,,\enskip j=\overline{1,m-1}\,,
+  \end{array}
+  \right \}
+   \label{e2-baz}
+  %\label{e3-baz}
+  \end{equation}
+где $x_{i1}^*, x_{i2}^*, \ldots , x_{im}^*$, $i\hm= \overline{1,n}$,~--- истинные 
+значения объясняющих переменных; $a_j$, $b_j$, $j\hm= \overline{1,m-1}$,~--- 
+неизвестные параметры; $\varepsilon_i^{(x_j)}$, $i\hm= \overline{1,n}$,~--- 
+ошибки $j$-й переменной.
+  
+  Модель полносвязной линейной регрессии~(\ref{e2-baz}) 
+целесообразно строить только тогда, когда абсолютно все объясняющие 
+переменные сильно коррелируют между собой, т.\,е.\ при сильной 
+мультиколлинеарности.
+  
+  Модель полносвязной линейной регрессии оценивается с~по\-мощью 
+взвешенного метода наименьших полных квадратов (ВМНПК):
+  \begin{multline}
+  \lambda_1 \sum\limits^n_{i=1} \left( x_{i1} -a_1-b_1x_{im}^*\right)^2 
++{}\\
+{}+\lambda_2 \sum\limits^n_{i=1} \left( x_{i2}-a_2-b_2x_{im}^*\right)^2+\cdots\\
+  {}\cdots  + \lambda_{m-1}\sum\limits^n_{i=1} \left( x_{i,m-1} -a_{m-1} -b_{m-1} x^*_{im}\right)^2 +{}\\
+  {}+\sum\limits^n_{i=1} \left( x_{im} -x_{im}^*\right)^2\to 
+\min\,,
+  \label{e4-baz}
+  \end{multline}
+где $\lambda_1, \lambda_2, \ldots , \lambda_{m-1}$~--- положительные весовые 
+коэффициенты (лямб\-да-па\-ра\-мет\-ры).
+  
+  Для заданных значений лямб\-да-па\-ра\-мет\-ров задача~(\ref{e4-baz}) 
+решается по сле\-ду\-ющей схеме.
+  \begin{enumerate}[1.]
+\item Находятся оценки $\tilde{b}_1, \tilde{b}_2, \ldots , \tilde{b}_{m-1}$ из 
+нелинейной системы
+\begin{multline*}
+b_p\left( D_{x_m} +\sum\limits_{j=1}^{m-1} \lambda_j^2 b_j^2 D_{x_j} 
++{}\right.\\
+{}+2\sum\limits_{j_1=1}^{m-2} \sum\limits_{j_2=j_1+1}^{m-1} \lambda_{j_1} 
+\lambda_{j_2} b_{j_1} b_{j_2} K_{x_{j_1} x_{j_2}}+{}\\
+\left.{}+ 2\sum\limits^{m-1}_{j=1} 
+\lambda_j b_j K_{x_j x_m}\right)={}\\
+{}= \left( 1+\sum\limits_{j=1}^{m-1} \lambda_j b_j^2\right) \left( 
+\sum\limits_{j=1}^{m-1} \lambda_j b_j K_{x_j x_p} +K_{x_m x_p}\right)\!,\\
+ p=\overline{1,m-1}\,.
+\end{multline*}
+  
+  В работе~\cite{9-baz} предложен численный метод ее решения.
+\item Определяются оценки $\tilde{a}_1, \tilde{a}_2, \ldots , \tilde{a}_{m-1}$ по 
+формулам
+$$
+\tilde{a}_j= \overline{x_j} - \tilde{b}_j \overline{x_m}\,,\enskip
+j= \overline{1,m-1}.
+$$
+\item Вычисляются оценки истинных значений переменной~$x_m^*$ по 
+формулам
+
+\noindent
+\begin{multline}
+\tilde{x}_{im}^*= \left( 1+\sum\limits_{j=1}^{m-1} \lambda_j 
+\tilde{b}_j^2\right)^{-1} \left( -\sum\limits_{j=1}^{m-1} \lambda_j \tilde{a}_j 
+\tilde{b}_j +{}\right.\\
+\left.{}+\sum\limits_{j=1}^{m-1} \lambda_j \tilde{b}_j x_{ij} +x_{im}\right)\,,\
+i=\overline{1,n}\,.
+\label{e5-baz}
+\end{multline}
+  \end{enumerate}
+  
+  В~\cite{9-baz} установлено, что при сильной корреляции объясняющих 
+переменных $x_1, x_2, \ldots , x_m$ в~(\ref{e5-baz}) знаки коэффициентов при 
+объясняющих переменных будут согласованы с~соответствующими знаками 
+коэффициентов корреляции~$r_{x_jx_m}$, $j\hm= \overline{1,m-1}$. На основе 
+этого факта в~\cite{9-baz} был разработан реализующий МВИК алгоритм 
+``Straight~B'':
+  \begin{enumerate}[1.]
+\item При $\lambda_1=D_{x_m}/D_{x_1}, \lambda_2\hm= D_{x_m}/D_{x_2}, 
+\ldots , \lambda_{m-1}\hm= D_{x_m}/D_{x_{m-1}}$ решается  
+задача~(\ref{e4-baz}).
+\item С помощью МНК оценивается модель $y_i\hm= c_0 \hm+ c_1 
+\tilde{x}_{im}^* \hm+ \varepsilon_i$, $i\hm= \overline{1,n}$, где  
+$c_0$ и~$c_1$~--- неизвестные параметры.
+\item Путем подстановки~(\ref{e5-baz}) в~равенство $\tilde{y}\hm= \tilde{c}_0 
+\hm+ \tilde{c}_1\tilde{x}_m^*$ определяется искомое уравнение регрессии.
+\end{enumerate}
+  
+  Условия применимости МВИК по алгоритму ``Straight~B'':
+  \begin{enumerate}[(1)]
+\item каждая объясняющая переменная должна тесно коррелировать с~выходной 
+переменной~$y$;
+\item все объясняющие переменные должны тесно коррелировать друг 
+с~другом.
+\end{enumerate}
+  
+  Если второе условие не выполняется, то могут возникнуть проблемы 
+с~численным оцениванием МПЛР, а также с~согласованностью знаков 
+коэффициентов регрессии с~соответствующими знаками коэффициентов 
+корреляции.
+  
+  Достоинство алгоритма ``Straight~B'' заключается в~полном отсутствии 
+эффекта мультиколлинеарности в~процессе получения регрессионного 
+уравнения и~сохранении в~модели всех исходных переменных.
+  
+  К сожалению, при решении прикладных задач анализа данных крайне редко 
+бывает так, чтобы сразу все объясняющие переменные коррелировали между 
+собой или только слабо, или только сильно. Поэтому возникает проб\-ле\-ма 
+с~применением как ММЛР~(\ref{e1-baz}), так и~МПЛР~(\ref{e2-baz}). Для ее решения был разработан итерационный алгоритм 
+``Straight~C'', основанный на постепенном сли\-янии сильно кор\-ре\-ли\-ру\-ющих 
+переменных.
+
+\section{Алгоритм ``Straight~C''}
+
+  Предварительно исключаются объясняющие переменные, которые слабо 
+коррелируют с~выходной переменной~$y$. Также следует исключить те 
+переменные, знаки коэффициентов корреляции которых с~$y$ противоречат 
+содержательному смыс\-лу ре\-ша\-емой задачи.
+  
+  Задается граница между областями слабой и~сильной 
+мультиколлинеарности~--- $r_{\mathrm{гран}}\hm\in (0,1)$. Будем считать, что 
+если все абсолютные значения коэффициентов корреляции объясняющих 
+переменных меньше~$ r_{\mathrm{гран}}$, то можно применять ММЛР, 
+а~если все больше~$ r_{\mathrm{гран}}$, то~--- МПЛР.
+  
+  \textbf{Шаг~1.} Находится корреляционная мат\-ри\-ца объ\-яс\-ня\-ющих 
+переменных~$R$. Когда число объ\-яс\-ня\-ющих переменных
+  \begin{enumerate}[(1)]
+\item равно двум, тогда если их коэффициент корреляции $r\hm < 
+r_{\mathrm{гран}}$, то находятся МНК-оцен\-ки ММЛР, а~если $r\hm\geq 
+r_{\mathrm{гран}}$, то выполняется алгоритм ``Straight~B''. На этом алгоритм 
+``Straight~C'' завершается;
+\item более двух, тогда если все абсолютные значения коэффициентов 
+корреляции матрицы~$R$:
+\begin{itemize}
+\item попадают в~промежуток $[0, r_{\mathrm{гран}})$, то с~по\-мощью МНК 
+оценивается ММЛР и~алгоритм ``Straight~C'' завершен;
+\item попадают в~промежуток $[ r_{\mathrm{гран}}, 1]$, то действуем по 
+алгоритму ``Straight~B'' и~алгоритм ``Straight~C'' завершен;
+\item не попадают в~эти промежутки, то переходим к~шагу~2.
+\end{itemize}
+\end{enumerate}
+  
+  \textbf{Шаг~2.} Генерируются все разбиения множества объ\-яс\-ня\-ющих 
+переменных, общее число которых называется чис\-лом Белла. Исключаются 
+раз\-би\-ения, в~которых чис\-ло подмножеств рав\-но чис\-лу переменных и~1, 
+поскольку ММЛР и~МПЛР уже про\-шли проверку на шаге~1. Каждое 
+подмножество переменных в~разбиении будем называть клас\-те\-ром.
+  
+  \textbf{Шаг~3} (\textbf{цикл по всем разбиениям}). Для данного разбиения 
+выбираются все кластеры, состоящие хотя бы из двух переменных. Для 
+каждого такого кластера проверяется условие попадания абсолютных значений 
+всех парных коэффициентов корреляции его переменных в~промежуток $[ 
+r_{\mathrm{гран}}, 1]$. Если все кластеры удовлетворяют этим условиям, то 
+для каждого из них оценивается МПЛР, по формуле~(\ref{e5-baz}) 
+определяются новые $z$-пе\-ре\-мен\-ные и~все результаты для данного 
+разбиения сохраняются в~па\-мять~№\,1.
+
+  \begin{table*}[b]\small
+  \begin{center}
+  \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+  \multicolumn{10}{c}{Корреляционная матрица}\\
+  \multicolumn{10}c{}{\ }\\[-6pt]
+  \hline
+&$y$&$x_2$&$x_3$&$x_5$&$x_8$&$x_{18}$&$x_{35}$&$x_{36}$&$x_{58}$\\
+\hline
+$y$&1\hphantom{$-$}&\hphantom{$-$}0,736&\hphantom{$-$}0,389&$-$0,372&$-$0,354&\hphantom{$-$}0,464&\hphantom{$-$}0,454&\hphantom{$-$}0,693&$-$0,322\\
+$x_2$&\hphantom{$-$}0,736&1\hphantom{$-$}&\hphantom{$-$}0,781&$-$0,879&$-$0,810&$-$0,079&\hphantom{$-$}0,881&\hphantom{$-$}0,851&$-$0,847\\
+$x_3$&\hphantom{$-$}0,389&\hphantom{$-$}0,781&1\hphantom{$-$}&$-$0,859&$-$0,742&$-$0,291&\hphantom{$-$}0,746&\hphantom{$-$}0,611&$-$0,853\\
+$x_5$&$-$0,372&$-$0,879&$-$0,859&1\hphantom{$-$}&\hphantom{$-$}0,935&\hphantom{$-$}0,498&$-$0,940&$-$0,667&\hphantom{$-$}0,988\\
+$x_8$&$-$0,354&$-$0,810&$-$0,742&\hphantom{$-$}0,935&1\hphantom{$-$}&\hphantom{$-$}0,496&$-$0,944&$-$0,544&\hphantom{$-$}0,913\\
+$x_{18}$&\hphantom{$-$}0,464&$-$0,079&$-$0,291&\hphantom{$-$}0,498&\hphantom{$-$}0,496&1\hphantom{$-$}&$-$0,357&\hphantom{$-$}0,075&\hphantom{$-$}0,548\\
+$x_{35}$&\hphantom{$-$}0,454&\hphantom{$-$}0,881&\hphantom{$-$}0,746&$-$0,940&$-$0,944&$-$0,357&1\hphantom{$-$}&\hphantom{$-$}0,712&$-$0,896\\
+$x_{36}$&\hphantom{$-$}0,693&\hphantom{$-$}0,851&\hphantom{$-$}0,611&$-$0,667&$-$0,544&\hphantom{$-$}0,075&\hphantom{$-$}0,712&1\hphantom{$-$}&$-$0,620\\
+$x_{58}$&$-$0,322&$-$0,847&$-$0,853&\hphantom{$-$}0,988&\hphantom{$-$}0,913&\hphantom{$-$}0,548&$-$0,896&$-$0,620&1\hphantom{$-$}\\
+\hline
+\end{tabular}
+\end{center}
+\end{table*}
+  
+  
+  \textbf{Шаг 4} (\textbf{цикл по всем разбиениям из памяти №\,1}). Для 
+данного разбиения находится корреляционная матрица объясняющих 
+переменных, среди которых могут быть либо $z$-пе\-ре\-мен\-ные, либо $x$- 
+и~$z$-пе\-ре\-мен\-ные. Проверяется условие попадания абсолютных значений 
+всех парных коэффициентов корреляции в~промежуток $[0, 
+r_{\mathrm{гран}})$. Если условие выполняется, то по $x$- 
+и~$z$-пе\-ре\-мен\-ным с~по\-мощью МНК оценивается ММЛР, проверяется 
+согласованность знаков ее коэффициентов и~в~случае успеха все результаты для 
+данного разбиения сохраняются в~память №\,2.
+  
+  \textbf{Шаг~5.}\ Если память №\,2 пуста, то в~памяти №\,1 выбираем модель 
+с~наибольшим значением коэффициента детерминации~$R^2$ и~переходим 
+к~шагу~1. В~противном случае выбираем в~памяти №\,2 модель с~наибольшим 
+значением коэффициента детерминации~$R^2$ и~алгоритм ``Straight~C'' 
+завершается.
+  
+  Таким образом, алгоритм ``Straight~C'' гарантирует сохранение 
+в~окончательной модели всех\linebreak исходных переменных. Помимо этого 
+итерационно снижается эффект муль\-ти\-кол\-ли\-не\-ар\-ности, что\linebreak приводит 
+к~выпрямлению искаженных коэффициентов. К~недостатку предложенного 
+алгоритма следует отнести проблему выбора начальной границы~$ 
+r_{\mathrm{гран}}$, от которой зависят итоговые \mbox{коэффициенты} 
+регрессионного уравнения, а~значит, и~согласованность их знаков со знаками 
+коэффициентов корреляции~$r_{yx_j}$, $j\hm= \overline{1,m}$.
+  
+  Из-за слияния $x$-переменных в~$z$-пе\-ре\-мен\-ные невозможно 
+проверить значимость первых с~по\-мощью $t$-кри\-те\-рия Стьюдента. Для 
+оценки степени влияния $x$-пе\-ре\-мен\-ных на~$y$  мож\-но воспользоваться 
+сле\-ду\-ющей процедурой.
+  
+  Известно, что коэффициент детерминации~$R^2$ оцененной с~по\-мощью 
+МНК ММЛР~(\ref{e1-baz}) находится по формуле
+  \begin{equation}
+  R^2= \sum\limits_{j=1}^m \tilde{\alpha}_j 
+\fr{\sigma_{x_j}}{\sigma_y}\,r_{yx_j}\,.
+  \label{e6-baz}
+  \end{equation}
+  
+  Формула~(\ref{e6-baz}) справедлива также и~для регрессионного уравнения, 
+полученного с~по\-мощью алгоритма ``Straight~C''. Если в~этом уравнении 
+со\-гласованы знаки коэффициентов~$\tilde{\alpha}_j$, $j\hm=\overline{1,m}$, 
+и~знаки коэффициентов корреляции~$r_{yx_j}$, $j\hm=\overline{1,m}$, то 
+мож\-но ввес\-ти относительные вклады $x$-пе\-ре\-мен\-ных в~общую 
+детерминацию:
+  \begin{equation}
+  C_j^{\mathrm{отн}} =100\tilde{\alpha}_j 
+\fr{\sigma_{x_j}}{\sigma_y}\,\fr{r_{yx_j} }{R^2}\,,\enskip j=\overline{1,m}\,.
+  \label{e7-baz}
+  \end{equation}
+  
+  Заметим, что относительные вклады~(\ref{e7-baz}) вводятся не впервые. Так, 
+в~работе~\cite{10-baz} эти характеристики названы  
+дель\-та-ко\-эф\-фи\-ци\-ен\-тами.
+
+\section{Пример}
+
+\vspace*{-6pt}
+  
+  Для демонстрации МВИК на основе алгоритма ``Straight~C'' решалась задача 
+моделирования грузоперевозок железнодорожным транс\-пор\-том в~Иркутской 
+области. Для этого были использованы ста\-ти\-сти\-че\-ские данные с~сайта 
+Федеральной службы государственной ста\-ти\-сти\-ки ({\sf https://rosstat.gov.ru}) за 
+период с~2000 по~2018~гг.\ по сле\-ду\-ющим переменным: $y$~--- отправление 
+грузов железнодорожным транспортом общего пользования (млн~т); 
+$x_2$~--- население в~трудоспособном возрасте (в~\% от общей чис\-лен\-ности 
+населения); $x_3$~--- чис\-лен\-ность рабочей силы (тыс.\ чел.); $x_5$~--- 
+чис\-лен\-ность пенсионеров (тыс.\ чел.); $x_8$~--- чис\-ло собственных 
+легковых автомобилей на~1000~чел.\ населения (шт.); $x_{18}$~--- чис\-ло 
+предприятий и~организаций; $x_{35}$~--- удельный вес автомобильных дорог 
+с~твер\-дым покрытием в~общей про\-тя\-жен\-ности автомобильных дорог общего 
+пользования (в~\%); $x_{36}$~--- удельный вес автомобильных дорог 
+с~усовершенствованным покрытием в~про\-тя\-жен\-ности автомобильных дорог 
+с~твер\-дым покрытием общего пользования (в~\%); $x_{58}$~--- индексы 
+тарифов на грузовые перевозки (железнодорожный транс\-порт) (в~\%).
+  
+  Матрица парных коэффициентов корреляции для этих переменных 
+представлена в~таб\-лице.
+  
+
+  Как видно, в~этой мат\-ри\-це некоторые переменные коррелируют слабо, 
+например~$x_2$ и~$x_{18}$, а~некоторые сильно, например~$x_5$ 
+и~$x_{58}$. Построенная с~по\-мощью МНК по этим данным ММЛР имеет вид:
+
+\vspace*{-6pt}
+
+\noindent
+  \begin{multline}
+  \tilde{y}= -385{,}919+4{,}856x_2+0{,}0286 x_3+ 0{,}2206 x_5-{}\\
+  {}- 0{,}03487 x_8- 0{,}0001018 x_{18} -0{,}1653 x_{35} -0{,}5952 x_{36} +{}\\
+  {}+ 0{,}003528 x_{58}\,,
+  \label{e8-baz}
+  \end{multline}
+а ее коэффициент детерминации $R^2\hm= 0{,}890647$.
+  
+  Из-за мультиколлинеарности в~уравнении~(\ref{e8-baz}) искажены знаки 
+сразу у пяти переменных: $x_5$, $x_{18}$, $x_{35}$, $x_{36}$ и~$x_{58}$.
+  
+  Полученная с~использованием МВИК на основе алгоритма ``Straight~B'' 
+регрессия имеет вид:
+  \begin{multline}
+  \tilde{y}=26{,}807+0{,}1679 x_2+ 0{,}011795 x_3- 0{,}015763 x_5 -{}\\
+  {}- 0{,}00987 x_8- 3{,}30878\cdot 10^{-5} x_{18} +0{,}09106 x_{35} +{}\\
+  {}+0{,}3636 x_{36} - 0{,}0000438 x_{58}\,,
+  \label{e9-baz}
+  \end{multline}
+а ее $R^2=0{,}21219$.
+  
+  В уравнении~(\ref{e9-baz}) искажен знак только у~переменной~$x_{18}$. Но 
+при этом~$R^2$ для модели~(\ref{e9-baz}) оказался существенно ниже, чем для 
+регрессии~(\ref{e8-baz}). Эти неудовлетворительные результаты связаны с~тем, 
+что нарушено второе условие применимости алгоритма ``Straight~B''.
+  
+  Затем к~данным был применен МВИК на основе алгоритма ``Straight~C''. 
+Граница степени мультиколлинеарности $r_{\mathrm{гран}}\hm= 0{,}72$. 
+Единственной в~памяти №\,2 оказалась модель
+  \begin{multline}
+  \tilde{y}= -40{,}2784 -0{,}0033877 z_1+0{,}00069865 x_{18}+ {}\\
+  {}+1{,}6017  x_{36}\,,
+  \label{e10-baz}
+  \end{multline}
+где
+\begin{multline}
+z_1=10069{,}3873 -67{,}570056 x_2 -4{,}802657 x_3 +{}\\
+{}+6{,}359486 x_5+ 4{,}02684 x_8 -36{,}745825 x_{35} +{}\\
+{}+ 0{,}176752 x_{58}\,.
+\label{e11-baz}
+\end{multline}
+  
+  Коэффициент детерминации регрессии~(\ref{e10-baz}) $R^2\hm= 
+0{,}741431$.
+  
+  Подставляя~(\ref{e11-baz}) в~(\ref{e10-baz}), получим согласованное по 
+знакам окончательное уравнение регрессии
+  \begin{multline}
+  \tilde{y}= -74{,}3904 +\underset{(9{,}497\%)}{0{,}2289} x_2 + 
+\underset{(4{,}791\%)}{0{,}0163} x_3 -\underset{(5{,}177\%)}{0{,}0215} x_5 -{}\\
+{}- \underset{(4{,}71\%)}{0{,}0136} x_8+ \underset{(42{,}035\%)}{0{,}0006986} x_{18} +
+  \underset{(6{,}103\%)}{0{,}1244} x_{35}+
+  \underset{(23{,}282\%)}{1{,}6017} x_{36} -{}\\
+  {}-
+  \underset{(4{,}403\%)}{0{,}0005987} x_{58}\,.
+  \label{e12-baz}
+  \end{multline}
+  
+  В~(\ref{e12-baz}) в~скобках под коэффициентами приведены относительные 
+вкла\-ды переменных в~общую детерминацию, найденные по  
+формулам~(\ref{e7-baz}). Как видно, наименьший относительный вклад 
+со\-став\-ля\-ет~4,403\% для переменной~$x_{58}$, что говорит о~зна\-чи\-мости всех 
+входящих в~модель переменных.
+  
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-baz}
+\Au{Montgomery D.\,C., Peck~E.\,A., Vining~G.\,G.} Introduction to linear regression analysis.~--- 
+Hoboken, NJ, USA: John Wiley \& Sons, 2012. 672~p.
+
+\bibitem{3-baz} %2
+\Au{Jolliffe I.\,T., Cadima~J.} Principal component analysis: A~review and recent developments~// 
+Philos. T. Roy. Soc.~A, 2016. Vol.~374. 
+No.\,2065. Art.\ 20150202. 16~p.
+
+\bibitem{2-baz} %3
+\Au{Naik G.\,R.} Advances in principal component analysis: Research and development.~--- 
+Springer, 2018. 252~p.
+
+\bibitem{4-baz}
+\Au{Kibria B.\,M.\,G., Banik~S.} Some ridge regression estimators and their performances~// 
+J.~Modern Applied Statistical Methods, 2016. Vol.~15. No.\,1. P.~206--238.
+\bibitem{5-baz}
+\Au{Hoerl R.\,W.} Ridge regression: A~historical context~// Technometrics, 2020. Vol.~62.  
+P.~420--425.
+
+\bibitem{7-baz} %6
+\Au{Giacalone M., Panarello~D., Mattera~R.} Multicollinearity in regression: An efficiency 
+comparison between Lp-norm and least squares estimators~// Qual. Quant., 2018. Vol.~52. No.\,4. P.~1831--1859.
+
+\bibitem{6-baz} %7
+\Au{Dawoud I., Kibria~B.\,M.\,G.} A~new biased estimator to combat the multicollinearity of the 
+Gaussian linear regression model~// Stats, 2020. Vol.~3. No.\,4. P.~526--541.
+
+\bibitem{8-baz}
+\Au{Базилевский М.\,П.} Многофакторные модели полносвязной линейной регрессии без 
+ограничений на соотношения дисперсий ошибок переменных~// Информатика и~её 
+применения, 2020. Т.~14. Вып.~2. С.~92--97.
+\bibitem{9-baz}
+\Au{Базилевский М.\,П.} Метод выпрямления искаженных из-за мультиколлинеарности 
+коэффициентов в~регрессионных моделях~// Информатика и~её применения, 2021. Т.~15. 
+Вып.~2. С.~60--65.
+\bibitem{10-baz}
+\Au{Орлова И.\,В.} Подход к~решению проблемы мультиколлинеарности при анализе 
+влияния факторов на результирующую переменную в~моделях регрессии~// 
+Фундаментальные исследования, 2018. №\,3. С.~\mbox{58--63}.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 31.08.21}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{GENERALIZATION OF~A~METHOD FOR~STRAIGHTENING COEFFICIENTS DISTORTED 
+DUE~TO~MULTICOLLINEARITY IN~REGRESSION MODELS WITH~DIFFERENT DEGREES 
+OF~EXPLANATORY VARIABLES CORRELATION}
+
+
+\def\titkol{Generalization of~a~method for~straightening coefficients distorted 
+due~to~multicollinearity in~regression models} % with~different degrees  of~explanatory variables correlation}
+
+
+\def\aut{M.\,P.~Bazilevskiy}
+
+\def\autkol{M.\,P.~Bazilevskiy}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-8pt}
+
+
+\noindent
+Irkutsk State Transport University, 15~Chernyshevskogo Str., Irkutsk 664074, 
+Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+
+
+
+
+
+\Abste{When constructing regression models, one of the main problems is multicollinearity. 
+This negative phenomenon leads to distortion of the regression coefficients, in particular, 
+their signs. Earlier, to solve the problem of multicollinearity, 
+a~method for straightening distorted coefficients was developed which is based on the construction of 
+a~fully connected linear regression model. One of the conditions for its applicability is 
+a~close correlation of absolutely all pairs of explanatory variables. But when solving real applied problems, this condition is rarely met. 
+Most often, explanatory variables correlate with each other in different ways. The authors propose 
+a~new iterative algorithm for the method of straightening distorted coefficients. 
+A~feature of the algorithm is that it combines the advantages of both traditional multiple models and new fully connected regressions.
+ The developed algorithm is universal and can be used to construct a~regression equation with any structure of the correlation matrix. 
+The new algorithm has been successfully applied to simulate freight transportation by rail in the Irkutsk region.}
+
+\KWE{regression analysis; correlation; multicollinearity; method for straightening distorted coefficients; fully connected linear regression model}
+
+ \DOI{10.14357/19922264220404} 
+
+%\vspace*{-16pt}
+
+ %\Ack
+ %  \noindent
+  
+
+%\vspace*{4pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-baz-1}
+\Aue{Montgomery, D.\,C., E.\,A.~Peck, and G.\,G.~Vining.} 2012. \textit{Introduction to linear regression 
+analysis}. Hoboken, NJ: John Wiley \& Sons. 672~p.
+
+\bibitem{3-baz-1} %2
+\Aue{Jolliffe, I.\,T., and J.~Cadima.} 2016. Principal component analysis: A~review and recent 
+developments. \textit{Philos. T. Roy. Soc.~A} 374(2065):20150202. 16~p.
+
+\bibitem{2-baz-1} %3
+\Aue{Naik, G.\,R.} 2018. \textit{Advances in principal component analysis: Research and development}. 
+Springer. 252~p.
+
+\bibitem{4-baz-1}
+\Aue{Kibria, B.\,M.\,G., and S.~Banik.} 2016. Some ridge regression estimators and their performances. 
+\textit{J.~Modern Applied Statistical Methods} 15(1):206--238.
+\bibitem{5-baz-1}
+\Aue{Hoerl, R.\,W.} 2020. Ridge regression: A~historical context. \textit{Technometrics} 62:420--425.
+
+\bibitem{7-baz-1} %6
+\Aue{Giacalone, M., D.~Panarello, and R.~Mattera.} 2018. Multicollinearity in regression: An efficiency 
+comparison between Lp-norm and least squares estimators. \textit{Qual. Quant.} 52(4):1831--1859.
+
+\bibitem{6-baz-1} %7
+\Aue{Dawoud, I., and B.\,M.\,G.~Kibria.} 2020. A new biased estimator to combat the multicollinearity of 
+the Gaussian linear regression model. \textit{Stats} 3(4):526--541. 
+\bibitem{8-baz-1}
+\Aue{Bazilevskiy, M.\,P.} 2020. Mnogofaktornye modeli polnosvyaznoy lineynoy regressii bez 
+ogranicheniy na sootnosheniya dispersiy oshibok peremennykh [Multifactor fully connected linear 
+regression models without constraints to the ratios of variables errors variances]. \textit{Informatika i~ee 
+Primeneniya~--- Inform. Appl.} 14(2):92--97.
+\bibitem{9-baz-1}
+\Aue{Bazilevskiy, M.\,P.} 2021. Metod vypryamleniya iskazhennykh iz-za mul'tikollinearnosti 
+koeffitsientov v~regressionnykh modelyakh [Method of straightening distorted due to multicollinearity 
+coefficients in regression models]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 15(2):60--65.
+\bibitem{10-baz-1}
+\Aue{Orlova, I.\,V.} 2018. Podkhod k~resheniyu problemy mul'tikollinearnosti pri analize vliyaniya 
+faktorov na rezul'tiruyushchuyu peremennuyu v~modelyakh regressii [Approach to the solution of the 
+multicollinearity problem at the analysis of the influence of the factors on the resulting variable in models of 
+regression]. \textit{Fundamental'nyye issledovaniya} [Fundamental Research] 3:58--63.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received August 31, 2021}}
+
+\Contrl
+
+\noindent
+\textbf{Bazilevskiy Mikhail P.} (b.\ 1987)~--- Candidate of Science (PhD) in technology, associate 
+professor, Department of Mathematics, Irkutsk State Transport University, 15~Chernyshevkogo Str., Irkutsk 
+664074, Russian Federation; \mbox{mik2178@yandex.ru}
+
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}    

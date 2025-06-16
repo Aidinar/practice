@@ -1,0 +1,901 @@
+\newcommand{\me}[2]{\mathbf{E}_{ #1 }\left\{ \mathop{#2} \right\} }
+\newcommand {\ff}{{\mathcal F}}
+\newcommand {\ppp}{{\mathcal P}}
+\newcommand{\pp}[1]{\mathbf{P}\left\{ #1 \right\}}
+\newcommand {\col}{\mathop{\mathrm{col}}}
+\newcommand {\ebd}{\triangleq}
+
+
+
+
+\def\stat{borisov}
+
+\def\tit{ОБЩИЙ ПОРЯДОК АППРОКСИМАЦИИ ОЦЕНОК ФИЛЬТРАЦИИ СОСТОЯНИЙ МАРКОВСКИХ 
+СКАЧКООБРАЗНЫХ ПРОЦЕССОВ ПО ДИСКРЕТИЗОВАННЫМ НАБЛЮДЕНИЯМ$^*$}
+
+\def\titkol{Общий порядок аппроксимации оценок фильтрации состояний МСП
+%марковских  скачкообразных процессов 
+по дискретизованным наблюдениям}
+
+\def\aut{А.\,В.~Борисов$^1$}
+
+\def\autkol{А.\,В.~Борисов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{А.\,В.~Борисов$^1$}
+\index{A.\,V.~Borisov}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнялась с~использованием инфраструктуры Центра коллективного пользования 
+<<Высокопроизводительные вы\-чис\-ле\-ния и~большие данные>> (ЦКП <<Информатика>>) ФИЦ ИУ  РАН.}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук,
+\mbox{aborisov@frccsc.ru}}
+
+
+\vspace*{-8pt}
+
+
+
+\Abst{Заметка продолжает исследования, по\-свя\-щен\-ные чис\-лен\-ной 
+аппроксимации оценок фильт\-ра\-ции со\-сто\-яний марковских скачкообразных процессов (МСП) по 
+счи\-та\-ющим и~диффузионным наблюдениям с~мультипликативными шумами. Оценки 
+аппроксимируются с~использованием наблюдений, дискретизованных по времени. 
+В~отличие от ранних алгоритмов, огра\-ни\-чи\-ва\-ющих воз\-мож\-ное чис\-ло скачков со\-сто\-яния 
+на интервале дискретизации, новые оценки предлагается вы\-чис\-лять
+без по\-доб\-ных ограничений с~по\-мощью единой ре\-кур\-рент\-ной схемы. В~заметке получена 
+верх\-няя граница показателя точ\-ности аппроксимации как функция па\-ра\-мет\-ров сис\-те\-мы 
+наблюдения, ис\-поль\-зу\-емой схемы чис\-лен\-но\-го интегрирования, шага дискретизации 
+и~момента оценивания. Чис\-лен\-ный пример иллюстрирует  сублинейное поведение данного 
+показателя в~за\-ви\-си\-мости от последнего аргумента.}
+
+
+\KW{марковский скачкообразный процесс; оптимальная фильт\-ра\-ция; 
+диффузионные и~счи\-та\-ющие наблюдения; мультипликативные шумы в~наблюдениях; 
+точ\-ность чис\-лен\-ной аппроксимации}
+
+ \DOI{10.14357/19922264220402} 
+  
+\vspace*{4pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+ \section{Введение}
+ 
+\vspace*{-5pt}
+ 
+ Данная заметка продолжает исследования в~об\-ласти разработки чис\-лен\-ных методов 
+фильт\-ра\-ции со\-сто\-яний МСП по со\-во\-куп\-ности 
+диффузионных и~счи\-та\-ющих наблюдений~\cite{B_20_1_ARC, B_20_2_ARC, B_21_1_IA, B_21_2_IA}. 
+Ин\-тен\-сив\-ность шумов в~диффузионных наблюдениях зависит от 
+оце\-ни\-ва\-емо\-го со\-сто\-яния.
+
+ В~\cite{B_20_1_ARC, B_20_2_ARC} была решена задача фильт\-ра\-ции при наличии 
+только диффузионных наблюдений. Помимо аналитического решения был предложен ряд 
+чис\-лен\-ных алгоритмов, основанных на обработке наблюдений, дискретизованных по 
+времени. Алгоритмы строились, исходя из предположения, что на интервале 
+дискретизации оце\-ни\-ва\-емый МСП может совершить чис\-ло скачков, ограниченное 
+некоторой величиной. Был получен показатель точ\-ности таких аппроксимаций, как 
+функция па\-ра\-мет\-ров сис\-те\-мы наблюдения, максимального чис\-ла скачков, величины 
+шага временн$\acute{\mbox{о}}$й дискретизации и~точ\-ности при\-ме\-ня\-емой схемы чис\-лен\-но\-го 
+интегрирования.
+
+ В работе~\cite{B_21_1_IA} пред\-став\-ле\-но решение задачи фильт\-ра\-ции по 
+совокупности диффузионных и~счи\-та\-ющих наблюдений, а~в~\cite{B_21_2_IA}  
+предложен метод при\-бли\-жен\-но\-го вы\-чис\-ле\-ния данной оценки. Следует отметить, что не 
+все схемы чис\-лен\-но\-го интегрирования предполагают ограничение чис\-ла воз\-мож\-ных 
+скачков МСП на интервале дискретизации: например, метод квадратур Гаусса может 
+быть использован без данного условия. В~\cite{B_21_2_IA} предложен \textit{общий 
+показатель} точ\-ности в~фор\-ме средней $\mathcal{L}_1$-нор\-мы ошибки аппроксимации 
+оценки фильт\-ра\-ции и~доказано утверж\-де\-ние о~его локальной за\-ви\-си\-мости от шага 
+временн$\acute{\mbox{о}}$й дискретизации и~схемы чис\-лен\-но\-го интегрирования.
+
+ Целью данной работы ставится определение глобального поведения показателя 
+точ\-ности аппроксимации, т.\,е.\ нахождение за\-ви\-си\-мости данной величины от шага 
+временн$\acute{\mbox{о}}$й дискретизации~$\delta$ и~момента оценивания~$T$.
+
+ Статья организована следующим образом. Раздел~2 содержит формальную постановку 
+задачи фильт\-ра\-ции со\-сто\-яний МСП по диффузионным и~счи\-та\-ющим наблюдениям, 
+дискретизованным по времени с~шагом $\delta$. Аналитическое решение данной 
+задачи пред\-став\-ле\-но в~разд.~3 в~виде формулы Байеса, содержащей интегралы по 
+абстрактной вероятностной мере в~чис\-ли\-те\-ле и~знаменателе. Для ее практической 
+реализации интегралы предлагается заменить некоторыми интегральными суммами. 
+Точ\-ность аппроксимации так\-же описывается в~форме сред\-ней $\mathcal{L}_1$-нор\-мы 
+раз\-ности оценки фильт\-ра\-ции и~ее при\-бли\-же\-ния. Основным результатом работы 
+является утверж\-де\-ние,
+пред\-став\-ля\-ющее различные границы сверху этого показателя точ\-ности. Показано, что
+эти границы пред\-став\-ля\-ют собой функции шага временн$\acute{\mbox{о}}$й дискретизации~$\delta$ 
+и~момента оценивания~$T$. В~за\-ви\-си\-мости от схемы чис\-лен\-но\-го интегрирования, 
+при\-ме\-ня\-емо\-го на одном шаге, верх\-няя граница может быть как линейной, так и~\textit{сублинейной} функцией времени~$T$.
+Раздел~4 содержит чис\-лен\-ный пример, ил\-лю\-ст\-ри\-ру\-ющий различие предложенных 
+в~работе границ точ\-ности. В~разд.~5 пред\-став\-ле\-ны выводы и~заключительные 
+замечания.
+
+  \section{Постановка задачи фильтрации состояния марковских скачкообразных процессов по~дискретизованным 
+наблюдениям}
+
+ На полном вероятностном пространстве с~фильт\-ра\-ци\-ей 
+$(\Omega,\ff,\ppp,\{\ff_t\}_{t \geqslant 0})$ рас\-смат\-ри\-ва\-ет\-ся не\-пре\-рыв\-но-дис\-крет\-ная сто\-ха\-сти\-че\-ская
+ динамическая сис\-те\-ма наблюдения
+\begin{equation}
+  X_t =X_0 + \int\limits_0^t \Lambda^{\top}X_{s}\,ds + \mu_t^X,
+ \label{eq:stat_1}
+ \end{equation}
+где
+   $X_t \in \mathbb{S}^N$~--- ненаблюдаемое со\-сто\-яние сис\-те\-мы~--- однородный МСП 
+  с~множеством со\-сто\-яний $ \mathbb{S}^N \hm\ebd \{e_1,\ldots,e_N\}$ ($\mathbb{S}^N$~--- 
+множество единичных век\-то\-ров про\-стран\-ст\-ва~$\mathbb{R}^N$), мат\-ри\-цей 
+интенсивностей переходов~$\Lambda$ и~начальным распределением~$\pi$;
+  $\mu_t^X \hm\in \mathbb{R}^N$~--- $\ff_t$-со\-гла\-со\-ван\-ный мартингал;
+ \begin{multline}
+  \mathcal{Y}_r = \int\limits_{t_{r-1}}^{t_r}fX_s\,ds+\int\limits_{t_{r-1}}^{t_r} 
+\sum\limits_{n=1}^NX_s^ng_n^{{1}/{2}}\, dW_s, \\
+r \in \mathbb{N}, \enskip t_r = r \delta, 
+ \label{eq:cobs_1}
+\end{multline}
+где
+  $ \mathcal{Y}_r \in \mathbb{R}^M$~--- диффузионные наблюдения
+  $Y_t \hm= \int\nolimits_{0}^{t}fX_s\,ds\hm+\int\nolimits_{0}^{t} \sum\nolimits_{n=1}^NX_s^ng_n^{{1}/{2}}\,dW_s$,
+   дискретизованные по времени с~шагом~$\delta$,
+за\-шум\-лен\-ные $\ff_t$-со\-гла\-со\-ван\-ным стандартным винеровским процессом $W_t \hm\in 
+\mathbb{R}^M$;  $(M \times N)$-мер\-ная мат\-ри\-ца~$f$ характеризует план 
+наблюдений, а~набор $(M\times M)$-мер\-ных сим\-мет\-рич\-ных мат\-риц
+  $\{g_n\}_{n=\overline{1,N}}$ определяет интенсивности шумов в~за\-ви\-си\-мости от 
+текущего со\-сто\-яния~$X_t$;
+\begin{equation}
+\mathcal{Z}_r =\!\!\!\!\int\limits_{t_{r-1}}^{t_r} \! \! hX_s\,ds+\left(\mu_{t_r}^Z- \mu_{t_{r-1}}^Z\right)\!,\enskip
+r \in \mathbb{N}, \ \  t_r = r \delta,
+ \label{eq:sobs_1}
+ \end{equation}
+где 
+  $ \mathcal{Z}_r \in \mathbb{R}^K$~--- считающие наблюдения
+   $Z_t \hm=\int\nolimits_{0}^{t}hX_s\,ds\hm+\mu_{t}^Z$, 
+  дискретизованные по времени с~шагом~$\delta$: элементы $(K \times N)$-мер\-ной 
+мат\-ри\-цы~$h$ определяют ин\-тен\-сив\-ность скач\-ков отдельных компонент в~за\-ви\-си\-мости 
+от текущего со\-сто\-яния~$X_t$; $\mu_t^Z \hm\in \mathbb{R}^K$~---  $\ff_t$-со\-гла\-со\-ван\-ный мар\-тин\-гал.
+ 
+
+  Обозначим через $\mathfrak{O}_r \ebd \left\{ \mathcal{Y}_q, \mathcal{Z}_q: \   q=\overline{1,r}  \right\}$ 
+  по\-сле\-до\-ва\-тель\-ность $\sigma$-ал\-гебр всех дискретизованных наблюдений,
+полученных на отрезке времени $[0,t_r]$, $r \hm\in \mathbb{N}$, $\mathfrak{O}_0 \hm \ebd \{\varnothing,\Omega\}$.
+
+
+\textit{Задача оптимальной фильтрации состояния МСП}~$X_t$ по дискретизованным 
+наблюдениям заключается в~по\-стро\-ении услов\-но\-го математического ожидания  
+$\widehat{\mathcal{X}}_r \hm\ebd \me{}{X_{t_r}|\mathfrak{O}_r}$, $r \hm\in 
+\mathbb{N}$.
+
+Система наблюдения~(\ref{eq:stat_1})--(\ref{eq:sobs_1}) удовлетворяет сле\-ду\-ющим 
+ограничениям.
+\begin{itemize}
+   \item[А.]
+  Исследуемый вероятностный базис с~фильт\-ра\-ци\-ей является пространством Ви\-не\-ра--Пу\-ас\-со\-на~\cite{IK_06}.
+  \item[Б.]
+  Шумы в~$\mathcal{Y}$ равномерно не\-вы\-рож\-ден\-ны~\cite{LSh_1_01}, т.\,е.\
+  $\min\nolimits_{1 \leqslant n \leqslant N }g_n > 0$.
+  \item[В.] Компоненты мартингала~$\mu^{Z}$ в~наблюдениях~$\mathcal{Z}$~(\ref{eq:sobs_1}) ортогональны друг другу, т.\,е.
+    $\langle  \mu^Z   \rangle_t \hm= \int\nolimits_0^t \mathrm{diag}\left( h X_s\right)ds.$
+  Мартингалы в~уравнении\linebreak со\-сто\-яния~$\mu^{X}$ и~в~наблюдениях~$\mu^{Z}$ так\-же 
+ортогональны   $\langle \mu^X,\mu^Z \rangle_t \hm\equiv 0.$
+\end{itemize}
+
+\section{Аналитическое решение задачи и~численная аппроксимация}
+
+Ниже в~статье будут использоваться сле\-ду\-ющие обозначения.
+\begin{enumerate}[1.]
+ \item
+  $\|\alpha\|^2_{Q} \ebd \alpha^{\top}Q\alpha$.
+ 
+  \item Для $X = \col\,(x_1,\ldots,x_N)\hm \in \mathbb{R}^N$  
+  $$
+  \|X\|_1 \hm\ebd 
+\sum\nolimits_{n=1}^N |x_n|\,;
+$$
+ для $A\hm=\|a_{ij}\|_{i,j=\overline{1,N}} \hm\in 
+\mathbb{R}^{N\times N}$  
+$$
+\|A\|_1 \hm\ebd \max_{1 \leqslant j \leqslant N} 
+\sum\nolimits_{i=1}^N |a_{ij}|\,.
+$$
+  \item
+  Единичная матрица подходящей раз\-мер\-ности:~$I$;
+  нулевая мат\-ри\-ца подходящей раз\-мер\-ности:~$\mathbf{0}$;
+  век\-тор-стро\-ка подходящей раз\-мер\-ности, со\-став\-лен\-ная из единиц:~$\mathbf{1}$.
+  \item
+   Характеристическая функция множества~$\mathcal{A}$: $\mathbf{I}_{\mathcal{A}}(x)$.
+ \item
+ Вектор, компоненты которого равны 
+случайному времени пребывания процесса~$X$ в~каж\-дом из воз\-мож\-ных со\-сто\-яний на  
+отрезке $[t_{r-1}, t_{r}]$:
+$$
+\tau_r \ebd \int\limits_{t_{r-1}}^{t_{r}} X_s\,ds\,.
+$$
+  \item
+  $(N-1)$-мер\-ный симплекс в~пространстве 
+$\mathbb{R}^N$, носитель распределения век\-то\-ра~$\tau_r$:
+
+ \vspace*{-5pt}
+ 
+ \noindent
+ \begin{multline*}
+ \mathcal{D} \ebd{}\\
+ \hspace*{-9.43114pt}{}\ebd \left\{u=\col\,\left(u^1,\ldots,u^N\right):\; u^n \geqslant 0, %\right.\\ 
+%\left.
+\sum\limits_{n=1}^Nu^n= \delta \right\}\!.
+\end{multline*}
+
+\item  <<Вероятностный симплекс>>, множество воз\-мож\-ных начальных распределений~$\pi$:
+
+ \vspace*{-5pt}
+ 
+ \noindent
+ \begin{multline*}
+ \Pi \ebd{}\\
+\hspace*{-6.22176pt} {}\ebd \left\{\pi=\col\,(\pi^1,\ldots,\pi^N):\ \pi^n > 0,\enskip \sum\limits_{n=1}^N\pi^n = 1 
+\right\}\!.\hspace*{-6.55559pt}
+\end{multline*} 
+
+ \item
+ Распределение вектора $ X_{t_{r}}^{\ell}\tau_{r}$ 
+при условии $X_{t_{r-1}}\hm=e_k$:
+$\mathbf{p}^{k \ell}(du)$, т.\,е.\
+ для любого $\mathcal{G} \hm\in \mathcal{B}(\mathbb{R}^N)$ вер\-но равенство
+ $$
+  \me{}{\mathbf{I}_{\mathcal{G}}(\tau_r)X_{t_r}^{\ell}|X_{t_{r-1}}=e_k} =  \int\limits_{\mathcal{G}} \mathbf{p}^{k \ell}(du).
+  $$
+ \item
+ $M$-мер\-ная плот\-ность гауссовского распределения с~математическим 
+ожиданием~$m$ и~не\-вы\-рож\-ден\-ной ковариационной мат\-ри\-цей~$Q$:
+
+ \vspace*{-5pt}
+ 
+ \noindent
+\begin{multline*}
+%\hspace*{-9pt}
+\mathcal{N}(y,m,Q) \ebd{}\\
+{}\ebd (2\pi)^{-{M}/{2}} \mathrm{det}^{-{1}/{2}} Q 
+\exp\left\{ - \fr{1}{2}\left\|y- 
+%\right.\right.\\
+%\left.\left.{}-
+m\right\|^2_{Q^{-1}}
+%\vphantom{\fr{1}{2}}
+\right\}\!.
+\end{multline*}
+ \item
+  Распределение $K$-мер\-но\-го 
+случайного вектора с~независимыми компонентами, 
+име\-ющи\-ми пуассоновское распределение с~па\-ра\-мет\-ра\-ми~$\alpha^k$, 
+$k\hm=\overline{1,K}$:
+$$
+\mathcal{P}(z,\alpha) \ebd e^{-\sum\nolimits_{k=1}^k \alpha^k}
+ \prod\limits_{k=1}^K \fr{(\alpha^k)^{z^k}}{(z^k)!},
+ $$
+ где
+ 
+ \vspace*{-6pt}
+ 
+ \noindent
+\begin{multline*}
+z = \col\,(z^1,\ldots,z^K) \hm\in 
+\mathbb{Z}_+^K;\\
+\alpha \hm= \col\,(\alpha^1,\ldots,\alpha^K) \hm\in \mathbb{R}_+^K.
+\end{multline*}
+ 
+ \item Функции
+ 
+  \vspace*{-5pt}
+  
+  \noindent
+ \begin{multline*}
+ \theta^{kj} = \theta^{kj}(y,z) \ebd{}\\
+ {}\ebd \int\limits_{\mathcal{D}} 
+\mathcal{N}\left(y,fu,\sum\limits_{p=1}^N u^p g_p\right)
+\mathcal{P}(z,hu)\mathbf{p}^{k j}(du).
+\end{multline*}
+ %\label{eq:int_1}
+ %\end{equation}
+ Мат\-ри\-цы, со\-став\-лен\-ные из этих функций:
+$$
+\theta =\theta(y,z) \ebd \|\theta^{kj}(y,z)\|_{k,j=\overline{1,N}}\,.
+$$ 
+
+Матричнозначные функции случайных величин~--- дискретизованных наблюдений, 
+полученных в~момент времени~$t_r$:
+$$
+\theta_r \ebd \theta\left(\mathcal{Y}_r,\mathcal{Z}_r\right).
+$$
+
+\vspace*{-12pt}
+
+\columnbreak
+
+
+\noindent
+Произведения мат\-риц~$\{\theta_i\}$ с~на\-рас\-та\-ющим итогом:
+\begin{multline*}
+\mathbf{\Theta}_r = \mathbf{\Theta}\left(y_1,\ldots,y_r, z_1,\ldots,z_r\right) \ebd{}\\
+{}\ebd
+\theta\left(y_1,z_1\right)\theta\left(y_2,z_2\right)\cdots \theta\left(y_r,z_r\right).
+\end{multline*}
+
+Матричнозначные функции  дискретизованных наблюдений, полученных на 
+промежутке времени $[0, t_r]$:
+
+%\vspace*{-5pt}
+
+\noindent
+$$
+\Theta_r \ebd \theta_1\theta_2 \cdots\theta_r.
+$$
+\end{enumerate}
+
+Используя введенные выше определения, оптимальную оценку 
+$\widehat{\mathcal{X}}_r$~\cite{B_21_2_IA} по дискретизованным наблюдениям можно 
+записать в~явном виде:
+
+\noindent
+\begin{equation*}
+\widehat{\mathcal{X}}_r =  \fr{1}{\mathbf{1}\,\Theta_r^{\top} \pi}\Theta_r^{\top} \pi\,.
+%\label{eq:expl_2}
+\end{equation*}
+
+\vspace*{-3pt}
+
+\noindent
+Матричнозначные функции~$\theta$ и~$\mathbf{\Theta}_r$ обладают сле\-ду\-ющи\-ми 
+очевидными свойствами:
+\begin{enumerate}[(1)]
+\item
+$ %\displaystyle
+\sum\nolimits_{z \in \mathbb{Z}_+^K} \int_{\mathbb{R}^M} \theta^{kj}(y,z)\, dy\hm = \mathbf{P}\left\{X_h = e_j \vert  X_0=\right.$\linebreak
+$\left.{}= e_k\right\} = \left(\exp\{h\Lambda\}\right)^{kj};
+$
+\item
+$ %\displaystyle
+\sum\nolimits_{z \in \mathbb{Z}_+^K} \int\nolimits_{\mathbb{R}^M}\left \|\theta^{\top}(y,z)\right\|_1 dy = 1;
+$
+\item
+$ \sum\nolimits_{(z_1,\ldots, z_r) \in \mathbb{Z}_+^{rK}} \int\nolimits_{\mathbb{R}^{rM}}
+\left\|\mathbf{\Theta}_r^{\top}\left(y_1,\ldots, y_r,z_1,\ldots\right.\right.$\linebreak $\left.\left.\ldots , z_r\right)\right\|_1 dy_1\cdots dy_r = 1.
+$
+\end{enumerate}
+Интегралы в~$\theta^{kj}$ не могут быть вы\-чис\-ле\-ны аналитически, поэтому их 
+предлагается аппроксимировать интегральными суммами общего вида. Для этого будем 
+использовать сле\-ду\-ющие функции и~мат\-ри\-цы, со\-став\-лен\-ные из них:
+\begin{itemize}
+\item аппроксимация~$\theta^{kj}$
+
+\noindent
+$$
+\psi^{kj} \!\ebd\! \sum\nolimits_{\ell=1}^L
+\mathcal{N}\left(y,fu_{\ell},\sum\limits_{p=1}^N u_{\ell}^p g_p\right)
+\mathcal{P}\left(z,hu_{\ell}\right)\rho_{\ell}^{k j};
+$$
+\item аппроксимация $\theta$
+
+\noindent
+$$
+\psi =\psi(y,z) \ebd \left\|\psi^{kj}(y,z)\right\|_{k,j=\overline{1,N}}\,;
+$$
+\item аппроксимация~$\theta_r$
+
+\noindent
+$$
+\psi_r \ebd \psi(\mathcal{Y}_r,\mathcal{Z}_r);
+$$ 
+\item  аппроксимация~$\mathbf{\Theta}_r$ 
+\vspace*{-5pt}
+
+\noindent
+\begin{multline*}
+\mathbf{\Psi}_r = \mathbf{\Psi}\left(y_1,\ldots,y_r, z_1,\ldots,z_r\right) \ebd{}\\
+{}\ebd
+\psi\left(y_1,z_1\right)\psi\left(y_2,z_2\right)\cdots \psi\left(y_r,z_r\right);
+\end{multline*}
+\item аппроксимация~$\Theta_r$
+
+\noindent
+$$
+\Psi_r \ebd \psi_1\psi_2 \cdots \psi_r.
+$$
+\end{itemize}
+
+В определенных выше интегральных суммах $\{u_{\ell}\}_{\ell=\overline{1,L}} 
+\hm\subset \mathcal{D}$ ($u_{\ell}\hm=u_{\ell}(\delta)$)~--- набор точек; 
+$\{\rho_{\ell}^{kj}\}_{\ell,k,j} \hm\subset \mathbb{R}_+$
+($\rho_{\ell}^{kj} \hm=\rho_{\ell}^{kj}(\delta)$)~--- набор весов. Будем использовать только аппроксимации, обла\-да\-ющие сле\-ду\-ющим 
+свойством:
+\begin{enumerate}[(1)]
+\setcounter{enumi}{3}
+\item
+$ %\displaystyle
+\max_{1 \leqslant k \leqslant N} \sum\nolimits_{j=1}^N \sum\nolimits_{\ell=1}^L 
+\rho_{\ell}^{kj}(\delta) \hm\ebd \mathfrak{W}(\delta)\hm \leqslant 1.$
+\end{enumerate}
+Условие~4 обеспечивает аппроксимациям выполнение свойств, близ\-ких по смыс\-лу~1--3:
+\begin{enumerate}[(1)]
+\setcounter{enumi}{4}
+\item
+$ \sum\nolimits_{z \in \mathbb{Z}_+^K} \int\nolimits_{\mathbb{R}^M} \psi^{kj}(y,z)\, dy\hm = 
+\sum\nolimits_{\ell=1}^L \rho_{\ell}^{kj} \leqslant \mathfrak{W}(\delta) \hm\leqslant 1;$
+\item
+$ \sum\nolimits_{z \in \mathbb{Z}_+^K} \int\nolimits_{\mathbb{R}^M} \left\|\psi^{\top}(y,z)\right\|_1 \,dy \leqslant \mathfrak{W}(\delta) \hm\leqslant 1;$
+\item
+$\sum\nolimits_{(z_1,\ldots, z_r) \in \mathbb{Z}_+^{rK}} \int\nolimits_{\mathbb{R}^{rM}}
+\left\|\mathbf{\Psi}_r^{\top}\left(y_1,\ldots, y_r,z_1,\ldots\right.\right.$\linebreak
+$\left.\left.\ldots , z_r\right)\right\|_1\, dy_1\cdots dy_r 
+\hm\leqslant \mathfrak{W}^r(\delta) \hm\leqslant 1.$
+\end{enumerate}
+Таким образом, вместо~$\widehat{\mathcal{X}}_r$ мож\-но вы\-чис\-лить ее  
+аппроксимацию
+
+\noindent
+\begin{equation*}
+\overline{\mathcal{X}}_r = \fr{1}{\mathbf{1}\Psi_r^{\top}  \pi}\,\Psi_r^{\top} \pi\,.
+%\label{eq:expl_approx}
+\end{equation*}
+
+Определим глобальную характеристику бли\-зости оценки~$\{\widehat{\mathcal{X}}\}$  
+и~ее аппроксимации $\{\overline{\mathcal{X}}\}$ сле\-ду\-ющим образом. Пусть  $T \hm> 0$~---  фиксированный момент времени,   
+$r \hm\ebd {T}/{\delta}$ (без 
+ограничения общ\-ности считаем, что~$T$ делится на~$\delta$ нацело). Показатель 
+точ\-ности опре\-де\-ля\-ет\-ся сле\-ду\-ющим образом:
+ \begin{equation*}
+\Sigma(T,\delta) \ebd \sup\limits_{\pi \in \Pi}\me{\pi}{\left\|\widehat{\mathcal{X}}_{{T}/{\delta}} - 
+\overline{\mathcal{X}}_{{T}/{\delta}}\right\|_{1}}.
+% \label{eq:prec_glob_1}
+ \end{equation*}
+
+\noindent
+\textbf{Теорема 1.}\ 
+\textit{Пусть для аппроксимации $\psi$ выполнено условие}
+
+\noindent
+ \begin{equation}
+ \sum\limits_{z \in \mathbb{Z}_+^K} \int\limits_{\mathbb{R}^M} \left\|
+ (\psi(y,z)-\theta(y,z))^{\top}\right\|_1 \,dy \leqslant C\delta^{1+\alpha}
+ \label{eq:cond_eps}
+ \end{equation}
+ \textit{при некоторых па\-ра\-мет\-рах $C,\;\alpha\hm > 0$. Тогда}
+ 
+ \noindent
+ \begin{alignat}{2}
+\!\!\!\! \Sigma(T,\delta) &\leqslant 2C   \fr{1-
+\mathfrak{W}^{{T}/{\delta}}(\delta)}{1-\mathfrak{W}(\delta)}\, 
+\delta^{1+\alpha}, &\ \mbox{если} \ \mathfrak{W}(\delta) &< 1\,;
+ \label{eq:gl_err_1}
+\\
+\!\!\!\! \Sigma(T,\delta) &\leqslant 2 TC  \delta^{\alpha} , &\ \mbox{если} \  
+\mathfrak{W}(\delta) &= 1\,.\!\!
+ \label{eq:gl_err_2}
+ \end{alignat}
+ %если $\mathfrak{W}(\delta) = 1$.
+
+ Доказательство теоремы~1 приведено в~приложении.
+
+ Суммарный вес $\mathfrak{W}$ зависит не только от шага дискретизации~$\delta$, 
+но и~от мат\-ри\-цы~$\Lambda$ в~уравнении динамики~(\ref{eq:stat_1}). В~то же время 
+значение~$C$ зависит от па\-ра\-мет\-ров~$f$, $\{g_n\}$ и~$h$ модели наблюдения~(\ref{eq:cobs_1}) и~(\ref{eq:sobs_1}).
+
+ \section{Численный пример}
+ 
+ Проиллюстрируем различия верхних границ~(\ref{eq:gl_err_1}) 
+ и~(\ref{eq:gl_err_2}) на конкретном примере. В~статье~\cite{B_20_2_ARC} была 
+предложена со\-став\-ная схема <<сред\-них>> прямоугольников для фильт\-ра\-ции со\-сто\-яний 
+МСП по 
+  наблюдениям с~мультипликативными шумами при наличии только диффузионных 
+наблюдений. При наличии дополнительных счи\-та\-ющих наблюдений эта схема принимает 
+вид
+
+\vspace*{-5pt}
+
+\noindent
+ \begin{multline*}
+ \psi^{kj} \ebd \delta_{kj}e^{\lambda_{jj} \delta} \mathcal{N}(y,\delta f^j, 
+\delta g_j)  \mathcal{P}(y, \delta f^j)  +{}\\
+ {}+
+  (1-\delta_{kj})\lambda_{kj}  \delta^{1+\alpha} e^{\lambda_{jj}\delta} \times{}\\
+  {}\times
+ \sum\limits_{\ell=1}^{\left[\delta^{-\alpha}\right]}
+ e^{(\lambda_{kk}-\lambda_{jj})u}
+ \mathcal{N}\left(y,uf^k+(\delta-u) f^j, ug_k+{}\right.\\
+ \left. {}+(\delta-u) g_j\right)
+ \mathcal{P}\left(y, uh^k+(\delta-u) h^j\right)
+ \Bigl|_{u=(\ell-{1}/{2})\delta^{1+\alpha}},\hspace*{-1.02296pt}
+% \label{eq: mid_rec}
+ \end{multline*}
+ 
+ \vspace*{-3pt}
+ 
+ \noindent
+ где $f^j$ и~$h^j$ -- $j$-е столбцы матриц $f$ и~$h$.
+
+ Действуя аналогично~\cite{B_20_2_ARC}, можно показать, что для данной схемы 
+вы\-чис\-ле\-ния коэффициентов~$\psi^{kj}$ выполнено условие~(\ref{eq:cond_eps}), 
+в~котором величина
+$C>0$ зависит от па\-ра\-мет\-ров модели наблюдения, а~параметр $\alpha\hm>0$  описывает 
+степень <<дополнительного дроб\-ле\-ния>> отрезка дискретизации~$\delta$.
+
+ Весовые коэффициенты в~данной схеме выражаются сле\-ду\-ющим образом:
+ 
+\vspace*{-5pt}
+
+\noindent
+\begin{multline*}
+ \varrho^{kj}_{\ell} = \delta_{kj}e^{\lambda_{jj} \delta} +{}\\
+ {}+
+ \left(1-\delta_{kj}\right)\lambda_{kj}  \delta^{1+\alpha}
+ \exp \left(  \delta  \left(  \lambda_{kk}\left(\ell-\fr{1}{2}\right)\delta^{\alpha} +{}\right.\right.\\
+\left.\left.{}+ \lambda_{jj}\left(1-\left(\ell-\fr{1}{2}\right)\delta^{\alpha}\right) \right)  \right).
+\end{multline*}
+
+\vspace*{-5pt}
+
+ Используя второй замечательный предел, мож\-но показать, что $\mathfrak{W}(\delta) 
+\hm< 1$ для до\-ста\-точ\-но малого $\delta\hm > 0$.
+
+
+ Численный эксперимент был проведен для значений па\-ра\-мет\-ров $N \hm= 10$,  
+$\lambda_{ij} \hm\equiv 5$ при $i \hm\neq j$, $T \hm\in [0;2]$. Показатель точ\-ности~$\Sigma (T,\delta)$ 
+прямо пропорционален па\-ра\-мет\-ру~$C$, поэтому нормируем его на~$C$ и~ис\-сле\-ду\-ем част\-ное ${\Sigma (T,\delta)}/{C}$.
+
+
+
+
+{ \begin{center}  %fig1
+% \vspace*{6pt}
+   \mbox{%
+\epsfxsize=76.664mm
+\epsfbox{bor-1.eps}
+}
+
+\end{center}
+
+\vspace*{-6pt}
+
+\noindent
+{\small Зависимость ${\Sigma (T,\delta)}/{C}$ от~$T$, вы\-чис\-лен\-ная по 
+формулам~(\ref{eq:gl_err_1}) (черный кривые) и~(\ref{eq:gl_err_2}) (серые кривые) при различных па\-ра\-мет\-рах~$\delta$:
+\textit{1}~--- $\delta\hm= 10^{-2}$; \textit{2}~--- 10$^{-3}$; \textit{3}~--- 10$^{-4}$; 
+\textit{4}~--- 10$^{-5}$; \textit{5}~--- $\delta\hm= 10^{-6}$
+}
+}
+
+%\vspace*{6pt}
+
+
+
+
+ На рисунке представлена за\-ви\-си\-мость от~$T$  функции ${\Sigma 
+(T,\delta)}/{C}$ при различных значениях шага дискретизации~$\delta$.
+
+
+
+ 
+Анализируя графики, легко прийти к~сле\-ду\-юще\-му заключению.  Если удается 
+по\-стро\-ить схемы числен\-но\-го интегрирования, для которых выполняется условие  
+$\mathfrak{W}(\delta) \hm< 1$, то пессимистичные линейные оценки~(\ref{eq:gl_err_2}) 
+верх\-ней границы $\Sigma (T,\delta)$ могут быть существенно 
+уточ\-не\-ны с~использованием формулы~(\ref{eq:gl_err_1}).
+
+
+
+ \section{Заключение}
+ 
+ Формулы (\ref{eq:gl_err_1}) и~(\ref{eq:gl_err_2}), описывающие оценки сверху 
+для средней $\mathcal{L}_1$-нор\-мы ошибки аппроксимации как функции шага 
+временн$\acute{\mbox{о}}$й дискретизации~$\delta$ и~момента по\-стро\-ения оценки фильт\-ра\-ции~$T$, 
+являются главными результатами данной работы. Тот факт, что в~(\ref{eq:gl_err_2}) порядок глобальной точ\-ности аппроксимации 
+на~$1$  меньше 
+порядка локальной точ\-ности, вполне ожидаем: потеря порядка точ\-ности на единицу 
+наблюдается для чис\-лен\-ных методов решения как обыкновенных, так и~сто\-ха\-сти\-че\-ских 
+дифференциальных уравнений~\cite{KP_92}. Линейный рост величины ошиб\-ки, 
+опре\-де\-ля\-емой формулой~(\ref{eq:gl_err_2}), с~рос\-том момента оценивания~$T$ так\-же 
+представляется достаточно рутинным и~следует из дискретного варианта неравенства 
+Гро\-ну\-ол\-ла--Бел\-лма\-на и~свойств~1--3.
+
+Вместе с~тем вариант верхней оценки глобального показателя точ\-ности, опи\-сы\-ва\-емый 
+(\ref{eq:gl_err_1}), обладает несколькими необычными качествами. Во-пер\-вых, 
+данная оцен\-ка демонстрирует не линейный, но \textit{сублинейный} рост по~$T$. 
+Во-вто\-рых, порядок глобальной точ\-ности понизился меньше чем на единицу. Эти 
+результаты получены благодаря тому, что матричнозначные функции 
+$\mathbf{\Theta}_r$ с~единичной нормой удалось при\-бли\-зить функциями 
+$\mathbf{\Psi}_r$, име\-ющи\-ми норму, меньшую~1. Именно это качество позволяет 
+описать эволюцию во времени верх\-ней границы с~по\-мощью устойчивой рекуррентной 
+зависимости, до\-став\-ля\-ющей в~итоге менее консервативную оцен\-ку показателю 
+точ\-ности.
+
+\vspace*{-6pt}
+
+{\small 
+\subsection*{\raggedleft Приложение}
+
+%\renewcommand{\theequation}{П.\arabic{equation}}
+
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\ \ тео\-ре\-мы~1.
+Преобразуем ошиб\-ку аппроксимации сле\-ду\-ющим образом:
+
+\noindent
+\begin{multline*}
+\Delta_r = \overline{\mathcal{X}}_r - \widehat{\mathcal{X}}_r ={}\\
+{}= 
+\fr{1}{\mathbf{1}\Psi_r^{\top}\pi \mathbf{1}\Theta_r^{\top}\pi}
+\left(\mathbf{1}\Theta_r^{\top}\pi \Psi_r^{\top}\pi - \mathbf{1}\Psi_r^{\top}\pi 
+\Theta_r^{\top}\pi\right) ={}\\
+{}=
+\fr{1}{\mathbf{1}\Psi_r^{\top}\pi \mathbf{1}\Theta_r^{\top}\pi}
+\left(\Psi_r^{\top}\pi\mathbf{1} \Theta_r^{\top}\pi - \mathbf{1}\Psi_r^{\top}\pi 
+\Theta_r^{\top}\pi \right) ={} 
+\end{multline*}
+
+\noindent
+\begin{multline*}
+{} = 
+\fr{1}{\mathbf{1}\Psi_r^{\top}\pi \mathbf{1}\Theta_r^{\top}\pi} 
+\left(\Psi_r^{\top}\pi\mathbf{1} - \mathbf{1}\Psi_r^{\top}\pi I\right) \Theta_r^{\top}\pi ={}\\
+{}=
+\fr{1}{\mathbf{1}\Psi_r^{\top}\pi \mathbf{1}\Theta_r^{\top}\pi} 
+\left(\Psi_r^{\top}\pi\mathbf{1} - \mathbf{1}\Psi_r^{\top}\pi I\right) 
+\left(\Theta_r^{\top}\pi - \Psi_r^{\top}\pi\right) ={} \\
+{} = 
+\left(\overline{\mathcal{X}}_r \mathbf{1} - I\right) \fr{1}{\mathbf{1}\Theta_r^{\top}\pi}
+\left(\Theta_r - \Psi_r\right)^{\top}\pi\,.
+\end{multline*}
+Из свойств нормы $\|\cdot\|_1$ следует, что $\|\pi\|_1\hm \equiv 1$ и~$\| 
+\overline{\mathcal{X}}_r \mathbf{1} \hm- I\|_1 \hm\leqslant 2$, поэтому
+\begin{equation}
+\left\|\Delta_r\right\|_1 \leqslant 2\left\| \fr{1}{\mathbf{1}\Theta_r^{\top}\pi}
+\left(\Theta_r - \Psi_r\right)^{\top} \right\|_1\,.
+\label{eq:ineq_1}
+\end{equation}
+Используя обозначения
+$\gamma_r \ebd \psi_r\hm - \theta_r$ и~$\Gamma_r \hm\ebd \Psi_r \hm- \Theta_r$,
+мож\-но записать рекурсию
+\begin{equation}
+\Gamma_r =  \Gamma_{r-1}\psi_r+\Theta_{r-1} \gamma_r,  \enskip  r > 1, \enskip
+\Gamma_1 = \gamma_1.
+\label{eq:rec_1}
+\end{equation}
+Согласно лемме~3~\cite{B_20_1_ARC} для любой интегрируемой функции 
+$a\left(y_1,\ldots,y_r, z_1,\ldots,z_r\right)$ имеет мес\-то равенство:
+\begin{multline*} 
+\me{\pi}{\fr{a\left(\mathcal{Y}_1,\ldots,\mathcal{Y}_r, 
+\mathcal{Z}_1,\ldots,\mathcal{Z}_r\right)}{\mathbf{1}\Theta_r^{\top}\left(\mathcal{Y}_1,\ldots,\mathcal{Y}_r, 
+\mathcal{Z}_1,\ldots,\mathcal{Z}_r\right)\pi}} ={}\\
+{}=
+\sum\limits_{(z_1,\ldots, z_r) \in \mathbb{Z}_+^{rK}} \int\limits_{\mathbb{R}^{rM}}
+a\left(y_1,\ldots,y_r, z_1,\ldots,z_r\right) \,dy_1\cdots dy_r.\hspace*{-0.70177pt}
+% \label{eq:int_1}
+\end{multline*}
+Взяв математическое ожидание левой и~правой час\-тей~(\ref{eq:ineq_1}), благодаря 
+утверж\-де\-нию данной леммы получаем
+\begin{multline}
+\me{\pi}{\left\|\Delta_r\right\|_1} \leqslant  2 \!\!\!\!\!\!\!\!\!\!\sum\limits_{(z_1,\ldots, z_r) \in 
+\mathbb{Z}_+^{rK}} \int\limits_{\,\mathbb{R}^{rM}}
+\Big\|\Gamma^{\top}\left(y_1,\ldots,y_r,\right.\\
+\left. z_1,\ldots,z_r\right)
+\Big\|_1 \,dy_1\cdots dy_r.
+ \label{eq:ineq_2}
+\end{multline}
+Обозначим 
+$$
+J_r \ebd \! \!\!\!\!\!\!\!\!\!\!\!\!\!\sum\limits_{(z_1,\ldots, z_r) \in \mathbb{Z}_+^{rK}} 
+\int\limits_{\,\mathbb{R}^{rM}} \!\!\left\|\Gamma^{\top}\!\left(y_1,\ldots,y_r, z_1,\ldots,z_r\right)\right\|_1 dy_1\cdots dy_r.
+$$ 
+Тогда, вычисляя интеграл нормы $\|\cdot\|_1$ от левой и~правой час\-тей~(\ref{eq:rec_1}) и~учитывая свойства~3, 6 и~7, для $r\hm>1$ мож\-но 
+получить  рекуррентное неравенство
+ $ J_r \hm\leqslant \mathfrak{W}(\delta) J_{r-1}\hm+ C\delta^{1+ \alpha}$ и~начальное 
+условие $J_1\hm = C\delta^{1+ \alpha}$,
+ откуда по свойству убы\-ва\-ющей гео\-мет\-ри\-че\-ской прогрессии следует, что
+$$
+ J_r\hm \leqslant
+ \begin{cases}
+  C\left(\fr{1-\mathfrak{W}^{{T}/{\delta}}(\delta)}{1-
+\mathfrak{W}(\delta)}\right) \delta^{1+\alpha}, & \mbox{если } \mathfrak{W}(\delta)\hm < 1; \\
+ C\left(\fr{T}{\delta}\right)\, \delta^{1+\alpha} = CT  \delta^{\alpha}, & \mbox{если } \mathfrak{W}(\delta) = 1.
+ \end{cases}
+ $$
+  Неравенства для~$J_r $ не зависят от 
+начального распределения~$\pi$. Утверж\-де\-ние тео\-ре\-мы следует из подстановки 
+неравенств в~правую часть~(\ref{eq:ineq_2}) и~по\-сле\-ду\-юще\-го взятия от обеих 
+час\-тей точ\-ной верхней грани по $\pi \hm\in \Pi$.
+Тео\-ре\-ма~1 доказана.
+
+}
+
+
+{\small\frenchspacing
+ {\baselineskip=10.8pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{B_20_1_ARC}
+\Au{Борисов~A.} $\mathcal{L}_1$-оп\-ти\-маль\-ная фильт\-ра\-ция марковских 
+скачкообразных процессов I: точ\-ное решение и~чис\-лен\-ные схемы реализации~// 
+Автоматика и~телемеханика, 2020. Вып.~11. С.~11--31.
+
+
+\bibitem{B_20_2_ARC}
+\Au{Борисов A.} $\mathcal{L}_1$-оп\-ти\-маль\-ная фильт\-ра\-ция марковских 
+скачкообразных процессов II: численный анализ конкретных схем~// Автоматика и~телемеханика, 2020. Вып.~12. С.~24--49.
+
+     \bibitem{B_21_1_IA}
+  \Au{Борисов А., Казанчян~Д.} Фильтрация состояний марковских скачкообразных 
+процессов по комплексным наблюдениям I: точное решение задачи~// Информатика и~её применения, 2021. Т.~15. Вып.~2.\linebreak C.~11--18.
+
+       \bibitem{B_21_2_IA}
+  \Au{Борисов А., Казанчян~Д.} Фильтрация состояний марковских скачкообразных 
+процессов по комплексным наблюдениям II: численный алгоритм~// Информатика и~её 
+применения, 2021. Т.~15. Вып.~3. C.~9--15.
+
+    \bibitem{IK_06}
+\Au{Ishikawa Y., Kunita~H.} Malliavin calculus on the Wiener--Poisson space 
+and its application to canonical SDE with jumps~// Stoch. Proc. 
+Appl., 2006. Vol.~116. P.~1743--1769.
+
+ \bibitem{LSh_1_01}
+  \Au{Liptser R., Shiryaev~A.} Statistics of random processes~I: General 
+theory.~--- Berlin/Heidelberg:~Springer, 2001. 427~p.
+
+  \bibitem{KP_92}
+\Au{Kloeden P., Platen~E.} Numerical solution of stochastic differential 
+equations.~--- Berlin: Springer, 1992. 636~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Поступила в~редакцию 27.12.21}}
+
+\vspace*{6pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+\vspace*{-4pt}
+
+\def\tit{TOTAL APPROXIMATION ORDER FOR~MARKOV JUMP PROCESS FILTERING GIVEN DISCRETIZED OBSERVATIONS\\[-7pt]}
+
+
+\def\titkol{Total approximation order for~Markov jump process filtering given discretized observations}
+
+
+\def\aut{A.\,V.~Borisov}
+
+\def\autkol{A.\,V.~Borisov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-17pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{1pt} 
+
+
+
+
+\Abste{The note proceeds the investigation devoted to the numerical approximation of the Markov jump process filtering given 
+both the counting and diffusion observations with the multiplicative noise. The filtering estimates are approximated using the 
+observations, previously discretized by time. By contrast with the previous algorithms which limit the number of the 
+Markov state transitions that occurred during the time discretization interval, the new estimates are free of these restrictions 
+and constructed via a~unified scheme. The note presents an upper bound for the approximation accuracy as a~function of the observation
+ system parameters, applied scheme of the numerical integration, the time discretization step, and the filtering moment. 
+ A~numerical example illustrates a~sublinear character of the bound towards the latter argument.}
+
+\KWE{Markov jump process; optimal filtering; diffusion and counting observations; multiplicative observation noise; numerical approximation accuracy}
+
+
+
+ \DOI{10.14357/19922264220402} 
+
+\vspace*{-20pt}
+
+
+   \Ack
+   
+   \vspace*{-6pt}
+   
+\noindent
+The research was carried out using the infrastructure of shared research facilities CKP ``Informatics'' of FRC CSC RAS.
+
+
+\vspace*{-1pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {\baselineskip=10.6pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{1-bor}
+\Aue{Borisov, A.} 2020. $\mathcal{L}_1$-optimal filtering of Markov jump processes. I. Exact solution and numerical implementation schemes. 
+\textit{Automat. Rem. Contr.} 81(11):1945--1962.
+\bibitem{2-bor}
+\Aue{Borisov, A.} 2020. $\mathcal{L}_1$-optimal filtering of Markov jump processes. II. Numerical analysis of particular realizations schemes. 
+\textit{Automat. Rem. Contr.} 81(12):2160--2180. 
+\bibitem{3-bor}
+\Aue{Borisov, A., and D.~Kazanchyan.} 2021. Fil't\-ra\-tsiya so\-sto\-yaniy mar\-kov\-skikh skach\-ko\-ob\-raz\-nykh 
+pro\-tses\-sov po komp\-leks\-nym nab\-lyu\-de\-ni\-yam~I: Toch\-noe re\-she\-nie za\-da\-chi 
+[\mbox{Filtering} of Markov jump processes given composite observation~I: Exact solution]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 15(2):11--18.
+\bibitem{4-bor}
+\Aue{Borisov, A., and D.~Kazanchyan.}
+ 2021. Fil'tra\-tsiya so\-sto\-yaniy mar\-kov\-skikh skach\-ko\-ob\-raz\-nykh pro\-tses\-sov po komp\-leks\-nym nab\-lyu\-de\-ni\-yam II: Chis\-len\-nyy al\-go\-ritm 
+ [Filtering of Markov jump processes given composite observations II: Numerical algorithm]. 
+ \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 15(3):9--15.
+\bibitem{5-bor}
+\Aue{Ishikawa, Y., and H.~Kunita.} 2006. Malliavin calculus on the Wiener--Poisson space and 
+its application to canonical SDE with jumps. \textit{Stoch. Proc. Appl.} 116:1743--1769.
+\bibitem{6-bor}
+\Aue{Liptser, R., and A.~Shiryaev.}
+ 2001. \textit{Statistics of random processes I: General theory}. Berlin/Heidelberg: Springer. 427~p.
+\bibitem{7-bor}
+\Aue{Kloeden, P., and E.~Platen.} 1992. 
+\textit{Numerical solution of stochastic differential equations}. Berlin: Springer. 636~p.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-8pt}
+
+\hfill{\small\textit{Received December 27, 2021}}
+
+\vspace*{-22pt}
+
+\Contrl
+
+\vspace*{-4pt}
+
+\noindent
+\textbf{Borisov Andrey V.} (b.\ 1965)~--- 
+Doctor of Science in physics and mathematics, principal scientist, Federal Research Center ``Computer Science and Control'' 
+of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{aborisov@frccsc.ru}
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}  

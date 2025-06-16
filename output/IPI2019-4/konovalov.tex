@@ -1,0 +1,621 @@
+\def\stat{konovalov}
+
+\def\tit{КОМПЛЕКСНОЕ УПРАВЛЕНИЕ В~ОДНОМ КЛАССЕ СИСТЕМ С~ПАРАЛЛЕЛЬНЫМ 
+ОБСЛУЖИВАНИЕМ$^*$}
+
+\def\titkol{Комплексное управление в~одном классе систем с~параллельным 
+обслуживанием}
+
+\def\aut{М.\,Г.~Коновалов$^1$, Р.\,В.~Разумчик$^2$}
+
+\def\autkol{М.\,Г.~Коновалов, Р.\,В.~Разумчик}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Коновалов М.\,Г.}
+\index{Разумчик Р.\,В.}
+\index{Konovalov M.\,G.}
+\index{Razumchik R.\,V.}
+
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Исследование выполнено при частичной финансовой поддержке РФФИ (проект 18-07-00692).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального исследовательского центра <<Информатика и~управление>> 
+Российской академии наук, \mbox{mkonovalov@ipiran.ru}}
+\footnotetext[2]{Институт проблем информатики Федерального исследовательского центра <<Информатика 
+и~управление>> Российской академии наук; Российский университет дружбы народов, 
+\mbox{rrazumchik@ipiran.ru} % \mbox{razumchik-rv@rudn.ru
+}
+
+\vspace*{12pt}
+
+
+    
+    \Abst{Рассматривается задача эффективного распределения потока однородных заданий в~системах с~параллельным обслуживанием на независимо работающих серверах 
+с~очередями неограниченной емкости. Имеется один диспетчер, который распределяет 
+задания между серверами без промежуточного хранения. Обмен заданиями между серверами 
+невозможен. Эффективность понимается с~точки зрения минимума двух конкурирующих 
+целевых показателей: стационарного среднего времени пребывания задания в~системе 
+и~вероятности нарушения дедлайна, до истечения которого каждое задание должно попасть на 
+обслуживание. Задание, дедлайн которого нарушен, остается на сервере до тех пор, пока не 
+будет обслужено. В~работе предлагается подход, основанный на идее комплексного 
+управления потоками в~системе и~предполагающий одновременный подбор как наиболее 
+эффективной диспетчеризации, так и~дисциплины обслуживания очереди. Методами 
+статистической имитации на численных примерах показано, что новый подход позволяет 
+получать такой выигрыш в~целевых показателях, достичь которого не удается, применяя те 
+же механизмы управления, но по отдельности.}
+
+\KW{системы с~параллельным обслуживанием; диспетчеризация; дисциплина обслуживания 
+очереди; время пребывания; вероятность превышения дедлайна}
+
+\DOI{10.14357/19922264190409} 
+  
+\vspace*{6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+Данная статья продолжает тематику повышения производительности систем 
+с~параллельными и~независимыми серверами. Теория управления такими 
+системами традиционно разделяется на три практически самостоятельных 
+раздела:
+   \begin{enumerate}[(1)]
+   \item диспетчеризация, т.\,е.\ распределение потоков заданий между 
+серверами;
+   \item обслуживание очередей, т.\,е.\ очередность обслуживания заданий на 
+серверах;
+   \item ограничение доступа заданий в~систему.
+   \end{enumerate}
+   
+   Существует весьма четкое разграничение этих направлений в~литературе по 
+управлению обслуживанием, причем каждая отдельно взятая работа посвящена, 
+как правило, строго одному из пе\-ре\-чис\-лен\-ных разделов. 
+
+Типичная статья в~этой 
+области выглядит так. Рассматриваются, например, несколько 
+диспетчеризаций, которые анализируются и~сравниваются между собой, а~при 
+этом остальные два способа управ\-ле\-ния фиксированы и~не об\-суж\-да\-ют\-ся. В~то 
+же время очевидно, что все указанные механизмы служат одной цели~--- 
+повышению эффективности обслуживания~--- и~в~реальных системах они 
+используются по большей части одновременно. 
+
+В~данной статье предпринята 
+попытка (подроб\-но см., например,~[1--3]) обратиться к~такой постановке задачи, 
+в~которой сочеталась бы возможность использовать для достижения заданных 
+критериев качества разные методы. Конкретно, рассматривается сервисная 
+система, в~которой оптимизация осуществляется за счет одновременного 
+подбора как наиболее эффективной диспетчеризации, так и~дисциплины 
+обслуживания очереди.
+   
+   Данная работа базируется на методах ста\-ти\-стической имитации. 
+Излагаемые результаты от\-носятся к~единственному примеру сис\-те\-мы 
+с~параллельным обслуживанием, взятому (для \mbox{возможности} осуществить 
+срав\-не\-ние) из \mbox{статьи}~[4]. 
+
+
+Материал распределен следующим образом. Общая 
+постановка задачи сформулирована в~разд.~2. Здесь вкратце описывается 
+предлагаемый подход к~ее решению. В~разд.~3 приводятся некоторые 
+результаты численных экспериментов. В~заключении кратко обсуждаются 
+результаты работы.
+   
+\section{Описание системы и~постановка задачи}
+
+   Система состоит из~$N$~серверов, работающих параллельно и~независимо 
+друг от друга. Производительность (интенсивность обслуживания) сервера~$i$ 
+равна~$v^{(i)}$. В~систему поступает пуассоновский входной поток 
+заданий\footnote{Ввиду предположения, что в~серверах реализована дисциплина частичного 
+разделения процессора, предположение о том, что в~систему поступает один поток однородных 
+заданий, является существенным. Случай нескольких входящих потоков разнородных заданий 
+требует отдельного исследования.}. Задания имеют случайную длину (объем), которая 
+определяется одним и~тем же распределением~$G$, и~предельный срок $0\hm< 
+\tau\hm<\infty$, до истечения которого оно должно попасть на обслуживание 
+(дедлайн). Каждое поступившее задание должно быть немедленно направлено 
+на один из серверов, причем диспетчеру, осуществляющему этот выбор, 
+доступна любая информация о текущем состоянии системы (например, размеры 
+очередей, остаточная работа на каждом сервере и~т.\,п.)\footnote{Совершенно 
+естественным является предположение, что диспетчеру доступна полная предыстория принятых 
+решений (с~указанием моментов времени, в~которые решения принимались). Однако 
+диспетчеризации, использующие такую информацию, обычно требуют больших дополнительных 
+вычислений и~поэтому здесь рассматриваться не будут.}. Число заданий, которые могут 
+одновременно находиться на каждом сервере, не ограничено. Если дедлайн 
+нарушен, задание остается на сервере до тех пор, пока не будет обслужено до 
+конца. Выполнение заданий на каждом сервере происходит в~соответствии 
+с~дисциплиной LPS (limited processor sharing), 
+т.\,е.\ дисциплиной частичного разделения процессора~[5, 
+6]. Эта дисциплина предполагает, что каждый сервер~$i$ действует следующим 
+образом. Если в~очереди находится~$n_i$, $1\hm\leq n_i\hm\leq L_i$, заданий 
+($L_i\hm\geq1$~--- фиксированное число), то каждое из~$n_i$ заданий 
+обслуживается со ско\-ростью~$v^{(i)}/n_i$. В~противном случае первые~$L_i$ 
+заданий обслуживаются со ско\-ростью~$v^{(i)}/L_i$, а~остальные ожидают 
+обслуживания в~очереди либо в~порядке поступления (FIFO~--- first in, first out), 
+либо в~порядке 
+возрастания размера задания (SJF, shortest job first). 
+  
+  Система функционирует в~непрерывном времени $t\hm\geq0$. Пусть 
+$0\hm\leq t_1<\cdots< t_n<\cdots$~--- последовательность моментов поступления 
+заданий в~систему. Действие, принимаемое в~момент~$t_n$ относительно вновь 
+поступившего задания, обозначим через~$y_n$. Полагаем, что $y_n\hm=i$, если 
+задание на\-прав\-ле\-но на сервер~$i$. Пусть задание, поступившее в~момент~$t_n$ 
+и~распределенное согласно правилу~$y_n$, в~течение времени~$w_n$ ожидает 
+обслуживания, а затем в~течение времени~$s_n$ обслуживается.
+  
+  Величины $w_n$ и~$s_n$ заранее не известны, но они как раз служат 
+основой для выбора показателей качества обслуживания, которых в~данном 
+случае два. Это, во-пер\-вых, предельное среднее время пребывания заданий 
+в~системе
+
+\vspace*{2pt}
+
+\noindent
+  $$
+  v=\lim\limits_{m\to\infty} \fr{1}{m}\sum\limits^m_{n=1} \mathrm{E}_y\left( 
+w_n+s_n\right)
+  $$
+  
+  \vspace*{-3pt}
+  
+  \noindent
+и, во-вторых, предельная вероятность нарушения дедлайна
+
+\noindent
+$$
+r=\lim\limits_{m\to\infty} \fr{1}{m}\sum\limits^m_{n=1} 
+\mathrm{E}_y\mathbf{1}_{\{w_n>\tau\}}\,.
+$$
+
+\vspace*{-2pt}
+  
+  В этих формулах $\mathbf{1}_{\{A\}}$~--- индикатор события~$A$, 
+$\mathrm{E}_y$~--- интегрирование по мере, порождаемой 
+диспетчеризацией~$y$.
+  
+  Показатели~$v$ и~$r$ являются конкурирующими, причем оба требуют 
+минимизации. Для разрешения многокритериальности в~данном случае вместо 
+того, чтобы формулировать задачу условной оптимизации либо определять 
+свертку, поступим следующим образом\footnote[3]{Несмотря на кажущуюся простоту 
+такого подхода по сравнению с~условной оптимизацией, отыскание значения~$L_i$ и~оптимальных 
+значений параметров диспетчеризаций представляет собой отдельные задачи, которые <<в~лоб>> 
+решить невозможно в~силу несчетности множества поиска. Здесь эти задачи решаются с~помощью 
+специального адаптивного алгоритма на имитационной модели~\cite{7-kon}.}. 
+Зададим набор 
+допустимых диспетчеризаций~$y_n$, две дисциплины обслуживания очереди 
+(FIFO или SJF), а также диапазон значений~$L_i$ и~будем перебирать 
+возможные варианты для нахождения наилучших значений показателей~$v$ 
+и~$r$.
+
+\begin{table*}\small %tabl1
+\begin{center}
+\Caption{Стационарная вероятность~$r$ нарушения дедлайна в~системе из четырех серверов при различных 
+стратегиях диспетчеризации и~обслуживания очереди и~различных значениях загрузки}
+\vspace*{2ex}
+
+\tabcolsep=10.5pt
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+\multicolumn{1}{|c|}{Стратегия}&\tabcolsep=0pt\begin{tabular}{c}$\lambda=4{,}2$\\ 
+($\rho=0{,}7$)\end{tabular}&\tabcolsep=0pt\begin{tabular}{c}$\lambda=4{,}8$\\ 
+($\rho=0{,}8$)\end{tabular}&\tabcolsep=0pt\begin{tabular}{c}$\lambda=5{,}04$\\
+ ($\rho=0{,}84$)\end{tabular}&\tabcolsep=0pt\begin{tabular}{c}$\lambda=5{,}4$\\
+($\rho=0{,}9$)\end{tabular}\\
+\hline
+$\mathrm{LWL+FIFO}$&0,011&0,054&0,098&0,236\\
+$\mathrm{MHV}(C)+\mathrm{FIFO}$&0,016 ($C=2$)&0,052 ($C=1{,}25$)&0,095 ($C=1{,}25)$&0,224 ($C=2$)\\
+$\mathrm{LWL+LPS(2)+FIFO}$&0,004&0,027&0,056&0,169\\
+$\mathrm{MHV}(C)+\mathrm{LPS(2)+FIFO}$&0,004 ($C=3$)&0,024 ($C=2{,}5$)&0,049 ($C=2$)&---\\
+$\mathrm{MHVI}(C)+\mathrm{LPS(2)+FIFO}$&---&---&---&0,145 ($C=2{,}5$)\\
+$\mathrm{LWL+SJF}$&0,008&0,027&0,043&0,079\\
+$\mathrm{MHV}(C)+\mathrm{SJF}$&0,009 ($C=2$)&---&---&---\\
+$\mathrm{MHVI}(C)+\mathrm{SJF}$&---&0,024 ($C=2{,}5$)&0,035 ($C=2{,}5$)&0,058 ($C=2$)\\
+$\mathrm{LWL+LPS(2)+SJF}$&0,004&0,015&0,027&0,065\\
+$\mathrm{MHV}(C)+\mathrm{LPS(2)+SJF}$&0,003 ($C=3$)&---&---&---\\
+$\mathrm{MHVI}(C)+\mathrm{LPS(2)+SJF}$&---&0,011 ($C=2{,}5$)&0,019 ($C=2{,}5$)&0,042 ($C=2$)\\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{-9pt}
+\end{table*}
+
+  
+  Ограничимся следующими простыми и~в~то же время достаточно 
+эффективными диспетчеризациями, наиболее полно использующими 
+доступную информацию о текущем состоянии системы (см., 
+например,~\cite[разд.~3]{8-kon}):
+  \begin{itemize}
+   \item $y_n=\argmin\nolimits_{1\leq i\leq M} (u_n^{(i)})$, где $u_n^{(i)}$~--- время, необходимое для 
+полного выполнения всех заданий, которые в~момент принятия решения~$t_n$ находятся на 
+сервере~$i$, при условии, что новые задания не поступают. Если в~момент~$t_n$ на сервере~$i$ 
+находятся~$k$~заданий, причем их длины равны $l_1, l_2,\ldots , l_k$, то $u_n^{(i)}\hm= 
+\sum\nolimits^k_{i=1} l_i/v^{(i)}$. Далее эта диспетчеризация обозначается 
+как $\mathrm{LWL}$ (least work left);
+  \item $y_n=\argmin\nolimits_{1\leq i\leq M} (\omega_n^{(i)})$, где 
+$\omega_n^{(i)}$~--- числовая характеристика сервера~$i$ в~момент принятия 
+решения~$t_n$, вычисляемая следующим образом. Если в~момент~$t_n$ на 
+сервере~$i$ находятся~$k$~заданий, причем их упорядоченные по 
+возрастанию длины равны $l_1, l_2,\ldots , l_k$, то
+
+\noindent
+  $$
+  \omega_n^{(i)}=\sum\limits^k_{i=1} \tau_i C^{k-i}\,,
+  $$
+  
+  \noindent
+где 
+$$
+\tau_i= \fr{k-i+1}{v^{(i)}} \left( l_i-\sum\limits_{j=1}^{i-1} \left( \fr{l_j(k-
+j+1)}{v^{(i)}}\right)\right)\,,
+$$
+а $C$~--- фиксированное положительное число. Далее эта эвристическая 
+диспетчеризация обозначается как $\mathrm{MHV}(C)$~[9, 10].
+\end{itemize}
+   
+   Заметим, что если функция $\argmin$ возвращает несколько значений, то 
+поступившее задание направляется на самый быстрый сервер; если таких 
+несколько, то сервер выбирается наугад. Расчет~$\omega_n^{(i)}$ возможен, 
+вообще говоря, как без учета нового задания, так и~в~предположении, что оно 
+отправлено именно на данный сервер. Снабжая такую оценку дополнительной 
+чертой сверху, получаем, заменяя в~$\mathrm{MHV}(C)$~$\omega_n^{(i)}$ на 
+$\overline{\omega}_n^{(i)} \hm- \omega_n^{(i)}$, еще одно правило 
+диспетчеризации (далее~--- $\mathrm{MHVI}(C)$).
+
+\vspace*{-6pt}
+   
+\section{Некоторые результаты численных экспериментов}
+
+\vspace*{-6pt}
+
+   Проверка большого числа численных экспериментов показывает, что 
+комплексное управление процессом распределения заданий и~обслуживанием 
+очереди дает такой выигрыш в~целевых функциях~$v$ и~$r$, достичь которого 
+не удается, применяя те же механизмы, но по раздельности\footnote{Даже весьма 
+сложных стратегий, как, например, FPI (first policy iteration) из~\cite{4-kon}.}. Важно отметить, что указанный 
+эффект проявляется при использовании просто реализуемых стратегий, не 
+требующих сложной настройки параметров. Одному из таких примеров 
+посвящен данных раздел.
+   
+   Рассматривается гетерогенная система из четырех серверов 
+производительностью $v^{(1)}\hm= v^{(2)}\hm=2$, 
+$v^{(3)}\hm= v^{(4)}\hm=1$. Входящий в~систему поток заданий с~дедлайном $\tau\hm=2$ является пуассоновским 
+с~параметром~$\lambda$. Размер заданий имеет экспоненциальное 
+распределение с~параметром~1. Загрузка системы равна $\rho\hm= \lambda/6$.
+   
+   В табл.~1 и~2 приводятся значения~$v$ и~$r$ для нескольких комбинаций 
+диспетчеризаций и~механизмов управления очередью при разных значениях 
+загрузки системы.
+   
+\begin{table*}\small %tabl2
+\begin{center}
+\parbox{400pt}{\Caption{Стационарное среднее~$v$ и~среднеквадратичное отклонение для времени пребывания задания 
+в~системе из четырех серверов при различных стратегиях диспетчеризации и~обслуживания очереди 
+и~различных значениях загрузки. Значение параметра~$C$ берется из соответствующей ячейки табл.~1}
+}
+
+\vspace*{2ex}
+
+\tabcolsep=10pt
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+\multicolumn{1}{|c|}{Стратегия}&\tabcolsep=0pt\begin{tabular}{c}$\lambda=4{,}2$\\ 
+($\rho=0{,}7$)\end{tabular}&\tabcolsep=0pt\begin{tabular}{c}$\lambda=4{,}8$\\ 
+($\rho=0{,}8$)\end{tabular}&\tabcolsep=0pt\begin{tabular}{c}$\lambda=5{,}04$\\
+ ($\rho=0{,}84$)\end{tabular}&\tabcolsep=0pt\begin{tabular}{c}$\lambda=5{,}4$\\
+($\rho=0{,}9$)\end{tabular}\\
+\hline
+$\mathrm{LWL+FIFO}$&0,886/0,863&1,151/1,060&1,355/1,233&1,975/1,804\\
+$\mathrm{MHV}(C)+\mathrm{FIFO}$&0,872/0,800&1,146/1,078&1,351/1,261&2,000/2,064\\
+$\mathrm{LWL+LPS(2)+FIFO}$&0,931/0,980&1,208/1,230&1,410/1,411&2,047/1,997\\
+$\mathrm{MHV}(C)+\mathrm{LPS(2)+FIFO}$&0,833/0,877&1,172/1,246&1,407/1,522&---\\
+$\mathrm{MHVI}(C)+\mathrm{LPS(2)+FIFO}$&---&---&---&1,987/2,137\\
+$\mathrm{LWL+SJF}$&0,848/0,879&1,028/1,126&1,147/1,370&1,430/2,267\\
+$\mathrm{MHV}(C)+\mathrm{SJF}$&0,816/0,796&---&---&---\\
+$\mathrm{MHVI}(C)+\mathrm{SJF}$&---&0,957/1,114&1,055/1,391&1,287/2,462\\
+$\mathrm{LWL+LPS(2)+SJF}$&0,915/0,983&1,145/1,258&1,297/1,479&1,684/2,349\\
+$\mathrm{MHV}(C)+\mathrm{LPS(2)+SJF}$&0,884/0,.950&---&---&---\\
+$\mathrm{MHVI}(C)+\mathrm{LPS(2)+SJF}$&---&1,086/1,238&1,218/1,495&1,539/2,385\\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{-9pt}
+\end{table*}
+   
+   Принимая стратегию $\mathrm{LWL}\hm+\mathrm{FIFO}$ за точку отсчета, 
+из таблиц можно увидеть, что комплексное управление диспетчеризацией 
+и~процессом обслуживания однозначно имеет преимущество. Выигрыш 
+в~целевых функциях~$v$ и~$r$ незначителен при средней нагрузке и~близок 
+к~нулю при малой нагрузке. При большой загрузке по сравнению со стратегией 
+$\mathrm{LWL}\hm+\mathrm{FIFO}$ одна из лучших рассмотренных 
+стратегий~--- $\mathrm{MHVI}(С)\hm+\mathrm{LPS(2)+SJF}$~--- обеспечивает 
+выигрыш по~$v$ и~$r$ примерно в~80\% и~20\% соответственно. По мере 
+внедрения комплексного подхода относительный выигрыш увеличивается 
+с~ростом нагрузки, хотя и~немонотонно. Последнее обстоятельство указывает 
+на то, что существуют <<неудачные>> комбинации механизмов 
+диспетчеризации и~управления очередью.
+
+\vspace*{-6pt}
+   
+\section{Заключение}
+
+\vspace*{-6pt}
+
+   Подводя итог краткому экспериментальному анализу комплексного 
+управления в~системах с~параллельным обслуживанием, можно сделать 
+следующие выводы. Эффективность таких систем может быть повышена за 
+счет одновременного использования даже простейших алгоритмов на всех 
+этапах принятия решений (поступление задания в~систему, выбор очередного 
+задания из очереди, выбор способа обработки заданий). В~случае 
+двухкритериальной оптимизации комплексный подход дает такой выигрыш 
+в~целевых функциях, который иначе может быть получен только за счет 
+внедрения изощренных стратегий, требующих специальной настройки 
+параметров. Другое его преимущество кроется в~отсутствие требования, чтобы 
+входящий поток заданий был пуассоновским. Кроме того, лучшие найденные 
+с~его помощью решения\footnote[1]{Исключение~--- диспетчеризация $\mathrm{MHVI}(C)$ при 
+малых~$C$, при которой система может быть нестабильна.} не приводят к~образованию 
+в~системе <<бесконечных>> очередей, которые, как отмечено 
+в~\cite[разд.~5]{4-kon}, при иных подходах к~управлению могут появляться 
+в~случае большой загрузки. 
+   
+   Недостатком подхода, несомненно, является невозможность на данный 
+момент получения ка\-ких-ли\-бо аналитических результатов. Пожалуй, 
+единственное исключение составляет не рассмотренная здесь вероятностная 
+диспетчеризация PAP (probabilistic allocation policy)~\cite[разд.~3]{8-kon} и~пуассоновский поток заданий, 
+при которых осуществим аналитический расчет целевых функций~$v$ и~$r$. 
+Это обстоятельство, однако, может  быть использовано лишь для контроля 
+вы\-чис\-ле\-ний, так как  получаемые таким образом результаты обычно заметно 
+хуже пред\-став\-лен\-ных в~табл.~1 и~2.
+
+\vspace*{-6pt}
+   
+{\small\frenchspacing
+ {\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+ \vspace*{-6pt}
+ 
+   \bibitem{1-kon}
+   \Au{Kleinrock L., Muntz~R.\,R.} Processor sharing queueing models of mixed 
+scheduling disciplines for time shared system~// J.~ACM, 1972. Vol.~19. Iss.~3. 
+P.~464--482.
+   \bibitem{2-kon}
+   \Au{Aalto S., Ayesta U}. Optimal scheduling of jobs with a DHR tail in the 
+$M/G/1$ queue~// 3rd ICST Conference (International) on Performance Evaluation 
+Methodologies and Tools Proceedings.~--- Brussels, Belgium: ICST, 2008. doi: 
+10.4108/ICST.VALUETOOLS2008.4335.
+   \bibitem{3-kon}
+   \Au{Wu R., Down D.\,G.} Scheduling multi-server systems using  
+foreground-background processing. {\sf 
+http://www.\linebreak cas.mcmaster.ca/$\sim$downd/fbpspaper5.pdf}.
+   \bibitem{4-kon}
+   \Au{Hyyti$\ddot{\mbox{a}}$~E., Righter~R.} Routing jobs with deadlines to 
+heterogeneous parallel servers~// Oper. Res. Lett., 2016. Vol.~44. Iss.~4. 
+P.~507--513.
+   \bibitem{5-kon}
+   \Au{Avi-Itzhak B., Halfin~S}. Expected response times in a~non-symmetric time 
+sharing queue with a~limited number of service positions~//  12th Teletraffic 
+Congress (International) Proceedings.~--- Torino, 1988. Art. ID: 5.4B.2. 7~p.
+   \bibitem{6-kon}
+   \Au{Schroeder B., Harchol-Balter~M., Iyengar~A., Nahum~E.\,M., Wierman~A.} 
+How to determine a~good multi-programming level for external scheduling~//  22nd 
+Conference  (International) on Data Engineering Proceedings.~--- Atlanta, GA, USA, 
+2006. P.~60.
+   \bibitem{7-kon}
+   \Au{Коновалов М.\,Г.} Методы адаптивной обработки информации и~их 
+приложения.~--- М.: ИПИ РАН, 2007. 212~с.
+   \bibitem{8-kon}
+   \Au{Коновалов М.\,Г., Разумчик~Р.\,В.} Обзор моделей и~алгоритмов 
+размещения заданий в~системах с~параллельным обслуживанием~// 
+Информатика и~её применения, 2015. Т.~9. Вып.~4. С.~56--67.
+   \bibitem{9-kon}
+   \Au{Коновалов М.\,Г., Разумчик~Р.\,В.} Минимизация среднего времени 
+пребывания в~ненаблюдаемых сис\-те\-мах с~параллельным обслуживанием 
+и~дисциплиной справедливого разделения процессора в~серверах~// 
+Информационные процессы, 2019. Т.~19. Вып.~3. С.~327--338.
+   \bibitem{10-kon}
+   \Au{Konovalov M., Razumchik~R.} Minimizing mean response time in  
+non-observable distributed systems with processor sharing nodes~// Commun. 
+ ECMS, 2019. Vol.~33. Iss.~1. P.~456--461.
+
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Поступила в~редакцию 10.10.19}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{MIXED POLICIES FOR~ONLINE JOB ALLOCATION 
+IN~ONE CLASS OF~SYSTEMS WITH~PARALLEL 
+SERVICE}
+
+
+\def\titkol{Mixed policies for~online job allocation 
+in~one class of~systems with~parallel 
+service}
+
+\def\aut{M.\,G.~Konovalov$^1$ and~R.\,V.~Razumchik$^{1,2}$}
+
+\def\autkol{M.\,G.~Konovalov and~R.\,V.~Razumchik}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+\noindent
+$^1$Institute of Informatics Problems, Federal Research Center ``Computer Science 
+and Control'' of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 44-2 Vavilov Str., Moscow 
+119333, Russian Federation
+
+\noindent
+$^2$Peoples' Friendship University of Russia (RUDN University),  
+6~Miklukho-Maklaya Str., Moscow 117198, Russian\linebreak
+$\hphantom{^1}$Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}  
+
+
+    \Abste{Consideration is given to the problem of efficient job allocation in the class of systems with parallel 
+service on independently working single-server stations each equipped with the infinite capacity queue. There is one 
+dispatcher which routes jobs, arriving one by one, to servers. The dispatcher does not have a queue to store the jobs and, 
+thus, the routing decision must be made on the fly. No jockeying between servers is allowed and jobs cannot be rejected. 
+For a~job, there is the soft deadline (maximum waiting time in the queue). If the deadline is violated, a~fixed cost is 
+incurred and the job remains in the system and must be served. The goal is to find the job allocation policy 
+which 
+minimizes both the job's stationary response time and probability of job's deadline violation. Based on simulation 
+results, it is demonstrated that the goal may be achieved (to some extent) by adopting a mixed policy, i.e. a proper 
+dispatching rule and the service discipline in the server.} 
+
+\KWE{parallel service; dispatching policy; service discipline; sojourn time; deadline violation}
+
+
+
+\DOI{10.14357/19922264190409} 
+
+%\vspace*{-14pt}
+
+  \Ack
+\noindent
+The research was partly supported by the Russian 
+Foundation for Basic Research (project 18-07-00692).
+
+
+\vspace*{4pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ { %\baselineskip=12pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+ \vspace*{-4pt}
+ 
+   \bibitem{1-kon-1}
+   \Aue{Kleinrock, L., and R.\,R.~Muntz.} 1972. Processor sharing queueing 
+models of mixed scheduling disciplines for time shared system. \textit{J.~ACM} 
+19(3):464--482.
+   \bibitem{2-kon-1}
+   \Aue{Aalto, S., and U.~Ayesta.} 2008. Optimal scheduling of jobs with a~DHR tail 
+in the $M/G/1$ queue. \textit{3rd  Conference (International) on 
+Performance Evaluation Methodologies and Tools Proceedings}. Brussels, Belgium. doi: 
+10.4108/\linebreak
+ ICST.VALUETOOLS2008.4335. 
+   \bibitem{3-kon-1}
+   \Aue{Wu, R., and D.\,G.~Down.} Scheduling multi-server systems using 
+foreground-background processing. Available at: {\sf 
+http://www.cas.mcmaster.ca/$\sim$downd/fbpspaper5.pdf} (accessed October~3, 
+2019).
+   \bibitem{4-kon-1}
+   \Aue{Hyyti$\ddot{\mbox{a}}$,~E., and R.~Righter.} 2016. Routing jobs with 
+deadlines to heterogeneous parallel servers. \textit{Operations Research Lett.} 
+44(4):507--513.
+   \bibitem{5-kon-1}
+   \Aue{Avi-Itzhak, B., and S.~Halfin.} 1989. Expected response times in 
+   a~non-symmetric time sharing queue with a~limited number of service positions. 
+\textit{12th  Teletraffic Congress (International) Proceedings}. 
+Torino. Art. ID:~5.4B.2. 7~p.
+   \bibitem{6-kon-1}
+   \Aue{Schroeder, B., M.~Harchol-Balter, A.~Iyengar, E.~Nahum, and A.~Wierman.} 
+2006. How to determine a good multi-programming level for external scheduling. 
+\textit{22nd  Conference (International) on Data Engineering Proceedings}. Atlanta, 
+GA. 60.
+   \bibitem{7-kon-1}
+   \Aue{Konovalov, M.\,G.} 2007. \textit{Metody adaptivnoy obrabotki informatsii i~ikh 
+prilozheniya} [Methods of adaptive information processing and their applications]. 
+Moscow: IPI RAN. 212 p.
+   \bibitem{8-kon-1}
+   \Aue{Konovalov, M.\,G., and R.\,V.~Razumchik.} 2015. Obzor modeley 
+   i~algoritmov razmeshcheniya zadaniy v~sistemakh s~parallel'nym obsluzhivaniem 
+[Methods and algorithms for job scheduling in systems with parallel service: 
+A~survey]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 9(4):56--67.
+   \bibitem{9-kon-1}
+   \Aue{Konovalov, M.\,G., and R.\,V.~Razumchik.} 2019. Mi\-ni\-mi\-za\-tsiya srednego 
+vremeni prebyvaniya v~nenablyudaemykh sistemakh s~parallel'nym 
+obsluzhivaniem i~dis\-tsip\-li\-noy spravedlivogo razdeleniya protsessora v~ser\-ve\-rakh 
+[Minimizing mean response time in non-observable distributed
+ processing systems 
+with nodes, operating under egalitarian processor sharing policy]. \textit{Informatsionnye 
+protsessy} [Information Processes] 19(3):327--338.
+   \bibitem{10-kon-1}
+   \Aue{Konovalov, M.\,G., and R.\,V.~Razumchik.} 2019. Minimizing mean 
+response time in non-observable distributed systems with processor sharing 
+nodes. \textit{Commun. ECMS} 33(1):456--461.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+%\vspace*{-7pt}
+
+\hfill{\small\textit{Received October 10, 2019}}
+
+%\pagebreak
+
+%\vspace*{-22pt}
+
+   \Contr
+   
+   \noindent
+   \textbf{Konovalov Mikhail G.} (b.\ 1950)~--- Doctor of Science in technology, 
+principal scientist, Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov 
+Str., Moscow 119333, Russian Federation; \mbox{mkonovalov@ipiran.ru}
+   
+   \vspace*{6pt}
+   
+   \noindent
+   \textbf{Razumchik Rostislav V.} (b.\ 1984)~--- Candidate of Science (PhD) in 
+physics and mathematics, leading scientist, Institute of Informatics Problems, Federal 
+Research Center ``Computer Science and Control'' of the Russian Academy of 
+Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; associate 
+professor, Peoples' Friendship University of Russia (RUDN University), 
+6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation; 
+\mbox{rrazumchik@ipiran.ru} 
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}  

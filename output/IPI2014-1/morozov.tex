@@ -1,0 +1,1044 @@
+
+\newcommand{\A}{{\mathcal A}}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+\renewcommand{\figurename}{\protect\bf Figure}
+
+\def\stat{morozov}
+
+\def\tit{STABILITY ANALYSIS OF AN OPTICAL SYSTEM WITH~RANDOM DELAY LINES LENGTHS}
+
+\def\titkol{Stability analysis of an optical system with random delay lines lengths}
+
+\def\autkol{E.~Morozov, L.~Potakhina,  and K.~De Turck}
+
+\def\aut{E.~Morozov$^{1,2}$, L.~Potakhina$^{1,2}$,  and~K.~De Turck$^3$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+%\footnotetext[1] {The work of first and second  authors is partially supported by the
+%Program of Strategy development of Petrozavodsk State University in
+%the framework of the research activity. The third author is a
+%postdoctoral fellow with the Research Foundation-Flanders
+%(FWO-Vlaanderen).}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Institute of Applied Mathematical
+Research, Karelian Research Center, Russian Academy of Sciences, 11 Pushkinskaya Str., Petrozavodsk 185910,
+Russian Federation}
+\footnotetext[2]{Petrozavodsk State University, 33 Lenin Str., Petrozavodsk 185910,
+Russian Federation} 
+\footnotetext[3]{Ghent University, TELIN Department, 41 Sint-Pietersnieuwstraat, 
+Gent B-9000, Belgium} 
+
+
+\vspace*{-6pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2014\ \ \ volume~8\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND APPLICATIONS\ \ \ 2014\ \ \ volume~8\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+
+
+
+
+\Abste{A new model of an optical buffer system is considered, in which the
+differences $\{\Delta_n\}$ between the lengths of two adjacent fiber
+delay lines (FDLs) are \textit{random}. This is an extension of the model
+considered in~\cite{Call} where these differences (also referred to
+as {\it granularity}) are constant, i.\,e., $\Delta_n\equiv const$. 
+The system is modeled by utilizing the random-walk theory and
+closely-related asymptotic results of the renewal theory, such as the
+inspection paradox  and the Lorden's inequality. 
+A~stability analysis is performed based on the regenerative approach.  Some
+numerical results  are included  as well, showing that the obtained
+conditions delimit the stability region with high accuracy.}
+
+\KWE{optical buffer; stability; stochastic granularity;
+renewal theory; regeneration; inspection paradox; simulation}
+
+\DOI{10.14357/19922264140113}
+
+
+\vskip 12pt plus 9pt minus 6pt
+
+      \thispagestyle{myheadings}
+
+      \begin{multicols}{2}
+
+            \label{st\stat}
+
+\section{Introduction}
+
+\noindent
+In networks featuring optical burst switching, data units {referred
+to as bursts} travel from source to destination in the form of light
+(i.\,e., without conversion to the electrical domain in intermediate
+switches). As optical random access memory does not as yet exist, a
+set $\cal A$ of FDLs is used as a substitute
+form of buffering. Thus, the set of possible waiting times is
+denumerable, with each value corresponding to the length of a
+fixed delay line belonging to~$\cal A$. As a result, in general even
+having an infinite set of (different) lines, arriving bursts have to
+wait for service longer than in the classical case with infinite
+buffer for awaiting customers. The stability of such a general
+optical system with  a denumerable set~$\cal A$ with deterministic
+lengths has been analyzed in recent papers~\cite{optical1, optical2}. 
+The main idea of the present paper is to consider a
+denumerable set of FDLs
+ with {\it random lengths}.
+
+Motivations for this extension are manifold. For heavily-loaded
+modern large networks, a large number of lines is required.
+These lines constitute a huge number of possible paths between hosts
+and  users. Moreover, it seems appropriate to describe the
+differences between their lengths as random variables to reflect 
+variability of the paths. On the other hand,  to meet the high
+quality of service (QoS) requirement and avoid  huge  difference in transmission times,
+it seems reasonable to assume that the difference $\Delta>0$ between
+the {\it adjacent increasing} FDL lengths has the same distribution
+regardless of the lines, reflecting  {\it homogeneity} of the
+network.
+ In particular, homogeneity may be important for  reduction
+of reordering in the multipath transmission of a big file by
+means of a huge number of  small packets. 
+
+One more argument to
+support a common distribution of $\Delta$ is that the modern
+networks are very well-connected and contain a huge number of links,
+such that  each path is collected from a number of {\it
+elementary (primary)} optical cables with {\it comparable} lengths.
+Thus, randomness of~$\Delta$ reflects  variability  of FDL
+lengths, while  the common distribution of~$\Delta$ (homogeneity)
+reflects the mentioned comparability.  Such a setting seems to be
+natural for a large fiber lines set (infinite in theory) in a
+local network, where knowledge of the exact FDL lengths  is
+unavailable (or costly) for the some reason. In this case, it is assumed
+that the most important predetermined information is contained in the
+distribution of $\Delta$, while other details/info related to  the
+set~$\cal A$ are  hardly  available or less  important.
+
+The final argument for the considered model is that sometimes,  it
+might be easier to assume some randomness in the differences~$\Delta$ 
+rather than to calculate the exact differences.
+Moreover, to meet the stability condition, in fact, only knowledge of the first two
+moments is required (not of the entire distribution); hence,
+ simple sample  estimators can be used.
+
+As it will be shown below, randomness of~$\Delta$ implies  considerable
+changes in the technique of analysis in comparison with the model
+with the deterministic FDL set~$\cal A$. As the difference
+$\Delta=const$ considered in~\cite{Call} is called \textit{granularity}, 
+it is natural to refer to the model considered in this
+paper as the model with {\it stochastic granularity}.
+
+Further, the term  {\it stochastic inhomogeneity} can be used to
+name a system in which the distribution of the  difference~$\Delta$ 
+depends on the lines.  This case will not  be further discussed; let only note that
+inhomogeneity may lead to extra  loss of
+capacity caused by an increase of variance of the void (the idle
+time following completion of a transmission).
+
+Note that the assumption   $\Delta>0$ reflecting the
+corresponding ordering of  the set of FDL lengths $\cal A$ seems
+less motivated for  large distributed networks, where the structure
+of currently available different routes is not as well defined.
+Nevertheless, the authors believe that such assumption  and, hence, the
+approach developed is suitable for some distributed optical
+networks. Besides,  it may be useful not only for optical systems
+but for some other bufferless communication networks as well.
+
+In the authors' opinion, this model has intrinsic interest from the
+mathematical point of view as well.
+
+The structure of the paper is as follows. In section~2, a description
+of the optical system with random delay lines  is given. Then, in
+Section~3,  stability of this system is analyzed. In particular,
+sufficient stability conditions of such a system are presented using
+regenerative arguments. The~key ingredient of the analysis is 
+application of the so-called inspection paradox from the renewal
+theory. In section~4, simulation results are presented which verify
+that the  stability conditions found are tight and close to being also
+necessary.
+
+
+\section{Description of~the~Model}
+
+\noindent
+Based on the assumptions detailed above, define the length  of
+the $n$th line as $S_n:= \Delta_1+\cdots+\Delta_n,\,S_0:=0,$ with
+independent and identically distributed (i.i.d.)\ random variables
+$\{\Delta_n,\,n\ge 1\}$
+ distributed as a generic variable~$\Delta$.
+Assume in the following that~$\Delta$ is nonlattice.
+ (In a more general case, it
+could  be assumed that  $S_n= a_0+ \Delta_1+\cdots+\Delta_n$ where
+a constant (or, possibly, even a random variable (r.v.))\ $a_0>0$ is a minimal
+given delay. However, further stability analysis is independent of
+this assumption.)
+
+
+Thus, for the $n$th  arriving  burst whose waiting time is $W_n=x$,
+generate a path until the random walk $\{S_i\}$ exceeds the level
+$x,\,\,n\ge 0$. As in previous works~\cite{optical1, optical2}, this
+rule  is motivated by the requirement to keep the \mbox{FIFO} (first in, first out)
+discipline. Thus,
+ the following  set
+ $\mathcal{A} = \{S_0,\, S_1,\,S_2,
+\ldots\}$, in which  the  origin~$0$  covers  the case of a
+nonwaiting burst is obtained. Define the  number of lines required to
+guarantee a delay exceeding the threshold $x\ge 0$ as
+\begin{equation*}
+%\label{numb} 
+N(x) = \inf \{n\ge 0: S_n \ge x\}\,.
+\end{equation*}
+(Obviously, $\{N(x)\}$  is the renewal process generated by the random
+walk $\{S_n\}$.) Then, the actual (random)  delay of the  burst, which
+meets the workload~$x$, is defined as
+\begin{equation*}
+\label{act_del} S_{N(x)}=\inf\{S_n: S_n-x\ge 0\}\,.
+%\,\,\,(S_{N(x)}:=0,\,x< 0).
+\end{equation*}
+Note that $S_{N(0)}=N(0)=S_0=0$. For each $x\ge0$, the
+overshoot of the renewal process is defined as
+\begin{equation}
+\label{eq:ceilx}
+S_{N(x)}-x=\Delta(x)\,.
+\end{equation}
+By definition,  $\Delta(x)\ge0$ for all $x\geq0$ and
+$\Delta(S_{k})=0$
+ for any $k\ge0$.   In what
+follows, it is assumed that
+\begin{equation}
+0<{\sf E} \Delta^{2+\varepsilon_0} < \infty \label{5}
+\end{equation}
+for some $\varepsilon_0>0$. This assumption is necessary to  apply the
+asymptotic results from the renewal theory detailed below. In
+particular, (\ref{5})  implies that {\it for any~$\delta_0$}, there
+are (fixed) constants $D<\infty,\,\delta^*>0$, such that
+\begin{equation}
+ {\sf P}( \delta^* < \Delta \le D )\ge 1- \delta_0\,.
+\label{cond2}
+\end{equation}
+(Obviously, having ${\sf E}\Delta<\infty$ is enough to ensure~(\ref{cond2}).)
+Let introduce the following quantities,  which  are crucial for the
+ further analysis:
+\begin{equation}
+\label{cond3} \Delta^* := \fr{\sf E \Delta^2}{{\sf E} \Delta}\,;\quad
+\Delta_0 := \fr{{\sf E} \Delta^2}{2{\sf E} \Delta}\,.
+\end{equation}
+Note that by the  Lorden's inequality \cite{Asmus} the first term in~$(\ref{cond3})$ 
+is  the upper bound of the expected overshoot $\Delta(x)$ over 
+all  $x \ge 0$, while the second term is the mean stationary  overshoot in the 
+random walk $\{S_n\}$ expressing the so-called {\it inspection paradox}. 
+Further, assume that the input process is renewal with independent and 
+identically distributed (i.i.d.)\ interarrival times $\{T_k\}$ with a generic 
+time~$T$. Also assume that service (transmission)  times $\{B_n\}$ are 
+i.i.d.\ with the generic element~$B$. Denote $U:=B-T$ and introduce the distribution 
+$F_{U}(x)={\sf P}(U\le x)$, $x\in (-\infty,\,+\infty)$.  Obviously, by the 
+independence between~$B$ and~$T$, one can express this distribution in the terms 
+of given distributions of~$B$ and~$T$ as follows:
+$$
+F_U(x)=\int\limits_{0^-}^\infty F_B(x+y)F_T(dy)\,.
+$$
+Let $W_k$ be the remaining workload which the burst~$k$ meets upon 
+arrival. In other words, it is the time which is required to
+transmit  the  work accumulated in the systems (in the optical
+buffer and server) prior to arrival of the  burst. Define  the workload
+process $W=\{W_{k},\,k\ge0\}$ and
+ construct  regeneration instants  $\{\beta_{n}\}$ for the
+ process~$W$ in the following (conventional) way: let $\beta_{0}=0$
+and
+\begin{equation*}
+\beta_{n+1}=\inf(k>\beta_{n}:W_{k}=0)\,,\enskip n\ge0\enskip
+(\inf\emptyset:=\infty)\,. 
+%\label{eq:recurrence}
+\end{equation*}
+In what follows, the focus will be on  the  zero-delayed regenerative process
+in which case $0$ is the regeneration point, and $\beta:=\beta_1$ is the
+generic regeneration period. Note that the  sequence $\{\beta_{n}\}$
+is well-defined since $0\in\A$.
+
+\section{Main Stability Result}
+\setcounter{section}{3}
+
+\noindent
+The main purpose is to establish conditions ensuring the {\it positive 
+recurrence} of the workload regenerative process meaning that 
+\begin{equation} 
+{\sf E} 
+\beta<\infty.\label{eq:positiverec}
+\end{equation}
+The importance of  positive recurrence for the stability analysis
+is well-known (see, for instance,~\cite{Asmus, 2}). Let use the
+following characterization of the recurrence property of the renewal
+process~$\beta$ via the limiting behavior of the forward
+regeneration time at the instant~$n$, which is defined as
+\begin{equation*} 
+\beta(n)=\inf_{k}(\beta_{k}-n:\beta_{k}-n>0)\,,\enskip
+n\ge1\,.
+\end{equation*}
+ It is known~\cite{Feller}
+  that
+ \begin{multline}
+ {\sf E} \beta=\infty\ \ \mbox{if and only if}\ \
+ \beta(n)\to\infty\ \ \mbox{in probability} \\
+\mbox{as}\ \  n\to\infty\,.\label{eq:Feller}
+\end{multline}
+Thus, to establish~(\ref{eq:positiverec}), it suffices to show that
+$\beta(n)\not \to\infty$ (in probability), which is exactly the approach 
+used below. Now,  the main stability result can be formulated.
+
+\medskip
+
+\noindent
+\textbf{Theorem 1.} \textit{Assume that $\Delta$ is nonlattice, ${\sf E} B <
+\infty$, ${\sf E} T < \infty$ and  that condition~$(\ref{5})$  holds. 
+Furthermore, assume  that the following negative drift assumption
+\begin{equation}
+\label{eq:condition2} 
+{\sf E}U+\Delta_0  < 0
+\end{equation}
+and the regeneration assumption
+\begin{equation}
+\label{eq:condition3} 
+{\sf P}(T > \Delta + B ) = \delta_1 > 0
+\end{equation}
+ hold. Then  ${\sf E}
+\beta<\infty$.}
+
+\medskip
+
+P\,r\,o\,o\,f\,.\ \  Put $N(x):=0$ for $x\le 0$ and define the increments of
+the workload process  as
+\begin{equation*}
+\Delta_{W}(k) = S_{N((W_k+U_k))}-W_k\,, \enskip k\ge 0\,.
+\end{equation*}
+Note  that $S_{N((W_k+U_k))}$ is the fiber line length which
+is selected for the $(k+1)$th burst meeting the workload
+$(W_k+B_k-T_k)^+:=(W_k+U_k)^+$, the time when  the $k$th burst brings the
+transmission (service) equals~$B_k$ and the interarrival time
+between the bursts~$k$ and $k+1$ (where the workload decreases)
+equals~$T_k$. Thus, $\Delta_{W}(k)$ is the overshoot of the random
+walk (forming line lengths) across the threshold $W_k+U_k$. Then
+ as in~\cite{optical1}, using
+independence between $U_{k}$ and $W_{k}$, one can write:
+\begin{equation*}
+{\sf E}\Delta_{W}(k)=
+ \int\limits_{y\in R_{+}} {\sf E}(S_{N(y+U)}-y){\sf P}(W_{k} \in
+ dy)\,,\ k\ge1\,.
+% \label{2.6}
+\end{equation*}
+If $U\le-y$, then ${\sf E}(S_{N(y+U)}-y)=-y.$ Thus, as in~\cite{optical1}, one 
+has for each  fixed~$y$:
+\begin{multline}
+{\sf E}(S_{N(y+U)}-y)= - y{\sf P}(U\le-y) +{}\\
+{}+\int\limits_{z\ge-y} {\sf E} \Delta 
+(y+z)F_{U}(dz) +\int\limits_{z\ge-y}zF_{U}(dz)\,. 
+\label{eq:3terms}
+\end{multline}
+Let consider the three terms in the right-hand side of Eq.~(\ref{eq:3terms}) one by 
+one. Since ${\sf E} U>-\infty$ , one has
+\begin{equation}
+0>-y{\sf P}(U\le-y) \ge\!\!
+\int\limits_{-\infty}^{-y}\! \! xF_{U}(dx)\uparrow0\,\,\mbox{as}\,\,
+y\to\infty.\!\!
+\label{eq:PUtozero}
+\end{equation}
+For the third term, %of (\ref{eq:3terms})
+it holds that (since $y\ge0$ and ${\sf E} U<\infty$)
+ \begin{equation}
+\int\limits_{z\ge-y}zF_{U}(dz)\downarrow{\sf E} U\,\,\mbox{as}\,\,
+y\to\infty\,.\label{eq:EUlower}
+\end{equation}
+Finally, for the second term, one has
+\begin{multline*}
+\int\limits_{-y}^{\infty}{\sf E}\Delta(y+z)F_{U}(dz)  \\
+{}=  \int\limits_{-y}^{-y/2}{\sf 
+E}\Delta(y+z)F_{U}(dz)
+ +\int\limits_{-y/2}^{\infty}{\sf E}\Delta(y+z)F_{U}(dz) \\
+{} \le  \sup\limits_{0\le x\le y/2}{\sf E}\Delta(x){\sf P}\left(-y<U\le-\fr{y}{2}\right)\\
+{}+ \sup\limits_{x\ge y/2}{\sf E}\Delta(x){\sf P}\left(U>-\fr{y}{2}\right)
+\le \Delta^{*}{\sf P}\left(U\le-\fr{y}{2}\right)\\
+{}+ \sup\limits_{x\ge y/2}{\sf E}\Delta(x){\sf 
+P}\left(U>-\fr{y}{2}\right)\,.
+\end{multline*}
+ Fix now an arbitrary $\varepsilon>0$ and choose  such $y_{0}$ that
+ for $y\ge y_{0}$,
+\begin{align}
+{\sf P}\left(U\le-\fr{y}{2}\right) & \le \fr{\varepsilon}{4\Delta^{*}}\,;\label{eq:y0A}\\
+\int\limits_{z\ge-y}zF_{U}(dz) & \le  {\sf E} U+\fr{\varepsilon}{4}\,.\label{eq:y0B}
+\end{align}
+Such a choice  of $y_{0}$ is possible: indeed, for~(\ref{eq:y0A}), due 
+to~(\ref{eq:PUtozero}); for~(\ref{eq:y0B}), due to~(\ref{eq:EUlower}). 
+As~$\Delta$ is nonlattice and~(\ref{5}) holds, then $\Delta(x)\Rightarrow 
+\Delta(\infty)$ in distribution, where ${\sf E}\Delta(\infty)=\Delta_0$. 
+Similarly,  the renewal interval $L(x)$ covering the point $x$  converges in 
+distribution, as $x\to \infty$, to a variable~$L$  with the mean~${\sf E} 
+L=\Delta^*$~\cite{Feller}.
+ By the modified  form of the  Lorden's inequality (see, for instance,~\cite{Chang}),
+\begin{equation*}
+\sup_x{\sf E}\left[\Delta(x)\right]^{1+\varepsilon_0}\le (3+\varepsilon_0){\sf E}
+L^{1+\varepsilon_0}\,. %\label{20}
+\end{equation*}
+It is well-known~\cite{Feller}  that the density  of~$L$ is
+
+\noindent
+$$
+{\sf P}(L\in dx)=\fr{1}{{\sf E} \Delta}\,xF_\Delta(dx)
+$$
+where $F_\Delta$ is the distribution of~$\Delta$  and, hence, ${\sf E}
+L^{1+\varepsilon_0}<\infty$  if and only if  condition~(\ref{5}) holds. Thus,  
+$\sup_x {\sf E}[\Delta(x)]^{1+\varepsilon_0}<\infty$, that is, the family 
+$\{\Delta(x),\,x\ge 0\}$ is uniformly integrable~\cite{Billingsley}. 
+It then follows from the convergence $ \Delta(x)\Rightarrow 
+\Delta(\infty)$ that ${\sf E}\Delta(x)\to {\sf E} \Delta(\infty)=\Delta_0$, 
+see~(\ref{cond3}).  Thus, one can take~$y_0$ in~(\ref{eq:y0A}) 
+and~(\ref{eq:y0B}) in such a way that simultaneously,
+\begin{equation*}
+\sup\limits_{x\ge y/2}{\sf E}\Delta(x) \le 
+\Delta_{0}+\fr{\varepsilon}{4}\,,\enskip y\ge y_{0}\,.
+%\label{eq:y0C}
+\end{equation*}
+As $\varepsilon $ above is arbitrary, define it now    as
+$\Delta_{0}+{\sf E} U=-2\varepsilon $ (see~(\ref{eq:condition2})).  Then,
+picking together the bounds obtained above, one has
+\begin{multline}
+{\sf E}(\Delta_{W}(k)|W_{k}=y)={\sf E}(S_{N(y+U)}-y) \\
+{}\le
+\fr{\varepsilon}{4}+\Delta_{0}+\fr{\varepsilon}{4}+{\sf E}
+U+\fr{\varepsilon}{4}<-\varepsilon\,, \enskip y\ge
+y_{0}\,.
+\label{eq:3termsB}
+\end{multline} 
+By the standard Lorden's inequality,  
+$\sup\limits_x{\sf E}\Delta(x)$\linebreak $\le\;\Delta^*$~\cite{Asmus} and it then follows that
+\begin{multline*}
+ {\sf E}(S_{N(y+B)}-y)\\
+ {}={\sf E}(S_{N(y+B)}-y-B)+{\sf E} B={\sf E}[\Delta(y+B)]+{\sf E} B \\
+{} \le  \Delta^{*}+{\sf E} B\le\max(\varepsilon,\,\Delta^{*}+{\sf E} B):=
+C<\infty\,.
+%\label{17}
+\end{multline*} 
+(It is necessary to ensure $\varepsilon/C\le1$ in~(\ref{eq:EDWBound}) 
+below.) In particular,
+\begin{multline}
+{\sf E}(\Delta_{W}(k)\,\vert\, W_{k}\le y_{0}) \\
+{}=\int\limits_0^{y_0}{\sf E}( 
+S_{N(y+U)}-y){\sf P}(W_k\in dy) \le C\,.
+\label{eq:DeltaWkcond2}
+\end{multline}
+Now, for any $k$, use~(\ref{eq:3termsB}) and~(\ref{eq:DeltaWkcond2}) to obtain
+ \begin{equation} 
+ {\sf E}\Delta_{W}(k)\le C{\sf P}(W_{k}\le
+y_{0})-\varepsilon{\sf P}(W_{k}>y_{0})\,.
+\label{eq:CPeP}
+\end{equation}
+Now it will be proved, by contradiction, that $W_{k}\not\to\infty$ in
+probability as $k\rightarrow\infty$.    Thus, it is  assumed that
+\begin{equation}
+ W_{k}\to\infty\;\mbox{in probability as }\;
+k\to\infty\,.\label{eq:absurdum}
+\end{equation}
+ Therefore, one can find a value $k_{0}$ such that 
+ $$
+{\sf P}(W_{k}\le y_{0})\le\fr{\varepsilon}{4C}\,, \enskip k\ge k_{0}\,,
+$$
+ which allows to rewrite~(\ref{eq:CPeP}) as 
+ \begin{equation}
+{\sf  E}\Delta_{W}(k)\le
+\fr{\varepsilon}{4}-\varepsilon\left(1-\fr{\varepsilon}{4C}\right)\le
+-\fr{\varepsilon}{2}\,,\enskip 
+k\ge k_{0}\,.
+\label{eq:EDWBound}
+\end{equation} 
+Using the Lorden's inequality, one 
+obtains (see~(\ref{eq:ceilx}))
+\begin{multline*}
+{\sf E} W_1  =  {\sf E} S_{N(U_0)}\le{\sf E} S_{N (B_0)}=
+\int\limits_0^\infty {\sf E} S_{N(z)}F_B(dz)\\
+{}= \int\limits_0^\infty {\sf E} \Delta(z)F_B(dz)+\int\limits_{0}^{\infty}z B(dz)
+\leq \Delta^{*}+{\sf E} B:= C^{*}
+ \end{multline*}
+where $F_B(x):={\sf P}(B\le x)$.  Continuing  this analysis iteratively, one 
+easily obtains ${\sf E} W_{k_{0}}<k_{0}C^{*}<\infty$ that contradicts~(\ref{eq:absurdum}). 
+Hence, assumption~(\ref{eq:absurdum}) is false, and there  
+exist a nonrandom (sub-)sequence $z_{k}\to\infty$ and constants 
+$\delta^\star>0$ and  $R<\infty$ such that
+ \begin{equation}
+\inf\limits_{k}{\sf P}(W_{z_{k}}\le R)\ge\delta^\star.
+\label{eq:sequence}
+\end{equation}
+Let now proceed by showing that the probability of reaching an
+empty system is strictly positive. Let
+discern two cases pertaining to the r.v.~$T$.
+In the first case, let assume that~$T$ is unbounded, while the second
+case considers bounded~$T$.
+
+\noindent
+1. If it is assumed that the r.v.~$T$ is unbounded, then ${\sf P}(T>x)>0$ for any
+$x\ge0$. It is easy to see that in the event 
+$
+\{W_{z_{k}}\le R,\, T_{z_{k}}>R+B_{z_{k}}+\Delta(W_{z_k} + B)\}
+$
+the burst $z_{k}+1$ meets an empty system, and, hence,  regeneration occurs.
+ In other words, the event $\{\beta(z_{k})=1\}$ occurs.
+Now, it will be shown that for a given~ $z_{k}$ belonging to the sequence $\{z_{k}\}$ which 
+satisfies~(\ref{eq:sequence}), the probability of this event is positive. Indeed,
+\begin{multline*}
+{\sf P}(\beta(z_{k})=1)\\
+{}\ge {\sf P}(\{W_{z_{k}}\le R,\,
+T_{z_{k}}>R+B_{z_{k}}+\Delta(W_{z_k} + B)\}) \\
+{} =  \int\limits_{x = 0}^{R} \int\limits_{y = 0}^{\infty} {\sf P}\left(W_{z_k} \in dx,\, 
+B_{z_k} \in dy,\right.\\
+\left. T_{z_k} > R + y + \Delta(x+y) \right) \\
+{}  =   \int\limits_{x = 0}^{R} \int\limits_{y = 0}^{\infty} {\sf P}(T_{z_k} > R + y + \Delta(x+y) ) 
+{\sf P}(W_{z_k} \in dx) \\
+{}\times {\sf P}(B_{z_k} \in dy)\\
+{} \ge  \int\limits_{x = 0}^{R} \int\limits_{y = 0}^{b} {\sf P}(T_{z_k} > R + y + 
+\Delta(x+y) )\\
+{}\times {\sf P}(W_{z_k} \in dx) {\sf P}(B_{z_k} \in dy)
+\\
+ {}\ge \inf\limits_{x+y \le R+b} {\sf P}(T_{z_k} >
+ R + b + \Delta(x+y) )
+\delta^\star {\sf P}(B \le b) 
+%\label{2.25}
+\end{multline*}
+where inequality~(\ref{eq:sequence}) and independence between variables 
+$W_{z_{k}}, B_{z_{k}}$, and $T_{z_{k}}$ are used, and a constant $b>0$ is such  
+that ${\sf P}(B\le b)>0$. Now, note that
+\begin{equation}
+\Delta(x+y) \le R+b+\Delta(R+b)\,,\enskip x+y \le  R+b\,. 
+\label{2.26}
+\end{equation}
+Moreover, because ${\sf E} \Delta(R+b)<\infty$, then constants
+$\varepsilon_0>0$ and $D<\infty$ exist such that
+\begin{equation}
+{\sf P}(\Delta(R+b)\le D)\ge 1- \varepsilon_0\,. 
+\label{2.27}
+\end{equation}
+Then, using (\ref{2.26}) and~(\ref{2.27}), one has
+
+\noindent
+\begin{multline*}
+\inf_{x+y \le R+b} {\sf P}(T_{z_k} >
+ R + b + \Delta(x+y) )\\
+ \ge 
+ {\sf P}(T> 2(R + b) +D,\, \Delta(R+b)\le D)\\
+\ge {\sf P}(T > 2(R +
+ b)+D)(1- \varepsilon_0):=\hat \delta>0\,.
+%\label{2.28}
+\end{multline*}
+Now, one obtains the following lower bound
+\begin{equation*}
+{\sf P}(\beta(z_{k})=1)\ge \hat \delta \,\delta^\star {\sf P}(B \le b)>0
+\end{equation*}
+which is uniform  in~$z_k$.
+
+\noindent
+2. Assume now that $T$ is bounded; then, it is possible that
+
+\noindent
+$$
+{\sf P}(T>2(R+b)+\Delta(R+b))=0\,.
+$$
+In the analysis below,
+the first  moment will be found when the random walk
+ $S_n$ reaches the zero state, starting into the compact set $[0,\,R+D]$.
+More exactly,  each next  burst finds a  shorter FDL upon arrival
+until a nonwaiting burst arrives. Consider the independent events
+
+\noindent
+\begin{multline*}
+\!\!\!{\cal D}(z_{k}+i):= \{T_{z_{k}+i}>\Delta_{z_k+i}+B_{z_{k}+i},\,
+\delta^* \le \Delta_{z_k} \le D\} \hspace*{-0.13023pt}\\ 
+{} = \!\{B_{z_{k}+i}-T_{z_{k}+i} < -\Delta , \, 
+\delta^* \le \Delta_{z_k} \le D \}\,, \ i\ge0\,, %\label{eq:events}
+\end{multline*}
+where,  by (\ref{cond2}) and  (\ref{eq:condition3}), constants 
+$D<\infty$ and $\delta^*>0$ are  chosen in  such a way that (regardless of~$z_k$ and~$i$)
+
+\noindent
+\begin{equation}
+{\sf P}\left(T_{z_k+i} > B_{z_k+i} + D,\, \Delta_{z_k+i}\in (\delta^*, \, D]\right)\ge 
+\fr{\delta_1}{2}\,.
+\label{2.29}
+\end{equation}
+It is clear that on each event ${\cal D}(z_{k}+i)$, the random
+walk $S_n$ decreases by at least~$\Delta$ and thus, each new
+burst occupies a shorter FDL. Note that $W_{z_k}\le S_{N(R)}$ in 
+the event ${\cal E}(z_{k})=\{W_{z_{k}}\le R\}$ and that in
+the event ${\cal E}(z_{k})\cap{\cal D}(z_{k})$,
+
+\noindent
+\begin{multline*}
+W_{z_{k}+1}  =  S_{N ((W_{z_k}+B_{z_k}-T_{z_k}))}  \le
+S_{N(R)}-\Delta \\
+=S_{(N(R)-1)^+}
+\end{multline*}
+where   ${\sf P}({\cal E}(z_{k})\cap{\cal D}(z_{k}))\ge
+\delta^\star\delta_{1}/2$ in view of~(\ref{eq:sequence}) and~(\ref{2.29}). 
+Continuing in such a way, one finds that in the event
+
+\noindent
+$$
+{\cal B} (z_k):={\cal E}(z_{k})\cap\bigcap_{i=0}^{N(R)}{\cal D}(z_{k}+i)\,,
+$$
+a  burst arrives, among the bursts with the numbers $\{z_k,\ldots,
+z_k+N(R)\}$,  which finds the transmission channel free, and thus 
+regeneration occurs.  Moreover, it is easy to see that in the event
+${\cal B}(z_k)$, 
+\begin{equation*}
+N(R)\le \left\lceil \fr{R+D}{\delta^{*}}\right\rceil:=C_0 <\infty\,.
+\end{equation*}
+Now, it follows that
+
+\noindent
+\begin{equation*}
+{\sf P}(\beta(z_{k})\le C_0)\ge {\sf P}({\cal B}(z_k))\ge \delta^\star
+\left[\fr{\delta}{2}\right]^{C_0}>0\,. 
+%\label{2.30}
+\end{equation*}
+As  the lower bound holds for all $z_{k}$ satisfying~(\ref{eq:sequence}) 
+and  the sequence $\{z_{k}\}$ is deterministic, then $\beta(n)\not\to\infty$, and
+ it   follows from~(\ref{eq:Feller}) that ${\sf E}\beta<\infty$.\hfill$\blacksquare$
+ 
+%\vspace*{-6pt}
+
+\section{Verification of the~Stability Region by~Simulation}
+\setcounter{section}{4}
+
+\noindent
+In this section, the  simulation
+results,  which illustrate the stability/instability domain of the
+described optical system and the accuracy of the  stability
+conditions found above, are presented. The simulation has been carried out by means
+of the {\it ``R'' toolbox}: the language and the environment for
+statistical computing~\cite{r_reference}. The conditions of Theorem~1
+imply the positive recurrence of the workload process~$W$. 
+
+First, let
+check the main negative drift condition~(\ref{eq:condition2})
+which includes the stationary overshoot~$\Delta_0$ of the FDL
+length. As simulations below suggest, condition~(\ref{eq:condition2}) is, in
+fact, a {\it stability criterion}, meaning that it appears to sharply delineate
+the regions of stability and instability. On the other hand,  a less tight
+condition has been suggested in previous related works~\cite{optical1, optical2}. 
+This condition, in adaptation to the
+model described, can be written~as
+\begin{equation}
+\label{delta*} {\sf E} U + \Delta^* < 0
+\end{equation}
+where $\Delta^*$  from~(\ref{cond3}) is used. Indeed, condition~(\ref{delta*}) 
+is suggested  in~\cite{optical1, optical2} for   the model  with the different 
+{\it deterministic} distances $\{\Delta_n\}$, and in this case, the appearance 
+of the bound $\Delta^*\ge \sup\limits_x {\sf E} \Delta(x)$ is motivated by   the 
+Lorden's inequality.  However, simulations of the model with  deterministic 
+granularity $\Delta=const$  have  shown that
+ condition~(\ref{delta*}) is indeed 
+overly restrictive. The inspection paradox presented above has revealed the 
+source of this redundancy and has allowed to replace~$\Delta^*$  by the smaller 
+quantity~$\Delta_0$ in~(\ref{eq:condition2}).
+ It explains  why below, the 
+accuracy of both conditions~(\ref{eq:condition2}) and~(\ref{delta*}) is verified.
+ In particular, 
+simulations confirm that in the intermediate case when condition~(\ref{delta*}) 
+is  violated but condition~(\ref{eq:condition2}) holds, the system remains stable.
+Visually, absence of a clear tendency in the workload process indicates
+that the system is stable, while instability is characterized by an 
+increase of~$W_n$ as $n\to 
+\infty$.  These evident observations are used  below to determine 
+stability/instability of the system.
+
+ In the numerical experiments,
+ 5000~bursts  have been simulated following a Poisson input with
+ rate~$\lambda$ and with   the i.i.d.\ exponential service times  with
+ rate~$\mu$.  Moreover, the following distributions of
+ the  difference~$\Delta$ have been  considered: ($i$)~exponential; ($ii$)~uniform; 
+ and ($iii$)~Pare-\linebreak\vspace*{-12pt}
+
+\begin{center}  %fig1
+\vspace*{-3pt}
+\mbox{%
+ \epsfxsize=80mm
+ \epsfbox{mor-1.eps}
+ }
+  \end{center}
+  
+    \vspace*{-2pt}
+
+\noindent
+{{\figurename~1}\ \ \small{The system with exponential $\Delta \sim \exp(3)$, 
+$\Delta_0 = 0.333$, $\Delta^* = 0.667$, and $\rho = 0.94$: \textit{1}~--- 
+${\sf E}U+\Delta_0$\protect\linebreak $=-0.268<0$, $\lambda=0.1$, and $\mu=0.1064$;
+and \textit{2}~--- ${\sf E}U+\Delta_0=0.273>0$, $\lambda=1$, and $\mu=1.0638$}}
+
+
+%\pagebreak
+
+\vspace*{18pt}
+
+\begin{center}  %fig2
+\mbox{%
+ \epsfxsize=79.849mm
+ \epsfbox{mor-2.eps}
+ }
+  \end{center}
+
+  \vspace*{-2pt}
+
+\noindent
+{{\figurename~2}\ \ \small{The system with uniform $\Delta \in [0,0.8]$, 
+$\Delta_0$\protect\linebreak $ =\;0.267$, $\Delta^* = 0.533$, and $\rho = 0.94$: \textit{1}~--- 
+${\sf E}U+\Delta_0$\protect\linebreak $=-0.230<0$, $\lambda=0.12$, and $\mu=0.1276$;
+and \textit{2}~--- ${\sf E}U$\protect\linebreak $+\;\Delta_0\hm=0.217>0$, $\lambda=1.2$, 
+and $\mu=1.2766$}}
+
+\vspace*{18pt}
+
+\begin{center}  %fig3
+ \mbox{%
+ \epsfxsize=80.111mm
+ \epsfbox{mor-3.eps}
+ }
+  \end{center}
+
+  \vspace*{-2pt}
+  
+  \noindent
+{{\figurename~3}\ \ \small{The system with $\Delta$ that has Pareto distribution with parameter 
+$\alpha=4$,
+$\Delta_0 = 0.75$, $\Delta^* = 1.5$, and $\rho = 0.94$: \textit{1}~--- ${\sf E}U+\Delta_0=-0.527<0$,
+$\lambda =0.047$, and $\mu=0.05$; and \textit{2}~--- ${\sf E}U+\Delta_0=0.622>0$,
+$\lambda=0.47$, and $\mu=0.5$}}
+
+%\vspace*{12pt}
+
+
+\noindent
+to,  $F_\Delta(x)=1-x^{-\alpha}$, $x\ge 1$ $(F_\Delta(x)=0,\,x<1)$.  
+ The  simulations have shown  similar
+results for   a range of traffic intensity $\rho:=\lambda/\mu$,
+but below, the present results for the most illustrative {\large}
+value $\rho = 0.94$ are presented, in which case,  an increase  of the workload
+process is more easy to observe if condition~(\ref{eq:condition2}) is
+violated. (For smaller values of~$\rho$, this tendency  requires much
+more time to be detected.) 
+
+Figure~1 describes  the system with exponential~$\Delta$ with 
+parameter~$3$. As one can see, satisfying condition~(\ref{eq:condition2}) implies 
+stability. At the same time, in  this case, ${\sf E} U + \Delta^* = 0.065$, and 
+a definite decision about stability   could not be made using condition~(\ref{delta*}). 
+Otherwise, if condition~(\ref{eq:condition2}) is violated, the 
+system is unstable. In this case, the value  ${\sf E} U + \Delta^* = 0.607$ 
+also indicates instability.
+
+
+Figure~2 describes  the system with~$\Delta$ uniformly distributed 
+in  the interval $[0,\, 0.8]$.  { Satisfying condition~(\ref{eq:condition2}) implies 
+stability; however, in this  case, ${\sf E} U + \Delta^* = 0.037$. Otherwise, if 
+ condition~(\ref{eq:condition2}) is violated, visual observation confirms 
+instability and it agrees with  the positivity of the sum  ${\sf E} U + 
+\Delta^* = 0.483$.}
+
+Finally, Fig.~3 corresponds to the system where~$\Delta$ has 
+Pareto distribution  with parameter $\alpha = 4$. One can see that satisfying 
+condition~(\ref{eq:condition2}) implies stability,   while in  this case, ${\sf E} 
+U + \Delta^* = 0.223$. Otherwise, if condition~(\ref{eq:condition2}) is violated, 
+the system is unstable, and again, it is consistent with the value  ${\sf E} U + 
+\Delta^* = 1.372$.
+{\looseness=1
+
+}
+
+
+ Thus, in all considered cases the simulations  confirm   that
+condition~(\ref{eq:condition2}) allows to delimit  the
+stability/instability region with high accuracy and that condition~(\ref{eq:condition2}) 
+is indeed overly strict.
+
+\section{Concluding Remarks}
+\setcounter{section}{4} 
+
+\noindent
+In this work, a new model of an optical
+buffer system is suggested.  The main assumption is that the
+distances $\{\Delta_n\}$ between the lengths of the adjacent
+increasing FDLs are random and have the same distribution for all
+lines. This is a natural extension of the model with the {\it
+deterministic granularity}  $\Delta_n\equiv const$ considered in~\cite{Call}. For this reason, the new model considered above
+ can be referred to as an optical system with {\it
+stochastic granularity}. The key new ingredient of the stability
+analysis  is the renewal theory, including such asymptotic results as
+the {\it inspection paradox} and the {\it Lorden's inequality}.
+The regenerative approach is applied to obtain sufficient stability
+conditions of the system.
+
+As simulations show, the stability condition found  allows to
+delimit the stability domain with high accuracy suggesting
+that it is in fact the stability criterion of the model.
+
+As an extension of the model, one may  consider the case when
+distributions $F_n $ of  $\{\Delta_n\}$ are different for
+$n=1,\ldots,n_0$, being  the same, $F_n\equiv F$, for $n>n_0$ with a
+ deterministic~$n_0$. Another modification may   assume that
+$F_{n}\to F$ (weakly) as $n\to \infty$. The authors believe that the analysis
+developed above can be applied in both cases. Finally, if we were to
+weaken the requirement $\Delta>0$, which may be problematic for
+distributed optical networks,  allowing~$\Delta$ to have  arbitrary
+sign, when the fundamental rule FIFO  is violated. An analysis of such
+an extension  is probably possible  within the framework of the extended
+renewal theory (where the renewal ``interval'' can be negative); however,
+this analysis is beyond the scope this paper.
+
+
+
+\Ack
+The work of the first and second  authors is partially supported by the
+Program of Strategy development of the Petrozavodsk State University within
+the framework of the research activity. The third author is a
+postdoctoral fellow with the Research Foundation-Flanders
+(FWO-Vlaanderen).
+
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\begin{thebibliography}{9}
+
+\bibitem{Call} %1
+\Aue{Callegati, F.} 
+2000. Optical buffers for variable
+length packets. \textit{IEEE Comm. Lett.}
+4(9):292--294.
+
+\bibitem{optical1} %2
+\Aue{Rogiest,~W., E.~Morozov, D.~Fiems, K.~Laevens, and H.~Bruneel}.
+2010. Stability of single-wavelength optical buffers.
+\textit{Eur. Trans.   Telecomm.} 21(3):202--212.
+\bibitem{optical2}   %3
+\Aue{Morozov,~E., W. Rogiest, K.~De~Turck, and D.~Fiems}. 2012. 
+Stability of
+multiwavelength optical buffers with delay-oriented scheduling.
+\textit{Trans. Emerging Telecomm. Technol.} 23(3):217--226.
+
+\bibitem{Asmus} %4
+\Aue{Asmussen, S}. 2003. \textit{Applied probability and queues}. 2nd
+ed.  NY: Springer-Verlag. 440~p.
+
+
+
+
+
+\bibitem{2} %5
+\Aue{Morozov,~E., and R.~Delgado}. 
+2009. Stability analysis of regenerative
+queueing  systems. \textit{Automation Remote Control} 70(12):1977--1991.
+
+\bibitem{Feller} %6
+\Aue{Feller,~W.}
+1971. \textit{An introduction to probability theory and its applications}. Vol.~II.
+ New York: John Wiley\,\&\,Sons. 704~p.
+ {\looseness=1
+ 
+ }
+
+
+
+\bibitem{Chang}  %7
+\Aue{Chang,~J.}
+1994. Inequalities for the overshoot. \textit{Ann. Appl. Probab.}  4(4):1223--1233.
+
+\bibitem{Billingsley} %8
+\Aue{Billingsley, P.}  1968.
+\textit{Convergence of probability measures}. Wiley. 296~p.
+
+\bibitem{r_reference} %9
+\textit{R Foundation for Statistical Computing}.
+  Vienna, Austria.  {\sf http://www.R-project.org/}.
+\end{thebibliography} } }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received November 8, 2013}}
+
+\vspace*{-6pt}
+
+\Contr
+
+\noindent
+\textbf{Morozov Evsei V.} (b.\ 1947)~--- Doctor of Science in physics and mathematics, professor,
+leading scientist, Institute of Applied Mathematical Research of Karelian Research Center,
+Russian Academy of Sciences, 11 Pushkinskaya Str., Petrozavodsk 185910,
+Republic of Karelia, Russian Federation; professor, Petrozavodsk State University,
+33 Lenin Str., Petrozavodsk 185910, Republic of Karelia,
+Russian Federation; emorozov@karelia.ru
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Potakhina Lyubov V.} (b.\ 1989)~--- PhD student, 
+Institute of Applied Mathematical Research of Karelian Research Center,
+Russian Academy of Sciences, 11 Pushkinskaya Str., Petrozavodsk 185910,
+Republic of Karelia, Russian Federation; engineer, Petrozavodsk State University,
+33 Lenin Str., Petrozavodsk 185910, Republic of Karelia,
+Russian Federation; lpotahina@gmail.com
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Koen De Turck} (b.\ 1981)~--- postdoctoral fellow with the Research Foundation
+Flanders (FWO-Vlaanderen), SMACS Research Group, Department of Telecommunications
+and Information Processing (TELIN), Ghent University, 41 Sint-Pietersnieuwstraat,  Gent B-9000,
+Belgium;  kdeturck@telin.ugent.be
+
+
+
+
+%\vspace*{24pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{12pt}
+
+\newpage
+
+
+\def\tit{АНАЛИЗ  УСТОЙЧИВОСТИ СИСТЕМЫ ПЕРЕДАЧИ ДАННЫХ  
+С~ОПТИЧЕСКИМИ ЛИНИЯМИ ЗАДЕРЖКИ СЛУЧАЙНОЙ ДЛИНЫ}
+
+\def\aut{Е.\,В. Морозов$^1$,  Л.\,В. Потахина$^2$,  К.~Де Турк$^3$}
+
+
+\def\titkol{Анализ  устойчивости системы передачи данных  с~оптическими линиями задержки случайной длины}
+
+\def\autkol{Е.\,В. Морозов,  Л.\,В. Потахина,  Де Турк~K.}
+
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-12pt}
+
+\noindent $^1$Институт прикладных математических исследований КарНЦ РАН,
+ Россия, Республика Карелия,\\
+ $\hphantom{^1}$г.~Петрозаводск 185910, ул.\ Пушкинская 11;
+Петрозаводский государственный университет,\\
+$\hphantom{^1}$Россия, Республика Карелия, г.~Петрозаводск 185910, пр.\ Ленина 33; emorozov@karelia.ru\\ 
+\noindent $^2$Институт прикладных математических исследований КарНЦ РАН,
+ Россия, Республика Карелия,\\
+  $\hphantom{^1}$г.~Петрозаводск 185910, ул.\ Пушкинская 11;
+Петрозаводский государственный университет,\\ 
+ $\hphantom{^1}$Россия, Республика Карелия, г.~Петрозаводск 185910, пр.\ Ленина 33; lpotahina@gmail.com\\
+\noindent
+$^3$Университет Гента,
+Sint-Pietersnieuwstraat 41,  Гент B-9000, Бельгия; kdeturck@telin.ugent.be
+
+
+\vspace*{6pt}
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 8\ \ \ выпуск\ 1\ \ \ 2014}
+}%
+ \def\rightfootline{\small{ИНФОРМАТИКА И ЕЁ ПРИМЕНЕНИЯ\ \ \ том\ 8\ \ \ выпуск\ 1\ \ \ 2014
+\hfill \textbf{\thepage}}}
+ 
+
+\Abst{Рассмотрена новая модель оптической системы, в которой разности упорядоченных  
+(по возрастанию)  длин  двух  соседних оптических  кабелей  
+являются независимыми одинаково распределенными случайными величинами.  
+Это является обобщением рассмотренной ранее модели, где  эти разности  
+были детерминированными величинами.  Эта система моделируется с использованием   
+теории случайного блуждания и тесно связанных  с ней асимптотических результатов  
+ теории восстановления,  таких как  парадокс инспекции  и неравенство Лордена.   
+ Развит анализ устойчивости, основанный на регенеративном подходе. Включены  
+ также некоторые численные результаты, которые показывают, 
+что полученные условия позволяют определить область устойчивости с высокой точностью.}
+
+\KW{оптический буфер; устойчивость;  теория восстановления; регенерация; 
+парадокс инспекции; неравенство Лордена;   имитационное моделирование}
+
+
+\DOI{10.14357/19922264140113}
+
+
+Работа первых двух авторов частично поддержана Программой стратегического развития Петрозаводского
+государственного университета.
+Работа третьего автора поддержана
+Research Foundation-Flanders
+(FWO-Vlaanderen).
+
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily Литература}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\addcontentsline{toc}{section}{References}
+\begin{thebibliography}{9}
+
+\bibitem{Call-1}  %1
+\Au{Callegati F.} 
+Optical buffers for variable
+length packets~// {IEEE Comm. Lett.}, 2000.
+Vol.~4. No.\,9. P.~292--294.
+
+\bibitem{optical1-1} %2
+\Au{Rogiest~W., Morozov E., Fiems D., Laevens~K., Bruneel~H.}
+Stability of single-wavelength optical buffers~//
+{Eur. Trans. Telecomm.}, 2010. Vol.~21. No.\,3. P.~202--212.
+\bibitem{optical2-1}  %3
+\Au{Morozov~E., Rogiest W., De~Turck~K., Fiems~D}. 
+Stability of multiwavelength optical buffers with delay-oriented scheduling~//
+{Trans. Emerging Telecomm. Technol.}, 2012. 
+Vol.~23. No.\,3. P.~217--226.
+
+\bibitem{Asmus-1} %4
+\Au{Asmussen S}.  {Applied probability and queues}.~--- 2nd
+ed.~---  NY: Springer-Verlag, 2003. 440~p.
+
+
+\bibitem{2-1} %5
+\Au{Morozov~E., Delgado~R}. 
+Stability analysis of regenerative
+queueing  systems~// Automation Remote Control, 2009. Vol.~70. No.\,12.
+P.~1977--1991.
+
+\bibitem{Feller-1}  %6
+\Au{Feller~W.}
+{An introduction to probability theory and its applications}. Vol.~II.~--- 1971.
+New York: John Wiley\,\&\,Sons. 704~p.
+
+
+\bibitem{Chang-1}  %7
+\Au{Chang~J.}
+ Inequalities for the overshoot~// \textit{Ann. 
+Appl. Probab.}, 1994.  Vol.~4. No.\,4. P.~1223--1233.
+
+\bibitem{Billingsley-1}
+\Au{Billingsley, P.} %8  
+{Convergence of probability measures}.~--- Wiley, 1968. 296~p.
+
+\bibitem{r_reference-1}  %9
+{R Foundation for Statistical Computing}.
+  Vienna, Austria. {\sf http://www.R-project.org/}.
+
+\end{thebibliography}
+} }
+
+\end{multicols}
+
+ \label{end\stat}
+
+\hfill{\small\textit{Поступила в редакцию 08.11.2013}}
+%\renewcommand{\bibname}{\protect\rm Литература}  
+\renewcommand{\figurename}{\protect\bf Рис.}

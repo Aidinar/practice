@@ -1,0 +1,1100 @@
+\def\stat{sinits}
+
+\def\tit{ИНТЕРПОЛЯЦИОННОЕ АНАЛИТИЧЕСКОЕ 
+ МОДЕЛИРОВАНИЕ РАСПРЕДЕЛЕНИЙ В~СЛОЖНЫХ СТОХАСТИЧЕСКИХ СИСТЕМАХ}
+
+\def\titkol{Интерполяционное аналитическое 
+ моделирование распределений в~сложных стохастических системах}
+
+\def\aut{И.\,Н.~Синицын$^1$}
+
+\def\autkol{И.\,Н.~Синицын}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Синицын И.\,Н.}
+\index{Sinitsyn I.\,N.}
+
+
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа поддержана РФФИ (проект 18-07-00274).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем
+информатики Федерального исследовательского центра
+<<Информатика и управ\-ле\-ние>> Российской академии наук, \mbox{sinitsin@dol.ru}}
+
+\vspace*{-12pt}
+
+
+\Abst{Разработаны методы интерполяционного аналитического моделирования (ИАМ) 
+в~сложных непрерывных и дискретных скалярных и приводимых к ним векторных
+стохастических системах (СтС). 
+Выделены типовые классы сложных СтС. Методы основаны на интерполяционном 
+решении эволюционного уравнения для одномерной 
+характеристической функции (х.ф.). Получены уравнения чувствительности для оценки х.ф.\
+ к~параметрам СтС.
+В~основу базовых алгоритмов ИАМ положена теорема отсчетов Котельникова. 
+Рассмотрены практические вопросы выбора интерполяционных формул 
+Котельникова и оценки количества интерполяционных отсчетов.
+Для СтС с известной аналитической природой в качестве дальнейшего 
+развития следует рассмотреть применение сплайнт-вейв\-лет методов для офлайн 
+алгоритмов, а~для онлайн алгоритмов~--- фильтрационных подходов, 
+при этом особое внимание следует уделить многомерным распределениям.}
+
+\KW{одномерная плотность вероятности (п.в.);
+одномерная характеристическая функция (х.ф.);
+стохастическая система (СтС);
+стохастический процесс (СтП)}
+
+\DOI{10.14357/19922264190101}
+  
+\vspace*{-3pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+Среди известных методов аналитического моделирования стохастических процессов 
+(СтП) в~дифференциальных СтС
+важное место занимают методы, основанные на прямом численном решении эволюционных 
+уравнений для $n$-мер\-ной х.ф.~[1]. Мальчиковым в~[2, 3] для гауссовских СтС 
+на основе теоремы отсчетов Котельникова~[4] разработан метод ИАМ для одномерной х.ф.
+
+В~[5] дано обобщение~[2, 3] для негауссовских СтС на основе замены негауссовкой 
+СтС эквивалентной гауссовской (нормальной) СтС. Дадим обобщение~[5] 
+на случай непрерывных и дискретных СтС, не приводимых к гауссовским. Разделы~2 и~3 
+посвящены методу ИАМ соответственно для непрерывных и дискретных СтС. 
+В~разд.~4 описаны практические способы выбора интерполяционных формул и чисел отсчетов. 
+Заключение содержит выводы и некоторые возможные обобщения.
+
+\vspace*{-12pt}
+
+\section{Метод интерполяционного 
+аналитического моделирования для~непрерывных стохастических систем}
+
+\vspace*{-3pt}
+
+2.1. Следуя~[5], введем следующие определения и допущения.
+
+\columnbreak
+
+\noindent
+\begin{enumerate}[1.]
+\item Пусть скалярный СтП  $Y(t) \hm= Y_t$ определяется скалярным 
+стохастическим дифференциальным уравнением Ито следующего вида~[1]:
+
+\noindent
+\begin{multline}
+dY_t = a \left(Y_t, \Theta, t\right) dt + b \left(Y_t, \Theta, t\right)\, 
+d W_0 (\Theta, t)+ {}\\
+\!{}+\!
+    \iii_{R_0^1}\! c(Y_t, \Theta, t, v) P^0 (\Theta, dt, dv),\enskip  
+    Y\left(t_0\right)=Y_0\,.\label{e2.1-s}
+    \end{multline}
+Здесь $W_0 \hm= W_0 (\Theta, t)$~--- скалярный винеровский СтП интенсивности 
+$\nu_0\hm=\nu_0 (\Theta, t)$; $\Theta$~--- $n^\Theta$-мер\-ный 
+вектор параметров; $P^0(\Theta, {\cal J}, {\cal A})$  пред\-став\-ля\-ет собой 
+для любого множества~${\cal A}$ простой пуассоновский СтП, 
+причем $P^0 (\Theta, {\cal J},{\cal A})\hm= P(\Theta, {\cal J},{\cal A})
+\hm- \mu_P (\Theta, {\cal J},{\cal A})$, где 
+$\mu_P (\Theta, {\cal J},{\cal A})$~--- его математическое ожиданием, равное
+
+\noindent
+    \begin{multline*}
+    \mu_P =\mu_P(\Theta, {\cal J},{\cal A})={\sf M}\, P(\Theta, {\cal J},{\cal A})= {}\\
+    {}=
+    \iii_{\cal J} \nu_P (\Theta, \tau,{\cal A})\, d\tau\,,
+\end{multline*}
+а $\nu_P\hm=\nu_P(\Theta, {\cal J},{\cal A})$~--- 
+интенсивность соответствующего пуассоновского потока событий; 
+${\cal J}\hm= (t_1, t_2]$; интегрирование по~$v$ распространяется на пространство~$R^1$ 
+с~выколотым началом координат; $a\hm=a(Y_t, \Theta, t)$, $b\hm=b(Y_t, \Theta, t)$ 
+и~$c\hm=c(Y_t, \Theta, t,v)$~--- скалярные нелинейные функции отмеченных аргументов.
+
+Предположим, что при фиксированном~$\Theta$ выполнены условия 
+существования и единствен-\linebreak\vspace*{-12pt}
+\end{enumerate}
+
+\begin{enumerate}[1.]
+\setcounter{enumi}{1}
+\item[\ ] ности СтП, определяемого~(\ref{e2.1-s}) 
+при соответствующем начальном условии~[1, 6]. Кроме того, функции~$a$,
+$b$ и~$c$ и характеристики СтП~$W_0$ и~$P^0$ будем считать дифференцируемыми по~$\Theta$.
+
+В~дальнейшем для белого шума $V\hm=\dot W$ (понимаемого 
+в~строгом смысле и являющегося производной по времени от произвольного СтП 
+с~независимыми приращениями~$W(t)$) будем использовать уравнение:
+\begin{equation}
+\dot Y_t =a\left(Y_t, \Theta, t\right)+ 
+b\left(Y_t, \Theta, t\right)V\,, \enskip 
+V=\dot W\,.\label{e2.2-s}
+\end{equation}
+
+\item Существует одномерная плотность $f\hm=f(y;\Theta,t)$, 
+а~уравнение для одномерной х.ф.\ $g\hm=g(\lambda;\Theta,t)$  при фиксированном~$\Theta$ 
+имеет вид~[1]:
+\begin{multline}
+    \fr{\prt g (\lambda;\Theta,t)}{\prt t} = \iin \left[ i\lambda a 
+    (y,\Theta,t)+ \right.\\
+\left.    {}+\chi(\lambda;y,\Theta,t)\right] e^{i\lambda y} f ( y; \Theta,t)\, dy
+    \label{e2.3-s}
+    \end{multline}
+при начальном условии
+\begin{equation}
+g(\lambda; \Theta,t_0) = g_0 (\lambda;\Theta)\,.
+\label{e2.4-s}
+\end{equation}
+Здесь $f\hm=f(y;\Theta,t)$~--- одномерная плотность вероятности (п.в.), 
+связанная с х.ф.~$g(\lambda;\Theta,t)$ следующим Фурье преобразованием:
+\begin{equation}
+f(y;\Theta,t) = \fr{1}{2\pi} \iin e^{-i\lambda y} g 
+(\lambda;\Theta,t)\, d\lambda\,;\label{e2.5-s}
+\end{equation}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+\chi(\lambda;y,\Theta,t) =-\fr{\lambda^2 \nu_0 (\Theta,t)}{2}\, b^2 (y,\Theta,t)+{}\\
+{}+ \iii_{R_0'} \exp \left\{\lk i\lambda 
+c(y,\Theta,t,v)\rk -1-{}\right.\\
+\left.{}-i\la c(y,\Theta,t,v)\right\} \nu_P (\Theta,t,dv)\,.
+%\label{e2.6-s}
+\end{multline*}
+
+Для стационарных дифференциальных СтС~(\ref{e2.1-s}) 
+уравнения для стационарных х.ф.\ $g^*\hm=g^*(\la;\Theta)$  
+и~п.в.~$f^*(y;\Theta)$ имеют вид:
+\begin{multline}
+\!\iin \!\left[ i \lambda a^* (y,\Theta) + \chi( \lambda;y,\Theta)\right]
+ e^{i\lambda y} 
+f^* (y;\Theta)\, dy ={}\\
+{}=0\,;\label{e2.7-s}
+\end{multline}
+
+\vspace*{-9pt}
+
+\noindent
+\begin{equation*}
+f^*(y;\Theta) = \fr{1}{2\pi} \iin e^{i\lambda y} g^* ( \lambda;\Theta)\, dy\,.
+\label{e2.8-s}
+\end{equation*}
+Здесь звездочкой отмечены стационарные значения соответствующих функций.
+
+Для СтС~(\ref{e2.2-s}) уравнения~(\ref{e2.3-s}) и~(\ref{e2.7-s}) имеют сле\-ду\-ющий вид:
+
+\columnbreak
+
+\noindent
+    \begin{multline}
+    \fr{\prt y ( \lambda;\Theta, t)}{\prt t} = 
+    \iin \left[ i\lambda a (y, \Theta, t) +{}\right.\\
+    \left. {}+
+    \chi( b(y,\Theta, t)\lambda; t)\right] \exp (i\lambda y) f(y,\Theta,t)\,dy\,;
+    \label{e2.9-s}
+    \end{multline}
+    
+    \vspace*{-16pt}
+    
+    \noindent
+    \begin{multline*}
+    \iin  \lk i\lambda a^* (y, \Theta) + \chi
+    \left( b^*(y,\Theta)\lambda; t\right)\rk\times{}\\
+    {}\times \exp (i\lambda y) f^*(y,\Theta)\,dy=0\,.
+%\label{e2.10-s}
+    \end{multline*}
+
+\item Пусть х.ф.\ $g\hm=g(\lambda;\Theta, t)$ для СтС~(\ref{e2.1-s}) 
+выражается через значение в фиксированных точках отсчета, применив для этого 
+ка\-кую-ни\-будь интерполяционную формулу~[6]:
+\begin{equation}
+    g(\lambda; \Theta, t) = \sss_{l=-N}^N g_l \left(\lambda_l;\Theta, t\right) 
+    \alpha_l (\lambda)+ R_N\,.\label{e2.11-s}
+    \end{equation}
+Здесь $R_N$~--- остаточный член;  $\lambda_l$~--- 
+некоторые фиксированные значения аргумента~$\lambda$ в~точках отсчета х.ф.; 
+$\alpha_l(\lambda)$~--- известные функции, удовлетворяющие условию
+    $$
+    \alpha_l (\lambda_r) =\delta_{lr}\enskip (l,r=0, \pm 1\tr \pm N)\,,
+    $$
+где $\delta_{lr}$~--- символ Кронекера.
+
+\end{enumerate}
+
+Таким образом, задача сводится к вычислению значений х.ф.\  
+в~точках отсчета х.ф. После определения х.ф.~ $g(\lambda;\Theta,t)$ п.в.\
+определяется преобразованием Фурье~(\ref{e2.5-s}).
+
+2.2. Рассмотрим метод ИАМ для СтС~(\ref{e2.1-s}).
+Подставляя в~(\ref{e2.5-s}) выражение~(\ref{e2.11-s}), найдем:
+
+\noindent
+\begin{multline}
+f(y;\Theta, t) \approx \sss_{l=-N}^N g_l \left(\lambda_l ; \Theta, t\right) 
+    \beta_l (y)\,,
+    \\
+\beta_l = \fr{1}{2\pi} \iin e^{-i\lambda y} \alpha_l (\lambda)\, d\lambda\,,
+%\label{e2.13-s}
+\label{e2.12-s}
+\end{multline}
+где функции $\beta_l(y)$ являются преобразованием \mbox{Фурье} функций~$\alpha_l(\la)$ 
+и,~следовательно, известны.
+А~значит, искомая п.в.\ выражается через значения х.ф.\ в~точках отсчета. 
+Полагая в~(\ref{e2.3-s}) $\la\hm=\la_r$ и~под\-став\-ляя в~него~(\ref{e2.12-s}), получаем:
+    \begin{equation}
+\fr{\prt g_r}{\prt t} = \dot g_r = \sss_{l=-N}^N \varepsilon_{lr} g_l\,.
+\label{e2.14-s}
+\end{equation}
+Здесь $g_l = g_l (\lambda_r;\Theta, t)$, а~$\varepsilon_{lr}$ равны
+\begin{equation}
+\varepsilon_{lr}=\varepsilon_{lr}^0 +\varepsilon_{lr}'+\varepsilon_{lr}''\,,
+\label{e2.15-s}
+\end{equation}
+где
+
+\noindent
+   $$
+   \varepsilon_{lr}^0 = \varepsilon_{lr}^0\left(\lambda_r;\Theta, t\right)= 
+   i \lambda_r \iin a(y, \Theta, t) \beta_l (y) e^{i\lambda_r y}\, dy\,;
+   $$
+   
+   \pagebreak
+   
+\noindent
+  \begin{multline*}
+  \varepsilon_{lr}' = \varepsilon_{lr}'\left(\lambda_r;\Theta, t\right)={}\\
+  {}=
+  -\fr{ \lambda_r^2}{2}\,\nu_0 (\Theta,t)  \iin b^2(y, \Theta, t) \beta_l (y) 
+  \exp(i\lambda_r y) \,dy\,;
+ \end{multline*}
+ 
+ \vspace*{-12pt}
+ 
+ \noindent
+\begin{multline}
+  \varepsilon_{lr}'' = \varepsilon_{lr}''\left(\lambda_r;\Theta, t\right)=
+  \iin \int\limits_{R_0^q} \left\{ \exp \lk i\la_r  c (y,\Theta, t,v)\rk-{}\right.\\
+\left.  {}-1-
+  i\lambda_r c (y,\Theta, t,v)\right\} \beta_l (y) \exp\lk i\lambda_r y\rk\,
+   dvdy.\label{e2.16-s}
+   \end{multline}
+
+
+\noindent
+\textbf{Замечание~2.1.}
+Уравнение~(\ref{e2.14-s}) линейно, причем интегралы~(\ref{e2.16-s}) 
+могут быть вычислены заранее, так как подынтегральные функции известны.
+
+\smallskip
+
+Следуя~[5], выполним с~(\ref{e2.14-s}) следующие преобразования. 
+Перейдем от комплексных величин к~действительным, положив
+\begin{equation}
+\hspace*{-20.5mm}g_r = g_{r1} + i g_{r2}\,;\label{e2.17-s}
+\end{equation}
+\begin{equation}
+\left.
+\begin{array}{rl}
+ \beta_l &= \beta_{l1} + i\beta_{l2}\,;\\[6pt]
+    \beta_{l1}&=\displaystyle \fr{1}{2\pi} \iin \alpha_l (\lambda) 
+    \cos \lambda y \,d\lambda\,;\\[6pt]
+    \beta_{l2}&= \displaystyle
+    \fr{1}{2\pi} \iin \alpha_l (\lambda) \sin \lambda y \,d\lambda\,;
+    \end{array}
+    \right\}
+    \label{e2.18-s}
+    \end{equation}
+    \begin{equation*}
+\hspace*{-18.5mm}\varepsilon_{lr} = \varepsilon_{lr1} + i \varepsilon_{lr2}\,,
+\end{equation*}
+где
+
+\noindent
+\begin{multline*}
+\varepsilon_{lr1} =-\lambda_r\iin \left[ \beta_{l1} (y) \sin \lambda_r y +{}\right.\\
+\left.{}+ \beta_{l2} (y) 
+\cos \lambda_r y\right] a (y, t) \,dy\,;
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+\varepsilon_{lr2} =-\lambda_r\iin \left[ \beta_{l1} (y) \cos \lambda_r y + {}\right.\\
+\left.{}+\beta_{l2} (y)
+ \sin \lambda_r y\right] a (y, t)\, dy\,.
+ \label{e2.19-s}
+ \end{multline}
+
+После подстановки~(\ref{e2.17-s})--(\ref{e2.19-s}) в~(\ref{e2.15-s}) 
+и~приравнивая действительные и мнимые части, получим систему линейных 
+обыкновенных дифференциальных уравнений для значений х.ф.\ 
+в~точках отсчета в~действительной форме:
+\begin{equation}
+\left.
+\begin{array}{rl}
+\dot g_{r1} &= G_{r1} = \displaystyle\sss_{l=-N}^N \left( \varepsilon_{lr1} g_{l1} - 
+    \varepsilon_{lr2} g_{l2}\right)\,;\\[6pt]
+    \dot g_{r2} &= G_{r2} = \displaystyle\sss_{l=-N}^N \left( \varepsilon_{lr2} g_{l1} + 
+    \varepsilon_{lr2} g_{l2}\right)\,.
+    \end{array}
+    \right\}
+    \label{e2.20-s}
+    \end{equation}
+Сократим число уравнений в~(\ref{e2.20-s}), учтя известные свойства х.ф.~[1]:
+\begin{equation}
+    g(0, \Theta, t) = 1\,; \enskip g(-\lambda; \Theta,t)= 
+    \overline{g(\lambda;\Theta t)}\,,\label{e2.21-s}
+    \end{equation}
+где черта~--- символ комплексного сопряжения. На основании~(\ref{e2.21-s}) находим:
+\begin{equation}
+\left.
+\begin{array}{rlrl}
+g_{01} &=1\,;&\quad g_{02} &=0\,;\\[6pt]
+ g_{-r,1} &= g_{r1}\,;&\quad 
+    g_{-r,2} &= -g_{r2}\,.
+    \end{array}
+    \right\}
+    \label{e2.22-s}
+    \end{equation}
+Отсюда следует, что~(\ref{e2.20-s}) надо решать лишь для~$g_{r1}$ и $g_{r2}$ при $r\hm>0$.
+
+Наконец, выделим слагаемое, соответствующее $l\hm=0$, далее разобьем полученную 
+сумму на две суммы и сменим порядок суммирования на $\overline{1,N}$. 
+Тогда придем к следующим окончательным уравнениям:
+    \begin{multline*}
+    \dot g_{r1} = G_{r1} ={}\\
+    {}= \sss_{h=1}^N \lk 
+    \left( \varepsilon_{hr1} + \varepsilon_{-hr1}\right) g_{h1} -
+    \left(\varepsilon_{hr2} -\varepsilon_{-hr2}\right) g_{h2} \rk\,;
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+    \dot g_{r2} = G_{r2} = \sss_{h=1}^N \left[ \left( \varepsilon_{hr2} - \varepsilon_{-hr2}
+    \right) g_{h1} +{}\right.\\
+\left.    {}+\left(\varepsilon_{hr1} +\varepsilon_{-hr1}\right) g_{h2} 
+    \right]\enskip 
+    \left( r=\overline{1,N}\right)\,.\label{e2.23-s}
+    \end{multline}
+
+В случае стационарного распределения уравнения~(\ref{e2.23-s}) принимают вид:
+\begin{equation}
+G_{r1}^* =0\,;\quad G_{r2}^*=0\,.\label{e2.24-s}
+\end{equation}
+
+Выражение~(\ref{e2.5-s}) для п.в.\ после аналогичных преобразований с~х.ф.\
+ принимает вид:
+ 
+ \noindent
+\begin{multline}
+    f(y,\Theta, t) = \beta_{01}(y) + \sss_{h=1}^N \lk \beta_{h1} (y) +
+     \beta_{-h1}(y)\rk g_{h1} -{}\\
+     {}-\sss_{h=1}^N \lk\beta_{h2} (y) - 
+     \beta_{-h2}(y)\rk g_{h2}\,.\label{e2.25-s}
+     \end{multline}
+
+В качестве начальных условий для~(\ref{e2.23-s}) следует принять следующие количества:
+\begin{equation}
+g_{rj} \left(\lambda_{r}; t_0\right) = g_{rj0} \enskip (j=1,2)\,.
+\label{e2.26-s}
+\end{equation}
+
+Так как х.ф.\ является преобразованием Фурье для п.в., 
+то теорема отсчетов Котельникова~[4] полностью определяется последовательностью 
+ее значений в дискретном ряде точек. Поэтому, если распределение СтП~$Y_t$ 
+сосредоточено на интервале  $2\Delta \hm= 2 \Delta_y$, то согласно~[4] 
+$ \alpha_r \hm=\alpha_r(\la)$ и $\beta_r \hm=\beta_r (y)$ можно выбрать в виде:
+\begin{equation}
+   \alpha_r =\fr{\sin \Delta( \la-\la_r)}{\Delta (\la-\la_r)} \,,\quad 
+   \lambda_r =\fr{\pi r}{\Delta}\,; \label{e2.27-s}
+   \end{equation}
+\begin{equation}
+\beta_r = \begin{cases}
+  \displaystyle \fr{1}{2\Delta} e^{-i\lambda_r y}& \mbox{ при} \ |y|\leq \Delta\,;\\
+   0& \mbox{ при}\ |y|> \Delta\,,
+   \end{cases}
+   \label{e2.28-s}
+   \end{equation}
+при этом п.в.\ будет определяться формулой:
+
+\pagebreak
+
+\noindent
+\begin{equation*}
+f(y,\Theta, t)= \begin{cases}
+\displaystyle   \fr{1}{\Delta}\sss_{r=1}^N (g_{r1}\cos \lambda_r y + 
+g_{r2} \sin \lambda_r y) 
+   &\\
+   &\hspace*{-20mm}\mbox{ при } |y|\leq \Delta\,;\\
+   0&\hspace*{-20mm}\mbox{ при } |y|> \Delta\,.
+   \end{cases}\!\!\!\!
+   %\label{e2.29-s}
+   \end{equation*}
+
+Чувствительность метода ИАМ к параметрам~$\Theta$ оценивается согласно~[5, 7] 
+путем вычисления следующих первых векторных функций чувствительности:
+ \begin{equation}
+    \nabla^\Theta g_{rj} =\nabla^\Theta g_{rj}(\la_r;\Theta, t) \enskip ( j=1,2)\,,
+    \label{e2.30-s}
+    \end{equation}
+где $\nabla^\Theta$~--- символ вектора частных производных по векторному
+ параметру~$\Theta$. В~силу~(\ref{e2.30-s}) 
+ соответствующие уравнения для функций чувствительности имеют вид:
+\begin{equation}
+\dot\nabla^\Theta g_{rj} =\nabla^\Theta G_{rj}\enskip ( j=1,2)\label{e2.31-s}
+\end{equation}
+при нулевых начальных условиях и
+\begin{equation}
+\nabla^\Theta G_{rj}^*=0 \enskip ( j=1,2)\label{e2.32-s}
+\end{equation}
+в стационарном случае.
+
+Таким образом, приходим к следующему обобщению~[5].
+
+\smallskip
+
+\noindent
+\textbf{Теорема~1.}\ \textit{Пусть СтС}~(\ref{e2.1-s}) 
+\textit{допускает одномерное нестационарное распределение, х.ф.\
+ которого удовлетворяет уравнению}~(\ref{e2.3-s}) 
+ \textit{при начальном условии}~(\ref{e2.4-s}). 
+ \textit{Тогда в основе метода ИАМ х.ф.\ по Котельникову лежат согласно}~(\ref{e2.27-s}) 
+ \textit{и}~(\ref{e2.28-s}) \textit{линейные обыкновенные дифференциальные 
+ уравнения}~(\ref{e2.23-s}) \textit{при начальных условиях}~(\ref{e2.26-s}). 
+ \textit{Для моделирования п.в.\ применяется формула}~(\ref{e2.25-s}). 
+ \textit{В~случае, когда имеет место стационарное одномерное распределение, 
+ используются уравнения}~(\ref{e2.24-s}). \textit{При этом чувствительность МИАМ 
+ оценивается согласно}~(\ref{e2.30-s})--(\ref{e2.32-s}).
+
+
+\smallskip
+
+2.3. Уравнения МИАМ для СтС~(\ref{e2.2-s}) имеют вид~(\ref{e2.23-s})--(\ref{e2.25-s}), 
+если принять
+\begin{equation}
+\varepsilon_{lr} = \varepsilon_{lr}^0 + \varepsilon_{lr}^1\,,\label{e2.33-s}
+\end{equation}
+где
+\begin{align}
+\varepsilon_{lr}^0 &= i \lambda_r \iin a (y, \Theta,t) \beta_l (y) 
+    e^{i\la_r y} \,dy\,; \notag %\label{e2.34-s}
+    \\
+\varepsilon_{lr}^1 &= \iin \chi\left( b(y,\Theta, t)\lambda;\Theta,t\right) \beta_l (y) 
+    e^{i\lambda_r y}\, dy\,.\label{e2.35-s}
+    \end{align}
+
+В результате имеем следующий алгоритм метода ИАМ.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~2.}\ \textit{Пусть СтС}~(\ref{e2.2-s}) 
+\textit{допускает одномерное нестационарное распределение, х.ф.\
+которого удовлетворяет уравнению}~(\ref{e2.9-s}) \textit{при начальном условии}~(\ref{e2.4-s}).
+\textit{Тогда в основе метода ИАМ х.ф.\ по Котельникову согласно}~(\ref{e2.27-s}) 
+\textit{и}~(\ref{e2.28-s}) \textit{лежат линейные обыкновенные дифференциальные 
+уравнения}~(\ref{e2.23-s})--(\ref{e2.25-s}) 
+\textit{при условиях}~(\ref{e2.33-s})--(\ref{e2.35-s}). 
+\textit{Для моделирования п.в.\ применяются формулы}~(\ref{e2.22-s}). 
+\textit{В~стационарном случае используются 
+уравнения}~(\ref{e2.24-s}). \textit{При этом чувствительность метода ИАМ оценивается 
+согласно}~(\ref{e2.30-s})--(\ref{e2.32-s}).
+
+\smallskip
+
+2.4. Теперь рассмотрим метод ИАМ для векторных СтС.
+Следуя~[2,~3], воспользуемся принципом эквивалентности векторной СтС скалярной СтС. 
+В~задачах практики обычно не требуется определения х.ф.\ и~п.в.\
+ всех составляющих вектора~$Y_t$,\linebreak а~достаточно определить одномерное распределение 
+ некоторых из них. Поэтому будем искать распределения отдельных составляющих. 
+ 
+ Для определения одномерных х.ф.\ и~п.в.\ некоторой $h$-й
+  составляющей вектора~$Y_t$
+ заменим исход\-ную многомерную СтС эквивалентной одномерной СтС, описываемой 
+ стохастическим дифференциальным уравнением Ито (или уравнением 
+ с~$\theta$-дифференци\-алом~[1]), выходная переменная~$\tilde Y_{ht}$ 
+ которого имеет те же х.ф.\ и~п.в., что и~$h$-я со\-став\-ля\-ющая~$Y_{ht}$.
+ 
+
+В результате придем к следующему утверж\-дению.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~3.}\
+\textit{Пусть векторные CтС вида}~(\ref{e2.1-s}) \textit{и}~(\ref{e2.2-s}) 
+\textit{приводятся к эквивалентной системе скалярных СтС в~форме Ито. Тогда  
+в~основе метода ИАМ лежат уравнения теорем~$1$ и~$2$ для каждой скалярной СтС.}
+
+
+\smallskip
+
+\noindent
+\textbf{Замечание~2.2.}
+Выходные переменные~$Y_{ht}$ и~$\tilde Y_{ht}$ в~общем случае~(\ref{e2.2-s})~--- 
+различные СтП, поскольку~$ \tilde Y_{ht}$ является марковским СтП,
+а~$Y_{ht}$~--- со\-став\-ля\-ющая марковского процесса и,~следовательно, 
+сам по себе может и~не быть марковским СтП. Однако одномерные распределения 
+у~них одинаковы.
+
+\smallskip
+
+\noindent
+\textbf{Замечание~2.3.}
+Для квазилинейных СтС с аддитивным шумом замена многомерной системы одномерной 
+допустима в случае асимптотической устойчивости линейной детерминированной части. 
+Для комп\-лекс\-но-со\-пря\-жен\-ных корней эквивалентная система будет уже двумерной. 
+Случаи кратных корней требуют специального рассмотрения.
+
+
+\section{Метод интерполяционного 
+аналитического моделирования для~дискретных стохастических систем}
+
+Следуя~[1], рассмотрим сначала нелинейные дискретные СтС, описываемые 
+разностными стохастическими уравнениями вида:
+
+\noindent
+\begin{align}
+Y_{k+1} &=\omega_k \left(Y_k, \Theta, V_k^d\right) \enskip (k=1,2,\ldots)\,;\label{e3.1-s}
+\\
+Y_{k+1} &=a_k \left(Y_k, \Theta\right) +b_k \left(Y_k, \Theta\right)V_k^d \notag\\ 
+&\hspace*{29mm}(k=1,2,\ldots)\,,\label{e3.2-s}
+\end{align}
+где $\omega_k$, $a_k$ и~$b_k$~--- скалярные функции. Характеристические функции 
+$h_k\hm=h_k (\rho, \Theta)$ векторных случайных величин~$V_k^d$ и~соответствующие им
+ п.в.\ $\eta_k \hm= \eta_k(v,\Theta)$ будем считать известными.
+
+Для одномерных п.в.\ и~х.ф., определяемых известными формулами
+\begin{align*}
+f_k (y) &=\displaystyle\fr{1}{2\pi} \iin 
+e^{-i\lambda y} g_k (\la) \,d\lambda\,; \\
+g_k(\lambda) &=      {\sf M} \exp \lf i \la Y_k\rf
+%\label{e3.3-s}
+\end{align*}
+применительно к уравнению~(\ref{e3.1-s}) имеют место следующие рекуррентные формулы~[1]:
+\begin{multline}
+g_{k+1} (\la) = {\sf M} \exp \lf i\la \omega_k (Y_k, \Theta, V_k) \rf = {}\\
+{}=
+    \iin \iin e^{i\lambda \omega_k (y, v,\Theta)} 
+    f_k (y) h_k ( v,\Theta)\, dy dv\,.\label{e3.4-s}
+    \end{multline}
+
+Общая рекуррентная формула для одномерного распределения в~(\ref{e3.2-s}) 
+немедленно получается из соответствующей формулы~(\ref{e3.4-s})
+и~приводит к следующему результату:
+ \begin{multline}
+ g_{k+1} ={\sf M} \exp \lf i\lambda a_k (Y_k, \Theta) + i\lambda b_k 
+    \left(Y_k,\Theta\right) V_k \rf={}\\
+{}=\! \iin\iin e^{i\la a_k(y,\Theta) + i\lambda b_k(y,\Theta) v} 
+    f_k (y) h_k (v,\Theta)\, dydv={}\\
+{}= {\sf M}\lk \exp \lf i \lambda a_k \left(Y_k,\Theta\right) \rf + 
+    h_k \left( b_k \left(Y_k,\Theta\right) \lambda
+    \right)\rk.\label{e3.5-s}
+    \end{multline}
+
+Для СтС~(\ref{e3.2-s}) метод ИАМ приводит к следующим рекуррентным формулам:
+ \begin{align}
+ g_{r1, k+1} &= G_{r1,k}^d = \!\!\sss_{h=1}^N \!\left[ 
+    \left(\varepsilon_{hr1,k}+\varepsilon_{-hr1,k}\right)g_{h1,k}-{}\right.\hspace*{-3.24097pt}\notag\\
+&\left.    \hspace*{5mm}{}-
+    \left(\varepsilon_{hr2,k}-\varepsilon_{-hr2,k}\right)g_{h2,k}\right]\,;
+    \label{e3.6-s}
+    \\
+g_{r2, k+1} &= G_{r2,k}^d = \!\!\sss_{h=1}^N \!\left[ 
+    \left(\varepsilon_{hr2,k}-\varepsilon_{-hr2,k}\right)g_{h1,k}+{}\right.\hspace*{-3.24097pt}\notag\hspace*{-3.24097pt}\\
+&\left.    \hspace*{5mm}{}+\left(\varepsilon_{hr1,k}+\varepsilon_{-hr1,k}\right)g_{h2,k}\right]\,;
+    \label{e3.7-s}
+    \\
+    g_{rj} (\lambda_r;k=1) &= g_{rj,1}\enskip (j=1,2)\,;\label{e3.8-s}
+    \\
+    \varepsilon_{lr,k} &= \varepsilon_{lr,k}^0+\varepsilon_{lr,k}^1\,,\notag
+    %\label{e3.9-s}
+    \end{align}
+    где
+\begin{align*}
+    \varepsilon_{lr,k}^0&=i\lambda_r \iin a_k 
+    \left(y_k,\Theta\right) \beta_l (y_k) \exp (i\la_r y_k) \,dy_k\,;
+    %\label{e3.10-s}
+\\
+    \varepsilon_{lr,k}^1&=\iin \exp\lf \exp\left(i\lambda a_k\right)\rf+
+    h_k \left(b_k \lambda\right)\, dy_k\,;
+    %\label{e3.11-s}
+    \end{align*}
+    
+   
+    \noindent
+\begin{align}
+    f_k (y;\Theta, k) &=\begin{cases}
+    \fr{1}{\Delta} \sss_{r=1}^N g_{r1,k}\cos \lambda_t y+{}\\[3pt]
+ \hspace*{3mm}{}+g_{r1,k} 
+    \sin \lambda_r y &\hspace*{-10mm}\mbox{ при } |y|\leq\Delta\,;\\[6pt]
+    0&\hspace*{-10mm}\mbox{ при } |y|>\Delta\,;
+    \end{cases}
+    \label{e3.12-s}
+    \\[3pt]
+ \Delta^\Theta g_{rj,k+1} &=\nabla^\Theta G_{rj,k}^d\,.\label{e3.13-s}
+ \end{align}
+Здесь аргументы для краткости опущены.
+
+Таким образом, приходим к~сле\-ду\-юще\-му утверж\-де\-нию.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~4.}\ \textit{
+Пусть дискретная СтС}~(\ref{e3.2-s}) 
+\textit{допускает одномерное нестационарное распределение, х.ф.\
+которого удовлетворяет разностному уравнению}~(\ref{e3.5-s}) 
+\textit{при начальном условии}~(\ref{e3.8-s}). 
+\textit{Тогда в основе метода ИАМ х.ф.\ по Котельникову согласно}~(\ref{e2.27-s}) 
+\textit{и}~(\ref{e2.28-s}) \textit{лежат рекуррентные формулы}~(\ref{e3.6-s}) 
+\textit{и}~(\ref{e3.7-s}) \textit{при начальных условиях}~(\ref{e3.8-s}). 
+\textit{Для моделирования п.в.\ применяется формула}~(\ref{e3.12-s}). 
+\textit{В~стационарном случае используются}~(\ref{e3.6-s}) 
+\textit{и}~(\ref{e3.7-s}), \textit{где $g_{rj,k+1}\hm= g_{rj,k}$ $(j=1,2)$. 
+При этом чувствительность МИАМ оценивается согласно}~(\ref{e3.13-s}).
+
+\smallskip
+
+
+\noindent
+\textbf{Замечание~3.1.}
+Общий случай СтС~(\ref{e3.1-s}) поддается разработке только при дополнительных 
+ограничениях на функции~ $\omega_k$.
+
+\smallskip
+
+
+\noindent
+\textbf{Замечание~3.2.}
+До сих пор СтС~(\ref{e3.1-s}) и~(\ref{e3.2-s}) предполагались скалярными. 
+В~векторном случае можно непосредственно воспользоваться результатами п.~2.4.
+
+\vspace*{-8pt}
+
+\section{Практические способы выбора интерполяционных формул и~чисел отсчетов}
+
+\vspace*{-2pt}
+
+
+4.1. В задачах аналитического моделирования СтП в непрерывных и дискретных 
+СтС выбор формул интерполяции х.ф.\ в~(\ref{e2.11-s}) 
+определяется интервалом значений~$Y_t$, в~котором сосредоточена его~п.в.
+
+Наряду с теоремой Котельникова~[4] для х.ф.\ 
+различают следующие интерполяционные функции~[8]:
+\begin{enumerate}[(1)]
+\item интерполяционная формула Лагранжа;
+
+\item разделенные разности и интерполяционная формула Ньютона;
+
+\item итерационно-ин\-тер\-по\-ля\-ци\-он\-ная формула Эйткена.
+\end{enumerate}
+
+Выбор функций  $\alpha_r (\la)$  и~$\beta_l (y)$ посредством этих
+интерполяционных формул встречает сле\-ду\-ющие
+ трудности: $\lambda_{\max}$ 
+(значение аргумента, опре\-де\-ля\-ющее об\-ласть, вне которой х.ф.\
+ практически мож\-но
+ считать рав\-ной нулю) заранее определить труд\-но.
+  Кроме того, формулы для $\beta_r\hm=\beta_r(y)$ при этом оказываются 
+ аналитически сложными. %\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+ 
+
+Для сложных СтС в случае равностоящих значений аргумента можно 
+рекомендовать интерполяционные формулы для х.ф.\
+ с~центральными разностями различного порядка, восходящие к Стирлингу, Бесселю, 
+ Эверетту и Стефенсону~[8].
+
+4.2. Необходимое приемлемое число~$N$ членов ряда, обеспечивающее 
+достаточную точность расчетов~$R_N$ в~(\ref{e2.11-s}) существенно зависит от 
+удачного определения интервала~$2\Delta$. Если выбранный 
+интервал значительно больше, чем область фактического распределения СтП~$Y_t$, 
+то может потребоваться значительное число членов ряда.
+
+В~[2, 3] показано, что для гауссовского шума~$V$ достаточно точные 
+результаты получаются уже при $N\hm=3$, а~для большинства негауссовских п.в.~--- 
+при выборе $\Delta\hm= (3\ldots5) \sqrt{\tilde D}$, где $\tilde D$~--- 
+приближенное значение дисперсии СтП~$Y_t$.
+
+В том случае, когда заранее определить интервал~$\Delta$ нет возможности, то  
+чтобы обеспечить в~каж\-дый момент времени разложение п.в.~$Y_t$ на интервале $(3\ldots5) 
+\sqrt{\tilde D}$ можно в исходных уравнениях~(\ref{e2.1-s}) и~(\ref{e2.2-s}) 
+сделать линейную замену переменных:
+\begin{equation*}
+Y_t = Z_t \sqrt{c_2} + c_1\,.
+%\label{e4.1-s}
+\end{equation*}
+Здесь $c_1$ и~$c_2$~--- приближенные значения математического ожидания  
+$c_1={\sf M}\, Y_t$ и~дисперсии  $c_2 \hm={\sf D}\, Y_t$, 
+определяемые приближенно, например\linebreak
+ методами параметризации распределений 
+(нормальной аппроксимации, моментов, семиинвариантов, ортогональных разложение 
+и~др.~[1]). При этом переменная~$Z_t$ имеет близкое к~нулю математическое ожидание 
+$c_1\hm=m_z\hm\approx 0$ и~близкую к~единице дисперсию $c_2 \hm=D_z\hm\approx 1$. 
+После такой замены уравнение~(\ref{e2.1-s}) 
+примет соответственно вид:
+\begin{multline}
+   \!\! \!\!dZ_t = a^z \left(Z_t,c_y,\Theta, t\right) dt + 
+    b^z \left(Z_t, c_y, \Theta, t\right) d W_0 (\Theta, t)\;+{}\\
+    {}+
+    \int\limits_{R_0^q} c^z\left(Z_t, c_y, \Theta, t, v\right) 
+    P^0 (\Theta, dt, dv)\,,\label{e4.2-s}
+    \end{multline}
+где $c_y \hm= \{c_j\}$~--- вектор параметров ортогонального разложения п.в.\
+ СтП~$Y_t$;
+ \begin{equation}
+ \left.
+ \begin{array}{rl}
+    a^z &= a^z( Z_t, c_y, \Theta, t) = {}\\[6pt]
+    &\hspace*{-5mm}{}=
+    \fr{1}{\sqrt{c_2}} a \left( Z_t \sqrt{c_2} + c_1 ,\Theta, t\right) - 
+    Z_t \fr{\dot c_2}{2 c_2} - \fr{\dot c_1}{\sqrt{c_2}}\,;
+\\[9pt]
+    b^z &= b^z\left( Z_t\sqrt{c_2}+c_1,  \Theta, t\right) ={}\\[6pt]
+    &\hspace*{19mm}{}= 
+\fr{1}{\sqrt{c_2}}\, b \left( Z_t \sqrt{c_2} + c_1 ,\Theta, t\right);
+    \\[6pt]
+    c^z&= c^z\left( Z_t \sqrt{c_2}+ c_1, \Theta, t, v\right)\,. 
+    \end{array}
+    \right\}
+    \label{e4.3-s}
+   \end{equation}
+   
+  % \vspace*{-12pt}
+   
+   %\noindent
+  % \begin{multline*}
+  %  a^z=a^z\left( Z_t, c_y, \Theta, t\right)={}\\
+  %  {}= 
+  %  \fr{1}{\sqrt{c_2}}\, a \left( Z_t \sqrt{c_2} + c_1 ,\Theta, t\right) - 
+  %  Z_t \fr{\dot c_2}{2 c_2} - \fr{\dot c_1}{\sqrt{c_2}}\,,
+%\end{multline*}
+%\begin{equation}
+ %   b^z = b^z\left( Z_t,c_y,  \Theta, t\right) = 
+  %  \fr{1}{\sqrt{c_2}}\, b \left( Z_t \sqrt{c_2} + c_1 ,\Theta, t\right)\,.
+  %  \label{e4.5-s}
+  %  \end{equation}
+
+При применении приближенного метода нормальной аппроксимации (МНА)~[1], 
+когда $c^y\hm=\{c_1, c_2\}$ в силу~(\ref{e4.2-s}) и~(\ref{e4.3-s}) 
+используются сле\-ду\-ющие уравнения для~$c_1$ и~$c_2$:
+
+\noindent
+  \begin{equation}
+  \dot c_1 = A^{c_1} (c_1, c_2,\Theta, t);\enskip 
+    \dot c_2 = A^{c_2} (c_1, c_2,\Theta, t),\label{e4.6-s}
+    \end{equation}
+где $A^{c_1}$ и~$A^{c_2}$ известные функции отмеченных функций.
+
+4.3. При вычислении п.в.\ переменной $Z\hm=Z_t$ согласно теоремам~1 и~2 
+интервал разложения можно принять равным $3\ldots5$. 
+Пользуясь известной формулой вычисления линейной фукнции случайного аргумента~[1], 
+получим искомую п.в.:
+\begin{equation*}
+f(y,\Theta)= \fr{1}{\sqrt{c_2}}\,
+     f_z \left( \fr{y-c_1}{\sqrt{c_2}} \right)\,,
+     %\label{e4.7-s}
+     \end{equation*}
+где $f_z$~--- п.в.\ переменной~$Z_t$. При этом~$c_1$ 
+и~$c_2$ определяются из~(\ref{e4.6-s}).
+
+
+
+%\smallskip
+
+\noindent
+\textbf{Замечание~4.1.}
+В случае СтС~(\ref{e2.1-s}), когда применяется нелинейная замена переменных  
+$z\hm= \varphi
+ (Y_t, t)$, в качестве параметров~$c^y$ выбираются коэффициенты 
+ортогонального разложения одномерной п.в.; уравнения для~$Z_t$ составляются 
+путем применения обобщенной формулы Ито~[1] для СтС~(\ref{e2.1-s}).
+
+
+%\smallskip
+
+\noindent
+\textbf{Замечание~4.2.}
+Для дифференциальных СтС описанные практические способы выбора интерполяционных формул 
+и~чисел отсчетов сохраняют силу.
+
+\vspace*{-12pt}
+
+
+\section{Заключение}
+
+\vspace*{-2pt}
+
+
+\noindent
+\begin{enumerate}[5.1.]
+\item Для сложных непрерывных и дискретных скалярных и приводимых к ним векторным 
+СтС разработаны методы ИАМ. Рассмотрены типовые классы сложных СтС. Разработанные методы 
+основаны на интерполяционном решении эволюционного уравнения для одномерной 
+х.ф. Получены уравнения для оценки чувствительности х.ф.\ к параметрам СтС.
+\item
+ В основу базовых алгоритмов ИАМ (теоремы~1--4) положены 
+теорема отсчетов Котельникова. Рассмотрены практические вопросы выбора 
+интерполяционных формул Котельникова и оценки количества интерполяционных отсчетов.
+\item
+ Для СтС с известной аналитической природой в качестве 
+дальнейшего развития следует рассмотреть применение сплайн-вейв\-лет методов
+ для офлайн алгоритмов, а~для онлайн алгоритмов фильтрационных подходов~[1]. 
+ При этом особое внимание следует уделить многомерным распределениям.
+\end{enumerate}
+
+\vspace*{-12pt}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+ 
+ \vspace*{-2pt}
+
+
+\bibitem{1-sin}
+\Au{Пугачёв В.\,С., Синицын И.\,Н.}
+Теория стохастических систем.~--- М.: Логос, 2000; 2004. 1000~с.
+%[Англ. пер. Stochastic Systems. Theory and  Applications. --
+%Singapore: World Scientific, 2001. 908~p.].
+
+\bibitem{2-sin}
+\Au{Мальчиков С.\,В.}
+Приближенный метод определения законов распределения фазовых координат 
+нелинейных\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+ автоматических систем~// Автоматика и~телемеханика, 1970. №\,5. С.~43--50.
+
+\bibitem{3-sin}
+\Au{Казаков И.\,Е., Мальчиков С.\,В.}
+Анализ стохастических систем в пространстве состояний.~--- М.: Наука, 1983. 348~с.
+
+\bibitem{4-sin}
+\Au{Котельников В.\,А.}
+Теория потенциальной помехоустойчивости.~--- М.: Госэнергоиздат, 1956. 412~с.
+
+\bibitem{5-sin}
+\Au{Синицын И.\,Н.}
+Метод интерполяционного аналитического моделирования одномерных распределений 
+в~стохастических системах~// Информатика и её применения, 
+2018. Т.~12. Вып.~1. С. 56--62.
+
+\columnbreak
+
+\bibitem{6-sin}
+Справочник по теории вероятностей и~математической статистике~/ 
+Под ред.\ В.\,С.~Королюка, Н.\,И.~Портенко, А.\,В.~Скорохода, А.\,Ф.~Турбина.~--- 
+М.: Наука, 1985. 640~с.
+
+
+
+\bibitem{7-sin}
+\Au{Евланов Л.\,Г., Константинов~В.\,М.}
+Системы со случайными параметрами.~--- М.:
+Наука,  1976.  585~с.
+
+
+\bibitem{8-sin}
+\Au{Корн Г., Корн~Т.}
+Справочник по  математике (для научных работников и~инженеров)~/
+Пер с~англ.~--- 
+М.: Наука, 1974. 832~с.
+(\Au{Korn~G., Korn~T.} 
+Mathematical handbook for scientists and engineers.~--- 
+New York\,--\,San Francisco\,--\,Toronto\,--\,London\,--\,Sydney:
+McGraw Hill Book Co., 1968. 1147~p.)
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Поступила в~редакцию 16.08.18}}
+
+\vspace*{5pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{INTERPOLATONAL ANALYTICAL MODELING\\
+ IN~COMPLEX STOCHASTIC SYSTEMS}
+
+\def\titkol{Interpolatonal analytical modeling in complex stochastic systems}
+
+\def\aut{I.\,N.~Sinitsyn}
+
+\def\autkol{I.\,N.~Sinitsyn}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+\noindent
+Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the 
+Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{6pt}
+
+
+\Abste{Methods and algorithms for interpolational analytical modeling 
+(IAM) of stochastic processes in complex continuous and discrete stochastic systems 
+(StS) which are scalar (or vector StS reducible to scalar) are developed. 
+Several types of continuous and discrete StS are considered. The IAM methods 
+are based on evolutionary equations numerical interpolation solution 
+for one-dimensional characteristic function (c.f.). Special attention is paid to 
+c.f.\ sensitivity analysis. In basic IAM algorithms,  
+the Kotel'nikov theorem was implemented. Some practical questions concerning 
+interpolational formulae and number of intervals for interpolation are 
+discussed. In the future, IAM for StS with known analytical structure 
+for offline modeling will be based on spline-wavelet methods and for 
+online modeling~--- on filtration approaches. 
+Special attention should be paid to multidimensional distributions.}
+
+
+\KWE{one-dimensional characteristic functions (c.f.);
+one-dimensional probability density (p.d.);
+stochastic processes (StP);
+stochastic system (StS)}
+
+\DOI{10.14357/19922264190101}
+
+%\vspace*{-14pt}
+
+%\Ack
+%\noindent
+
+
+
+
+\vspace*{-6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+\bibitem{1-s-1}
+\Aue{Pugachev, V.\,S., and I.\,N.~Sinitsyn.} 2000, 2004.
+Teoriya stokhasticheskikh sistem [Stochastic systems: Theory and  applications]. 
+Moscow: Logos. 1000~p.  %[Angl. per. . -- Singapore: World Scientific, 2001].
+
+\bibitem{2-s-1}
+\Aue{Mal'chikov, S.\,V.} 1970.
+Priblizhennyy metod opredeleniya zakonov raspredeleniya fazovykh koordinat 
+nelineynykh avtomaticheskikh sistem [Approximate method for phase coordinates 
+analysis in nonlinear control systems]. 
+\textit{Automat. Rem. Contr.}
+5:43--50.
+
+\bibitem{3-s-1}
+\Aue{Kazakov, I.\,E., and S.\,V.~Mal'chikov.} 1983.
+\textit{Analiz sto\-kha\-sti\-che\-skikh sistem v~prostranstve sostoyaniy} [Stochastic 
+systems analysis in state space]. Moscow: Nauka. 348~p.
+
+\bibitem{4-s-1}
+\Aue{Kotel'nikov, V.\,A. } 1956.
+\textit{Teoriya potentsial'noy po\-me\-kho\-us\-toy\-chi\-vosti} [Theory of potential noiseproof]. 
+Moscow: Gosenergoizdat. 412~p.
+
+\bibitem{5-s-1}
+\Aue{Sinitsyn, I.\,N.} 2018. Metod interpolyatsionnogo ana\-li\-ti\-che\-sko\-go 
+modelirovaniya odnomernykh raspredeleniy v~stokhasticheskikh sistemakh 
+[Method of interpolational analytical modeling of processes in stochastic systems]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 12(1):56--62.
+
+\bibitem{6-s-1}
+Korolyuk, V.\,S., N.\,I.~Portenko, A.\,V.~Skorokhod, and A.\,F.~Turbin, eds. 1985.
+\textit{Spravochnik po teorii veroyatnostey v~matematicheskoy statistike}
+[Handbook on probability theory and mathematical statistics]. 
+ Moscow: Nauka. 640~p.
+ 
+\bibitem{7-s-1} 
+\Aue{Evlanov, L.\,G., and V.\,M.~Konstantinov.} 1976.
+\textit{Sistemy so sluchaynymi parametrami} [Systems with random parameters]. Moscow:
+Nauka.  585~p.
+
+\bibitem{8-s-1}
+\Aue{Korn, G., and T.~Korn.} 1968.
+\textit{Mathematical handbook for scientists and engineers}. 
+New York\,--\,San Francisco\,--\,Toronto\,--\,London\,--\,Sydney:
+McGraw Hill Book Co. 1147~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received August 16, 2018}}
+
+%\pagebreak
+
+\vspace*{-24pt}
+
+
+
+\Contrl
+
+\noindent
+\textbf{Sinitsyn Igor N.} (b.\ 1940)~--- 
+Doctor of Science in technology, professor, Honored scientist of RF, 
+principal scientist, Institute of Informatics Problems, 
+Federal Research Center ``Computer Science and Control'' 
+of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, 
+Russian Federation; \mbox{sinitsin@dol.ru}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}       

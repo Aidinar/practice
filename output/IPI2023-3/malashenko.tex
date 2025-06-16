@@ -1,0 +1,728 @@
+\def\stat{malashenko}
+
+\def\tit{АНАЛИЗ ЗАГРУЗКИ МНОГОПОЛЬЗОВАТЕЛЬСКОЙ СЕТИ  ПРИ~РАСЩЕПЛЕНИИ ПОТОКОВ 
+ПО~КРАТЧАЙШИМ МАРШРУТАМ}
+
+\def\titkol{Анализ загрузки многопользовательской сети  при~расщеплении потоков 
+по кратчайшим маршрутам}
+
+\def\aut{Ю.\,Е.~Малашенко$^1$, И.\,А.~Назарова$^2$}
+
+\def\autkol{Ю.\,Е.~Малашенко, И.\,А.~Назарова}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Малашенко Ю.\,Е.}
+\index{Назарова И.\,А.}
+\index{Malashenko Yu.\,E.}
+\index{Nazarova I.\,A.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнена с~использованием инфраструктуры Центра коллективного пользования <<Высокопроизводительные вы\-чис\-ле\-ния и~большие данные>> 
+%(ЦКП <<Информатика>>) ФИЦ ИУ РАН (г.~Москва).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, \mbox{malash09@ccas.ru}}
+\footnotetext[2]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, \mbox{irina-nazar@yandex.ru}}
+
+
+\vspace*{-12pt}
+
+
+\Abst{В~рамках вычислительных экспериментов на многопродуктовой 
+сетевой модели изуча\-ют\-ся два способа передачи потоков различных видов  по 
+крат\-чай\-шим марш\-ру\-там. В~первом случае пе\-ре\-да\-ва\-емые межузловые потоки рав\-ны по 
+величине.  В~другом~---  определяется не\-диск\-ри\-ми\-ни\-ру\-ющее распределение,   при 
+котором  всем  парам корреспондентов  выделяются одинаковые ресурсы. Суммарная  
+за\-груз\-ка ребер сети, воз\-ни\-ка\-ющая при одновременной передаче  всех  межузловых 
+информационных потоков, считается заданной.  Предложенный  метод позволяет 
+получить  гарантированные оценки  удель\-ных за\-трат  ресурсов сети  и~предельно 
+до\-пус\-ти\-мых  за\-гру\-зок  ребер  при одновременной   передаче рас\-щеп\-лен\-ных   
+межузловых потоков по всем  найденным крат\-чай\-шим марш\-ру\-там.
+Приводятся результаты сравнительного анализа урав\-ни\-тель\-но\-го  рас\-пре\-де\-ле\-ния 
+потоков и~ресурсов  в~сетях  с~различными структурными  особенностями. 
+Ал\-го\-рит\-ми\-че\-ская  схема имеет полиномиальную оценку  тре\-бу\-емо\-го чис\-ла операций.}
+
+
+\KW{многопродуктовая потоковая модель; распределение 
+межузловых потоков и~на\-гру\-зок; предельная за\-груз\-ка сети}
+
+\DOI{10.14357/19922264230305}{NLUSQJ}
+  
+%\vspace*{-4pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+Данная работа продолжает исследование проб\-лем управ\-ле\-ния потоками 
+в~телекоммуникационных территориально рас\-пре\-де\-лен\-ных сис\-те\-мах \mbox{связи}~[1--3]. 
+В~рамках вы\-чис\-ли\-тель\-ных экспериментов на многопродуктовой сетевой модели 
+анализируются ре\-зуль\-ти\-ру\-ющие за\-груз\-ки ребер при урав\-ни\-тель\-ном способе 
+распределения потоков. Под межузловой на\-груз\-кой понимается суммарная \mbox{величина} 
+про\-пуск\-ных способностей, вы\-де\-ля\-емых в~сети
+для обеспечения передачи информационного потока определенного вида. Сумма всех 
+дуговых потоков раз\-ных видов, проходящих по некоторому реб\-ру, трактуется как 
+\textit{реберная загрузка}. Общая до\-пус\-ти\-мая за\-груз\-ка ребер сети, воз\-ни\-ка\-ющая при 
+одновременной передаче межузловых информационных потоков для всех пар 
+корреспондентов, считается заданной.
+
+Анализируются две стратегии управ\-ле\-ния и~диспетчерские правила марш\-ру\-ти\-за\-ции. 
+В~первом \mbox{случае} осуществляется распределение межузловых потоков, рав\-ных друг 
+другу,  во втором~--- определяется не\-диск\-ри\-ми\-ни\-ру\-ющее распределение, при котором  
+всем  парам корреспондентов  выделяются одинаковые ресурсы. При передаче каж\-до\-го 
+вида потока по всем крат\-чай\-шим марш\-ру\-там проводится оценка удельных за\-трат. 
+Анализ результатов экспериментов поз\-во\-ля\-ет оценить распределение \textit{реберных 
+загрузок} для описанных стратегий управ\-ле\-ния в~многопользовательских сетях с~различными структурными особенностями.
+
+При создании, развитии и~эксплуатации те\-ле\-ком\-му\-ни\-ка\-ци\-он\-ных сис\-тем
+в~на\-сто\-ящее время используются потоковые модели~[4]. В~част\-ности, указанные 
+модели применяются для поиска стратегий управ\-ле\-ния и~по\-стро\-ения диспетчерских 
+правил рас\-пре\-де\-ле\-ния потоков, на\-гру\-зок и~ресурсов в~многопользовательских сетях~[5, 6]. 
+В~русле исследований по разработке SPLIT-ме\-то\-дов~[7--10] лежат 
+пред\-став\-лен\-ные в~разд.~2--4 ал\-го\-рит\-ми\-че\-ские схемы вы\-рав\-ни\-ва\-ния нагрузок 
+и~получения урав\-ни\-тель\-ных распределений межузловых потоков по раз\-лич\-ным марш\-ру\-там. 
+В~данной работе используются процедуры поиска всех крат\-чай\-ших путей 
+с~полиномиальными оцен\-ка\-ми вы\-чис\-ли\-тель\-ных за\-трат~[11]. 
+
+\section{Математическая модель}
+
+Для описания многопользовательской сетевой сис\-те\-мы связи  воспользуемся 
+сле\-ду\-ющей математической за\-писью модели передачи многопродуктового потока.
+Сеть~$G$ задается \mbox{множествами}  $\langle V, R,  U, P \rangle$:
+узлов (вершин) сети  $V \hm= \{ v_1, v_2, \ldots, v_n, \ldots, v_N \}$;
+неориентированных ребер $R \hm= \{ r_1, r_2,  \ldots, r_k,  \ldots, r_E \}$;
+ориентированных дуг  $U = \{ u_1, u_2, \ldots, u_k, \ldots, u_{2E}\}$;
+пар уз\-лов-кор\-рес\-пон\-ден\-тов $P \hm= \{ p_1, p_2,  \ldots, p_M\}$.
+Предполагается, что в~сети отсутствуют пет\-ли и~сдво\-ен\-ные реб\-ра.
+В~многопользовательской сети~$G$ рас\-смат\-ри\-ва\-ет\-ся $M \hm= N (N\hm-1)$ независимых, 
+не\-взаи\-мо\-за\-ме\-ня\-емых и~рав\-но\-прав\-ных межузловых потоков различных ви\-дов.
+
+Ребро $r_k \hm\in R$ со\-еди\-ня\-ет \textit{смеж\-ные} вершины~$v_{n_k}$ и~$v_{j_k}$.
+Каж\-до\-му реб\-ру~$r_k$ ставятся в~соответствие две ориентированные дуги~$u_k$ 
+и~$u_{k+E}$ из множества~$U$.
+Дуги $\{u_k, u_{k+E}\}$ определяют прямое и~обрат\-ное на\-прав\-ле\-ние передачи потока 
+по  реб\-ру~$r_k$ меж\-ду концевыми вершинами $v_{n_k}$ и~$v_{j_k}$.
+
+Каждой паре узлов-кор\-рес\-пон\-ден\-тов~$p_m$ из множества~$P$ ставятся в~соответствие:
+вер\-ши\-на-ис\-точ\-ник с~номером~$s_m$,  из~$s_m$  входной поток $m$-го вида по\-сту\-па\-ет в~сеть;
+вер\-ши\-на-при\-ем\-ник с~номером~${t_m}$, из~${t_m}$ поток $m$-го вида покидает сеть.
+Обозначим через~$z_m$ величину \textit{межузлового} потока $m$-го вида, по\-сту\-па\-юще\-го в~сеть через 
+узел с~номером~$s_m$ и~по\-ки\-да\-юще\-го сеть из узла с~номером~$t_m$;
+$x_{mk}$ и~$x_{m(k + E)}$~---  поток $m$-го вида, который передается по дугам~$u_k$ и~$u_{k + E}$ со\-глас\-но на\-прав\-ле\-нию передачи, 
+$x_{mk} \hm\ge 0$, $x_{m(k + E)}\hm\ge 0$, $m \hm= \overline{1, M}$, $k \hm= \overline {1, E}$;
+$S(v_n)$~--- множество номеров исходящих дуг, по ним поток покидает узел~$v_n$;
+$T(v_n)$~--- множество номеров входящих дуг, по ним поток по\-сту\-па\-ет в~узел~$v_n$.
+Со\-став множеств~$S(v_n)$ и~$T(v_n)$ однозначно формируется в~ходе выполнения 
+сле\-ду\-ющей процедуры. Пусть некоторое реб\-ро $r_k \hm\in R$ соединяет вершины 
+с~номерами~$n$ и~$j$, такими что $n\hm < j$. Тогда ориентированная дуга $u_k \hm= (v_n, v_j)$, 
+на\-прав\-лен\-ная из вершины~$v_n$ в~$v_j$, считается \textit{исходящей} из 
+вершины~$v_{n}$ и~ее номер~$k$ заносится в~множество~$S(v_n)$, а~дуга~$u_{k+E}$, 
+на\-прав\-лен\-ная из~$v_j$ в~$v_n$,~--- \textit{входящей} для~$v_{n}$ и~ее номер $k\hm+E$ помещается в~список~$T(v_n)$.
+Дуга~$u_k$ является \textit{входящей} для~$v_j$, и~ее номер~$k$ попадает 
+в~$T(v_j)$, а~дуга~$u_{k+E}$~--- \textit{исходящей}, и~номер $k+E$ вносится в~список ис\-хо\-дя\-щих дуг~$S(v_j)$.
+
+Во всех узлах сети $v_n \in V$, $n = \overline{1,N}$,  для каж\-до\-го вида потока долж\-ны 
+выполняться условия со\-хра\-не\-ния потоков:
+\begin{multline}
+\sum\limits_{i \in S(v_n)}{x_{mi}} - \sum\limits_{i \in T(v_n)}{x_{mi}} ={}\\
+{}=
+\begin{cases}
+ z_m, & \mbox{если\ } v_n = v_{s_m}; \\
+- z_m, & \mbox{если\ } v_n = v_{t_m}; \\
+ 0 & \mbox{в\ остальных\ случаях,}
+\end{cases}
+\\
+n = \overline {1, N}\,, \enskip m = \overline {1, M}\,, \enskip x_{mi} \ge 0\,, \enskip z_m \ge 0\,.
+\label{e1-ms}
+\end{multline}
+Величина $z_m$ равна входному межузловому потоку $m$-го вида, проходящему от 
+источника к~приемнику пары~$p_m$ при рас\-пре\-де\-ле\-нии  потоков~$x_{mi}$ по дугам 
+\mbox{сети}.
+
+Каждому ребру $r_k \in R$ приписывается не\-от\-ри\-ца\-тель\-ное чис\-ло~$d_k$, 
+опре\-де\-ля\-ющее суммарный предельно до\-пус\-ти\-мый поток, который мож\-но передать по 
+реб\-ру~$r_k$ в~обоих на\-прав\-ле\-ни\-ях. Компоненты век\-то\-ра про\-пуск\-ных способностей   
+$\mathbf{d} \hm= (d_1, d_2,  \ldots, d_k,  \ldots, d_E)$~--- положительные чис\-ла $d_k \hm> 0$.  
+Век\-тор~$\mathbf{d}$ задает сле\-ду\-ющие ограничения на сумму потоков всех видов, 
+пе\-ре\-да\-ва\-емых по реб\-ру~$r_k$ од\-но\-вре\-менно:
+\begin{multline}
+\sum\limits_{m=1}^{M} {(x_{mk}+ x_{m(k+E)})} \le d_k,  \\
+ x_{mk} \ge 0\,, \enskip 
+x_{m(k+E)} \ge 0\,, \enskip  k =\overline{1, E}\,. 
+\label{e2-ms}
+\end{multline}
+Ограничения~(\ref{e1-ms}) и~(\ref{e2-ms}) задают вы\-пук\-лое многогранное множество  до\-пус\-ти\-мых значений 
+компонент вектора межузловых по\-токов
+$\mathbf{z} \hm= (z_1, z_2,  \ldots, z_m,  \ldots, z_M)$:
+\begin{multline*}
+\mathcal{Z}(\mathbf{d}) ={}\\
+{}= \{\mathbf{z} \ge 0 \ |\  \exists\, \mathbf{x} \ge 0: \ 
+(\mathbf{z}, \mathbf{x})  \mbox{ удовлетворяют}\ (1), (2)\}.
+\end{multline*}
+
+В рамках данной модели про\-пуск\-ная спо\-соб\-ность ребер сети измеряется в~условных 
+единицах потока и~трак\-ту\-ет\-ся как \textit{ресурсное} огра\-ни\-че\-ние. Суммарное значение 
+про\-пуск\-ной спо\-соб\-ности сети
+$ D(0) \hm= \sum\nolimits_{k=1}^{E} d_k$ считается заданным.
+Для каждой пары уз\-лов-кор\-рес\-пон\-ден\-тов $p_m \hm\in P$, для некоторого до\-пус\-ти\-мо\-го 
+межузлового потока~$\tilde{z}_m$ и~со\-от\-вет\-ст\-ву\-ющих дуговых потоков~$\tilde{x}_{mk}$, 
+ $k \hm= \overline{1, 2E}$, ве\-ли\-чина
+$$
+\tilde{y}_m = \sum\limits_{i=1}^{2E} \tilde{x}_{mi}, \quad m = \overline{1, M}\,,
+$$
+характеризует \textit{нагрузку} на сеть  при передаче  межузлового потока величиной~$\tilde{z}_m$ 
+из уз\-ла-ис\-точ\-ни\-ка~$s_m$  в~узел-при\-ем\-ник~$t_m$. 
+Величина~$\tilde{y}_m$ показывает, какая суммарная про\-пуск\-ная спо\-соб\-ность сети 
+по\-тре\-бу\-ет\-ся для передачи дуговых потоков~$\tilde{x}_{mk}$. В~рамках модели 
+отношение реберных и~межузловых потоков
+$ \tilde{w}_m \hm= {\tilde{y}_m}/{\tilde{z}_m}$,  $m \hm= \overline{1, M},$
+мож\-но трак\-то\-вать как удельные \textit{затраты}  ресурсов сети при передаче 
+единичного   потока $m$-го вида меж\-ду узлами~$s_m$ и~$t_m$ при  дуговых потоках~$\tilde{x}_{mi}$.
+Величины $\overline {z}_m \hm= \tilde{z}_m/\tilde{y}_m$ и~$\overline{x}_{mi} \hm= \tilde{x}_{mi}/ \tilde{y}_m$, 
+ $m \hm= \overline{1, M}$,  $i \hm= \overline{1, E}$, соответствуют межузловому 
+потоку при единичной на\-груз\-ке для пары~$p_m$.
+
+Вводится величина $\tilde{\Delta}_k$, ха\-рак\-те\-ри\-зу\-ющая ре\-бер\-ную суммарную 
+\textit{загрузку} (РС-за\-груз\-ку) $k$-го ребра при одновременной передаче всех межузловых 
+потоков~$\tilde{z}_m$:
+$$
+\tilde{\Delta}_k = \sum\limits_{m=1}^{M} \left(\tilde{x}_{mk}+ \tilde{x}_{m(k+E)}\right),  \quad  k =\overline{1, E}\,.  
+$$
+
+\section{Распределение межузловых потоков по~кратчайшим маршрутам}
+
+Для оценки минимальных удельных затрат при различных урав\-ни\-тель\-ных стратегиях 
+управ\-ле\-ния использовалась SFSR-про\-це\-ду\-ра (\textit{англ}.\ split flow shortest 
+route~--- рас\-щеп\-ле\-ние потока по всем крат\-чай\-шим маршрутам), которая
+поз\-во\-ля\-ет распределять межузловые потоки по марш\-ру\-там, со\-сто\-ящим из минимального 
+чис\-ла ре\-бер.
+
+При проведении эксперимента на пер\-вом этапе для каж\-дой пары узлов $p_m \hm= (s_m, t_m)$ в~сети~$G(0)$ 
+определяется множество всех крат\-чай\-ших путей, которые далее 
+используются как марш\-ру\-ты передачи $m$-го вида потока
+$$
+H^0(m) = \left\{ h^1(m), h^2(m), \ldots, h^j(m), \ldots, h^{J(m)}(m)\right\}\!.
+$$ 
+
+\vspace*{-3pt}
+
+\noindent
+Здесь $h^j(m)\hm = 
+\{k_1^j(m), \ k_2^j(m),  \ldots, k_{\mu(m)}^j(m)\}$~--- список номеров ребер в~$j$-м крат\-чай\-шем пути меж\-ду узлами~$s_m$ и~$t_m$,  
+где $\mu(m)$~--- чис\-ло ребер в~кратчайшем маршруте~$h^j(m)$; $J(m)$~--- чис\-ло 
+крат\-чай\-ших марш\-ру\-тов для $m$-й \mbox{пары}.
+
+Для оценки возможности <<расщепления>>  потока по раз\-лич\-ным марш\-ру\-там на пер\-вом 
+этапе для каж\-дой пары $p_m \hm\in P$ по каж\-до\-му маршруту~$h^j(m)$ из~$H^0(m)$ 
+передается межузловой поток $z_m^j \hm= 1$. Под\-счи\-ты\-ва\-ет\-ся величина~$z_m^0$, 
+чис\-лен\-но рав\-ная сумме единичных потоков, которые одновременно передаются по всем 
+крат\-чай\-шим маршрутам из узла~$s_m$ в~узел~$t_m$:  
+$$
+z_m^0 = \sum\limits_{j=1}^{J(m)} z_m^j = J(m)\,.
+$$
+
+\vspace*{-3pt}
+
+
+Вычисляется нормирующий коэффициент 
+$$
+\xi_m^0 = \fr{1}{z_{m}^0}\,,\enskip z_{m}^0 \not = 0\,,\enskip m = \overline{1, M}\,,
+$$
+
+\vspace*{-3pt}
+
+\noindent
+ значения индикаторной \mbox{функции}
+$$ 
+\eta_k^j(m) = \begin{cases}
+ 1, & \mbox{если}\ r_k \in R, \enskip k \in h^j(m)\,; \\
+ 0 & \mbox{в\ остальных\ случаях}
+\end{cases} 
+$$
+
+\vspace*{-3pt}
+
+\noindent
+и подсчитываются реберные за\-грузки
+$$
+\Delta_k^0(m) = \xi_m^0 \sum\limits_{j=1}^{J(m)} \eta_k^j(m), \enskip  m = \overline{1, M}\,, \enskip k =\overline{1, E}\,,
+$$
+
+\vspace*{-3pt}
+
+\noindent
+которые возникнут при передаче единичного межузлового потока из узла~$s_m$ в~узел~$t_m$ одновременно по всем крат\-чай\-шим марш\-ру\-там из~$H^0(m)$.
+
+В ходе вы\-чис\-ли\-тель\-ных экспериментов предполагалось, что суммарная за\-груз\-ка всех ребер сети не может превышать~$D(0)$. Для 
+заданного~$D(0)$ под\-счи\-ты\-ва\-ют\-ся предельно до\-пус\-ти\-мые РС-за\-грузки:
+$$
+\alpha^{**}(0) \sum\limits_{m=1}^{M} \Delta_k^0(m)  = \Delta_k^{*}(z), \quad
+\sum\limits_{k=1}^{E} \Delta_k^{*}(z) = D(0). 
+$$
+
+Реберные суммарные загрузки~$\Delta_k^{*}(z)$ возникают в~сети при одновременной передаче  межузловых потоков
+$ z_m^{**} \hm= \alpha^{**}(0)$ для всех пар $p_m \hm\in P$ и~суммарного межузлового 
+потока $\sum\nolimits_{m=1}^{M} z_m^{**} \hm= M \alpha^{**}(0)$.
+
+Для оценки РС-за\-гру\-зок при \textit{уравнительном } рас\-пре\-де\-ле\-нии ре\-зуль\-ти\-ру\-ющих 
+межузловых на\-гру\-зок для всех пар уз\-лов $p_m \hm\in P$  так\-же используется SFSR-про\-це\-ду\-ра. 
+На первом этапе определяются ре\-бер\-ные за\-груз\-ки для $m\hm = \overline{1, M}$ и~$k \hm= \overline{1, E}$ 
+при передаче единичных потоков по всем крат\-чай\-шим марш\-ру\-там из~$H^0(m)$, $m \hm= \overline{1, M}$. 
+Для каж\-дой пары $p_m \hm\in P$ вы\-чис\-ля\-ют\-ся на\-грузки
+$$ 
+y_m^0 = \sum\limits_{k=1}^{E} \sum\limits_{j=1}^{J(m)} \eta_k^j(m) = \mu(m)J(m), \quad m = \overline{1, M}\,, 
+$$
+нормирующие коэффициенты
+$$
+ \theta_m^0 = \fr{1}{y_m^0}\,,\enskip  y_m^0 \not = 0\,,\enskip  m = \overline{1, M}\,,
+ $$
+и \textit{загрузки}
+$$
+\Delta_k^0(m) = \theta_m^0 \sum\limits_{j=1}^{J(m)} \eta_k^j(m), \enskip  m = \overline{1, M}\,, \enskip 
+k =\overline{1, E}\,,
+$$
+при которых по всем марш\-ру\-там~$H^0(m)$, $m \hm= \overline{1, M}$, ре\-зуль\-ти\-ру\-ющие 
+межузловые нагрузки $y_m^1 \hm= \theta_m^0 y_m^0$ будут рав\-ны единице. Определяются РС-за\-грузки
+$$
+\beta^{**}  \sum\limits_{j=1}^{M} \Delta_k^0(m) = \Delta_k^{*}(y), \quad
+ \sum\limits_{k=1}^{E}  \Delta_k^{*}(y) = D(0) 
+ $$
+и межузловые потоки
+$$
+z_m\left(y^{**}\right) = \beta^{**}\theta_m^0 z_{m}^0,\enskip m = \overline{1, M}\,.
+$$ 
+
+
+
+   
+\section{Вычислительный эксперимент}
+
+Вычислительный эксперимент проводился на моделях сетевых сис\-тем, пред\-став\-лен\-ных 
+на рис.~1. В~каж\-дой сети~69~узлов. В~ходе вы\-чис\-ли\-тель\-но\-го эксперимента 
+проводилась нормировка, и~суммарная про\-пуск\-ная спо\-соб\-ность в~обеих сетях была 
+оди\-на\-кова:
+$$
+\sum\limits_{k=1}^{E} \Delta_k^*(\cdot) = D(0)= 68\,256\,.
+$$
+
+Результаты вычислительных экспериментов с~использованием SFSR-про\-це\-ду\-ры 
+пред\-став\-ле\-ны\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\end{multicols}
+
+\begin{figure*} %fig1
+\vspace*{1pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=153.408mm 
+\epsfbox{mash-1.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Результирующие реберные за\-груз\-ки в~базовой~(\textit{а}) и~в~кольцевой~сети~(\textit{б})}
+%\end{figure*}
+%\begin{figure*} %fig2
+\vspace*{6pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=163mm 
+\epsfbox{mash-3.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Распределение ре\-бер\-ных за\-гру\-зок в~базовой~(\textit{а}) и~в~кольцевой~сети~(\textit{б})}
+\end{figure*}
+
+\begin{table*}\small
+\vspace*{6pt}
+\begin{center}
+\begin{tabular}{|l|c|c|c|c|} 
+\multicolumn{5}{p{98mm}}{Значения потоков и загрузок в базовой и кольцевой сети (SFSR-cтра\-те\-гия)}\\
+\multicolumn{5}{c}{\ }\\[-6pt]
+\hline
+ \multicolumn{1}{|c|}{Сеть} &  \tabcolsep=0pt\begin{tabular}{c} Медиана\\  потоков\end{tabular} & 
+   \tabcolsep=0pt\begin{tabular}{c} Сумма\\ межузловых\\ потоков\end{tabular} & 
+   \tabcolsep=0pt\begin{tabular}{c}Удельные\\ затраты\end{tabular} &  
+ \tabcolsep=0pt\begin{tabular}{c}   Норма вектора\\ РС-загрузок\end{tabular}\\
+    \hline
+    Базовая & &&&\\
+      \hspace*{5mm}$z^{**}$   & 1,85& \hphantom{9}8\,670& 7,9& 9210\\
+      \hspace*{5mm}$z(y^{**})$ & 1,82& 12\,810& 5,3& 9000\\
+      \hline
+     Кольцевая &&&&\\
+     \hspace*{5mm}$z^{**}$   &  2,5\hphantom{9}& 11\,750& 5,8& 9520\\
+         \hspace*{5mm}$z(y^{**})$  & 2,4\hphantom{9}& 15\,650& 4,4& 9160\\
+        \hline
+    \end{tabular}
+    \end{center}
+    \vspace*{-9pt}
+    \end{table*}
+
+
+\begin{multicols}{2}
+
+
+\noindent
+ на рис.~1 и~2. В~таб\-ли\-це и~на рис.~1 значения потоков и~за\-гру\-зок 
+указаны в~единицах потока, а~на рис.~2~--- в~относительных единицах. По 
+завершении экспериментов на осно\-ве полученных значений $\Delta_k^*(z)$ 
+(за\-груз\-ки сети при урав\-ни\-тель\-ном рас\-пре\-де\-ле\-нии межузловых потоков) 
+и~$\Delta_k^*(y)$ (загрузок при урав\-ни\-тель\-ном распределении межузловых на\-гру\-зок) вы\-чис\-ля\-ют\-ся
+
+ \vspace*{-4pt}
+ 
+ \noindent
+\begin{multline*}
+\Delta_{\min}(z) = \min_k\{\Delta_k^*(z)\}, \enskip
+ \Delta_{\min}(y) =  \min_k\{\Delta_k^*(y)\},\\
+    k= \overline{1, E}\,;
+\end{multline*}
+
+\vspace*{-15pt}
+
+\columnbreak
+
+\noindent
+\begin{multline*}
+\delta_k(z) = \fr{\Delta_k^*(z)}{\Delta_{\min}(z)}, \enskip
+ \delta_k(y) = \fr{\Delta_k^*(y)}{\Delta_{\min}(y)}, \\[4pt]
+  k= \overline{1, E},\enskip \Delta_{\min}(\cdot) \not = 0\,.
+\end{multline*}
+
+ %\vspace*{-22pt}
+
+ 
+
+
+Результирующие диаграммы пред\-став\-ле\-ны на рис.~2. На диаграммах по 
+вертикальной оси откладываются значения~$\delta_k(\cdot)$ (упорядоченные по
+не\-воз\-рас\-та\-нию), а~по горизонтальной ука\-зы\-ва\-ют\-ся порядковые номера ре\-бер в~данной 
+упорядоченной по\-сле\-до\-ва\-тель\-ности $\pi(k) \hm= k/E$  для $k \hm= \overline{1, E}$, где $E \hm= 
+72$~--- чис\-ло ребер для базовой сети (см.\ рис.~2,\,\textit{а}) и~$E \hm= 80$~--- для кольцевой (см.\ рис.~2,\,\textit{б}). 
+Значения $\delta_k(\cdot) \hm= 1$ в~правой час\-ти диаграммы относятся к~реб\-рам, 
+инцидентным висячим узлам, а~в~левой час\-ти диаграммы~--- к~реб\-рам с~максимальной за\-груз\-кой.
+{\looseness=1
+
+}
+
+Схематичные изображения сетей на рис.~1 соответствуют рас\-пре\-де\-ле\-нию 
+относительных за\-гру\-зок~$\delta_k(\cdot)$ на реб\-рах сети. В~базовой сети (см.\ рис.~1,\,\textit{а}) 
+наибольшая за\-груз\-ка на коль\-це и~реб\-рах, исходящих из цент\-ра сети. В~кольцевой 
+сети (см.\ рис.~1,\,\textit{б}) максимальная за\-груз\-ка приходится на дополнительные реб\-ра 
+внут\-рен\-не\-го коль\-ца и~на реб\-ра, со\-еди\-ня\-ющие внеш\-нее кольцо с~внут\-рен\-ним. В~обеих 
+сетях единичная относительная за\-груз\-ка на висячих реб\-рах соответствует 
+собственным информационным потокам при отсутствии тран\-зит\-ных.
+{\looseness=1
+
+}
+
+
+Результаты, собранные в~таб\-ли\-це, свидетельствуют о~том, что как суммарное, так 
+и~медианное значение межузловых потоков значительно больше в~коль\-це\-вой сети при 
+рав\-ной сум\-мар\-ной допустимой за\-груз\-ке в~обеих сетях.
+Удельные за\-тра\-ты на передачу потоков при рав\-ных межузловых на\-груз\-ках достигают 
+минимального значения в~кольцевой сети. Медианные значения реберной за\-груз\-ки 
+в~базовой сети на~50\% больше, чем в~кольцевой. 
+
+
+%\vspace*{-6pt}
+
+\section{Заключение}
+
+%\vspace*{-6pt}
+
+В работе анализируются распределения реберных за\-гру\-зок и~проводится оценка 
+удельных за-\linebreak трат ресурсов при одновременной передаче межузловых потоков разных 
+видов и~урав\-ни\-тель\-ном\linebreak способе управ\-ле\-ния. Полученные значения медиан  
+распределений межузловых потоков мож\-но интерпретировать как пред\-ста\-ви\-тель\-ные 
+оценки функциональных возможностей сети в~условиях не\-опре\-де\-лен\-ности, 
+не\-вза\-и\-мо\-за\-ме\-ня\-е\-мости потоков и~\mbox{рав\-но\-прав\-ности} корреспондентов. Все межузловые 
+потоки, не пре\-вы\-ша\-ющие медианных значений,
+мож\-но передать в~сети одновременно. В~кольцевой сети удельные за\-тра\-ты на 
+передачу потоков и~медианные значения ре\-бер\-ных загрузок значительно меньше, чем 
+в~базовой. Сред\-ние показатели удельных за\-трат позволяют
+оценивать эф\-фек\-тив\-ность использования ресурсов при изменении структуры \mbox{сети}.
+
+Предложенный метод расщепления потоков по всем крат\-чай\-шим марш\-ру\-там дает 
+воз\-мож\-ность анализировать за\-груз\-ку сети с~учетом рас\-щеп\-ле\-ния каж\-до\-го вида 
+потока. Полученные агрегированные показатели для узлов сети могут быть 
+использованы при по\-стро\-ении марш\-рут\-но-ад\-рес\-ных таб\-лиц, подготовке графиков 
+обходов и~замен для работы в~аварийных режимах и~при критически опас\-ных 
+по\-вреж\-де\-ниях.
+
+Описанный метод позволяет проводить пред\-ва\-ри\-тель\-ную оцен\-ку проекта сети, 
+по\-стро\-ен\-ной на базе арендованных каналов связи при со\-хра\-не\-нии их общего чис\-ла. 
+Вы\-чис\-ли\-тель\-ные эксперименты показали, что изменение структуры и~за\-груз\-ки ребер 
+при переходе от базовой к~кольцевой поз\-во\-ля\-ет значительно увеличить межузловые 
+потоки, хотя общее чис\-ло арен\-ду\-емых каналов совпадает в~обеих се\-тях. 
+
+%\vspace*{-6pt}
+
+{\small\frenchspacing
+ { %\baselineskip=12pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+    
+    \bibitem{Mal22-5} %1
+    \Au{Малашенко~Ю.\,Е., Назарова~И.\,А.} Оцен\-ка 
+предельных рас\-пре\-де\-ле\-ний  пропускной спо\-соб\-ности в~многопользовательской сети 
+при  передаче  межузловых потоков  по кратчайшим  марш\-ру\-там~// Известия РАН. 
+Тео\-рия и~сис\-те\-мы управ\-ле\-ния, 2022. №\,5. С.~79--89.
+
+\bibitem{Mal22-3}  %2
+\Au{Малашенко~Ю.\,Е., На\-за\-ро\-ва~И.\,А.} Анализ 
+рас\-пре\-де\-ле\-ния на\-груз\-ки и~межузловых потоков при различных стратегиях  
+марш\-ру\-ти\-за\-ции  в~многопользовательской сети~// Известия РАН. Тео\-рия и~сис\-те\-мы 
+управ\-ле\-ния, 2022. №\,6. С.~112--122.
+    
+    \bibitem{Mal23-2} %3
+    \Au{Малашенко~Ю.\,Е., На\-за\-ро\-ва~И.\,А.} 
+Срав\-ни\-тель\-ный анализ стратегий  управ\-ле\-ния потоками в~многопользовательской 
+телекоммуникационной сети~// Известия РАН. Тео\-рия и~сис\-те\-мы управ\-ле\-ния, 2023.  
+№~2. С.~164--176.
+    
+    \bibitem{Salimifard2020}  %4
+    \Au{Salimifard~K., Bigharaz~S.} The 
+multicommodity network flow problem: State of the art classification, 
+applications, and solution methods~// Operational Research, 2020. Vol.~22. Iss.~1.  P.~1--47.
+doi: 10.1007/s12351-020-00564-8.
+    
+    \bibitem{Luss2012}  %5
+    \Au{Luss H.} Equitable resource allocation: 
+Models, algorithms, and applications.~--- Hoboken, NJ, USA: John Wiley \& Sons, 
+2012. 376~p.
+    
+    \bibitem{Balakrishnan2017}   %6
+    \Au{Balakrishnan~A., Li~G., Mirchandani~P.}  
+    Optimal network design with end-to-end service requirements~// Oper. Res., 
+2017. Vol.~65. Iss.~3. P.~729--750. doi: 10.1287/opre. 2016.1579.
+    
+    
+    
+    \bibitem{Caramia10}  %7
+    \Au{Caramia M., Sgalambro~A.} A~fast heuristic 
+algorithm for the maximum concurrent k-splittable flow problem~// Optim. Lett., 
+2010. Vol.~4. Iss.~1. P.~37--55. doi: 10.1007/s11590-009-0147-4.
+
+
+    
+    \bibitem{Kabadurmus2016}   %8
+    \Au{Kabadurmus~O., Smith~A.\,E.}  
+Multicommodity k-splittable survivable network design problems with relays~// 
+Telecommun. Syst., 2016. Vol.~62. Iss.~1. P.~123--133. doi: 10.1007/s11235-015-0067-9.
+
+\bibitem{Bialon2017}  %9
+    \Au{Bialon P.} A~randomized rounding approach 
+to a~\mbox{k-splittable} multicommodity flow problem with lower path flow bounds 
+affording solution quality guarantees~// Telecommun. Syst., 2017. Vol.~64. 
+Iss.~3. P.~525--542.  doi: 10.1007/s11235-016-0190-2.
+
+\bibitem{Melchiori20}   %10
+\Au{ Melchiori~A., Sgalambro~A.} A~branch and price 
+algorithm to solve the quickest multicommodity k-splittable flow problem~// 
+Eur. J. Oper. Res., 2020. Vol.~282. Iss.~3. P.~846--857. doi: 10.1016/j.ejor.2019.10.016.
+    
+    \bibitem{Kormen} %11
+     \Au{Кормен~Т.\,Х., Лей\-зер\-сон~Ч.\,И., Ри\-вест~Р.\,Л., Штайн~К.} 
+    Ал\-го\-рит\-мы: по\-стро\-ение и~анализ~/ Пер. с~англ.~--- М.: Вильямс, 2005. 1296~с.
+    (\Au{Cormen~T.\,H., Leiserson~C.\,E., Rivest~R.\,L., Stein~C.}
+{Introduction to algorithms}.~--- 2nd ed.~--- Cambridge, London: The MIT Press,  2001.\linebreak  1180~p.)
+    \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-11pt}
+
+\hfill{\small\textit{Поступила в~редакцию 31.05.23}}
+
+\vspace*{6pt}
+
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+\vspace*{-2pt}
+
+\def\tit{MULTIUSER NETWORK LOAD ANALYSIS BY~SPLITTING FLOWS ALONG~THE~SHORTEST ROUTES\\[-4pt]}
+
+
+\def\titkol{Multiuser network load analysis by~splitting flows along~the~shortest routes}
+
+
+\def\aut{Yu.\,E.~Malashenko and I.\,A.~Nazarova}
+
+\def\autkol{Yu.\,E.~Malashenko and I.\,A.~Nazarova}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-14pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov
+Str., Moscow 119333, Russian Federation
+
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{2pt}
+
+
+
+
+
+\Abste{In computational experiments on a~multicommodity network model, two ways of transmitting flows of different types along shortest routes
+ are investigated. In the first case, the transmitted internodal flows are equal in magnitude.  In the other~--- 
+ a~nondiscriminatory distribution is defined in which all pairs of nodes are distributed the same resources. 
+ The total load of the network edges resulting from the simultaneous transmission of all internodal flows is considered to be given. 
+ The proposed method allows one to obtain guaranteed estimates of the specific resource costs of the network and the maximum feasible load 
+ of the edges while transmitting split internodal flows along the shortest routes found. The results of a comparative analysis of 
+ the equalization distribution of flows and resources in networks with different structural 
+features are given. The algorithmic scheme has a~polynomial estimate of the required number of operations. } 
+
+
+\KWE{multicommodity flow model; distribution of internodal flows and loads; network peak load}
+
+\DOI{10.14357/19922264230305}{NLUSQJ}
+
+%\vspace*{-20pt}
+
+%\Ack
+%\noindent
+
+  
+
+\vspace*{-6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {\baselineskip=10.5pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99} 
+ 
+ \bibitem{Mal22-5-1} %1
+\Aue{Malashenko, Y.\,E., and I.\,A.~Nazarova.}
+ 2022. Estimate of resource distribution with the shortest paths in the multiuser network. 
+ \textit{J.~Comput. Sys. Sc. Int.} 61(4):599--610. doi: 10.1134/S106423072204013X.
+
+\bibitem{Mal22-3-1}    %2
+\Aue{Malashenko, Y.\,E., and I.\,A.~Nazarova.}
+ 2022. Analysis of the load distribution and internodal flows under different routing strategies in a~multiuser network. 
+ \textit{J.~Comput. Sys. Sc. Int.} 61(6): 970--980. doi: 10.1134/ S1064230722060132.
+    
+
+    
+\bibitem{Mal23-2-1} %3
+\Aue{Malashenko, Y.\,E., and I.\,A.~Nazarova.}
+ 2023. Quantitative analysis of flow distributions in a~multi-user telecommunication network. 
+ \textit{J.~Comput. Sys. Sc. Int.} 62(2):\linebreak 324--335.
+    
+\bibitem{Salimifard2020-1}  %4
+\Aue{Salimifard, K., and S.~Bigharaz.}
+  2020. The multicommodity network flow problem: State of the art classification, applications, and solution methods.
+   \textit{Operational Research} 22(1):1--47. doi: 10.1007/s12351-020-00564-8.
+    
+\bibitem{Luss2012-1}   %5
+\Aue{Luss, H.} 
+2012. \textit{Equitable resource allocation: Models, algorithms, and applications}. Hoboken, NJ: John Wiley \&~Sons. 376~p.
+    
+\bibitem{Balakrishnan2017-1}   %6
+\Aue{Balakrishnan, A., G.~Li, and P.~Mirchandani.}
+ 2017. Optimal network design with end-to-end service requirements. \textit{Oper. Res.} 65(3):729--750. doi: 10.1287/opre.2016.1579.
+    
+
+    
+\bibitem{Caramia10-1} %7
+\Aue{Caramia, M., and A.~Sgalambro.} 
+2010. A~fast heuristic algorithm for the maximum concurrent k-splittable flow problem. 
+\textit{Optim. Lett.} 4(1):37--55. doi: 10.1007/s11590-009-0147-4.
+
+
+    
+\bibitem{Kabadurmus2016-1} %8
+  \Aue{Kabadurmus, O., and A.\,E.~Smith.}
+   2016. Multicommodity k-splittable survivable network design problems with relays. 
+   \textit{Telecommun. Syst.} 62(1):123--133. doi: 10.1007/ s11235-015-0067-9.
+   
+   \bibitem{Bialon2017-1} %9 
+\Aue{Bialon, P.} 2017. A~randomized rounding approach to a~k-splittable multicommodity flow problem 
+with lower path flow bounds affording solution quality guarantees.
+ \textit{Telecommun. Syst.} 64(3):525--542. doi: 10.1007/s11235-016-0190-2.
+   
+   \bibitem{Melchiori20-1} %10
+\Aue{Melchiori, A., and A.~Sgalambro.} 
+2020. A~branch and price algorithm to solve the quickest multicommodity \mbox{k-splittable} flow problem. 
+\textit{Eur. J. Oper. Res.} 282(3):846--857. doi: 10.1016/j.ejor.2019.10.016.
+    
+\bibitem{Kormen-1}   %11
+\Aue{Cormen, T.\,H., C.\,E.~Leiserson, R.\,L.~Rivest, and C.~Stein.}
+ 2001. \textit{Introduction to algorithms}. 2nd ed. Cambridge, London: The MIT Press.  1180~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Received May 31, 2023}} 
+
+\vspace*{-22pt}
+  
+
+
+\Contr
+
+\vspace*{-4pt}
+
+\noindent
+\textbf{Malashenko Yuri E.} (b.\ 1946)~--- 
+Doctor of Science in physics and mathematics, principal scientist, Federal Research Center ``Computer Science and Control'' 
+of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{malash09@ccas.ru} 
+
+%\vspace*{3pt}
+
+\noindent
+\textbf{Nazarova Irina A.} (b.\ 1966)~--- Candidate of Science (PhD) in physics and mathematics, scientist, 
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{irina-nazar@yandex.ru}
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

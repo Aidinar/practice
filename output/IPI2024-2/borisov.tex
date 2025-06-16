@@ -1,0 +1,818 @@
+\newcommand {\ff}{{\mathcal F}}
+\newcommand {\ppp}{{\mathcal P}}
+\newcommand {\col}{\mathop{\mathrm{col}}\,}
+\newcommand {\qqq}{{\mathcal Q}}
+\newcommand{\me}[2]{\mathsf{E}_{ #1 }\left\{ \mathop{#2} \right\} }
+\newcommand {\row}{\mathop{\mathrm{row\,}}}
+
+
+\def\stat{borisov}
+
+\def\tit{РЫНОК С МАРКОВСКОЙ СКАЧКООБРАЗНОЙ ВОЛАТИЛЬНОСТЬЮ V: ПОПОЛНЕНИЕ РЫНКА ДЕРИВАТИВАМИ$^*$}
+
+\def\titkol{Рынок с~марковской скачкообразной волатильностью V: пополнение рынка деривативами}
+
+\def\aut{А.\,В.~Борисов$^1$}
+
+\def\autkol{А.\,В.~Борисов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Борисов А.\,В.}
+\index{Borisov A.\,V.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнялась с~использованием инфраструктуры Центра коллективного пользования <<Высокопроизводительные вы\-чис\-ле\-ния и~большие данные>> 
+(ЦКП <<Информатика>>) ФИЦ ИУ РАН (г.~Москва).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{aborisov@frccsc.ru}}
+
+
+\vspace*{-6pt}
+
+
+
+
+\Abst{Пятая, заключительная часть цикла посвящена задаче пополнения рынка с~марковской скачкообразной сменой режимов. 
+Рынок включает в~себя безрисковый банковский депозит с~известной неслучайной процентной ставкой, 
+а~также набор базовых рисковых активов. Мгновенные процентные ставки и~волатильности этих активов представляют собой функции 
+скрытого фактора смены режимов, описываемого некоторым марковским скачкообразным процессом (МСП) с~конечным множеством состояний. 
+Целью статьи ставится пополнение предложенного рынка. Оно означает добавление некоторого набора новых финансовых инструментов 
+таким образом, что выплаты по любому платежному требованию, сформированному на рынке, могут быть воспроизведены 
+с~помощью некоторого самофинансируемого портфеля, содержащего исходные и~добавленные инструменты. Доказано, что для пополнения
+рынка к~исходному множеству активов достаточно добавить
+деривативы европейского типа, построенные на уже представленных на рынке базовых рисковых активах.
+При этом число добавляемых деривативов совпадает с~числом режимов рынка. Задача пополнения рынка имеет неединственное решение, 
+и~в~статье приведено сравнение предложенного способа с~уже существующим.}
+
+
+\KW{марковский скачкообразный процесс; портфель ценных бумаг; свойство самофинансирования; полнота рынка}
+
+\DOI{10.14357/19922264240202}{DQFSDO}
+  
+%\vspace*{-6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+\section{Введение}
+
+Предметом исследования заключительной заметки цикла~\cite{B_23_1_IA, B_23_2_IA, B_23_3_IA, B_23_4_IA} 
+стала модель рынка, состоящего из безрискового банковского депозита и~набора базовых рисковых активов. 
+Мгновенная \mbox{процентная} ставка и~волатильность этих активов зависят от режима рынка, описываемого некоторым 
+ненаблюдаемым МСП. Рынки такого типа считаются неполными~\cite{Criens_20}, 
+так как содержат <<не\-тор\-гу\-емый>> (\textit{nontradable}) случайный процесс~\cite{Fouque_00}. 
+Этот факт усложняет теоретическое и~практическое решение задач определения справедливых цен деривативов, 
+хеджирования и~оптимального инвестирования. Одним из на\-прав\-ле\-ний сокращения не\-опре\-де\-лен\-ности в~данных моделях  стало 
+оценивание режима рынка по имеющейся статистической информации: журналам заявок на по\-куп\-ку/про\-да\-жу 
+финансовых инструментов (базовых и~производных), а~так\-же цен проведенных сделок. Предыду\-щие час\-ти цик\-ла~\cite{B_23_1_IA, B_23_3_IA, B_23_4_IA} 
+содержали результаты исследований в~этой об\-ласти.
+
+Другой способ сокращения данной неопределенности~--- 
+пополнение рынка. Эта процедура означает добавление к~уже имеющимся на рынке некоторых дополнительных инструментов, несущих информацию 
+о~неторгуемых процессах. Пополненный набор инструментов должен давать возможность воспроизводить выплаты по любым платежным 
+требованиям, которые можно определить на рынке. Именно задаче пополнения рынка посвящена эта заметка.
+
+Статья организована следующим образом. В~разд.~2 
+приведено детальное описание модели исследуемого рынка. Раздел~3 содержит необхо\-димые определения портфельных инвестиций,\linebreak 
+а~также %\linebreak 
+постановку задачи пополнения рынка. Раздел~4~--- основной в~данной работе: 
+он представляет\linebreak набор деривативов европейского типа от су\-щест\-ву\-ющих рисковых активов, пригодный для пополнения рынка. 
+В~разд.~4 также приводится сравнение данного набора деривативов со \mbox{скачкообразными} финансовыми инструментами, предложенными 
+в~\cite{Courcuera_05, ZhangElliottSiuGuo_11} с~аналогичной целью. Раздел~5 содержит выводы по проведенным исследованиям.
+
+
+\vspace*{-2pt}
+
+\section{Исследуемая модель рынка}
+
+На вероятностном базисе с~фильтрацией $(\Omega, \ff, \ppp, \{\ff_t\}_{t \in [0,T]})$ рассматривается модель финансового рынка, изначально состоящего
+из банковского вклада 
+
+\noindent
+$$
+B_t = \exp \left( \int\limits_0^t r_u\,d_u\right)
+$$ 
+с~детерминированной ставкой~$r_t$
+и~$N$ базовых рисковых инструментов 
+$$
+S_t = \col(S_t^1,\ldots,S_t^N).
+$$
+
+Цена $S_t $  описывается стохастической дифференциальной сис\-те\-мой (СДС)
+  \begin{multline}
+  dS_t = \mathrm{diag}\, S_t a(t,Z_t)\,dt + \mathrm{diag}\, S_t \sigma(t,Z_t)\,dw_t,\\
+   t \in (0,T], \ S_0 \sim p_0(s),
+  \label{eq:S_sys_P}
+  \end{multline}
+  где $w_t \triangleq \col (w_t^1,\ldots,w_t^N)$~--- $N$-мер\-ный винеровский процесс, 
+  а~случайные функции мгновенной процентной ставки~$a$ и~внутренней во\-ла\-тиль\-ности~$\sigma$  имеют вид
+  $$
+  a(t,Z_t) = \sum\limits_{\ell=1}^L Z_t^{\ell} a^{\ell}(t);\enskip
+  \sigma(t,Z_t) = \sum\limits_{\ell=1}^L Z_t^{\ell}  \sigma^{\ell}(t)
+  $$
+с~набором известных детерминированных функций $\{ a^{\ell}(t)\}_{\ell=\overline{1,L}}$  и~$\{\sigma^{\ell}(t)\}_{\ell=\overline{1,L}}$: 
+$$
+a^{\ell}(t) \triangleq \col(a_1^{\ell}(t), \ldots,a_N^{\ell}(t) );
+\sigma^{\ell}(t) = \|\sigma_{ij}^{\ell}(t)\|_{i,j=\overline{1,N}}.
+$$
+
+
+В функциях $a(\cdot)$ и~$\sigma(\cdot)$  $Z_t \triangleq \col(Z_t^1, \ldots, Z_t^L) \hm\in \{e_1,\ldots, e_L\}$~--- МСП 
+с~мат\-ри\-цей интенсивностей переходов~$\Lambda(\cdot)$ и~начальным распределением~$p_0^Z$. 
+Марковский скачкообразный процесс~$Z_t$ пред\-став\-ля\-ет собой решение СДС с~мартингалом $M_t \hm= \col(M_t^1, \ldots, M_t^L)$ в~правой части~\cite{ElliottAggounMoore_08}:
+\begin{equation}
+  dZ_t = \Lambda^{\top}(t)Z_t\,dt + dM_t,\enskip t \in (0,T], \ Z_0 \sim p_0^Z.
+  \label{eq:Z_sys}
+  \end{equation}
+
+Для вероятностного базиса с~фильтрацией и~модели~(\ref{eq:S_sys_P}), (\ref{eq:Z_sys}) выполнены следующие предположения.
+\begin{enumerate}[1.]
+\item
+С вероятностью 1 траектории процесса~$Z_t$ непрерывны справа и~имеют конечные пределы слева~\cite{liptser2012theory}.
+\item
+$\ff_t = \sigma \{S_0,\;w_u,\;Z_u: \;0 \leqslant u \hm\leqslant t\}$ для любых $t \hm\in [0,T]$.
+\item
+Для некоторого $\alpha \hm> 0$ неравенство
+$\sigma^{\ell}(t)\left( \sigma^{\ell}(t)\right)^{\top} \hm\geqslant \alpha I$ выполняется для всех $t\hm \in [0,T]$ и~$\ell\hm = \overline{1,L}$.
+\item
+$\mathcal{P}\{S_0 > 0\} =1$.
+\item
+$p_0^Z = \col (p_0^{Z,1},\ldots,p_0^{Z,L})$: $\enskip \min_{1 \leqslant \ell \leqslant L}p_0^{Z,\ell} \hm>0$.
+\item
+Начальные условия $S_0$ и~$Z_0$ независимы.
+\end{enumerate}
+
+Несмотря на технический характер, предположения~1--6 необременительны и~имеют очевидный смысл. Предположения~1, 2 и~6 
+гарантируют непрерывность справа потока $\{\ff_t\}$~--- стандартное требование для правомерного применения математического аппарата
+ стохастического анализа. Предположение~2 также означает, что вся случайность на рынке порождается
+только начальным условием~$S_0$, процессами~$w$ и~$Z$. Совместно с~предположением~3 оно также обеспечивает совпадение фильтраций
+$$
+\ff_t \equiv \sigma\{ S_u, \; Z_u: \; 0 \leqslant u \leqslant t\}, \enskip t \in [0,T].
+$$
+Предположение~4 с~вероятностью~1 гарантирует положительность цен базовых рисковых активов в~любой момент времени. 
+Предположение~5 обеспечивает строгую положительность всех компонентов вектора распределения~$p_t^Z$ МСП~$Z$ при $t \hm\in [0,T]$.
+
+\section{Задача пополнения рынка}
+
+Для корректной постановки задачи пополнения исследуемой модели рынка необходимо ввес\-ти ряд дополнительных определений~\cite{shiryaev1999essentials}. 
+Пусть $\mathcal{S}_t \triangleq \sigma \{ S_u: \; 0 \hm\leqslant u \hm\leqslant t \}$~--- естественный поток $\sigma$-ал\-гебр, порожденный 
+ценами базовых финансовых инструментов. Он задает структуру информации, доступной трейдерам для выработки торговых стратегий~--- портфелей ценных бумаг.
+Заметим, что для любого $t \hm\in [0,T]$ в~исследуемой модели рынка выполняется строгое включение $\mathcal{S}_t \hm\subset \ff_t$, причем поток $\sigma$-ал\-гебр
+$\{\mathcal{S}_t\}$ не обладает свойством непрерывности справа в~отличие от~$\{\ff_t\}$. С~прикладной точки зрения это значит, 
+что не все случайные процессы, влияющие на рынок, доступны трейдерам в~форме цен тех или иных бумаг: имеется неторгуемый МСП~$Z_t$. 
+Данный процесс не является ценой ка\-кой-ли\-бо бумаги, но скрыто влияет на цены~$S_t$ исходных инструментов.
+
+\textit{Портфелем} ценных бумаг называется пара $(\varpi, \pi)$, где
+\begin{itemize}
+\item
+$\varpi \triangleq\{\varpi_t\}_{t \in [0,T]}$, $\varpi_t \in \mathbb{R}$,~--- 
+скалярный $\mathcal{S}_t$-пред\-ска\-зу\-емый случайный процесс, определяющий объем средств, вложенных в~банковский депозит;
+\item
+$\pi \triangleq\{\pi_t\}_{t \in [0,T]}, \; \pi_t \hm\in \mathbb{R}^N$,~--- $N$-мер\-ный $\mathcal{S}_t$-пред\-ска\-зу\-емый случайный 
+процесс $\pi_t \hm= \mathrm{row}\,(\pi_t^1, \ldots, \pi_t^N)$, определяющий число рисковых ценных бумаг каждого наименования, 
+входящих в~данный момент времени в~портфель.
+\end{itemize}
+При этом процесс
+$
+C_t \triangleq \varpi_t B_t + \pi_t S_t
+%\label{eq:eq_cap_1}
+$
+называется \textit{капиталом} портфеля $(\varpi, \pi)$.
+
+Портфель $C$ называется \textit{самофинансируемым}, если равенство
+\begin{equation*}
+C_t = \varpi_0  B_0 + \pi_0 S_0 + \int\limits_0^t \left(\varpi_u dB_u + \pi_u dS_u\right)
+%\label{eq:eq_cap_1}
+\end{equation*}
+выполняется для любого $t \hm\in [0,T]$.
+
+Рынок называется \textit{полным}, если для любого платеж\-но\-го требования~--- $\ff_T$-из\-ме\-ри\-мой 
+неотрицательной квадратично интегрируемой случайной величины~$q_T$~--- существует такой са\-мо\-фи\-нан\-си\-ру\-емый портфель $(\varpi, \pi)$, что
+\begin{multline*}
+C_T = \varpi_0  B_0 + \pi_0 S_0 + \int\limits_0^T \left(\varpi_u \,dB_u + \pi_u\, dS_u\right) ={}\\
+{}= q_T \enskip \ppp\mbox{-{п.~н.}}
+%\label{eq:eq_compl_1}
+\end{multline*}
+Полнота рынка означает, что любое платежное\linebreak средство на нем может быть воспроизведено с~помощью надлежащего выбора уже 
+имеющихся финансовых инструментов. Следует также подчеркнуть, что данное определение полноты \mbox{рынка}\linebreak предполагает воз\-мож\-ность 
+воспроизведения не только платежного требования <<европейского типа>>, т.\,е.\ $q_T (\omega) \hm= q_T (S_T(\omega))$, 
+но и~<<американского>>, <<азиатского>> и~прочих типов~\cite{wilmott_95}:
+$$
+q_T (\omega) = q_T (S_{[0,T]}(\omega)).
+$$
+
+Известно, что модель~(\ref{eq:S_sys_P}), (\ref{eq:Z_sys}) описывает неполный рынок~\cite{ZhangElliottSiuGuo_11}.
+\textit{Задача пополнения рынка} заключается в~определении на исследуемом стохастическом базисе дополнительных 
+финансовых инструментов таким образом, чтобы новая модель описывала полный рынок, 
+а~расширенный набор финансовых инструментов позволял воспроизводить любое платежное требование~$q_T$.
+
+\section{Выбор множества пополняющих деривативов}
+
+Прежде всего отметим, что в~случае $a^{\ell}(t) \hm\equiv a(t)$ и~$\sigma^{\ell}(t) \hm\equiv \sigma(t)$ для 
+любых $t \hm\in [0,T]$, $\ell \hm= \overline{1,L}$ модель~(\ref{eq:S_sys_P}), (\ref{eq:Z_sys}) превращается в~классическую модель
+ Блэ\-ка--Шо\-ул\-за~\cite{shiryaev1999essentials} и~рынок становится полным. 
+ В~этом частном случае и~мгновенная процентная ставка, и~волатильность рисковых активов становятся неслучайными и~известными трейдерам. 
+ В~общем же случае модели параметры~$a^{\ell}(\cdot)$ и~$\sigma^{\ell}(\cdot)$ для них скрыты. Идея пополнения рынка заключается
+  в~одновременном получении информации об~МСП~$Z$ и~построении дополнительных финансовых инструментов, позволяющих эту информацию использовать: 
+  по сути дела, торговать~ею.
+
+Один из вариантов пополнения рынка~(\ref{eq:S_sys_P}), (\ref{eq:Z_sys}) представлен в~работах~\cite{ZhangElliottSiuGuo_11, Courcuera_05}. 
+Пусть $J_t^{\ell}$~--- процесс, считающий число скачков МСП~$Z$ в~состояние~$e_{\ell}$, произошедших на отрезке времени $[0,t]$. 
+Данный процесс допускает следующее мартингальное разложение:
+$$
+J_t^{\ell} \hm= \int\limits_0^t \sum\limits_{i:\; i \neq \ell} \Lambda_{i\ell}(u)Z_u^i\, du \hm+
+\int\limits_0^t (1-Z_{u-}^{\ell})\,dM_u^{\ell}.
+%\label{eq:eq_jump_sec_1}
+$$
+Для пополнения рынка предлагалось ввести дополнительно~$L$ (по числу возможных режимов рынка) скачкообразных финансовых инструментов, связанных с~процессами~$J_t^{\ell}$. 
+Их цены описывались векторным процессом $G_t \triangleq \col(G_t^1,\ldots,G_t^L)$, компоненты которого имеют вид
+$$
+G_t^{\ell} =  \exp \left( \int\limits_0^t r_u\,du \right)
+\int\limits_0^t (1-Z_{u-}^{\ell})\,dM_u^{\ell},\enskip \ell = \overline{1,L}.
+$$
+%\label{eq:eq_jump_sec_2}
+В~\cite{ZhangElliottSiuGuo_11} доказано утверждение, согласно которому для каждого платежного требования~$q_T$ существует самофинансируемый 
+$\ff_t$-пред\-ска\-зу\-емый портфель $(\varpi, \pi, \Pi)$ ($\Pi_t \triangleq \row (\Pi_t^{1},\ldots, \Pi_t^{L})$), воспроизводящий~$q_T$:
+\begin{multline*}
+q_T = \varpi_0  B_0+ \pi_0 S_0 + \Pi_0 G_0 + {}\\
+{}+\int\limits_0^T \left(\varpi_u \,dB_u + \pi_u\, dS_u
++ \Pi_u\,dG_u\right) \ \ppp\mbox{-п.~н.}
+\end{multline*}
+Подобное пополнение рынка представляется искусственным. Во-пер\-вых, введение на рынок скачкообразных инструментов 
+предполагает доступность МСП~$Z$ точному наблюдению для всех \mbox{трейдеров}. Во-вто\-рых, 
+из определения новых инструментов следует, что цены~$G_t^{\ell}$ могут с~положительной вероятностью принимать отрицательные значения.
+
+В данной работе предлагается провести пополнение рынка более <<естественными>> финансовыми инструментами, представляющими собой 
+деривативы от уже имеющихся на рынке. Прежде всего заметим, что рынок~(\ref{eq:S_sys_P}), (\ref{eq:Z_sys})~--- безарбитражный~\cite{Criens_20}. 
+Это, в~свою очередь, обеспечивает существование на измеримом пространстве~$(\Omega, \ff)$ \textit{мартингальной} вероятностной меры~$\qqq$ ($\qqq \hm\sim \ppp$),
+относительно которой процесс цен $S_t$ описывается решением СДС
+ \begin{multline}
+  dS_t =r_t S_t \,dt + \mathrm{diag}\, S_t \sigma(t,Z_t)\,dw_t^{\qqq},\\
+  t \in (0,T], \ S_0 \sim p_0(s),
+  \label{eq:S_sys_Q}
+  \end{multline}
+  в~которой $w_t^{\qqq} \in \mathbb{R}^N$~--- $\ff_t$-со\-гла\-со\-ван\-ный винеровский процесс относительно~$\qqq$.
+
+  В силу неполноты рынка мартингальная мера~$\qqq$ не является единственной. Будем считать, что $\qqq$~--- одна из мартингальных мер, 
+  \textit{преобладающая}, для которой помимо представления~$S_t$ в~форме~(\ref{eq:S_sys_Q}) выполняется следующее условие.
+  \begin{enumerate}
+  \item[7.] Процесс $M_t$ является мартингалом относительно меры~$\qqq$.
+  \end{enumerate}
+  Цена $q_t$ платежного требования~$q_T$ в~момент времени $t \hm\in [0,T]$ служит дисконтированным условным средним
+ $$
+ q_t = e^{-\int\nolimits_t^T r_s\,ds}\me{\qqq}{q_T|\ff_t}.
+%\label{eq:F_1}
+$$
+  Процесс $\mu_t \triangleq \me{\qqq}{q_T|\ff_t}$, будучи $\ff_t$-со\-гла\-со\-ван\-ным $\qqq$-мар\-тин\-га\-лом, допускает разложение~\cite{Elliott_76}:
+\begin{equation}
+\mu_t = \mu_0 + \int\limits_0^t \xi_u \,dw_u^{\qqq}+  \int\limits_0^t \Xi_u \,dM_u,
+\label{eq:mu_1}
+\end{equation}
+в котором $\xi_t \triangleq
+\row (\xi_t^1,\ldots,\xi_t^N)$ и~$\Xi_t \triangleq\linebreak \triangleq
+\row (\Xi_t^1,\ldots,\Xi_t^L)$, $t \hm\in [0,T]$,~--- некоторые $\ff_t$-пред\-ска\-зу\-емые интегранды.
+
+Пусть $H(S_T)$~--- некоторое платежное требование, определяющее
+дериватив <<европейского типа>>, построенный на имеющихся базовых активах.
+Его цена~$F_t$ в~момент времени $t \hm\in [0,T]$ определяется формулой
+ $$
+F_t = e^{-\int\nolimits_t^T r_s\,ds}\me{\qqq}{H(S_T)|\ff_t}.
+%\label{eq:F_1}
+$$
+В~предположении, что существует детерминированная функция цены $F(t,s,z):[0,T] \times \mathbb{R}^N \times  \mathbb{S}^L$, 
+такая что $\overline{F}_t \hm =F(t,S_t(\omega), Z_t(\omega))$ $\ppp$-п.~н., в~\cite{B_23_1_IA} показано, что цена дериватива 
+выражается следующим образом:
+$$
+\overline{F}_t  =\sum\limits_{\ell=1}^L Z_t^{\ell}(\omega) F^{\ell}(t,S_t(\omega)).
+$$ 
+Здесь век\-тор-фун\-кция $F(t,s)  \triangleq \col (F^1(t,s),\ldots\linebreak \ldots,F^L(t,s))$ пред\-став\-ля\-ет собой 
+решение сле\-ду\-ющей сис\-те\-мы дифференциальных уравнений в~частных производных~--- 
+обобщения классического уравнения Блэ\-ка--Шо\-ул\-за (зависимость функций от своих аргументов опущена):
+\begin{equation}
+\left.
+\begin{array}{rl}
+\!\!\!\hspace*{-1mm}F_t^{\ell} &= \displaystyle rF^{\ell} \! - \!\! \sum\limits_{j=1}^L \!\Lambda_{\ell j}F^{j} \! - \!\! \sum\limits_{n=1}^N \!F_{s^n}^{\ell}s^n(r - a_n^{\ell}) \! - {}\\[6pt]
+&\hspace*{-1mm}\!\!\!\hspace*{-5mm}{}-\! \fr{1}{2} \!\sum\limits_{i,j=1}^N  \!\!F_{s^i,s^j}^{\ell}s^is^j b_{ij}^{\ell},\;\;  \ell=\overline{1,L}, \;\;
+t \in [0,T];\\[12pt]
+\!\!\!\hspace*{-1mm}F^{\ell}(T,s) &= H(s).
+\end{array}\!
+\right\}\!\!
+\label{eq:F_m_eq}
+\end{equation}
+В данной системе использовано следующее обозначение:
+$$
+\sigma^{\ell}(t) \left( \sigma^{\ell}(t) \right)^{\top}= b^{\ell}(t) = \|b_{ij}^{\ell}(t)\|_{i,j=\overline{1,L}}.
+$$
+При этом процесс~$F_t$ допускает следующий стохастический дифференциал относительно мартингальной меры~$\qqq$:
+\begin{multline}
+dF_t =
+r_tF_t\,dt + \sum\limits_{\ell=1}^L F^{\ell}(t,S_t)\,dM_t^{\ell} +{}\\
+{}+
+\sum\limits_{\ell=1}^L Z_t^{\ell} \nabla_s F^{\ell}(t,S_t) \mathrm{diag}\left(S_t\right)
+ \sigma^{\ell}(t)\,dw_t^{\qqq},
+ \label{eq:F_m_obs}
+\end{multline}
+где $
+\nabla_s F^{\ell} \triangleq \row \left(
+F_{s^1}^{\ell},\ldots, F_{s^N}^{\ell}
+\right)$.
+
+Для пополнения рынка введем дополнительно~$L$ деривативов, соответствующих следующему платежному требованию: $H(S_T) 
+\triangleq \col (H^1(S_T), \ldots\linebreak \ldots , H^L(S_T))$ ($T$~--- общая дата исполнения всех требований).
+Объединим цены в~векторный процесс $\overline{F}_t \triangleq \col (\overline{F}_t^1,\ldots,\overline{F}_t^L)$. 
+Относительно $H(\cdot)$ сделано следующее предположение.
+\begin{enumerate}
+\item[8.] Матрица
+\begin{equation*}
+\mathbf{F}(t,s) \triangleq
+\left[
+\begin{array}{cccc}
+F^{11}(t,s) & F^{12}(t,s) & \cdots & F^{1L}(t,s) \\
+F^{21}(t,s) & F^{22}(t,s) & \cdots & F^{2L}(t,s) \\
+\vdots & \vdots & \vdots & \vdots \\
+F^{L1}(t,s) & F^{L2}(t,s) & \cdots & F^{LL}(t,s)
+\end{array}
+\right]
+\end{equation*}
+невырождена почти везде на множестве \mbox{$[0,T] \times \mathbb{R}_+^{L}$}.
+\end{enumerate}
+
+ Заметим, что $k$-я строка матрицы $\mathbf{F}(t,s)$ $(F^{k1}(t,s) , F^{k2}(t,s) , \ldots , F^{kL}(t,s))$ представляет собой решение системы~(\ref{eq:F_m_eq})
+ с~терминальным условием $F^{k\ell}(T,s) \hm\equiv H^k(s)$ ($\ell \hm= \overline{1,L}$) и~эта строка полностью задает функцию цены $k$-го дериватива.
+
+Легко видеть, что предположение 8 гарантирует, что МСП
+$Z_t$ согласован с~фильтрацией {$\mathcal{S}_t \vee \overline{\mathcal{F}}_t$} 
+(здесь {$\overline{\mathcal{F}}_t \triangleq \sigma \{\overline{F}_u: \; 0 \hm\leqslant u\hm \leqslant t\}$}):
+\begin{equation}
+Z_t = \mathbf{F}^{-1}(t,S_t)\overline{F}_t
+\label{eq:Z_through_F}
+\end{equation}
+и, следовательно, при выполнении предположений~1--8 для любых  $t \hm\in [0,T]$ имеет место совпадение фильтраций
+ $\ff_t \hm\equiv \mathcal{S}_t \vee \overline{\mathcal{F}}_t$.
+ Поэтому стохастический дифференциал $\qqq$-мар\-тин\-га\-ла~$w^{\qqq}$ принимает вид:
+\begin{multline}
+dw_t^{\qqq} = \underbrace{
+\sum\limits_{\ell=1}^L \left( \mathbf{F}^{-1}(t,S_t)\overline{F}_t\right)^{\ell}
+(\sigma^{\ell})^{-1}(t) \mathrm{diag}^{-1} (S_t)}_{\triangleq \gamma_t} \times{}\\
+{}\times
+\left(dS_t - r_tS_t \,dt \right).
+\label{eq:w_Q_through_F}
+\end{multline}
+Из (\ref{eq:F_m_obs}) и~(\ref{eq:w_Q_through_F}) следует, что
+\begin{multline*}
+d\overline{F}_t^k = r_t\overline{F}_t^k dt  + \sum\limits_{\ell=1}^L F^{k\ell}(t,S_t)\,dM_t^{\ell} +{} \\ 
+{} +
+\underbrace{\sum\limits_{\ell=1}^L  \left( \mathbf{F}^{-1}(t,S_t)\overline{F}_t\right)^{\ell} \nabla_s F^{k\ell}(u, S_u)}_{\triangleq \Gamma_t^k} \;
+\!\left( dS_t-r_tS_t\,dt
+\right), \\
+k=\overline{1,L},
+%\label{eq:F_through_F}
+\end{multline*}
+и в~векторном виде эволюция цен деривативов описывается с~помощью следующей СДС (здесь $\Gamma_t\hm = \col(\Gamma_t^1, \ldots, \Gamma_t^L)$):
+ \begin{multline*}
+d\overline{F}_t = r_t\overline{F}_t\,dt + \mathbf{F}_t \,dM_t +
+\Gamma_t\left(
+dS_t-r_tS_t\,dt
+\right), \\
+\overline{F}_0\ \mbox{--- начальное условие.}
+%\label{eq:F_through_FF}
+\end{multline*}
+Таким образом, предположение~8 позволяет выразить мартингал~$M_t$, участвующий в~представлении МСП~$Z_t$:
+\begin{equation}
+dM_t = \mathbf{F}^{-1}_t \left[ d\overline{F}_t - r_t\overline{F}_t\,dt -\Gamma_t\left( dS_t-r_tS_t\,dt \right)
+\right]\!.\!
+\label{eq:M_through_SF}
+\end{equation}
+
+Вернемся к~мартингалу $\mu_t$~(\ref{eq:mu_1}),
+представляющему произвольное платежное требование, и~сконструируем для него воспроизводящий портфель 
+$(\pi_t,\Pi_t, \varpi_t)$, обладающий свойством самофинансирования. Векторный процесс $\pi_t 
+\triangleq \row (\pi_t^1, \ldots, \pi_t^N)$ описывает часть включенных в~портфель базовых активов, $\Pi_t 
+\triangleq \row (\Pi_t^1, \ldots, \Pi_t^L)$ выполняет ту же функцию для предложенных деривативов, 
+а~скалярный процесс~$\varpi_t$ определяет долю портфеля, находящуюся на банковском депозите. Выбор доли депозита в~портфеле
+\begin{equation}
+\varpi_t = \mu_t - B_t^{-1}(\pi_tS_t+\Pi_t\overline{F}_t)
+\label{eq:varpi}
+\end{equation}
+обеспечивает воспроизведение~$\mu_t$. Действительно, если~$C_t$~--- текущий капитал портфеля, то
+\begin{multline*}
+C_t = \varpi_t B_t +  \pi_tS_t+\Pi_t\overline{F}_t ={}\\
+{}= \left( \mu_t \!-\! B_t^{-1}(\pi_tS_t\! +\!\Pi_t\overline{F}_t)\right) B_t
+\!+\!  \pi_tS_t \!+\!\Pi_t\overline{F}_t\! =\!  \mu_t  B_t.
+\end{multline*}
+
+Рассмотрим прибыль портфеля и~преобразуем его, используя формулы~(\ref{eq:w_Q_through_F})--(\ref{eq:varpi}) и~интегрирование по частям:
+\begin{multline*}
+\Delta_t  \triangleq \int\limits_0^t \varpi_u r_u B_u\, du + \int\limits_0^t \left( \pi_u dS_u + \Pi_u \,d \overline{F}_u \right) = {}\\
+{} =
+\int\limits_0^t \left( \mu_u - B_u^{-1}(\pi_uS_u+\Pi_u\overline{F}_u) \right) r_u B_u \,du +{}
+\end{multline*}
+
+\noindent
+\begin{multline*}
+{}+
+  \int\limits_0^t \left( \pi_u\, dS_u + \Pi_u\, d \overline{F}_u \right) =
+\int\limits_0^t  \mu_u \,dB_u -{}\\
+{}- \! \int\limits_0^t \left( \pi_uS_u+\Pi_u\overline{F}_u \right) r_u \,du +
+\!\int\limits_0^t \left( \pi_u\, dS_u + \Pi_u \,d\overline{F}_u \right) = {} \\
+{} =
+\mu_t B_t -\mu_0 - \int\limits_0^t  B_u\, d\mu_u -
+\int\limits_0^t \left( \pi_uS_u+\Pi_u\overline{F}_u \right) r_u \,du +{}\\
+{}+ 
+\int\limits_0^t \left( \pi_u \,dS_u + \Pi_u\, d\overline{F}_u \right)  = 
+\mu_t B_t -\mu_0 -{}\\
+{}- 
+\!\int\limits_0^t \left( \pi_uS_u+\Pi_u\overline{F}_u \right) r_u\, du +
+\!\int\limits_0^t \left( \pi_u \,dS_u + \Pi_u \,d\overline{F}_u \right) - {} \\
+{} - \int\limits_0^t B_u \left[ \xi_u \gamma_u (dS_u-r_u S_u \,du) + {}\right.\\
+\left.{}+ \Xi_u \mathbf{F}^{-1}_u \left(
+d\overline{F}_u \!-\!r_u\overline{F}_u\,du \!-\! \Gamma_u(dS_u-r_u S_u \,du) \right) \right] ={} \\
+{} =
+\mu_t B_t -\mu_0 +
+\int\limits_0^t I_u^1 \,du + \int\limits_0^t I_u^2 \,dS_u +
+\int\limits_0^t I_u^3 \,d\overline{F}_u,
+\end{multline*}
+где
+\begin{align*}
+I_t^1 &\triangleq r_t \left\{ \left[
+B_t(\xi_t\gamma_t -\Xi_t\mathbf{F}^{-1}_t \Gamma_t) -\pi_t
+\right]S_t + {}\right.\\
+&\hspace*{25mm}\left.{}+\left[ B_t \Xi_t\mathbf{F}^{-1}_t - \Pi_t
+\right] \overline{F}_t
+\right\};
+\\
+I_t^2 &\triangleq
+\pi_t - B_t(\xi_t\gamma_t -\Xi_t\mathbf{F}^{-1}_t \Gamma_t);
+\\
+I_t^3 &\triangleq \Pi_t - B_t \Xi_t\mathbf{F}^{-1}_t.
+\end{align*}
+Легко проверить, что выбор долей
+$$
+\pi_t = B_t(\xi_t\gamma_t -\Xi_t\mathbf{F}^{-1}_t \Gamma_t),
+\enskip
+\Pi_t = B_t \Xi_t\mathbf{F}^{-1}_t
+$$
+гарантирует портфелю свойство самофинансирования:
+$$
+\Delta_t \hm= \mu_t B_t \hm- \mu_0.
+$$
+
+Таким образом, доказана
+
+
+\smallskip
+
+\noindent
+\textbf{Теорема~1.}\ 
+\textit{Если предположения}~1--8 \textit{верны, то рынок}~(\ref{eq:S_sys_P}), (\ref{eq:Z_sys}) 
+\textit{может быть пополнен набором~$L$ производных финансовых инструментов}.
+
+\section{Заключение}
+
+Представленный способ пополнения рынка позволяет сделать следующие выводы.
+\begin{enumerate}[1.]\item 
+Для пополнения использовались деривативы европейского типа, однако портфели, построенные на них и~имеющихся базовых активах, 
+позволяют воспроизводить платежные требования любого типа: американского, азиатского, бермудского и~пр. 
+\item Предложенный в~доказательстве портфель воспроизводит не только платежное требование в~момент погашения~$T$, 
+но и~всю траекторию цены этого требования на отрезке $[0,T]$. 
+\item Предложенные для пополнения инструменты выглядят более естественными, чем предложенные в~\cite{ZhangElliottSiuGuo_11, Courcuera_05}. 
+\end{enumerate}
+
+Вообще говоря, и~в~ци\-ти\-ру\-емых работах, и~в~данной заметке используется единый подход. Изначально рынок содержит скрытый случайный процесс, 
+недоступный наблюдению для участников рынка. Он порождает дополнительный риск, обладающий некоторой ценой. Далее на основе 
+этого процесса строятся некоторые инструменты с~наблюдаемыми ценами, которыми и~предлагается пополнить рынок. 
+В~\cite{ZhangElliottSiuGuo_11, Courcuera_05} в~качестве этих активов выступают мартингалы процессов, считающих 
+скачки МСП в~то или иное состояние. 
+
+Подобный выбор пред\-став\-ля\-ет\-ся не вполне естественным. Цены могут принимать отрицательные величины, 
+МСП является скрытым, и~с~практической точки зрения не вполне понятен источник наблюдений этого процесса. 
+Предложенный в~данной работе способ пополнения выглядит более привлекательно: в~качестве пополняющих используются <<естественные>> 
+деривативы европейского типа, по\-стро\-ен\-ные на име\-ющих\-ся на рынке базовых активах.
+{ %\looseness=1
+
+}
+
+Результаты, представленные в~данной заметке, имеют, на первый взгляд, лишь академический интерес. 
+Действительно, при выполнении предположения~8 скрытый режим рынка~$Z_t$ может быть\linebreak
+ восстановлен точно с~по\-мощью 
+элементарного алгебраического преобразования~(\ref{eq:Z_through_F}) без привлечения методов оптимальной нелинейной фильт\-ра\-ции~\cite{B_21_1_IA}. 
+Это означает, что наличие точно \mbox{наблюдаемых} в~непрерывном времени цен деривативов исключает статистическую неопределенность 
+процентной ставки и~волатильности. В~\cite{B_23_3_IA}\linebreak приведена аргументация против наличия наблюдений цен базовых активов 
+и~деривативов в~непрерывном времени, а~также воз\-мож\-ности наблюдать точные цены деривативов и~в~дискретные 
+моменты \mbox{времени}. Эти факты подталкивают к~разработке высокоточных методов оценивания состояний скрытого МСП по разнородным косвенным 
+зашумленным наблюдениям. 
+Подобные алгоритмы были\linebreak
+ предложены в~\cite{B_23_3_IA, B_23_4_IA} для двух разных видов статистической информации. 
+
+Перспективным продолжением исследований в~данной об\-ласти пред\-став\-ля\-ет\-ся решение задачи хеджирования на рынках 
+подобного типа с~использованием концепции фильт\-ро\-ван\-но\-го пространства. 
+
+Другое на\-прав\-ле\-ние подразумевает проведение 
+аналогичных исследований для моделей Хал\-ла--Уай\-та и~Васичека с~марковскими переключениями.
+{ %\looseness=1
+
+}
+
+
+{\small\frenchspacing
+ {\baselineskip=11.5pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+   \bibitem{B_23_1_IA}
+\Au{Борисов~A.} Рынок с~марковской скачкообразной волатильностью I: мониторинг цены риска как задача оптимальной фильтрации~// 
+Информатика и~её применения,~2023. Т.~17. Вып.~2. С.~27--33. doi: 10.14357/19922264230204. EDN: GAXCHQ.
+
+   \bibitem{B_23_2_IA}
+\Au{Борисов A.} Рынок с~марковской скачкообразной волатильностью II: алгоритм вычисления справедливой цены деривативов~// 
+Информатика и~её применения,~2023. Т.~17. Вып.~3. С.~18--24. doi: 10.14357/ 19922264230303. EDN: DNXJGB.
+
+   \bibitem{B_23_3_IA}
+\Au{Борисов A.} Рынок с~марковской скачкообразной волатильностью III:
+алгоритм мониторинга цены риска по дискретным наблюдениям цен~// Информатика и~её применения,~2023. Т.~17. Вып.~4. С.~9--16. 
+doi: 10.14357/19922264230402. EDN: OFYELT.
+
+   \bibitem{B_23_4_IA}
+\Au{Борисов A.} Рынок с~марковской скачкообразной волатильностью IV: алгоритм мониторинга рыночной цены риска 
+по потоку высокочастотных наблюдений базовых активов и~деривативов~// Информатика и~её применения,~2024. 
+Т.~18. Вып.~1. С.~26--32. doi: 10.14357/19922264240104. EDN: ZRQKIT.
+
+\bibitem{Criens_20}
+\Au{Criens D.} No arbitrage in continuous financial markets~//
+Math. Financ. Econ.,~2020.~Vol.~14.~P.~461--506.
+doi: 10.1007/s11579-020-00262-1.
+
+   \bibitem{Fouque_00}
+\Au{Fouque J., Papanicolaou~G., Sircar~K.}
+Derivatives in financial markets with stochastic volatility.~--- Cambrige, U.K.: Cambrige University Press,~2000.~218~p.
+
+\bibitem{Courcuera_05}
+\Au{Courcuera J., Nualart~D., Schoutens~W.} Completion of a~L$\acute{\mbox{e}}$vy market by power-jump assets~// Financ. 
+Stoch., 2005. Vol.~9. Iss.~1. P.~109--127. doi: 10.1007/s00780-004-0139-2.
+
+ \bibitem{ZhangElliottSiuGuo_11}
+\Au{Zhang X., Elliott R., Siu~T., Guo~J.}
+Markovian regime-switching market completion using additional Markov
+  jump assets~//
+IMA J.~Manag. Math., 2011. Vol.~23. Iss.~3. P.~283--305.
+doi: 10.1093/imaman/dpr018.
+
+
+\bibitem{ElliottAggounMoore_08}
+\Au{Elliott R., Aggoun~L., Moore~J.} Hidden Markov models: Estimation and control.~--- New York,~NY, USA: Springer, 2010. 382~p.
+
+  \bibitem{liptser2012theory}
+\Au{Liptser R., Shiryayev~A.}
+Theory of martingales; mathematics and its applications.~--- Amsterdam, The Netherlands:   Springer, 2012. 806~p.
+
+\bibitem{shiryaev1999essentials}
+\Au{Shiryayev A.} Essentials of stochastic finance: Facts, models, theory.~--- New Jersey, NJ, USA: World Scientific, 1999. 834~p.
+
+  \bibitem{wilmott_95}
+\Au{Wilmott P., Howison~S., Dewynne~J.}
+The mathematics of financial derivatives: A~student introduction.~--~Cam-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+brige, U.K.:   Cambrige University Press, 1995. 317~p.
+ doi: 10.1017/CBO9780511812545.
+ 
+% \pagebreak
+
+\bibitem{Elliott_76}
+\Au{Elliott R.}
+Double martingales~// Z. Wahrscheinlichkeit., 1976. Vol.~34. P.~17--28. doi: 10.1007/BF00532686.
+
+\columnbreak
+
+     \bibitem{B_21_1_IA}
+\Au{Борисов A., Казанчян~Д.} Фильтрация состояний марковских скачкообразных процессов по комплексным наблюдениям I: точное решение задачи~// 
+Информатика и~её применения, 2021. Т.~15. Вып.~2. С.~12--19. doi: 10.14357/19922264210202. EDN: NKCTNS.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 05.02.24}}
+
+\vspace*{10pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+
+
+\def\tit{MARKET WITH MARKOV JUMP VOLATILITY V: MARKET~COMPLETION WITH~DERIVATIVES}
+
+
+\def\titkol{Market with Markov jump volatility V: Market completion with~derivatives}
+
+
+\def\aut{A.\,V.~Borisov}
+
+\def\autkol{A.\,V.~Borisov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-8pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of 
+Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{4pt}
+
+
+
+\Abste{The final, fifth, part of the series is devoted to a replenishment procedure of the market with 
+a~Markov jump regime change. The market includes a riskless bank deposit with a~known nonrandom interest rate and a~set of underlying risky assets. 
+The instantaneous interest rates and volatilities of the assets are the functions of the hidden regime change factor described by some
+ finite state Markov jump process. The purpose of this article is to complete the investigated market.
+  It means the market enlargement by a set of auxiliary financial instruments. 
+  The point is that any contingent claim declared in the market can be replicated with 
+  some self-financing portfolio containing the original and auxiliary instruments. For the market completion, 
+  it is enough to include European-style derivatives built on underlying risky assets already on the market.
+In this case, the number of added derivatives coincides with the number of market modes. The problem of 
+replenishing the market has a~nonunique solution and the article compares the proposed replenishment method with the existing one.}
+
+\KWE{Markov jump process; financial portfolio; self-financing property;
+market completeness}
+
+
+
+\DOI{10.14357/19922264240202}{DQFSDO}
+
+\vspace*{-12pt}
+
+\Ack
+
+\vspace*{-3pt}
+
+
+     \noindent
+     The research was carried out using the infrastructure of the Shared Research Facilities ``High Performance Computing and Big Data'' 
+(CKP ``Informatics'') of FRC CSC RAS (Moscow).
+
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99} 
+%1
+\bibitem{B_23_1_IA-1} 
+\Aue{Borisov, A.} 2023. 
+Rynok s~markovskoy skachkoobraznoy volatil'nost'yu I: monitoring tseny riska kak zadacha optimal'noy fil'tratsii 
+[Market with Markov jump volatility I: Price of risk monitoring as an optimal filtering problem]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 17(2):27--33. 
+doi: 10.14357/19922264230204. EDN: GAXCHQ.
+
+%2
+\bibitem{B_23_2_IA-1}
+\Aue{Borisov, A.} 2023. 
+Rynok s`markovskoy skachkoobraznoy volatil'nost'yu II: algoritm vychisleniya spravedlivoy tseny derivativov 
+[Market with Markov jump volatility II: Algorithm of derivative fair price calculation].
+\textit{Informatika i~ee primeneniya~--- Inform. Appl.} 17(3):18--24. 
+doi: 10.14357/19922264230303. EDN: DNXJGB.
+
+%3
+\bibitem{B_23_3_IA-1}
+\Aue{Borisov, A.} 2023. 
+Rynok s~markovskoy skachkoobraznoy volatil'nost'yu III: algoritm monitoringa tseny riska po diskretnym nablyudeniyam tsen aktivov 
+[Market with Markov jump volatility III: Price of risk monitoring algorithm given discrete-time observations of asset prices]. 
+\textit{Informatika i~ee primeneniya~--- Inform. Appl.} 17(4):9--16. 
+doi: 10.14357/19922264230402. EDN: OFYELT.
+
+%4
+\bibitem{B_23_4_IA-1}
+\Aue{Borisov, A.} 2024. Rynok s~markovskoy skachkoobraznoy volatil'nost'yu IV: algoritm monitoringa rynochnoy tseny riska po potoku 
+vysokochastotnykh nablyudeniy bazovykh aktivov i~derivativov [Market with Markov jump volatility IV: 
+Price of risk monitoring algorithm given high frequency observation flows of assets prices]. 
+\textit{Informatika i~ee primeneniya~--- Inform. Appl.} 18(1):26--32. doi: 10.14357/19922264240104. EDN: ZRQKIT.
+
+%5
+\bibitem{Criens_20-1}
+\Aue{Criens, D.} 2020. 
+No arbitrage in continuous financial markets. \textit{Math. Financ. Econ.} 14:461--506. 
+doi: 10.1007/s11579-020-00262-1.
+
+%6
+\bibitem{Fouque_00-1}
+\Aue{Fouque, J., G.~Papanicolaou, and K.~Sircar.} 2000.
+\textit{Derivatives in financial markets with stochastic volatility}. Cambrige, U.K.: Cambrige University Press. 218~p.
+
+%7
+\bibitem{Courcuera_05-1}
+\Aue{Courcuera, J., D.~Nualart, and W.~Schoutens.} 2005.
+Completion of a L$\acute{\mbox{e}}$vy market by power-jump assets. \textit{Financ. Stoch.} 9(1):109--127. doi: 10.1007/s00780-004-0139-2.
+
+%8
+\bibitem{ZhangElliottSiuGuo_11-1}
+\Aue{Zhang X., R.~Elliott, T.~Siu, and J.~Guo.} 2011.
+Markovian regime-switching market completion using additional Markov jump assets.
+\textit{IMA J. Manag. Math.} 23(3):283--305.
+doi: 10.1093/imaman/dpr018.
+
+%9
+\bibitem{ElliottAggounMoore_08-1}
+\Aue{Elliott, R., L.~Aggoun, and J.~Moore.} 2010. \textit{Hidden Markov models: Estimation and control}. New York, NY: Springer. 382~p.
+
+%10
+\bibitem{liptser2012theory-1}
+\Aue{Liptser, R., and A.~Shiryayev.} 2012.
+\textit{Theory of martingales. Mathematics and its applications}. Amsterdam, The Netherlands: Springer. 806~p.
+
+%11
+\bibitem{shiryaev1999essentials-1}
+\Aue{Shiryayev, A.} 1999. 
+\textit{Essentials of stochastic finance: Facts, models, theory}. New Jersey, NJ: World Scientific. 834~p.
+
+%12
+\bibitem{wilmott_95-1}
+\Aue{Wilmott, P., S.~Howison, and J.~Dewynne.} 1995.
+\textit{The mathematics of financial derivatives: A~student introduction}.
+Cambrige, U.K.: Cambrige University Press. 317~p. doi: 10.1017/CBO9780511812545.
+
+%13
+\bibitem{Elliott_76-1}
+\Aue{Elliott, R.} 1976.
+Double martingales. \textit{Z. Wahrscheinlichkeit.} 34:17--28.
+doi: 10.1007/BF00532686.
+
+%14
+\bibitem{B_21_1_IA-1}
+\Aue{Borisov, A., and D.~Kazanchyan.} 2021. Fil'tratsiya sostoyaniy markovskikh skachkoobraznykh protsessov po kompleksnym nablyudeniyam I: 
+tochnoe reshenie zadachi [Filtering of Markov jump processes given composite observations I: Exact solution]. 
+\textit{Informatika i~ee primeneniya~--- Inform. Appl.} 15(2):12--19. doi: 10.14357/19922264210202. EDN: NKCTNS.
+
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received February 5, 2024}} 
+
+\vspace*{-18pt}
+
+
+\Contrl
+
+\vspace*{-3pt}
+
+\noindent
+\textbf{Borisov Andrey V.} (b.\ 1965)~--- 
+Doctor of Science in physics and mathematics, principal scientist, Federal Research Center ``Computer Science and Control''
+ of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{aborisov@frccsc.ru}
+
+
+
+
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

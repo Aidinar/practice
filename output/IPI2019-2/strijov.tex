@@ -1,0 +1,1129 @@
+\def\stat{strijov}
+
+\def\tit{ОПРЕДЕЛЕНИЕ РЕЛЕВАНТНОСТИ ПАРАМЕТРОВ НЕЙРОСЕТИ$^*$}
+
+\def\titkol{Определение релевантности параметров нейросети}
+
+\def\aut{А.\,В.~Грабовой$^1$, О.\,Ю.~Бахтеев$^2$, В.\,В.~Стрижов$^3$}
+
+\def\autkol{А.\,В.~Грабовой, О.\,Ю.~Бахтеев, В.\,В.~Стрижов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Грабовой А.\,В.}
+\index{Бахтеев О.\,Ю.}
+\index{Стрижов В.\,В.}
+\index{Grabovoy A.\,V.}
+\index{Bakhteev O.\,Yu.}
+\index{Strijov V.\,V.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена 
+при поддержке РФФИ (проект 19-07-0875) и~Правительства РФ (соглашение 
+05.Y09.21.0018). Настоящая статья содержит результаты проекта <<Статистические 
+методы машинного обучения>>, выполняемого в~рамках реализации Программы Центра 
+компетенций Национальной технологической инициативы <<Центр хранения и~анализа 
+больших данных>>, поддерживаемого Министерством науки и~высшего образования 
+Российской Федерации по Договору МГУ им.\ М.\,В.~Ломоносова  с~Фондом поддержки 
+проектов Национальной технологической инициативы от 11.12.2018 №\,13/1251/2018.}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский физико-технический институт, 
+\mbox{grabovoy.av@phystech.edu}}
+\footnotetext[2]{Московский физико-технический 
+институт, \mbox{bakhteev@phystech.edu}}
+\footnotetext[3]{Вычислительный центр им.\ А.\,А.~Дородницына Федерального 
+исследовательского центра <<Информатика и~управление>> Российской академии наук; 
+Московский фи\-зи\-ко-тех\-ни\-че\-ский институт, \mbox{strijov@ccas.ru}}
+
+
+%\vspace*{-2pt}
+
+
+\Abst{Работа посвящена оптимизации структуры нейронной сети. 
+Предполагается, что чис\-ло па\-ра\-мет\-ров нейросети можно существенно снизить без 
+значимой потери качества и~значимого повышения дис\-пер\-сии функции ошиб\-ки. 
+Предлагается метод прореживания па\-ра\-мет\-ров нейронной сети, основанный на 
+автоматическом определении релевантности па\-ра\-мет\-ров. Для определения 
+релевантности па\-ра\-мет\-ров предлагается проанализировать ковариационную мат\-ри\-цу 
+апостериорного распределения параметров и~удалить из нейросети 
+мультикоррелирующие па\-ра\-мет\-ры. Для определения мультикорреляции используется 
+метод Белсли. Для анализа качества представленного алгоритма проводятся 
+эксперименты на выборке Boston Housing, а также на синтетических данных.}
+    
+\KW{нейронные сети; оптимизация гиперпараметров; метод 
+Белсли; релевантность па\-ра\-мет\-ров; прореживание нейронной сети}
+
+\DOI{10.14357/19922264190209}
+  
+%\vspace*{4pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+\section{Введение}
+
+Решается задача выбора оптимальной структуры нейронной сети. В~силу высокой 
+вычислительной сложности время оптимизации нейронных сетей может занимать до 
+нескольких дней~\cite{sutskever2014}. Поэтому по\-стро\-ение и~выбор оптимальной 
+структуры нейронной сети так\-же является вычислительно слож\-ной процедурой, 
+которая значимо влияет на итоговое качество модели. Использование избыточно 
+слож\-ных моделей с~избыточным чис\-лом неинформативных параметров служит 
+препятствием для использования глубоких сетей на мобильных устройствах в~режиме 
+реального времени.
+
+Существует ряд подходов к~построению оптимальной сети. 
+В~работах~\cite{maclarin2015, luketina2015} предлагается ис\-пользовать модель 
+градиентного спуска для оптимизации сети. В~\cite{molchanov2017} используются 
+байесовские методы~\cite{neal1995} оптимизации па\-ра\-мет\-ров нейронных сетей.  Еще 
+один метод поиска оптимальной структуры за\-клю\-ча\-ет\-ся в~прореживании избыточно 
+слож\-ной модели~\cite{cun1990, louizos2017, graves2011}. В~работе~\cite{cun1990} 
+предлагается\linebreak
+ удалять наименее релевантные па\-ра\-мет\-ры на основе значений первой 
+и~второй производных функции \mbox{ошибки}.
+
+Данная работа посвящена прореживанию структуры сети. Предлагается удалять 
+наименее релевантные па\-ра\-мет\-ры модели. Под ре\-ле\-вант\-ностью~\cite{cun1990} 
+подразумевается то, насколько сильно параметр влияет на функцию ошиб\-ки. Малая 
+ре\-ле\-вант\-ность указывает на то, что удаление этого па\-ра\-мет\-ра не влечет значимого 
+изменения функции ошиб\-ки. Метод предлагает по\-стро\-ение исходной избыточно сложной 
+нейросети с~большим числом избыточных па\-ра\-мет\-ров. Для определения ре\-ле\-вант\-ности 
+па\-ра\-мет\-ров предлагается оптимизировать параметры и~гиперпараметры в~единой 
+процедуре. Для удаления па\-ра\-мет\-ров предлагается использовать метод 
+Белсли~\cite{neychev2016} .
+
+Проверка и~анализ метода проводятся на выборке Boston Housing~\cite{Boston}, 
+Wine~\cite{Wine} и~синтетических данных. Результат сравнивается с~моделью, 
+полученной при помощи базовых алгоритмов.
+
+\vspace*{-9pt}
+
+\section{Постановка задачи}
+
+Задана выборка
+\begin{equation*}
+\mathfrak{D} = \{\mathbf{x}_i,y_i\},\enskip  i =1,\ldots,N\,, 
+%\label{e2.1-str}
+\end{equation*}
+где~$\mathbf{x}_i \in \mathbb{R}^{m}$, $y_i \hm\in \{1, \ldots, Y\}$,~$Y$~--- число 
+классов.
+Рассмотрим модель~$f(\mathbf{x}, \mathbf{w}): \mathbb{R}^m \times \mathbb{R}^n 
+\to \{1,\ldots,Y\}$, где~$\mathbf{w}\hm \in \mathbb{R}^n$~--- пространство 
+параметров модели,
+\begin{equation*}
+f(\mathbf{x}, \mathbf{w}) = \mathrm{softmax}
+\left( f_1\left( f_2\left( \cdots \left(f_l(\mathbf{x}, 
+\mathbf{w})\right)\right)\right)\right)\,, 
+%\label{e2.2-str}
+\end{equation*}
+где~$f_k(\mathbf{x}, \mathbf{w}) \hm=  
+\mathrm{tanh}(\mathbf{w}^\mathsf{T}\mathbf{x})$,
+ $k \hm\in \{1,\ldots ,l\}$; $l$~--- чис\-ло слоев нейронной 
+сети.
+Параметр~$w_j$ модели~$f$\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+  называется активным, если~$w_j \not = 0$. Множество 
+индексов активных па\-ра\-мет\-ров обозначим~$\mathcal{A} \hm\subset \mathcal{J} \hm= 
+\{1,\ldots ,n\}$.
+Задано пространство па\-ра\-мет\-ров модели
+\begin{equation*}
+\mathbb{W_\mathcal{A}} = \{ \textbf{w} \in \mathbb{R}^n~|~w_j\not=0,\enskip j \in 
+\mathcal{A}  \}. %\label{e2.3-str}
+\end{equation*}
+
+
+Для модели~$f$ с~множеством индексов активных па\-ра\-мет\-ров~$\mathcal{A}$ 
+и~соответствующего ей вектора па\-ра\-мет\-ров~$\mathbf{w} \hm\in \mathbb{W_\mathcal{A}}$  
+определим логарифмическую функцию правдоподобия выборки:
+\begin{equation}
+\mathcal{L}_\mathfrak{D}(\mathfrak{D}, \mathcal{A}, \mathbf{w}) = \log 
+p(\mathfrak{D}|\mathcal{A}, \mathbf{w}), \label{e2.4-str}
+\end{equation}
+где~$p(\mathfrak{D}|\mathcal{A},\textbf{w})$~--- апостериорная вероятность 
+выборки~$\mathfrak{D}$ при заданных~$\mathbf{w}, \mathcal{A}$.
+Оптимальные значения~$\mathbf{w},\mathcal{A}$ находятся из 
+минимизации~$-\mathcal{L}_{\mathcal{A}}(\mathfrak{D},\mathcal{A})$~--- логарифма правдоподобия 
+модели:
+\begin{multline}
+\mathcal{L}_{\mathcal{A}}(\mathfrak{D},\mathcal{A}) =\log 
+p(\mathfrak{D}|\mathcal{A}) = {}\\
+{}=\log  \int\limits_{{\mathbf{w}\in\mathbb{W_\mathcal{J}}}}
+p(\mathfrak{D} | \mathbf{w}) p(\mathbf{w} | \mathcal{A})\, d \mathbf{w}, 
+\label{e2.5-str}
+\end{multline}
+где~$p(\mathbf{w}|\mathcal{A})$~---  априорная вероятность век\-то\-ра па\-ра\-мет\-ров 
+в~пространстве~$\mathbb{W_\mathcal{J}}$.
+
+Так как вычисление интеграла~(\ref{e2.5-str}) является вы\-чис\-ли\-тель\-но слож\-ной задачей, 
+рас\-смот\-рим вариационный подход~\cite{bishop2006} для решения этой задачи. Пусть 
+задано распределение:
+\begin{equation*}
+q(\mathbf{w})\sim \mathcal{N}\left(\mathbf{m}, \mathbf{A}^{-1}_{\mathrm{ps}}\right). 
+%\label{e2.6-str}
+\end{equation*}
+Здесь~$\mathbf{m}, \mathbf{A}^{-1}_{\mathrm{ps}}$~--- вектор средних и~матрица 
+ковариации, аппроксимирующее неизвестное апостериорное 
+распределение~$p(\mathbf{w}|\mathfrak{D},\mathcal{A})$, полученное при априорном 
+предположении
+\begin{equation*}
+p(\mathbf{w} | \mathcal{A})\sim \mathcal{N}
+\left(\boldsymbol{\mu},\mathbf{A}^{-1}_{\mathrm{pr}}\right), 
+%\label{e2.7-str}
+\end{equation*}
+где~$\boldsymbol{\mu},\mathbf{A}^{-1}_{\mathrm{pr}}$~--- вектор средних и~матрица 
+ковариации априорного распределения.
+
+Приблизим интеграл~(\ref{e2.5-str}) методом, предложенным в~\cite{bishop2006}:
+\begin{multline*}
+\mathcal{L}_{\mathcal{A}}(\mathfrak{D},\mathcal{A}) = \log 
+p(\mathfrak{D}|\mathcal{A}) = {}\\
+{} =\int\limits_{\mathbf{w}\in\mathbb{W_\mathcal{J}}} q(\mathbf{w}) \log 
+\fr{p(\mathfrak{D}, \mathbf{w}|\mathcal{A})}{q(\mathbf{w})}\,d \mathbf{w} - {}\\
+{}-
+\int\limits_{\mathbf{w}\in\mathbb{W_\mathcal{J}}}  q(\mathbf{w}) \log 
+\fr{p(\mathbf{w}|\mathfrak{D},\mathcal{A})}{q(\mathbf{w})}\,d \mathbf{w} \approx {}\\
+{}\approx \int\limits_{\mathbf{w}\in\mathbb{W_\mathcal{J}}} q(\mathbf{w}) \log 
+\fr{p(\mathfrak{D}, \mathbf{w}|\mathcal{A})}{q(\mathbf{w})}\,d \mathbf{w} = {}\\[-20pt]
+\end{multline*}
+
+\noindent
+\begin{multline}
+{}= \int\limits_{\mathbf{w}\in\mathbb{W_\mathcal{J}}} q(\mathbf{w}) \log 
+\fr{p(\mathbf{w}| \mathcal{A})}{q(\mathbf{w})}\,d \mathbf{w} + {}\\
+{}+
+\int\limits_{\mathbf{w}\in\mathbb{W_\mathcal{J}}} q(\mathbf{w}) \log 
+p(\mathfrak{D}|\mathcal{A}, \mathbf{w})\,d \mathbf{w}={}\\
+{}=\mathcal{L}_\mathbf{w}(\mathfrak{D}, \mathcal{A}, 
+\mathbf{w})+\mathcal{L}_{E}(\mathfrak{D},\mathcal{A})\,.
+\label{e2.8-str}
+\end{multline}
+
+Первое слагаемое формулы~(\ref{e2.8-str})~--- это слож\-ность модели. Оно определяется 
+расстоянием Куль\-ба\-ка--Лейб\-лера:
+\begin{equation*}
+\mathcal{L}_\mathbf{w}(\mathfrak{D}, \mathcal{A}, \mathbf{w}) = -
+D_{\mathrm{KL}}\left(q(\textbf{w})||p(\textbf{w}|\mathcal{A})\right). 
+%\label{e2.9-str}
+\end{equation*}
+Второе слагаемое формулы~(\ref{e2.8-str}) пред\-став\-ля\-ет собой математическое
+ожидание правдоподобия 
+выборки~$\mathcal{L}_\mathfrak{D}(\mathfrak{D},\mathcal{A}, \mathbf{w})$. 
+В~данной работе оно является функцией ошибки:
+\begin{equation*}
+\mathcal{L}_{E}(\mathfrak{D},\mathcal{A}) = \mathsf{E}_{\mathbf{w}\sim  q}
+\mathcal{L}_\mathfrak{D}(\mathbf{y}, \mathfrak{D}, \mathcal{A}, \mathbf{w}). 
+%\label{e2.10-str}
+\end{equation*}
+
+Требуется найти параметры, достав\-ля\-ющие минимум суммарному функционалу 
+потерь $\mathcal{L}_\mathcal{A}(\mathfrak{D},\mathcal{A},\mathbf{w})$ из~(\ref{e2.8-str}):
+\begin{multline}
+\hat{\mathbf{w}} =\! \argmin_{\mathcal{A}\subset\mathcal{J}, \mathbf{w} \in 
+\mathbb{W_\mathcal{A}}} \!-\mathcal{L}_\mathcal{A}(\mathfrak{D}, \mathcal{A}, 
+\mathbf{w}) = {}\\
+\!\!{}=\!\!\argmin_{\mathcal{A}\subset\mathcal{J}, \mathbf{w} \in 
+\mathbb{W_\mathcal{A}}} \!\!
+D_{\mathrm{KL}}\left(q(\textbf{w})||p(\textbf{w}|\mathcal{A})\right) - 
+\mathcal{L}_\mathfrak{D}(\mathfrak{D}, \mathcal{A}, \mathbf{w}). 
+\label{e2.11-str}
+\end{multline}
+
+
+
+\section{Базовые методы прореживания нейросети}
+
+\subsection{Случайное удаление}
+
+Метод случайного удаления заключается в~том, что случайным образом удаляется 
+некоторый параметр~$w_\xi$ из множества активных па\-ра\-мет\-ров сети.  Индекс 
+па\-ра\-мет\-ра~$\xi$ из равномерного распределения~--- случайная величина, 
+предположительно до\-став\-ля\-ющая оптимум в~(\ref{e2.11-str}):
+\begin{equation*}
+\xi \sim \mathcal{U}(\mathcal{A}). 
+%\label{e3.1.1-str}
+\end{equation*}
+
+\subsection{Оптимальное прореживание}
+
+Метод оптимального прореживания~\cite{cun1990} использует вторую производную 
+целевой функции~(\ref{e2.4-str}) по па\-ра\-мет\-рам для выявления нерелевантных 
+па\-ра\-мет\-ров. 
+Рас\-смот\-рим функцию потерь~$\mathcal{L}$~(\ref{e2.4-str}), разложенную в~ряд Тейлора 
+в~некоторой окрест\-ности вектора па\-ра\-мет\-ров~$\mathbf{w}$:
+\begin{equation}
+\delta \mathcal{L} = \!\!\sum\limits_{j\in \mathcal{A}} \!g_j\delta w_j + 
+\fr{1}{2}\!\sum\limits_{i,j\in \mathcal{A}} \! h_{ij}\delta w_i\delta w_j + 
+O\left(||\delta\mathbf{w}||^3\right)\!,
+\!\! \label{e3.2.1-str}
+\end{equation}
+где~$\delta w_j~$~--- компоненты вектора~$\delta\mathbf{w}$; $g_j$~--- 
+компоненты вектора градиента~$\nabla \mathcal{L}$; $h_{ij}$~--- компоненты 
+гесcиана~$\mathbf{H}$:
+
+\noindent
+\begin{equation*}
+g_j = \fr{\partial \mathcal{L}}{\partial w_j}\,, \qquad h_{ij} = 
+\fr{\partial^2\mathcal{L}}{\partial w_i \partial w_j}\,. 
+%\label{e3.2.2-str}
+\end{equation*}
+
+Задача является вычислительно слож\-ной в~силу высокой раз\-мер\-ности мат\-ри\-цы 
+\textbf{H}. Введем предположение~\cite{cun1990} о~том, что удаление нескольких 
+па\-ра\-мет\-ров приводит к~такому же изменению функции потерь~$\mathcal{L}$, как 
+и~суммарное изменение при индивидуальном удалении:
+
+\vspace*{2pt}
+
+\noindent
+\begin{equation*}
+\delta \mathcal{L} = \sum\limits_{j\in \mathcal{A}} \delta \mathcal{L}_j, 
+%\label{e3.2.3-str}
+\end{equation*}
+
+\vspace*{-2pt}
+
+\noindent
+где~$\mathcal{A}$~--- множество активных параметров; $\delta\mathcal{L}_j$~--- 
+изменение функции потерь при удалении одного па\-ра\-мет\-ра~$\mathbf{w}_j$.
+
+В силу данного предположения будем рас\-смат\-ри\-вать только диагональные элементы 
+мат\-ри\-цы~\textbf{H}. После введенного предположения 
+выражение~(\ref{e3.2.1-str}) принимает 
+вид:
+
+\vspace*{-1pt}
+
+\noindent
+\begin{equation*}
+\delta \mathcal{L} = \fr{1}{2} \sum\limits_{j\in \mathcal{A}} h_{jj}\delta w_j^2. 
+%\label{e3.2.4-str}
+\end{equation*}
+
+\vspace*{-2pt}
+
+Получаем следующую задачу оптимизации:
+\begin{equation*}
+\xi = \argmin\limits_{j\in \mathcal{A}} h_{jj}\fr{w_j^2}{2}\,, 
+%\label{e3.2.5-str}
+\end{equation*}
+где~$\xi$~--- индекс наименее релевантного, уда\-ля\-емо\-го па\-ра\-мет\-ра, 
+предположительно до\-став\-ля\-юще\-го оптимум в~(\ref{e2.11-str}).
+
+\vspace*{-4pt}
+
+\subsection{Удаление неинформативных параметров с~помощью вариационного вывода}
+
+\vspace*{-2pt}
+
+Для удаления параметров в~работе~\cite{graves2011} предлагается удалить 
+па\-ра\-мет\-ры, которые имеют максимальное отношение 
+плот\-ности~$p(\mathbf{w}|\mathcal{A})$ априорной вероятности в~нуле к~плотности 
+априорной ве\-ро\-ят\-ности в~математическом ожидании~$\mu_j$ па\-ра\-мет\-ра~$w_j$.
+
+Для гауссовского распределения с~диагональной матрицей ковариации получаем:
+\begin{equation*}
+p_j(\mathbf{w}|\mathcal{A})(w) = \fr{1}{\sqrt[]{2\sigma_j^2}}\exp\left({-
+\fr{(w-\mu_j)^2}{2\sigma_j^2}}\right), %\label{e3.3.1-str}
+\end{equation*}
+где $w$~--- значение носителя распределенного параметра.
+Разделим плотность вероятности в~нуле к~плот\-ности в~математическом ожидании
+\begin{equation*}
+\fr{p_j(\mathbf{w}|\mathcal{A})(0)}{p_j(\mathbf{w}|\mathcal{A})(\mu_j)}= 
+\exp\left({-\fr{\mu_j^2}{2\sigma_j^2}}\right) 
+%\label{e3.3.2-str}
+\end{equation*}
+и поставим следующую задачу оптимизации:
+\begin{equation*}
+\xi = \argmin\limits_{j\in \mathcal{A}} \left\vert \fr{\mu_j}{\sigma_j}\right\vert\,, 
+%\label{e3.3.3-str}
+\end{equation*}
+
+\vspace*{-8pt}
+
+\columnbreak
+
+\noindent
+где~$\xi$~--- индекс наименее релевантного, удаляемого па\-ра\-метра.
+
+\vspace*{-8pt}
+
+\section{Предлагаемый метод определения релевантности параметров нейросети}
+
+\vspace*{-2pt}
+
+Предлагается метод, основанный на модификации метода Белсли. Пусть~$\mathbf{w}$~--- 
+вектор параметров, доставляющий минимум функционалу потерь 
+$\mathcal{L}_\mathcal{A}$ из~(\ref{e2.8-str}) на  множестве $\mathbb{W_\mathcal{A}}$, 
+а~$\mathbf{A}_{\mathrm{ps}}$~--- соответствующая ему ковариационная матрица.
+
+Выполним сингулярное разложение мат\-рицы
+
+\vspace*{3pt}
+
+\noindent
+\begin{equation*}
+\mathbf{A}_{\mathrm{ps}} = \mathbf{U}{\bf\Lambda}\mathbf{V}^{\mathsf{T}}. 
+%\label{e4.1-str}
+\end{equation*}
+
+\vspace*{-2pt}
+
+\noindent
+Индекс обусловленности~$\eta_{j}$ определим как отношение максимального 
+элемента к~$j$-му элементу мат\-ри\-цы~$\mathbf{\Lambda}$. Для
+ нахождения муль\-ти\-кор\-ре\-ли\-ру\-ющих 
+признаков требуется найти индекс~$\xi$ вида
+
+\vspace*{2pt}
+
+\noindent
+\begin{equation*}
+\xi = \argmax\limits_{j\in \mathcal{A}}{\eta_j}\,. 
+%\label{e4.2-str}
+\end{equation*}
+
+\vspace*{-2pt}
+
+
+Дисперсионный долевой коэффициент~$q_{ij}$ определим как вклад $j$-го признака 
+в~дис\-пер\-сию $i$-го элемента вектора па\-ра\-мет\-ра~$\mathbf{w}$:
+
+\vspace*{3pt}
+
+\noindent
+\begin{equation*}
+q_{ij} = \fr{u^2_{ij}/\lambda_{jj}}{\sum\nolimits^n_{j=1}{u^2_{ij}/\lambda_{jj}}}\,. 
+%\label{e4.3-str}
+\end{equation*}
+
+\vspace*{-2pt}
+
+Большие значения дисперсионных долей указывают на наличие зависимости между 
+параметрами. Находим долевые коэффициенты, которые вносят максимальный вклад 
+в~дис\-пер\-сию па\-ра\-мет\-ра~$w_\xi$:
+
+\vspace*{2pt}
+
+\noindent
+\begin{equation*}
+\zeta = \argmax\limits_{j\in \mathcal{A}} q_{\xi j}\,. 
+%\label{e4.4-str}
+\end{equation*}
+
+\vspace*{-2pt}
+
+\noindent
+Параметр с~индексом~$\zeta$ определим как наименее релевантный параметр 
+нейросети.
+%Для удаления нескольких зависимых параметров за раз, предлагается удалить 
+%параметры с~номерами $p \in \mathcal{A}: q_{\xi i} > \lambda  \in  
+%\mathbb{R}_+$.
+
+
+
+
+Проиллюстрируем принцип работы метода Белсли на примере. Рас\-смот\-рим данные, 
+по\-рож\-ден\-ные сле\-ду\-ющим образом:
+
+\vspace*{2pt}
+
+\noindent
+$$
+\mathbf{w} = \begin{bmatrix}
+\sin(x)\\
+\cos (x)\\
+2+\cos(x)\\
+2+\sin(x)\\
+\cos(x) + \sin(x)\\
+x
+\end{bmatrix}\,,
+$$
+
+\vspace*{-2pt}
+
+
+\noindent
+с матрицей ковариации, пред\-став\-лен\-ной на рис.~\ref{CovBel},\,\textit{а}, где $x \hm\in 
+[0{,}0; 0{,}02; \ldots; 20{,}0]$.
+
+В табл.~\ref{CovBelTable} приведены индексы обуслов\-лен\-ности и~соответствующие им 
+дис\-пер\-си\-он\-ные доли, ко-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\end{multicols}
+
+\begin{figure*} %fig1
+  \vspace*{1pt}
+    \begin{center}  
+  \mbox{%
+ \epsfxsize=161.599mm 
+ \epsfbox{str-1.eps}
+ }
+ \end{center}
+\vspace*{-11pt}
+\Caption{Иллюстрация метода Белсли: (\textit{a})~мат\-ри\-ца ковариации; 
+(\textit{б})~дис\-пер\-си\-он\-ные доли}
+\label{CovBel}
+\vspace*{-12pt}
+\end{figure*}
+
+\begin{table*}\small
+\begin{center}
+\Caption{Илюстрация метода Белсли
+\label{CovBelTable}}
+\vspace*{2ex}
+
+\begin{tabular}{|c|l|l|l|l|l|l|}
+\hline
+$\eta$ & \multicolumn{1}{c|}{$q_1$}& 
+\multicolumn{1}{c|}{$q_2$}& \multicolumn{1}{c|}{$q_3$}& 
+\multicolumn{1}{c|}{$q_4$}& \multicolumn{1}{c|}{$q_5$}& \multicolumn{1}{c|}{$q_6$}\\
+\hline
+&&&&&&\\[-9pt]
+$1{,}0$ &  $2\cdot 10^{-17}$ &  $4\cdot 10^{-17}$ &  $1\cdot 10^{-16}$ &  $2\cdot 
+10^{-17}$ &  $6\cdot 10^{-17}$&  $3\cdot 10^{-4}$ \\
+%\hline
+$1{,}5$ &  $5\cdot 10^{-17}$ &  $9\cdot 10^{-17}$ &  $2\cdot 10^{-16}$ &  $5\cdot 
+10^{-17}$ &  $3\cdot 10^{-20}$ &  $3\cdot 10^{-2}$ \\
+%\hline
+$3{,}3$ &  $9\cdot 10^{-18}$ &  $1\cdot 10^{-17}$ &  $2\cdot 10^{-17}$ &  $9\cdot 
+10^{-18}$ &  $2\cdot 10^{-19}$ &  $9\cdot 10^{-1}$ \\
+%\hline
+$2\cdot 10^{15}$ &  $1\cdot 10^{-2}$ &  $1\cdot 10^{-1}$ &  $8\cdot 10^{-1}$ &  
+$2\cdot 10^{-3}$ &  $9\cdot 10^{-2}$ &  $1\cdot 10^{17}$ \\
+%\hline
+$8\cdot 10^{15}$ &  $6\cdot 10^{-2}$ &  $8\cdot 10^{-1}$ &  $9\cdot 10^{-2}$ &  
+$8\cdot 10^{-2}$ &  $9\cdot 10^{-1}$ & $ 2\cdot 10^{17} $\\
+%\hline
+$1\cdot 10^{16}$ &  $\bf9\cdot 10^{-1}$ &  $1\cdot 10^{-2}$& $ 4\cdot 10^{-2}$&  
+$\bf9\cdot 10^{-1}$ &  $1\cdot 10^{-3}$ & $ 5\cdot 10^{-21}$ \\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{-6pt}
+\end{table*}
+
+\begin{multicols}{2}
+
+
+
+\noindent
+торые так\-же изоб\-ра\-же\-ны на рис.~\ref{CovBel},\,\textit{б}. Согласно 
+этим данным максимальный индекс обуслов\-лен\-ности $\eta_6 \hm= 1{,}2\cdot 
+10^{16}$. Ему соответствуют максимальные дис\-пер\-си\-он\-ные доли признаков 
+с~индексами~1 и~4, которые, как видно из по\-стро\-ения выборки, коррелируют между 
+собой.
+
+\vspace*{-6pt}
+
+
+\section{Вычислительный эксперимент}
+
+\vspace*{-2pt}
+
+Для анализа свойств предложенного алгоритма и~сравнения его с~существующими был 
+проведен вычислительный эксперимент, в~котором па\-ра\-мет\-ры нейросети удалялись 
+методами, описанными в~подразд.~3.1---3.3, и~методом Белсли.
+
+В качестве данных использовались три выборки,
+представленные в~табл.~2. Выборки Wine~\cite{Wine} 
+и~Boston~Housing~\cite{Boston}~--- это реальные данные. Синтетические данные 
+сгенерированы таким образом, чтобы па\-ра\-мет\-ры сети
+ были муль\-тикор\-ре\-ли\-руемы\-ми.
+Генерация
+ данных состояла из двух этапов.\linebreak\vspace*{-12pt}
+ 
+%\begin{table*}
+{\small %tabl2
+\begin{center}
+{{\tablename~2}\ \ \small{Описание выборок}}
+\vspace*{2ex}
+
+\tabcolsep=3pt
+\begin{tabular}{|c|c|c|c|}
+\hline
+    Выборка &\tabcolsep=0pt\begin{tabular}{c}Тип\\ задачи\end{tabular}& 
+    \tabcolsep=0pt\begin{tabular}{c}Размер\\ выборки\end{tabular}& 
+    \tabcolsep=0pt\begin{tabular}{c}Число\\ признаков\end{tabular}\\
+    \hline
+    \multicolumn{1}{|l|}{Wine}
+    &
+    \multicolumn{1}{l|}{Классификация}
+     & \hphantom{\,99}178 & 13\\
+    %\hline
+    \multicolumn{1}{|l|}{Boston Housing}
+    &
+    \multicolumn{1}{l|}{Регрессия}
+    & \hphantom{\,99}506 & 13\\
+    %\hline
+    \multicolumn{1}{|l|}{Synthetic data}
+    &
+    \multicolumn{1}{l|}{Регрессия}
+    & 10\,000 & 100\hphantom{9}\\
+\hline
+\end{tabular}
+\end{center}
+}
+%\end{table*}
+
+\vspace*{9pt}
+
+
+\noindent
+ На первом этапе генерировался вектор па\-ра\-мет\-ров~$\mathbf{w}_{\mathrm{synthetic}}$:
+ 
+ \noindent
+\begin{equation*}
+\mathbf{w}_{\mathrm{synthetic}}  \sim \mathcal{N}\left(\mathbf{m}_{\mathrm{synthetic}}, 
+\mathbf{A}_{\mathrm{synthetic}}\right), 
+%\label{e5.1-str}
+\end{equation*}
+где
+
+\vspace*{-9pt}
+
+\noindent
+\begin{align*}
+\mathbf{m}_{\mathrm{synthetic}} &= 
+\begin{bmatrix}
+1{,}0\\
+0{,}0025\\[-3pt]
+\vdots\\[-2pt]
+0{,}0025
+\end{bmatrix}\,;
+\\
+\mathbf{A}_{\mathrm{synthetic}} &= \begin{bmatrix}
+1{,}0& 10^{-3}& \cdots& 10^{-3}& 10^{-3}\\
+10^{-3}& 1{,}0& \cdots& 0{,}95& 0{,}95\\[-2pt]
+\cdots&\cdots&\cdots&\cdots&\cdots\\[-2pt]
+10^{-3}& 0{,}95& \cdots& 0{,}95& 1{,}0
+\end{bmatrix}\,.
+\end{align*}
+
+На втором этапе генерировалась выборка $\mathfrak{D}_{\mathrm{synthetic}}$:
+
+\vspace*{-2pt}
+
+\noindent
+\begin{multline*}
+\mathfrak{D}_{\mathrm{synthetic}} = \left\{(\mathbf{x}_i,y_i)| \mathbf{x}_i \sim  
+\mathcal{N}(\mathbf{1}, \mathbf{I}),\right.\\
+\left. y_i = x_{i0},\ i = 1, \ldots , 10\,000\right\}. 
+%\label{e5.2-str}
+\end{multline*}
+В приведенном выше векторе параметров $\mathbf{w}_{\mathrm{synthetic}}$\linebreak для 
+выборки $\mathfrak{D}_{\mathrm{synthetic}}$ наиболее релевантным является первый 
+параметр, а~все остальные\linebreak параметры~--- нерелевантные. Матрица ковариации была 
+вы\-брана таким образом, чтобы все нерелевантные па\-ра\-мет\-ры были зависимы и~метод 
+Белсли был максимально эффективен.
+
+
+
+
+
+
+
+Для алгоритмов тренировочная и~тестовая выборки составили~80\% и~20\% 
+соответственно. Критерием качества прореживания служит доля па\-ра\-мет\-ров 
+нейросети, удаление которых не влечет\linebreak значимой потери качества прогноза. Так\-же 
+критерием качества служит устой\-чи\-вость нейросети к~зашумленности данных.
+
+Качеством прогноза~$R_{\mathrm{cl}}$ модели для задачи классификации выступает 
+точность прогноза модели:
+
+\vspace*{4pt}
+
+\noindent
+\begin{equation*}
+R_{\mathrm{cl}} = \fr{\sum\nolimits_{(\textbf{x},y)\in \mathfrak{D}} [f(\textbf{x}, 
+\mathbf{w}) = y]}{\left|\mathfrak{D}\right|}. 
+%\label{e5.3-str}
+\end{equation*}
+
+Качеством прогноза~$R_{\mathrm{rg}} $ модели для задачи регрессии является 
+сред\-не\-квад\-ра\-тич\-ное отклонение результата модели от точ\-ного:
+\begin{equation*}
+R_{\mathrm{rg}} = \fr{\sum\nolimits_{(\mathbf{x},y)\in \mathfrak{D}} 
+\left(f(\mathbf{x}, \mathbf{w}) - 
+y\right)^2}{\left|\mathfrak{D}\right|}\,.
+%\label{e5.4-str}
+\end{equation*}
+
+\vspace*{-5pt}
+
+\paragraph*{Выборка Wine.} Рассмотрим нейронную сеть с~13~нейронами на входе, 
+13~нейронами в~скрытом слое и~3~нейронами на выходе.
+
+
+  
+
+На рис.~2,\,\textit{а} показано, как меняется точ\-ность прогноза $R_{\mathrm{cl}}$ 
+при удалении па\-ра\-мет\-ров указанными методами. Из графика видно, что метод 
+оптимального прореживания, вариационный метод и~метод Белсли поз\-во\-ля\-ют удалить 
+$\approx80\%$ па\-ра\-мет\-ров и~качество всех этих методов падает при удалении 
+$\approx90\%$ па\-ра\-мет\-ров нейросети.
+
+На рис.~3 представлены по\-верх\-ности изменения уровня шума ответов 
+нейросети при изменении доли удаленных па\-ра\-мет\-ров и~уровня шума вход\-ных 
+данных для раз\-ных методов прореживания. Из графиков видно, что при удалении 
+па\-ра\-мет\-ров нейросети методом Белсли шум меньше, чем при удалении па\-ра\-мет\-ров 
+другими методами. На это указывает то, что по\-верх\-ность, которая соответствует 
+методу Белсли, ниже других поверхностей.
+
+
+
+  
+
+
+
+\vspace*{-9pt}
+
+\paragraph*{Выборка Boston Housing.} Рассмотрим нейронную сеть с~13~нейронами на 
+входе, 39~нейронами в~скрытом слое и~одним нейроном на выходе.
+
+
+{ \begin{center}  %fig2
+ \vspace*{-6pt}
+  \mbox{%
+ \epsfxsize=78mm %79.149mm 
+ \epsfbox{str-2.eps}
+ }
+
+
+\end{center}
+
+\vspace*{-9pt}
+
+
+\noindent
+{{\figurename~2}\ \ \small{Качество прогноза при удалении 
+па\-ра\-мет\-ров на выборках Wine~(\textit{а}),
+Boston~(\textit{б}) и~синтетической~(\textit{в}):
+\textit{1}~--- произвольное удаление; \textit{2}~--- оптимальное прореживание;
+\textit{3}~--- вариационный метод; \textit{4}~--- метод Белсли}}
+}
+
+\vspace*{9pt}
+
+\addtocounter{figure}{1}
+
+
+На рис.~2,\,\textit{б} показано, как меняется сред\-не\-квад\-ра\-тич\-ное отклонение 
+прогноза $R_{\mathrm{rg}}$ от точного ответа  при удалении па\-ра\-мет\-ров указанными 
+методами.
+%
+ График показывает, что метод Белсли является
+более эффективным, чем 
+другие методы, так как
+поз\-во\-ляет удалить больше па\-ра\-мет\-ров нейросети без потери 
+качества.
+
+\pagebreak
+
+\end{multicols}
+
+\setcounter{figure}{2}
+\begin{figure*} %fig3
+  \vspace*{1pt}
+  \begin{minipage}[t]{80mm}
+    \begin{center}  
+  \mbox{%
+ \epsfxsize=77.956mm 
+ \epsfbox{str-3.eps}
+ }
+ \end{center}
+\vspace*{-6pt}
+\Caption{Влияние шума в~начальных данных на шум выхода 
+нейросети на выборке 
+Wine: (\textit{а})~произвольное удаление па\-ра\-мет\-ров; 
+(\textit{б})~оптимальное прореживание; (\textit{в})~вариационный метод.
+Серый цвет~--- метод Белсли}
+\end{minipage}
+%\label{BostonNoise}
+%\end{figure*}
+\hfill
+%\begin{figure*} %fig4
+\vspace*{1pt}
+  \begin{minipage}[t]{80mm}
+    \begin{center}  
+  \mbox{%
+ \epsfxsize=77.956mm 
+ \epsfbox{str-4.eps}
+ }
+ \end{center}
+\vspace*{-6pt}
+\Caption{Влияние шума в~начальных данных на шум выхода нейросети на выборке 
+Boston: (\textit{а})~произвольное удаление па\-ра\-мет\-ров; 
+(\textit{б})~оптимальное прореживание; (\textit{в})~вариационный метод.
+Серый цвет~--- метод Белсли}
+\label{BostonNoise}
+\end{minipage}
+\vspace*{12pt}
+\end{figure*}
+
+
+\begin{multicols}{2}
+
+
+На рис.~4 представлены поверхности изменения уровня шума ответов 
+нейросети при изменении доли удаленных параметров и~уровня шума входных 
+данных для разных методов прореживания. График показывает, что уровень шума всех 
+методов одинаковый, так как поверхности всех методов находятся на одном уровне.
+
+\vspace*{-9pt}
+
+\paragraph*{Синтетические данные.} Рассмотрим нейронную сеть со~100~нейронами на 
+входе и~одним нейроном на выходе.
+
+
+
+На рис.~2,\,\textit{в} показано, как меняется сред\-не\-квад\-ра\-тич\-ное отклонение 
+прогноза от $R_{\mathrm{rg}}$ точного ответа при удалении параметров указанными 
+методами. График показывает, что удаление параметров
+методом Белсли является 
+более эффективным, чем другие методы прореживания, так как качество прогноза 
+нейросети улучшается при удалении шумовых параметров.
+
+На рис.~5 представлены поверхности изменения уровня шума ответов 
+нейросети при изменении\linebreak\vspace*{-12pt}
+
+{ \begin{center}  %fig5
+ \vspace*{-6pt}
+  \mbox{%
+ \epsfxsize=79mm 
+ \epsfbox{str-5.eps}
+ }
+
+
+\end{center}
+
+
+\noindent
+{{\figurename~5}\ \ \small{Влияние шума в~начальных данных на шум выхода нейросети на 
+синтетической выборке: (\textit{а})~произвольное удаление па\-ра\-мет\-ров; 
+(\textit{б})~оптимальное 
+прореживание; (\textit{в})~вариационный метод.
+Серый цвет~--- метод Белсли}}
+}
+
+\vspace*{9pt}
+
+\addtocounter{figure}{1}
+
+
+\noindent
+ доли удаленных параметров и~уровня шума входных 
+данных для разных методов прореживания.\linebreak
+ Из графиков видно, что при удалении 
+параметров нейросети методом Белсли шум меньше, чем при удалении параметров 
+другими методами, так как поверхность, которая соответствует методу Белсли, ниже 
+других поверхностей.
+
+\section{Заключение}
+
+В работе рассматривалась задача прореживания моделей нейросетей. Рассматривались 
+метод оптимального прореживания и~метод, основанный на вариационном подходе. Был 
+предложен алгоритм прореживания, основанный на методе Белсли, для удаления 
+зависимых параметров модели. В~ходе эксперимента было показано, что нейросети, 
+прореженные методом Белсли, более устойчивы к~шуму на входных данных. Качество 
+прогноза нейросетей после прореживания методом Белсли не хуже качества прогноза 
+нейросетей, прореженных другими методами.
+
+
+
+
+ {\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+   \bibitem{sutskever2014}
+   \Au{Sutskever I., Vinyals~O., Le~Q.} Sequence to sequence learning 
+with neural networks~// Adv. Neur. Inf., 2014. 
+Vol.~2. P.~3104--3112.
+    
+    \bibitem{maclarin2015}
+    \Au{Maclaurin D., Duvenaud~D., Adams~R.} Gradient-based hyperparameter 
+optimization through reversible learning~//  32th 
+ Conference (International) on Machine Learning Proceedings.~---
+ Lille, 2015. Vol.~37. P.~2113--2122.
+        
+    \bibitem{luketina2015}
+\Au{Luketina J., Berglund~M., Raiko~T., Greff~K.} Scalable gradient-based 
+tuning of continuous regularization hyperparameters~//  
+33th  Conference (International) 
+on Machine Learning Proceedings.~--- New York, NY, USA, 2016. Vol.~48. P.~2952--2960.
+
+    \bibitem{molchanov2017}
+    \Au{Molchanov D., Ashukha~A., Vetrov~D.} Variational dropout 
+sparsifies deep neural networks~// 34th Conference 
+(International) on Machine Learning Proceedings.~--- Sydney, 2017. Vol.~70. P.~2498--2507.
+
+    \bibitem{neal1995}
+    \Au{Neal A., Radford~M.} Bayesian learning for neural network.~--- 
+    Toronto, ON, Canada, 1995.  Ph.D. Thesis. 195~p.
+    
+    \bibitem{cun1990} %6
+   \Au{LeCun Y., Denker~J., Solla~S.} Optimal brain damage~// Adv. 
+Neur. Inf., 1989. Vol.~2. P.~598--605.
+
+ \bibitem{graves2011} %7
+    \Au{Graves A.} Practical variational inference for neural networks~// 
+Adv. Neur. Inf., 2011. Vol.~24. P.~2348--2356.
+    
+    \bibitem{louizos2017} %8
+    \Au{Louizos C., Ullrich~K., Welling~M.} Bayesian compression for deep 
+learning~// Adv. Neur. Inf., 2017. Vol.~30. 
+P.~3288--3298.
+    
+   
+
+    \bibitem{neychev2016}
+    \textit{Neychev R., Katrutsa~A., Strijov~V.} Robust selection of 
+multicollinear features in forecasting~// Factory Laboratory, 2016. Vol.~82. 
+No.\,2. P.~68--74.
+    
+    \bibitem{Boston}
+    \Au{Harrison D.,  Rubinfeld~D.} Hedonic prices and the demand for 
+clean air~//
+J.~Environ. Econ. Manag., 1978. Vol.~5. P.~81--102. 
+{\sf https://www.cs.toronto.edu/$\sim$delve/ data/boston/bostonDetail.html.}
+    
+    \bibitem{Wine}
+    \Au{Aeberhard S.} Wine Data Set, 1991. 
+{\sf http://archive.ics.\linebreak uci.edu/ml/datasets/Wine.}
+
+    \bibitem{bishop2006}
+    \Au{Bishop C.} Pattern recognition and machine learning.~--- Berlin: 
+Springer, 2006. 758~p.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Поступила в~редакцию 31.10.18}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-29pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{ESTIMATION OF~THE~RELEVANCE OF~THE~NEURAL NETWORK PARAMETERS}
+
+
+\def\titkol{Estimation of~the~relevance of~the~neural network parameters}
+
+\def\aut{A.\,V.~Grabovoy$^1$, O.\,Yu.~Bakhteev$^1$, and~V.\,V.~Strijov$^{1,2}$}
+
+\def\autkol{A.\,V.~Grabovoy, O.\,Yu.~Bakhteev, and~V.\,V.~Strijov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+\noindent
+$^1$Moscow Institute of Physics and Technology,
+9~Institutskiy Per., Dolgoprudny, Moscow Region 141700, Russian\linebreak
+$\hphantom{^1}$Federation
+
+\noindent
+$^2$A.\,A.\,Dorodnicyn Computing Center, Federal Research Center 
+``Computer Science and Control'' of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences,
+40~Vavilov Str., Moscow 119333, Russian Federation 
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{6pt}    
+    
+
+
+\Abste{The paper investigates a method for optimizing the structure of 
+a~neural network. It is assumed that the number of neural network parameters can be 
+reduced without significant loss of quality and without significant increase in 
+the variance of the loss function. The paper proposes a~method for automatic 
+estimation of the relevance of parameters to prune a~neural network. This method 
+analyzes the covariance matrix of the posteriori distribution of the model 
+parameters and removes the least relevant and multicorrelate parameters. It uses the 
+Belsly method to search for multicorrelation in the neural network. The proposed 
+method was tested on the Boston Housing data set, the Wine data set, and synthetic 
+data.}
+
+\KWE{neural network; hyperparameters optimization; Belsly method; relevance 
+of parameters; neural network pruning}
+
+
+
+\DOI{10.14357/19922264190209}
+
+%\vspace*{-14pt}
+
+\Ack
+\noindent
+This research was supported by the Russian Foundation for Basic
+Research, project 19-07-0875, 
+and by Government of the Russian Federation, agreement 05.Y09.21.0018. 
+This paper contains results of the project ``Statistical methods of 
+machine learning,'' which is carried out within the framework of the Program 
+``Center of Big Data Storage and Analysis'' of the National Technology 
+Initiative Competence Center supported by the Ministry of Science 
+and Higher Education of the Russian Federation according to the agreement 
+between M.\,V.~Lomonosov Moscow State University and the Foundation 
+of Project Support of the National Technology Initiative from 11.12.2018, 
+No.\,13/1251/2018.
+
+
+%\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+    \bibitem{sutskever2014-str}
+\Aue{Sutskever,~I., O.~Vinyals, and Q.~Le.} 2014. 
+Sequence to sequence learning with neural networks. 
+\textit{Adv. Neur. Inf.} 2:3104--3112.
+
+    \bibitem{maclarin2015-str}
+    \Aue{Maclaurin, D., D.~Duvenaud, and R.~Adams.}
+     2015. Gradient-based hyperparameter optimization through reversible learning. 
+     \textit{32th  Conference (International) on Machine Learning Proceedings}. 
+     Lille. 37:2113--2122.
+    
+    \bibitem{luketina2015-str}
+    \Aue{Luketina, J., M.~Berglund, T.~Raiko, and K.~Greff.} 2016. 
+    Scalable gradient-based tuning of continuous regularization hyperparameters. 
+    \textit{33th Conference (International)
+    on Machine Learning Proceedings}. New~York, NY. 48:2952--2960.
+
+    \bibitem{molchanov2017-str}
+    \Aue{Molchanov, D., A.~Ashukha, and D.~Vetrov.} 
+    2017. Variational dropout sparsifies deep neural networks. 
+    \textit{34th Conference 
+    (International) on Machine Learning Proceedings}. Sydney. 70:2498--2507.
+    
+    \bibitem{neal1995-str}
+    \Aue{Neal, A., and M.~Radford.} 1995. Bayesian learning for neural networks. 
+    Toronto, ON: University of Toronto. Ph.D. Thesis. 195~p. 
+    
+    \bibitem{cun1990-str}
+    \Aue{LeCun, Y., J. Denker, and S.~Solla.} 1989. Optimal brain damage. 
+    \textit{Adv. Neur. Inf.} 2:598--605.
+    
+    
+    
+    \bibitem{graves2011-str}
+    \Aue{Graves, A.}  2011. Practical variational inference for neural networks.
+     \textit{Adv. Neur. Inf.} 24:2348--2356.
+     
+     \bibitem{louizos2017-str}
+    \Aue{Louizos, C., K.~Ullrich, and M.~Welling.} 
+    2017. Bayesian compression for deep learning. \textit{Adv. 
+    Neur. Inf}. 30:3288--3298. 
+
+    \bibitem{neychev2016-str}
+    \Aue{Neychev, R., A.~Katrutsa, and V.~Strijov.} 
+    2016. Robust selection of multicollinear features in forecasting. 
+    \textit{Factory Laboratory} 82(3):68--74.
+    
+    \bibitem{Boston-str}
+\Aue{Harrison, D., and D.~Rubinfeld.}  1978.
+ Hedonic prices and the demand for clean air.
+ \textit{J.~Environ. Econ. Manag.}
+ 5:81--102. Available at:
+ {\sf https://www.cs.toronto.edu/$\sim$delve/ data/boston/bostonDetail.html}
+ (accessed June~4, 2019).
+    
+    \bibitem{Wine-str}
+    \Aue{Aeberhard, S.} 1991.  Wine Data Set. Available at:
+    {\sf http://archive.ics.uci.edu/ml/datasets/Wine}
+    (accessed June~4, 2019).
+    
+    \bibitem{bishop2006-str}
+    \Aue{Bishop, C.} 2006. \textit{Pattern recognition and machine learning}. 
+    Berlin: Springer. 758~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received October 31, 2018}}
+
+%\pagebreak
+
+%\vspace*{-18pt}    
+
+
+\Contr
+
+\noindent
+\textbf{Grabovoy Andrey V.} (b.\ 1997)~--- 
+student, Moscow Institute of Physics and Technology, 
+9~Institutskiy Per., Dolgoprudny, Moscow Region 141700, Russian Federation; 
+\mbox{grabovoy.av@phystech.edu}
+
+\vspace*{6pt}
+
+\noindent
+\textbf{Bakhteev Oleg Yu.} (b.\ 1991)~--- 
+graduate student, Moscow Institute of Physics and Technology, 
+9~Institutskiy Per., Dolgoprudny, Moscow Region 141700, Russian Federation; 
+\mbox{bakhteev@phystech.edu} 
+
+\vspace*{6pt}
+
+\noindent
+\textbf{Strijov Vadim V.} (b.\ 1967)~---
+Doctor of Science in physics and mathematics, leading scientist, 
+Dorodnicyn Computing Center, Federal Research Center ``Computer Science and Control'' 
+of the Russian Academy of Sciences, 40~Vavilov Str., Moscow 119333, Russian Federation; 
+professor, Moscow Institute of Physics and Technology, 
+9~Institutskiy Per., Dolgoprudny, Moscow Region 141701, Russian Federation; 
+\mbox{strijov@ccas.ru}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}  

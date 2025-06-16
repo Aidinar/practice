@@ -1,0 +1,646 @@
+\def\stat{shestakov}
+
+\def\tit{НЕПАРАМЕТРИЧЕСКОЕ ОЦЕНИВАНИЕ МНОГОМЕРНОЙ ПЛОТНОСТИ
+  С~ПОМОЩЬЮ ВЕЙВЛЕТ-ОЦЕНОК\\ ОДНОМЕРНЫХ ПРОЕКЦИЙ$^*$}
+
+\def\titkol{Непараметрическое оценивание многомерной плотности
+  с~помощью вейвлет-оценок одномерных проекций}
+
+\def\aut{О.\,В.~Шестаков$^1$}
+
+\def\autkol{О.\,В.~Шестаков}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Шестаков О.\,В.}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при финансовой
+поддержке РФФИ (проект 15-07-02652).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет им.\ М.\,В.~Ломоносова,
+ кафедра математической статистики факультета ВМК;
+Институт проблем информатики Федерального исследовательского
+центра <<Информатика и~управление>> Российской академии наук,
+oshestakov@cs.msu.su}
+
+
+\Abst{Рассматривается используемый в~реконструктивной
+томографии метод обращения преобразования Радона для получения
+статистических оценок многомерных вероятностных плотностей.
+Этот метод использует нелинейные вейв\-лет-оцен\-ки одномерных проекций
+ для построения оценки многомерной плотности. Нелинейные вейв\-лет-оцен\-ки
+ обладают возможностью адаптации к локальным свойствам оцениваемой функции
+ плотности и,~следовательно, менее чувствительны к наличию сингулярных точек,
+ чем линейные оценки. Еще одним важным практическим аспектом рассматриваемого
+ метода является его параллельная структура, позволяющая значительно ускорить
+ построение оценок на компьютерах, поддерживающих параллельные вычисления.
+Также показано, что при выполнении некоторых условий регулярности равномерное
+расстояние между построенной оценкой и~истинной многомерной вероятностной
+плотностью стремится к нулю в~среднем, и~получены оценки скорости этой сходимости.}
+
+\KW{вейвлеты; многомерная плотность; преобразование Радона}
+
+\DOI{10.14357/19922264150210}
+
+\vspace*{6pt}
+
+
+\vskip 14pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+Проблема непараметрического оценивания мно\-го\-мер\-ной плотности вероятностного
+распре\-деления возникает во многих областях статисти\-ческого анализа данных,
+например в~задачах классификации и~распознавания изображений.
+
+Существуют
+различные подходы к решению этой проб\-ле\-мы~[1], такие как использование
+ядерных оценок, оценивание по ближайшим соседям, аппроксимация сплайнами
+и~разложение в~орто\-гональные ряды. В~последние годы все более популярны\-ми
+становятся методы, основанные на вейв\-лет-раз\-ло\-же\-нии~[2]. Преимуществом
+этих методов является адаптивность к локальной гладкости оцениваемой плотности.
+Возможные многомерные обобщения вейв\-лет-ме\-то\-дов оценивания плот\-ности
+рассмотрены в~работах~[3--6].
+
+В~данной работе рассматривается томографический
+подход, основанный на построении оценки многомерной плотности по одномерным
+оценкам проекций. Как отмечено в~работе~[7], данный подход не нуждается
+в~использовании структурных предположений, таких как мультипликативность
+или аддитивность плотности. Кроме того, важным практическим аспектом такого
+метода является возможность параллельного вы\-чис\-ле\-ния одномерных оценок.
+
+Для рассматриваемого метода получены оценки скорости сходимости к нулю в~среднем
+равномерного расстояния между построенной оценкой и~оцениваемой многомерной
+плот\-ностью.
+
+\section{Преобразование Радона}
+
+Преобразование Радона в~$d$-мер\-ном пространстве ставит в~соответствие
+функции $f(x)$, $x\hm\in\mathbb{R}^d$, одномерные проекции $R_\theta f(s)$:
+\begin{equation*}
+R_\theta f(s)=\int\limits_{s\theta=s}f(x)\,dx=
+\int\limits_{\theta^\perp}f(s\theta+y)\,dy\,,
+\end{equation*}
+где $\theta\in S^{d-1}$, а $S^{d-1}$~--- единичная сфера в~$\mathbb{R}^d$.
+
+Зная $R_\theta f(s)$ для всех $\theta\hm\in S^{d-1}$ и~всех $s\hm\in\mathbb{R}$,
+функцию $f(x)$ можно вычислить по следующей формуле~[7]:
+\begin{multline}
+f(x)={}\\
+\hspace*{-4mm}{}=\fr{1}{2(2\pi)^{d}}\!\!\!\!\int\limits_{S^{d-1}}
+\int\limits_{-\infty}^{\infty}\!\!\!
+\abs{\omega}^{d-1}\!\widehat{R_\theta f}(\omega)\exp
+\{ i\omega(x \theta)\}\,d\omega d\theta,\!\!\!\!
+\label{Inverse_Radon_transform}
+\end{multline}
+где $\widehat{R_\theta f}(\omega)$~---
+преобразование Фурье функции $R_\theta f(s)$ по переменной~$s$:
+\begin{equation*}
+\widehat{R_\theta f}(\omega)=
+\int\limits_{-\infty}^{\infty}R_\theta f(s)\exp\{-i\omega s\}\,ds\,.
+\end{equation*}
+
+Метод оценивания многомерной плотности основан на следующих соображениях.
+Легко видеть, что если $X$~--- $d$-мер\-ный случайный вектор с~плотностью $f(x)$,
+то одномерная случайная величина $X\theta$ имеет плот\-ность
+$R_\theta f(s)$~[7]. Таким образом, построив оценки одномерных плотностей
+$R_\theta f(s)$ по выборкам $(X\theta)_j$, $j=1,\ldots,N$, можно получить
+оценку многомерной плотности $f(x)$, используя методы обращения преобразования
+Ра\-дона.
+
+\section{Вейвлет-оценки одномерных вероятностных плотностей}
+
+Вейвлет-базисы приобрели большую популярность в~задачах непараметрического
+оценивания функций благодаря своей адаптивности к локальным особенностям
+оцениваемых функций. В~работе~[8] предложено использовать вейв\-лет-раз\-ло\-же\-ние
+для оценивания вероятностных плотностей.
+
+Рассмотрим неоднородный ортонормированный вейв\-лет-ба\-зис
+$\left\{\phi_{j_0,k}(s)\hm=2^{j_0/2}\phi(2^{j_0}s-k)\right\}_{k\in\mathbb{Z}}$
+и~$\left\{\psi_{j,k}(s)=2^{j/2}\psi(2^{j}s-k)\right\}_{k\in\mathbb{Z}}$,
+$j\hm\geqslant j_0$, где $\phi(s)$ и~$\psi(s)$~--- масштабирующая
+и~вейв\-лет-функ\-ции, порождающие некоторый кратномасштабный анализ~[9].
+Будем полагать, что функции $\phi(s)$ и~$\psi(s)$ имеют компактный носитель
+и~непрерывно дифференцируемы достаточное число раз (этому требованию удовлетворяют,
+например, вейвлеты Добеши~[10]). Кроме того, будем полагать, что функция
+$\phi(s)$ нормализована следующим образом:
+$$
+\int\limits_{-\infty}^{\infty}\phi(s)\,ds=1\,.
+$$
+
+ Вероятностную плотность $g(s)$
+можно формально представить в~виде ряда
+\begin{equation}
+\label{Density_expansion}
+g(s)=\sum\limits_{k\in\mathbb{Z}}a_{j_0,k}\phi_{j_0,k}(s)+
+\sum\limits_{j\geqslant j_0}\sum\limits_{k\in\mathbb{Z}}b_{j,k}\psi_{j,k}(s)\,,
+\end{equation}
+где
+
+\noindent
+\begin{equation*}
+a_{j_0,k}=\int\limits_{-\infty}^{\infty}g(s)\phi_{j_0,k}(s)\,ds\,;\
+b_{j,k}\hm=\int\limits_{-\infty}^{\infty}g(s)\psi_{j,k}(s)\,ds\,.
+\end{equation*}
+
+Если $Y_1,\ldots,Y_N$~--- выборка из независимых одинаково распределенных
+случайных величин с~плотностью $g(s)$, то
+
+\columnbreak
+
+\noindent
+\begin{equation*}
+\hat{a}_{j_0,k}=\fr{1}{N}\sum\limits_{m=1}^{N}\phi_{j_0,k}(Y_m)\,;\quad
+\hat{b}_{j,k}=\fr{1}{N}\sum\limits_{m=1}^{N}\psi_{j,k}(Y_m)
+\end{equation*}
+являются несмещенными оценками коэффициентов $a_{j_0,k}$ и~$b_{j,k}$
+соответственно. Нелинейная оценка вероятностной плотности $g(s)$ имеет вид~[8]:
+\begin{multline}
+g_N(s)=\sum\limits_{k\in\mathbb{Z}}\hat{a}_{j_0,k}\phi_{j_0,k}(s)+{}\\
+{}+
+\sum\limits_{j=j_0}^{J}\sum\limits_{k\in\mathbb{Z}}\hat{b}_{j,k}\mathbf{1}
+\left(\hat{b}_{j,k}>T_{j,N}\right)\psi_{j,k}(s)\,,
+\label{Density_estimate}
+\end{multline}
+где $T_{j,N}$~--- <<порог>>, а $J$~--- еще один сглажива\-ющий параметр.
+Первая сумма в~(\ref{Density_estimate}) представляет собой несмещенную
+оценку первой суммы в~(\ref{Density_expansion}). Во второй сумме необходимо
+производить пороговую обработку и~усечение до~$J$. Параметры $T_{j,N}$ и~$J$
+позволяют находить компромисс между смещением и~дисперсией.
+
+\section{Оценка многомерной плотности и~ее свойства}
+
+Для построения оценки многомерной плот\-ности нельзя использовать непосредственно
+формулу~(\ref{Inverse_Radon_transform}) в~силу некорректности задачи обращения
+преобразования Радона. Вместо этого используется регуляризованный вариант
+этой формулы, в~которой $\abs{\omega}$ умножается на функцию окна
+$W_\alpha(\abs{\omega})$, зависящую от сглаживающего параметра~$\alpha$.
+Часто в~качестве $W_\alpha(\abs{\omega})$ выбирается функция
+$W_\alpha(\abs{\omega})\hm=\exp(-\alpha^2\omega^2/2)$, т.\,е.\
+фактически осуществляется свертка проекций с~нормальным распределением.
+В~результате вместо $f(x)$ оценивается
+\begin{multline}
+\label{Regular_inverse}
+f_\alpha(x)=\fr{1}{2(2\pi)^{d}}\int\limits_{S^{d-1}}
+\int\limits_{-\infty}^{\infty}\abs{\omega}^{d-1}
+\exp\left(-\fr{\alpha^2\omega^2}{2}\right)\times{}\\
+{}\times \widehat{R_\theta f}(\omega)
+\exp\{ i\omega(x\theta)\}\,d\omega d\theta
+\end{multline}
+и оценка многомерной плотности вычисляется по формуле:
+\begin{multline}
+\label{Multi_Density_estimate}
+f_{N}(x)=\fr{1}{2(2\pi)^{d}}\int\limits_{S^{d-1}}
+\int\limits_{-\infty}^{\infty}\abs{\omega}^{d-1}
+\exp\left(-\fr{\alpha^2\omega^2}{2}\right)\times{}\\
+{}\times \widehat{R_N f}(\theta,\omega)
+\exp\{ i\omega(x\cdot\theta)\}\,d\omega d\theta,
+\end{multline}
+где $R_N f(\theta,s)$~--- вейвлет-оценки одномерных плотностей
+$R_\theta f(s)$, построенные по правилу~(\ref{Density_estimate}).
+На практике можно вычислить оценки одномерных плотностей только
+для конечного числа направлений $\theta_1,\ldots,\theta_M$. Для случая,
+когда $f(x)$ имеет конечный носитель, некоторые равномерные оценки близости
+функции плотности, восстановленной по конечному числу проекций, к истинной
+функции плотности можно найти в~работах~[11, 12]. Здесь будет предполагаться,
+что $M$ достаточно велико ($M\hm\gg N$), чтобы можно было игнорировать ошибку,
+возникающую из-за использования конечного числа направлений. Докажем,
+что равномерное расстояние между $f_{N}(x)$ и~$f_\alpha(x)$ стремится к нулю
+в~среднем.
+
+Пусть $W^r(\mathbb{R}^d)$~--- пространство Соболева, т.\,е.\ пространство всех
+таких функций $f(x)$, для которых
+\begin{equation*}
+\norm{f}_r^2=\int\limits_{\mathbb{R}^d}(1+\abs{\omega}^2)^r
+\abs{\widehat{f}(\omega)}^2d\omega<\infty\,.
+\end{equation*}
+Обозначим через $W^r_0(U)$ пространство всех $f(x)\hm\in W^r$, носитель которых
+содержится в~некотором компактном множестве $U\subset\mathbb{R}^d$.
+
+\smallskip
+
+\noindent
+\textbf{Теорема 1.} \textit{Пусть $f(x)\hm\in W^r_0(U)$, $r>0$.
+Пусть $T_{j,N}\hm=C_r\sqrt{j/N}$ ($C_r>0$~--- константа, зависящая
+от~$r$}~[8, 13]), $j_0$ \textit{фиксировано, а $J\hm=J(N)$ выбирается
+из условия $2^{J(N)}\hm\approx(N/\log N)^{1/(2r+1)}$. Тогда}
+\begin{multline}
+\label{Uniform_distance_alpha}
+\mathbf{E}\sup\limits_{x\in \mathbb{R}^d}
+\abs{f_\alpha(x)-f_{N}(x)}\leqslant {}\\
+{}\leqslant C_d\alpha^{1/2-d}N^{-({2r+d-1})/(4r+2d)}\,,
+\end{multline}
+\textit{где $C_d$~--- некоторая положительная константа}.
+
+\smallskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \
+Используя формулы~(\ref{Regular_inverse}) и~(\ref{Multi_Density_estimate})
+и~неравенство Ко\-ши--Бу\-ня\-ков\-ско\-го, получаем:
+\begin{multline*}
+\mathbf{E}\sup\limits_{x\in \mathbb{R}^d}\abs{f_\alpha(x)-f_{N}(x)}={}
+\\
+{}=\mathbf{E}\sup\limits_{x\in \mathbb{R}^d}\fr{1}{2(2\pi)^{d}}
+\left\vert \int\limits_{\,S^{d-1}}\int\limits_{-\infty}^{\infty}
+\abs{\omega}^{d-1}\exp\left(-\fr{\alpha^2\omega^2}{2}\right)\times{}\right.\\
+{}\left.\times
+\left(\widehat{R_\theta f}(\omega)-\widehat{R_N f}(\theta,\omega)\right)
+\exp\{i\omega(x\theta)\}\,d\omega d\theta
+\vphantom{\int\limits_{\,S^{d-1}}\int\limits_{-\infty}^{\infty}}
+\right\vert\leqslant{}\\
+{}\leqslant\fr{1}{2(2\pi)^{d}}\int\limits_{S^{d-1}}
+\int\limits_{-\infty}^{\infty}\abs{\omega}^{d-1}
+\exp\left(-\fr{\alpha^2\omega^2}{2}\right)\mathbf{E}\times{}\\
+{}\times
+\abs{\widehat{R_\theta f}(\omega)-\widehat{R_N f}(\theta,\omega)}
+\,d\omega d\theta\leqslant{}\\
+{}\leqslant\fr{1}{2(2\pi)^{d}}\!\!\int\limits_{S^{d-1}}\!\left(
+\int\limits_{\,-\infty}^{\infty}
+\abs{\omega}^{2(d-1)}\exp\left(-\alpha^2\omega^2\right)\,d\omega\right)^{1/2}\!\!\!\times{}\\
+{}\times \left(
+\int\limits_{\,-\infty}^{\infty}\left(\mathbf{E}
+\abs{\widehat{R_\theta f}(\omega)-\widehat{R_N f}(\theta,\omega)}\right)^2d
+\omega\right)^{1/2}\, d\theta\leqslant{}
+\end{multline*}
+
+\noindent
+\begin{multline*}
+\hspace*{-4pt}{}\leqslant\fr{1}{2(2\pi)^{d}}\!\int\limits_{S^{d-1}}\left(
+\int\limits_{\,-\infty}^{\infty}\abs{\omega}^{2(d-1)}
+\exp\left(-\alpha^2\omega^2\right)d\omega\right)^{1/2}\!\!\times{}\\
+{}\times \left(
+\int\limits_{\,-\infty}^{\infty}\mathbf{E}
+\abs{\widehat{R_\theta f}(\omega)-\widehat{R_N f}(\theta,\omega)}^2d
+\omega\right)^{1/2}\, d\theta\,.
+\end{multline*}
+Поскольку $f(x)\in W^r_0(U)$, функция $R_\theta f(s)\hm\in W^{p}(\mathbb{R})$ для
+любого $\theta\hm\in S^{d-1}$, где $p\hm=r\hm+(d-1)/2$~\cite{14-sh}.
+В~работе~\cite{8-sh} показано, что
+\begin{multline*}
+\left(\int\limits_{\,-\infty}^{\infty}\mathbf{E}
+\abs{\widehat{R_\theta f}(\omega)-\widehat{R_N f}(\theta,\omega)}^2d
+\omega\right)^{1/2}={}\\
+{}=
+\left(\int\limits_{\,-\infty}^{\infty}\mathbf{E}
+\abs{R_\theta f(s)-R_N f(\theta,s)}^2ds\right)^{1/2}
+\leqslant{}\\
+{}\leqslant C_p N^{{p}/(2p+1)},
+\end{multline*}
+где $C_p>0$~--- некоторая константа. Следовательно, существует константа $C_d\hm>0$
+такая, что
+\begin{equation*}
+\mathbf{E}\sup\limits_{x\in \mathbb{R}^d}
+\abs{f_\alpha(x)-f_{N}(x)}\leq C_d\alpha^{1/2-d}N^{-{p}/(2p+1)}\,.
+\end{equation*}
+Теорема доказана.
+
+\smallskip
+
+Функция $f_\alpha(x)$ аппроксимирует функцию $f(x)$, и~чем меньше~$\alpha$, тем
+точнее эта аппроксимация. Если дополнительно предположить, что функция $f(x)$
+равномерно регулярна по Липшицу с~показателем $1\hm\geqslant\gamma\hm>0$ на~$U$,
+т.\,е.\ существует константа $C_L\hm>0$, такая что
+\begin{equation}
+\label{Lip_condition}
+\sup\limits_{x\in U}\abs{f(x)-f(x+y)}\leqslant
+C_L\abs{y}^{\gamma}\ \forall\ y\in\mathbb{R}^d\,,
+\end{equation}
+то можно оценить скорость стремления к нулю в~среднем равномерного
+расстояния между $f_{N}(x)$ и~$f(x)$.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~2.} \textit{Пусть выполнены условия теоремы~$1$
+и~условие регулярности}~(\ref{Lip_condition}).
+\textit{Тогда}
+\begin{multline}
+\label{Uniform_distance}
+\mathbf{E}\sup\limits_{x\in \mathbb{R}^d}
+\abs{f(x)-f_{N}(x)}\leqslant{}\\
+{}\leqslant C_{d,\gamma}N^{-({(2r+d-1)\gamma})/((4r+2d)(\gamma+d-1/2))}\,,
+\end{multline}
+\textit{где $C_{d,\gamma}$ -- некоторая положительная константа}.
+
+\smallskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \ Имеем
+\begin{multline*}
+\mathbf{E}\sup\limits_{x\in \mathbb{R}^d}\abs{f(x)-f_{N}(x)}\leqslant
+\sup\limits_{x\in \mathbb{R}^d}\abs{f(x)-f_\alpha(x)}+{}\\
+{}+
+\mathbf{E}\sup\limits_{x\in \mathbb{R}^d}\abs{f_\alpha(x)-f_{N}(x)}\,.
+\end{multline*}
+Далее
+\begin{multline}
+\sup\limits_{x\in \mathbb{R}^d}\abs{f(x)-f_\alpha(x)}\leqslant{}\\
+{}\leqslant
+\fr{1}{(2\pi\alpha^2)^{d/2}}\!\int\limits_{\mathbb{R}^d}\abs{f(x)-f(x+y)}
+\exp\left(-\fr{\abs{y}^2}{2\alpha^2}\right)dy\leqslant{}
+\\
+\hspace*{-1mm}\leqslant\fr{C_L}{(2\pi\alpha^2)^{d/2}}\int\limits_{\mathbb{R}^d}
+\abs{y}^\gamma\exp\left(\!
+-\fr{\abs{y}^2}{2\alpha^2}\!\right)\,dy\leqslant C_{d,L}\alpha^{\gamma},\!\!
+\label{Alpha_distance}
+\end{multline}
+где $C_{d,L}$~--- положительная константа.
+Выберем $\alpha=\alpha(N)=N^{-\beta}$, где
+\begin{equation*}
+\beta=\frac{2r+d-1}{(4r+d)(\gamma+d-1/2)}\,.
+\end{equation*}
+При таком выборе $\beta$ степени у~$N$~в~оценках~(\ref{Uniform_distance_alpha})
+и~(\ref{Alpha_distance}) равны. Следовательно,
+используя~(\ref{Uniform_distance_alpha}) и~(\ref{Alpha_distance}),
+получаем~(\ref{Uniform_distance}). Теорема доказана.
+
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+\bibitem{1-sh}
+\Au{Silverman B.\,W.} Density estimation for statistics and data analysis.~---
+London: Chapman and Hall. 1986. 176~p.
+\par
+\bibitem{2-sh}
+\Au{Vidacovic B.} Statistical modeling by wavelets.~--- New York, NY,
+USA: John Wiley and Sons.
+1999. 408~p.
+
+
+\bibitem{6-sh} %3
+\Au{Tribouley K.} Practical estimation of multivariate densities using
+wavelet methods~// Stat. Neerl., 1995. Vol.~49. P.~41--62.
+
+\bibitem{5-sh} %4
+\Au{Masry E.} Multivariate probability density estimation by wavelet
+methods: Strong consistency and rates for stationary time series~//
+Stoch. Proc. Appl., 1997. Vol.~67. P.~177--193.
+
+\bibitem{4-sh} %5
+\Au{Dong J., Jiang R.} Multinomial probability estimation by wavelet
+thresholding~// Communication in Statistics. Theory and Methods, 2009.
+Vol.~38. P.~1486--1507.
+
+\bibitem{3-sh} %6
+\Au{Chesneau C., Dewan I., Doosti~H.} Nonparametric estimation of
+a~two dimensional continuous-discrete density function by wavelets~//
+Stat. Methodol., 2014. Vol.~18. P.~64--78.
+
+\bibitem{7-sh}
+\Au{O'Sullivan F., Pawitan Y.} Multidimensional density estimation
+by tomography~// J.~Roy. Stat. Soc. B, 1993. Vol.~55. No.\,2. P.~509--521.
+
+\bibitem{8-sh}
+\Au{Donoho D.\,L., Johnstone I.\,M., Kerkyacharian~G., Picard~D.}
+Density estimation by wavelet thresholding~// Ann. Stat., 1996.
+Vol.~23. P.~508--539.
+
+\bibitem{9-sh}
+\Au{Mallat S.} A wavelet tour of signal processing.~--- New York, NY, USA: Academic Press, 1999.
+851~p.
+
+\bibitem{10-sh}
+\Au{Daubechies I.} Ten lectures on wavelets.~--- Philadelphia, PA, USA: SIAM, 1992. 357~p.
+
+\bibitem{11-us}
+\Au{Khalfin L.\,A., Klebanov L.\,B.} A~solution of the computer tomography
+paradox and estimating the distances between the
+densities of measures with the same marginals~// Ann. Probab., 1994.
+Vol.~22. P.~2235--2241.
+
+\bibitem{12-sh}
+\Au{Шестаков О.\,В., Савенков Т.\,Ю.} Оценка расстояния между
+плотностями вероятностных мер, имеющих близкие проекции~// Вестн.
+Моск. ун-та. Сер.~15. Вычисл. матем. и~киберн., 2001. №\,4. С.~44--46.
+
+\bibitem{13-sh}
+\Au{Hall P., Patil P.} Formulae for mean integrated squared error of nonlinear wavelet-based density estimators~//
+ Ann. Stat., 1995. Vol.~23. No.\,3. P.~905--928.
+
+\bibitem{14-sh}
+\Au{Smith K.\,T., Solmon~D.\,C., Wagner~S.\,L.} Practical and mathematical
+aspects of the problem of reconstructing objects from radiographs~//
+Bull. Amer. Math. Soc., 1977. Vol.~83. P.~1227--1270.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 02.03.15}}
+
+%\newpage
+
+\vspace*{12pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{12pt}
+
+\def\tit{NONPARAMETRIC ESTIMATION OF~MULTIDIMENSIONAL
+ DENSITY WITH~THE~USE OF~WAVELET ESTIMATES\\ OF~UNIVARIATE PROJECTIONS}
+
+\def\titkol{Nonparametric estimation of multidimensional density with the use of wavelet estimates of univariate projections}
+
+\def\aut{O.\,V.~Shestakov$^{1,2}$}
+
+\def\autkol{O.\,V.~Shestakov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Shestakov O.\,V.}
+
+\vspace*{-9pt}
+
+\noindent
+$^1$Department of Mathematical Statistics, Faculty of Computational Mathematics
+and Cybernetics,\linebreak
+$\hphantom{^1}$M.\,V.~Lomonosov Moscow State University,
+1-52 Leninskiye Gory, GSP-1, Moscow 119991, Russian\linebreak
+$\hphantom{^1}$Federation
+
+\noindent
+$^2$Institute of Informatics Problems, Federal Research
+Center ``Computer Science and Control'' of the
+Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 44-2 Vavilov Str., Moscow 119333,
+Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2015\ \ \ volume~9\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2015\ \ \ volume~9\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+\Abste{The paper explores the computerized tomography method of
+inverting the Radon transformation for obtaining statistical estimates
+of multidimensional probability densities. This method utilizes nonlinear
+wavelet estimators of univariate projections to construct the multidimensional
+density estimate. Nonlinear wavelet estimators possess the ability to adapt
+to the local properties of the estimated density function and, therefore,
+are less sensitive to the singular points than linear estimators. Another
+important practical feature of the considered\linebreak\vspace*{-12pt}}
+
+\Abstend{method is its parallel structure,
+which allows a~considerable speedup of constructing the estimates on the computers
+supporting parallel processing. It is also proved that under some regularity
+conditions, the uniform distance between the constructed estimate and the true
+multidimensional probability density converges to zero in the mean, and some
+estimates of the rate of this convergence are obtained.}
+
+\KWE{wavelets; multidimensional density; Radon transformation}
+
+
+
+
+\DOI{10.14357/19922264150210}
+
+\Ack
+\noindent
+The research was financially supported by the Russian Foundation for
+Basic Research (project 15-07-02652).
+
+
+
+%\vspace*{3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-sh-1}
+\Aue{Silverman, B.\,W.} 1986. \textit{Density
+estimation for statistics and data analysis.} London: Chapman and Hall. 176~p.
+
+\bibitem{2-sh-1}
+\Aue{Vidacovic, B.} 1999. \textit{Statistical modeling by wavelets.} New York, NY:
+John Wiley and Sons. 408~p.
+
+
+ \bibitem{6-sh-1} %3
+\Aue{Tribouley, K.} 1995. Practical estimation of multivariate densities
+using wavelet methods. \textit{Stat. Neerl.} 49:41--62.
+
+\bibitem{5-sh-1} %4
+\Aue{Masry, E.} 1997. Multivariate probability density estimation by wavelet
+methods: Strong consistency and rates for stationary time series.
+\textit{Stoch. Proc. Appl.} 67:177--193.
+
+\bibitem{4-sh-1} %5
+\Aue{Dong, J., and R. Jiang.} 2009. Multinomial probability estimation
+by wavelet thresholding. \textit{Communication in Statistics. Theory and Methods}
+ 38:1486--1507.
+
+\bibitem{3-sh-1} %6
+\Aue{Chesneau, C., Dewan, I., and H.~Doosti}. 2014.
+Nonparametric estimation of a two dimensional continuous-discrete
+density function by wavelets. \textit{Stat. Methodol.} 18:64--78.
+
+
+
+\bibitem{7-sh-1}
+\Aue{O'Sullivan, F., and Y.~Pawitan.} 1993. Multidimensional density
+estimation by tomography. \textit{J.~Roy. Stat. Soc. B} 55(2):509--521.
+
+\bibitem{8-sh-1}
+\Aue{Donoho, D.\,L., I.\,M.~Johnstone, G.~Kerkyacharian, and D.~Picard}.
+1996. Density estimation by wavelet thresholding.
+\textit{Ann. Stat.}  23:508--539.
+
+\bibitem{9-sh-1}
+\Aue{Mallat, S.} 1999. \textit{A~wavelet tour of signal processing.}
+New York, NY: Academic Press. 851~p.
+
+\bibitem{10-sh-1}
+\Aue{Daubechies, I.} 1992. \textit{Ten lectures on wavelets.}
+Philadelphia, PA: SIAM. 357~p.
+
+\bibitem{11-sh-1}
+\Aue{Khalfin, L.\,A., and L.\,B.~Klebanov}. 1994. A~solution of the
+computer tomography paradox and estimating the distances between the
+densities of measures with the same marginals.
+\textit{Ann. Probab.} 22:2235--2241.
+
+\bibitem{12-sh-1}
+\Aue{Shestakov, O.\,V., and T.\,Yu.~Savenkov}.
+2001. Otsenka rasstoyaniya mezhdu plotnostyami veroyatnostnykh mer,
+imeyushchikh blizkie proektsii [Estimating the distances between
+the densities of measures with $\varepsilon$-identical marginals].
+\textit{Vestn. Mosk. Un-ta. Ser.~15. Vychisl. matem. i~kibern.}
+[\textit{Moscow University Computational Mathematics and Cybernetics}] 4:44--46.
+
+\bibitem{13-sh-1}
+\Aue{Hall, P., and P. Patil}. 1995. Formulae for
+mean integrated squared error of nonlinear wavelet-based density estimators.
+\textit{Ann. Stat.} 23(3):905--928.
+
+\bibitem{14-sh-1}
+\Aue{Smith, K.\,T., D.\,C.~Solmon, and S.\,L.~Wagner}.
+1977. Practical and mathematical aspects of the problem of reconstructing
+objects from radiographs. \textit{Bull. Amer. Math. Soc.} 83:1227--1270.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Received March 2, 2015}}
+
+%\vspace*{-18pt}
+
+
+\Contrl
+
+\noindent
+\textbf{Shestakov Oleg V.} (b.\ 1976)~---
+Doctor of Science in physics and mathematics, associate professor,
+Department of Mathematical Statistics, Faculty of Computational Mathematics
+and Cybernetics, M.\,V.~Lomonosov Moscow State University,
+1-52 Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation;
+senior scientist, Institute of Informatics Problems, Federal Research
+Center ``Computer Science and Control'' of the
+Russian Academy of Sciences, 44-2 Vavilov Str., Moscow 119333,
+Russian Federation; oshestakov@cs.msu.su
+
+
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература}

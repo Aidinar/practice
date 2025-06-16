@@ -1,0 +1,899 @@
+\def\stat{kor-kor}
+
+
+
+\def\tit{МОДИФИЦИРОВАННЫЙ СЕТОЧНЫЙ МЕТОД РАЗДЕЛЕНИЯ ДИСПЕРСИОННО-СДВИГОВЫХ
+СМЕСЕЙ НОРМАЛЬНЫХ ЗАКОНОВ$^*$}
+
+
+
+\def\titkol{Модифицированный сеточный метод разделения дисперсионно-сдвиговых
+смесей нормальных законов}
+
+\def\aut{В.\,Ю.~Королев$^1$,  А.\,Ю.~Корчагин$^2$}
+
+\def\autkol{В.\,Ю.~Королев,  А.\,Ю.~Корчагин}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа поддержана Российским научным фондом (проект 14-11-00364).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Факультет
+вычислительной математики и кибернетики Московского государственного
+университета им.\ М.\,В.~Ломоносова; Институт проблем информатики
+Российской академии наук; victoryukorolev@yandex.ru}
+\footnotetext[2]{Факультет вычислительной математики и кибернетики
+Московского государственного университета им.\ М.\,В.~Ломоносова;
+sasha.korchagin@gmail.com}
+
+%\vspace*{2pt}
+
+
+
+\Abst{Описывается модифицированный двухэтапный
+сеточный метод разделения дис\-пер\-си\-он\-но-сдви\-го\-вых смесей нормальных
+законов, представляющий собой альтернативу чистому ЕМ (expectation-maximization)
+ал\-го\-рит\-му. На
+первом этапе этого алгоритма строится дискретная аппроксимация для
+смешивающего распределения, на втором этапе подбирается абсолютно
+непрерывное распределение из заранее заданного семейства, например,
+обобщенных обратных гауссовских законов, ближайшее к~дискретному
+распределению, полученному на первом этапе. Обсуждаются вопросы
+сходимости этого двухэтапного алгоритма. Доказана монотонность
+сеточного итерационного метода, используемого на первом этапе.
+Подробно обсуждается вопрос оптимального выбора параметров метода,
+прежде всего сетки, накидываемой на носитель смешивающего
+распределения. С~этой целью предложены статистические оценки
+квантилей смешивающего распределения. Эффективность метода
+иллюстрируется примерами конкретных вычислений оценок параметров
+обобщенных гиперболических распределений.}
+
+\KW{смесь распределений вероятностей;
+дис\-пер\-си\-он\-но-сдви\-го\-вая смесь нормальных законов; обобщенное
+гиперболическое распределение; ЕМ-ал\-го\-ритм; сеточный метод
+разделения смесей}
+
+\vspace*{1pt}
+
+%\vspace*{2pt}
+
+\DOI{10.14357/19922264140402}
+
+
+\vskip 12pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+При {\it практическом} решении задачи моделирования и исследования
+волатильности (изменчивости) хаотических стохастических процессов
+ключевым этапом является статистическое разделение смесей
+вероятностных распределений. Задача разделения смесей~---
+статистического оценивания параметров смесей вероятностных
+распределений~--- в~деталях разобрана, например, в~книге~\cite{k2011}.
+
+Для решения задачи разделения смесей вероятностных распределений
+традиционно используются итерационные процедуры типа ЕМ-ал\-го\-рит\-ма.
+К~сожалению, классический ЕМ-ал\-го\-ритм обладает рядом серьезных
+недостатков при его применении к~смесям нормальных законов, а~именно:
+он демонстрирует крайнюю неустойчивость по отношению к~исходным
+данным и~начальным приближениям.
+
+Для преодоления этих недостатков
+предложено много модификаций ЕМ-ал\-го\-рит\-ма (см., например,~\cite{k2011}).
+Вместе с тем в~указанной книге предложен и~исследован
+принципиально новый~--- сеточный~--- метод приближенного решения
+задачи разделения смесей. В~работе~\cite{n2013} подробно исследованы
+вопросы сходимости сеточных методов разделения смесей.
+
+В соответствии с подходом к~статистическому анализу хаотических
+стохастических процессов, в~частности к~решению задачи декомпозиции
+волатильности таких процессов, развитом в~книге~\cite{k2011},
+в~общем случае на практике приходится решать задачу разделения
+конечных смесей нормальных законов с~произвольно большим числом
+неизвестных параметров (параметров компонент и~их весов).
+И~хотя в~большинстве приложений возникают смеси не более чем с~пятью--семью
+компонентами, даже при использовании таких смесей, скажем, в~задачах
+анализа и~прогнозирования финансовых рисков приходится моделировать
+траекторию движения точки в~пространствах, размерность которых
+соответственно лежит в~пределах от~14 (для пятикомпонентных смесей)
+до~20 (для семикомпонентных смесей), что существенно увеличивает
+вычислительные и~временн$\acute{\mbox{ы}}$е ресурсы, необходимые для практического
+решения указанных задач.
+
+Поскольку во многих ситуациях (например,
+при прогнозировании на основе высокочастотных данных) эти задачи
+необходимо решать в~режиме, близком к~реальному времени, для
+создания эффективных методов статистического анализа на основе
+смешанных моделей на первый план выходит проб\-ле\-ма снижения
+размерности решаемой задачи, т.\,е.\ параметрического пространства.
+
+Одним из возможных подходов к~снижению размерности является
+априорное сужение классов допусти\-мых смесей. К~примеру, при решении
+многих задач, связанных с~анализом процессов атмосферной или
+плазменной турбулентности, а~так\-же процессов, описывающих эволюцию
+различных финансовых индексов, высочайшую адекватность
+продемонстрировали модели, основанные на дис\-пер\-си\-он\-но-сдви\-го\-вых
+смесях нормальных законов. Класс таких смесей очень обширен
+и,~в~част\-ности, включает в~себя обобщенные гиперболические распределения,
+которые были введены О.-Е.~Барн\-дорфф-Ниль\-се\-ном в~1977--1978~гг.\ как
+класс специальных сдвиг-мас\-штаб\-ных смесей нормальных законов~\cite{BN1977, BN1978}.
+Пусть $\alpha\hm\in\r$, $\beta\hm\in\r$. Если
+функцию распределения обобщенного гиперболического закона
+с~параметрами~$\alpha$, $\beta$, $\nu$, $\mu$, $\lambda$ обозначить
+$P_{GH}(x;\alpha,\beta,\nu,\mu,\lambda)$, то по определению
+\begin{multline}
+P_{GH}(x;\alpha,\beta,\nu,\mu,\lambda)={}\\
+{}=
+\int\limits_{0}^{\infty}\Phi\left(\fr{x-\beta-\alpha
+z}{\sqrt{z}}\right)\,p_{GIG}(z;\nu,\mu,\lambda)\,dz\,,\\
+x\in\r\,,
+\label{e1-kor}
+\end{multline}
+где $\Phi(x)$~--- стандартная нормальная функция распределения:
+$$
+\Phi(x)=\int\limits_{-\infty}^{x}\varphi(z)\,dz\,,\enskip
+\varphi(x)=\fr{1}{\sqrt{2\pi}}e^{-x^2/2}\,,\enskip  x\in\mathbb{R}\,;
+$$
+$p_{GIG}(x;\nu,\mu,\lambda)$~--- плот\-ность обобщенного обратного
+гауссовского распределения:
+\begin{multline*}
+p_{GIG}(x;\nu,\mu,\lambda)={}\\
+{}=\fr{\lambda^{\nu/2}}{2\mu^{\nu/2}
+K_{\nu}\left(\sqrt{\mu\lambda}\right)}\,
+x^{\nu-1}\exp\left\{-\fr{1}{2}\left(\fr{\mu}{x}+\lambda
+x\right)\right\}\,,\\ x>0\,.
+\end{multline*}
+Здесь $\nu\in\r$;
+$$
+\begin{array}{lll}
+\mu>0\,, & \lambda\geqslant0\,, & \mbox{если }\nu<0\,;\\[6pt]
+\mu>0\,, & \lambda>0\,, & \mbox{если }\nu=0\,;\\[6pt]
+\mu\geqslant0\,, & \lambda>0\,, & \mbox{если }\nu>0\,;
+\end{array}
+$$
+$K_{\nu}(z)$~--- модифицированная бесселева функция третьего рода
+порядка~$\nu$:
+
+\noindent
+\begin{multline*}
+K_{\nu}(z)=\fr{1}{2}\int\limits_{0}^{\infty}y^{\nu-1}\exp
+\left\{-\fr{z}{2}\left(y+\fr{1}{y}\right)\right\}\,dy\,,\\
+z\in\mathbb{C}\,,\enskip \mathrm{Re}\,z>0\,.
+\end{multline*}
+Обратим внимание, что в~(1) смешивание происходит одновременно и~по
+параметру сдвига, и~по параметру масштаба, но так как эти параметры
+в~(1)  связаны жесткой зависимостью, так что параметр сдвига
+смешиваемого распределения пропорционален его дисперсии, то
+фактически смесь~(1) является {\it однопараметрической} и~поэтому
+называется {\it дис\-пер\-си\-он\-но-сдви\-го\-вой} (см., например,~\cite{BN1982}).
+
+Другим примером дис\-пер\-си\-он\-но-сдви\-го\-вых смесей нормальных законов
+являются обобщенные дисперсионные гам\-ма-рас\-пре\-де\-ле\-ния, в~которых
+смешивающими являются обобщенные гам\-ма-рас\-пре\-де\-ле\-ния~\cite{ks2012, zk2013}.
+
+В указанных семействах смесей число неизвестных параметров равно
+пяти или шести (если\linebreak учитывать неслучайный сдвиг). Вместе
+с~тем у~подоб\-ных моделей имеются довольно серьезные тео\-ре\-ти\-че\-ские
+обоснования: в~работах~\cite{zk2013, k2013} показано, что указанные
+модели являются асимптотическими аппроксимациями в~простой
+предельной схеме случайного суммирования и~потому могут успешно
+применяться для анализа процессов типа остановленных случайных
+блужданий. Эти выводы подтверждены статистическим анализом
+вы\-со\-ко\-час\-тот\-ных финансовых данных, в~результате которого выявлен
+синхронизированный характер изменения интенсивностей потоков заявок
+в~сис\-те\-мах электронных торгов, что естественно приводит к~синхронизированному
+поведению па\-ра\-мет\-ров сдвига и~диффузии в~соответствующих моделях вида смесей
+нормальных законов~\cite{kckg2013}.
+
+\section{Описание моди\-фи\-ци\-ро\-ван\-но\-го
+сеточного ме\-то\-да разделения дисперсионно-сдвиговых смесей
+нормальных законов и~его свойства}
+
+Оказывается, что сеточные методы разделения смесей довольно
+эффективны не только при разделении конечных смесей нормальных
+законов, но и~при разделении произвольных дис\-пер\-си\-он\-но-сдви\-го\-вых
+смесей нормальных законов. Поясним сказанное на примере задачи
+оценивания па\-ра\-мет\-ров обобщенных гиперболических распределений.
+
+Для решения задачи оценивания параметров обобщенных гиперболических
+распределений традиционно используется метод, предложенный в~статье~\cite{p2004}
+и~по сути являющийся классическим ЕМ-ал\-го\-рит\-мом,
+приспособленным к~конкретной задаче, и,~соответственно, наследующий
+присущие ЕМ-ал\-го\-рит\-мам недостатки.
+
+Рассмотрим следующий альтернативный двухэтапный метод. На первом
+этапе на поло\-жи\-тельной полупрямой выделим основную часть носителя
+смешивающего распределения, т.\,е.\ \mbox{ограниченный} интервал,
+вероятность которого, вычисленная в~соответствии со смешивающим
+распределением, практически равна единице. На этот интервал накинем
+конечную сетку, содержащую, возможно, очень много {\it известных}
+узлов $u_1,\ldots,u_K$. Считая параметр сдвига~$\beta$ равным нулю,
+приблизим искомое обобщенное гиперболическое распределение конечной
+смесью нормальных законов:
+
+\noindent
+\begin{multline}
+P_{GH}(x;\,\alpha,0,\nu,\mu,\lambda)\approx{}\\
+{}\approx \sum\limits_{i=1}^K
+p_i\Phi\left(\fr{x-\alpha u_i}{\sqrt{u_i}}\right)\,,\enskip
+x\in\mathbb{R}\,.\label{e2-kor}
+\end{multline}
+В смеси, стоящей в~правой части соотношения~(2), неизвестными
+являются только параметры $p_1,\ldots,p_{K-1}$ и~$\alpha$. Пусть
+$x_1,\ldots,x_n$~--- анализируемая выборка значений случайной
+величины с~оцениваемым обобщенным гиперболическим распределением.
+Итерационный процесс, определяющий сеточный ЕМ-ал\-го\-ритм для данной
+задачи, задается следующим образом. Пусть
+$p_1^{(m)},\ldots,p_{K-1}^{(m)}$ и~$\alpha^{(m)}$~--- оценки параметров
+$p_1,\ldots,p_{K-1}$ и~$\alpha$ на $m$-й итерации,
+$p_K^{(m)}\hm=1\hm-p_1^{(m)}-\cdots-p_{K-1}^{(m)}$. Обозначим
+
+\noindent
+\begin{align*}
+\varphi_{ij}^{(m)}&=\fr{1}{\sqrt{u_i}}\varphi\left(\fr{x_j-\alpha^{(m)}u_i}{\sqrt{u_i}}\right)\,;
+\\
+g_{ij}^{(m)}&=\fr{p_i^{(m)}\varphi_{ij}^{(m)}}{\sum\limits_{r=1}^K
+p_r^{(m)}\varphi_{rj}^{(m)}}\,,\\
+&\hspace*{14mm}i=1,\ldots,K\,;\enskip j=1,\ldots,n\,.
+\end{align*}
+Тогда, используя стандартные рассуждения, определяющие
+вычислительные формулы EM-ал\-го\-рит\-ма для параметров конечной смеси
+нормальных законов (см, например,~[1, разд.~5.3.7--5.3.8]),
+следует положить
+
+\noindent
+\begin{equation}
+p_i^{(m+1)}=\fr{1}{n}\sum\limits_{j=1}^n g_{ij}^{(m)}\,, \enskip
+i=1,\ldots,K\,.\label{e3-kor}
+\end{equation}
+Обозначим $\overline{x}=(1/n)\sum\limits_{j=1}^nx_j$. Используя
+соотношение~(5.3.24) в~\cite{k2011}, с~учетом очевидного равенства
+$\sum\limits_{i=1}^K g_{ij}^{(m)}\hm=1$ можно заметить, что уточненная
+оценка параметра~$\alpha$ имеет вид:
+
+\columnbreak
+
+\noindent
+\begin{equation}
+\alpha^{(m+1)}=\fr{\overline{x}}{\sum\limits_{i=1}^K u_ip_i^{(m+1)}}\,,
+\label{e4-kor}
+\end{equation}
+т.\,е.\ равна отношению генерального выборочного среднего и~текущего
+эмпирического среднего смешивающего распределения, что вполне
+согласуется с~тем, что в~соответствии с~приводимым ниже соотношением~(\ref{e5-kor})
+в~данном случае ${\sf E}X\hm=\alpha{\sf E}U$.
+
+В силу монотонности классического ЕМ-ал\-го\-рит\-ма справедливо следующее
+утверждение.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~1.} {\it Пусть узлы $u_1,\ldots,u_K$ сетки различны,
+неотрицательны и~известны. Тогда итерационный процесс $(3)$--$(4)$
+является монотонным, т.\,е.\ каждая его итерация не уменьшает
+целевую сеточную функцию правдоподобия}
+\begin{multline*}
+L(p_1,\ldots,p_K,\alpha;x_1,\ldots,x_n)={}\\
+{}=
+\prod\nolimits_{j=1}^n\left[\sum\nolimits_{i=1}^K
+\fr{p_i}{\sqrt{u_i}}\,\varphi\left(\fr{x_j-\alpha^{(m)}u_i}{\sqrt{u_i}}\right)\right].
+\end{multline*}
+
+\smallskip
+
+\noindent
+\textbf{Замечание~1.} В~разд.~5.7.4 книги~\cite{k2011} показано, что
+при каждом фиксированном значении параметра~$\alpha$ сеточная
+функция правдоподобия\linebreak
+$L(p_1,\ldots,p_{K-1},\alpha;\,x_1,\ldots,x_n)$ вогнута по
+аргументам $p_1,\ldots,p_{K-1}$. Поэтому на каждом шаге
+итерационного процесса вместо соотношения~(3) можно\linebreak использо\-вать
+любой более быстрый алгоритм максимизации функции
+$L(p_1,\ldots,p_{K-1},\alpha^{(m)};\,x_1,\ldots$\linebreak $\ldots,x_n)$ по переменным
+$p_1,\ldots,p_{K-1}$. Например, оценки весов $p_1,\ldots,p_K$ можно
+искать методом условного градиента~\cite{k2011, kn2010}.
+
+\smallskip
+
+Таким образом, на первом этапе получаются оценки параметра~$\alpha$
+и~весов всех узлов~$u_i$ конечной сетки, накинутой на носитель
+смешивающего обобщенного обратного гауссовского распределения
+$P_{\mathrm{GIG}}(z;\,\nu,\mu,\lambda)$.
+
+На втором этапе остается применить ка\-кой-ли\-бо стандартный метод
+подгонки обобщенного обратного гауссовского распределения
+$P_{\mathrm{GIG}}(z;\,\nu,\mu,\lambda)$ к~эмпирическим данным типа
+гистограммы $(u_1, p_1),\ldots, (u_K, p_K)$. Например, параметры~$\nu$,
+$\mu$ и~$\lambda$ можно оценить, минимизируя соответствующую
+статистику хи-квад\-рат. Или же, например, можно решить задачу
+наименьших квад\-ратов:
+\begin{multline*}
+(\nu^*,\mu^*,\lambda^*)={}\\
+{}=\arg\min\limits_{\nu,\mu,\lambda}\sum\limits_{i=1}^K
+\left[p_i- \!\!\!\!\!
+\int\limits_{(1/2)\left(u_{i-1}+u_i\right)}^{(1/2)(u_i+u_{i+1})}\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!
+p_{GIG}(u;\,\nu,\mu,\lambda)\,du\right]^2,
+\end{multline*}
+где $u_0=0$; $u_{K+1}\hm=\infty$.
+
+На практике хорошие результаты показал подход с решением задачи
+наименьших квадратов. Для поиска параметров использовался алгоритм
+ns2sol, описанный в~книге~\cite{DSch1983}. Указанный алгоритм
+доступен во многих статистических пакетах, отличается высоким
+быстродействием и~возможностью при желании задавать разумные
+интервалы для поиска параметров.
+
+%\vspace*{-9pt}
+
+\section{О практическом выборе сетки
+на~первом этапе моди\-фи\-ци\-ро\-ван\-но\-го
+сеточного метода разделения дисперсионно-сдвиговых смесей нормальных
+законов}
+
+Естественно, что при использовании указанного двухэтапного метода
+в~динамическом режиме крайне важным становится вопрос о~выборе
+наиболее эффективных и~быстродействующих численных процедур и~их
+параметров. В~частности, исключительную важность приобретает
+правильный выбор сетки на первом этапе. Рассмотрим этот вопрос
+подробнее.
+
+Формально рассматриваемая задача выглядит так: по наблюдаемым
+значениям $x_1,\ldots,x_n$ требуется построить статистическую оценку
+верхней границы квантилей заданного порядка сме\-ши\-ва\-юще\-го закона так,
+чтобы как можно точнее оценить носитель смешивающего распределения.
+
+В дальнейшем будем считать, что $x_1,\ldots,x_n$~--- независимые
+реализации случайной величины $X\hm=Y\sqrt{U}+\alpha U$, где $Y$~---
+случайная величина со стандартным нормальным распределением, а~$U$~---
+независимая от нее случайная величина с~обобщенным обратным
+гауссовским распределением. Тогда, очевидно, распределение случайной
+величины~$X$ имеет вид~(1). Предположим, что у~случайной величины~$U$
+существуют моменты первых двух порядков. Тогда, как несложно видеть,
+\begin{equation}
+{\sf E}X={\sf E}Y\cdot{\sf E}\sqrt{U}+\alpha{\sf E}U=\alpha{\sf
+E}U\,.\label{e5-kor}
+\end{equation}
+При этом по усиленному закону больших чисел с~вероятностью единица
+$\overline x\hm\longrightarrow {\sf E}X$ $(n\hm\to\infty)$, так что при
+больших~$n$ справедливо приближенное равенство ${\sf E}X\hm\approx\overline x$
+и~с учетом~(\ref{e5-kor})
+\begin{equation}
+{\sf E}U\approx\fr{\overline x}{\alpha}\,.\label{e6-kor}
+\end{equation}
+Далее, очевидно,
+
+\columnbreak
+
+\noindent
+\begin{multline}
+{\sf E}X^2={\sf E}Y^2\cdot{\sf E}U+2\alpha{\sf E}X\cdot{\sf E}U^{3/2}+{}\\
+{}+
+\alpha^2{\sf E}U^2={\sf E}U+\alpha^2{\sf E}U^2\,.
+\label{e7-kor}
+\end{multline}
+
+\noindent
+Поэтому, обозначив
+$$
+m^2=\fr{1}{n}\sum\limits_{i=1}^nx_i^2\,,
+$$
+получаем приближенное равенство ${\sf E}X^2\hm\approx m^2$, так что
+с~учетом~(\ref{e6-kor}) и~(\ref{e7-kor}) имеем:
+\begin{equation}
+{\sf E}U^2\approx\fr{1}{\alpha^2}\left(m^2-\fr{\overline
+x}{\alpha}\right)\,.\label{e8-kor}
+\end{equation}
+Если параметр~$\alpha$ известен, то для определения верхней границы~$u^*$
+сетки, накидываемой на носитель распределения случайной
+величины~$U$, можно задать малое положительное число~$\varepsilon$
+и~воспользоваться требованием
+\begin{equation}
+{\sf P}(U\geqslant u^*)\leqslant\varepsilon\,.\label{e9-kor}
+\end{equation}
+А~для гарантированного выполнения требования~(\ref{e9-kor}) можно использовать
+неравенство Маркова:
+$$
+{\sf P}(U\geqslant u^*)\leqslant\fr{{\sf E}U^2}{(u^*)^2}\leqslant \varepsilon\,,
+$$
+откуда с учетом~(\ref{e8-kor})
+$$
+(u^*)^2\geqslant\fr{{\sf E}U^2}{\varepsilon}\approx
+\fr{1}{\alpha^2\varepsilon}\left( m^2-\fr{\overline x}{\alpha}\right)
+$$
+или
+\begin{equation}
+u^*\approx\fr{1}{\alpha\sqrt{\varepsilon}}\sqrt{m^2-
+\fr{\overline x}{\alpha}}\,.\label{e10-kor}
+\end{equation}
+
+\begin{figure*}[b] %fig1
+\vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=161.718mm
+ \epsfbox{kor-1.eps}
+ }
+ \end{center}
+ \vspace*{-9pt}
+\Caption{Примеры применения модифицированного двухэтапного сеточного
+ЕМ-ал\-го\-рит\-ма для подгонки обобщенного гиперболического распределения
+к искусственным данным, $\beta\hm=0$: (\textit{a})~$n\hm=1000$, $\alpha\hm=0{,}3$,
+$\nu\hm=1{,}3$, $\mu\hm=1{,}6$, $\lambda\hm=0{,}2$;
+(\textit{б})~$n\hm=1000$, $\alpha\hm=0{,}5$, $\nu\hm=1$, $\mu\hm=1$,
+$\lambda\hm=3$;
+(\textit{в})~$n\hm=1000$, $\alpha\hm=3$,
+ $\nu\hm=1{,}3$, $\mu\hm=1{,}6$, $\lambda\hm=2$;
+(\textit{г})~$n\hm=10\,000$,
+$\alpha\hm=0{,}3$, $\nu\hm=1{,}3$, $\mu\hm=1{,}6$, $\lambda\hm=0{,}2$}
+\end{figure*}
+
+
+Если же параметр~$\alpha$, определяющий асим\-мет\-рию распределения
+случайной величины~$X$, неизвестен, то можно воспользоваться
+следующими рассуждениями. Обозначим
+$$
+q_n=\fr{1}{n}\sum\limits_{i=1}^n{\bf 1}(x_i<0)\,,
+$$
+где ${\bf 1}(A)$~--- индикаторная функция множества (события)~$A$.
+При этом по усиленному закону больших чисел с~вероятностью единица
+$q_n\hm\longrightarrow {\sf P}(X\hm<0)$ $(n\hm\to\infty)$, так что при
+больших~$n$ справедливо приближенное равенство
+\begin{equation}
+q_n\approx{\sf P}(X<0)\,.\label{e11-kor}
+\end{equation}
+Но
+\begin{multline}
+{\sf P}(X<0)=\int\limits_{0}^{\infty}\Phi
+\left(-\alpha\sqrt{u}\right) p_{\mathrm{GIG}}(u;\nu,\mu,\lambda)\,du={}\\
+{}=
+{\sf E}\Phi\left(-\alpha\sqrt{U}\right)\,.\label{e12-kor}
+\end{multline}
+
+\pagebreak
+
+\noindent
+Предположим сначала, что $q_n\hm<1/2$. Если~$n$ достаточно велико,
+то можно с~большой степенью
+ уверенности утверж\-дать, что тогда
+$\overline x\hm>0$ и~$-\alpha\hm<0$, т.\,е.
+ $\alpha\hm>0$ и,~стало быть, на
+положительной полуоси значений аргумента~$u$ функция $\Phi(\alpha u)$
+вогнута, т.\,е.\ выпукла вверх. Тогда из~(\ref{e11-kor}) и~(\ref{e12-kor}), дважды
+применяя неравенство Иенсена, в~силу монотонности функции~$\Phi$
+получаем:
+\begin{multline}
+1-q_n\approx 1-{\sf E}\Phi\left(-\alpha\sqrt{U}\right)=
+          {\sf E}\Phi\left(\alpha\sqrt{U}\right)\leqslant{}\\
+          {}\leqslant\Phi
+          \left(\alpha{\sf E}\sqrt{U}\right)\leqslant
+          \Phi\left(\alpha\sqrt{{\sf E}U}\right)\,.\label{e13-kor}
+\end{multline}
+Если теперь для $t\hm\in(0,1)$ символом~$v_t$ обозначить $t$-кван\-тиль
+стандартного нормального закона, то из~(\ref{e13-kor}) и~(\ref{e6-kor}) вытекает
+<<приближенное неравенство>>
+$$
+v_{1-q_n}\hm\leqslant \alpha\sqrt{{\sf E}U}\,,
+$$
+т.\,е.
+$$
+\alpha\geqslant\fr{v_{1-q_n}}{\sqrt{{\sf E}U}}\approx
+\fr{v_{1-q_n}\sqrt{\alpha}}{\sqrt{\overline x}}\,,
+$$
+откуда получаем, что при достаточно больших~$n$
+\begin{equation}
+\alpha\geqslant\fr{v_{1-q_n}^2}{\overline x}\,.\label{e14-kor}
+\end{equation}
+Если теперь задать малое положительное число~$\varepsilon$, то
+для определения верхней границы~$u^*$ сетки, накидываемой на
+носитель распределения случайной величины~$U$, можно воспользоваться
+требованием~(\ref{e9-kor}), для гарантированного выполнения которого
+с~учетом~(\ref{e6-kor}) и~(\ref{e14-kor}) можно использовать неравенство Маркова:
+$$
+{\sf P}(U\geqslant u^*)\leqslant \fr{{\sf E}U}{u^*}\approx\fr{\overline
+x}{\alpha u^*}\leqslant \fr{(\overline x)^2}{v_{1-q_n}^2 u^*}\leqslant
+\varepsilon\,,
+$$
+откуда окончательно вытекает оценка
+\begin{equation}
+u^*\approx\fr{(\overline x)^2}{v_{1-q_n}^2 \varepsilon}\,.\label{e15-kor}
+\end{equation}
+
+\begin{figure*}[b] %fig2
+\vspace*{18pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=162.433mm
+ \epsfbox{kor-3.eps}
+ }
+ \end{center}
+ \vspace*{-9pt}
+\Caption{Примеры применения модифицированного двухэтапного
+сеточного ЕМ-ал\-го\-рит\-ма для подгонки обобщенного гиперболического
+распределения к~искусственным данным, $n=10\,000$, $\beta\hm=0$:
+(\textit{а})~$\alpha\hm=0{,}3$,
+$\nu\hm=2$, $\mu\hm=2$, $\lambda\hm=2{,}5$;
+(\textit{б})~$\alpha\hm=0{,}5$,  $\nu\hm=1$, $\mu\hm=1$, $\lambda\hm=3$;
+(\textit{в})~$\alpha\hm=0{,}8$,
+$\nu\hm=1{,}3$, $\mu\hm=1{,}6$, $\lambda\hm=2$;
+(\textit{г})~$\alpha\hm=1{,}3$, $\nu\hm=2$, $\mu\hm=2$, $\lambda\hm=2{,}5$}
+\end{figure*}
+
+
+
+В случае $q_n\hm\geqslant1/2$, если $n$ достаточно велико, то можно
+с~большой степенью уверенности утверж\-дать, что $\overline x\hm\leqslant 0$
+и~$-\alpha\hm\geqslant 0$, т.\,е.\ на положительной\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+%\end{multicols}
+
+
+%\begin{multicols}{2}
+
+\noindent
+ полуоси значений аргумента~$u$
+функция $\Phi(-\alpha u)$ вогнута, т.\,е.\ выпукла вверх. Тогда
+из~(\ref{e11-kor}) и~(\ref{e12-kor}), дважды применяя неравенство Иенсена, в~силу
+монотонности функции~$\Phi$ получаем
+$$
+q_n\approx {\sf E}\Phi\left(-\alpha\sqrt{U}\right)\leqslant
+\Phi\left(-\alpha\sqrt{{\sf E}U}\right)\,,
+$$
+откуда вытекает <<приближенное неравенство>> $v_{q_n}\hm \leqslant
+-\alpha\sqrt{{\sf E}U}$,
+т.\,е.
+$$
+-\alpha\geqslant\fr{v_{q_n}}{\sqrt{{\sf E}U}}\approx
+\fr{v_{q_n}\sqrt{|\alpha|}}{\sqrt{|\overline x|}}
+$$
+и при достаточно больших~$n$
+\begin{equation}
+|\alpha|\geqslant\fr{v_{q_n}^2}{|\overline x|}\,.\label{e16-kor}
+\end{equation}
+Для определения верхней границы~$u^*$ сетки, накидываемой на
+носитель распределения случайной величины~$U$, снова зададим малое
+положительное число~$\varepsilon$ и~потребуем, чтобы было
+справедливо условие~(\ref{e9-kor}), для гарантированного выполнения которого
+с~учетом~(\ref{e6-kor}) и~(\ref{e16-kor}) используем неравенство Маркова и~тот факт, что
+$\mathrm{sign}\, \overline x\hm=\mathrm{sign}\,\alpha$ при достаточно
+больших~$n$:
+\begin{multline}
+{\sf P}(U\geqslant u^*)\leqslant \fr{{\sf E}U}{u^*}\approx
+\fr{\overline x}{\alpha u^*}=
+\fr{|\overline x|}{|\alpha| u^*} \leqslant{}\\
+{}\leqslant
+\fr{(\overline x)^2}{v_{q_n}^2 u^*}\leqslant
+\varepsilon\,.\label{e17-kor}
+\end{multline}
+В силу симметричности нормального распределения $v_{t}\hm=-v_{1-t}$ для
+любого $t\hm\in(0,1)$, поэтому $v_{q_n}^2\hm=v_{1-q_n}^2$ и~в~случае
+$q_n\hm\geqslant1/2$ соотношение~(\ref{e17-kor}) снова приводит к~оценке~(\ref{e15-kor}).
+
+Справедливости ради необходимо отметить, что оценки~(\ref{e10-kor}) и~(\ref{e15-kor})
+являются завышенными, но они гарантируют, что
+$(1-\varepsilon)$-почти-весь носитель распределения случайной
+величины~$U$ будет лежать внутри интервала $[0, u^*]$.
+
+\section{Результаты численных экспериментов}
+
+Приводимые в~данном разделе графики иллюстрируют качество работы
+модифицированного сеточного метода разделения дис\-пер\-си\-он\-но-сдви\-го\-вых
+смесей нормальных законов на примере его\linebreak применения к~оцениванию
+параметров обоб\-щенных гиперболических распределений с~ис\-поль\-зованием
+указанного алгоритма выбора сетки\linebreak с~умеренным чис\-лом узлов $K\hm=40$.
+Для вы\-чис\-ле\-ний использовались искусственно сгенерированные выборки
+объемов $n\hm=1000$ и~$n\hm=10\,000$ с~разными наборами параметров, значения
+которых указаны на рисунках. На рис.~1 и~2 изображены гистограммы
+(серые столбики) и~графики
+истинной плот\-ности (штриховые линии), промежуточной
+оценки, полученной сеточным ЕМ-ал\-го\-рит\-мом (пунктирные линии)
+и~итоговой оценки (непрерывные линии). На рис.~1 и~2 так\-же указаны
+значения полученных оценок параметров. Как видно из приводимых
+рисунков, параметры~$\alpha$ оцениваются очень точно. Точность
+оценок остальных параметров удовлетворительная и~может быть повышена
+за счет использования более частых сеток и~более чувствительных
+критериев остановки ЕМ-ал\-го\-рит\-ма на первом этапе. Следует отметить,
+что даже в~тех случаях, в~которых наблюдаются заметные расхождения
+оценок параметров и~их точных значений, оценки самих плотностей
+довольно \mbox{точны}.
+
+
+
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{k2011}
+\Au{Королев В.\,Ю.} Ве\-ро\-ят\-но\-ст\-но-ста\-ти\-сти\-че\-ские методы
+декомпозиции волатильности хаотических процессов.~--- М.: Изд-во
+Московского ун-та, 2011.
+
+\bibitem{n2013}
+\Au{Назаров А.\,Л.} Приближенные методы разделения смесей
+вероятностных распределений: Дисс.\ \ldots\  канд. физ.-мат. наук.~--- М.:
+МГУ им.\ М.\,В.~Ломоносова, 2013.
+
+\bibitem{BN1977}
+\Au{Barndorff-Nielsen~O.-E.} Exponentially decreasing distributions
+for the logarithm of particle size~// Proc. Roy. Soc. Lond.~A,
+1977. Vol.~353. P.~401--419.
+
+\bibitem{BN1978}
+\Au{Barndorff-Nielsen~O.-E.} Hyperbolic distributions and
+distributions of hyperbolae~// Scand. J. Statist., 1978. Vol.~5.
+P.~151--157.
+
+\bibitem{BN1982}
+\Au{Barndorff-Nielsen~O.-E., Kent~J., S\!{\!\ptb{\!\o}}\,rensen~M.} Normal
+variance-mean mixtures and $z$-distributions~// Int. Statist. Rev.,
+1982. Vol.~50. No.\,2. P.~145--159.
+
+\bibitem{ks2012}
+\Aue{Королев В.\,Ю., Соколов И.\,А.} Скошенные распределения
+Стьюдента, дисперсионные гам\-ма-рас\-пре\-де\-ле\-ния и~их обобщения как
+асимптотические аппроксимации~// Информатика и~её применения, 2012.
+Т.~6. Вып.~1. С.~2--10.
+
+\bibitem{zk2013}
+\Au{Закс Л.\,М., Королев В.\,Ю.} Обобщенные дисперсионные
+гам\-ма-рас\-пре\-де\-ле\-ния как предельные для случайных сумм~// Информатика
+и её применения, 2013. Т.~7. Вып.~1. С.~105--115.
+
+\bibitem{k2013}
+\Au{Королев В.\,Ю.} Обобщенные гиперболические
+распределения как предельные для случайных сумм~// Тео\-рия
+вероятностей и~ее применения, 2013. Т.~58. Вып.~1. С.~117--132.
+
+\bibitem{kckg2013}
+\Au{Королев В.\,Ю., Черток А.\,В., Корчагин~А.\,Ю.,
+Горшенин~А.\,К.} Ве\-ро\-ят\-но\-ст\-но-ста\-ти\-сти\-че\-ское моделирование
+информационных потоков в~сложных финансовых системах на основе
+высокочастотных данных~// Информатика и~её применения, 2013. Т.~7.
+Вып.~1. С.~12--21.
+
+\bibitem{p2004}
+\Au{Protassov R.\,S.} EM-based maximum likelihood parameter
+estimation for a~multivariate generalized hyperbolic distribution
+with fixed~$\lambda$~// Statistics Computing, 2004. Vol.~14.
+P.~67--77.
+
+\bibitem{kn2010}
+\Au{Королев В.\,Ю., Назаров А.\,Л.} Разделение смесей
+вероятностных распределений при помощи сеточных методов моментов и~максимального правдоподобия~//
+Автоматика и~телемеханика, 2010. Вып.~3. С.~98--116.
+
+\bibitem{DSch1983}
+\Au{Dennis J.\,E., Schnabel R.\,B.} Numerical methods for
+unconstrained optimization and nonlinear equations.~--- Englewood
+Cliffs: Prentice-Hall, 1983. 378~p.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в редакцию 01.10.14}}
+
+\newpage
+
+%\vspace*{12pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{12pt}
+
+\def\tit{A MODIFIED GRID METHOD FOR~STATISTICAL SEPARATION
+OF~NORMAL VARIANCE-MEAN MIXTURES}
+
+\def\titkol{A modified grid method for statistical separation
+of~normal variance-mean mixtures}
+
+\def\aut{V.\,Yu.~Korolev$^{1,2}$ and~A.\,Yu.~Korchagin$^1$}
+
+\def\autkol{V.\,Yu.~Korolev and~A.\,Yu.~Korchagin}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+$^1$Faculty of Computational Mathematics and Cybernetics,
+M.\,V.~Lomonosov Moscow State University,\linebreak
+$\hphantom{^1}$1-52 Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation
+
+
+\noindent
+$^2$Institute of Informatics Problems, Russian Academy of Sciences,
+44-2~Vavilov Str., Moscow 119333, Russian\linebreak
+$\hphantom{^1}$Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2014\ \ \ volume~8\ \ \ issue\ 4}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2014\ \ \ volume~8\ \ \ issue\ 4
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+\Abste{A~modified two-stage grid method for
+statistical separation of normal variance-mean mixtures is described
+as an alternative to a pure EM (expectation-maximization) algorithm.
+At the first stage of this
+algorithm, a~discrete approximation is constructed to the mixing
+distribution. At the second stage, the obtained discrete
+distribution is approximated by an absolutely continuous
+distribution from a~predetermined family, say, by a generalized
+inverse Gaussian distribution. The convergence of this two-stage
+procedure is discussed. The monotonicity of the grid procedure used
+at the first stage is proved. The problem of the optimal choice of
+the parameters of the method is discussed in detail. First of all,
+the problem of the optimal choice of the grid thrown on the support
+of the mixing distribution is considered. Statistical estimators are
+proposed for the quantiles of the mixing law. The efficiency of the
+method is illustrated by examples of its application to the
+estimation of the parameters of generalized hyperbolic
+distributions.}
+
+\smallskip
+
+\KWE{mixture of probability distributions; normal
+variance-mean mixture; generalized hyperbolic distribution;
+EM-algorithm; grid method of separation of mixtures}
+
+\DOI{10.14357/19922264140402}
+
+\Ack
+\noindent
+The research was supported by the Russian Science Foundation (project 14-11-00364).
+
+%\vspace*{3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ \bibitem{k2011eng}
+ \Aue{Korolev, V.\,Yu.} 2011.
+\textit{Veroyatnostno-statisticheskie metody dekompozitsii
+volatil'nosti khaoticheskikh protsessov}
+[Probabilistic and statistical methods for the decomposition of volatility
+of chaotic processes].
+Moscow: Moscow University Press. 510~p.
+
+\bibitem{n2013eng}
+\Aue{Nazarov, A.\,L.} 2013.
+{Priblizhennye metody razdeleniya smesey veroyatnostnykh raspredeleniy}
+[Approximate methods for the decomposition of volatility of chaotic processes].
+Ph.D. Thesis. Moscow: Moscow State University.
+
+\bibitem{BN1977eng}
+\Aue{Barndorff-Nielsen, O.\,E.} 1977.
+Exponentially decreasing distributions for the logarithm of particle size.
+\textit{Proc. Roy. Soc. Lond. A} 353:401--419.
+
+\bibitem{BN1978eng}
+\Aue{Barndorff-Nielsen, O.\,E.} 1978.
+Hyperbolic distributions and distributions of hyperbolae.
+\textit{Scand. J. Statist.} 5:151--157.
+
+\bibitem{BN1982eng}
+\Aue{Barndorff-Nielsen, O.\,E., J.~Kent, and M.~S\!{\ptb{\o}}rensen}. 1982.
+Normal variance-mean mixtures and $z$-distributions.
+\textit{Int. Statist. Rev.} 50(2):145--159.
+
+\bibitem{ks2012eng}
+\Aue{Korolev, V.\,Yu., and I.\,A. Sokolov}. 2012.
+{Skoshennye raspredeleniya St'yudenta, dispersionnye
+gam\-ma-ras\-pre\-de\-le\-niya i~ikh obobshcheniya kak asimptoticheskie
+approksimatsii}
+[Skewed Student's distributions, variance gamma distributions, and their
+generalizations as asymptotic approximations].
+\textit{Informatika i ee Primeneniya}~--- \textit{Inform. Appl.} 6(1):2--10.
+
+\bibitem{zk2013eng}
+\Aue{Korolev, V.\,Yu., and L.\,M.~Zaks}. 2013.
+{Obobshchennye dispersionnye gam\-ma-ras\-pre\-de\-le\-niya kak
+predel'nye dlya sluchaynykh summ}
+[Generalized variance gamma distributions as limiting for random sums].
+\textit{Informatika i ee Primeneniya}~--- \textit{Inform. Appl.} 7(1):105--115.
+
+\bibitem{k2013eng} \Aue{Korolev, V.\,Yu.} 2013.
+{Obobshchennye giperbolicheskie raspredeleniya kak predel'nye dlya sluchaynykh summ}
+[Generalized hyperbolic distributions as limiting for random sums]
+\textit{Theory Probab. Appl.} 58(1):117--132.
+
+\bibitem{kckg2013eng}
+\Aue{Korolev, V.\,Yu., A.\,V. Chertok, A.\,Yu.~Korchagin, and A.\,K.~Gorshenin}.
+2013. {Ve\-ro\-yat\-no\-st\-no-sta\-ti\-sti\-che\-skoe
+mo\-de\-li\-ro\-va\-nie informatsionnykh potokov v~slozhnykh finansovykh sistemakh
+na osnove vysokochastotnykh dannykh}
+[Probability and statistical modeling of information flows in complex
+financial systems from high-frequency data].
+\textit{Informatika i~ee Primeneniya}~--- \textit{Inform.  Appl.} 7(1):12--21.
+
+\bibitem{p2004eng-1}
+\Aue{Protassov, R.\,S.} 2004.
+EM-based maximum likelihood parameter estimation for a multivariate
+generalized hyperbolic distribution with fixed~$\lambda$.
+\textit{Statistics Computing} 14:67--77.
+
+\bibitem{kn2010eng-1}
+\Aue{Korolev, V.\,Yu., and A.\,L.~Nazarov}. 2010.
+{Razdelenie smesey veroyatnostnykh raspredeleniy pri pomoshchi
+setochnykh metodov momentov i~maksimal'nogo pravdopodobiya}
+[Separation of mixtures using grid moment-based methods and maximum likelihood].
+\textit{Avtomatika i~Telemekhanika} [Automatics and Telemechanics] 3:98--116.
+
+\bibitem{DSch1983eng}
+\Aue{Dennis, J.\,E., and R.\,B.~Schnabel}. 1983.
+\textit{Numerical methods for unconstrained optimization and nonlinear equations}.
+Englewood Cliffs: Prentice-Hall. 378~p.
+
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received October 01, 2014}}
+
+\vspace*{-18pt}
+
+\Contr
+
+\noindent
+\textbf{Korolev Victor Yu.} (b.\ 1954)~---
+Doctor of Science in physics and mathematics, professor,
+Department of Mathematical Statistics, Faculty of Computational Mathematics
+and Cybernetics, M.\,V.~Lomonosov Moscow State University,
+1-52 Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation;
+leading scientist, Institute of Informatics Problems,
+Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian
+Federation; victoryukorolev@yandex.ru
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Korchagin Alexander Yu.} (b.\ 1989)~---
+PhD student, Faculty of Computational Mathematics and Cybernetics,
+M.\,V.~Lomonosov Moscow State University,
+1-52 Leninskiye Gory, GSP-1, Moscow 119991, Russian Federation;
+sasha.korchagin@gmail.com
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}

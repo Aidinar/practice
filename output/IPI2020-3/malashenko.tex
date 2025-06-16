@@ -1,0 +1,680 @@
+
+%\def\de{\defeq}
+
+%\def\fa{\forall}
+
+%\def\se{\subseteq}
+%\def\bs{\backslash}
+
+%\def\ul{\underline}
+%\def\wl{\widetilde}
+%\def\ge{\geq}
+%\def\vn{\varnothing}
+%\def\sm{\setminus}
+%\def\w{\widetilde}
+%\def\v{\vert}
+%\def\V{\Vert}
+%\def\dm{d^{max}}
+%\def\d{{\rm d}}
+%\def\zm{z^{max}}
+
+%\def\ups{\upsilon}
+%\def\sig{\sigma}
+%\def\vs{\varsigma}
+%\def\del{\delta}
+%\def\ta{\tau}
+%\def\io{\iota}
+%\def\vt{\vartheta}
+%\def\al{\alpha}
+%\def\ka{\kappa}
+%\def\lm{\lambda}
+%\def\vph{\varphi}
+%\def\t{\theta}
+%\def\i#1,#2,#3 {{#1}^{#2}_{#3}}
+%\def\c{\cdot}
+%\def\la{\langle}
+%\def\ra{\rangle}
+%\def\beq{\begin{equation}}
+%\def\eeq{\end{equation}}
+%\def\r(#1){({\ref{#1}})}
+%%\def\L{{\rm I}\!{\rm L}}
+%\def\st{\stackrel{\rightarrow}}
+%\def\defeq{\stackrel{\mbox{\scriptsize {\rm def}}}=}
+%\def\ba{{\bar a}}
+%\def\bp{{\bar p}}
+%\def\pr{{\bf pr}}
+
+\def\stat{malashenko}
+
+\def\tit{АППРОКСИМАЦИЯ МНОЖЕСТВА ДОСТИЖИМЫХ ПОТОКОВ МНОГОПОЛЬЗОВАТЕЛЬСКОЙ СЕТИ}
+
+\def\titkol{Аппроксимация множества достижимых потоков многопользовательской сети}
+
+\def\aut{Ю.\,Е.~Малашенко$^1$, И.\,А.~Назарова$^2$}
+
+\def\autkol{Ю.\,Е.~Малашенко, И.\,А.~Назарова}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Малашенко Ю.\,Е.}
+\index{Назарова И.\,А.}
+\index{Malashenko Yu.\,E.}
+\index{Nazarova I.\,A.}
+ 
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнена при финансовой поддержке РФФИ (проект 19-07-00352);
+%исследования проводились в~рамках программы Московского Цент\-ра 
+%фундаментальной и~прикладной математики.}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> 
+Российской академии наук, \mbox{malash09@ccas.ru}}
+\footnotetext[2]{Федеральный исследовательский центр <<Информатика и~управление>> 
+Российской академии наук, \mbox{irina-nazar@yandex.ru}}
+
+%\vspace*{-6pt}
+
+ 
+
+\Abst{Рассматривается метод приближенного описания  
+выпуклого многогранного множества до\-пус\-ти\-мых потоков,  передаваемых 
+между всеми узлами сети одновременно. Предлагается способ построения 
+внутреннего выпуклого аппроксимирующего каркаса. Каркас формируется 
+на основе векторов предельно достижимых потоков между парами вершин 
+ис\-точ\-ник--при\-ем\-ник. Система  опорных векторов определяется точками, 
+лежащими на внешних гранях исходного множества. Любая выпуклая комбинация  
+базовых векторов задает допустимое распределение потоков. Разработанные 
+алгоритмические схемы допускают  распараллеливание вычислительных 
+процедур на гетерогенных многопроцессорных комплексах. Полученное 
+агрегированное описание можно использовать при диспетчеризации   
+интенсивных входных информационных потоков, превышающих функциональные 
+возможности сети.}
+
+\KW{многопродуктовая потоковая модель; множество допустимых потоков; 
+внутренний опорный каркас}
+
+\DOI{10.14357/19922264200312} 
+ 
+%\vspace*{-6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+В работе рассматривается общая схема по\-строения 
+приближенного описания множества\linebreak достижимых потоков~\cite{lot} 
+в~многопользовательской сетевой системе~\cite{Yen, Dan}. В~рамках 
+формальной математической записи системы ограничений ис\-следуются 
+векторы различных потоков, которые могут одновременно передаваться 
+между всеми\linebreak парами ис\-точ\-ник--при\-ем\-ник. Вычисляются граничные точки,
+ которые соответствуют предельно достижимому значению потока для некоторой 
+ пары узлов при фиксированных значениях для всех остальных. 
+ Полученные наборы точек на грани\-це множества достижимости определяют
+  опорные векторы      внутреннего каркаса. Любая вы\-пук\-лая комбинация 
+  базисных векторов задает до\-пус\-ти\-мое распределение потоков в~исходной сети. 
+  Предло\-жен\-ную алгоритмическую схему можно рас\-сматри\-вать как 
+  многоэтапную динамическую процедуру диспетчеризации в~условиях 
+  не\-опре\-де\-лен\-ности~\cite{JCM-19, Mal19-6}. 
+  
+  \vspace*{-6pt}
+
+\section{Математическая модель}
+
+  \vspace*{-2pt}
+
+Для описания многопользовательской сетевой системы  используется 
+математическая запись\linebreak модели передачи многопродуктового потока~\cite{Mal19-6}.
+Структура сети~$G(\mathbf{d})$ задается множествами  
+$\langle V,\ R, \ U\rangle$:
+узлов (вершин) сети  $V \hm= \{ v_1, v_2, \ldots\linebreak
+\ldots, v_n, \ldots, v_N \}$;
+неориентированных ребер $R \hm= \{ r_1, r_2, \ldots, r_k, \ldots, r_E \} 
+\hm\subset V \times V$.  Ребро $r_k = (v_{n_k}, v_{j_k})$ 
+соединяет вершины~$v_{n_k}$, $v_{j_k}$ (инцидентно вершинам~$v_{n_k}$, 
+$v_{j_k}$), которые для него служат концевыми. Предполагается, что 
+в~сети отсутствуют петли и~сдвоенные ребра.
+Ребру~$r_k$ ставятся в~соответствие две ориентированные дуги~$u_k$ и~$u_{k+E}$ 
+прямого и~обратного направления из множества
+ориентированных дуг  $U \hm= \{ u_1, u_2,\ldots, u_k, \ldots, u_{2E}\}$.
+Дуги~$\{u_k, u_{k+E}\}$ определяют направление передачи потока по  
+ребру~$r_k$ между концевыми вершинами~$v_{n_k}$ и~$v_{j_k}$.
+
+Обозначим через~$S(v_n)$ множество номеров исходящих дуг, 
+по которым поток покидает узел~$v_n$;
+$T(v_n)$~--- множество номеров входящих дуг, по которым поток поступает 
+в~узел~$v_n$.
+Состав множеств $S(v_n)$ и~$T(v_n)$ однозначно 
+определяется в~ходе выполнения следующей процедуры. Пусть некоторое ребро
+ $r_k \hm\in R$ соединяет вершины с~номерами~$n$ и~$j$, такими что $n \hm< j$. 
+ Тогда ориентированная дуга $u_k \hm= (v_n, v_j)$
+считается \textit{исходящей} из вершины~$v_{n}$ и~ее номер~$k$ 
+заносится в~множество~$S(v_n)$, ориентированная дуга $u_{k+E} 
+\hm= (v_j, v_n)$~--- \textit{входящей} для~$v_{n}$ и~ее номер~$k\hm+E$ 
+помещается в~список~$T(v_n)$.
+Соответственно дуга~$u_k$ является \textit{входящей} для~$v_j$ и~ее номер~$k$ 
+попадает в~$T(v_j)$, а~дуга~$u_{k+E}$~--- \textit{исходящей} и~номер~$k\hm+E$ 
+вносится в~список исходящих дуг~$S(v_j)$.
+
+Предполагается, что в~сети
+между любой парой узлов могут  передаваться потоки разных видов.
+Пара уз\-лов-кор\-рес\-пон\-ден\-тов~$p_m$ определяется упорядоченной 
+парой вершин $p_m \hm= (v_{s_m}, v_{t_m})$,
+где вершина с~номером~$s_m$ называется источником, а~с~номером~${t_m}$~--- 
+стоком, или приемником, потока $m$-го вида.
+В~настоящей работе в~сети из~$N$~узлов рассматривается $M \hm= 
+N (N\hm-1)$ независимых, невзаимозаменяемых и~равноправных потоков 
+различных видов, которые передаются между уз\-ла\-ми-кор\-рес\-пон\-ден\-та\-ми 
+из множества $P \hm= \{ p_1, p_2, \ldots, p_M\}$.
+
+Пусть $x_{mk}$~--- величина потока $m$-го вида, который передается
+по ребру~$r_k$, $x_{mk}\hm \ge 0$, $m \hm= \overline{1, M}$, 
+$k \hm= \overline {1, E}$. Каждому ребру $r_k \hm\in R$ 
+приписывается неотрицательное число~$d_k$, определяющее 
+суммарный предельно допустимый поток, который можно передать по ребру~$r_k$ 
+в~обоих направлениях. В~исходной сети компоненты вектора пропускных 
+способностей $\mathbf{d} \hm= (d_1, d_2, \ldots, d_k, \ldots, d_E)$~--- 
+наперед заданные положительные числа $d_k \hm> 0$. Вектором~$\mathbf{d}$
+ определяются следующие ограничения на все  потоки, передаваемые по ребру~$r_k$:
+\begin{multline}
+\sum\limits_{m=1}^{M} \left(x_{mk}+ x_{m(k+E)}\right) \le d_k,  
+\\
+ x_{mk} \ge 0, \ \ x_{m(k+E)} \ge 0, \ \  
+k =\overline{1, E}. 
+\label{e1-mal}
+\end{multline}
+
+Обозначим через~$z_m$ величину потока $m$-го вида, который 
+поступает в~сеть в~узле с~номером~${s_m}$ и~покидает из узла с~номером~${t_m}$.
+
+Во всех узлах сети $v_n \hm\in V$, $n \hm= \overline{1,N}$,  
+для всех видов потоков должны выполняться условия сохранения потоков:
+\begin{multline}
+\sum\limits_{i \in S(v_n)}{x_{mi}} - \sum\limits_{i \in T(v_n)}{x_{mi}} ={}\\
+{}=
+\begin{cases}
+ z_m, & \mbox{если } v_n = v_{s_m}; \\
+- z_m, & \mbox{если } v_n = v_{t_m}; \\
+ 0 & \mbox{в\ остальных\ случаях,}
+\end{cases}
+\\
+n = \overline {1, N}, \ m = \overline {1, M}, \ x_{mi} \ge 0, \ z_m \ge 0.
+\label{e2-mal}
+\end{multline}
+Величина $z_m$ равна входному потоку $m$-го вида, который пропускается 
+от источника к стоку пары~$p_m$ при распределении потоков~$x_{mi}$ 
+по дугам сети.
+
+Ограничения~(1) и~(2) задают множество  допустимых значений компонент 
+векторов потоков
+ $\mathbf{z} \hm= (z_1, z_2, \ldots, z_m, \ldots, z_M)$:
+\begin{equation*}
+\mathcal{Z}(x,\mathbf{ d}) = \{\mathbf{z} \ge 0 | \
+(\mathbf{z}, x)\  \mbox{удовлетворяют } (1), (2)\}. 
+%\label{e3-mal}
+\end{equation*}
+
+\section{Аппроксимация множества допустимых потоков}
+
+Для приближенного описания множества допустимых потоков 
+строится внутренний опорный каркас~\cite{Dan}. Каркас формируется 
+на основе набора точек (векторов), лежащих на границе 
+$\mathcal{Z}(x,\mathbf{ d})$. На начальном этапе рассматривается 
+произвольная пара узлов корреспондентов $p_a \hm\in P$ 
+и~определяется максимальный поток~\cite{Yen}, который можно 
+независимо передать в~сети из вершины с~номером~$s_a$ в~вершину 
+с~номером~${t_a}$ без учета всех остальных потоков.
+
+\smallskip
+
+\noindent
+\textbf{Задача~1.} Найти
+$$ 
+z_a^0 (1) = \max\limits_{(\mathbf{z}, x)  \in \mathcal{Z}(x, 
+\mathbf{d})} z_a 
+$$
+при дополнительных условиях 
+$$
+z_m = 0,\ m \not = a,\ m = \overline {1, M}\,.$$
+
+Вектор решений $\mathbf{z}_a^0(1) = (0, 0, \ldots, z_a^0 (1), \ldots, 0)$ 
+определяет угловую точку выпуклого множества
+$\mathcal{Z}(x,\mathbf{ d})$, которая лежит на пересечении грани 
+$\mathcal{Z}(x,\mathbf{ d})$ с~осью координат, соответствующей паре~$p_a$. 
+Последовательное решение задачи~1 для всех $p_m \hm\in P$ позволяет 
+построить множество $\mathbf{Z}^0(1) \hm= \{\mathbf{z}_1^0(1),
+ \mathbf{z}_2^0(1), \ldots, \mathbf{z}_m^0(1), \ldots, 
+ \mathbf{z}_M^0(1) \}$ опорных векторов $C(1)$-се\-че\-ния 1-го слоя.
+
+Векторы из множества $\mathbf{Z}^0(1)$ можно также рас\-смат\-ри\-вать как 
+направляющие векторы конуса возмож\-ных направлений к внешней 
+границе множества~$\mathcal{Z}(x,\mathbf{ d})$.
+Компоненты вектора $\mathbf{z}(0) \hm= \left(
+{z}_1^0(1), {z}_2^0(1), \ldots, {z}_m^0(1), \ldots, 
+{z}_M^0(1)\right)$\linebreak численно равны предельно достижимым потокам для каждой 
+пары $p_m \hm\in P$. Рассмотрим  луч $\mathbf{z}(\beta)
+\hm = \beta \mathbf{z}(0)$, на\-прав\-лен\-ный из начала координат 
+в~точку~$\mathbf{z}(0)$. Длину шага по лучу определим как коэффициент 
+разложения в~выпуклой комбинации опорных векторов из~$\mathbf{z}^0(1)$.
+
+\smallskip
+
+\noindent
+\textbf{Задача~2.} Найти~$\beta^*$ и~коэффициенты~$\gamma_m^*$,  
+$m \hm= \overline {1, M}$,
+$$
+\beta^* \mathbf{z}(0) = \sum\limits_{m=1}^M \gamma_m^* {z}_m^0(1) = 
+\sum\limits_{m=1}^M \gamma_m^* \mathbf{z}^0(1) 
+$$
+при условии 
+$$
+\sum\limits_{m=1}^M \gamma_m^* = 1, \  \gamma_m^* \ge 0, \ 
+ m = \overline {1, M}\,. 
+ $$
+
+Из покомпонентной записи
+$$
+\beta^* {z}_m^0(1) = \gamma_m^* {z}_m^0(1), \ 
+ \sum\limits_{m=1}^M \gamma_m^* = 1, \  
+ \gamma_m^* \ge 0, \  m = \overline {1, M},
+ $$
+следует, что $\beta^* \hm= \gamma_m^*  \hm= 1/M$. 
+Координаты точки~$\mathbf{z}(\beta^*)$ 
+в~множестве $ \mathcal{Z}(x,\mathbf{ d})$ обозначим
+$$
+z_m^*(1) = \fr{1}{M}\, z_m^0(1),\enskip  m = \overline {1, M}\,. 
+$$
+
+Вектор $\mathbf{z}^*(1) \hm= \left(z_1^*(1), z_1^*(1), \ldots, z_m^*(1), 
+z_M^*(1)\right)$ определяет распределение потоков при одновременной 
+передаче потока между всеми парами узлов ис\-точ\-ник--при\-ем\-ник. 
+Каждая компонента вектора~$\mathbf{z}^*(1)$  пропорциональна максимальному 
+потоку для соответствующей пары $p_m \hm\in P$.
+
+На следующем этапе в~множестве $\mathcal{Z}(x, \mathbf{d})$ 
+осуществляется поиск вектора потоков, каждая компонента которого 
+больше или равна достигнутым значениям~${z}_m^*(1)$.
+
+\smallskip
+
+\noindent
+\textbf{Задача~3.} Для некоторой пары узлов~$p_a$ определить 
+максимальный поток
+$$ 
+z_a^0 (2) = \max\limits_{(\mathbf{z}, x)  \in \mathcal{Z}(x, \mathbf{d})}  z_a  
+$$
+при дополнительных условиях 
+$$ z_a \ge z_a^*(1)\,;\enskip z_m \ge z_m^*(1)\  \forall p_m \in P,  \ 
+m\not = a. $$
+Решение задачи~3~--- вектор 
+$$
+\mathbf{z}_a^0 (2) = \left(z_1^*(1), z_2^*(1), \ldots, z_a^0 (2), 
+\ldots, z_M^*(1)\right), 
+$$
+который лежит на границе множества $\mathcal{Z}(x, \mathbf{d})$. 
+На основе решения цепочки задач~3 последовательно для всех $p_m \hm\in P$ 
+формируется множество
+$$
+\mathbf{Z}^0(2)= \left\{\mathbf{z}_1^0(2), \mathbf{z}_2^0(2), 
+\ldots, \mathbf{z}_m^0(2), \ldots, \mathbf{z}_M^0(2)\right\}
+$$ 
+опорных векторов $C(2)$-се\-че\-ния 2-го слоя или направляющих 
+векторов конуса возможных\linebreak направлений из точки 
+с~координатами~$\left(z_1^*(1)\right.$,\linebreak  $\left.z_2^*(1), \ldots, z_m^*(2), \ldots, z_M^*(1)\right)$.
+
+Любой вектор потоков~$\mathbf{z}$, который можно представить 
+как выпуклую комбинацию векторов из~$\mathbf{Z}^0(2)$, 
+является допустимым и~принадлежит множеству $\mathcal{Z}(x, \mathbf{d})$.
+Век\-тор-луч~$\Delta \mathbf{z}(2)$ с~компонентами 
+$$
+\Delta z_m(2) = 
+z_m^0 (2) - z_m^*(1)\,,\enskip m = \overline {1, M}\,, 
+$$
+определяет возможное направление увеличения достигнутых величин потоков. 
+При этом коэффициент~$\alpha$~--- длина шага в~возможном направлении 
+при переходе из~$\mathbf{z}^*(1)$ в~точку~$\mathbf{z}^*(2)$~--- к~новому 
+распределению потоков:
+$$
+ \mathbf{z}^*(2) = \mathbf{z}^*(1) + \alpha \Delta \mathbf{z}(2)\,.
+ $$
+
+
+\noindent
+\textbf{Задача~4.} Найти~$\alpha^*$ и~коэффициенты выпуклой 
+комбинации~$\gamma_m^*$,  $m \hm= \overline {1, M}$, такие что
+\begin{multline*}
+\mathbf{z}^*(2) = \mathbf{z}^*(1) + \alpha^* \Delta \mathbf{z}(2) = 
+\sum\limits_{m=1}^M \gamma_m^* \mathbf{z}_m^0(2)\,, 
+\\
+  \sum\limits_{m=1}^M \gamma_m^* = 1, \enskip  \gamma_m^* \ge 0,  \enskip 
+  m = \overline {1, M}\,,
+\end{multline*}
+при покомпонентной записи:
+\begin{multline*} 
+{z}_m^*(2) = z_m^*(1) + \alpha^*\left( z_m^0(2)  -  z_m^*(1)\right) = {}\\
+{}=
+\gamma_m^* z_m^0(2) + \sum\limits_{j=1}^M \gamma_j^* z_m^*(1)  - 
+\gamma_m^* {z}_m^*(1) = {}\\
+{}  = \gamma_m^* z_m^0(2) + 
+\left(1 - \gamma_m^*\right) {z}_m^*(1);
+\end{multline*}
+$$  
+\sum\limits_{m=1}^M \gamma_m^* = 1, \  \gamma_m^* \ge 0, \ 
+ m = \overline {1, M}\,.
+ $$
+
+Решение задачи~4~--- координаты разложения $\alpha^* \hm= \gamma_m^* 
+\hm= ({1}/{M})$, $ m \hm= \overline {1, M}$,~--- 
+определяет вектор допустимых потоков~$\mathbf{z}^*(2)$ с~координатами:
+\begin{multline*}
+z_m^*(2) = \fr{M - 1}{M}\, z_m^*(1) + \fr{1}{M}\, z_m^0(2) = {}\\
+{}=
+\left(\fr{1}{M} - \fr{1}{M^2}\right) z_m^0(1) + \fr{1}{M} \,z_m^0(2) = {}\\
+{} = \fr{1}{M} \left[\fr{M - 1}{M} \,z_m^0(1) + z_m^0(2) \right],  \ 
+m = \overline {1, M}.
+\end{multline*}
+После сравнения найденных~$\mathbf{z}^*(1)$ и~$\mathbf{z}^*(2)$ 
+формируется множество пар корреспондентов для поиска вектора~$\mathbf{z}^*(3)$.
+
+Пусть задано малое положительное число $\delta\hm > 0$. Обозначим  $P^-(2)$~--- 
+множество пар, для которых на всех последующих этапах  фиксируется 
+достигнутый поток~$z_m^*(2)$,
+$$ 
+P^-(2) = \left\{ p_m \ | \ p_m \in P, \ |z_m^*(2) - z_m^*(1)| \le \delta \right\}, 
+$$
+$M^-(2)$ --- множество индексов пар, входящих в~$P^-(2)$,
+$M^-(2)\hm = \{ m \ | \ p_m \hm\in P^-(2)\}$, $\mu^-(2)$~--- 
+число элементов в~$P^-(2)$ или~$M^-(2)$. При этом
+$P^+(2)$~--- множество пар, для которых на сле\-ду\-ющем, треть\-ем, этапе 
+определяется возможное направление увеличения потоков,
+$$ 
+P^+(2) = \left\{ p_m \ | \ p_m \in P, \ |z_m^*(2) - z_m^*(1)| > \delta \right\}, 
+$$
+$M^+(2)$~--- множество индексов пар, входящих в~$P^+(2)$,
+$\mu^+(2) \hm= \{ m \ | \ p_m \in P^+(2)\}$, $\mu^+(2)$~--- 
+число элементов в~$P^+(2)$ или~$M^+(2)$.
+
+\smallskip
+
+\noindent
+\textbf{Задача~5.} Для некоторой пары узлов-кор\-рес\-пон\-ден\-тов $p_a \hm\in P^+(2)$ 
+определить максимальный поток
+$$ 
+z_a^0 (3) = \max\limits_{(\mathbf{z}, x)  \in \mathcal{Z}(x, \mathbf{d})} 
+ z_a  
+ $$
+при дополнительном условии $z_a \hm\ge z_a^*(2)$
+и~сохранении значений всех остальных потоков $z_m \hm\ge z_m^*(2)$ 
+для всех пар $p_m \hm\in P$,  $m \not= a$.
+
+Вектор-решение задачи~5 
+$$
+\mathbf{z}_a^0 (3) = \left(z_1^*(2), z_2^*(2), \ldots, z_a^0 (3), \ldots, z_M^*(2)\right)
+$$ 
+находится на границе множества $\mathcal{Z}(x, \mathbf{d})$. 
+Решение цепочки задач~5 для каждого $p_m \hm\in P^+(2)$ позволяет 
+построить множество опорных векторов
+$$
+\mathbf{Z}^0(3) = \left\{\mathbf{z}_1^0(3), \mathbf{z}_2^0(3), 
+\ldots, \mathbf{z}_m^0(3), \ldots, \mathbf{z}_{M^+(2)}^0(3)\right\}
+$$ 
+ $C(3)$-се\-че\-ния 3-го слоя.
+
+Компоненты вектора $\mathbf{z}^*(3)$ определяются по следующему правилу:
+\begin{multline*}
+\!\!\!z_j^*(3) ={}\\
+\!{}=\!
+\begin{cases}
+\!
+z_j^*(2) + \displaystyle \fr{1}{\mu^+(2)}\left(z_j^0(3) - z_j^*(2)\right), & 
+\!\!\!\mbox{если } j  \in M^+(2); \\
+z_j^*(2), & \!\!\!\mbox{если } j  \in M^-(2).
+\end{cases}\hspace*{-9.9pt}
+\end{multline*}
+
+Предположим, что на некотором этапе~$T$ найден вектор~$\mathbf{z}^*(T)$ 
+и~при попытке формирования множества~$P^+(T)$ оказалось, что 
+$P^+(T) \hm= \emptyset$, поскольку для всех $p_m \hm\in P$ выполняется 
+неравенство:
+$$ \left\vert z_m^0(T) - z_m^*(T) \right\vert \le \delta,
+\ m = \overline {1, M}\,. 
+$$
+
+Вектор $\mathbf{z}^*(T)$ лежит  \textit{вблизи} 
+границы множества $\mathcal{Z}(x, \mathbf{d})$ и~определяет 
+\textit{приближенное} предельное  распределение потоков, 
+при котором нельзя увеличить ни одно из достигнутых значений~$z_m^*(T)$, 
+не уменьшив при этом поток хотя бы для одной пары уз\-лов-кор\-рес\-пон\-ден\-тов.
+
+На основе вектора~$\mathbf{z}^*(T)$ и~всех векторов 
+из~$\mathbf{Z}^0(t)$, $t \hm= \overline{1, T}$, формируется опорный 
+внутренний  каркас:
+$$ 
+\mathrm{SiF}\left (\cdot\right) =\left\{\textbf{z}^*(T), \mathbf{Z}^0(1), \mathbf{Z}^0(2), 
+\ldots, \mathbf{Z}^0(T)\right\}
+$$
+(от \textit{англ}. Support-internal-Frame~--- опорный внут\-рен\-ний каркас). 
+$\mathrm{SiF}\,(\cdot)$-кар\-кас можно рас\-смат\-ривать как приближенное описание, 
+или ап\-про\-к\-симацию, множества $\mathcal{Z}(x, \mathbf{d})$. 
+Любая выпуклая комбинация базисных векторов $\mathrm{SiF}\,(\cdot)$-кар\-ка\-са 
+задает допустимое распределение потоков, которые могут одновременно 
+передаваться между всеми парами уз\-лов-кор\-рес\-пон\-ден\-тов. 
+
+\section{Заключение}
+
+Разработанную схему вычислений можно использовать как  составную 
+часть многоэтапной  динамической  процедуры диспетчеризации в~условиях 
+отсутствия данных о~состоянии  передающих\linebreak
+ подсистем сети  и~при  
+интенсивных  входных потоках~\cite{Mal19-6}.  Вектор потоков~$\mathbf{z}^*(1)$, 
+вычисленный на первом шаге, можно трактовать как априорное  допустимое  
+распределение,  полученное  на основе  \mbox{нормативных} показателей 
+работоспособности сис\-те\-мы. На втором шаге решается цепочка задач 
+поиска максимального увеличения потока  независимо для каждой пары 
+корреспондентов, но при фиксированных достигнутых  значениях для 
+всех остальных. Каждая   найденная точка  лежит на границе множества 
+достижимости и~определяет   предельно до\-пус\-ти\-мые потоки.  Любой набор 
+до\-пус\-ти\-мых   потоков приближенно  представим выпуклой комбинацией  
+векторов предельно допустимых потоков.
+
+Значение коэффициента разложения меньше  единицы будет означать, 
+что пропускные возможности системы не позволяют одновременно передать 
+все запрашиваемые  потоки.  В~результате,  согласно диспетчерским правилам, 
+будут введены  ограничения на величины передаваемых потоков, 
+а~через несколько   итераций  вновь будут определены новые возможные   
+распределения.  Пред\-ла\-га\-емый метод позволяет в~процессе принятия решений  
+использовать как нормативную, так и~текущую информацию о~состоянии сети.  
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+    
+\bibitem{lot}  
+\Au{Лотов А.\,В., Поспелова И.\,И.}  
+Многокритериальные задачи принятия решений.~--- М.: Макс Пресс, 2008. 197~с.
+
+
+
+\bibitem{Dan} \Au{Данциг Дж.} Линейное программирование, 
+его применения и~обобщения~/ Пер. с~англ.~--- М.: Прогресс, 1966. 589~c. 
+(Dantzig~G.  Linear programming and extensions.~--- 
+Princeton, NJ, USA: Princeton University Press, 1963. 600~p.)
+
+
+\bibitem{Yen} \Au{Йенсен П., Барнес~Д.} 
+Потоковое программирование~/ Пер. с~англ.~--- М.: Радио и~связь, 1984. 392~с. 
+(Jensen~P.\,A., Barnes~J.\,W. Network flow programming.~--- 
+New York, NY, USA: Wiley, 1980. 408~p.)
+
+
+\bibitem{JCM-19} \Au{Малашенко~Ю.\,Е., Назарова~И.\,А., Новикова~Н.\,М.} 
+Один подход к анализу возможных  структурных  повреждений  в~многопродуктовых  
+сетевых системах~// Ж.~вычисл. мат. мат. физ., 2019. Т.~59.  №\,9. С.~1626--1638.
+
+\bibitem{Mal19-6} \Au{Малашенко~Ю.\,Е., Назарова~И.\,А., Новикова~Н.\,М.} 
+Экс\-пресс-ана\-лиз и~агрегированное представление множества достижимых 
+потоков многопродуктовой сетевой системы~// Изв. РАН. ТиСУ, 2019. №\,6. 
+С.~63--72.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 23.06.20}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{APPROXIMATION OF~THE~MULTIUSER NETWORK FEASIBLE FLOWS SET}
+
+\def\titkol{Approximation of~the~multiuser network feasible flows set}
+
+\def\aut{Yu.\,E.~Malashenko and I.\,A.~Nazarova}
+
+\def\autkol{Yu.\,E.~Malashenko and I.\,A.~Nazarova}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' 
+of the Russian Academy of Sciences, 40~Vavilov Str., 
+Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+
+
+
+\Abste{A~method for approximate description of 
+a~convex polyhedral set of feasible flows transmitted between all 
+network nodes simultaneously is considered. A~method for constructing 
+an internal convex approximating frame is proposed. The frame is 
+formed based on the vectors of maximum feasible flows between pairs 
+of source--receiver vertices. The system of support vectors is 
+determined by the points lying on the outer edges of the baseline set. 
+Any convex combination of base vectors sets the feasible flow 
+distribution. The developed algorithmic schemes allow parallelization 
+of computational procedures on heterogeneous multiprocessor complexes. 
+The resulting aggregated description can be used for dispatching 
+intensive input information flows that exceed the network's capability.}
+
+\KWE{multicommodity flow model; feasible flows set; internal support frame}
+
+\DOI{10.14357/19922264200312} 
+
+%\vspace*{-20pt}
+
+%\Ack
+%\noindent
+
+
+%\vspace*{6pt}
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{1-mal-1}
+\Aue{Lotov, A.\,V., and I.\,I.~Pospelova.} 
+2008. \textit{Mnogokriterial'nye zadachi prinyatiya resheniy} 
+[Multicriteria decision making tasks]. Moscow: Maks Press. 197~p.
+
+\bibitem{3-mal-1}
+\Aue{Dantzig, G.} 1963. 
+\textit{Linear programming and extensions}. 
+Princeton, NJ: Princeton University Press. 600~p.
+
+\bibitem{2-mal-1}
+\Aue{Jensen, P.\,A., and J.\,W.~Barnes.}
+ 1980. \textit{Network flow programming}. New York, NY: Wiley. 408~p.
+ 
+\bibitem{4-mal-1}
+\Aue{Malashenko, Yu.\,E., I.\,A.~Nazarova, and N.\,M.~Novikova.}
+ 2019. An approach to the analysis of possible structural damages 
+ in multicommodity network systems. 
+ \textit{Comp. Math. Math. Phys.} 59(9):1562--1574. 
+\bibitem{5-mal-1}
+\Aue{Malashenko, Yu.\,E., I.\,A.~Nazarova, and N.\,M.~Novikova.}
+ 2019. Express analysis and aggregated representation of the set of 
+ reachable flows for a multicommodity network system. 
+ \textit{J.~Comput. Sys. Sc. Int.} 58(6):889--897.  
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received June 23, 2020}}
+
+%\pagebreak
+
+%\vspace*{-24pt}
+
+
+\Contr
+
+\noindent
+\textbf{Malashenko Yuri E.} (b.\ 1946)~--- 
+Doctor of Science in physics and mathematics, principal scientist, 
+Federal Research Center ``Computer Science and Control'' 
+of the Russian Academy of Sciences, 40~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{malash09@ccas.ru} 
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Nazarova Irina A.} (b.\ 1966)~--- 
+Candidate of Science (PhD) in physics and mathematics, scientist, 
+Federal Research Center ``Computer Science and Control''
+ of the Russian Academy of Sciences, 40~Vavilov Str., Moscow 119333, Russian Federation; 
+ \mbox{irina-nazar@yandex.ru}
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

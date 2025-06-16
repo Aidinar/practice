@@ -1,0 +1,1404 @@
+\def\stat{shestakov+vor}
+
+\def\tit{АСИМПТОТИЧЕСКАЯ НОРМАЛЬНОСТЬ И~СИЛЬНАЯ СОСТОЯТЕЛЬНОСТЬ ОЦЕНКИ РИСКА ПРИ~ИСПОЛЬЗОВАНИИ FDR-ПОРОГА В УСЛОВИЯХ СЛАБОЙ ЗАВИСИМОСТИ}
+
+\def\titkol{Асимптотическая нормальность и~сильная состоятельность оценки риска при~использовании FDR-порога} % в~условиях слабой зависимости}
+
+\def\aut{М.\,О.~Воронцов$^1$, О.\,В.~Шестаков$^2$}
+
+\def\autkol{М.\,О.~Воронцов, О.\,В.~Шестаков}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Воронцов М.\,О.}
+\index{Шестаков О.\,В.}
+\index{Vorontsov M.\,O.}
+\index{Shestakov O.\,V.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа 
+%выполнена при поддержке Программы развития МГУ, проект №\,23-Ш03-03. При анализе 
+%данных использовалась инфраструктура Центра коллективного пользования 
+%<<Высокопроизводительные вычисления и~большие данные>> 
+%(ЦКП <<Информатика>>) ФИЦ ИУ РАН (г.~Москва)}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет 
+имени~М.\,В.~Ломоносова, факультет вычислительной математики и~кибернетики;  
+Московский центр фундаментальной и~прикладной математики, \mbox{m.vtsov@mail.ru}}
+\footnotetext[2]{Московский государственный университет 
+имени М.\,В.~Ломоносова, факультет вычислительной математики и~кибернетики; 
+Федеральный исследовательский центр <<Информатика и~управление>> Российской 
+академии наук; Московский центр фундаментальной и~прикладной математики, 
+\mbox{oshestakov@cs.msu.ru}}
+
+
+\vspace*{-12pt}
+
+
+
+
+
+\Abst{Рассматривается подход к~решению задачи удаления шума в~большом массиве 
+разреженных данных, основанный на методе контроля средней доли ложных отклонений 
+гипотез (False Discovery Rate, FDR). Данный подход эквивалентен процедурам 
+пороговой обработки, обнуляющим компоненты массива, значения которых не 
+превосходят некоторого заданного порога.  Наблюдения в~модели считаются слабо 
+зависимыми. Для контроля степени зависимости используются ограничения на 
+коэффициент сильного перемешивания и~максимальный коэффициент корреляции. 
+В~качестве меры эффективности рассматриваемого подхода используется 
+среднеквадратичный риск. Вычислить значение риска можно только на тестовых 
+данных, поэтому в~работе рассматривается его статистическая оценка и~исследуются 
+ее свойства. Показана асимптотическая нормальность и~сильная состоятельность 
+оценки риска при использовании FDR-по\-ро\-га в~условиях слабой зависимости в~данных.}
+
+\KW{пороговая обработка; множественная проверка гипотез; 
+оценка риска}
+
+\DOI{10.14357/19922264240309}{ZOQVTO}
+  
+%\vspace*{-6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+
+\section{Введение}
+
+Во многих прикладных областях возникает задача обработки больших массивов 
+зашумленных данных. Примерами служат задачи обработки изоб\-ра\-же\-ний с~высоким 
+разрешением~\cite{FDRImage}, задачи множественной проверки гипотез, возникающие 
+в~\mbox{исследованиях} в~об\-ласти генетики~\cite{MultipleTesting}, и~другие проб\-ле\-мы. 
+В~связи с~этим рас\-смот\-рим модель
+$$
+x_i = \mu_i + z_i, \enskip i=\overline{1,n}\,,
+$$
+где $\mu_i\in\mathbb{R}$~--- <<полезные>> данные; $z_i \sim N(0,\sigma^2)$~--- 
+шум. Задача заключается в~нахождении оценки неизвестного вектора $\mu \hm= 
+(\mu_1,\ldots,\mu_n)$ как функции вектора $x \hm= (x_1,\ldots,x_n)$ и~может 
+рассматриваться как задача множественной проверки гипотез о~равенстве нулю 
+компонент вектора~$\mu$~\cite{AdaptingFDR}. При этом обычно предполагается, что 
+вектор~$\mu$ имеет в~определенном смысле <<разреженную>> структуру, т.\,е.\ для 
+<<полезных>> данных используется <<экономное>> представление.
+
+
+
+В работе~\cite{AdaptingFDR} для решения рассматриваемой задачи в~условиях 
+независимости компонент вектора~$x$ и~разреженности вектора~$\mu$ была 
+предложена процедура построения оценки~$\hat{\mu}_F$ вектора~$\mu$, основанная 
+на методе контроля средней доли ложных отклонений (FDR) 
+гипотез при помощи алгоритма Бен\-жа\-ми\-ни--Хох\-бер\-га,
+и~было проведено исследование асимптотики ее среднеквадратичного риска. 
+В~работах~\cite{ZasShe17,Mathematics2020} была показана состоятельность 
+и~асимптотическая нормальность оценки риска данной процедуры. Аналогичные 
+результаты для других методов построения~$\hat{\mu}_F$ получены в~работах~\cite{Shestakov2021-1,Shestakov2021-2,Shestakov2022}.
+
+В то же время в~определенных приложениях, например  при анализе полученных 
+в~результате использования ДНК-мик\-ро\-чи\-пов данных~\cite{ResultsOnFDRUnderDependence}, исследовании геофизических процессов 
+и~анализе помех\linebreak в~телекоммуникационных каналах, условие незави\-си\-мости компонент 
+вектора $x$ может не выполняться. Ранее в~работах~\cite{VorontsovShestakov2023,Vorontsov2024} была \mbox{исследована} асимп\-то\-ти\-ка 
+среднеквадратичного риска оценки~$\hat{\mu}_F$ \mbox{в~случае}, когда~$\mu$ принадлежит 
+одному из классов разреженности
+$$
+l_0[\eta] = \left\{\mu\,:\, ||\mu||_0 \leq \eta n\right\}, \enskip \eta \in 
+(0,1),
+$$
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+m_p[\eta] \equiv{}\\
+{}\equiv \left\{\mu \in \mathbb{R}^n : |\mu|_{(k)} \leq \eta n^{1/p} 
+k^{-1/p},\ k=\overline{1,n}\right\}, \\
+ p\in(0, 2),
+\end{multline*}
+а компоненты вектора~$x$ слабо зависимы~--- имеют достаточно быстро убывающий 
+коэффициент сильного перемешивания~\cite{Bosq}
+
+\noindent
+\begin{multline*}
+\alpha(k) = \sup\limits_{1\leq m\leq n}\alpha\left(\sigma(x_i, i\leq m), 
+\sigma(x_i, i\geq m+k)\right), \\ 
+k=\overline{1,n-1}\,,
+\end{multline*}
+где символом $\sigma(x_i, i\in I)$ обозначена сиг\-ма-ал\-геб\-ра, порожденная 
+множеством случайных величин $\{x_i, i \hm\in I\}$, а~мера  $\alpha(\cdot, \cdot)$ 
+близости двух сиг\-ма-ал\-гебр определяется как
+$$
+\alpha(\mathcal{B},\mathcal{C}) = \sup\limits_{B\in\mathcal{B}, 
+C\in\mathcal{C}} \left|\p(BC)-\p(B)\p(C)\right|.
+$$
+
+В настоящей работе показана асимптотическая нормальность и~сильная 
+состоятельность оценки риска при применении FDR-про\-це\-ду\-ры в~случае, когда 
+компоненты вектора~$x$ слабо зависимы, а~$\mu$ принадлежит одному из классов 
+раз\-ре\-жен\-ности: 
+$l_0[\eta]$ или $m_p[\eta]$.
+
+
+\section{Обработка вектора данных с~помощью FDR-процедуры}
+
+Широким классом методов построения оценки~$\hat{\mu}$ стала пороговая обработка 
+вектора~$x$ с~некоторым порогом~$T$. Различают жесткую пороговую обработку, при 
+которой полагается
+\begin{equation*}
+\left(\hat{\mu}\right)_i  = p_H(x_i,T) \equiv
+ \begin{cases}
+   x_i, & |x_i| > T\,;\\
+   0, & |x_i| \leq T\,,
+ \end{cases}
+\end{equation*}
+и мягкую пороговую обработку, для которой
+\begin{equation*}
+(\hat{\mu})_i  = p_S(x_i,T) \equiv
+ \begin{cases}
+   x_i-T, & \hphantom{\vert\vert}x_i > T;\\
+   x_i+T, & \hphantom{\vert\vert}x_i <- T;\\
+   0, & |x_i| \leq T.
+ \end{cases}
+\end{equation*}
+Среднеквадратичный риск подобных процедур определяется как
+\begin{equation}
+\label{riskDef}
+R(T) = {\mathsf E} ||\hat{\mu}-\mu||^2 = \sum\limits_{i=1}^n {\mathsf E} \left((\hat{\mu})_i-
+\mu_i\right)^2.
+\end{equation}
+Обозначим через~$T_m$ наилучшее значение порога:
+$$
+T_m : \, R(T_m) = \min\limits_{T} R(T).
+$$
+
+Предложенная в~\cite{AdaptingFDR} процедура заключается в~жесткой пороговой 
+обработке компонент вектора~$x$ с~порогом $\hat{t}_F \hm= \hat{t}_F(x)$, и~ее 
+результат~--- оценка $\hat{\mu}_F$ вектора~$\mu$ с~компонентами $(\hat{\mu}_F)_i  
+\hm= p_H(x_i,\hat{t}_F)$, где
+\begin{multline*}
+\hat{t}_F = \sigma z\left(\fr{q \hat{k}_F}{2n}\right), \enskip
+\hat{k}_F = \max 
+\left\{k \, :\, |x|_{(k)} \geq t_k \right\}, \\
+ t_k = \sigma z\left(\fr{q  k}{2n}\right);
+\end{multline*}
+$z(\alpha)$ --- квантиль уровня $(1\hm-\alpha)$ стандартного нормального 
+распределения; $|x|_{(k)}$~--- $k$-й элемент вектора, получаемого в~результате 
+упорядочения вектора~$|x|$ по невозрастанию:
+$$
+|x|_{(1)} \geq |x|_{(2)} \geq \cdots \geq |x|_{(n)};
+$$
+$q\in(0;1)$~--- управ\-ля\-ющий параметр FDR-ме\-то\-да.
+Далее полагается, что $q\hm\equiv q_n$ зависит от~$n$. В~\cite{AdaptingFDR} 
+показано, что эта процедура эквивалентна множественной проверке гипотез 
+о~равенстве нулю компонент наблюдаемого вектора. Также показано, что с~помощью 
+метода штрафных функций данную процедуру можно свести к~другим видам пороговой 
+обработки, в~част\-ности к~мягкой пороговой обработке.
+
+В работах~\cite{VorontsovShestakov2023, Vorontsov2024} была исследована 
+асимптотика среднеквадратичного риска~$R(\hat{t}_F)$ описанной процедуры 
+в~случае, когда компоненты вектора $x$ слабо зависимы, а $\mu$ принадлежит классу 
+разреженности~$\Theta_n$, где~$\Theta_n$ есть~$l_0[\eta_n]$ или~$m_p[\eta_n]$. 
+Было показано, что~$R(\hat{t}_F)$ асимптотически отличается от минимаксного 
+риска
+$\inf\nolimits_{\hat{\mu}\hm=\hat{\mu}(x)} \sup\nolimits_{\mu\in \Theta_n} {\mathsf E} 
+||\hat{\mu}-\mu||^2$
+на множитель не более чем логарифмического по\-рядка.
+
+Отметим, что в~выражении для среднеквадратичного риска~(\ref{riskDef}) 
+присутствуют неизвестные величины~$\mu_i$, а~потому вычислить~$R(T_m)$ и~$T_m$ 
+не представляется возможным. На практике можно пользоваться, например, следующей 
+оценкой среднеквадратичного риска~\cite{Mallat}:
+$$
+\hat{R}(T) = \sum\limits_{i=1}^n F[x_i, T],
+$$
+где  
+\begin{multline*}
+F[x_i, T] = {}\\[3pt]
+{}=\!\begin{cases}
+\left(x_i^2-\sigma^2\right) \Ik(|x_i|\leq T) + \sigma^2 \Ik\left(|x_i|>T\right) &\\[3pt]
+&\hspace*{-53mm}\mbox{для\ жесткой\ пороговой\ обработки};\\[3pt]
+\left(x_i^2-\sigma^2\right) \Ik\left(|x_i|\leq T\right) + (\sigma^2+T^2) 
+\Ik \left(|x_i|>T\right) \hspace*{-11.21576pt}&\\[3pt]
+&\hspace*{-51mm}\mbox{для\ мягкой\ пороговой\ обработки}.
+\end{cases}\hspace*{-7.17859pt}
+\end{multline*}
+
+
+\noindent
+\textbf{Замечание}.\ При пороговой обработке иногда также используется так 
+называемый универсальный порог $T_U\hm = \sigma \sqrt{2\ln n}$, предложенный 
+в~работе~\cite{spatialAdaptation}. Исследования в~\cite{AdaptingSURE, ExactRisk} 
+показали, что порог~$T_U$ в~определенном смысле максимальный, и~рас\-смат\-ри\-вать 
+пороги выше него не имеет смысла. Более того, нетрудно показать, что $t_k \hm< T_U$ 
+для всех~$k$ и~всех достаточно больших~$n$, в~связи с~чем всюду далее полагаем, 
+что порог~$\hat{t}_F$ выбирается на отрезке $[0; T_U]$.
+
+\section{Вспомогательные утверждения}
+
+Кроме коэффициента сильного перемешивания~$\alpha(\cdot)$ также понадобится 
+следующее понятие~\cite{Bosq}.
+
+\smallskip
+
+\noindent
+\textbf{Определение.} %\label{defRho}
+Максимальным коэффициентом корреляции~$\rho(\cdot)$ компонент вектора~$x$ 
+называется
+\begin{multline*}
+\rho (k) \equiv \rho_n (k) = {}\\
+{}=\sup\limits_{1\leq m\leq n}\rho\left(\sigma(x_i, 
+i\leq m), \sigma(x_i, i\geq m+k)\right), \\
+ k=\overline{1,n-1}\,,
+\end{multline*}
+где мера $\rho(\cdot, \cdot)$ близости двух сиг\-ма-ал\-гебр определяется как
+$$
+\rho(\mathcal{B},\mathcal{C}) = \sup\limits_{\substack{\xi 
+\in\mathcal{L}^2(\mathcal{B}) \\
+ \eta \in\mathcal{L}^2(\mathcal{C})}} 
+\left|\mathrm{corr}\,(\xi, \eta)\right|.
+$$
+
+
+Введем обозначения:
+$$
+T_1 = \sqrt{2\ln \eta_n^{-p}};  \,\gamma_n = \fr{1}{\ln\ln n}; \, \kappa_n 
+= \fr{n \eta_n^p T_1^{-p}}{1 - q_n - \gamma_n}; 
+$$
+$$ 
+\kappa_n^0 = \fr{[n \eta_n]}{1 - q_n - \gamma_n} ;\, \rho^\star (k) = 
+\sup\limits_{n\geq k+1} \rho(k), k \in \mathbb{N} ;
+$$
+$$
+t_{\kappa_n} = \sigma z\left(\fr{q_n \kappa_n }{2n}\right) , \,\, t_{\kappa_n^0} 
+= \sigma z\left(\fr{q_n \kappa_n^0 }{2n}\right).
+$$
+
+
+Следующие два утверждения показывают, что случайный порог~$\hat{t}_F$ в~случае 
+$\mu\hm\in m_p[\eta_n]$ (соответственно $\mu\hm\in l_0[\eta_n]$) с~большой 
+вероятностью будет не меньше~$t_{\kappa_n}$ (соответственно~$ t_{\kappa_n^0}$). 
+Их  доказательства приведены в~работах~\cite{VorontsovShestakov2023, Vorontsov2024}.
+
+\smallskip
+
+\noindent
+%\begin{lem}\label{lem5}
+\textbf{Лемма~1.}\ \textit{Пусть $n^{-\delta_1} \hm\leq \eta_n^p \hm\leq n^{-\delta_2}$, 
+$0\hm<\delta_2\hm<\delta_1<1$, $\mathrm{lim\,inf} q_n \ln n \hm\geq C \hm> 0$, 
+$m\hm\in[1;n/2]\cap\mathbb{N}$, а $\alpha(\cdot)$~--- коэффициент сильного 
+перемешивания компонент вектора~$x$. Для некоторого $N\hm\in\mathbb{N}$ при $n \hm\geq 
+N$ справедливо}
+\begin{multline*}
+\hspace*{-3pt}\sup\limits_{\mu\in m_p[\eta_n]} \p \left(\hat{k}_F \geq \kappa_n \right) \leq 
+4 n \exp\left\{-\fr{m}{256n}  \kappa_n q_n \gamma_n^2    \right\}+{}\\
+{}+ 22\left(1+\fr{8n}{\kappa_n q_n \gamma_n}\right)^{1/2} n m 
+\alpha\left(\left[\fr{n}{2m}\right]\right).
+\end{multline*}
+
+
+
+\smallskip
+
+\noindent
+\textbf{Лемма 2.}\ 
+%\label{lem1}
+\textit{Пусть $\eta_n \hm\leq b\hm<1$, $m\in[1;n/2]\cap\mathbb{N}$, а~$\alpha(\cdot)$~--- 
+коэффициент сильного перемешивания компонент вектора~$x$. Для некоторого 
+$N\hm\in\mathbb{N}$ при $n \hm\geq N$ справедливо}
+\begin{multline*}
+\sup\limits_{\mu\in l_0[\eta_n]} \p \left(\hat{k}_F \geq \kappa_n^0 \right) 
+\leq{}\\
+{}\leq 4 n \exp\left\{-\fr{(1-b)m}{64n}\,  \kappa_n^0 q_n \gamma_n^2    
+\right\}+{}\\
+{}+ 22\left(1+\fr{4n}{(1-b)\kappa_n^0 q_n \gamma_n}\right)^{1/2} n m 
+\alpha\left(\left[\fr{n}{2m}\right]\right).
+\end{multline*}
+
+Следующие два утверждения доказаны в~\cite{Bosq} и~представляют собой аналоги 
+неравенств Хеффдинга и~Бернштейна для слабо зависимых случайных величин.
+
+
+\smallskip
+
+\noindent
+\textbf{Лемма 3.}\
+\textit{Пусть для набора действительных случайных величин $X_1, \ldots, X_n$ 
+с~коэффициентом сильного перемешивания $\alpha(\cdot)$ выполняется ${\mathsf E} X_i \hm=0$, 
+$|X_i|\hm\leq b$, $i\hm=\overline{1,n}$. Тогда для любого целого числа $m\hm\in[1; n/2]$ 
+и~любого $\eps\hm>0$ справедливо}
+\begin{multline*}
+\p\left(\left|\sum\limits_{i=1}^n X_i\right| > n\eps \right) \leq 4 
+\exp\left\{-\fr{\eps^2 m}{8 b^2}\right\}+ {}\\
+{}+
+22\left(1+\fr{4b}{\eps}\right)^{1/2} m\, 
+\alpha\left(\left[\fr{n}{2m}\right]\right).
+\end{multline*}
+
+
+\smallskip
+
+\noindent
+\textbf{Лемма 4.}\
+\textit{Пусть для набора действительных случайных величин $X_1, \ldots, X_k$ 
+с~коэффициентом сильного перемешивания $\alpha(\cdot)$ выполняется ${\mathsf E} X_i \hm=0$, 
+$|X_i|\hm\leq b$, $i\hm=\overline{1,k}$. Тогда для любого целого числа $m\hm\in[1; k/2]$ 
+и~любого $\eps\hm>0$ справедливо}
+\begin{multline*}
+\p\left(\left|\sum\limits_{i=1}^k X_i\right| > \eps \right) \leq 4 
+\exp\left\{-\fr{\eps^2 m}{8 v^2 k^2}\right\}+{}\\
+{}+ 22\left(1+\fr{4bk}{\eps}\right)^{1/2} m\, 
+\alpha\left(\left[\fr{k}{2m}\right]\right),
+\end{multline*}
+\textit{где $p = k/(2m)$}:
+\begin{multline*}
+v^2 =
+ \fr{b \eps}{2k} + {}\\
+ {}+\fr{2}{p^2} \,  \max\limits_{ j\in[0,\,2m-1]} 
+{\mathsf E} \big( ([jp]+1-jp)X_{[jp]+1} + X_{[jp]+2}+{}\\
+{}+ \cdots +  X_{[(j+1)p]} + ((j+1)p-[(j+1)p])X_{[(j+1)p+1]}\big)^2.
+\end{multline*}
+
+\noindent
+\textbf{Замечание.}
+Если существует такое число $S \hm> 0$, что сразу для всех $i\hm\in[1;k]$  выполняется 
+${\mathsf E} X_i^2 \hm\leq S^2$, то в~качестве~$v^2$ можно взять
+$$
+v^2 = \fr{b \eps}{2k} + 8 S^2.
+$$
+
+
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\ \ сле\-ду\-юще\-го утверж\-де\-ния приведено в~работе~\cite{AdaptingFDR}.
+
+\smallskip
+
+\noindent
+\textbf{Лемма 5.}\ 
+\textit{Для $y\leq 0{,}01$ справедливы представления}
+\begin{multline}
+\label{lem1eq1}
+z^2(y) = 2 \ln y^{-1} - \ln \ln y^{-1} - r_2(y), \\
+ r_2(y) \in [1{,}8; 3];
+\end{multline}
+
+\noindent
+\begin{equation}
+\label{lem1eq2}
+z(y) = \sqrt{2 \ln y^{-1}} - r_1(y), \, \, r_1(y) \in [0; 1{,}5].
+\end{equation}
+
+
+\section{Асимптотическая нормальность оценки риска при~применении FDR-процедуры в~условиях слабой зависимости}
+
+Перейдем к~описанию достаточных условий для асимптотической нормальности оценки 
+риска $\hat{R}(\hat{t}_F)$ в~случае $\mu \hm\in m_p[\eta_n]$.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~1.}\
+\textit{Пусть $\mu \hm\in m_p[\eta_n],$ $\eta_n^p \hm\in[n^{-\delta_1}; n^{-\delta_2}],$ $1/2 \hm< 
+\delta_2 \hm< \delta_1<1;$ имеются такие константы $c_1, c_2>0$, что для 
+коэффициента сильного перемешивания $\alpha(\cdot)$ компонент вектора $x$ 
+справедливо  $\alpha(k) \hm\leq c_1 k^{-1-(5/2)\delta_1/(1-\delta_1)-c_2},$ 
+$k\hm=\overline{1,n-1};$ $q_n \hm< c_3 \hm< 1;$ $\mathrm{lim\,inf} q_n \ln n \hm= c_4 \hm> 0;$ и,~кроме того, 
+для максимального коэффициента корреляции $\rho(\cdot)$ компонент вектора~$x$ 
+справедливо}
+$$
+\sum\limits_{k = 1}^{\infty} \sup\limits_{n\geq k+1} \rho(k) \equiv 
+\sum\limits_{k = 1}^{\infty}  \rho^\star (k) = c_5 < \infty. 
+$$
+\textit{Тогда при $n \to \infty$}
+$$
+\fr{\hat{R}(\hat{t}_F) - R(T_m)}{C_\rho \sqrt{2n}} \Rightarrow N(0, 1),
+$$
+\textit{где}
+$$
+C_\rho = \sigma^2\sqrt{1 +  \lim\limits_{n\to\infty} \fr{1}{n} \sum\limits_{j\neq i} \mathrm{corr}^2 (x_i, x_j)}.
+$$
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\  \
+ приводится для метода мягкой пороговой обработки; в~случае жесткой пороговой 
+обработки доказательство аналогично. Обозначим
+$$
+U(T) = \hat{R}(T) -  \hat{R}(T_m) = \sum \limits_{i=1}^n H_i(T, T_m),
+$$
+где
+$$
+H_i(T, T_m) = F[x_i, T] - F[x_i, T_m].
+$$
+Имеем
+
+\vspace*{-3pt}
+
+\noindent
+\begin{multline}
+\label{D00}
+\hat{R}(\hat{t}_F) - R(T_m) + \hat{R}(T_m) - \hat{R}(T_m) ={}\\
+{}= \hat{R}(T_m) - 
+R(T_m) + U(\hat{t}_F).
+\end{multline}
+Покажем, что
+\begin{equation}
+\label{D0}
+\fr{\hat{R}(T_m) - R(T_m)}{C_\rho\sqrt{2n}} \Rightarrow N(0, 1).
+\end{equation}
+
+
+Повторяя рассуждения из~\cite{KuShe2016_1,KuShe2016_2,Jansen}, можно показать, 
+что $T_m \hm\geq t_{\kappa_n}$. Учитывая также $T_m\hm \leq T_U$, имеем 
+$$
+C \sqrt{\ln n} \leq T_m \leq C^\prime \sqrt{\ln n}
+$$ 
+для некоторых положительных констант $C$ и~$C^\prime$.
+
+\columnbreak
+
+В случае мягкой пороговой обработки $\hat{R}(T_m)$ представляет собой 
+несмещенную оценку~$R(T_m)$, а~при жесткой пороговой обработке и~выполнении 
+условий теоремы смещение стремится к~нулю при делении на $\sqrt{n}$~\cite{Mallat}.
+
+Для дисперсии числителя~(\ref{D0}) имеем:
+\begin{multline*}
+{\mathsf D} \left(\hat{R}(T_m) - R(T_m)\right) = \sum\limits_{i=1}^n {\mathsf D} F[x_i, T_m] + {}\\
+{}+
+\sum\limits_{i=1}^n\sum\limits_{\substack{j=1 \\  j\neq i}}^n \mathrm{cov}\left( F[x_i, T_m], F[x_j, 
+T_m] \right).
+\end{multline*}
+
+Поскольку $\mu \in m_p[\eta_n]$,
+\begin{equation}
+\left.
+\begin{array}{l}
+ \displaystyle\sum\limits_{i: |\mu_i| > 1/T_1} {\mathsf D} F[x_i, T_m]  \leq{}\\
+ \hspace*{15mm}{}\leq  4\left(\sigma^2 + T_m^2\right)^2 n \eta_n^p 
+T_1^p = o(n);
+\\[6pt]
+\displaystyle \sum\limits_{\substack{{i,j: \max\{|\mu_i|, |\mu_j|\} > 1/T_1,}\\{j\neq i}}}  \hspace*{-12mm}\mathrm{cov}\,(F[x_i, 
+T_m],F[x_j, T_m])  \leq{}\\
+\hspace*{10mm}{}\leq 16\left(\sigma^2 + T_m^2\right)^2 n \eta_n^p T_1^p c_5 = o(n). 
+\end{array}
+\right\}    
+\label{D2}
+\end{equation}
+Далее, учитывая что ${\mathsf D} x_i^2 \hm= 2\sigma^4 \hm+ 4\sigma^2 \mu_i^2$, нетрудно 
+убедиться, что
+\begin{multline}
+\label{D3}
+\sum\limits_{i: |\mu_i| \leq 1/T_1}\hspace*{-4mm} {\mathsf D} F[x_i, T_m] ={}\\
+{}= \sum\limits_{i: |\mu_i| \leq 1/T_1} \hspace*{-4mm} {\mathsf D} 
+x_i^2 + o(n) = 2\sigma^4 n + o(n).
+\end{multline}
+
+
+Введем обозначение 
+$$
+D_n = \left\{(i,j) : \max\left\{|\mu_i|, |\mu_j|\right\}  \leq \fr{1}{T_1}\,, \enskip j\hm\neq i\right\}.
+$$
+ Для суммы ковариаций аналогично~(\ref{D3}) получим
+\begin{multline*}
+\sum\limits_{(i,j)\in D_n} \hspace*{-2mm}\mathrm{cov}\left( F[x_i, T_m], F[x_j, T_m] \right) = {}\\
+{}=
+\sum\limits_{(i,j)\in D_n} \hspace*{-2mm}\mathrm{cov}\left( x_i^2, x_j^2 \right) + o(n).
+\end{multline*}
+Воспользуемся тождеством~\cite{Eroshenko}
+$$
+\mathrm{cov}\left (x_i^2, x_j^2\right) = 4 {\mathsf E} x_i {\mathsf E} x_j \mathrm{cov}\left(x_i, x_j\right) + 2 \mathrm{cov}^2 \left(x_i, x_j\right)
+$$
+для вектора $(x_i, x_j)$, имеющего двумерное нормальное распределение. Заметим, 
+что
+\begin{gather*}
+ \sum\limits_{(i,j)\in D_n} 4 | {\mathsf E} x_i {\mathsf E} x_j \mathrm{cov}\left(x_i, x_j\right)| \leq 8 T_1^{-2} 
+\sigma^2 n c_5 = o(n);
+\\
+\sum\limits_{(i,j)\in D_n} 2 \mathrm{cov}^2 (x_i, x_j)  = 2\sigma^4 \sum\limits_{(i,j)\in D_n} 
+\mathrm{corr}^2 (x_i, x_j). 
+\end{gather*}
+Более того, поскольку  %< 4 \sigma^2 n c_5.$$
+\begin{equation*}
+\sum\limits_{\substack{{i,j: \max\{|\mu_i|, |\mu_j|\} > 1/T_1} \\ {j\neq i}}}
+\hspace*{-10mm}\mathrm{corr}^2 (x_i, x_j)  
+\leq  4 n \eta_n^p T_1^p c_5 =  o(n),
+\end{equation*}
+имеем
+\begin{multline*}
+\sum\limits_{(i,j)\in D_n} \mathrm{corr}^2 (x_i, x_j) ={}\\
+{}= \sum\limits_{j\neq i} \mathrm{corr}^2 (x_i, x_j) 
++o(n)= c_6 n + o(n),
+\end{multline*}
+где
+$$
+c_6 = \lim\limits_{n\to\infty} \fr{1}{n} \sum\limits_{j\neq i} \mathrm{corr}^2 (x_i, x_j) 
+\leq 2 c_5.
+$$
+Полагая $C_\rho \hm= \sigma^2\sqrt{1 + c_6}$, получим, наконец,
+\begin{equation}
+\label{D1}
+{\mathsf D} \left(\hat{R}(T_m) - R(T_m)\right)  =  2 n C_\rho^2 + o(n).
+\end{equation}
+Заметим, что из~(\ref{D2}), (\ref{D3}) и~(\ref{D1}) следует, что
+\begin{equation}
+\label{D5}
+\sup\limits_{n} \fr{\sum\nolimits_{i=1}^n {\mathsf D} F[x_i, T_m]}{V_n^2} < \infty\,,
+\end{equation}
+где 
+$$
+V_n^2 = {\mathsf D} \sum\limits_{i=1}^n \left(F[x_i, T_m] \hm- {\mathsf E} F[x_i, T_m]\right).
+$$
+Кроме того, поскольку $F[x_i, T_m]$ по модулю ограничены величиной $\sigma^2 \hm+ 
+T_m^2$, выполнено условие Линдеберга: для любого $\eps\hm>0$ при $n \hm\to \infty$
+\begin{multline}
+\label{D6}
+\!\!\!\fr{1}{V_n^2}\sum\limits_{i=1}^n {\mathsf E} \left( \!\left( F\left[x_i, T_m\right]\! -\! {\mathsf E} F\left[x_i, T_m\right]\right)^2 
+\Ik \left(\vert F\left[x_i, T_m\right] -{}\right.\right.\hspace*{-2.69505pt}\\
+\left.\left.{}- {\mathsf E} F\left[x_i, T_m\right]\vert >\eps V_n\right)\!
+\vphantom{\left( F\left[x_i, T_m\right]\! -\! {\mathsf E} F\left[x_i, T_m\right]\right)^2}
+\right) 
+\to  0\,.
+\end{multline}
+Из~(\ref{D1})--(\ref{D6}), очевидного неравенства
+$$ 
+\lim\limits_{k\to\infty} \sup\limits_{n\geq k+1}\rho(k) \equiv 
+\lim\limits_{k\to\infty} \rho^\star (k)  < 1
+$$
+ и~центральной предельной теоремы для сильно перемешанных случайных величин~\cite{Peligrad} следует~(\ref{D0}).
+
+Перейдем к~доказательству того, что $U(\hat{t}_F) \, n^{-1/2} \overset{\, \p \, }{\to} 0$.
+Всюду далее, не ограничивая общности, полагаем $\sigma=1$. 
+Введем обозначения:
+
+\noindent
+\begin{align*}
+S_1(T) &= \sum\limits_{i: |\mu_i| > 1/T_1} H_i(T, T_m); \\
+S_2(T) &= \sum\limits_{i: |\mu_i| \leq 1/T_1} H_i(T, T_m); 
+\\
+N_1(a, b) &= \sum\limits_{i: |\mu_i| > 1/T_1} \Ik (a<|x_i|\leq b); \\ 
+N_2(a, b) &= \sum\limits_{i: |\mu_i| \leq 1/T_1} \Ik (a<|x_i|\leq b);
+\end{align*}
+
+\noindent
+\begin{align*}
+Z_l(T) &= S_l(T) - {\mathsf E} S_l(T),\enskip l = 1,2\,; \\  
+d_n &= \fr{T_U -  t_{\kappa_n}}{n};\\
+T_j^{\prime} &= t_{\kappa_n}+j d_n,\enskip j = \overline{0,n-1}\,.
+\end{align*} 
+
+\vspace*{-3pt}
+
+\noindent
+Для произвольного $\eps>0$
+
+\vspace*{-3pt}
+
+\noindent
+\begin{multline}
+\p \left( \fr{|U(\hat{t}_F)|}{\sqrt{n}}> 4\eps \right) \leq 
+\p\left(\hat{t}_F \leq t_{\kappa_n}\right) + {}\\
+{}+\p \left(\fr{\sup\nolimits_{T\in 
+[t_{\kappa_n}, T_U]} |U(T)|}{\sqrt{n}}>4\eps \right)\leq  {}\\
+{}\leq \p\left(\hat{t}_F \leq t_{\kappa_n}\right) + \p\left(\fr{\sup\nolimits_{T\in 
+[t_{\kappa_n}, T_U]} |{\mathsf E} U(T)|}{\sqrt{n}}>\eps\right)+{}\\
+{}+ \p \left(\sup\limits_{T\in [t_{\kappa_n}, T_U]} |Z_1(T)| > 
+\eps\sqrt{n}\right) +{}\\
+{}+ \p \left(\sup\limits_{j \in [0, n-1]} |Z_2(T_j^{\prime})| > 
+\eps\sqrt{n}\right) +{}\\
+{}+ \p \left(\sup\limits_{\substack{j \in [0, n-1] \\
+ T\in [T_j^{\prime},T_j^{\prime}+d_n]}} |Z_2(T)-Z_2(T_j^{\prime})| > \eps\sqrt{n}\right).
+\label{M1}
+\end{multline}
+Заметим, что $\gamma_n\hm > \ln^{-1} n$, $\kappa_n\hm > n \eta_n^p \ln ^{-1} n \hm\geq 
+n^{1-\delta_1} \ln ^{-1} n$ и~$q_n\hm > c_4 \ln ^{-1} n /2$ для всех достаточно 
+больших~$n$.
+Для первого слагаемого в~(\ref{M1}) по лемме~1 с~$m \hm= n^{\delta_1} \ln 
+^7 n$ для  больших~$n$ имеем
+
+\vspace*{-3pt}
+
+\noindent
+\begin{multline}
+\label{M1next}
+\p\left(\hat{t}_F \leq t_{\kappa_n}\right)  = \p \left(\hat{k}_F \geq \kappa_n 
+\right) \leq 4 n e^{-\ln^2 n} + {}\\
+{}+n^{1+(3/2)\,\delta_1} \ln^9 n \, 
+\alpha\left(\left[\fr{n^{1-\delta_1}}{\ln^{7} n}\right]\right) = o(1)
+\end{multline}
+при $n\to\infty$. 
+Для оценки второго слагаемого в~(\ref{M1}) заметим, что при $T \hm\in 
+[t_{\kappa_n}, T_U]$ справедливо
+\begin{equation}
+\label{M2}
+{\mathsf E} H_i(T, T_m) \leq T_U^2 + 1.
+\end{equation}
+Если же кроме $T \hm\in [t_{\kappa_n}, T_U]$ также выполнено $|\mu_i| \hm\leq T_1^{-1}$, то
+
+\vspace*{-6pt}
+
+\noindent
+\begin{multline*}
+|{\mathsf E} H_i (T, T_m)| \leq 2 T_U^2 \, \p \left(|x_i| > t_{\kappa_n}\right) \leq {}\\
+{}\leq2 
+T_U^2 \, \p \left(|x_i-\mu_i| > t_{\kappa_n}-T_1^{-1}\right) \leq{}\\
+{}\leq 2 T_U^2  \exp\left\{ -\fr{1}{2} \left(t_{\kappa_n} - T_1^{-
+1}\right)^2 \right\}  \leq{}\\
+{}\leq
+ 4 (\ln n)  \exp\left\{ -\fr{1}{2} 
+\left(z\left(\fr{q_n\kappa_n}{2n}\right)\right)^2 + t_{\kappa_n} T_1^{-
+1}\right\},
+\end{multline*}
+
+\vspace*{-2pt}
+
+\noindent
+где использовано неравенство 
+
+\noindent
+$$
+2(1-\Phi(x))\hm \leq \fr{e^{-x^2/2}}{x}
+$$
+
+\pagebreak
+
+
+\noindent
+ для $x\hm\geq 0$ 
+($\Phi(x)$~--- функция распределения $N(0,1)$). Рас\-смот\-рим выражение 
+в~экспоненте. Второе слагаемое не превышает $1\hm+o(1)$ при $n\hm\to\infty$, поскольку 
+$t_{\kappa_n} \hm\leq T_1 (1+o(1))$ при $\sigma\hm=1$, что нетрудно получить из 
+определения~$t_{\kappa_n}$, пред\-став\-ле\-ния~(\ref{lem1eq2}) и~ограничения на~$q_n$ 
+из формулировки тео\-ре\-мы. Для первого слагаемого, используя пред\-став\-ле\-ние~(\ref{lem1eq1}) 
+и~ограничения, наложенные на~$q_n$, при больших~$n$ получим
+\begin{multline*}
+-\fr{1}{2}\left(z\left(\fr{q_n \kappa_n}{2n}\right)\right)^2 \leq - \ln 
+\fr{2n (1-q_n-\gamma_n)}{q_n n \eta_n^p T_1^{-p}} + {}\\
+{}+\fr{1}{2} \ln 
+\left((1+o(1)) \ln \eta_n^{-p}\right) + \fr{3}{2} \leq{}\\
+{}\leq \ln \fr{c_3}{1-c_3} + \ln \eta_n^p + \ln T_1^{-p} + \ln T_1 + 
+\fr{3}{2}+ o(1).
+\end{multline*}
+Из приведенных соотношений следует, что с~некоторой константой $c_7 = c_7(c_3, 
+p, \delta_1, \delta_2, c_4)$
+\begin{equation}\label{M3}
+\sup\limits_{\substack{i: |\mu_i| \leq 1/T_1 \\ T\in [t_{\kappa_n}, T_U]}} |{\mathsf E} 
+H_i (T, T_m)|  \leq c_7 (\ln n)^{(3-p)/2}\eta_n^p.
+\end{equation}
+Из (\ref{M2}) и~(\ref{M3}) с~учетом $\delta_2 \hm> 1/2$ следует
+\begin{multline*}
+\sup\limits_{T\in [t_{\kappa_n}, T_U]} |{\mathsf E} U(T)| \leq{}\\
+{}\leq 
+ n\eta_n^p T_1^p 
+(T_U^2+1) + c_7 (\ln n)^{(3-p)/2} n \eta_n^p = o(\sqrt{n})
+\end{multline*}
+при $n\to\infty$, а следовательно, для любого $\eps\hm>0$ второе слагаемое в~(\ref{M1}) обращается в~ноль для всех достаточно больших~$n$.
+
+Далее, поскольку при $T \hm\leq T_U$ и~$\sigma\hm=1$
+$$
+|H_i(T, T_m) - {\mathsf E} H_i(T, T_m)| \leq 2 (T_U^2 +2), \enskip i=\overline{1, n}\,,
+$$
+а число слагаемых в~$Z_1(T)$ не превосходит $n\eta_n^p T_1^p$, имеем
+$$
+\sup\limits_{T\in [t_{\kappa_n}, T_U]} |Z_1(T)|  \leq 2 n\eta_n^p T_1^p (T_U^2 
++2) = o(\sqrt{n})
+$$
+при $n\to\infty$, а следовательно, для любого $\eps\hm>0$ и~третье слагаемое в~(\ref{M1}) обращается в~ноль для всех достаточно больших~$n$.
+
+Перейдем к~оценке четвертого слагаемого в~(\ref{M1}). Аналогично~(\ref{M3}) 
+можно получить:
+\begin{multline}
+\label{M10}
+\!\!\sup\limits_{\substack{i: |\mu_i| \leq 1/T_1 \\ T\in [t_{\kappa_n}, T_U]}} \!{\mathsf D} 
+H_i (T, T_m)  \leq \!\sup\limits_{\substack{i: |\mu_i| \leq 1/T_1 \\ T\in 
+[t_{\kappa_n}, T_U]}} \!{\mathsf E} \left(H_i (T, T_m)\right)^2  \leq{}\\
+{}\leq 2 c_7 (\ln n)^{(5-p)/2} \eta_n^p.
+\end{multline}
+По лемме~4 с~$m \hm= \sqrt{n} (\ln n)^3$ и~$k \hm= n-[n\eta_n^p T_1^p]$ 
+для четвертого слагаемого в~(\ref{M1}) имеем:
+
+\noindent
+\begin{multline}
+\p \left(\sup\limits_{j \in [0, n-1]} |Z_2(T_j^\prime)| > \eps\sqrt{n}\right) 
+\leq {}\\
+{}\leq \sum\limits_{j \in [0, n-1]} \hspace*{-3mm}\p \left( |Z_2(T_j^\prime)| > \varepsilon\sqrt{n}\right)\leq{}\\
+{}\leq 4 n \exp \left\{ - \fr{\eps^2 n^{3/2} (\ln n)^3}{n-[n\eta_n^p T_1^p]}\!\Bigg/\! \big( 8 (T_U^2+2)\eps\sqrt{n} +{}\right.\\
+\left.{}+ 128 c_7 (\ln n)^{(5-p)/2} \eta_n^p  (n-
+[n\eta_n^p T_1^p])\big) 
+\vphantom{ \fr{\eps^2 n^{3/2} (\ln n)^3}{n-[n\eta_n^p T_1^p]}}
+\right\} +{}\\
+{}
++ 22 \left(1+\fr{8(T_U^2+2) (n-[n\eta_n^p T_1^p])}{\eps 
+\sqrt{n}}\right)^{1/2}\times{}\\
+{}\times n^{3/2} (\ln n)^3 \alpha\left(\left[\fr{n-[n\eta_n^p 
+T_1^p]}{2 (\ln n)^3 \sqrt{n}}\right]\right).
+\label{M5}
+\end{multline}
+Используя ограничения $n^{-\delta_1}\hm\leq \eta_n^p \leq n^{-\delta_2}$ 
+и~$1/2\hm<\delta_2\hm<\delta_1\hm<1$, из~(\ref{M5}) получим для любого $\eps\hm>0$
+$$
+\p \left(\sup\limits_{j \in [0, n-1]} |Z_2(T_j^\prime)| > \eps\sqrt{n}\right) 
+\to 0
+$$
+при $n \to \infty$.
+
+Рассмотрим, наконец, пятое слагаемое в~(\ref{M1})). Заметим, что при $0\hm< a \hm< b$ 
+справедливо
+$$
+|Z_2(b)-Z_2(a)| \leq 2 |N_2(a,b)-{\mathsf E} N_2(a,b)| + n (b^2-a^2).
+$$
+Полагая $a = T_j^\prime$, $b \hm= T \hm\in [T_j^\prime, T_j^\prime+d_n]$ для 
+произвольного $j \hm\in [0, n-1]$ и~учитывая, что
+$$
+(T^2 - (T_j^\prime )^2) = (T - T_j^\prime)(T+ T_j^\prime ) \leq  2 d_n T_U < 2 
+T_U^2 n^{-1}; 
+$$
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+\p\left(T_j^\prime < |x_i| \leq T \right) \leq \p\left(T_j^\prime < |x_i| \leq 
+T_j^\prime+d_n\right) <{}\\
+{}< d_n < T_U n^{-1}, 
+\end{multline*}
+получим  оценку
+$$
+|Z_2(T)-Z_2(T_j^\prime)| \leq 2 N_2(T_j^\prime, T) +  3 T_U^2 .
+$$
+Далее, поскольку $N_2 (T_j^\prime, T) \hm\leq N_2 (T_j^\prime, T_j^\prime+d_n)$ и~${\mathsf E} N_2 (T_j^\prime, T_j^\prime+d_n) \hm< T_U^2$,
+имеем
+\begin{multline*}
+\sup\limits_{T \in [T_j^\prime, T_j^\prime+d_n]} |Z_2(T)-Z_2(T_j^\prime)| \leq {}\\
+{}\leq
+2 \left|N_2 (T_j^\prime, T_j^\prime+d_n) - {\mathsf E} N_2 (T_j^\prime, 
+T_j^\prime+d_n)\right| +  5 T_U^2 .
+\end{multline*}
+Аналогично~(\ref{M3}) показывается, что
+\begin{multline}
+\label{M11}
+\sup\limits_{\substack{i : |\mu_i| \leq 1/T_1 \\ j \in [0, n-1]}} {\mathsf D} \Ik 
+(T_j^\prime < |x_i| \leq T_j^\prime + d_n) <{}\\
+{}< c_7 (\ln n)^{(1-p)/2} \eta_n^p.
+\end{multline}
+Пусть $n > N(\eps)$ настолько, что 
+$$
+\fr{\eps\sqrt{n} - 5 T_U^2}{2} > \fr{\eps \sqrt{n} }{4}\,.
+$$
+%
+ Тогда для пятого слагаемого в~(\ref{M1}) по лемме~4 с~$m \hm= 
+\sqrt{n} (\ln n)^2$ и~$k \hm= n\hm-[n\eta_n^p T_1^p]$ имеем
+\begin{multline}
+\p \left(\sup\limits_{\substack{j \in [0, n-1] \\ T\in 
+[T_j^{\prime},T_j^{\prime}+d_n]}} |Z_2(T)-Z_2(T_j^{\prime})| > 
+\eps\sqrt{n}\right) \leq{}\\
+{}\leq  \sum\limits_{j \in [0, n-1]} \p \left(  \left|N_2 (T_j^\prime, 
+T_j^\prime+d_n) -{}\right.\right.\\
+\left.\left.{}- {\mathsf E} N_2 (T_j^\prime, T_j^\prime+d_n)\right| > \fr{\eps\sqrt{n}}{4} 
+\right) \leq{}\\
+{}\leq  4n \exp \left\{ -  \fr{\eps^2 n^{3/2} (\ln n)^2}{(n-[n\eta_n^p T_1^p])^{-1}}\Bigg/ 
+\big( 16 \eps \sqrt{n} +{}\right.\\
+\left.{}+ 64 c_7 (\ln n)^{(1-p)/2} \eta_n^p (n-[n\eta_n^p 
+T_1^p]) \big) 
+\vphantom{\fr{\eps^2 n^{3/2} (\ln n)^2}{(n-[n\eta_n^p T_1^p])^{-1}}}
+\right\} +{}\\
+{}+ 22 \left(1+\fr{16 (n-[n\eta_n^p T_1^p])}{\eps \sqrt{n}}\right)^{1/2}\times{}\\
+{}\times 
+n^{3/2} (\ln n)^2 \alpha\left(\left[\fr{n-[n\eta_n^p T_1^p]}{2 (\ln n)^2 
+\sqrt{n}}\right]\right).
+\label{M6}
+\end{multline}
+Используя ограничения $n^{-\delta_1}\hm\leq \eta_n^p\hm \leq n^{-\delta_2}$ 
+и~$1/2\hm<\delta_2\hm<\delta_1<1$, из~(\ref{M6}) получим для любого $\eps\hm>0$
+$$
+\p \left(\sup\limits_{\substack{j \in [0, n-1] \\ T\in 
+[T_j^{\prime},T_j^{\prime}+d_n]}} |Z_2(T)-Z_2(T_j^{\prime})| > 
+\eps\sqrt{n}\right) \to 0
+$$
+при $n \to \infty$.
+
+Таким образом, показано, что для любого $\eps>0$ все слагаемые в~(\ref{M1}) 
+стремятся к~нулю при $n\to\infty$. Следовательно,
+$$
+\fr{|U(\hat{t}_F)|}{\sqrt{n}}  \overset{\, \p \, }{\to} 0 \,,
+$$
+что вместе с~(\ref{D0}) завершает доказательство тео\-ремы.~\hfill$\square$
+
+\smallskip
+
+Следующая теорема дает достаточные условия для асимптотической нормальности 
+оценки риска $\hat{R}(\hat{t}_F)$ в~случае $\mu \hm\in l_0[\eta_n]$.
+
+\smallskip
+
+\noindent
+\textbf{Теорема 2.}\ 
+\textit{Пусть $\mu \hm\in l_0[\eta_n]$, $\eta_n\hm\in[n^{-\delta_1}, n^{-\delta_2}]$, $1/2\hm < 
+\delta_2\hm < \delta_1\hm<1;$ имеются такие константы $c_1, c_2\hm>0$, что для 
+коэффициента сильного перемешивания $\alpha(\cdot)$ компонент вектора~$x$ 
+справедливо} 
+\begin{gather*}
+\alpha(k) \leq c_1 k^{-1-(5/2)\delta_1/(1\hm-\delta_1)\hm-c_2},\enskip 
+k=\overline{1,n-1};\\
+ q_n < c_3 < 1;\enskip \mathrm{lim\,inf} q_n \ln n = c_4 > 0;
+\end{gather*}
+\textit{для максимального коэффициента корреляции~$\rho(\cdot)$ компонент вектора~$x$ 
+справедливо}
+$$
+\sum\limits_{k = 1}^{\infty} \sup\limits_{n\geq k+1} \rho(k) \equiv 
+\sum\limits_{k = 1}^{\infty}  \rho^\star (k) = c_5 < \infty. 
+$$
+\textit{Тогда при $n \to \infty$}
+$$
+\fr{\hat{R}(\hat{t}_F) - R(T_m)}{C_\rho \sqrt{2n}} \Rightarrow N(0, 1),
+$$
+\textit{где}
+$$
+C_\rho = \sigma^2\sqrt{1 +   \lim\limits_{n\to\infty} \fr{1}{n} 
+\sum\limits_{j\neq i} \mathrm{corr}^2 (x_i, x_j)}\,.
+$$
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\  проводится аналогично доказательству теоремы~1. 
+Переменная~$D_n$ теперь определяется как $D_n \hm= \{(i,j) : 
+|\mu_i|\hm=|\mu_j|=0$, $j\hm\neq i\}$. Условия вида $|\mu_i|\hm<T_1^{-1}$ (вида 
+$|\mu_i|\hm\geq T_1^{-1}$) заменяются условиями  $\mu_i\hm=0$ (соответственно 
+$|\mu_i|\hm>0$).
+Поскольку $\mu \hm\in l_0[\eta_n]$, количество~$i$ таких, что $|\mu_i|\hm>0$ 
+(а~значит, и~число слагаемых в~$Z_1(T)$), не превышает~$[n \eta_n]$.
+
+Для оценки первого слагаемого в~(\ref{M1}) используется лемма~2, 
+в~которой можно взять, например, $b\hm=1/2$, а~для~$\kappa_n^0$ использовать оценку 
+$\kappa_n^0 \hm> n \eta_n$. Формулы (\ref{M3}),  (\ref{M10}) и~(\ref{M11}) 
+принимают вид соответственно
+\begin{align*}
+\sup\limits_{\substack{i: \mu_i =0 \\ T\in [t_{\kappa_n^0}, T_U]}} |{\mathsf E} H_i (T, 
+T_m)| & \leq c_8 (\ln n)^{3/2} \eta_n ;
+\\
+\sup\limits_{\substack{i: \mu_i =0 \\ T\in [t_{\kappa_n^0}, T_U]}} {\mathsf D} H_i (T, 
+T_m)  & \leq 2 c_8 (\ln n)^{5/2} \eta_n;
+\\
+\sup\limits_{\substack{i : \mu_i =0 \\ j \in [0, n-1]}} {\mathsf D} \Ik (T_j^\prime < 
+|x_i| \leq T_j^\prime + d_n) &< c_8 (\ln n)^{1/2} \eta_n,
+\end{align*}
+где $c_8 = c_8(c_3,\delta_1, \delta_2, c_4)$. В~остальном доказательство 
+аналогично.~\hfill$\square$
+
+\section{Сильная состоятельность оценки риска при~применении FDR-процедуры 
+в~условиях слабой зависимости}
+
+Следующая теорема дает достаточные условия для сильной состоятельности оценки 
+риска $\hat{R}(\hat{t}_F)$ в~случаях $\mu \hm\in m_p[\eta_n]$ и~$\mu \hm\in 
+l_0[\eta_n]$.
+
+\smallskip
+
+\noindent
+\textbf{Теорема 3.}
+\textit{Пусть $\mu\hm \in m_p[\eta_n]$, $\eta_n^p\hm\in[n^{-\delta_1}, n^{-\delta_2}]$ либо 
+$\mu \hm\in l_0[\eta_n]$, $\eta_n\hm\in[n^{-\delta_1}, n^{-\delta_2}]$; $0 \hm< \delta_2 
+\hm< \delta_1<1$; имеются такие константы $c_1, c_2\hm>0$, что для коэффициента 
+сильного перемешивания $\alpha(\cdot)$ компонент вектора~$x$ справедливо}  
+$\alpha(k) \hm\leq c_1 k^{-2-(7/2)\delta_1/(1\hm-\delta_1)\hm-c_2}$, $k\hm=\overline{1,n-1}$; 
+$q_n \hm< c_3 \hm< 1$; $\mathrm{lim\,inf} q_n \ln n \hm= c_4 \hm> 0$. \textit{Тогда при} $n \hm\to \infty$
+$$
+\fr{\hat{R}(\hat{t}_F) - R(T_m)}{n} \rightarrow 0 \, \, \,\textit{п.~в.}
+$$
+
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.  Воспользуемся представлением~(\ref{D00}).
+
+Покажем, что $(\hat{R}(T_m)-R(T_m))n^{-1}\hm \to 0$ п.~в.\ при $n\hm\to\infty$. 
+При мягкой пороговой обработке ${\mathsf E} \hat{R}(T_m) \hm= R(T_m)$, а~при жесткой 
+пороговой обработке
+\begin{multline*}
+\fr{\hat{R}(T_m)-R(T_m)}{n} = {}\\
+{}=\fr{\hat{R}(T_m)-{\mathsf E} \hat{R}(T_m)}{n} 
++\fr{{\mathsf E}\hat{R}(T_m)-R(T_m)}{n}\,,
+\end{multline*}
+где второе слагаемое стремится к~нулю при $n\to\infty$ \cite{Mallat}. 
+Следовательно, достаточно показать, что $(\hat{R}(T_m)\hm-{\mathsf E}\hat{R}(T_m))n^{-1} \hm\to 0$ п.~в.
+
+Полагая в~лемме~3 $X_i \hm= F[x_i, T_m] \hm- {\mathsf E} F[x_i, T_m]$, $b \hm= 
+2(\sigma^2\hm+T_m^2)$ и~$m \hm= n^{1/4}$ и~учитывая ограничения на $\alpha(\cdot)$ из 
+условия, нетрудно убедиться, что для всех~$n$
+$$
+\p \left(\left| \fr{\hat{R}(T_m)-{\mathsf E} \hat{R}(T_m)}{n}\right| >\eps \right) 
+\leq \fr{c_5}{n^{1+c_6}}\,, 
+$$
+где константы $c_5$, $c_6$ положительны. Отсюда
+$$
+\sum\limits_{n=1}^{\infty}\p \left(\left|\fr{\hat{R}(T_m)-{\mathsf E} 
+\hat{R}(T_m)}{n}\right| >\eps \right) < \infty,
+$$
+и по теореме~1.3.4 из~\cite{Serfling2002} 
+$$
+\left(\hat{R}(T_m)-{\mathsf E}\hat{R}(T_m)\right)n^{-1} \to 0~\mbox{п.~в.}
+$$
+
+
+
+Покажем теперь, что  $U(\hat{t}_F) \, n^{-1}\hm \to 0$ п.~в. Доказательство 
+проведено для $\mu \hm\in m_p[\eta_n]$, в~случае $\mu\hm \in l_0[\eta_n]$ 
+доказательство аналогично.
+Аналогично формуле~(\ref{M1}), для произвольного $\eps\hm>0$ в~терминах тео\-ре\-мы~1 имеем
+\begin{multline*}
+\p \left( \fr{|U(\hat{t}_F)|}{n}> 4\eps \right) \leq \p\left(\hat{t}_F 
+\leq t_{\kappa_n}\right) +{}\\
+{}+ \p\left(\fr{\sup\nolimits_{T\in [t_{\kappa_n}, T_U]} |{\mathsf E} 
+U(T)|}{n}>\eps\right)+{}\\
+{}+ \p \left(\sup\limits_{T\in [t_{\kappa_n}, T_U]} |Z_1(T)| > \eps n\right) +{}
+\end{multline*}
+
+\noindent
+\begin{multline}
+{}+ \p  \left(\sup\limits_{j \in [0, n-1]} |Z_2(T_j^{\prime})| > \eps n\right) +{}\\
+{}+ \p \left(\sup\limits_{\substack{j \in [0, n-1] \\ T\in 
+[T_j^{\prime},T_j^{\prime}+d_n]}} |Z_2(T)-Z_2(T_j^{\prime})| > \eps n\right).
+\label{M1SC}
+\end{multline}
+Применяя рассуждения, аналогичные приведенным в~доказательстве теоремы~1, можно показать, что
+$$
+\sup\limits_{T\in [t_{\kappa_n}, T_U]} |{\mathsf E} U(T)| = o(n); \enskip
+\sup\limits_{T\in [t_{\kappa_n}, T_U]} |Z_1(T)|  = o(n),
+$$
+откуда следует, что второе и~третье слагаемые в~(\ref{M1SC}) обращаются в~ноль 
+для всех достаточно больших~$n$.
+
+Для некоторых положительных констант  $c_7$ и~$c_8$ первое, четвертое и~пятое 
+слагаемые  в~(\ref{M1SC}) не превышают $c_7 n^{-1-c_8}$ для всех достаточно 
+боль\-ших~$n$, что можно показать с~помощью ограничения на $\alpha(\cdot)$ из 
+условия и~рассуждений, аналогичных приведенным при выводе соответственно формул~(\ref{M1next}), (\ref{M5}) и~(\ref{M6}), с~тем отличием, что при применении 
+леммы~4 полагается $m \hm= (\ln n)^3$.
+
+Из доказанного следует, что
+$$
+\sum\limits_{n=1}^{\infty}\p \left( \fr{|U(\hat{t}_F)|}{n}> 4\eps \right) 
+< \infty,
+$$
+и по теореме~1.3.4 из~\cite{Serfling2002} $U(\hat{t}_F) \, n^{-1} \to 0$ п.~в., 
+что завершает доказательство теоремы.~\hfill$\square$
+
+
+
+{\small\frenchspacing
+ {\baselineskip=11.5pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{FDRImage}
+\Au{Krylov V.\,A., Moser~G., Serpico~S.\,B., Zerubia~J.}
+False discovery rate approach to unsupervised image change detection~// IEEE 
+T. Image Process., 2016. Vol.~25. No.\,10. P.~4704--4718. doi: 10.1109/TIP.2016.2593340.
+
+\bibitem{MultipleTesting} %2
+\Au{Menyhart~O., Weltz~B., Gyorffy~B.}
+MultipleTesting.com: A~tool for life science researchers for multiple hypothesis 
+testing correction~// PLoS One, 2021. Vol.~16. No.\,6. Art.~0245824. doi: 10.1371/journal.pone.0245824.
+
+\bibitem{AdaptingFDR} %3
+\Au{Abramovich~F., Benjamini~Y., Donoho~D., Johnstone~I.}
+Adapting to unknown sparsity by controlling the false discovery rate~// Ann. Stat., 2006. Vol.~34. No.\,2. P.~584--653.
+doi: 10.1214/009053606000000074.
+
+\bibitem{ZasShe17} %4
+\Au{Заспа~А.\,Ю., Шестаков~О.\,В.}
+Состоятельность оценки риска при множественной проверке гипотез с~FDR-по\-ро\-гом~// 
+Вестник ТвГУ. Сер. Прикладная математика, 2017. Вып.~1. С.~5--16.
+doi: 10.26456/vtpmk119. EDN: YFYJXT.
+
+\bibitem{Mathematics2020} %5
+\Au{Palionnaya~S.\,I., Shestakov~O.\,V.}
+Asymptotic properties of MSE estimate for the false discovery rate controlling 
+procedures in multiple hypothesis testing // Mathematics, 2020. Vol.~8. No.~11. 
+Art.~1913. 11~p. doi: 10.3390/ math8111913.
+
+\bibitem{Shestakov2021-1} %6
+\Au{Шестаков~О.\,В.}
+Анализ несмещенной оценки среднеквадратичного риска метода блочной пороговой 
+обработки~// Информатика и~её применения, 2021. Т.~15. Вып.~2. С.~30--35.
+doi: 10.14357/19922264210205. EDN: DSQQAU.
+
+\bibitem{Shestakov2021-2} %7
+\Au{Шестаков~О.\,В.}
+Пороговые функции в~методах подавления шума, основанных на вейв\-лет-раз\-ло\-же\-нии 
+сигнала~// Информатика и~её применения, 2021. Т.~15. Вып.~3. С.~51--56.
+doi: 10.14357/19922264210307. EDN: WSEAYG.
+
+\bibitem{Shestakov2022} %8
+\Au{Шестаков~О.\,В.}
+Несмещенная оценка риска пороговой обработки с~двумя пороговыми значениями~// 
+Информатика и~её применения, 2022. Т.~16. Вып.~4. С.~14--19.
+doi: 10.14357/19922264220403. EDN: \mbox{DZBVLC}.
+
+\bibitem{ResultsOnFDRUnderDependence} %9
+\Au{Farcomeni~A.}
+Some results on the control of the false discovery rate under dependence~// 
+Scand. J. Stat., 2007. Vol.~34. No.\,2. P.~275--297.
+doi: 10.1111/j.1467-9469.2006.00530.x.
+
+\bibitem{VorontsovShestakov2023} %10
+\Au{Воронцов~М.\,О., Шестаков~О.\,В.}
+Среднеквадратичный риск FDR-про\-це\-ду\-ры в~условиях слабой за\-ви\-си\-мости~// 
+Информатика и~её применения, 2023. Т.~17. Вып.~2. С.~34--40.
+doi: 10.14357/19922264230205. EDN: AVJZDX.
+
+\bibitem{Vorontsov2024} %11
+\Au{Воронцов~М.\,О.}
+Анализ среднеквадратичного риска при использовании методов множественной 
+проверки гипотез для выбора параметров пороговой обработки в~условиях слабой 
+зависимости~// Вестник Московского университета. Сер. 15: Вычислительная 
+математика и~кибернетика, 2024. №\,2. С.~18--24.
+
+\bibitem{Bosq} %12
+\Au{Bosq~D.}
+Nonparametric statistics for stochastic processes: Estimation and prediction.~--- 
+Lecture notes in statistics ser.~--- New York, NY, USA: Springer, 1996. Vol.~110. 
+188~p.
+
+\bibitem{Mallat} %13
+\Au{Mallat~S.}
+A wavelet tour of signal processing.~--- New York, NY, USA: Academic Press, 1999. 
+857~p.
+
+\bibitem{spatialAdaptation} %14
+\Au{Donoho~D., Johnstone~I.}
+Ideal spatial adaptation via wavelet shrinkage~// Biometrika, 1994. Vol.~81. 
+No.\,3. P.~425--455. doi: 10.1093/biomet/81.3.425.
+
+\bibitem{AdaptingSURE} %15
+\Au{Donoho D., Johnstone I.\,M.}
+Adapting to unknown smoothness via wavelet shrinkage~// J.~Amer. Stat. Assoc., 
+1995. Vol.~90. P.~1200--1224.
+
+\bibitem{ExactRisk} %16
+\Au{Marron J.\,S., Adak~S., Johnstone~I.\,M., Neumann~M.\,H., Patil~P.}
+Exact risk analysis of wavelet regression~// J.~Comput. Graph. Stat., 1998. 
+Vol.~7. P.~278--309. doi: 10.1080/ 10618600.1998.10474777.
+
+\bibitem{Jansen} %17
+\Au{Jansen~M.}
+Noise reduction by wavelet thresholding.~-- Lecture notes in statistics ser.~--- 
+New York, NY, USA: Springer, 2001. Vol.~161. 217~p.
+
+\bibitem{KuShe2016_1} %18
+\Au{Кудрявцев~А.\,А., Шестаков~О.\,В.}
+Асимптотическое поведение порога, минимизирующего усредненную\linebreak вероятность ошибки 
+вычисления вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов~// Докл. Акад. наук, 2016. Т.~468. №\,5. 
+С.~487--491.
+
+\bibitem{KuShe2016_2} %19
+\Au{Кудрявцев~А.\,А., Шестаков~О.\,В.}
+Асимптотически оптимальная пороговая обработка вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов в~моделях с~негауссовым распределением шума~// Докл. Акад. наук, 2016. Т.~471. №\,1. 
+С.~11--15.
+
+
+
+\bibitem{Eroshenko} %20
+\Au{Ерошенко~А.\,А.}
+Статистические свойства оценок сигналов и~изображений при пороговой обработке 
+коэффициентов в~вейв\-лет-раз\-ло\-же\-ни\-ях: Дис.\ \ldots\ канд. физ.-мат. наук.~--- 
+М.: МГУ, 2015. 82~с.
+
+\bibitem{Peligrad} %21
+\Au{Peligrad~M.}
+On the asymptotic normality of sequences of weak dependent random variables~// 
+J. Theor. Probab., 1996. Vol.~9. No.\,3. P.~703--715. doi: 10.1007/BF02214083.
+
+\bibitem{Serfling2002} %22
+\Au{Serfling~R.\,J.}
+Approximation theorems of mathematical statistics.~--- New York, NY, USA: John Wiley \&~Sons, Inc., 2002. 371~p.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 21.05.24}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+
+
+\def\tit{ASYMPTOTIC NORMALITY AND STRONG CONSISTENCY\\ OF~RISK ESTIMATE WHEN USING THE~FDR THRESHOLD\\ UNDER WEAK DEPENDENCE CONDITION}
+
+
+\def\titkol{Asymptotic normality and strong consistency of~risk estimate when using the~FDR threshold under weak dependence condition}
+
+
+\def\aut{M.\,O.~Vorontsov$^{1,2}$ and~O.\,V.~Shestakov$^{1,2,3}$}
+
+\def\autkol{M.\,O.~Vorontsov and~O.\,V.~Shestakov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-13pt}
+
+
+\noindent
+$^{1}$Department of Mathematical Statistics, Faculty of Computational Mathematics and Cybernetics,
+ M.\,V.~Lo\-mo-\linebreak
+ $\hphantom{^1}$nosov Moscow State University, 1-52~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation
+
+\noindent
+$^{2}$Moscow Center for Fundamental and Applied Mathematics, M.\,V.~Lomonosov Moscow State University,\linebreak
+$\hphantom{^1}$1~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation
+
+\noindent
+$^{3}$Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov\linebreak
+$\hphantom{^1}$Str., Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{2pt}
+
+
+
+
+
+
+\Abste{An approach to solving the problem of noise removal in a large array of sparse data is considered
+ based on the method of controlling the average proportion of false hypothesis rejections (False Discovery Rate, FDR). 
+ This approach is equivalent to threshold processing procedures that remove array components whose values do not exceed 
+ some specified threshold. The observations in the model are considered weakly dependent. To control the\linebreak\vspace*{-12pt}}
+ 
+ \Abstend{degree of dependence, 
+ restrictions on the strong mixing coefficient and the maximum correlation coefficient are used. The mean-square risk is 
+ used as a measure of the effectiveness of the considered approach. It is possible to calculate the risk value only on the test data;
+  therefore, its statistical estimate is considered in the work and its properties are investigated. The asymptotic normality and
+   strong consistency of the risk estimate are proved when using the FDR threshold under conditions of weak dependence in the data.}
+
+\KWE{thresholding; multiple hypothesis testing; risk estimate}
+
+\DOI{10.14357/19922264240309}{ZOQVTO}
+
+%\vspace*{-12pt}
+
+
+    
+   %   \Ack
+
+%\vspace*{-3pt}
+%\noindent
+
+
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99} 
+
+%1
+\bibitem{FDRImage-1}
+\Aue{Krylov, V.\,A., G.~Moser, S.\,B.~Serpico, and J.~Zerubia.} 2016. 
+False discovery rate approach to unsupervised image change detection. 
+\textit{IEEE T. Image Process.} 25(10):4704--4718. doi: 10.1109/TIP.2016.2593340.
+
+%2
+\bibitem{MultipleTesting-1}
+\Aue{Menyhart, O., B.~Weltz, and B.~Gyorffy.} 2021. 
+MultipleTesting.com: A~tool for life science researchers for multiple hypothesis testing correction. 
+\textit{PLoS One} 16(6):0245824. 
+doi: 10.1371/journal.pone.0245824.
+
+%3
+\bibitem{AdaptingFDR-1}
+\Aue{Abramovich, F., Y.~Benjamini, D.~Donoho, and I.\,M.~Johnstone.} 2006. 
+Adapting to unknown sparsity by controlling the false discovery rate. 
+\textit{Ann. Stat.} 34(2):584--653. 
+doi: 10.1214/009053606000000074.
+
+
+%4
+\bibitem{ZasShe17-1}
+\Aue{Zaspa, A.\,Yu., and O.\,V.~Shestakov.} 2017.
+Sostoyatel'nost' otsenki riska pri mnozhestvennoy proverke gipotez s~FDR-porogom
+ [Consistency of the risk estimate of the multiple hypothesis testing with the FDR threshold]. 
+\textit{Vestnik TvGU. Ser.: Prikladnaya matematika} [Herald of Tver State University. Ser. Applied Mathematics] 1:5--16.
+doi: 10.26456/vtpmk119. EDN: YFYJXT.
+
+%5
+\bibitem{Mathematics2020-1}
+\Aue{Palionnaya, S.\,I., and O.\,V.~Shestakov.} 2020. 
+Asymptotic properties of MSE estimate for the false discovery rate controlling procedures in multiple hypothesis testing. 
+\textit{Mathematics} 8(11):1913. 11~p.
+doi: 10.3390/math8111913.
+
+%6
+\bibitem{Shestakov2021-1-1}
+\Aue{Shestakov, O.\,V.} 2021.
+Analiz nesmeshchennoy otsenki srednekvadratichnogo riska metoda blochnoy po\-ro\-go\-voy obrabotki 
+[Analysis of the unbiased mean-square risk estimate of the block thresholding method]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 15(2):30--35.
+doi: 10.14357/19922264210205. EDN: DSQQAU.
+
+%7
+\bibitem{Shestakov2021-2-1}
+\Aue{Shestakov, O.\,V.} 2021.
+Porogovye funktsii v~metodakh podavleniya shuma, osnovannykh na veyvlet-razlozhenii signala 
+[Thresholding functions in the noise suppression methods based on the wavelet expansion of the signal]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 15(3):51--56.
+doi: 10.14357/19922264210307. EDN: WSEAYG.
+
+%8
+\bibitem{Shestakov2022-1}
+\Aue{Shestakov, O.\,V.} 2022.
+Nesmeshchennaya otsenka riska porogovoy obrabotki s dvumya porogovymi znacheniyami [Unbiased thresholding risk estimate with two threshold values]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 16(4):14--19.
+doi: 10.14357/19922264220403. EDN: DZBVLC.
+
+%9
+\bibitem{ResultsOnFDRUnderDependence-1}
+\Aue{Farcomeni, A.} 2007. Some results on the control of the false discovery rate under dependence. 
+\textit{Scand. J. Stat.} 34(2):275--297. 
+doi: 10.1111/j.1467-9469.2006.00530.x.
+
+%10
+\bibitem{VorontsovShestakov2023-1}
+\Aue{Vorontsov, M.\,O., and O.\,V.~Shestakov.} 2023.
+Sred\-ne\-kvad\-ra\-tich\-nyy risk FDR-protsedury v~usloviyakh slaboy za\-vi\-si\-mosti [Mean-square risk of the FDR procedure under weak dependence]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 17(2):34--40.
+doi: 10.14357/19922264230205. EDN: AVJZDX.
+
+%11
+\bibitem{Vorontsov2024-1}
+\Aue{Vorontsov, M.\,O.} 2024. 
+RMS risk analysis when using multiple hypothesis testing select parameters of thresholding under conditions of weak dependence. 
+\textit{Moscow University Computational Mathematics Cybernetics} 48:91--97. 
+doi: 10.3103/S027864192470002X.
+
+%12
+\bibitem{Bosq-1}
+\Aue{Bosq, D.} 1996. 
+\textit{Nonparametric statistics for stochastic processes: Estimation and prediction}. 
+Lecture notes in statistics ser. New York, NY: Springer Verlag. Vol.~110. 188~p.
+
+%13
+\bibitem{Mallat-1}
+\Aue{Mallat, S.} 1999. 
+\textit{A wavelet tour of signal processing}. New York, NY: Academic Press. 857~p.
+
+%14
+\bibitem{spatialAdaptation-1}
+\Aue{Donoho, D., and I.\,M.~Johnstone.} 1994. 
+Ideal spatial adaptation via wavelet shrinkage. 
+\textit{Biometrika} 81(3):425--455. doi: 10.1093/biomet/81.3.425.
+
+%15
+\bibitem{AdaptingSURE-1}
+\Aue{Donoho, D., and I.\,M.~Johnstone.} 1995. 
+Adapting to unknown smoothness via wavelet shrinkage. 
+\textit{J. Am. Stat. Assoc.} 90(432):1200--1224. doi: 10.1080/01621459. 1995.10476626.
+
+%16
+\bibitem{ExactRisk-1}
+\Aue{Marron, J.\,S., S.~Adak, I.\,M.~Johnstone, M.\,H.~Neumann, and P.~Patil.} 1998. 
+Exact risk analysis of wavelet regression. 
+\textit{J.~Comput. Graph. Stat.} 7(3):278-309. doi: 10.1080/ 10618600.1998.10474777.
+
+%17
+\bibitem{Jansen-1}
+\Aue{Jansen, M.} 2001. 
+\textit{Noise reduction by wavelet thresholding}. Lecture notes in statistics ser. New York, NY: Springer Verlag. Vol.~161. 217~p.
+
+%18
+\bibitem{KuShe2016_1-1}
+\Aue{Kudryavtsev, A.\,A., and O.\,V.~Shestakov.} 2016. 
+Asymptotic behavior of the threshold minimizing the average probability of error in calculation of wavelet coefficients. 
+\textit{Dokl. Math.} 93(3):295--299.
+doi: 10.1134/S1064562416030212. EDN: WUMUEV. 
+
+%19
+\bibitem{KuShe2016_2-1}
+\Aue{Kudryavtsev, A.\,A., and O.\,V.~Shestakov.} 2016. 
+Asymptotically optimal wavelet thresholding in the models with non-Gaussian noise distributions. 
+\textit{Dokl. Math.} 94(3):615--619.
+doi: 10.1134/S1064562416060028. EDN: YUYVUP.
+
+
+
+
+%20
+\bibitem{Eroshenko-1}
+\Aue{Eroshenko, A.\,A.} 2015. Statisticheskie svoystva otsenok signalov i~izobrazheniy pri porogovoy obrabotke ko\-ef\-fi\-tsi\-en\-tov 
+v~veyvlet-razlozheniyakh 
+[Statistical properties of signal and image estimates under thresholding of coefficients in wavelet decompositions]. Moscow: MSU. PhD Diss. 82~p.
+
+%21
+\bibitem{Peligrad-1}
+\Aue{Peligrad, M.} 1996. 
+On the asymptotic normality of sequences of weak dependent random variables. 
+\textit{J. Theor. Probab.} 9(3):703--715. doi: 10.1007/BF02214083.
+
+%22
+\bibitem{Serfling2002-1}
+\Aue{Serfling, R.\,J.} 2002. 
+\textit{Approximation theorems of mathematical statistics}. New York, NY: John Wiley \&~Sons. 371~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received May 21, 2024}} 
+
+%\vspace*{-18pt}
+
+\Contr
+
+\vspace*{-3pt}
+
+
+\noindent
+\textbf{Vorontsov Mikhail O.} (b.\ 1996)~--- PhD student, Department of Mathematical Statistics, 
+Faculty of Computational Mathematics and Cybernetics, M.\,V.~Lomonosov Moscow State University, 1-52~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation;  
+mathematician, Moscow Center for Fundamental and Applied Mathematics, M.\,V.~Lomonosov Moscow State University, 1~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation;
+\mbox{m.vtsov@mail.ru}
+
+\vspace*{6pt}
+
+\noindent
+\textbf{Shestakov Oleg V.} (b.\ 1976)~--- Doctor of Science in physics and mathematics, professor, Department of Mathematical Statistics,
+ Faculty of Computational Mathematics and Cybernetics, M.\,V.~Lomonosov Moscow State University, 1-52~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation; 
+ senior scientist, Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, 
+ Russian Federation; leading scientist, Moscow Center for Fundamental and Applied Mathematics, M.\,V.~Lomonosov Moscow State University, 
+ 1~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation; \mbox{oshestakov@cs.msu.su}
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

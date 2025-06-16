@@ -1,0 +1,722 @@
+\def\stat{yakovlev}
+
+\def\tit{УСКОРЕННЫЙ АЛГОРИТМ СТЕРЕОСОПОСТАВЛЕНИЯ НА~ОСНОВЕ 
+ГЕОДЕЗИЧЕСКИХ ВСПОМОГАТЕЛЬНЫХ КОЭФФИЦИЕНТОВ}
+
+\def\titkol{Ускоренный алгоритм стереосопоставления на~основе 
+геодезических вспомогательных коэффициентов}
+
+\def\aut{О.\,А.~Яковлев$^1$, А.\,В.~Гасилов$^2$}
+
+\def\autkol{О.\,А.~Яковлев, А.\,В.~Гасилов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Яковлев О.\,А.}
+\index{Гасилов А.\,В.}
+\index{Yakovlev O.\,A.}
+\index{Gasilov A.\,V.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнена при частичной поддержке РФФИ (проект 16-07-00272 А).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Орловский филиал Федерального исследовательского центра <<Информатика и~управление>> Российской 
+академии наук, \mbox{maucra@gmail.com}}
+\footnotetext[2]{Орловский филиал Федерального исследовательского центра <<Информатика и~управление>> Российской 
+академии наук, \mbox{gasilov.av@yandex.ru}}
+
+\vspace*{-12pt}
+  
+  \Abst{Среди локальных алгоритмов стереосопоставления качественные результаты дают 
+алгоритмы, использующие концепцию вспомогательных коэффициентов. В~данной работе 
+предложена модификация алгоритма стереосопоставления на основе геодезических 
+расстояний. Предлагаемая модификация существенно снижает вычислительные затраты, 
+незначительно уступая в~качестве сопоставления оригинальному подходу, что 
+подтверждается приведенными результатами экспериментов. Рассматриваемый 
+алгоритм опирается на сегментацию одного из изображений стереопары, используя 
+геодезические вспомогательные коэффициенты для вычисления цвета каждого сегмента. 
+Такое преобразование изображения делает возможным применение принципа частичных 
+сумм при вычислении стоимости сопоставления, что и~является основным источником 
+прироста производительности.}
+  
+  \KW{стереосопоставление; сегментация; геодезические вспомогательные коэффициенты}
+  
+\DOI{10.14357/19922264160313} 
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+  Задача стереосопоставления двух изображений состоит в~установлении для 
+каждой точки одного изображения соответствующей ей точки на втором\linebreak 
+изображении. В~данной работе рассматривается самый распространенный 
+вариант исходных данных~--- пара ректифицированных изображений. В~паре 
+таких изображений естественным образом можно выделить левое ($I_L$) 
+и~правое ($I_R$). На ректифицированных изображениях эпиполярные прямые 
+параллельны оси~$Ox$, следовательно, соответствующие точки имеют равные 
+координаты по оси~$Oy$. Пусть $p\hm\in I_L$ и~$p^\prime\hm\in I_R$~--- 
+соответствующие точки, тогда диспарантностью пикселя~$p$ будем называть 
+величину $\mathrm{disp}\,(p)\hm= p_x\hm-p^\prime_x$. Значения $\mathrm{disp}\,(p)$ для каждого 
+$p\hm\in I_L$ образуют матрицу, называемую картой диспарантности. Карта 
+диспарантности выступает результатом сте\-рео\-со\-по\-став\-ле\-ния изображений 
+и~может быть использована, например, для трехмерной реконструкции сцены.
+  
+  Среди алгоритмов стереосопоставления выделяют глобальные и~локальные 
+алгоритмы. Глобальные алгоритмы решают задачу оптимизации,\linebreak вы\-чис\-ляя 
+оптимальную по некоторому критерию\linebreak карту диспарантности, что обеспечивает 
+высокое качество результата. Однако вычислительная\linebreak сложность глобальных 
+алгоритмов не позволяет применять их в~системах реального времени. 
+Локальные алгоритмы являются представителями класса жадных алгоритмов, 
+имеют высокую производительность, но качество вычисленных карт 
+дис\-па\-рант\-ности у~них значительно ниже, чем у~глобальных алгоритмов. 
+В~связи с~постоянным совершенствованием %\linebreak 
+аппарат\-ных средств большинство 
+исследований на\-прав\-ле\-но на улучшение качест-\linebreak ва
+ сопоставления изображений. 
+Как следствие, многие локальные алгоритмы приобрели черты глобальных, и~их 
+применение в~условиях ограниченных вычислительных ресурсов становится 
+невозможным. Алгоритм сопоставления изображений с~помощью 
+геодезических вспомогательных коэффициентов~[1] является ярким примером 
+локального алгоритма, %\linebreak 
+обладающего как высоким качеством, так и~высокой 
+вычислительной сложностью. В~настоящей работе рассматривается 
+модификация этого алгоритма, позволяющая добиться роста 
+производительности с~незначительной потерей качества.
+
+\vspace*{-9pt}
+  
+\section{Стереосопоставление на~основе геодезических 
+вспомогательных коэффициентов}
+
+\vspace*{-2pt}
+  
+  Рассмотрим неориентированный граф, вершинами которого являются 
+пиксели изображения и~каждая вершина соединена ребром с~8~соседними. 
+Стоимостью ребра будем считать евклидово расстояние между двумя 
+пикселями как RGB-век\-то\-ра\-ми. Стоимость кратчайшего пути между двумя 
+вершинами такого графа будем называть геодезическим расстоянием между 
+соответствующими пикселями изображения.
+  
+  В работе~[1] предлагается использовать в~качестве вспомогательного 
+коэффициента величину, обратную геодезическому расстоянию:
+  \begin{equation}
+  w(p,q) =e^{-g(p,q)/\gamma}\,,
+  \label{1-ya}
+  \end{equation}
+     где $g(p,q)$~--- геодезическое расстояние между~$p$ и~$q$;  
+$\gamma$~--- положительный коэффициент.
+
+Коэффициент~$\gamma$ позволяет регулировать скорость убывания $w(p,q)$ 
+при возрастании $g(p,q)$. Рассмотрим функцию $f(x)\hm= e^{-x/\gamma}$. Ее 
+производная $f^\prime(x)\hm= -(1/\gamma) e^{-x/\gamma}$. Таким образом, чем 
+меньше~$\gamma$, тем быстрее убывает~$f(x)$.
+  
+  Для вычисления $\mathrm{disp}\,(p)$ с~помощью вспомогательных коэффициентов 
+используется ска\-ни\-ру\-ющее окно, размер которого подбирается 
+экспериментально. Пусть Win$_p$~--- сканирующее окно\linebreak с~центром 
+в~точке~$p$, тогда стоимость диспарантности~$d$ для пикселя~$p$ можно 
+вычислить как
+  $$
+  c(p,d) =\sum\limits_{q\in \mathrm{Win}_p} w(p,q)  \mathrm{diff} \left(q,\left(q_x-d, q_y\right ) 
+\right)\,,
+  $$
+  где $\mathrm{diff}\,(p,q)$~--- величина цветоразличия пикселя~$p$ левого изображения 
+и~пикселя~$q$ правого.
+  
+  Для вычисления диспарантности каждого пикселя будем использовать 
+локальную оптимизацию: в~качестве $disp(p)$ возьмем такое значение~$d$, при 
+котором достигается минимум стоимостной функции~$c(p,d)$, т.\,е.
+  $$
+  \mathrm{disp}\,(p)=\mathop{\mathrm{argmin}}\limits_{d\leq D} c(p,d)\,,
+  $$
+  где $D$~--- максимально допустимая диспарантность.
+  
+  Пусть $W$ и~$H$~--- ширина и~высота изображения соответственно; $s$~--- 
+размер сканирующего окна. Тогда вычислительная сложность построения карты 
+диспарантности описанным способом составит $O(W  H  s^2 D)$.
+
+\section{Ускоренный алгоритм стереосопоставления}
+
+  Нетрудно понять, что вспомогательные коэффициенты позволяют оценить 
+вероятность принадлежности двух пикселей одной поверхности сцены. Более 
+грубую оценку принадлежности двух пикселей одной поверхности дает 
+сегментация изображения~[2]. Сегментация и~вспомогательные коэффициенты 
+могут быть скомбинированы, что позволит снизить вычислительную сложность 
+сопоставления изображений.
+  
+  Пусть $S_1\cup S_2\cup S_3\cup\cdots \cup S_m$~--- сегментация левого 
+изображения. Опорной точкой pivot$_i$ сегмента~$S_i$ будем называть его 
+медиану как упорядоченного по значениям координат списка точек. Цветом 
+сегмента~$i$ будем называть средневзвешенный вспомогательными 
+коэффициентами цвет составляющих его пикселей:
+  $$
+  C_i= \fr{\sum\nolimits_{p\in S_i} w(p,\mathrm{pivot}_i) I_L(p)} {\sum\nolimits_{p\in S_i} 
+w(p,\mathrm{pivot}_i)}\,,
+  $$
+  где $I_L(p)$~--- цвет пикселя~$p$  на изображении.
+  
+  На данном этапе предполагается, что такой вариант использования 
+коэффициентов принадлежности не приведет к~значительному снижению 
+качества по сравнению с~оригинальным алгоритмом. Параметр~$\gamma$ 
+в~выражении~(1) должен быть согласован с~уровнем сегментации, иначе 
+теряется смысл применения вспомогательных коэффициентов~--- 
+значение~$C_i$ будет близко к~среднему цвету сегмента. Высокому уровню 
+сегментации соответствует малое значение~$\gamma$ и~наоборот. Рисунок~1 
+иллюстрирует влияние параметра~$\gamma$ на значения вспомогательных 
+коэффициентов.
+  
+  
+  \begin{figure*} %fig1
+  \vspace*{1pt}
+ \begin{center}  
+\mbox{%
+ \epsfxsize=115mm
+ \epsfbox{yak-1.eps}
+ }
+\end{center} 
+\vspace*{-9pt}
+\Caption{Вспомогательные коэффициенты при различных значениях~$\gamma$: 
+(\textit{а})~$\gamma\hm=10$; (\textit{б})~15; (\textit{в})~30; (\textit{г})~$\gamma\hm=50$}
+\end{figure*}
+
+  Пусть $s(p)$~--- номер сегмента, которому принадлежит пиксель~$p$, тогда 
+в~качестве стоимостной функции будем рассматривать величину
+  \begin{equation}
+  c(p,d) =\sum\limits_{q\in \mathrm{Win}_p} \left\| C_{s(q)} -I_R(q_x-d, q_y)\right\|_{2}\,,
+  \label{e2-ya}
+  \end{equation}
+  где $I_R(x,y)$~--- цвет пикселя $(x,y)$ на правом изображении.
+  
+Используя стоимостную функцию~(2), можно значительно сократить 
+вычислительные затраты на построение карты диспарантности~--- стоимостная 
+функция для каждой позиции сканирующего окна может быть вычислена за 
+$O(1)$ с~помощью частичных сумм.
+
+  Рассмотрим метод частичных сумм. Имеется матрица $A\hm= (a_{i,j})$, 
+состоящая из $n\times m$ элементов, и~необходимо многократно вычислять 
+сумму подматриц этой матрицы. Пусть
+  $$
+  \mathrm{ps}_{r,c} =\sum\limits_{i=1}^r \sum\limits_{j=1}^c a_{i,j}\,.
+  $$
+Используя принцип динамического программирования, величину ps можно 
+рассчитать за время порядка $O(n m)$ согласно соотношению:
+\begin{equation}
+\mathrm{ps}_{r,c}= \mathrm{ps}_{r-1,c} +\mathrm{ps}_{r,c-1} -
+\mathrm{ps}_{r-1,c-1}+a_{r,c}\,.
+\label{e3-ya}
+\end{equation}
+  
+  Сумму на произвольной подматрице $(r_1,c_1)\hm- (r_2,c_2)$ можно 
+вычислить по формуле вклю\-че\-ний-ис\-клю\-че\-ний:
+  \begin{multline}
+  \mathrm{sum}\left(r_1,c_1,r_2,c_2\right) = {}\\
+  {}=\mathrm{ps}_{r_2, c_2} -\mathrm{ps}_{r_2, c_1-1} - \mathrm{ps}_{r_1-1, 
+c_2} + \mathrm{ps}_{r_1-1, c_1-1}\,.
+  \label{e4-ya}
+  \end{multline}
+  
+  Воспользуемся методом частичных сумм для вычисления стоимостной 
+функции $c(p,d)$. Пусть sum$_d(x_1, y_1, x_2, y_2)$~--- суммарная стоимость 
+диспарантности~$d$ для всех пикселей прямоугольника $(x_1,y_1)\mbox{--}(x_2,y_2)$, т.\,е.
+ \begin{multline*}
+  \mathrm{sum}_d \left( x_1, y_1, x_2, y_2\right) = {}\\
+  {}=\sum\limits_{i=x_1}^{x_2} 
+\sum\limits_{j=y_1}^{y_2} \left\| C_{s(i,j)} -I_R (x-d,y)\right\|_2\,,
+  \end{multline*}
+  где $s(i,j)$~--- номер сегмента, которому принадле-\linebreak жит пиксель~($i,j$).
+  
+    Обозначив 
+  $$
+  \mathrm{ps}_d(x,y)= \sum\limits_{i\leq x} \sum\limits_{j\leq y} \left\| 
+C_{s(i,j)} - I_R (x- d, y)\right\|_2\,,
+$$
+ согласно выражению~(\ref{e4-ya})  имеем:
+  \begin{multline*}
+  \mathrm{sum}_d\left( x_1, y_1, x_2, y_2\right) ={}\\
+  {}= \mathrm{ps}_d\left( x_2, y_2\right)  - \mathrm{ps}_d\left( x_2-
+1, y_1-1\right) - {}\\
+{}-\mathrm{ps}_d \left( x_1-1, y_2-1\right) +\mathrm{ps}_d \left( x_1-1, y_1-1\right)\,.
+  \end{multline*}
+  
+  С помощью выражения~(\ref{e3-ya}) величину~ps$_d$ можно вычислить за 
+время порядка $O(W  H)$. Значение стоимостной функции для 
+сканирующего окна размером $s\hm= 2h\hm+1$ выражается через~sum$_d$:
+
+\vspace*{2pt}
+
+\noindent
+  $$
+  c(p,d) = \mathrm{sum}_d \left( p_x -h, p_y -h, p_x+h, p_y+h\right)\,.
+  $$
+  
+  \vspace*{-2pt}
+  
+  Таким образом, стоимостная функция для всевозможных позиций 
+сканирующего окна при фиксированной диспарантности рассчитывается за 
+время~$O(W  H)$; следовательно, вычислительная сложность построения 
+карты диспарантности есть $O(W H D)$.
+  
+  Для определения ошибочных значений диспарантности воспользуемся 
+стандартным критерием согласованности. Пусть Disp$_{L,R}$~--- карта 
+диспарантности для левого изображения относительно правого, 
+а~Disp$_{R,L}$~--- карта диспарантности для правого изображения 
+относительно левого. В~соответствии с~приведенным ранее определением, 
+значения диспарантности для правого изображения должны быть 
+неположительными.
+  
+  Пусть Disp$_{L,R}(x,y)$ и~Disp$_{R,L} (x^\prime, y)$, где $x^\prime \hm= 
+x\hm- \mathrm{Disp}_{L,R}$, являются корректными значениями диспарантности. Тогда 
+выполняется равенство:
+
+\noindent
+  $$
+  \mathrm{Disp}_{L,R} (x,y) =- \mathrm{Disp}_{R,L}\left(x^\prime, y\right)\,.
+  $$
+На основании этого равенства будем производить фильтрацию карты 
+диспарантности: если равенство  для некоторого пикселя не выполняется, будем 
+считать, что его диспарантность не установлена.
+\begin{table*}
+{\small \begin{center}
+\Caption{Результаты расчета геодезических расстояний алгоритмом Borgefors}
+\vspace*{2ex}
+
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\tabcolsep=0pt\begin{tabular}{c}Число\\ итераций\end{tabular}&
+Средняя ошибка&
+\tabcolsep=0pt\begin{tabular}{c}Максимальная\\ ошибка\end{tabular}&
+\tabcolsep=0pt\begin{tabular}{c}Время\\ расчета, с\end{tabular}&
+\tabcolsep=0pt\begin{tabular}{c}Время расчета\\ алгоритмом Дейкстры, с\end{tabular}\\
+\hline
+2&0,0022&0,35&0,22&0,15\\
+3&$4{,}5\cdot 10^{-4}$&0,15&0,32&\\
+5&$4\cdot  
+10^{-5}$&\hphantom{9}0,057 &0,53&\\
+10\hphantom{9}&10$^{-8}$&10$^{-4}$&1,05&\\
+\hline
+\end{tabular}
+\end{center}}
+\end{table*}
+\begin{figure*}[b] %fig2
+%\renewcommand{\tablename}{\protect\bf Рис.}
+%\setcounter{table}{1}
+\vspace*{1pt}
+ \begin{center}  
+\mbox{%
+ \epsfxsize=160mm
+ \epsfbox{yak-2.eps}
+ }
+\end{center} 
+\vspace*{-9pt}
+\Caption{Результаты стереосопоставления: (\textit{а})~левое изображение стереопары; 
+(\textit{б})~результат работы ускоренного алгоритма; (\textit{в})~результат работы 
+оригинального алгоритма}
+\end{figure*}
+  
+
+
+%  \renewcommand{\figurename}{\protect\bf Рис.}
+%\renewcommand{\tablename}{\protect\bf Таблица}
+
+%\addtocounter{figure}{1}
+%\addtocounter{table}{-1}
+
+  Ввиду того что при вычислении диспарант\-ности задействуется некоторая 
+окрестность пикселя, вполне вероятным является случай незначительного 
+рассогласования значений Disp$_{L,R}$ и~Disp$_{R,L}$. Для корректной 
+обработки таких случаев следует ослабить критерий согласованности до
+  $$
+  \left\vert \mathrm{Disp}_{L,R} (x,y) +\mathrm{Disp}_{R,L} 
+  \left( x^\prime, y\right) \right\vert \leq 
+1\,.
+  $$
+
+\section{Вычисление геодезических расстояний}
+
+  В работе~[1] для вычисления геодезических расстояний используется 
+итерационный алгоритм Borgefors~\cite{3-ya}, позволяющий найти 
+приближение геодезического расстояния с~заданной точностью. 
+Вычислительная сложность алгоритма Borgefors линейна относительно размера 
+сегмента.
+  
+  Для точного вычисления геодезических расстояний можно воспользоваться 
+алгоритмом Дейкстры, который позволяет вычислить длины кратчайших путей 
+от одной вершины графа до остальных. В~качестве вершин графа будем 
+использовать пиксели одного сегмента, а~ребро между двумя вершинами будет 
+существовать, если соответствующие им пиксели являются смежными в~восьми 
+направлениях. Стоимость ребра~--- евклидово расстояние между цветами 
+пикселей в~системе RGB. Очевидно, что длина кратчайшего пути в~таком графе 
+будет геодезическим расстоянием по определению.
+  
+  Описанный граф обладает важным свойством: число ребер линейно зависит 
+от числа вершин. Такое свойство дает возможность реализовать алгоритм 
+Дейкстры с~использованием двоичной кучи~[4], снизив вычислительную 
+сложность до $O(\vert V\vert \log \vert V \vert )$, где $\vert V\vert$~--- чис\-ло 
+вершин графа, т.\,е.\ размер сегмента.
+  
+  В ходе экспериментов было выявлено, что асимптотически лучшее 
+быстродействие алгоритма Borgefors проявляется лишь на областях достаточно 
+большого размера, наличие которых в~сегментации реальных снимков 
+маловероятно. В~табл.~1 представлены результаты расчета геодезических 
+расстояний алгоритмом Borgefors с~разным числом итераций для изображения 
+размером $450\times 375$.
+
+
+
+
+  Таким образом, применение алгоритма Borgefors не оправдано при расчете 
+геодезических расстояний внутри сегмента.
+
+\vspace*{-12pt}
+
+\section{Результаты}
+
+  Алгоритм был реализован на языке C++ в~соответствии с~приведенным 
+описанием. Реализация алгоритма доступна в~открытом 
+репозитории ({\sf https:// github.com/helgui/FastGSW.}). Оценка результата 
+стереосопоставления проводилась по методике, описанной в~работе~[5], 
+с~по\-мощью предоставленного авторами работы программного обеспе\-чения 
+Middlebury Stereo 
+Evaluation SDK. %\linebreak\vspace*{-12pt}
+  Набор входных данных~[6] состоит из~14~стереопар различной 
+конфигурации. В~ходе экспериментов проводилось сравнение ускоренного 
+алгорит-\linebreak\vspace*{-12pt}
+
+
+
+\pagebreak
+
+\end{multicols}
+
+\begin{table}\small %tabl2
+\begin{center}
+\Caption{Параметры запуска алгоритмов}
+\vspace*{2ex}
+
+\begin{tabular}{|l|c|c|}
+\hline
+\multicolumn{1}{|c|}{Параметр}&
+\tabcolsep=0pt\begin{tabular}{c}Значение\\ для оригинального\\ алгоритма\end{tabular}&
+\tabcolsep=0pt\begin{tabular}{c}Значение\\ для ускоренного\\ алгоритма\end{tabular}\\
+\hline
+Размер сканирующего окна&31&15\\
+Коэффициент~$\gamma$&10&5\\
+Алгоритм сегментации&Не используется&Сегментация на основе графа~[7]\\
+\hline
+\end{tabular}
+\end{center}
+%\end{table*}
+%\begin{table*}\small %tabl3
+\begin{center}
+\Caption{Результаты экспериментов}
+\vspace*{2ex}
+
+\begin{tabular}{|l|l|c|c|c|}
+\hline
+\multicolumn{1}{|c|}{Название теста}&\multicolumn{1}{c|}{
+\tabcolsep=0pt\begin{tabular}{c}Используемый \\ алгоритм\end{tabular}}&
+\tabcolsep=0pt\begin{tabular}{c}Значения\\ диспарантности\\ с~ошибкой\\ более 2 единиц,
+ \%\end{tabular}&
+ \tabcolsep=0pt\begin{tabular}{c}Неустановленные\\  значения\\ диспарантности,\\ \%\end{tabular}&
+ \tabcolsep=0pt\begin{tabular}{c}Время\\ выполнения,\\ с\end{tabular}\\
+\hline
+\multicolumn{1}{|l|}{\raisebox{-6pt}[0pt][0pt]{Adirondack}}&
+Оригинальный&\hphantom{9}9,98&66,72&562,19\\
+&Ускоренный&10,26&60,44&\hphantom{99}6,39\\
+\hline
+\multicolumn{1}{|l|}{\raisebox{-6pt}[0pt][0pt]{Jadeplant}}&Оригинальный&
+\hphantom{9}4,05&40,03&1063,23\hphantom{9}\\
+&Ускоренный&11,79&60,23&\hphantom{99}6,31\\
+\hline
+\multicolumn{1}{|l|}{\raisebox{-6pt}[0pt][0pt]{Motorcycle}}&Оригинальный&
+\hphantom{9}5,72&31,98&557,48\\
+&Ускоренный&\hphantom{9}6,92&39,03&\hphantom{99}6,58\\
+\hline
+\multicolumn{1}{|l|}{\raisebox{-6pt}[0pt][0pt]{Motorcycle E}}&Оригинальный&
+14,46&82,6\hphantom{9}&556,19\\
+&Ускоренный&\hphantom{9}8,31&84,86&\hphantom{99}6,77\\
+\hline
+\multicolumn{1}{|l|}{\raisebox{-6pt}[0pt][0pt]{Piano}}&Оригинальный&13,71&26,21&478,00\\
+&Ускоренный&\hphantom{9}8,55&47,49&\hphantom{99}6,17\\
+\hline
+\multicolumn{1}{|l|}{\raisebox{-6pt}[0pt][0pt]{Piano L}}&Оригинальный&10,77&81,84&479,30\\
+&Ускоренный&\hphantom{9}7,49&84,33&\hphantom{99}6,17\\
+\hline
+\multicolumn{1}{|l|}{\raisebox{-6pt}[0pt][0pt]{Pipes}}&Оригинальный&
+\hphantom{9}5,24&36,68&578,16\\
+&Ускоренный&10,7\hphantom{9}&38,23&\hphantom{99}6,45\\
+\hline
+\multicolumn{1}{|l|}{\raisebox{-6pt}[0pt][0pt]{Playroom}}&Оригинальный&10,19&61,9\hphantom{9}&597,20\\
+&Ускоренный&11,08&47,81&\hphantom{99}6,02\\
+\hline
+\multicolumn{1}{|l|}{\raisebox{-6pt}[0pt][0pt]{Playtable}}&Оригинальный&10,86&42,08&497,01\\
+&Ускоренный&10,04&54,52&\hphantom{99}5,67\\
+\hline
+\multicolumn{1}{|l|}{\raisebox{-6pt}[0pt][0pt]{Playtable P}}&Оригинальный&
+\hphantom{9}7,15&36,33&498,76\\
+&Ускоренный&\hphantom{9}9,98&54,4\hphantom{9}&\hphantom{99}5,83\\
+\hline
+\multicolumn{1}{|l|}{\raisebox{-6pt}[0pt][0pt]{Recycle}}&Оригинальный&
+\hphantom{9}8,78&31,9\hphantom{9}&491,86\\
+&Ускоренный&8,4&53,29&\hphantom{99}6,35\\
+\hline
+\multicolumn{1}{|l|}{\raisebox{-6pt}[0pt][0pt]{Shelves}}&Оригинальный&16,64&42,83&475,90\\
+&Ускоренный&10,19&58,21&\hphantom{99}6,52\\
+\hline
+\multicolumn{1}{|l|}{\raisebox{-6pt}[0pt][0pt]{Teddy}}&Оригинальный&
+\hphantom{9}3,11&30,12&233,55\\
+&Ускоренный&7,1&34,48&\hphantom{99}3,36\\
+\hline
+\multicolumn{1}{|l|}{\raisebox{-6pt}[0pt][0pt]{Vintage}}&Оригинальный&13,06&32,35&
+1283,93\hphantom{9}\\
+&Ускоренный&7,9&52,3\hphantom{9}&\hphantom{99}6,38\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{multicols}{2}
+
+
+
+
+
+\noindent
+ма с~оригинальным (рис.~2). Параметры запуска алгоритмов приведены 
+в~табл.~2. Следует заметить, что параметры для оригинального алгоритма 
+заданы в~соответствии с~рекомендациями авторов. Результаты экспериментов 
+сведены в~табл.~3.
+  
+
+
+  Главный критерий оценки качества~--- доля пикселей от общего числа, 
+вычисленное значение диспарантности для которых отличается более чем 
+на~2~единицы от истинного значения. Разница между средними значениями 
+этого параметра для оригинального и~ускоренного алгоритмов 
+составила~0,33\%.
+  
+  При оценке также использовался дополнительный критерий~--- доля 
+пикселей, отброшенных при фильтрации. Разница между средними значениями 
+составила~8,4\% в~пользу оригинального алго-\linebreak ритма.
+  
+  Из табл.~3 видно, что ускоренный алгоритм имеет многократное 
+превосходство в~производительности. Исходя из приведенных ранее 
+асимптотических оценок сложности, нетрудно понять, что разни\-ца во времени 
+расчета при увеличении размера сканирующего окна будет расти 
+пропорционально квадрату этого размера.
+
+%\vspace*{-6pt}
+
+\section{Заключение}
+
+  В данной работе была описана модификация алгоритма~[1] и~представлена 
+его реализация. Результаты экспериментов позволили убедиться в~том, что 
+путем незначительной потери качества был получен существенный прирост 
+производительности. Также очевидным преимуществом рассмотренного метода 
+является эффективность интеграции с~сис\-те\-ма\-ми компьютерного зрения, 
+которые уже используют сегментацию при анализе изображений.
+  
+  Единственным недостатком предложенного подхода является меньшая 
+плотность вычисленных карт диспарантности, что может свидетельствовать 
+о~недостаточной совместимости алгоритма с~фильт\-ра\-ци\-ей по критерию 
+согласованности.
+
+\vspace*{-6pt}
+  
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{1-ya}
+\Au{Hosni A., Bleyer M., Gelautz~M., Rhemann~C.} Local stereo matching using 
+geodesic support weights~// 16th IEEE Conference (International) on Image 
+Processing.~--- IEEE Press, 2009. P.~2093--2096.
+\bibitem{2-ya}
+\Au{Shapiro L.\,G., Stockman G.\,C.} Computer vision.~--- Upper Saddle River, NJ, 
+USA: Prentice Hall, 2001. 580~p.
+\bibitem{3-ya}
+\Au{Borgefors G.} Distance transformations in digital images~// Comput. Vision 
+Graph. Image Proc., 1986. Vol.~34. No.\,3. P.~344--371.
+\bibitem{4-ya}
+\Au{Кормен Т.\,Х., Лейзерсон~Ч.\,И., Ривест~Р.\,Л., Штайн~К.} Алгоритмы: 
+построение и~анализ~/ Пер. с~англ.~--- 3-е изд.~--- М.: Вильямс, 2013. 1328~с. 
+(\Au{Cormen~T.\,H., Leiserson~С.\,E., Rivest~R.\,L., Stein~C.} Introduction to 
+algorithms.~--- 3rd ed.~--- MIT Press, 2009. 1312~p.).
+\bibitem{5-ya}
+\Au{Scharstein D., Szeliski~R.} A~taxonomy and evaluation of dense two-frame 
+stereo correspondence algorithms~// IJCV, 2002. Vol.~47. No.\,1/2/3. P.~7--42.
+\bibitem{6-ya}
+\Au{Scharstein D., Hirschm$\ddot{\mbox{u}}$ller~H., Kitajima~Y., Krathwohl~G., 
+Nesic~N., Wang~X., Westling~P.} High-resolution stereo datasets with  
+subpixel-accurate ground truth~// German Conference on Pattern Recognition.~--- 
+Springer, 2014. P.~31--42.
+\bibitem{7-ya}
+\Au{Felzenszwalb P.\,F., Huttenlocher~D.\,P.} Efficient graph-based image 
+segmentation~// IJCV, 2004. Vol.~59. No.\,2. P.~167--181.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+%\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 14.07.16}}
+
+\vspace*{10pt}
+
+%\newpage
+
+%\vspace*{-24pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+\vspace*{8pt}
+
+
+
+\def\tit{SPEEDED-UP STEREO MATCHING USING~GEODESIC SUPPORT 
+WEIGHTS}
+
+\def\titkol{Speeded-up stereo matching using~geodesic support 
+weights}
+
+\def\aut{O.\,A.~Yakovlev and A.\,V.~Gasilov}
+
+\def\autkol{O.\,A.~Yakovlev and A.\,V.~Gasilov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+\noindent
+Orel Branch of the Federal Research Center ``Computer Science and Control'' of the 
+Russian Academy of Sciences, 137~Moskovskoe Sh., Orel 302025, Russian 
+Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2016\ \ \ volume~10\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2016\ \ \ volume~10\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{9pt}
+
+
+ 
+\Abste{In local stereo matching, the algorithms based on the adaptive support weights 
+have good-quality results. This paper presents a modified version of the local 
+matching with geodesic support. The proposed algorithm considerably reduces 
+computation time at the cost of insignificant loss of quality that is experimentally 
+confirmed with Middlebury Stereo Evaluation SDK. The key idea is to combine 
+geodesic support weights and image segmentation for recoloring the reference image. 
+This transformation makes it possible to use partial sums for matching cost 
+computation.}
+
+\vspace*{3pt}
+
+\KWE{stereo matching; segmentation; geodesic support weights}
+
+
+\vspace*{3pt}
+
+\DOI{10.14357/19922264160313} 
+
+%\vspace*{-9pt}
+
+%\Ack
+%\noindent
+
+
+
+\vspace*{18pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{1-ya-1}
+\Aue{Hosni, A., M. Bleyer, M.~Gelautz, and C.~Rhemann}. 2009. Local stereo 
+matching using geodesic support weights. \textit{16th IEEE Conference 
+(International) on Image Processing}. IEEE Press. 2093--2096.
+\bibitem{2-ya-1}
+\Aue{Shapiro, L.\,G., and G.\,C.~Stockman}. 2001. \textit{Computer vision}.  
+Upper Saddle River, NJ: Prentice Hall. 580~p.
+\bibitem{3-ya-1}
+\Aue{Borgefors, G.} 1986. Distance transformations in digital images.  
+\textit{Comput. Vision Graph. Image Proc.} 34:344--371.
+\bibitem{4-ya-1}
+\Aue{Cormen, T.\,H., Сh.\,E.~Leiserson, R.\,L.~Rivest, and C.~Stein}. 2009. 
+\textit{Introduction to algorithms}. 3rd ed. MIT Press. 1312~p.
+
+%\pagebreak
+
+\bibitem{5-ya-1}
+\Aue{Scharstein, D., and R.~Szeliski}. 2002. A~taxonomy and evaluation of 
+dense two-frame stereo correspondence algorithms. \textit{IJCV}  
+47(1-3):7--42.
+\bibitem{6-ya-1}
+\Aue{Scharstein, D., H.~Hirschm$\ddot{\mbox{u}}$ller, Y.~Kitajima, 
+G.~Krathwohl, N.~Nesic, X.~Wang, and P.~Westling}. 2014. High-resolution 
+stereo datasets with subpixel-accurate ground truth. \textit{German Conference 
+on Pattern Recognition}. Springer. 31--42.
+\bibitem{7-ya-1}
+\Aue{Felzenszwalb, P.\,F., and D.\,P.~Huttenlocher}. 2004. Efficient 
+graph-based image segmentation. \textit{IJCV} 59:167--181.
+   \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Received July 14, 2016}}
+
+\vspace*{-3pt}
+
+\Contr
+
+\noindent
+\textbf{Yakovlev Oleg A.} (b.\ 1992)~--- research engineer, Orel Branch of the 
+Federal Research Center ``Computer Science and Control'' of the Russian Academy 
+of Sciences, 137~Moskovskoe Sh., Orel 302025, Russian Federation; 
+\mbox{maucra@gmail.com}
+
+
+\vspace*{5pt}
+
+\noindent
+\textbf{Gasilov Artur V.} (b.\ 1992)~--- research engineer, Orel Branch of the Federal 
+Research Center ``Computer Science and Control'' of the Russian Academy of 
+Sciences, 137~Moskovskoe Sh., Orel 302025, Russian Federation; 
+\mbox{gasilov.av@ya.ru}
+
+  \label{end\stat}
+  
+  
+  \renewcommand{\bibname}{\protect\rm Литература}

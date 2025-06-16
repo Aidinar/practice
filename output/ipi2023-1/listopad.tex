@@ -1,0 +1,830 @@
+\def\stat{listopad}
+
+\def\tit{МЕТОД НА ОСНОВЕ НЕЧЕТКИХ ПРАВИЛ ДЛЯ~УПРАВЛЕНИЯ КОНФЛИКТАМИ 
+АГЕНТОВ В~ГИБРИДНЫХ ИНТЕЛЛЕКТУАЛЬНЫХ МНОГОАГЕНТНЫХ СИСТЕМАХ}
+
+\def\titkol{Метод на основе нечетких правил для управления конфликтами 
+агентов в~ГиИМАС} %гибридных интеллектуальных многоагентных системах}
+
+\def\aut{С.\,В.~Листопад$^1$, И.\,А.~Кириков$^2$}
+
+\def\autkol{С.\,В.~Листопад, И.\,А.~Кириков}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Листопад С.\,В.}
+\index{Кириков И.\,А.}
+\index{Listopad S.\,V.}
+\index{Kirikov I.\,A.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнена при поддержке Министерства науки и~высшего образования
+%Российской федерации, грант №\,075-15-2020-799.}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> 
+Российской академии наук, \mbox{ser-list-post@yandex.ru}}
+\footnotetext[2]{Федеральный исследовательский центр <<Информатика и~управление>> 
+Российской академии наук, \mbox{baltbipiran@mail.ru}}
+
+%\vspace*{-6pt}
+ 
+ 
+  \Abst{Работа продолжает исследования по компьютерному моделированию гибридными 
+интеллектуальными многоагентными сис\-те\-ма\-ми (ГиИМАС) работы коллектива специалистов различных 
+профилей, решающих проблемы за круглым столом. Агенты таких сис\-тем~--- автономные 
+программные сущности, имитирующие рассуждения реальных специалистов. 
+Моделирование в~единой интеллектуальной сис\-те\-ме разнородных знаний, целей и~точек 
+зрения агентов на поставленную проблему обусловливает их столкновение, возникновение 
+конфликтов по аналогии с~тем, как это происходит в~моделируемых коллективах. Не каждый 
+конфликт между агентами носит деструктивный характер и~требует подавления: управление 
+конфликтом в~ГиИМАС, как и~в~коллективе, 
+предполагает идентификацию ситуации принятия решений, при необходимости стимуляцию 
+и~последующее разрешение конструктивных форм конфликта, а~также предотвращение его 
+деструктивных форм. Для управ\-ле\-ния конфликтами между агентами 
+в~ГиИМАС предлагается метод на основе 
+нечетких правил.}
+   
+  \KW{конфликт; гибридная интеллектуальная многоагентная сис\-те\-ма; коллектив 
+специалистов; управ\-ле\-ние конфликтами}
+
+\DOI{10.14357/19922264230109} 
+  
+\vspace*{6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+\vspace*{-3pt}
+  
+  Как показано в~[1], для множества практических проблем, традиционно 
+решаемых коллективом специалистов под руководством лица, принимающего 
+решения, актуальна разработка \mbox{ГиИМАС}, моделирующих работу такого коллектива с~\mbox{целью} ускорения выработки 
+решений в~условиях высокой динамичности внешней среды и~временн$\acute{\mbox{ы}}$х 
+ограничений на принятие решения. Характерная особенность как указанных 
+коллективов, так и~их компьютерных моделей~--- возникновение внутри них 
+конфликтов различного характера и~необходимость задействовать механизмы 
+управления ими для обеспечения эффективной работы коллектива. 
+В~последние несколько десятилетий конфликты в~коллективах 
+рассматриваются не только как препятствия, но и~как потенциальные 
+источники для повышения эффективности групповой работы~[2]. Наличие 
+противоречивых эмпирических данных о~роли конф\-лик\-тов в~коллективной 
+работе обусловливает необходимость дальнейших исследований~[3--8]. 
+  
+  В~[9] показано, что конструктивная роль конфликтов проявляется 
+преимущественно тогда, когда цели и~потребности конф\-лик\-ту\-ющих 
+специалистов не противоположны целям, ценностям и~нормам коллектива,  
+а~со\-ци\-аль\-но-пси\-хо\-ло\-ги\-че\-ская структура коллектива относительно 
+гибкая,\linebreak т.\,е.\ для коллектива характерна относительная открытость подгрупп
+ и~динамичные связи между ними и~не включенными в~них членами~[9]. 
+Конструктивные конфликты~--- преимущественно \mbox{инструментальные} 
+конфликты, возникающие по поводу проблемы или процесса ее решения. 
+Открытое обсуждение и~споры по этим вопросам повышают результативность 
+деятельности \mbox{группы}.
+{\looseness=1
+
+}
+  
+  Деструктивный конфликт возникает, когда цели и~по\-треб\-но\-сти 
+конф\-лик\-ту\-ющих субъектов радикально расходятся с~целями, ценностями 
+и~нормами коллектива, при этом коллектив обладает \mbox{жесткой} структурой, 
+т.\,е.\ для него характерна закрытость подгрупп по отношению к~коллективу 
+и~явное доминирование дезынтегративных связей между ними~[9]. Чаще всего 
+деструктивные конфликты~--- конфликты по поводу отношений, т.\,е.\ 
+разногласия между специалистами по личным вопросам и~не относящимся 
+к~выполняемой работе проб\-ле\-мам, которые обусловлены не\-со\-вмес\-ти\-мостью 
+и~враж\-деб\-ностью между ними.
+  
+  Управление конфликтом в~малых коллективах специалистов состоит 
+в~предотвращении деструктивных конфликтов, но стимулировании 
+и~разрешении конструктивных. В~[1] для управ\-ле\-ния конфликтами, 
+возникающими между агентами, по аналогии с~тем, как это происходит 
+в~коллективах\linebreak специалистов, предложена модель \mbox{ГиИМАС}  
+с~проб\-лем\-но- и~про\-цес\-сно-ори\-ен\-ти\-ро\-ван\-ны\-ми конфликтами. 
+\mbox{Цель} на\-сто\-ящей работы~--- разработка в~рамках данной модели метода 
+управ\-ле\-ния \mbox{конфликтами} между агентами на основе нечетких правил.
+
+\section{Моделирование конфликтов в~гибридных 
+интеллектуальных многоагентных системах}
+  
+  Подробное описание модели \mbox{ГиИМАС} с~проб\-лем\-но-
+  и~про\-цес\-сно-ори\-ен\-ти\-ро\-ван\-ны\-ми конфликтами пред\-став\-ле\-но 
+в~[10]. Рассмотрим основные ее элементы, необходимые для описания 
+процесса управ\-ле\-ния конфликтами. 
+  
+  Формально \mbox{ГиИМАС} в~целом определяется следующим 
+образом~[10]:
+  \begin{equation}
+  \mathrm{himas} =\langle \mathrm{AG}^*, 
+\mathrm{env},\mathrm{INT}^*,\mathrm{ORG}, \mathrm{MLP}\rangle\,,
+  \label{e1-lis}
+  \end{equation}
+где $\mathrm{AG}^*\hm= \left\{ \mathrm{ag}_1, \ldots , \mathrm{ag}_n, 
+\mathrm{ag}^{\mathrm{dm}}, \mathrm{ag}^{\mathrm{fc}}\right\}$~--- множество агентов, 
+включающее $n$ аген\-тов-спе\-циа\-ли\-стов (АС) $\mathrm{ag}_i$, $i\hm\in 
+\mathbb{N}$, $1\hm\leq i\hm\leq n$, агента, принимающего решения (АПР), 
+$\mathrm{ag}^{\mathrm{dm}}$ и~аген\-та-фа\-си\-ли\-та\-то\-ра (АФ), управ\-ля\-юще\-го 
+взаимодействиями агентов при решении проб\-ле\-мы и~конфликтами между 
+ними, $\mathrm{ag}^{\mathrm{fc}}$; $\mathrm{env}$~--- концептуальная модель 
+внешней среды сис\-те\-мы; $\mathrm{INT}^*$~--- множество элементов 
+структурирования взаимодействий агентов~[10], содержащее среди прочего 
+модель предметной об\-ласти $\mathrm{ont}$;\linebreak $\mathrm{ORG}$~--- множество архитектур 
+\mbox{ГиИМАС}; $\mathrm{MLP}\hm= \{ \mathrm{cnffm}, \mathrm{gdid}\}$~--- множество 
+концептуальных моделей макроуровневых процессов в~\mbox{ГиИМАС},\linebreak 
+содержащее модель $\mathrm{cnffm}$ процесса нечеткого управ\-ле\-ния конфликтами 
+агентов, которая представлена выражением~(\ref{e2-lis}), и~модель~$\mathrm{gdid}$ 
+идентификации взаимозависимости целей агентов, описанную 
+выражением~(\ref{e4-lis}). 
+
+  Агент $\mathrm{ag}_{\mathrm{id}}\hm\in \mathrm{AG}^*$ из формулы~(\ref{e1-lis}) 
+описывается выражением:
+  $$
+  \mathrm{ag}_{\mathrm{id}} =\left\langle \mathrm{id}_{\mathrm{id}}^{\mathrm{ag}}, \mathrm{gl}_{\mathrm{id}}^{\mathrm{ag}}, 
+\mathrm{ACT}_{\mathrm{id}}^{\mathrm{ag}} \right\rangle\,,
+  $$
+где $\mathrm{id}_{\mathrm{id}}^{\mathrm{ag}}$~--- идентификатор агента; $\mathrm{gl}_{\mathrm{id}}^{\mathrm{ag}}$~--- нечеткая\linebreak цель 
+агента, т.\,е.\ нечеткое множество с~функцией принадлежности 
+$\mu_{\mathrm{id}}(\mathrm{pr}_1, \ldots , \mathrm{pr}_{\mathrm{NPRG}})$, заданной на 
+подмножестве целевых кон\-цеп\-тов-свойств
+$\mathrm{PR}^g\hm= \{ 
+\mathrm{pr}_1, \ldots , \mathrm{pr}_{\mathrm{NPRG}}\}$ множества  
+кон\-цеп\-тов-\linebreak\vspace*{-12pt}
+
+\columnbreak
+
+\noindent
+ свойств $\mathrm{PR}^g\hm\subseteq \mathrm{PR}$ модели 
+предметной области $\mathrm{ont}$; $\mathrm{ACT}_{\mathrm{id}}^{\mathrm{ag}}$~--- множество 
+действий агента.
+
+
+  Модель нечеткого управ\-ле\-ния конфликтами агентов описывается 
+выражением:
+  \begin{multline}
+  \mathrm{cnffm} ={}\\
+  {}=\left\langle \mathbf{CNF}, \mathrm{cnfcl}, \mathrm{ACT}^{\mathrm{afcfm}}, 
+\mathrm{ACT}^{\mathrm{agcs}}, \mathrm{ACT}^{\mathrm{agcr}}\right\rangle,
+  \label{e2-lis}
+  \end{multline}
+где $\mathbf{CNF}$~--- матрица конфликтов~(\ref{e3-lis}) между парами 
+агентов; $\mathrm{cnfcl}$~--- классификатор конфликтов агентов~[10], формирующий  
+мат\-ри\-цу~$\mathbf{CNF}$;\linebreak $\mathrm{ACT}^{\mathrm{afcfm}}\hm= \{ 
+\mathrm{act}^{\mathrm{cnffm}}, \mathrm{act}^{\mathrm{cnfi}}, \mathrm{act}^{\mathrm{cnfs}}, 
+\mathrm{act}^{\mathrm{cnfr}}\}$~--- множество функций АФ по управ\-ле\-нию 
+конфликтами АС, содержащее функцию <<нечеткое управ\-ле\-ние конфликтом>> 
+$\mathrm{act}^{\mathrm{cnffm}}$, обеспечивающую \mbox{идентификацию} 
+$\mathrm{act}^{\mathrm{cnfi}}$ конфликтов с~по\-мощью классификатора $\mathrm{cnfcl}$ 
+и~инициализацию функции стимуляции $\mathrm{act}^{\mathrm{cnfs}}$ или разрешения 
+$\mathrm{act}^{\mathrm{cnfr}}$ конфликтов; $\mathrm{ACT}^{\mathrm{agcs}}$~--- множество 
+действий АС, выполняемых при стимулировании противоречий~[11] АФ, 
+$\mathrm{ACT}^{\mathrm{agcs}} \hm\subseteq \cup_{\mathrm{ag}_{\mathrm{id}}\in 
+\mathrm{AG}^*}  \mathrm{ACT}_{\mathrm{id}}^{\mathrm{ag}}$; $\mathrm{ACT}^{\mathrm{agcr}}$~--- 
+множество допустимых действий АС по разрешению противоречий~[12], 
+$\mathrm{ACT}^{\mathrm{agcr}} \hm\subseteq \cup_{\mathrm{ag}_{\mathrm{id}}\in 
+\mathrm{AG}^*} \mathrm{ACT}_{\mathrm{id}}^{\mathrm{ag}}$.
+  
+  Конфликт между агентами, т.\,е.\ элемент матрицы $\mathbf{CNF}$ из 
+выражения~(\ref{e2-lis}), описывается следующей формулой:
+
+\vspace*{-7pt}
+
+\noindent
+  \begin{multline}
+  \mathrm{cnf}_{i\,j\,\mathrm{cnft}}={}\\
+  {}= \left\langle \mathrm{ag}_i,\mathrm{ag}_j, \mathrm{cnfin}, \mathrm{cnft}, 
+\mathrm{ACT}_i^{\mathrm{agcr}}, \mathrm{ACT}_j^{\mathrm{agcr}}\right\rangle,
+  \label{e3-lis}
+  \end{multline}
+  
+\vspace*{-3pt}
+
+  \noindent
+где $\mathrm{ag}_i$ и $\mathrm{ag}_j$~--- агенты-субъ\-ек\-ты конфликта, 
+$i,j\hm\in \mathbb{N}$, $1\hm \leq i, j \hm\leq n$, $i\not= j$; $\mathrm{cnfin}$~--- 
+напряженность конфликта в~виде скалярной величины $\mathrm{cnfin} \hm\in [0,1]$, 
+вычисляемой классификатором конфликтов $\mathrm{cnfcl}$ в~соответствии 
+с~реализуемой им мерой напряженности конфликта, в~зависимости от того, 
+предлагают АС частные решения проб\-ле\-мы или альтернативные решения 
+проблемы в~целом, могут использоваться меры на основе совместимости 
+частных решений~[13] или на основе ранжирования альтернатив~[14, 15]; 
+$\mathrm{cnft}$~--- символьная переменная <<тип конфликта>>, определенная на 
+множестве $\mathrm{CNFT}\hm= \{  
+\mathrm{cnfprb}$\;=\;<<{проб\-лем\-но-ори\-ен\-ти\-ро\-ван\-ный}>>, 
+$\mathrm{cnfprc}$\;=\;<<{про\-цес\-сно-ори\-ен\-ти\-ро\-ван\-ный}>>$\}$; 
+$\mathrm{ACT}_i^{\mathrm{agcr}}$ и~$\mathrm{ACT}_j^{\mathrm{agcr}}$~--- множество 
+допустимых действий агентов~$\mathrm{ag}_i$ и~$\mathrm{ag}_j$ 
+соответственно по разрешению противоречий, $\mathrm{ACT}_i^{\mathrm{agcr}} 
+\hm\subseteq \mathrm{ACT}_i^{\mathrm{ag}}$, $\mathrm{ACT}_j^{\mathrm{agcr}}\hm\subseteq 
+\mathrm{ACT}_j^{\mathrm{ag}}$, $\mathrm{ACT}_i^{\mathrm{agcr}}, \mathrm{ACT}_j^{\mathrm{agcr}} 
+\hm\subseteq \mathrm{ACT}^{\mathrm{agcr}}$.
+
+  Модель идентификации взаимозависимости целей описывается выражением
+  
+  \vspace*{2pt}
+  
+  \noindent
+  \begin{equation}
+\mathrm{gdid} =\langle \mathbf{GD}, \mathrm{gdi}\rangle.
+  \label{e4-lis}
+  \end{equation}
+  
+  \vspace*{-2pt}
+  
+  \noindent
+Здесь $\mathbf{GD}$~--- мат\-ри\-ца показателей взаимоза\-ви\-си\-мости целей пар 
+агентов, $\mathrm{gd}_{i\,j} \hm\in [-1,1]$: 
+
+\noindent
+$$
+\mathrm{gd}_{i\,j}=\begin{cases}
+-1 & \mbox{---~максимальная\ отрицательная}\\
+&\hphantom{\mbox{---~}}\mbox{взаимозависимость};\\
+\hphantom{-}0 & \mbox{---~независимость}; \\
+\hphantom{-}1 &\mbox{---~максимальная\ положительная}\\
+&\hphantom{\mbox{---~}}\mbox{взаимозависимость\ целей}\\
+&\hphantom{\mbox{---~}}\mbox{пары\ агентов}\  \mathrm{\mathrm{ag}}_i\ \mbox{и}\ \mathrm{\mathrm{ag}}_j;
+\end{cases}
+$$
+ $\mathrm{gdi}$~--- показатель 
+взаимозависимости целей агентов, формирующий мат\-ри\-цу~$\mathbf{GD}$ 
+в~случае одномерных целей, т.\,е.\ $\vert \mathrm{PR}^g\vert \hm= 1$ 
+в~соответствии с~выражением
+\begin{multline}
+\mathrm{gd}_{i\,j} =\mathrm{gdi} \left( \mathrm{gl}_i^{\mathrm{ag}}, \mathrm{gl}_j^{\mathrm{ag}}\right) = 
+\fr{\int\nolimits_{v_{\min}}^{v_{\max}} \mu_{i\cap j}(\mathrm{pr}) 
+d(\mathrm{pr})}{\int\nolimits_{v_{\min}}^{v_{\max}} \mu_i(\mathrm{pr}) 
+d(\mathrm{pr})}+{}\\
+{}+\fr{\int\nolimits_{v_{\min}}^{v_{\max}} \mu_{i\cap 
+j}(\mathrm{pr}) d(\mathrm{pr})}{\int\nolimits_{v_{\min}}^{v_{\max}} \mu_j 
+(\mathrm{pr}) d(\mathrm{pr})} -1\,,
+\label{e5-lis}
+\end{multline}
+где $v_{\min}$ и~$v_{\max}$~--- минимальное и~максимальное значение 
+свойства~$\mathrm{pr}$; $\mu_{i\cap j} (\mathrm{pr})$~--- пересечение 
+функций принадлежности нечетких целей агентов~$\mathrm{ag}_i$ 
+и~$\mathrm{ag}_j$.
+
+\section{Нечеткое управление конфликтами агентов 
+в~гибридных интеллектуальных многоагентных системах}
+  
+  Для нечеткого управления конфликтами АФ использует метод на основе 
+нечеткого вывода Мамдани со следующими лингвистическими переменными: 
+<<конфликт>>, <<взаимозависимость целей>>, <<длитель\-ность>>, 
+<<стадия>>. При формировании нечетких множеств используются 
+колоколообразные
+\begin{equation*}
+\mathrm{bmf}(u,a,b,c)= \left( 1+\vert u-c\vert^{2b} \vert a\vert^{-2b}\right)^{-1}
+%\label{e6-lis}
+  \end{equation*}
+  и~сигмоидальные функции
+  \begin{equation*}
+\mathrm{sigmf}(u,b,c)= \left( 1+e^{-b(u-c)}\right)^{-1}\,,
+%\label{e7-lis}
+  \end{equation*}
+где $u$~--- элемент нечеткого множества; $a$, $b$ и~$c$~--- параметры функции 
+принадлежности.
+  
+  Кроме того, используется детерминированная переменная <<номер 
+итерации>> $\mathrm{it} \hm\in \mathbb{N}_0\hm= \{0\}\cup \mathbb{N}$, описывающая 
+число повторений действий по анализу текущей ситуации, выполняемых АФ 
+при управлении конфликтами.
+  
+  Лингвистическая переменная <<конфликт>> для оценки напряженности 
+конфликта между агентами \mbox{ГиИМАС} задается выражением
+  \begin{equation}
+  \mathrm{cnfl} =\left\langle \beta_{\mathrm{cnfl}}, T_{\mathrm{cnfl}}, U_{\mathrm{cnfl}}, G_{\mathrm{cnfl}}, 
+M_{\mathrm{cnfl}}\right\rangle,
+  \label{e8-lis}
+  \end{equation}
+где $\beta_{\mathrm{cnfl}}$\;=\;<<{конфликт}>>~--- наименование 
+линг\-ви\-сти\-че\-ской переменной; $T_{\mathrm{cnfl}}$\;=\;$\{$<<{нет}>>; 
+<<{слабый}>>; <<{умеренный}>>; <<{острый}>>$\}$~---  
+терм-мно\-жест\-во ее значений, названий нечеткой переменной;\linebreak 
+$U_{\mathrm{cnfl}}\hm=[0;1]$~--- универсум нечетких переменных; $G_{\mathrm{cnfl}}\hm= 
+\varnothing$~--- процедура образования из элементов множества~$T_{\mathrm{cnfl}}$ 
+новых термов;\linebreak $M_{\mathrm{cnfl}}$\;=\;$\{ \mu_{\mathrm{нет}}, 
+\mu_{\mathrm{слабый}}, \mu_{\mathrm{умеренный}}, 
+\mu_{\mathrm{острый}}\}$~--- процедура, ставящая в~соответствие каж\-до\-му
+терму\linebreak  множества~$T_{\mathrm{cnfl}}$ осмысленное содержание путем\linebreak формирования 
+нечеткого множества: $\mu_{\mathrm{нет}}\hm= \mathrm{bmf}(u_{\mathrm{cnfl}}; 0{,}15;5;0)$, 
+$\mu_{\mathrm{слабый}}\hm= \mathrm{bmf} ( u_{\mathrm{cnfl}}; 0{,}15; 5;\linebreak 0{,}3)$, $\mu_{\mathrm{умеренный}} 
+\hm= \mathrm{bmf} ( u_{\mathrm{cnfl}}; 0{,}15; 5; 0{,}6)$, $\mu_{\mathrm{острый}}\} \hm = \mathrm{bmf} ( u_{\mathrm{cnfl}}; 
+0{,}25;5;1)$. Параметры этих и~других функций принадлежности, 
+рассмотренных в~работе, должны быть уточнены в~ходе тестирования сис\-темы.
+  
+  Лингвистическая переменная <<взаимозависимость целей>> описывается по 
+аналогии с~формулой~(\ref{e8-lis}) следующим выражением:
+  $$
+ \mathrm{gdl}=\left\langle \beta_{\mathrm{gdl}}, T_{\mathrm{gdl}}, U_{\mathrm{gdl}}, G_{\mathrm{gdl}}, M_{\mathrm{gdl}}\right\rangle,
+  $$
+где $\beta_{\mathrm{gdl}}$\;=\;<<{взаи\-мо\-за\-ви\-си\-мость целей}>>; 
+$T_{\mathrm{gdl}}$\;=\;$\{$<<{от\-ри\-ца\-тель\-ная}>>; <<{нет}>>; 
+<<{по\-ло\-жи\-тель\-ная}>>$\}$; $U_{\mathrm{gdl}}=\linebreak$
+$= [-1;1]$; $G_{\mathrm{gdl}}\hm= 
+\varnothing$; $M_{\mathrm{gdl}}=\{ \mu_{\mathrm{от\-ри\-ца\-тель\-ная}},
+\mu_{\mathrm{нет}},\linebreak 
+ \mu_{\mathrm{по\-ло\-жи\-тель\-ная}}\}$, 
+$\mu_{\mathrm{от\-ри\-ца\-тель\-ная}}\hm= \mathrm{sigmf} (u_{\mathrm{dcnfl}}; -10;\linebreak -0{,}3)$, $\mu_{\mathrm{нет}} 
+\hm= \mathrm{bmf}(u_{\mathrm{dcnfl}}; 0{,}3; 3; 0)$, $\mu_{\mathrm{по\-ло\-жи\-тель\-ная}}\hm= \mathrm{sigmf} (u_{\mathrm{dcnfl}}; 10; 0{,}3)$.
+  
+  Лингвистическая переменная <<длительность>>, используемая для оценки 
+продолжительности стадии управления конфликтом, представляется 
+выражением
+  $$
+  \mathrm{durl} =\left\langle \beta_{\mathrm{durl}}, T_{\mathrm{durl}}, U_{\mathrm{durl}}, G_{\mathrm{durl}}, 
+M_{\mathrm{durl}}\right\rangle,
+  $$
+где $\beta_{\mathrm{durl}}$\;=\;<<{длительность}>>; 
+$T_{\mathrm{durl}}$\;=\;$\{$<<{ма\-лая}>>;\linebreak <<{большая}>>$\}$; 
+$U_{\mathrm{durl}}\hm= \mathbb{N}_0$; $G_{\mathrm{durl}}\hm=\varnothing$; $M_{\mathrm{durl}}\hm=  
+\{\mu_{\mathrm{малая}}, \mu_{\mathrm{большая}}\}$, 
+$\mu_{\mathrm{малая}} \hm= \mathrm{sigmf}\,(u_{\mathrm{durl}}; -0{,}2;\linebreak 10\cdot n)$, 
+$\mu_{\mathrm{большая}} \hm= \mathrm{sigmf}\, (u_{\mathrm{durl}};0{,}5; 10\cdot n)$.
+  
+  Лингвистическая переменная <<стадия>> описывается выражением
+  $$
+  \mathrm{stgl} =\left\langle \beta_{\mathrm{stgl}}, T_{\mathrm{stgl}}, U_{\mathrm{stgl}}, G_{\mathrm{stgl}}, M_{\mathrm{stgl}}\right\rangle,
+  $$
+где $\beta_{\mathrm{stgl}}$\;=\;<<{ста\-дия}>>;  
+$T_{\mathrm{stgl}}$\;=\;$\{$<<{на\-ча\-ло}>>; <<{сти\-му\-ля\-ция}>>; 
+<<{раз\-ре\-ше\-ние}>>; <<{ко\-нец}>>$\}$; $U_{\mathrm{stgl}}\hm= [0;1]$;\linebreak 
+$G_{\mathrm{stgl}}\hm= \varnothing$; $M_{\mathrm{stgl}}\hm= \{ \mu_{\mathrm{начало}}, 
+\mu_{\mathrm{стимуляция}}, \mu_{\mathrm{разрешение}},\linebreak 
+\mu_{\mathrm{конец}}\}$, $\mu_{\mathrm{начало}}\hm= \mathrm{bmf}\,(u_{\mathrm{stgl}}; 6^{-1}; 5; 0)$, 
+$\mu_{\mathrm{стимуляция}}\hm= \mathrm{bmf}\,(u_{\mathrm{stgl}}; 6^{-1}; 5; 3^{-1})$, 
+$\mu_{\mathrm{разрешение}} \hm= \mathrm{bmf}\,(u_{\mathrm{stgl}}; 6^{-1}; 5; 2\cdot 3^{-1})$, 
+$\mu_{\mathrm{конец}}\hm= \mathrm{bmf}\,(u_{\mathrm{stgl}}; 6^{-1};\linebreak 5; 1)$.
+  
+  Таким образом, функция <<нечеткое управление конфликтом>> 
+$\mathrm{act}^{\mathrm{cnffm}}$ АФ может быть представлена следующей 
+последовательностью шагов:
+  \begin{enumerate}[(1)]
+  \item установить начальные значения переменных $\mathrm{it}\hm=0$, $u_{\mathrm{stgl}}^{\mathrm{it}} 
+\hm=0$ и~$u_{\mathrm{durl}}\hm=0$;
+  \item используя выражение~(\ref{e5-lis}), вычислить среднее арифметическое 
+показателей взаимозависимости целей агентов по формуле
+  $$
+  \mathrm{gd}^{\mathrm{himas}} =\sum\limits^n_{i=1} \sum\limits^n_{j=i+1} 2 \mathrm{gd}_{i\,j} 
+(n-2)! (n!)^{-1}\,;
+  $$
+  \item ожидать поступления сообщений от АС или АПР;
+  \item если получено сообщение от АПР о~завершении работы, закончить 
+работу;
+  \item если получено сообщение от АС, содержащее решение проблемы или ее 
+части, перейти к~п.\,6, иначе сообщить отправителю об ошибке и~перейти 
+к~п.\,12;
+  \item увеличить значение счетчиков $\mathrm{it}\hm= \mathrm{it}\hm+1$, $u_{\mathrm{durl}}\hm= 
+u_{\mathrm{durl}}\hm+1$;
+  \item запустить функцию идентификации конфликтов $\mathrm{act}^{\mathrm{cnfi}}$, 
+чтобы с~помощью классификатора\linebreak конфликтов $\mathrm{cnfcl}$ на основе решений, 
+предложенных АС, сформировать мат\-ри\-цу конф\-лик\-тов~$\mathbf{CNF}$ между 
+парами агентов~[10] и~вы\-чис\-лить для \mbox{ГиИМАС} общие показатели 
+\mbox{напряженности} конф\-лик\-тов по каж\-до\-му типу:
+  \begin{align*}
+  \mathrm{cnf}_{\mathrm{cnfprb}}^{\mathrm{himas}} &= \sum\limits^n_{i=1} \sum\limits^n_{j=i+1} 
+2 \mathrm{cnf}_{i\,j\,\mathrm{cnfprb}} (n-2)! (n!)^{-1}\,;\\
+  \mathrm{cnf}^{\mathrm{himas}}_{\mathrm{cnfprc}} &= \sum\limits^n_{i=1} \sum\limits^n_{j=i+1} 
+2\mathrm{cnf}_{i\,j\,\mathrm{cnfprc}} (n-2)! (n!)^{-1}\,;
+  \end{align*}
+    
+  \item фаззифицировать четкие значения лингвистических переменных 
+  $u_{\mathrm{cnfl}}^{\mathrm{cnfprb}} \hm= \mathrm{cnf}_{\mathrm{cnfprb}}^{\mathrm{himas}}$, $u_{\mathrm{cnfl}}^{\mathrm{cnfprc}} 
+\hm= \mathrm{cnf}_{\mathrm{cnfprc}}^{\mathrm{himas}}$ и~$u_{\mathrm{gdl}}\hm= \mathrm{gd}^{\mathrm{himas}}$;
+  \item установить стадию управления конфликтами $\mathrm{stgl}^{\mathrm{it}}$ в~результате 
+нечеткого вывода Мамдани~\cite{16-lis} по следующим правилам:
+  \begin{description}
+\item[правило~1:] ЕСЛИ ($\mathrm{stgl}^{\mathrm{it}-1}$ ЕСТЬ <<{начало}>>\\
+ИЛИ $\mathrm{stgl}^{\mathrm{it}-1}$ ЕСТЬ <<{стимуляция}>>) \\ 
+И ($\mathrm{cnfl}_{\mathrm{cnfprc}}$ ЕСТЬ <<{нет}>> ИЛИ $\mathrm{cnfl}_{\mathrm{cnfprc}}$\\
+ЕСТЬ <<{слабый}>>), \\ 
+ТО $\mathrm{stgl}^{\mathrm{it}}$ ЕСТЬ <<{стимуляция}>>;
+\item[правило~2:] ЕСЛИ ($\mathrm{stgl}^{\mathrm{it}-1}$ ЕСТЬ <<{начало}>>\\
+ИЛИ $\mathrm{stgl}^{\mathrm{it}-1}$ ЕСТЬ <<{стимуляция}>>)\\  
+И ($\mathrm{cnfl}_{\mathrm{cnfprb}}$ ЕСТЬ <<{нет}>> ИЛИ $\mathrm{cnfl}_{\mathrm{cnfprb}}$\\ 
+ЕСТЬ <<{слабый}>>), \\ 
+ТО $\mathrm{stgl}^{\mathrm{it}}$ ЕСТЬ <<{стимуляция}>>;
+\item[правило~3:] ЕСЛИ ($\mathrm{stgl}^{\mathrm{it}-1}$ ЕСТЬ <<{начало}>>\\
+ИЛИ $\mathrm{stgl}^{\mathrm{it}-1}$ ЕСТЬ <<{стимуляция}>>)\\  
+И ($\mathrm{cnfl}_{\mathrm{cnfprc}}$ ЕСТЬ <<{умеренный}>>\\
+ИЛИ $\mathrm{cnfl}_{\mathrm{cnfprc}}$ ЕСТЬ <<{острый}>>),\\  
+ТО $\mathrm{stgl}^{\mathrm{it}}$ ЕСТЬ <<{разрешение}>>;
+\item[правило~4:] ЕСЛИ ($\mathrm{stgl}^{\mathrm{it}-1}$ ЕСТЬ <<{начало}>>\\
+ИЛИ  $\mathrm{stgl}^{\mathrm{it}-1}$ ЕСТЬ <<{стимуляция}>>) \\ 
+И $\mathrm{cnfl}_{\mathrm{cnfprb}}$ ЕСТЬ <<{острый}>>\\
+ТО $\mathrm{stgl}^{\mathrm{it}}$ ЕСТЬ  <<{разрешение}>>;
+\item[правило~5:] ЕСЛИ ($\mathrm{stgl}^{\mathrm{it}-1}$ ЕСТЬ <<{начало}>>\\
+ИЛИ $\mathrm{stgl}^{\mathrm{it}-1}$ ЕСТЬ <<{стимуляция}>>)\\  
+И $\mathrm{gdl}$ ЕСТЬ <<{положительная}>>\\
+И $\mathrm{cnfl}_{\mathrm{cnfprb}}$ ЕСТЬ <<t{умеренный}>>, \\ 
+ТО $\mathrm{stgl}^{\mathrm{it}}$ ЕСТЬ <<{стимуляция}>>;
+\item[правило~6:] ЕСЛИ ($\mathrm{stgl}^{\mathrm{it}-1}$ ЕСТЬ <<{начало}>>\\
+ИЛИ $\mathrm{stgl}^{\mathrm{it}-1}$ ЕСТЬ <<{стимуляция}>>)\\  
+И $\mathrm{gdl}$ ЕСТЬ <<{отрицательная}>>\\
+И $\mathrm{cnfl}_{\mathrm{cnfprb}}$ ЕСТЬ <<{умеренный}>>,\\  
+ТО $\mathrm{stgl}^{\mathrm{it}}$ ЕСТЬ <<{разрешение}>>;
+\item[правило~7:] ЕСЛИ $\mathrm{stgl}^{\mathrm{it}-1}$ ЕСТЬ <<{стимуляция}>>\\
+И $\mathrm{durl}$  ЕСТЬ <<{большая}>>, \\ 
+ТО $\mathrm{stgl}^{\mathrm{it}}$ ЕСТЬ <<{разрешение}>>;
+\item[правило~8:] ЕСЛИ $\mathrm{stgl}^{\mathrm{it}-1}$ ЕСТЬ <<{разрешение}>>\\
+И $\mathrm{durl}$  ЕСТЬ <<{большая}>>,\\  
+ТО $\mathrm{stgl}^{\mathrm{it}}$ ЕСТЬ <<{конец}>>;
+\end{description}
+  \item  если $\mathrm{stgl}^{\mathrm{it}-1}\not= \mathrm{stgl}^{\mathrm{it}}$, установить $u_{\mathrm{durl}}\hm=0$;
+  \item  если $\mathrm{stgl}^{\mathrm{it}-1}$\;=\;``сти\-му\-ля\-ция'', выполнить функцию 
+<<стимуляция конфликтов>> $\mathrm{\mathrm{act}}^{\mathrm{cnfs}}$, если же 
+$\mathrm{stgl}^{\mathrm{it}}$\;=\;``раз\-ре\-ше\-ние'', выполнить функцию <<разрешение 
+конфликтов>> $\mathrm{\mathrm{act}}^{\mathrm{cnfr}}$;
+  \item если $\mathrm{stgl}^{\mathrm{it}}$\;=\;``{конец}'' или после выполнения функций 
+<<стимуляция конфликтов>> $\mathrm{\mathrm{act}}^{\mathrm{cnfs}}$ или <<разрешение 
+конфликтов>> $\mathrm{act}^{\mathrm{cnfr}}$ уста\-нов\-лен флаг завершения работы, то 
+отправить АПР сообщение о~необходимости завершения работы 
+\mbox{ГиИМАС} и~закончить работу, иначе перейти к~п.\,3.
+  \end{enumerate}
+  
+  Как показывает анализ функции <<нечеткое управление конфликтом>> 
+$\mathrm{act}^{\mathrm{cnffm}}$ АФ, порядок смены стадий не предопределен, 
+а~зависит от ситуации решения проблемы в~\mbox{ГиИМАС}, в~част\-ности от 
+длительности использования метода, интенсивности конфликтов 
+и~соотношения целей АС. С~использованием данной функции, а~также 
+действий по стимулированию $\mathrm{ACT}^{\mathrm{agcs}}$ и~разрешению 
+$\mathrm{ACT}^{\mathrm{agcr}}$ противоречий АФ может повышать напряженность 
+конфликтов в~\mbox{ГиИМАС} и~разнообразие рассматриваемых в~ходе 
+решения проблемы альтернатив либо переходить к~этапу согласования 
+позиций АС, если между ними возникает большое число конфликтов высокой 
+интенсивности. Таким образом, благодаря динамической комбинации 
+различных технологий искусственного интеллекта, реа\-ли\-зу\-емых агентами, 
+\mbox{ГиИМАС} при решении очередной проб\-ле\-мы вырабатывает наиболее 
+релевантный ей метод. Применение нечеткого вывода Мамдани при управ\-ле\-нии 
+конфликтами в~\mbox{ГиИМАС} обеспечивает прозрачность базы знаний для 
+интерпретации человеком, в~отличие от систем нечеткого вывода  
+Та\-ка\-ги--Су\-ге\-но~[17] или нейронечетких гибридов: ANFIS~[18], 
+GARIC~[19], SONFIN~[20], за счет того, что в~консеквенте правила 
+присутствуют лингвистические переменные. Кроме того, сохраняется 
+возможность более тонкой настойки базы знаний в~ходе тестирования  
+сис\-те\-мы с~применением методов подстройки параметров функций 
+принадлежности по алгоритму обратного распространения ошибки,  
+рас\-смот\-рен\-ных в~[21].
+
+\section{Заключение}
+
+  Рассмотрены особенности возникновения и~управления конфликтами 
+в~коллективах реальных специалистов и~их компьютерных моделей, 
+решающих практические проб\-ле\-мы за круглым столом. Представлена модель 
+\mbox{ГиИМАС} с~управ\-ле\-ни\-ем проб\-лем\-но-  
+и~про\-цес\-сно-ори\-ен\-ти\-ро\-ван\-ны\-ми конфликтами на основе анализа их 
+напряженности,\linebreak типа и~соотношения целей агентов. Предложен\linebreak метод 
+управления конфликтами в~\mbox{ГиИМАС} с~использованием нечеткого 
+вывода Мамдани, что обеспечивает прозрачность базы знаний, а~также\linebreak 
+воз\-мож\-ность более тонкой ее настойки в~ходе тес-\linebreak тирования сис\-те\-мы. 
+Управ\-ле\-ние конф\-лик\-та\-ми в~\mbox{ГиИМАС} заключается в~релевантном 
+ситуа\-ции стимулировании или разрешении проб\-лем\-но-  
+и~про\-цес\-сно-ори\-ен\-ти\-ро\-ван\-ных конфликтов. Стимулирование 
+конструктивных \mbox{конфликтов} в~\mbox{ГиИМАС} позволяет расширить 
+множество рас\-смат\-ри\-ва\-емых альтернатив, учесть различные точки зрения 
+и~интересы специалистов, мо\-де\-ли\-ру\-емых агентами сис\-те\-мы. Последующее 
+снижение ин\-тен\-сив\-ности и~разрешение конфликтов, возникших между 
+агентами \mbox{ГиИМАС} на первых стадиях рас\-смот\-ре\-ния по\-став\-лен\-ной 
+проблемы, поз\-во\-ля\-ет выработать согласованную позицию с~учетом различных 
+точек зрения и~интересов специалистов, мо\-де\-ли\-ру\-емых агентами сис\-те\-мы, 
+повышая таким образом релевантность сис\-те\-мы реальному коллективу 
+специалистов.
+  
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+  \bibitem{1-lis}
+  \Au{Листопад С.\,В., Кириков~И.\,А.} Моделирование конфликтов агентов в~гиб\-рид\-ных 
+интеллектуальных многоагентных сис\-те\-мах~// Сис\-те\-мы и~средства информатики, 2019. 
+Т.~29. №\,3. С.~139--148. doi: 10.14357/08696527190312.
+  \bibitem{2-lis}
+  \Au{Maltarich M.\,A., Kukenberger~M., Reilly~G., Mathieu~J.} Conflict in teams: Modeling 
+early and late conflict states and the interactive effects of conflict processes~// Group  
+Organ. Manage., 2018. Vol.~43. Iss.~1. P.~6--37.
+
+ \bibitem{7-lis} %3
+  \Au{Jehn K.\,A., Northcraft~G.\,B., Neale~M.\,A.} Why differences make a difference: A~field 
+study of diversity, conflict, and performance in workgroups~// Admin. Sci. Quart., 
+1999. Vol.~44. P.~741--763.
+  \bibitem{8-lis} %4
+  \Au{Rahim M.\,A.} Toward a~theory of managing organizational conflict~// Int. J.~Confl. 
+Manage., 2002. Vol.~13. Iss.~3. P.~206--235.
+
+ \bibitem{6-lis} %5
+  \Au{Емельянов С.\,М.} Практикум по конфликтологии.~--- СПб.: Питер, 2009. 384~с.
+
+ 
+  \bibitem{4-lis} %6
+  \Au{Greer L.\,L., Caruso~H.\,M., Jehn~K.\,A.} The bigger they are, the harder they fall: Linking 
+team power, team conflict, and performance~// Organ. Behav. Hum. Dec., 2011. Vol.~116. P.~116--128.
+
+ \bibitem{3-lis} %7
+  \Au{De Wit F.\,R.\,C., Greer~L.\,L., Jehn~K.\,A.} The paradox of intragroup conflict:  
+A~meta-analysis~// J.~Appl. Psychol., 2012. Vol.~97. P.~360--390.
+
+  \bibitem{5-lis} %8
+  \Au{Хохлов А.\,С.} Конфликтология: История. Теория. Практика.~--- 
+Самара: СФ МГПУ, 2014. 312~с.
+ 
+ 
+  \bibitem{9-lis}
+  \Au{Сидоренков А.\,В.} Конфликт в~малой группе: понятие, функции, виды и~модель~//  
+Се\-ве\-ро-Кав\-каз\-ский психологический вестник, 2008. Т.~6. №\,4. С.~22--28.
+  \bibitem{10-lis}
+  \Au{Листопад С.\,В., Кириков~И.\,А.} Метод идентификации конфликтов агентов 
+ в~гиб\-рид\-ных интеллектуальных многоагентных системах~// Сис\-те\-мы и~средства 
+информатики, 2020. Т.~30. №\,1. С.~56--65. doi: 10.14357/08696527200105.
+  \bibitem{11-lis}
+  \Au{Листопад С.\,В., Кириков~И.\,А.} Стимуляция конфликтов агентов  
+в~гиб\-рид\-ных интеллектуальных многоагентных сис\-те\-мах~// Сис\-те\-мы и~средства 
+информатики, 2021. Т.~31. №\,2. С.~47--58. doi: 10.14357/ 08696527210205.
+  \bibitem{12-lis}
+  \Au{Листопад С.\,В., Кириков~И.\,А.} Разрешение конфликтов 
+ в~гиб\-рид\-ных интеллектуальных многоагентных сис\-те\-мах~// Информатика и~её 
+применения, 2022. Т.~16. Вып.~1. С.~54--60. doi: 10.14357/19922264220108.
+  \bibitem{13-lis}
+  \Au{Kolesnikov A.\,V., Listopad~S.\,V.} Hybrid intelligent multiagent system of heterogeneous 
+thinking for solving the problem of restoring the distribution power grid after failures~// Open 
+Semantic Technologies for Intelligent Systems: Research Papers Collection.~--- Minsk: BGUIR, 
+2019. P.~133--138.
+ 
+  \bibitem{15-lis} %14
+  \Au{Bana e~Costa C.} The use of multi-criteria decision analysis to support the search for less 
+conflicting policy options in a multi-actor context: Case study~// J.~Multi-Criteria Decision 
+Analysis, 2001. Vol.~10. Iss.~2. P.~111--125.
+
+ \bibitem{14-lis} %15
+  \Au{Fasth T., Larsson~A., Ekenberg~L., Danielson~M.} Measuring conflicts using cardinal 
+ranking: An application to decision analytic conflict evaluations~// Advances Operations Research, 
+2018. Vol.~2018. Art.~8290434. 14~p.
+
+  \bibitem{16-lis}
+  \Au{Леоненков А.\,В.} Нечеткое моделирование в~среде MATLAB и~fuzzyTECH.~--- СПб.: 
+БХВ Петербург, 2005. 736~с.
+  \bibitem{17-lis}
+  \Au{Abonyi J., Nagy~L., Szeifert~F.} Adaptive fuzzy inference system and its application in 
+modelling and model\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+ based control~// Chem. Eng. Res. Des., 1999. Vol.~77. 
+Iss.~4. P.~281--290.
+  \bibitem{18-lis}
+  \Au{Jang J.-S.\,R.} ANFIS: Adaptive-network-based fuzzy inference systems~// IEEE 
+Transactions on Systems, Man, and Cybernetics, 1993. Vol.~23. P.~665--685.
+  \bibitem{19-lis}
+  \Au{Berenji H.\,R., Khedkar~P.} Learning and tuning fuzzy logic controllers through 
+reinforcements~// IEEE Trans. Neural Networks, 1992. Vol.~3. P.~724--740.
+
+%\columnbreak 
+
+  \bibitem{20-lis}
+  \Au{Feng J.\,C., Teng~L.\,C.} An online self constructing neural fuzzy inference network and its 
+applications~// IEEE T. Fuzzy Syst., 1998. Vol.~6. Iss.~1. P.~12--32.
+  \bibitem{21-lis}
+  \Au{Колесников А.\,В., Кириков~И.\,А., Листопад~С.\,В.} Гиб\-рид\-ные интеллектуальные 
+сис\-те\-мы с~самоорганизацией: координация, согласованность, спор.~--- М.: ИПИ РАН, 2014. 
+189~с.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\footnotesize\textit{Поступила в~редакцию 10.01.23}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{FUZZY RULES BASED METHOD FOR~AGENT CONFLICT 
+MANAGEMENT IN~HYBRID INTELLIGENT MULTIAGENT 
+SYSTEMS}
+
+
+\def\titkol{Fuzzy rules based method for~agent conflict 
+management in~hybrid intelligent multiagent 
+systems}
+
+
+\def\aut{S.\,V.~Listopad and~I.\,A.~Kirikov}
+
+\def\autkol{S.\,V.~Listopad and~I.\,A.~Kirikov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-8pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov
+Str., Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{15pt} 
+
+  
+   
+   \Abste{The paper continues research on computer simulation with hybrid intelligent multiagent systems 
+of a~teamwork of specialists of various profiles who solve problems at a~round table. The agents of such 
+systems are autonomous software entities that imitate the reasoning of real specialists. Modeling of 
+heterogeneous knowledge, goals, and points of view of agents on the problem posed within single intelligent 
+system causes their collision, the emergence of conflicts by analogy with how it happens in simulated teams. 
+Not every conflict between agents is destructive and requires suppression: conflict management in a~hybrid 
+intelligent multiagent system as well as in a~team involves the identification of a~decision-making 
+situation, if necessary, stimulation and subsequent resolution of constructive forms of conflict as well as the 
+prevention of its destructive forms. The paper proposes the method based on fuzzy rules to manage conflicts 
+between agents in hybrid intelligent multiagent systems.}
+   
+   \KWE{conflict; hybrid intelligent multiagent system; team of specialists; conflict management}
+   
+\DOI{10.14357/19922264230109} 
+
+%\vspace*{-16pt}
+
+%\Ack
+%\noindent
+
+  
+
+\vspace*{4pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99} 
+  \bibitem{1-lis-1}
+   \Aue{Listopad, S.\,V., and I.\,A.~Kirikov.} 2019. Mo\-de\-li\-ro\-va\-nie\linebreak konfliktov agen\-tov v~gib\-rid\-nykh 
+in\-tel\-lek\-tu\-al'\-nykh mno\-go\-agent\-nykh sis\-te\-makh [Modeling of agent conflicts in hybrid intelligent multiagent 
+systems]. \textit{Sis\-te\-my i~Sredstva\linebreak Informatiki~--- Systems and Means of Informatics} 29(3):139--148. doi: 10.14357/08696527190312.
+  \bibitem{2-lis-1}
+   \Aue{Maltarich, M.\,A., M.~Kukenberger, G.~Reilly, and J.~Mathieu.} 2018. Conflict in teams: 
+Modeling early and late conflict states and the interactive effects of conflict processes. \textit{Group  
+Organ. Manage.} 43(1):6--37.
+  
+  
+  
+
+%\columnbreak
+
+\bibitem{7-lis-1} %3
+   \Aue{Jehn, K.\,A., G.\,B.~Northcraft, and M.\,A.~Neale.} 1999. Why differences make a difference: 
+A~field study of diversity, conflict, and performance in workgroups. \textit{Admin. Sci. 
+Quart.} 44:741--763.
+  \bibitem{8-lis-1} %4
+   \Aue{Rahim, M.\,A.} 2002. Toward a~theory of managing organizational conflict. \textit{Int.  
+J.~Confl. Manage.} 13(3):206--235.
+
+  \bibitem{6-lis-1} %5
+   \Aue{Emel'yanov, S.\,M.} 2009. \textit{Praktikum po konfliktologii} [Tutorial at conflictology]. St.\ 
+Petersburg: Piter. 384~p. 
+
+\bibitem{4-lis-1} %6
+   \Aue{Greer, L.\,L., H.\,M.~Caruso, and K.\,A.~Jehn.} 2011. The bigger they are, the harder they fall: 
+Linking team power, team conflict, and performance. \textit{Organ. Behav. Hum. Dec.} 116:116--128.
+  
+  
+  \bibitem{3-lis-1} %7
+   \Aue{De Wit, F.\,R.\,C., L.\,L.~Greer, and K.\,A.~Jehn.} 2012. The paradox of intragroup conflict: 
+A~meta-analysis. \textit{J.~Appl. Psychol.} 97:360--390.
+
+\bibitem{5-lis-1} %8
+   \Aue{Khokhlov, A.\,S.} 2014. \textit{Konfliktologiya: Istoriya. Teoriya. Praktika} [Conflictology: 
+History. Theory. Practice]. Samara: SF MGPU. 312~p.
+
+  \bibitem{9-lis-1}
+   \Aue{Sidorenkov, A.\,V.} 2008. Konflikt v~ma\-loy grup\-pe: po\-nya\-tie, funk\-tsii, vi\-dy i~mo\-del' [Conflict in 
+small group: Concept, functions, forms and model]. \textit{Severo-Kavkazskiy psikhologicheskiy vestnik} 
+[North Caucasian Psychological~J.] 6(4):22--28.
+  \bibitem{10-lis-1}
+   \Aue{Listopad, S.\,V., and I.\,A.~Kirikov.} 2020. Metod iden\-ti\-fi\-ka\-tsii konf\-lik\-tov agen\-tov v~gib\-rid\-nykh 
+in\-tel\-lek\-tu\-al'\-nykh mno\-go\-agent\-nykh sis\-te\-makh [Agent conflict identification
+   method in hybrid intelligent multiagent systems]. \textit{Sis\-te\-my i~Sredstva Informatiki~--- Systems 
+and Means of Informatics} 30(1):56--65. doi: 10.14357/08696527200105.
+   
+  \bibitem{11-lis-1}
+   \Aue{Listopad, S.\,V., and I.\,A.~Kirikov.} 2021. Stimulyatsiya konfliktov agentov v~gibridnykh 
+intellektual'nykh mnogoagentnykh sis\-te\-makh [Stimulation of agent conflicts in hybrid intelligent 
+multiagent systems]. \textit{Sis\-te\-my i~Sredstva}\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+\textit{Informatiki~--- Systems and Means of Informatics} 
+31(2):47--58.
+   doi: 10.14357/08696527210205.
+  \bibitem{12-lis-1}
+  \Aue{Listopad, S.\,V., and I.\,A.~Kirikov.} 2022. Razreshenie konfliktov v~gibridnykh intellektual'nykh 
+mnogoagentnykh sis\-te\-makh [Conflict resolution in hybrid intelligent multi-agent systems]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 16(1):54--60. doi: 10.14357/19922264220108.
+   
+  \bibitem{13-lis-1}
+   \Aue{Kolesnikov, A.\,V., and S.\,V.~Listopad.} 2019. Hybrid intelligent multiagent system of 
+heterogeneous thinking for solving the problem of restoring the distribution power grid after failures. 
+\textit{Open Semantic Technologies for Intelligent Systems: Research Papers Collection}. Minsk: BGUIR. 
+133--138.
+  
+  \bibitem{15-lis-1} %14
+   \Aue{Bana e Costa, C.} 2001. The use of multi-criteria decision analysis to support the search for less 
+conflicting policy options in a multi-actor context: Case study. \textit{J.~Multi-Criteria Decision Analysis} 
+10(2):111--125.
+
+\bibitem{14-lis-1} %15
+   \Aue{Fasth, T., A.~Larsson, L.~Ekenberg, and M.~Danielson.} 2018. Measuring conflicts using 
+cardinal ranking: an application to decision analytic conflict evaluations. \textit{Advances Operations 
+Research} 2018:8290434. 14~p.
+
+\columnbreak
+
+  \bibitem{16-lis-1}
+   \Aue{Leonenkov, A.\,V.} 2005. \textit{Nechetkoe modelirovanie v~srede MATLAB i~fuzzyTECH} 
+[Fuzzy modeling in MATLAB and fuzzyTECH]. St.\ Petersburg: BHV-Peterburg. 736~p.
+  \bibitem{17-lis-1}
+   \Aue{Abonyi, J., L.~Nagy, and F.~Szeifert.} 1999. Adaptive fuzzy inference system and its application 
+in modelling and model based control. \textit{Chem. Eng. Res. Des.} 77(4):281--290.
+  \bibitem{18-lis-1}
+   \Aue{Jang, J.-S.\,R.} 1993. ANFIS: Adaptive-network-based fuzzy inference systems. \textit{IEEE 
+Transactions Systems, Man, and Cybernetics} 23:665--685.
+  \bibitem{19-lis-1}
+   \Aue{Berenji, H.\,R., and P.~Khedkar.} 1992. Learning and tuning fuzzy logic controllers through 
+reinforcements. \textit{IEEE Trans. Neural Networks} 3:724--740.
+  \bibitem{20-lis-1}
+   \Aue{Feng, J.\,C., and L.\,C.~Teng.} 1998. An online self constructing neural fuzzy inference network 
+and its applications. \textit{IEEE T. Fuzzy Syst.} 6(1):12--32.
+  \bibitem{21-lis-1}
+   \Aue{Kolesnikov, A.\,V., I. A.~Kirikov, and S.\,V.~Listopad.} 2014. \textit{Gibridnye intellektual'nye  
+sis\-te\-my s~samoorganizatsiey: koordinatsiya, soglasovannost', spor} [Hybrid intelligent systems with  
+self-organization: Coordination, consistency, and dispute]. Moscow: IPI RAN. 189~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\footnotesize\textit{Received January 10, 2023}}   
+   
+   \Contr
+   
+   \noindent
+   \textbf{Listopad Sergey V.} (b.\ 1984)~--- Candidate of Science (PhD) in technology, senior scientist, 
+Kaliningrad Branch of the Federal Research Center ``Computer Science and Control'' of the Russian 
+Academy of Sciences, 5~Gostinaya Str., Kaliningrad 236000, Russian Federation;  
+\mbox{ser-list-post@yandex.ru}
+   
+   \vspace*{3pt}
+   
+   \noindent
+   \textbf{Kirikov Igor A.} (b.\ 1955)~--- Candidate of  Sciences (PhD) in technology; director, 
+Kaliningrad Branch of the Federal Research Center ``Computer Science and Control'' of the Russian 
+Academy of Sciences, 5~Gostinaya Str., Kaliningrad 236000, Russian Federation; 
+\mbox{baltbipiran@mail.ru}
+   
+ 
+
+   
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

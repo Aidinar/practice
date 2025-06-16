@@ -1,0 +1,834 @@
+\def\stat{bosov}
+
+\def\tit{УПРАВЛЕНИЕ ВЫХОДОМ СТОХАСТИЧЕСКОЙ 
+ДИФФЕРЕНЦИАЛЬНОЙ СИСТЕМЫ\\ ПО~КВАДРАТИЧНОМУ 
+КРИТЕРИЮ.\\ V.~СЛУЧАЙ НЕПОЛНОЙ ИНФОРМАЦИИ 
+О~СОСТОЯНИИ$^*$}
+
+\def\titkol{Управление выходом стохастической 
+дифференциальной системы по квадратичному критерию. V}
+%.~Случай неполной информации о~состоянии}
+
+\def\aut{А.\,В. Босов$^1$}
+
+\def\autkol{А.\,В. Босов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Босов А.\,В.}
+\index{Bosov A.\,V.}
+ 
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при частичной поддержке РФФИ (проект 19-07-00187-A).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Институт проблем информатики Федерального 
+исследовательского центра <<Информатика 
+и~управление>> Российской академии наук, \mbox{ABosov@frccsc.ru}}
+    
+     \vspace*{-12pt}
+    
+    \Abst{Рассматривается обобщение задачи оптимального управления 
+для диффузионного процесса Ито и~линейного управляемого выхода 
+с~квадратичным критерием качества на случай косвенных наблюдений за 
+состоянием. Имеющееся решение задачи с~полной информацией 
+используется для синтеза управления по косвенным наблюдениям на 
+основании принципа разделения. Возможность разделения задач 
+управления и~фильтрации состояния обосновывается свойствами 
+используемого квадратичного критерия. Вместо решения возникающей 
+вспомогательной задачи оптимальной фильтрации, описываемого общими 
+уравнениями нелинейной фильтрации на основе обновляющих процессов, 
+предлагается использовать оценку условно-оптимального фильтра (УОФ)
+В.\,С.~Пугачева. Таким образом, субоптимальное решение 
+рассматриваемой задачи управления получается как результат 
+традиционного подхода к~синтезу управления в~задаче с~неполной 
+информацией, состоящего в~формальной замене в~решении 
+соответствующей задачи с~полной информацией переменной состояния на 
+ее оценку. Окончательно предлагается вариант численной реализации 
+предложенного субоптимального управления на основе метода 
+имитационного компьютерного моделирования, использующий общий 
+пучок моделируемых траекторий как для расчета параметров 
+УОФ, так и~для вычисления параметров 
+в~исходной задаче управления.}
+    \KW{стохастическое дифференциальное уравнение; стохастическая 
+дифференциальная система; оптимальное управление; стохастическая 
+фильтрация; условно-оптимальная фильтрация; имитационное 
+компьютерное моделирование}
+    
+\DOI{10.14357/19922264200203} 
+ 
+%\vspace*{9pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+
+\section{Введение}
+
+     Задача управления линейным выходом стохастической 
+дифференциальной системы по квадратичному критерию качества, 
+постановка и~оптимальное решение, анализ свойств оптимального решения 
+и~основанные на нем варианты численной реализации, а~также 
+выполненные модельные расчеты представлены в~работах~[1--4]. 
+В~постановке (здесь и~далее для простоты рассматриваются скалярные 
+величины) используется состояние~$y_t$ стохастической дифференциальной 
+системы, описываемое нелинейным стохастическим дифференциальным 
+уравнением Ито:
+     \begin{equation}
+     dy_t=A_t(y_t)\,dt+\Sigma_t(y_t)\,dv_t\,,\enskip y_0=Y\,,
+     \label{e1-bos}
+     \end{equation}
+где $v_t$~--- стандартный винеровский процесс; $Y$~--- случайная величина 
+с~конечным вторым моментом; функции~$A_t$ и~$\Sigma_t$ удовлетворяют 
+условиям Ито, обеспечивающим существование единственного 
+решения~\cite{5-bos}.
+
+     С состоянием~$y_t$ линейно связан выход~$z_t$:
+     \begin{equation}
+     dz_t= a_ty_t\,dt+b_tz_t\,dt+c_tu_t\,dt+\sigma_t\,dw_t\,,\  z_0=Z\,,
+     \label{e2-bos}
+     \end{equation}
+где $w_t$~--- не зависящий от~$v_t$, $Y$ и~$Z$ стандартный винеровский 
+процесс; $Z$~--- случайная величина с~конечным вторым моментом; 
+$u_t$~--- допустимое управление. Функции~$a_t$, $b_t$, $c_t$ и~$\sigma_t$ 
+предполагаются ограниченными, процесс управления~--- допустимым 
+неупреждающим~\cite{5-bos}, что обеспечивает существование решения 
+уравнения~(\ref{e2-bos}) для любого допустимого управления.
+
+     Используется квадратичный целевой функционал следующего вида:
+     
+     \noindent
+     \begin{multline}
+    \!\! J\left( U_0^T\right)={\sf E}\left\{ \int\limits_0^T 
+\left( S_t(s_ty_t-g_tz_t-h_tu_t)^2+G_tz_t^2+{}\!\right.\right.\\
+\left.\left.{}+H_tu_t^2\right)dt+S_T(s_Ty_T-g_Tz_T)^2+G_Tz_T^2
+\vphantom{\int\limits_0^T }
+     \right\}\,,\\
+     \enskip
+     U_0^T=\left\{ u_t,0\leq t\leq T\right\}\,,
+     \label{e3-bos}
+     \end{multline}
+где $S_t$, $G_t$ и~$H_t$~--- неотрицательные ограниченные функции.
+     
+     Задача была сформулирована в~предположении наличия полной 
+информации о~состоянии~$y_t$ и~выходе~$z_t$ (соответствующая 
+$\sigma$-ал\-геб\-ра, порожденная величинами~$y_\tau$, $z_\tau$, $0\hm\leq 
+\tau\hm\leq t$, обозначается~$\mathcal{F}_t^{y,z}$), поэтому допустимое 
+управление искалось в~классе  
+$\mathcal{F}_t^{y,z}$-из\-ме\-ри\-мых неупреждающих функций и~оказалось 
+управлением с~обратной связью:
+\begin{multline}
+u_t^*=u_t^*(y_t,z_t)= -
+\fr{1}{2}\left( S_th_t^2+H_t\right)^{-1}\times {}\\
+{}\times \left( c_t(2\alpha_tz_t+\beta_t(y_t))+2S_t(s_ty_t-g_tz_t)h_t\right).
+\label{e4-bos}
+\end{multline}
+     %
+     Это решение обеспечено представлением функции Беллмана в~виде 
+$$
+V_t(y,z)= \alpha_tz^2+\beta_t(y)z+\gamma_t(y)$$ 
+и~решением 
+уравнений динамического программирования, приведшим к~линейными 
+уравнениями в~частных производных второго порядка параболического типа 
+относительно коэффициентов $\beta_t(y)$ и~$\gamma_t(y)$  и~уравнению 
+Риккати для коэффициента~$\alpha_t$. Подходы к~численной реализации 
+по-\linebreak лученного оптимального решения обеспечили, во-пер\-вых, традиционные 
+сеточные методы решения уравнений параболического типа, во-вто\-рых, 
+альтернативное описание этих коэффициентов, базирующееся на уравнении 
+А.\,Н.~Колмогорова~\cite{6-bos} или эквивалентной ему интегральной 
+формуле Фейнмана--Каца~\cite{7-bos}, обосновавшие применение 
+в~расчетах имитационного компьютерного моделирования~\cite{4-bos}.
+     
+     Цель данной работы, подводящей окончательный теоретический итог 
+исследованию задачи, рассмотреть случай неполной информации 
+о~состоянии, т.\,е.\ предположить, что полная информация 
+о~состоянии~$y_t$ из~(\ref{e1-bos}) недоступна, и~интерпретировать 
+уравнение~(\ref{e2-bos}) как уравнение наблюдений. Формально такая 
+постановка требует определения допустимых управлений в~классе 
+$\mathcal{F}_t^z$-из\-ме\-ри\-мых неупреждающих функций 
+($\mathcal{F}_t^z$~--- $\sigma$-ал\-геб\-ра, по\-рож\-ден\-ная~$z_\tau$, 
+$0\hm\leq \tau\hm\leq t$; также 
+далее используется обозначение~${\sf E}\{\cdot\vert \mathcal{F}_t^z\}$~--- 
+оператор условного математического ожидания 
+относительно~$\mathcal{F}_t^z$). Но, даже несмотря на отсутствие 
+управления в~уравнении состояния~(1), линейность наблюдений~(2) 
+и~квад\-ра\-тич\-ный критерий~(3), получить оптимальное решение не удастся. 
+Обсуждение этого положения и~вариант субоптимального управ\-ле\-ния, 
+опи\-ра\-юще\-го\-ся на принцип разделения, обосно\-вы\-ва\-емый в~данной задаче 
+свойствами квадратичного функционала качества, приводятся во втором 
+разделе статьи. 
+     
+     Соображения по принципу разделения и~формулировка отдельно 
+задачи фильтрации для системы наблюдения~(1), (2) с~точки зрения 
+практической реализуемости приводят к~выбору в~качестве метода 
+оценивания УОФ 
+В.\,С.~Пугачева~\cite{8-bos}. При этом структура оценки УОФ 
+такова, что позволяет еще предложить 
+вариант численной реализации на основе метода имитационного 
+компьютерного моделирования, вклю\-ча\-ющий в~том чис\-ле расчет 
+параметров оптимального управ\-ле\-ния методом, представленным 
+и~апробированным в~\cite{4-bos}. Этот алгоритм приведен в~разд.~4. Итоги 
+исследования подведены в~заключении.
+
+\section{Управление на~основе принципа разделения}
+     
+     Понятие <<принципа разделения>> интерпрети\-руется в~смысле 
+классического результата о~разделении задач управления и~фильтрации 
+в~линей-\linebreak но-гауссовской стохастической системе~\cite{9-bos}. Этот\linebreak результат 
+базируется на двух положениях. Во-пер\-вых, это дифференциальная форма 
+оценки фильт\-ра Калмана, условного математического ожидания\linebreak состояния 
+в~ли\-ней\-но-гаус\-сов\-ской системе наблюдения, имеющая тот же вид, что 
+и~уравнение со\-стояния, т.\,е.\ то же самое линейное уравнение, 
+отли\-чающееся лишь ковариацией шума, роль которого выполняет 
+обновляющий процесс, явля\-ющий\-ся винеровским. Во-вто\-рых, это 
+воз\-мож\-ность пред\-став\-ле\-ния квад\-ра\-тич\-но\-го критерия\linebreak двумя сла\-га\-емы\-ми, 
+отвечающими за качество управ\-ле\-ния и~качество оценивания состояния.
+     
+     Оба эти положения имеют свою интерпретацию в~рассматриваемой 
+задаче, но вначале следует обсудить важный дополнительный аспект 
+разделения, а~именно: отсутствие в~задаче управления дуального 
+эффекта~\cite{10-bos}, т.\,е.\ влияния закона управ\-ле\-ния на качество 
+оценивания состояния. С~этой целью видоизменим исходную постановку 
+сле\-ду\-ющим образом. Выполним замену переменных в~(2), избавляясь от 
+слагаемых $b_tz_t\,dt$ и~$c_tu_t\,dt$, приводя уравнение выхода к~некоторой 
+канонической форме (традиционной форме записи наблюдений за 
+состоянием). Для этого введем новую переменную 
+$$
+\tilde{z}_t= B_tz_t- \int\limits_0^t B_s c_s u_s\,ds\,,
+$$
+ где обозначено 
+$$
+B_t= \exp \left\{-\int\limits_0^t b_s\,ds\right\}.
+$$
+
+\pagebreak
+
+ С~учетом того, что 
+$$
+dB_t= - b_t B_t\,dt\,,
+$$ 
+дифференциал введенной переменной принимает вид:
+$$
+d\tilde{z}_t= 
+B_t\left(dz_t- b_t z_t\,dt- c_t u_t\,dt\right)=
+ \tilde{a}y_t\,dt+ \tilde{\sigma}_t 
+\,dw_t\,,
+$$
+ где обозначено 
+ $$
+ \tilde{a}_t=a_tB_t\,;\enskip \tilde{\sigma}_t=  \sigma_tB_t\,.
+ $$
+     
+     Заметим, что проведенное преобразование обеспечивает совпадение 
+$\sigma$-алгебр $\mathcal{F}_t^z$ и~$\mathcal{F}_t^{\tilde{z}}$ для любого 
+допустимого управления~$u_t$. Действительно, $\mathcal{F}_t^z\hm= 
+\mathcal{F}_t^{\tilde{z}}$, поскольку выполненная замена~--- линейное, 
+невырожденное ($B_t\hm>0$) преобразование~$z_t$, а~$u_t$ по условию 
+$\mathcal{F}_t^z$-измеримо. При этом полученное уравнение 
+для~$\tilde{z}_t$ показывает, что $\tilde{z}_t$ не зависит от~$u_t$, т.\,е., 
+используя~$\tilde{z}_t$ в~качестве наблюдения, можно строить оценку 
+состояния, не зависящую от конкретного закона управления. Таким образом, 
+вместо задачи оценивания состояния по наблюдениям~$z_t$, зависящим от 
+реализуемого закона управления, можно рассматривать эквивалентную 
+задачу оценивания~$y_t$ по наблюдениям~$\tilde{z}_t$, не зависящим 
+от~$u_t$.
+     
+     Проведенная замена не означает разделение задач управления 
+и~фильтрации в~рассматриваемой постановке, но обосновывает отсутствие 
+в~ней дуального эффекта, так что, не ограничивая общ\-ности, задачу 
+фильтрации можно решать, используя вместо уравнения выхода~(2) 
+уравнение
+     \begin{equation}
+     d\tilde{z}_t=\tilde{a}y_t\,dt+\tilde{\sigma}_t\,dw_t\,,\enskip \tilde{z}_0=Z\,.
+     \label{e5-bos}
+     \end{equation}
+     
+     Оптимальную оценку состояния системы~(1) по наблюдениям~(\ref{e5-bos}), 
+т.\,е.\ условное математическое ожидание ${\sf E}\{y_t\vert 
+\mathcal{F}_t^{\tilde{z}}\}$, обозначим через~$\hat{y}_t$. Наложенные выше 
+на систему~(1), (2) ограничения представляют, по-видимому, наиболее 
+жесткий вариант условий, обеспечивающих существование этой оценки. 
+Соотношения для нее основаны на принципиальных результатах, 
+полученных для общей задачи нелинейной фильтрации на основе 
+обновляющих процессов~\cite{11-bos}. Применительно к~рассматриваемой 
+задаче оптимальную оценку дает следующее соотношение:
+     \begin{equation}
+     d\hat{y}_t= 
+\widehat{A_t}\,dt+\fr{\widehat{\Sigma_t}}{\tilde{\sigma}_t}\,d\hat{v}_t\,,\enskip 
+\hat{y}_0={\sf E}\{Y\}\,,
+     \label{e6-bos}
+     \end{equation}
+где 
+\begin{align*}
+\widehat{A_t}&={\sf E}\left\{ A_t(y_t)\vert \mathcal{F}_t^{\tilde{z}}\right\};\\ 
+\widehat{\Sigma_t}&= \tilde{a}_t {\sf E}\left\{ y_t(y_t\hm- \hat{y}_t)\vert 
+\mathcal{F}_t^{\tilde{z}}\right\}\,;\\
+d\hat{v}_t&=\fr{1}{\tilde{\sigma}_t}\left(d\tilde{z}_t- \tilde{a}_t\hat{y}_t\,dt\right)\,.
+\end{align*}
+Кроме того, 
+обновляющий процесс~$\hat{v}_t$ является стандартным винеровским 
+относительно~$\mathcal{F}_t^{\tilde{z}}$.
+
+     Если исходить из того, что~(\ref{e6-bos}) используется в~качестве 
+уравнения состояния, то наблюдения~(\ref{e5-bos}) можно задать 
+следующим уравнением:
+     \begin{equation}
+     d\tilde{z}_t=\tilde{a}\hat{y}_t\,dt+\tilde{\sigma}_t\,d\hat{v}_t\,,\enskip 
+\tilde{z}_0=Z\,.
+     \label{e7-bos}
+     \end{equation}
+     %
+     Это уравнение действительно описывает линейные наблюдения для 
+состояния~$\hat{y}_t$, при том что эти наблюдения совпадают 
+с~(\ref{e5-bos}). Таким образом, полученную пару уравнений~(\ref{e6-bos}), 
+(\ref{e7-bos}) можно использовать в~качестве эквивалентного описания системы 
+наблюдения.
+     
+     На этом возможности разделения, обеспечи\-ва\-емые средствами 
+оптимальной фильтрации, в~рассматриваемой постановке исчерпываются: 
+хотя и~удалось сохранить структуру наблюдений, уравнение оценки 
+оказалось принципиально иным. Уравнение~(\ref{e6-bos}) никоим образом 
+не повторяет форму~(1), так что готовое решение задачи управления по 
+полной информации применить не получится. Кроме того, решение 
+уравнения для оптимального фильт\-ра само по себе является существенной 
+задачей. Это, строго говоря, не уравнение Ито, так как его параметры 
+$\widehat{A_t}$ и~$\widehat{\Sigma_t}$ зависят от всей 
+траектории~$\tilde{z}_\tau$, $0\hm\leq \tau\hm\leq t$, и~вычисление их~--- 
+отдельная задача, требующая привлечения сложных дополнительных 
+уравнений. Таким образом, все, на что позволяет опираться это уравнение, 
+выражается целесообразностью использовать в~рассматриваемой задаче 
+управления оценку фильтрации и~предполагать, что результат будет тем 
+успешнее, чем ближе эта оценка к~эталонной, определяемой~(\ref{e6-bos}).
+     
+     Поддерживает этот вывод и~рассмотрение второго базового положения 
+принципа разделения~--- разделение квадратичного критерия. Учитывая 
+обозначения 
+$$
+\hat{y}_t= {\sf E}\left\{ y_t\vert \mathcal{F}_t^{\tilde{z}}\right\} =
+{\sf E}\left\{ 
+y_t\vert \mathcal{F}_t^{z}\right\}
+$$ 
+и~формулу полного математического ожидания, 
+используемый функционал~(3) можно представить в~виде:
+\begin{multline*}
+ \!J\left( U_0^T\right)={\sf E}\left( \int\limits_0^T 
+\left(S_t \left(s_t\hat{y}_t-g_tz_t-h_tu_t\right)^2 +G_tz_t^2+{}\right.\right.\hspace*{-3.52704pt}\\
+\left.\left.{}
++H_tu_t^2
+\vphantom{S_t\left(\right)^2}
+\right)\,dt+S_T(s_T\hat{y}_T-g_Tz_T)^2+G_T 
+z_T^2\vphantom{\int\limits_0^T}\right)+{}\\
+    {}+{\sf E}\left\{ \int\limits_0^T S_ts_t^2 (y_t-\hat{y}_t)^2dt+
+S_Ts_T^2(y_t-\hat{y}_T)^2\right\}.
+     \end{multline*} 
+     %
+     В этом представлении квадратичного критерия выделено второе 
+слагаемое, составляющее плату за ошибку оценивания. С~учетом сказанного 
+выше в~отношении независимости оценки фильтрации~$\hat{y}_t$ от закона 
+управления это слагаемое можно убрать из целевого функционала и,~таким 
+образом, обосно\-вать использование в~оптимизационной постановке целевой 
+функции вида:
+     \begin{multline*}
+ \!\!    J\left( U_0^T\right)={\sf E}\left\{ \int\limits_0^T 
+\left(S_t(s_t\hat{y}_t-g_tz_t-h_tu_t)^2 +G_tz_t^2+{}\right.\!\right.\\
+     \left.\left.{}
+    +H_tu_t^2\right)dt+ 
+\vphantom{\int\limits_0^T }
+S_T(s_T\hat{y}_T-g_Tz_T)^2+G_Tz_T^2\right\}.
+     %\label{e8-bos}
+     \end{multline*} 
+     
+     Сказанное дает основание в~качестве результата неформального 
+применения принципа разделения в~рассматриваемой задаче предложить 
+субоптимальный вариант управления~$u_t^S$ вида
+     \begin{equation}
+     u_t^S=u_t^*\left( \hat{y}_t, z_t\right)\,,
+     \label{e9-bos}
+     \end{equation}
+где~$u_t^*$ определено соотношением~(\ref{e4-bos})~--- решением исходной 
+задачи оптимизации~(1)--(3); $\hat{y}_t$~--- оценка состояния~$y_t$ по 
+преобразованным наблюдениям~(\ref{e5-bos}), не зависящая от закона 
+управления~$u_t$. \mbox{Верхний} индекс~$S$ можно интерпретировать как 
+подчеркивание субоптимальности управления~(\ref{e9-bos}) или как первую 
+букву от английского separation (разделение). Нетрудно видеть, что это 
+управление было бы оптимальным для задачи с~полной информацией 
+с~состоянием~$y_t$ вида 
+$$
+dy_t= A_t(y_t)\,dt+ 
+\fr{\Sigma_t(y_t)}{\sigma_t}\,dv_t,
+$$
+ выходом~(2) и~целевым функционалом~(3). 
+Такое уравнение состояния можно интерпретировать как нулевое 
+приближение решения задачи оптимальной фильтрации.
+     
+     Итак, получен вариант~(\ref{e9-bos}) субоптимального управления 
+в~исходной задаче, выполняющий формально принцип разделения 
+и~обладающий потенциалом практической реализуемости при условии 
+приемлемого качества собственно управления. В~отношении этого варианта 
+управления придется сделать еще одно упрощение. Поскольку шансов 
+реализовать расчет условного математического ожидания ${\sf E}\{ y_t\vert 
+\mathcal{F}_t^{\tilde{z}}\}$ практически нет, то вместо оптимального 
+фильтра~(\ref{e6-bos}) в~расчетах придется использовать другую оценку 
+фильтрации. Качество управления при этом, видимо, упадет, но можно 
+предполагать, что потери будут тем меньше, чем лучше, т.\,е.\ ближе 
+к~оптимальной оценке~(\ref{e6-bos}), будет используемый фильтр.
+
+\section{Управление на~основе условно-оптимального фильтра}
+     
+     Итак, имеется необходимость отказаться от использования 
+оптимальной оценки~--- условного математического ожидания ${\sf E}\{ y_t\vert 
+\mathcal{F}_t^{\tilde{z}}\}$~--- в~пользу другого решения задачи 
+фильтрации, не являющегося оптимальным, но обладающего хорошим 
+качеством в~решении задачи оценивания состояния~$y_t$ по 
+наблюдениям~$\tilde{z}_\tau$, $0\hm\leq \tau\hm\leq t$. Такую оценку будем 
+обозначать через~$\tilde{y}_t$ и~определять ее методом 
+услов\-но-оп\-ти\-маль\-ной фильтрации В.\,С.~Пугачева~\cite{8-bos}.
+     
+     Условно-оптимальная оценка~$\tilde{y}_t$ состояния сис\-те\-мы~(1) по 
+наблюдениям~(2) ищется в~виде:
+     \begin{multline}
+     d\tilde{y}_t=\tilde{\alpha}_t\xi_t\left( 
+\tilde{y}_t,\tilde{z}_t\right)dt+\tilde{\beta}_t\zeta_t\left( 
+\tilde{y}_t,\tilde{z}_t\right)d\tilde{z}_t+\tilde{\gamma}_t\,dt\,,\\[1pt]
+\enskip 
+\tilde{y}_0={\sf E}\{Y\}\,,
+     \label{e10-bos}
+     \end{multline}
+где $\tilde{\alpha}_t$, $\tilde{\beta}_t$ и~$\tilde{\gamma}_t$~--- ограниченные 
+функции времени, выполняющие роль параметров; функции~$\xi_t(y,z)$ 
+и~$\zeta_t(y,z)$~--- заданные структурные функции, выбираемые из 
+эмпирических соображений.
+
+     Для обеспечения условий существования решения дифференциального 
+уравнения~(\ref{e10-bos}) будем накладывать на структурные функции те же 
+ограничения, что и~на функции сноса и~диффузии в~(1) с~учетом 
+ограничений, наложенных на параметры уравнения~(2), т.\,е.
+\begin{multline*}
+\left\vert \xi_t(y,z)\right\vert + \left\vert \zeta_t(y,z)\right\vert 
+\leq C(1+\vert y\vert +\vert z\vert )\\[1pt] \mbox{для\ всех } 0\leq t\leq T\,;
+\end{multline*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+\left\vert \xi_t (y_1,z_1)-\xi_t(y_1,z_1)\right\vert +\left\vert 
+\zeta_t(y_1,z_1)-\zeta_t(y_2,z_2)\right\vert \leq{}\\[1pt]
+{}\leq C\left( \left\vert y_1-y_2\right\vert 
++\left\vert z_1-z_2\right\vert \right)\\[1pt]
+ \mbox{для\ всех }0\leq t\leq T\ 
+\mbox{и}\ y_1, y_2, z_1, z_2\in\mathbb{R}^1\,.
+\end{multline*}
+     
+     В рассматриваемой задаче в~качестве эмпирических соображений, 
+обосновывающих выбор структуры УОФ, предлагается использовать 
+записанные выше уравнения оптимальной оценки~(\ref{e6-bos}), точнее их 
+структуру, а~именно: представление правой час\-ти~(\ref{e6-bos}) в~виде 
+$(\widehat{A_t}\hm- (\widehat{\Sigma_t}/\tilde{\sigma}_t^2)
+\tilde{a}_t\hat{y}_t)\,dt\hm+ 
+(\widehat{\Sigma_t}/\tilde{\sigma}_t^2)\,d\tilde{z}_t$ обосно\-вы\-ва\-ет 
+предложение использовать в~качестве структурных функций 
+\begin{align*}
+\xi_t(y,z)&=\xi_t(y)= A_t(y)-
+\fr{\Sigma_t(y)}{\tilde{\sigma}_t^2}\,\tilde{a}_t y\,;\\ 
+\zeta_t(y,z)&= \zeta_t(y)= \fr{\Sigma_t(y)}{\tilde{\sigma}_t^2}\,,
+\end{align*}
+ т.\,е.\ 
+оценку фильтрации в~виде:
+
+\noindent
+     \begin{multline}
+d\tilde{y}_t= \tilde{\alpha}_t\left( A_t(\tilde{y}_t) - 
+\fr{\Sigma_t(\tilde{y}_t)}{\tilde{\sigma}_t^2}\,\tilde{a}_t\tilde{y}_t\right) dt 
++\tilde{\beta}_t 
+\fr{\Sigma_t(\tilde{y}_t)}{\tilde{\sigma}_t^2}\,d\tilde{z}_t+{}\\
+{}+\tilde{\gamma}_t\,dt\,,\enskip \tilde{y}_0={\sf E}\{Y\}\,.
+     \label{e11-bos}
+     \end{multline} 
+     %
+     Здесь, как и~для варианта управления~(\ref{e9-bos}), величины 
+$A_t(\tilde{y}_t)$ и~$\Sigma_t(\tilde{y}_t)$ можно интерпретировать как нулевые 
+приближения для $\widehat{A_t}$ и~$\widehat{\Sigma_t}$, которые уточняются 
+согласно методу услов\-но-оп\-ти\-маль\-ной фильт\-ра\-ции коэффициентами 
+$\tilde{\alpha}_t$, $\tilde{\beta}_t$ и~$\tilde{\gamma}_t$, обеспечивающими оценке 
+фильтра~(\ref{e11-bos}) несмещенность и~гарантированное качество, лучшее 
+на некотором классе допустимых фильтров~\cite{8-bos}.
+     
+     Соотношения для коэффициентов УОФ приведены в~\cite{8-bos} 
+и~представляют собой комбинации моментных характеристик 
+состояния~$y_t$, наблюдений~$\tilde{z}_t$ и~структурных функций~$\xi_t$ 
+и~$\zeta_t$, т.\,е.\ не зависят от реализуемого закона управления~$u_t$. 
+Приемлемый вариант для расчета этих коэффициентов на основе 
+имитационного компьютерного моделирования приведен в~следующем 
+разделе.
+
+\section{Численная реализация управления~$u_t^S$}
+
+     Подведем итог рассуждениям предыдущего раздела, перечислив шаги, 
+выполняемые для реализации варианта управления~$u_t^S$ для решения 
+исходной задачи оптимизации, включающей уравнение~(1) ненаблюдаемого 
+состояния, уравнение~(2) выхода, формирующего косвенные наблюдения, 
+и~критерия~(3), минимизируемого на классе $\mathcal{F}_t^z$-из\-ме\-ри\-мых 
+неупреждающих управлений.
+     
+    \textbf{Шаг~1.} Рассматривается вспомогательная задача условно-оптимальной 
+фильтрации для системы наблюдения и~фильтра вида
+     \begin{equation}
+     \left.
+     \begin{array}{rl}
+     dy_t&= A_t(y_t)\,dt+\Sigma_t(y_t)\,dv_t\,,\enskip y_0=Y\,;\\[6pt]
+     d\tilde{z}_t&= \tilde{a}_t y_t\,dt+\tilde{\sigma}_t \,dw_t\,,\enskip 
+z_0=Z\,;\\[6pt]
+     d\tilde{y}_t&= \tilde{\alpha}_t\xi_t(\tilde{y}_t)\,dt 
++\tilde{\beta}_t\zeta_t(\tilde{y}_t)\,d\tilde{z}_t+\tilde{\gamma}_t\,dt\,,
+\\[6pt]
+&\hspace*{35mm}\tilde{y}_0={\sf E}\{Y\}\,,
+\end{array}
+\right\}
+     \label{e12-bos}
+\end{equation}
+где
+$$
+     \xi(\tilde{y}_t)=A_t(\tilde{y}_t)-
+\fr{\Sigma_t(\tilde{y}_t)}{\tilde{\sigma}_t^2}\,\tilde{a}_y\tilde{y}_t\,;\enskip 
+\zeta_t(\tilde{y}_t)= \fr{\Sigma_t(\tilde{y}_t)}{\tilde{\sigma}_t^2}\,.
+  $$
+     
+     Решение~(\ref{e12-bos})~--- коэффициенты $\tilde{\alpha}_t$, 
+$\tilde{\beta}_t$ и~$\tilde{\gamma}_t$ УОФ~--- определяются следующей системой 
+уравнений (это частный случай решения задачи УОФ для системы 
+наблюдения общего вида~\cite{8-bos}):
+
+\noindent
+     \begin{equation}
+     \left.
+     \begin{array}{l}
+     \hspace*{-2.5mm}\tilde{\gamma}_t={\sf E}\left\{A_t\right\} - \tilde{\alpha}_t {\sf E}\{\xi_t\} -
+\tilde{\beta}_t\tilde{a}_t {\sf E}\{y_t\}\,;\\[9pt]
+  \hspace*{-2.5mm} \tilde{\beta}_t= \fr{\tilde{a}_t {\sf E}\left\{(y_t-\tilde{y}_t) y_t 
+\zeta_t\right\}}{\tilde{\sigma}_t^2 {\sf E}\{\zeta_t^2\}}\,;\\[9pt]
+    \hspace*{-2.5mm} \tilde{\alpha}_t= {\sf E}\left\{\!\left(\!
+y_t-\tilde{y}_t\!\right)\! \Bigg(\!\fr{\partial \xi_t}{\partial t} +
+\fr{1}{2}\,\fr{\partial^2\xi_t}{\partial 
+(\tilde{y}_t)^2}\left(\tilde{\beta}_t\zeta_t \tilde{\sigma}_t)^2\right)+ {}\right.\\[6pt]
+\hspace*{-2.5mm}{}+\left(y_t-\tilde{y}_t\right) 
+\fr{\partial \xi_t}{\partial \tilde{y}_t}\,{\sf E}\{A_t\} +
+\tilde{\beta}_t 
+\tilde{a}_t\overline{\zeta_t y_t}\Bigg)-{}\\[6pt]
+{}-\fr{\partial \xi_t}{\partial 
+\tilde{y}_t}\,\left(\tilde{\beta}_t\zeta_t\tilde{\sigma}_t\right)^2+
+\xi_t\left(\overline{A}_t-
+\tilde{\beta}_t\tilde{a}_t \overline{\zeta_t y_t}
+\right)\Bigg\}\times{}\\[6pt]
+\hspace*{14mm}{}\times
+\left(
+{\sf E}\{ \xi_t \overline{\xi}_t-(y_t- \tilde{y}_t)
+\fr{\partial \xi_t}{\partial \tilde{y}_t}\,\overline{\xi}_t\}\right)^{-1}\,,
+     \end{array}\!\!\!
+     \right\}\!\!
+     \label{e13-bos}
+     \end{equation}
+где обозначено: 
+\begin{alignat*}{2}
+A_t&= A_t\left(y_t\right);&\enskip \overline{A}_t&=A_t- {\sf E}\{A_t\};\\ 
+\xi_t&= \xi_t\left(\tilde{y}_t\right);&\enskip \overline{\xi}_t&=\xi_t- 
+{\sf E}\left\{\xi_t\right\}\,;\\
+\zeta_t&= \zeta_t(\tilde{y}_t);&\enskip 
+\overline{\zeta_t y_t}&= \zeta_t y_t- {\sf E}\left\{\zeta_t y_t\right\}\,.
+\end{alignat*}
+     
+     В качестве численной реализации оценки~$\tilde{y}_t$ предлагается 
+использовать метод имитационного компьютерного  моделирования, 
+а~именно: разбивая ось времени на интервалы равной малой длины~$\Delta 
+t$, для вычисления коэффициентов $\tilde{\alpha}_t$, $\tilde{\beta}_t$ 
+и~$\tilde{\gamma}_t$ в~правой части~(\ref{e13-bos}) использовать вычисленные 
+на предыдущем шаге $\tilde{\alpha}_{t-\Delta t}$ и~$\tilde{\beta}_{t-\Delta t}$, 
+а~моменты~${\sf E}\{\cdot\}$ заменять на их оценки статистическим средним, для 
+чего моделировать пучок траекторий процессов $y_t$, $\tilde{z}_t$
+и~$\tilde{y}_t$ 
+Заметим, что аналогичный метод, основанный на формуле  
+Фейн\-ма\-на--Ка\-ца, использован в~\cite{4-bos} для расчета коэффициентов 
+$\alpha_t$, $\beta_t(y)$ и~$\gamma_t(y)$ в~задаче оптимального управления по 
+полной информации и~хорошо себя показал. Кроме того, для обоих расчетов 
+(параметров управления и~коэффициентов УОФ) можно воспользоваться 
+одним и~тем же ресурсом~--- смоделированным пучком траекторий.
+     
+     \textbf{Шаг~2.} Рассматривается вспомогательная задача управления с~тем же 
+целевым функционалом~(3), линейным выходом~(2) и~состоянием~(1), но 
+в~предположении наблюдаемости состояния. Решение~--- коэффициенты 
+$\alpha_t$ и~$\beta_t(y)$, формирующие закон управления $u_t^*\hm= u_t^*(y_t, 
+z_t)$ согласно~(4),~--- находится любым из двух численных методов, 
+предложенных в~\cite{2-bos, 4-bos}.
+     
+     \textbf{Шаг~3.} Формируется расширенная (эквивалентная) постановка для 
+исходной задачи, вклю\-ча\-ющая уравнение состояния~(1), линейный 
+выход~(2) и~псевдонаблюдения 
+$$
+\tilde{z}_t= B_tz_t- \int\limits_0^t 
+B_s c_s u_s^S\,ds\,.
+$$
+ Предложенный вариант управления~$u_t^S$ вычисляется 
+по формуле~(\ref{e9-bos}), где используются параметры управления 
+$\alpha_t$ и~$\beta_t(y)$, вычисленные на шаге~2, и~оценка УОФ~$\tilde{y}_t$ 
+по наблюдениям~$\tilde{z}_t$ с~коэффициентами~$\tilde{\alpha}_t$, 
+$\tilde{\beta}_t$ и~$\tilde{\gamma}_t$ вычисленными на шаге~1.
+
+\section{Заключение}
+
+     В статье подведен итог исследованию задачи оптимизации линейного 
+выхода нелинейной дифференциальной системы по квадратичному 
+критерию, выполненному в~[1--4]. Оптимальные алгоритмы, полученные для 
+рассматриваемой задачи оптимизации в~случае полной информации, т.\,е.\ 
+при наличии возможности наблюдать и~выход сис\-те\-мы, и~ее состояние, 
+проанализированы в~связи с~постановкой задачи при неполной информации, а~именно:
+в~случае, когда выход выполняет функцию косвенных наблюдений за 
+неизвестным состоянием системы. Возможности получить и~в~такой 
+постановке оптимальные решения не выявлены, поэтому предложен вариант 
+субоптимального решения, опирающийся на концепцию разделения задач 
+управления и~фильтрации и~на метод услов\-но-оп\-ти\-маль\-ной 
+фильт\-ра\-ции состояний стохастических дифференциальных систем наблюдения 
+В.\,С.~Пугачева.
+     
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+\bibitem{1-bos}
+\Au{Босов А.\,В., Стефанович А.\,И.} Управление выходом 
+стохастической дифференциальной системы по квад\-ра\-тич\-но\-му 
+критерию. I.~Оптимальное решение методом динамического 
+программирования~// Информатика и~её применения, 2018. Т.~12. 
+Вып.~3. С.~99--106.
+\bibitem{2-bos}
+\Au{Босов А.\,В., Стефанович А.\,И.} Управление выходом 
+стохастической дифференциальной системы по квад\-ра\-тич\-но\-му 
+критерию. II.~Численное решение уравнений динамического 
+программирования~// Информатика и~её применения, 2019. Т.~13. 
+Вып.~1. С.~9--15.
+\bibitem{3-bos}
+\Au{Босов А.\,В., Стефанович А.\,И.} Управление выходом 
+стохастической дифференциальной системы по квад\-ра\-тич\-но\-му 
+критерию. III.~Анализ свойств оптимального управления~// 
+Информатика и~её применения, 2019. Т.~13. Вып.~3. С.~41--49.
+\bibitem{4-bos}
+\Au{Босов А.\,В., Стефанович А.\,И.} Управление выходом стохастической 
+дифференциальной системы по квад\-ра\-тич\-но\-му критерию. 
+IV.~Альтернативное чис\-лен\-ное решение~// Информатика и~её 
+применения, 2020. Т.~14. Вып.~1. С.~24--30.
+\bibitem{5-bos}
+\Au{Флеминг У., Ришел Р.} Оптимальное управление 
+детерминированными и~стохастическими системами~/ Пер. с~англ.~--- 
+М.: Мир, 1978. 316~с. (\Au{Fleming~W.\,H., Rishel~R.\,W.} Deterministic 
+and stochastic optimal control.~--- New York, NY, USA: Springer-Verlag, 
+1975. 222~p.)
+\bibitem{6-bos}
+\Au{Гихман И.\,И., Скороход А.\,В.} Теория случайных процессов.~--- М.: Наука, 1975. 
+Т.~III. 496~с.
+\bibitem{7-bos}
+\Au{{\ptb{\O}}\,\,ksendal~B.} Stochastic differential equations. An introduction 
+with applications.~--- New York, NY, USA: Springer-Verlag, 2003. 379~p.
+\bibitem{8-bos}
+\Au{Пугачев В.\,С., Синицын И.\,Н.} Стохастические 
+дифференциальные системы. Анализ и~фильтрация.~--- М.: Наука, 
+1990. 632~с.
+\bibitem{9-bos}
+\Au{Davis M.\,H.\,A.} Linear estimation and stochastic control.~--- London: 
+Chapman and Hall, 1977. 224~p.
+\bibitem{10-bos}
+\Au{Фельдбаум А.\,А.} Основы теории оптимальных автоматических 
+систем.~--- 2-е изд., испр. и~доп.~--- М.: Наука, 1966. 624~с.
+\bibitem{11-bos}
+\Au{Липцер Р.\,Ш., Ширяев А.\,Н.} Статистика случайных процессов 
+(нелинейная фильтрация и~смежные вопросы).~--- М.: Наука, 1974. 
+696~с.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+%\vspace*{-12pt}
+
+\hfill{\small\textit{Поступила в~редакцию 30.01.20}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{STOCHASTIC DIFFERENTIAL SYSTEM OUTPUT CONTROL BY~THE~QUADRATIC 
+CRITERION.\\ V.~CASE OF~INCOMPLETE STATE INFORMATION}
+
+
+
+\def\titkol{Stochastic differential 
+system output control by the quadratic 
+criterion. V. Case of incomplete state information}
+
+\def\aut{A.\,V.~Bosov}
+
+\def\autkol{A.\,V.~Bosov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+Institute of Informatics Problems, Federal Research Center ``Computer 
+Science 
+and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., 
+Moscow 
+119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+\Abste{ A generalization of the optimal control problem for the Ito diffusion process and a~linear 
+controlled output with a~quadratic quality criterion for the case of indirect observation of the state is 
+considered. The available solution of the problem with full information is used to synthesize control 
+from indirect observations based on the principle of separation. The ability to separate control and 
+state filtering tasks is justified by the properties\linebreak\vspace*{-12pt}}
+
+\Abstend{ of the quadratic criterion used. Instead of solving the 
+arising auxiliary problem of optimal filtering described by
+the general equations of nonlinear filtering 
+based on innovation processes, it is proposed to use the estimate of the conditionally optimal filter of 
+V.\,S.~Pugachev. Thus, the suboptimal solution of the control problem under consideration is 
+obtained as a~result of the traditional approach to control synthesis in the problem with incomplete 
+information, consisting in a~formal replacement in solving the corresponding problem with complete 
+information of the state variable by its estimate. Finally, a~case of numerical implementation of the 
+obtained suboptimal control is proposed. It is based on the method of computer simulation, using 
+a~common beam of simulated paths both for calculating the parameters of a~conditionally optimal 
+filter and for calculating the parameters in the original control problem.}
+\KWE{stochastic differential equation; stochastic differential system; optimal control; stochastic 
+filtering; conditionally-optimal filtering; computer simulations}
+
+\DOI{10.14357/19922264200203}
+
+%\vspace*{-20pt}
+
+\Ack
+\noindent
+This work was partially supported by the Russian Foundation for Basic Research (grant 19-07-00187-A).
+
+%\vspace*{6pt}
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+
+\bibitem{1-bos-1}
+\Aue{Bosov, A.\,V., and A.\,I.~Stefanovich.} 2018. Upravlenie vykhodom 
+stokhasticheskoy differentsial'noy sistemy po kvadratichnomu kriteriyu. 
+I.~Optimal'noe reshenie metodom dinamicheskogo programmirovaniya 
+[Stochastic differential system output control by the quadratic criterion. 
+I.~Dynamic programming optimal solution]. \textit{Informatika i ee 
+Primeneniya~--- Inform. Appl.} 12(3):99--106.
+\bibitem{2-bos-1}
+\Aue{Bosov, A.\,V., and A.\,I.~Stefanovich.} 2019. Upravlenie vykhodom 
+stokhasticheskoy differentsial'noy sistemy po kvadratichnomu kriteriyu. 
+II.~Chislennoe reshenie uravneniy dinamicheskogo programmirovaniya 
+[Stochastic differential system output control by the quadratic criterion. 
+II.~Dynamic programming equations numerical solution]. 
+\textit{Informatika i ee Primeneniya~--- Inform. Appl.} 13(1):9--15.
+\bibitem{3-bos-1}
+\Aue{Bosov, A.\,V., and A.\,I.~Stefanovich.} 2019. Upravlenie vykhodom 
+stokhasticheskoy differentsial'noy sistemy po kvadratichnomu kriteriyu. 
+III.~Analiz svoystv optimal'nogo upravleniya [Stochastic differential system 
+output control by the quadratic criterion. III.~Optimal control properties 
+analysis]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 13(3):41--49.
+\bibitem{4-bos-1}
+\Aue{Bosov, A.\,V., and A.\,I.~Stefanovich.} 2020. Upravlenie vykhodom 
+stokhasticheskoy differentsial'noy sistemy po kvadratichnomu kriteriyu. 
+IV.~Al'ternativnoe chislennoe reshenie [Stochastic differential system 
+output control by the quadratic criterion. IV.~Alternative numerical 
+decision]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 14(1):24--30.
+\bibitem{5-bos-1}
+\Aue{Fleming, W.\,H., and R.\,W.~Rishel.} 1975. \textit{Deterministic and 
+stochastic optimal control.} New York, NY: Springer-Verlag. 222~p.
+\bibitem{6-bos-1}
+\Aue{Gihman, I.\,I., and A.\,V.~Skorohod.} 2012. \textit{The theory of 
+stochastic processes}. New York, NY: Springer-Verlag. Vol.~3. 388~p.
+\bibitem{7-bos-1}
+\Aue{{\ptb{\O}}ksendal, B.} 2003. \textit{Stochastic differential equations. 
+An introduction with applications}. New York, NY: Springer-Verlag. 379~p.
+\bibitem{8-bos-1}
+\Aue{Pugachev, V.\,S., and I.\,N.~Sinitsyn.} 1987. \textit{Stochastic 
+differential systems. Analysis and filtering}. Chichester, NY: J.~Wiley \& 
+Sons. 549~p.
+\bibitem{9-bos-1}
+\Aue{Davis, M.\,H.\,A.} 1977. \textit{Linear estimation and stochastic 
+control}. London: Chapman and Hall. 224~p.
+\bibitem{10-bos-1}
+\Aue{Feldbaum, A.\,A.} 1966. \textit{Osnovy teorii optimal'nykh 
+avtomaticheskikh system} [Foundations of theory of optimal automatic 
+systems]. Moscow: Nauka. 624~p.
+\bibitem{11-bos-1}
+\Aue{Liptser, R.\,S., and A.\,N.~Shiryaev}. 2001. \textit{Statistics of 
+random processes~II.~Applications}. Berlin: Springer-Verlag. 402~p.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Received January 30, 2020}}
+
+%\pagebreak
+
+%\vspace*{-24pt}
+
+
+
+\Contrl
+
+\noindent
+\textbf{Bosov Alexey V.} (b.\ 1969)~--- Doctor of Science in technology, principal scientist, 
+Institute of Informatics Problems, Federal Research Center ``Computer Science and Control'' of 
+the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{AVBosov@ipiran.ru}
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

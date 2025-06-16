@@ -1,0 +1,721 @@
+\def\stat{listopad}
+
+\def\tit{РАЗРЕШЕНИЕ КОНФЛИКТОВ В~ГИБРИДНЫХ ИНТЕЛЛЕКТУАЛЬНЫХ  
+МНОГОАГЕНТНЫХ СИСТЕМАХ}
+
+\def\titkol{Разрешение конфликтов в~гибридных интеллектуальных  
+многоагентных системах}
+
+\def\aut{С.\,В.~Листопад$^1$, И.\,А.~Кириков$^2$}
+
+\def\autkol{С.\,В.~Листопад, И.\,А.~Кириков}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Листопад С.\,В.}
+\index{Кириков И.\,А.}
+\index{Listopad S.\,V.}
+\index{Kirikov I.\,A.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнена при поддержке Министерства науки и~высшего образования Российской Федерации (проект 
+%075-15-2020-799).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Калининградский филиал Федерального исследовательского центра <<Информатика 
+  и~управ\-ле\-ние>> Российской 
+академии наук, \mbox{ser-list-post@yandex.ru}}
+\footnotetext[2]{Калининградский филиал Федерального исследовательского центра 
+      <<Информатика и~управ\-ле\-ние>>
+       Российской академии наук, \mbox{baltbipiran@mail.ru}}
+
+%\vspace*{-4pt}
+
+       
+  
+  \Abst{Рассматривается алгоритм снижения интенсивности и~разрешения конфликтов, 
+возни\-ка\-ющих в~гибридных интеллектуальных многоагентных сис\-те\-мах (\mbox{ГиИМАС}). Предлагаемый 
+алгоритм~--- составная часть метода управления проб\-лем\-но-
+и~про\-цес\-сно-ори\-ен\-ти\-ро\-ван\-ны\-ми конфликтами в~таких системах. Данный метод 
+позволяет идентифицировать ситуации принятия решений, при необходимости 
+стимулировать и~впоследствии разрешать с~помощью предлагаемого алгоритма 
+конструктивные формы конфликта, а~так\-же предотвращать его деструктивные формы. 
+Стимулирование конфликта совместно с~ге\-те\-ро\-ген\-ностью сис\-те\-мы по моделируемым 
+агентами знаниям специалистов и~используемым методам обеспечивает всестороннее 
+рассмотрение поставленной проб\-ле\-мы. Предлагаемый алгоритм снижения интенсивности 
+и~разрешения конфликтов позволяет агентам автоматически согласовать свои позиции 
+и~выработать единое коллективное решение, чтобы избавить пользователя от 
+необходимости ручного анализа и~выбора решения из массива альтернатив, предлагаемых 
+отдельными агентами.}
+  
+  \KW{конфликт; гибридная интеллектуальная многоагентная система; коллектив 
+специалистов; разрешение конфликта}
+
+\DOI{10.14357/19922264220108}
+  
+\vspace*{-3pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+\vspace*{-3pt}
+
+  На сегодняшний день быстрое и~точное решение проблем, возникающих при 
+управлении сложными со\-ци\-аль\-но-эко\-но\-ми\-че\-ски\-ми сис\-те\-ма\-ми, 
+стало одним из важнейших элементов конкурентоспособности компании~[1]. 
+При этом последствия принимаемых решений в~условиях неопределенности, 
+риска и~динамической среды не могут быть точно спрогнозированы. Поэтому 
+все б$\acute{\mbox{о}}$льшую актуальность приобретает разработка 
+и~применение интеллектуальных сис\-тем поддержки принятия решений, 
+собирающих и~анализирующих данные, предос\-тав\-ля\-ющих пользователю 
+альтернативы, релевантные проб\-лем\-ной ситуации, и~их оценки. Для 
+по\-стро\-ения таких систем в~[2] предложен подход на основе \mbox{ГиИМАС}, мо\-де\-ли\-ру\-ющих 
+коллективное решение проб\-лем специалистами различных профилей <<за 
+круглым столом>> путем организации взаимодействия интеллектуальных 
+агентов~--- относительно автономных программных сущностей, об\-ла\-да\-ющих 
+достаточно развитыми моделями предметной\linebreak об\-ласти и~целеполагания. 
+Гибридные интеллектуальные многоагентные сис\-те\-мы 
+интегрируют подход гиб\-рид\-ных интеллектуальных сис\-тем 
+А.\,В.~Колесникова~[2], обеспечивающих учет \mbox{неоднородности} решаемой 
+проблемы, и~аппарат многоагентных сис\-тем (МАС) в~смысле В.\,Б.~Тарасова~[3], 
+поз\-во\-ля\-ющий моделировать макроуровневые процессы и~явления 
+в~коллективах спе\-ци\-а\-ли\-стов. 
+  
+  Одна из особенностей \mbox{ГиИМАС}~--- возможность моделирования 
+проблемно- и~про\-цес\-сно-ори\-ен\-тиро\-ван\-ных конфликтов между 
+агентами, кото-\linebreak рые, как показано в~[4], поз\-во\-ля\-ют всесторонне\linebreak рассмотреть 
+проблему и~адаптировать под нее процессы выработки решения системой. 
+Причины возникновения конфликтов среди агентов сис\-те\-мы~--- 
+противоречия между целями, методами, моделями предметной об\-ласти, 
+наборами данных, используемыми отдельными агентами при подготовке 
+решений подзадач и~согласовании правил взаимодействия для выработки 
+итогового коллективного решения~[1]. Если агенты не могут договориться 
+между собой, пользователь сталкивается с~дополнительной задачей ручного 
+анализа и~выбора решения из массива альтернатив, пред\-ла\-га\-емых отдельными 
+агентами, что обесценивает результаты работы \mbox{ГиИМАС}. Таким 
+образом, без автоматического разрешения конфликтов 
+агентов \mbox{ГиИМАС} не может рас\-смат\-ри\-вать\-ся как эффективная сис\-те\-ма 
+поддержки принятия решений. 
+
+Цель настоящей работы~--- разработка 
+алгоритма снижения интенсивности и~разрешения 
+конфликтов между агентами в~рамках модели \mbox{ГиИМАС} с~проб\-лем\-но-  
+и~про\-цес\-сно-ори\-ен\-ти\-ро\-ван\-ны\-ми конфликтами.
+
+  \vspace*{-6pt}
+  
+\section{Подходы к~разрешению конфликтов в~системах  
+распределенного искусственного интеллекта}
+
+  \vspace*{-2pt}
+
+  Вопросы разрешения конфликтов в~сис\-те\-мах распределенного 
+искусственного интеллекта связаны с~преодолением множества проб\-лем, 
+таких как выбор агентом стратегии поведения, оценка интересов 
+и~прогнозирование поведения других агентов, обеспечение спра\-вед\-ли\-вости 
+результатов разрешения конфликта, наличие в~сис\-те\-ме <<эгоистичных>> 
+агентов, неоднородность и~взаимозависимость целевых функций агентов, 
+согласование противоречивых аргументов, повторяющиеся взаимодействия, 
+доверие между агентами и~другие~[5, 6]. В~[7] предложен метод выбора 
+стратегии поведения агента при разрешении конфликтов в~МАС 
+в~зависимости от типа конфликта (конфликт по целям, планам 
+или убеж\-де\-ни\-ям), степени автономности агента и~целевой функции~[8]. В~[9] 
+рассматриваются вопросы разрешения конфликтов, связанных с~совместным 
+использованием ресурсов и~не\-со\-вмес\-ти\-мостью целей агентов, путем выбора 
+одной из шести стратегий в~зависимости от загруженности\linebreak сети обмена 
+сообщениями: арбитраж, самомодификация (независимость), централизация, 
+переговоры, соглашение о~приоритете и~взаимное согласование. В~[10] 
+представлены четыре базовые \mbox{упрощенные} стратегии разрешения конфликтов 
+в~МАС: переговоры, арбитраж, самомодификация и~голосование. Выбор 
+стратегий зависит от числа агентов, количества требуемых сообщений, 
+расчетного процессорного времени, расчетного времени поиска и~принятия 
+решения, а~также ожидаемого сред\-не\-го удовлетворения от принятого решения. 
+Авторы~[11] предложили метод выбора стратегии разрешения конфликтов 
+(ConfRSSM) с~по\-мощью многоагентного моделирования. В~рамках данного 
+метода релевантность стратегий (принуждение, подчинение, делегирование, 
+переговоры, консенсус) текущей конфликтной ситуации оценивается на основе 
+степени уве\-рен\-ности агентов в~своих <<мнениях>> и~интенсивности 
+конфликта.
+  
+  Анализ~\cite{5-l, 6-l, 7-l, 8-l, 9-l, 10-l, 11-l} позволяет выделить следующие 
+основные стратегии разрешения конфликтов в~сис\-те\-мах распределенного 
+искусственного ин\-тел\-лекта: 
+  \begin{itemize}
+  \item  переговоры, обеспечивающие обмен знаниями и~информацией о целях 
+между двумя или более агентами для достижения взаимоприемлемого 
+соглашения по убеждениям, планам действий или целям в~рамках совместной 
+работы над поставленными проб\-ле\-ма\-ми~[1]. Работы в~об\-ласти 
+организации переговорного процесса агентов охватывают вопросы его 
+формализации (создание моделей предметной об\-ласти и~предпочтений, 
+необходимых для ведения переговоров, разработка протоколов, ре\-гу\-ли\-ру\-ющих 
+взаимодействие между агентами), а~так\-же разработки моделей 
+интеллектуальных переговорных агентов, построенных, например, на основе 
+стратегии торгов, модели оппонентов или стратегии принятия~\cite{6-l}. 
+Реализация стратегии переговоров возможна, если все взаимодействующие 
+агенты~--- интеллектуальные, т.\,е.\ обладают развитыми моделями предметной 
+области и~под\-сис\-те\-ма\-ми целеполагания, что позволяет им принимать решения 
+для достижения своих целей;
+
+
+  \item делегирование, т.\,е.\ привлечение для разрешения конфликта агентов 
+третьей стороны, которая не имеет воз\-мож\-ности напрямую изменять поведение 
+агентов~\cite{11-l}. В~рамках стратегий\linebreak данного класса выделяются два 
+подкласса: арбитраж и~посредничество. В~первом случае решение арбитра 
+обязательно для принятия и~исполнения конфликтующими агентами. \mbox{В~случае} 
+посредничества решения третьей стороны принимаются и~выполняются 
+с~согласия конфликтующих сторон. В~рамках данной стратегии 
+предполагается, что привлекаемый для разрешения конфликта агент имеет 
+более развитую базу знаний и~больше возможностей для поиска решений по 
+сравнению с~конфликтующими агентами~[12, 13]. Стратегия привлечения 
+третьей стороны обеспечивает быстрое принятие решения и~минимальное 
+число сообщений между агентами. Эта стратегия наиболее актуальна, когда 
+агент не способен взаимодействовать с~другими агентами;
+  \item голосование, когда каждый из агентов с~по\-мощью своих рассуждений 
+генерирует ре\-ше\-ние-кан\-ди\-дат, после чего агенты голосуют по 
+предложенным решениям в~соответствии со своими целевыми функциями, 
+чтобы максимизировать об\-ще\-сис\-тем\-ный показатель удовлетворенности~[14];
+  \item самомодификация, которая предполагает, что агент, об\-на\-ру\-жив\-ший 
+конфликты с~другими агентами, меняет свое поведение вместо того, чтобы 
+взаимодействовать с~ними для выработки взаимовыгодного решения. 
+Достоинства данной стратегии~--- простота и~высокая скорость разрешения 
+конфликтов~\cite{10-l};
+  \item  подчинение, которое может применяться, когда агент добровольно 
+идет на уступки другому агенту с~более высоким статусом, репутацией, опытом 
+или уверенностью в~предложенном решении~\cite{11-l}. В~реальных 
+коллективах такое поведение соответствует конформизму;\\[-10pt]
+  \item игнорирование, т.\,е.\ отказ от усилий по разрешению конфликта, если 
+его интенсивность низкая, а~конфликтующие стороны обладают равным 
+статусом, репутацией и~опытом, а также низкой уверенностью в~предлагаемых 
+ими решениях~\cite{11-l};
+  \item  принуждение, когда агент с~более высоким статусом, репутацией, 
+опытом или уверенностью в~предложенном решении принуждает другого 
+агента отказаться от своего решения, что помогает снизить слож\-ность принятия 
+итогового решения за счет исключения некоторых вариантов в~рамках 
+некомпенсаторной стратегии~\cite{14-l}. 
+  \end{itemize}
+  
+  \vspace*{-6pt}
+  
+\section{Модель гибридных интеллектуальных многоагентных 
+систем с~управлением конфликтами}
+
+  \vspace*{-2pt}
+
+  Детально модель \mbox{ГиИМАС}, моделирующей проб\-лем\-но-  
+и~про\-цес\-сно-ори\-ен\-ти\-ро\-ван\-ные конфликты, представлена в~\cite{4-l}. 
+Рассмотрим основные ее элементы, необходимые для описания алгоритма 
+снижения ин\-тен\-сив\-ности и~разрешения конфликтов. Формально 
+\mbox{ГиИМАС} определяется выражением~\cite{4-l}:
+  \begin{equation}
+  \mathrm{himas} = \langle \mathrm{AG}^*, \mathrm{env}, \mathrm{INT}, 
+\mathrm{ORG}, \mathrm{MLP}\rangle\,,
+  \label{e1-l}
+  \end{equation}
+где $\mathrm{AG}^*=\{ \mathrm{ag}_1, \ldots , \mathrm{ag}_n, \mathrm{ag}^{\mathrm{dm}}, \mathrm{ag}^{\mathrm{fc}}\}$~--- 
+множество 
+агентов, включающее~$n$ аген\-тов-спе\-ци\-а\-ли\-стов (АС) $\mathrm{ag}_i$, 
+$i\hm\in \mathbb{N}$, $1\hm\leq i\hm\leq n$, агента $\mathrm{ag}^{\mathrm{dm}}$, 
+при\-ни\-ма\-юще\-го решения (АПР), и~аген\-та-фа\-си\-ли\-та\-то\-ра (АФ) 
+$\mathrm{ag}^{\mathrm{fc}}$, обеспечивающего управ\-ле\-ние конфликтами в~сис\-те\-ме; 
+$\mathrm{env}$~--- концептуальная модель внешней среды системы; 
+$\mathrm{INT}$~--- множество элементов структурирования 
+взаимодействий агентов~\cite{4-l};\linebreak $\mathrm{ORG}$~--- множество 
+архитектур \mbox{ГиИМАС}; $\mathrm{MLP}\hm= \{\mathrm{cnfm, gdid}\}$~--- 
+множество концептуальных моделей \mbox{макроуровневых} процессов 
+в~\mbox{ГиИМАС}, содержащее модель $\mathrm{cnfm}$ процесса управ\-ле\-ния 
+\mbox{конфликтами} агентов~\cite{15-l} и~модель $\mathrm{gdid}$ идентификации 
+взаимозависимости целей агентов~\cite{15-l}. 
+
+  Агент $\mathrm{ag}_{\mathrm{id}}\hm\in \mathrm{AG}^*$ из формулы~(1) описывается 
+выражением
+
+\noindent
+  $$
+  \mathrm{ag_{id}}=\langle \mathrm{id}_{\mathrm{id}}^{\mathrm{ag}}, 
+  \mathrm{gl}_{\mathrm{id}}^{\mathrm{ag}}, \mathrm{ACT}_{\mathrm{id}}^{\mathrm{ag}}\rangle\,,
+  $$
+где $\mathrm{id}_{\mathrm{id}}^{\mathrm{ag}}$~--- идентификатор агента; 
+$\mathrm{gl}_{\mathrm{id}}^{\mathrm{ag}}$~--- нечеткая цель 
+агента~\cite{15-l}; $\mathrm{ACT}_{\mathrm{id}}^{\mathrm{ag}}$~--- множество действий агента.
+  
+  Модель процесса управления конфликтами агентов описывается выражением:
+  \begin{multline}
+ \mathrm{cnfm} ={}\\
+\!\!{}=\left\langle \mathbf{CNF}, \mathrm{cnfcl}, \mathrm{ACT^{afcm}}, 
+\mathrm{ACT}^{\mathrm{agcs}}, \mathrm{ACT}^{\mathrm{agcr}}\right\rangle,\!\!\!
+  \label{e2-l}
+  \end{multline}
+где $\mathbf{CNF}$~--- мат\-ри\-ца конфликтов~(\ref{e3-l}) между парами 
+агентов; $\mathrm{cnfcl}$~--- это функ\-ция-клас\-си\-фи\-ка\-тор конфликтов~\cite{4-l}, 
+необходимая для формирования мат\-ри\-цы~$\mathbf{CNF}$; 
+$\mathrm{ACT}^{\mathrm{afcm}}\hm= \{ \mathrm{act}^{\mathrm{cnfm}},\linebreak \mathrm{act}^{\mathrm{cnfi}}, 
+\mathrm{act}^{\mathrm{cnfs}}, 
+\mathrm{act}^{\mathrm{cnfr}}\}$~--- множество функций АФ по управ\-ле\-нию конфликтами 
+в~\mbox{ГиИМАС}, содержащее функцию <<управ\-ле\-ние конфликтом>> 
+$\mathrm{act}^{\mathrm{cnfm}}$, обеспечивающую идентификацию $\mathrm{act^{cnfi}}$ конфликтов 
+с~по\-мощью классификатора $\mathrm{cnfcl}$ и~инициа\-ли\-за\-цию функции стимуляции 
+$\mathrm{act^{cnfs}}$ или разрешения $\mathrm{act^{cnfr}}$ конфликтов; 
+$\mathrm{ACT}^{\mathrm{agcs}}$~--- \mbox{множество} действий АС, выполняемых при 
+стимулировании противоречий АФ; $\mathrm{ACT}^{\mathrm{agcr}}\hm= \left( \{ 
+\mathrm{act}_{\mathrm{ig}}^{\mathrm{agcr}}, 
+\mathrm{act}_{\mathrm{sm}}^{\mathrm{agcr}}, \mathrm{act}_{\mathrm{vot}}^{\mathrm{agcr}}, 
+\mathrm{act}_{\mathrm{del}}^{\mathrm{agcr}}, 
+\mathrm{act}_{\mathrm{neg}}^{\mathrm{agcr}}\}, \overset{\mathrm{prf}}{\prec}\right)$~---
+ упорядоченное множество 
+допустимых действий (стратегий) АС по разрешению противоречий,\linebreak 
+содержащее стратегию переговоров $\mathrm{act}^{\mathrm{agcr}}_{\mathrm{neg}}$, делегирования 
+$\mathrm{act}_{\mathrm{del}}^{\mathrm{agcr}}$, голосования 
+$\mathrm{act}_{\mathrm{vot}}^{\mathrm{agcr}}$, самомодификации 
+$\mathrm{act}_{\mathrm{sm}}^{\mathrm{agcr}}$ и~игнорирования 
+$\mathrm{act}_{\mathrm{ig}}^{\mathrm{agcr}}$. Отношение предпочтения 
+$\overset{\mathrm{prf}}{\prec}$ задано сле\-ду\-ющим образом: $\mathrm{act}_{\mathrm{ig}}^{\mathrm{agcr}} 
+\overset{\mathrm{prf}}{\prec} \mathrm{act}_{\mathrm{sm}}^{\mathrm{agcr}} 
+\overset{\mathrm{prf}}{\prec} \mathrm{act}_{\mathrm{vot}}^{\mathrm{agcr}} 
+\overset{\mathrm{prf}}{\prec} \mathrm{act}_{\mathrm{del}}^{\mathrm{agcr}}
+\overset{\mathrm{prf}}{\prec} \mathrm{act}_{\mathrm{neg}}^{\mathrm{agcr}}$. 
+Стратегии подчинения и~принуждения не моделируются в~\mbox{ГиИМАС}, так как 
+предполагают наличие иерархии АС и~способствуют возникновению таких 
+отрицательных эффектов, как груп\-синк и~конформизм.
+
+\begin{figure*}[b] %fig1
+  \vspace*{1pt}
+  \begin{center}  
+    \mbox{%
+\epsfxsize=153.979mm
+\epsfbox{Lis-1.eps}
+}
+
+
+\vspace*{6pt}
+
+{\small Алгоритм снижения интенсивности и~разрешения конфликтов в~\mbox{ГиИМАС}}
+\end{center}
+\end{figure*}
+  
+  Конфликт между агентами, т.\,е.\ элемент матрицы $\mathbf{CNF}$ из 
+выражения~(\ref{e2-l}), представляет собой следующий кортеж:
+  \begin{multline}
+  \mathrm{cnf}_{i j \,\mathrm{cnft}} ={}\\
+  {}=\left\langle  \mathrm{ag}_i, \mathrm{ag}_j, 
+  \mathrm{cnfin}, \mathrm{cnft}, \mathrm{ACT}_i^{\mathrm{agcr}}, 
+\mathrm{ACT}_j^{\mathrm{agcr}}\right\rangle,
+  \label{e3-l}
+  \end{multline}
+где $\mathrm{ag}_i$ и~$\mathrm{ag}_j$~--- это агенты-субъекты конфликта, $i,j\hm\in 
+\mathbb{N}$,  $1\hm\leq i,j\hm\leq n$, $i\not= j$; $\mathrm{cnfin}$~--- напряженность 
+конфликта в~виде скалярной величины $\mathrm{cnfin} \hm\in [0,1]$, вычисляемая 
+\mbox{классификатором} конфликтов $\mathrm{cnfcl}$ в~соответствии с~мерой напряженности 
+конфликта~\cite{4-l}; $\mathrm{cnft}$~--- символьная переменная <<тип конфликта>>, 
+определенная на множестве  
+$\mathrm{CNFT}=\{\mathrm{cnft}_{\mathrm{prb}}$\;=\;<<проб\-лем\-но-ори\-ен\-ти\-ро\-ван\-ный>>, 
+$\mathrm{cnft}_{\mathrm{prc}}$\;=\;<<про\-цес\-сно-ори\-ен\-ти\-ро\-ван\-ный>>$\}$; 
+$\mathrm{\mathrm{ACT}}_i^{\mathrm{agcr}}$ и~$\mathrm{ACT}_j^{\mathrm{agcr}}$~--- множество 
+допустимых действий агентов $\mathrm{ag}_i$ и~$\mathrm{ag}_j$ соответственно по разрешению 
+противоречий, $\mathrm{ACT}_i^{\mathrm{agcr}}\hm\subseteq \mathrm{ACT}_i^{\mathrm{ag}}$, 
+$\mathrm{ACT}_j^{\mathrm{agcr}}\hm\subseteq \mathrm{ACT}_j^{\mathrm{ag}}$, 
+$\mathrm{ACT}_i^{\mathrm{agcr}}, \mathrm{ACT}_j^{\mathrm{agcr}}\hm\subseteq 
+\mathrm{ACT}^{\mathrm{agcr}}$.
+  
+  Функция <<управление конфликтом>> $\mathrm{act^{cnfm}}$ АФ подробно описана 
+в~\cite{4-l}. Она состоит в~первоначальном определении показателя 
+взаимоза\-ви\-си\-мости целей агентов, запуска функции <<идентификация 
+конфликтов>> $\mathrm{act^{cnfi}}$ при получении очередного со\-об\-ще\-ния-ре\-ше\-ния 
+от АС и~в зависимости от ее результатов вызова функции стимуляции 
+$\mathrm{act^{cnfs}}$ или разрешения $\mathrm{act^{cnfr}}$ конфликтов. В~случае если одна из 
+двух последних функций устанавливает флаг необходимости завершения 
+работы, инициализируется процесс завершения работы \mbox{ГиИМАС}. 
+Поскольку работа посвящена вопросам снижения интенсивности и~разрешения 
+конфликтов в~\mbox{ГиИМАС}, рассмотрим функцию $\mathrm{act^{cnfr}}$ подробнее.
+  
+\section{Снижение интенсивности и~разрешение конфликтов 
+в~гибридных интеллектуальных многоагентных системах}
+
+  Для снижения интенсивности и~разрешения конфликтов в~\mbox{ГиИМАС} 
+предлагается алгоритм, представленный на рисунке. Он обеспечивает подбор 
+и~смену стратегий, рас\-смот\-рен\-ных в~разд.~2, для каждой пары 
+конфликтующих агентов с~учетом характеристик конфликта между ними.
+  
+
+
+
+  Алгоритм снижения интенсивности и~разрешения конфликтов агентов 
+начинается с~запроса у~конфликтующих агентов $\mathrm{ag}_i$ и~$\mathrm{ag}_j$ множеств 
+реализуемых ими стратегий разрешения противоречий 
+$\mathrm{ACT}_i^{\mathrm{agcr}}$ и~$\mathrm{ACT}_j^{\mathrm{agcr}}$. Агент-фа\-си\-ли\-та\-тор\linebreak
+ создает локальные 
+копии этих множеств $\mathrm{ACT}_i^{\mathrm{agcr}^*}\hm= \mathrm{ACT}_i^{\mathrm{agcr}}$ 
+и~$\mathrm{ACT}_j^{\mathrm{agcr}^*}\hm= \mathrm{ACT}_j^{\mathrm{agcr}}$. В~блоке~2 
+выполняется формирование списка (упорядоченного множества) стратегий для 
+разрешения конфликта между парой агентов $\mathrm{ag}_i$ и~$\mathrm{ag}_j$ по пра\-вилу:
+  \begin{equation}
+    \mathrm{ACT}_{ijc}^{\mathrm{agcr}} =\mathrm{ACT}_i^{\mathrm{agcr}^*} \cap  
+\mathrm{ACT}_j^{\mathrm{agcr}^*}\cap \mathrm{ACT}_{\mathrm{cnf}}^{\mathrm{agcr}}\,,
+  \label{e4-l}
+  \end{equation}
+  где
+  \begin{multline*}
+  \mathrm{ACT}_{\mathrm{cnf}}^{\mathrm{agcr}} = {}\\
+{}=\begin{cases}
+  \{ \mathrm{act}_{\mathrm{neg}}^{\mathrm{agcr}}, \mathrm{act}_{\mathrm{del}}^{\mathrm{agcr}}\}, &
+  \!\!\!\!\!\!\!\!\!\!\! \mbox{если } 
+\mathrm{cnfin}>\mathrm{cnfin^{htr}}\,;\\
+  \mathrm{ACT}^{\mathrm{agcr}}\,, & \hspace*{-18mm} \mbox{если } \mathrm{cnfin^{ltr}}<\mathrm{cnfin}< \mathrm{cnfin^{htr}}\\
+   &\hspace*{-18mm}\mbox{и}\ \mathrm{cnft}=\mathrm{cnft_{prb}}\,;\\
+  \mathrm{ACT}^{\mathrm{agcr}}\backslash 
+  \left\{\mathrm{act}_{\mathrm{ig}}^{\mathrm{agcr}}\right\}, & \!\!\!\!\mbox{если } \\
+&\hspace*{-87pt}\mathrm{cnfin^{ltr}}<\mathrm{cnfin} < \mathrm{cnfin^{htr}}\ \mbox{и}\ \mathrm{cnft} =\mathrm{cnft_{prc}}\,;\\
+  \{\mathrm{act}_{\mathrm{ig}}^{\mathrm{agcr}}\}, & \hspace*{-17mm}\!\!\!\mbox{если } \mathrm{cnfin}< \mathrm{cnfin^{ltr}}\,.
+  \end{cases}
+   \end{multline*}
+Здесь $\mathrm{cnfin^{ltr}}$ и~$\mathrm{cnfin^{htr}}$~--- 
+нижний и~верх\-ний пороги ин\-тен\-сив\-ности конфликта, 
+которые первоначально имеют сле\-ду\-ющие значения: 
+$\mathrm{cnfin^{ltr}}\hm= 0{,}005$ и~$\mathrm{cnfin^{htr}}\hm= 
+0{,}5$~--- и~долж\-ны быть уточнены в~ходе тестирования сис\-те\-мы. Конфликт с~ин\-тен\-сив\-ностью 
+$\mathrm{cnfin}\hm< \mathrm{cnfin^{ltr}}$ считается незначительным, а~с~ин\-тен\-сив\-ностью $\mathrm{cnfin} \hm > 
+\mathrm{cnfin^{htr}}$~--- сильным.
+
+  Если список $\mathrm{ACT}_{ijc}^{\mathrm{agcr}}$ стратегий для разрешения 
+конфликта, сформированный по правилу~(\ref{e4-l}), пуст, то конфликт не 
+может быть разрешен, и~функция завершает свою работу. В~противном случае 
+инициируется разрешение конфликтов по наиболее предпочтительной 
+стратегии в~соответствии с~отношением $\overset{\mathrm{prf}}{\prec}$. Если выбрана 
+стратегия <<игнорирование>>, то конфликт считается разрешенным, и~функция 
+завершает работу. В~противном случае АФ ожидает  
+со\-об\-ще\-ний-ре\-ше\-ний от АС, которые они выработают после применения 
+соответствующей стратегии. Получив такие сообщения, АФ вновь 
+идентифицирует конфликт между парой агентов $\mathrm{ag}_i$ и~$\mathrm{ag}_j$, оценивая его 
+ин\-тен\-сив\-ность и~тип, с~по\-мощью функции $\mathrm{act^{cnfi}}$. Выполняется смена 
+стратегии разрешения конфликта, для чего из копий множеств 
+$\mathrm{ACT}_i^{\mathrm{agcr}^*}$  и~$\mathrm{ACT}_j^{\mathrm{agcr}^*}$ удаляется текущая 
+стратегия и~происходит переход к~блоку~2.
+  
+  Таким образом, предлагаемый алгоритм дает возможность снизить 
+интенсивность сильных и~умеренных конфликтов, которые не позволяют 
+агентам \mbox{ГиИМАС} эффективно взаимодействовать при решении 
+поставленной проблемы. В~то же время незначительные конфликты могут 
+быть проигнорированы из-за того, что временн$\acute{\mbox{ы}}$е затраты на 
+их окончательное разрешение превышают затраты, связанные с~нарушениями 
+взаимодействия агентов из-за этих конфликтов. Наличие такого алгоритма 
+в~арсенале АФ позволяет ему динамически стимулировать возникновение 
+противоречий между АС, чтобы всесторонне рас\-смот\-реть по\-став\-лен\-ную  
+проб\-ле\-му и~сгенерировать нестандартные решения, не <<опасаясь>>, что 
+АС впоследствии не смогут согласовать свои позиции и~выработать совместные 
+рекомендации для пользователя.
+
+\section{Заключение}
+
+  В работе показана необходимость механизма автоматического разрешения 
+конфликтов между агентами \mbox{ГиИМАС}. Рассмотрены существующие\linebreak 
+подходы к~разрешению конфликтов в~сис\-те\-мах\linebreak распределенного 
+искусственного интеллекта. Пред\-став\-ле\-на модель \mbox{ГиИМАС} 
+с~проблемно- и~про\-цес\-сно-ори\-ен\-ти\-ро\-ван\-ны\-ми конфликтами, 
+имитирующая процесс коллективного решения проб\-лем на основе анализа их 
+напряженности. Предложен алгоритм снижения ин\-тен\-сив\-ности и~разрешения 
+конфликтов между агентами \mbox{ГиИМАС} с~использованием стратегий, 
+традиционных для сис\-тем распределенного искусственного интеллекта. 
+Снижение интенсивности и~разрешение конфликтов, \mbox{возникших} между 
+агентами \mbox{ГиИМАС} на первых стадиях рас\-смот\-ре\-ния по\-став\-лен\-ной 
+проблемы, поз\-во\-ля\-ет выработать согласованную позицию с~учетом различных 
+точек зрения и~интересов специалистов, мо\-де\-ли\-ру\-емых агентами сис\-те\-мы, 
+повышая таким образом ре\-ле\-вант\-ность сис\-те\-мы реальному коллективу 
+специалистов. 
+  
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+  \bibitem{1-l}
+  \Au{Hernes M., Sobieska-Karpi$\acute{\mbox{n}}$ska~J.} A~comparative analysis of conflicts 
+resolving methods in multiagent decision support systems~// Cognition Creativity Support 
+Systems, 2013. Vol.~153. P.~23--32.
+  \bibitem{2-l}
+  \Au{Колесников А.\,В., Кириков~И.\,А., Листопад~С.\,В.} Гибридные интеллектуальные 
+системы с~самоорганизацией: координация, согласованность, спор.~--- М.: ИПИ РАН, 2014. 
+189~с.
+  \bibitem{3-l}
+  \Au{Тарасов В.\,Б.} От многоагентных сис\-тем к~интеллектуальным организациям: 
+философия, психология, информатика.~--- М.: Эдиториал УРСС, 2002. 352~с.
+  \bibitem{4-l}
+  \Au{Листопад С.\,В., Кириков~И.\,А.} Метод идентификации конфликтов агентов 
+в~гибридных интеллектуальных многоагентных сис\-те\-мах~// Сис\-те\-мы и~средства 
+информатики, 2020. Т.~30. №\,1. С.~56--65. doi: 10.14357/08696527200105.
+  \bibitem{5-l}
+  \Au{Baarslag T., Kaisers~M., Gerding~E.\,H., Jonker~C.\,M., Gratch~J.} Computers that 
+negotiate on our behalf: Major challenges for self-sufficient, self-directed, and interdependent 
+negotiating agents~// {Autonomous agents and multiagent systems}~/ Eds. G.~Sukthankar,  
+J.\,A.~Rodriguez-Aguilar.~--- Lecture notes in computer science ser.: Lecture notes in artificial 
+intelligence subser.~--- Cham, Switzerland: Springer, 2017. Vol.~10643. P.~143--163.
+  \bibitem{6-l}
+  \Au{Aydo{\!\ptb{\!\v{g}}}an R., Baarslag~T., Gerding~E.} Artificial intelligence techniques for 
+conflict resolution~// Group Decis. Negot., 2021. Vol.~30. P.~879--883.
+  \bibitem{7-l}
+  \Au{Liu T.\,H., Goel~A., Martin~C.\,E., Barber~K.\,S.} Classification and representation of 
+conflict in multi-agent systems.~--- Austin, TX, USA: The University of Texas at Austin, 
+1998. Technical Report of the Laboratory for Intelligent Processes and 
+Systems TR98-UT-LIPS-AGENTS-01.
+13~p. {\sf https://citeseerx.ist.psu.edu/viewdoc/download?\linebreak  doi=10.1.1.35.3694\&rep=rep1\&type=pdf}.
+  \bibitem{8-l}
+  \Au{Basheer G.\,S., Ahmad~M.\,S., Tang~A.\,Y.\,C.} A~framework\linebreak for conflict resolution in 
+multi-agent systems~// Computational collective intelligence: Technologies and applications~/
+Eds. C.~B$\grave{\mbox{a}}$dic$\grave{\mbox{a}}$, N.\,T.~Nguyen, 
+M.~Brezovan.~--- Lecture notes in computer science ser.: Lecture notes in\linebreak artificial intelligence 
+subser.~--- Berlin, Heidelberg: Springer, 2013. Vol.~8083. P.~195--204.
+  \bibitem{9-l}
+  \Au{Adler M.\,R., Davis~A.\,B., Weihmayer~R., Worrest~R.\,W.} Conflict-resolution strategies 
+for nonhierarchical distributed agents~// Distributed artificial intelligence~II.~--- London: Pitman 
+Publishing, 1989. P.~139--161. 
+  \bibitem{10-l}
+  \Au{Barber K.\,S., Liu~T.\,H., Han~D.\,C.} Strategic decision-making for conflict resolution in 
+dynamic organized multi-agent systems~// CERA~J., 2000. Special Issue. 18~p. 
+{\sf https://citeseerx.ist.psu.edu/viewdoc/\linebreak download?doi=10.1.1.144.6881\&rep=rep1\&type=pdf}.
+  \bibitem{11-l}
+  \Au{Tang A., Basheer~G.\,A.} Conflict Resolution Strategy Selection Method (ConfRSSM) in 
+multi-agent systems~// Int. J.~Advanced Computer Science Applications, 2017. Vol.~8.  
+P.~398--404.
+  \bibitem{12-l}
+  \Au{Ioannidis Y.\,E., Sellis~T.\,K.} Conflict resolution of rules assigning values to virtual 
+attributes~// Conference (International) on the Management of Data Proceedings.~--- New York, 
+NY, USA: ACM, 1989. P.~205--214.
+  \bibitem{13-l}
+  \Au{Ephrati~E., Rosenschein~J.\,S.} The Clarke tax as a~consensus mechanism among 
+automated agents~// AAAI Proceedings, 1991. Vol.~91. P.~173--178.
+  \bibitem{14-l}
+  \Au{Helge G.} Decision-making strategies and self-regulated learning: Fostering  
+decision-making competence in education for sustainable development: PhD Thesis.~--- 
+G$\ddot{\mbox{o}}$ttingen: der Georg-August-Universit$\ddot{\mbox{a}}$t 
+G$\ddot{\mbox{o}}$ttingen, 2011. 206~p.
+  \bibitem{15-l}
+  \Au{Листопад С.\,В., Кириков~И.\,А.} Стимуляция конфликтов агентов в~гибридных 
+интеллектуальных многоагентных сис\-те\-мах~// Сис\-те\-мы и~средства информатики, 2021. 
+Т.~31. №\,2. С.~47--58. doi: 10.14357/ 08696527210205.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-12pt}
+
+\hfill{\small\textit{Поступила в~редакцию 10.01.22}}
+
+\vspace*{6pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{CONFLICT RESOLUTION\\ IN~HYBRID INTELLIGENT MULTIAGENT SYSTEMS}
+
+
+\def\titkol{Conflict resolution in~hybrid intelligent multiagent systems}
+
+
+\def\aut{S.\,V.~Listopad and~I.\,A.~Kirikov}
+
+\def\autkol{S.\,V.~Listopad and~I.\,A.~Kirikov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+  \noindent
+   Kaliningrad Branch of the Federal Research Center ``Computer Science and Control'' of the 
+Russian Academy of Sciences, 5~Gostinaya Str., Kaliningrad 236000, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+  
+   
+    
+   \Abste{The paper discusses an algorithm for reducing the intensity and resolving conflicts that 
+arise in hybrid intelligent multiagent systems. The proposed algorithm is an integral part of the 
+method for managing problem- and process-oriented conflicts in such systems. This method makes 
+it possible to identify decision-making situations, stimulate, if necessary, and subsequently resolve 
+constructive forms of conflict, as well as prevent its destructive forms using the proposed algorithm. 
+Stimulation of the conflict together with the heterogeneity of the system according to the knowledge 
+of specialists simulated by agents and the methods used by them provides an all-sided consideration 
+of the problem posed. The proposed algorithm for reducing the intensity and resolving conflicts 
+allows agents to reconcile automatically their positions on solving the problem and work out a 
+single collective solution in order to save the user from the need for manual analysis and choosing a 
+solution from the array of alternatives proposed by individual agents.}
+   
+   \KWE{conflict; hybrid intelligent multiagent system; team of specialists; conflict resolution}
+   
+\DOI{10.14357/19922264220108}
+
+%\vspace*{-16pt}
+
+%\Ack
+%\noindent
+
+
+
+
+%\vspace*{6pt}
+
+   \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+ \vspace*{-2pt}
+   
+  \bibitem{1-l-1}
+   \Aue{Hernes, M., and J.~Sobieska-Karpi$\acute{\mbox{n}}$ska.} 2013. A~comparative 
+analysis of conflicts resolving methods in multiagent decision support systems. \textit{Cognition 
+Creativity Support Systems} 153:23--32.
+  \bibitem{2-l-1}
+   \Aue{Kolesnikov, A.\,V., I.\,A.~Kirikov, and S.\,V.~Listopad.} 2014. \textit{Gibridnye 
+intellektual'nye sistemy s~samoorganizatsiey: koordinatsiya, soglasovannost', spor} [Hybrid 
+intelligent systems with self-organization: Coordination, consistency, and dispute]. Moscow: IPI 
+RAN. 189~p.
+  \bibitem{3-l-1}
+   \Aue{Tarasov, V.\,B.} 2002. \textit{Ot mnogoagentnykh sistem k~intellektual'nym 
+organizatsiyam: filosofiya, psikhologiya, informatika} [From multiagent systems to intelligent 
+organizations: Philosophy, psychology, and informatics]. Moscow: Editorial URSS. 352~p.
+  \bibitem{4-l-1}
+   \Aue{Listopad, S.\,V., and I.\,A.~Kirikov.} 2020. Metod identifikatsii konfliktov agentov 
+v~gibridnykh intellektual'nykh\linebreak\vspace*{-12pt}
+
+\columnbreak
+
+\noindent
+ mnogoagentnykh sistemakh [Agent conflict identification method in 
+hybrid intelligent multiagent systems]. \textit{Sistemy i~Sredstva Informatiki~--- Systems and 
+Means of Informatics} 30(1):56--65. doi: 10.14357/08696527200105.
+
+%\vspace*{-2pt}
+
+  \bibitem{5-l-1}
+   \Aue{Baarslag, T., M.~Kaisers, E.\,H.~Gerding, C.\,M.~Jonker, and J.~Gratch.} 2017. 
+Computers that negotiate on our behalf: Major challenges for self-sufficient, self-directed, and 
+interdependent negotiating agents. \textit{Autonomous agents and multiagent systems}. Eds. 
+G.~{Sukthan\-kar} and\linebreak  J.\,A.~Rodriguez-Aguilar. Lecture notes in computer science ser.:
+Lecture notes in artificial 
+intelligence subser. Cham, Switzerland: Springer. 
+10643:143--163. 
+
+%\vspace*{-2pt}
+
+  \bibitem{6-l-1}
+   \Aue{\mbox{Aydo{\!\ptb{\!\v{g}}}an}, R., T.~Baarslag, and E.~Gerding.} 2021. Artificial 
+intelligence techniques for conflict resolution. \textit{Group Decis. Negot.}  
+30:879--883.
+
+%\pagebreak
+
+  \bibitem{7-l-1}
+   \Aue{Liu, T.\,H., A.~Goel, C.\,E.~Martin, and K.\,S.~Barber.} 1998. Classification and 
+representation of conflict in multi-agent systems.
+Austin, TX, USA: The University of Texas at Austin, 
+1998. Technical Report of the Laboratory for Intelligent Processes and 
+Systems TR98-UT-LIPS-AGENTS-01. 13~p.  Available at: {\sf 
+https://citeseerx.\linebreak  ist.psu.edu/viewdoc/download?doi=10.1.1.35.3694\&\linebreak rep=rep1\&type=pdf} 
+(accessed January~17, 2022).
+  \bibitem{8-l-1}
+   \Aue{Basheer, G.\,S., M.\,S.~Ahmad, and A.\,Y.\,C.~Tang.} 2013. A~framework for conflict 
+resolution in multi-agent systems. \textit{Computational Collective Intelligence. Technologies and 
+applications}. Eds. C.~B$\grave{\mbox{a}}$dic$\grave{\mbox{a}}$, N.\,T.~Nguyen, and 
+M.~Brezovan. Lecture notes in computer science ser..: Lecture notes in artificial intelligence 
+subser. Berlin, Heidelberg: Springer. 8083:195--204.
+   \bibitem{9-l-1}
+   \Aue{Adler, M.\,R., A.\,B.~Davis, R.~Weihmayer, and R.\,W.~Worrest.} 1989.  
+Conflict-resolution strategies for nonhierarchical distributed agents. \textit{Distributed artificial 
+intelligence~II.} London: Pitman Publishing. 139--161. 
+   \bibitem{10-l-1}
+   \Aue{Barber, K.\,S., T.\,H.~Liu, and D.\,C.~Han.} 2000. Strategic decision-making for conflict 
+resolution in dynamic organized multi-agent systems. \textit{CERA~J.} Special Issue. 18~p.
+Available at: {\sf 
+https://citeseerx.ist.psu.edu/\linebreak viewdoc/download?doi=10.1.1.144.6881\&rep=rep1\&\linebreak type=pdf} 
+(accessed January~17, 2022).
+   \bibitem{11-l-1}
+   \Aue{Tang, A., and G.~Basheer.} 2017. A~Conflict Resolution Strategy Selection Method 
+(ConfRSSM) in multi-agent systems. \textit{Int. J.~Advanced Computer Science Applications} 
+8:398--404.
+   \bibitem{12-l-1}
+   \Aue{Ioannidis, Y.\,E., and T.\,K.~Sellis.} 1989. Conflict resolution of rules assigning values to 
+virtual attributes. \textit{Conference (International) on the Management of Data Proceedings}. 
+New York, NY: ACM. 205--214.
+   \bibitem{13-l-1}
+   \Aue{Ephrati, E., and J.\,S.~Rosenschein.} 1991. The Clarke tax as a consensus mechanism among 
+automated agents. \textit{AAAI Proceedings} 91:173--178.
+   \bibitem{14-l-1}
+   \Aue{Helge, G.} 2011. Decision-making strategies and self-regulated learning: Fostering 
+decision-making competence in education for sustainable development. 
+G$\ddot{\mbox{o}}$ttingen G$\ddot{\mbox{o}}$ttingen: der 
+Georg-August-Universit$\ddot{\mbox{a}}$t G$\ddot{\mbox{o}}$ttingen. PhD Thesis. 206~p.
+   \bibitem{15-l-1}
+   \Aue{Listopad, S.\,V., and I.\,A.~Kirikov.} 2021. Stimulyatsiya konfliktov agentov 
+v~gibridnykh intellektual'nykh mnogoagentnykh sistemakh [Stimulation of agent conflicts in hybrid 
+intelligent multiagent systems]. \textit{Sistemy i~Sredstva Informatiki~--- Systems and Means of 
+Informatics} 31(2):47--58. doi: 10.14357/08696527210205.
+   \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received January 10, 2022}}
+
+%\pagebreak
+
+%\vspace*{-18pt}
+   
+   \Contr
+   
+   \noindent
+   \textbf{Listopad Sergey V.} (b.\ 1984)~--- Candidate of Science (PhD) in technology, senior 
+scientist, Kaliningrad Branch of the Federal Research Center ``Computer Science and Control'' of 
+the Russian Academy of Sciences, 5~Gostinaya Str., Kaliningrad 236000, Russian Federation;  
+\mbox{ser-list-post@yandex.ru}
+   
+   \vspace*{3pt}
+   
+   \noindent
+   \textbf{Kirikov Igor A.} (b.\ 1955)~--- Candidate of  Sciences (PhD) in technology, director, 
+Kaliningrad Branch of the Federal Research Center ``Computer Science and Control'' of the Russian 
+Academy of Sciences, 5~Gostinaya Str., Kaliningrad 236000, Russian Federation; 
+\mbox{baltbipiran@mail.ru}
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 
+    

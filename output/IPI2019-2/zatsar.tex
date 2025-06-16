@@ -1,0 +1,881 @@
+\def\stat{zatsar}
+
+\def\tit{МОДЕЛИРОВАНИЕ ПРОЦЕССОВ СЕТЕВОГО ПЛАНИРОВАНИЯ ПОРТФЕЛЯ 
+ПРОЕКТОВ С~НЕОДНОРОДНЫМИ РЕСУРСАМИ В~УСЛОВИЯХ НЕЧЕТКОЙ 
+ИНФОРМАЦИИ$^*$}
+
+\def\titkol{Моделирование процессов сетевого планирования портфеля 
+проектов с~неоднородными ресурсами} % в~условиях нечеткой информации}
+
+\def\aut{А.\,А.~Зацаринный$^1$, В.\,В.~Коротков$^2$, М.\,Г.~Матвеев$^3$}
+
+\def\autkol{А.\,А.~Зацаринный, В.\,В.~Коротков, М.\,Г.~Матвеев}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Зацаринный А.\,А.}
+\index{Коротков В.\,В.}
+\index{Матвеев М.\,Г.}
+\index{Zatsarinny A.\,A.}
+\index{Korotkov V.\,V.}
+\index{Matveev M.\,G.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при частичной финансовой поддержке РФФИ (проект 17-01-00251).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{AZatsarinny@ipiran.ru}}
+\footnotetext[2]{Воронежский государственный университет, факультет компьютерных наук, 
+\mbox{chasecrunk@gmail.com}}
+\footnotetext[3]{Воронежский государственный университет, факультет компьютерных наук, 
+\mbox{mgmatveev@yandex.ru}}
+%\vspace*{-2pt}
+  
+  
+  \Abst{Рассматривается задача планирования портфеля проектов в~условиях ограничений 
+на имеющиеся трудовые ресурсы различной специализации и~нечетких оценок трудозатрат 
+выполнения работ. Был использован аппарат нечеткой W-ал\-геб\-ры, позволивший избежать 
+недостатков и~трудностей традиционных подходов: неоправданного расширения носителя, 
+необходимости задания операции сравнения нечетких чисел и~ряда других. Предложенная 
+модель позволяет получить нечеткие оценки времени выполнения проектов и~их работ, 
+а~также оптимальное распределение исполнителей по работам с~учетом их возможной 
+частичной занятости. Для решения задачи был реализован генетический алгоритм, 
+основанный на кодировании особей в~виде списка приоритетов работ. Приводится 
+численный пример, демонстрирующий перспективы применения данного подхода 
+проектными организациями при совершении оценок, необходимых для принятия решений 
+в~условиях неопределенности.}
+  
+  \KW{управление проектами; W-алгебра; нечеткая арифметика; комбинаторная 
+оптимизация; генетический алгоритм}
+
+\DOI{10.14357/19922264190213}
+  
+\vspace*{1pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+  
+\section{Введение}
+
+\vspace*{-1pt}
+  
+  В условиях, когда ключевой национальной \mbox{целью} России стал  
+на\-уч\-но-тех\-но\-ло\-ги\-че\-ский прорыв и~руководством страны взят курс на 
+реализацию Программы цифровой экономики, объективно возросла значимость 
+системного подхода к~процес\-сам планирования и~управления выполнением 
+масштабных проектов~[1]. Важнейшими инструментами для реализации такого 
+подхода должны стать результаты опережающих фундаментальных 
+исследований, направленных в~том числе и~на совершенствование 
+методических подходов к~сетевому планированию~[2].
+  
+  Процессы управления проектами включают обоснование планов поэтапного 
+выполнения работ в~рамках комплекса проектов при заданных ресурсах. Такие 
+планы предполагают составление сетевых план-гра\-фи\-ков и~расписания 
+выполнения работ с~учетом заданных сроков и~выделенных ресурсов~[3]. 
+  
+  В основе управления лежит план-факт\-ный анализ, который в~определенные 
+моменты времени показывает степень рассогласования планового 
+и~фактического расписания выполнения работ и~является первоосновой для 
+перераспределения ресурсов и~составления нового сетевого плана. Проб\-ле\-ма 
+управления особенно остро встает при реализации портфеля проектов, когда 
+добавление нового проекта в~портфель выполняемых проектов сразу требует 
+плановой оценки времени его завершения, т.\,е.\ времени завершения последней 
+работы в~сети, и~плановой оценки потребляемых работами ресурсов. Без таких 
+оценок невозможно обеспечить эффективность проектной деятельности, так 
+как на них основан расчет финансовых отношений заказчика проекта 
+и~проектной организации.
+  
+  Таким образом, проблема сетевого планирования проектов с~ограниченными 
+ресурсами (Resource Constrained Project Scheduling Problem, \mbox{RCPSP}) становится 
+одной из самых актуальных прикладных задач в~деятельности практически 
+каж\-дой проектной организации. Параметры в~задаче сетевого планирования 
+чаще всего не являются детерминированными величинами. В~част\-ности, 
+нельзя точно указать продолжительности выполнения работ на стадии 
+планирования, можно говорить лишь о~приблизительных сроках. 
+Воз\-ни\-ка\-ющую неопределенность часто пытаются описать с~по\-мощью 
+статистических методов~[4]. Но статистические выборки не всегда релевантны 
+особенностям конкретных работ конкретной проектирующей организации. 
+Экспертная оценка~--- более подходящий способ задания параметров работ 
+проекта. При этом адекватным аппаратом описания значений параметров для 
+эксперта служит нечеткая математика~[5]. Применение нечеткой математики 
+для управления проектами давно привлекает внимание исследователей как 
+перспективное на\-прав\-ле\-ние~[6]. В~работе~[7] приведена классификация 
+методов решения задачи сетевого планирования с~нечеткими параметрами 
+с~указанием их недостатков, главные из которых~--- громоздкость вычислений, 
+искажение естественных свойств и~отношений классических моделей, 
+неоправданное расширение носителя результата, что сказывается на 
+возможности его интерпретации и~полезности практического применения. 
+В~работах~[8, 9] для устранения указанных недостатков предлагается 
+использовать W-ал\-геб\-ру и~W-чис\-ла. В~работе~[10] приводится пример 
+использования W-ал\-геб\-ры для решения задачи планирования работ проекта 
+с~фиксированными однородными ресурсами и~нечетко заданными 
+продолжительностями работ методами линейного программирования. Однако, 
+как отмечается в~[11], такой подход нельзя использовать при планировании 
+с~ограниченными переменными ресурсами. В~этом случае приходится 
+обращаться к~эвристическим алгоритмам квазиоптимального выбора. 
+В~работах~[12--14] предлагается использовать различные модификации 
+генетических алгоритмов, которые существенно упрощают решение задачи 
+даже для планирования портфеля проектов с~переменными разнородными 
+ресурсами, но при детерминированном задании параметров работ.
+  
+  В статье предлагается решение задачи сетевого планирования портфеля 
+проектов с~неоднородными ограниченными ресурсами. Длительность работ 
+задается нечеткими W-чис\-ла\-ми и~зависит от выделенных ресурсов. 
+Результатом решения является нечеткий сетевой график выполнения работ, 
+позволяющий рассчитать нечеткую оценку длительности выполнения каждого 
+планируемого проекта, а также нечеткую оценку плановой потребности 
+в~неисчерпаемых ресурсах и~степень их загруженности.
+  
+\section{Формализация задачи сетевого планирования}
+  
+  Под проектом понимается комплекс мероприятий, направленных на 
+достижение к~заданному сроку определенных целей в~условиях ограничений на 
+выделенные ресурсы~\cite{6-zac}. Далее под ресурсами будем понимать 
+трудовые ресурсы, т.\,е.\ исполнителей работ проектов.
+  
+  Рассматривается портфель проектов~$P$, со\-сто\-ящий из~$n$~проектов. 
+Каждый проект $p\hm\in P$ включает множество работ~$J_p$. Предполагается, 
+что работы не могут быть прерваны в~процессе своего выполнения. Каждый 
+проект $p\hm\in P$ также имеет дату старта $\mathrm{Start}_p$, раньше которой не может 
+быть начата ни одна из его работ. Некоторые работы требуют завершения 
+других перед своим началом, поэтому множество $\mathrm{Pre}(j)$ задает всех 
+предшественников работы $j\hm\in J_p$.
+  
+  Выполнение работ требует привлечения исполнителей соответствующей 
+специализации. Введем множество всех возможных специализаций~$E$ 
+и~пусть отображение $\mathrm{Spec}:\ J_p\hm\to E \,\forall p\hm\in P$ ставит 
+в~соответствие всякой работе любого проекта специализацию, необходимую 
+для ее выполнения. На каждый проект~$p$ выделено $c_{pe}^{\mathrm{local}}$ 
+исполнителей специализации $e\hm\in E$, а~кроме того возможно привлечение 
+дополнительных ресурсов, имеющихся в~количестве~$c_e^{\mathrm{global}}$. 
+Дополнительные ресурсы не привязаны к~ка\-ко\-му-ли\-бо из проектов и~могут 
+привлекаться для выполнения работ любого проекта. Предполагается, что 
+исполнители не могут временно прерывать свое участие в~работе. Допускается 
+частичная занятость исполнителя в~работе. 
+  
+  Примем, что длительность работы $j\hm\in J_p$ зависит от числа ее 
+исполнителей $\tilde{l}_{pj}$:
+  \begin{equation*}
+  \tilde{d}_{pj}=\fr{\tilde{q}_{pj}}{\tilde{l}_{pj}}\ \forall p\in P,\ j\in J_p\,,
+ % \label{e1-zac}
+  \end{equation*}
+где $\tilde{d}_{pj}$~--- нечеткая длительность работы $j\hm\in J_p$; 
+$\tilde{q}_{pj}$~--- нечеткие трудозатраты; $\tilde{l}_{pj}$~--- нечеткое число 
+исполнителей, которое рассматривается как числовая интерпретация 
+возможности исполнителя <<работать за двоих>> или возможности обратного 
+эффекта, при этом фактическое число исполнителей будет соответствовать 
+моде нечеткого числа. Нечеткие переменные~$\tilde{q}_{pj}$, $\tilde{l}_{pj}$ 
+и~$\tilde{d}_{pj}$ в~соответствии с~\cite{9-zac} представлены парами функций 
+вида $(q^L_{pj}(\alpha); q^R_{pj}(\alpha))$, $(l^L_{pj}(\alpha); l^R_{pj}(\alpha))$ 
+и~$(d^L_{pj}(\alpha); d^R_{pj}(\alpha))$, где $\alpha\hm\in [0;1]$~--- параметр 
+нечеткости. Такое пред\-став\-ле\-ние под\-разуме\-ва\-ет возможность использования 
+как треугольных, так и~трапецеидальных нечетких чисел. Далее для сокращения 
+записей будем использовать только треугольные нечеткие числа.
+  
+  Пусть $\tilde{s}_{pj}$~--- нечеткое время начала работы $j\hm\in J_p$, тогда 
+время ее окончания определяется как
+  \begin{equation*}
+  \tilde{f}_{pj}=\tilde{s}_{pj}+\tilde{d}_{pj}\ \forall p\in P\,,\ j\in J_p\,.
+  %\label{e2-zac}
+  \end{equation*}
+    
+  Целью является нахождение для каждой задачи $j\hm\in J_p$ каждого из 
+проектов $p\hm\in P$ такого времени старта~$\tilde{s}_{pj}$ и~числа 
+выделенных трудовых ресурсов~$\tilde{l}_{pj}$, которые не нарушают 
+ограничения предшествования и~ресурсные ограничения, а также обеспечивают 
+минимальное взвешенное суммарное время выполнения 
+проектов~$\tilde{f}_{\mathrm{TPD}}$:
+  \begin{equation*}
+  \tilde{f}_{\mathrm{TPD}}= \sum\limits_{p\in P} \omega_p \left( \tilde{f}_p-
+\tilde{s}_p\right)\,.
+ % \label{e3-zac}
+  \end{equation*}
+  Здесь $\tilde{f}_p\hm= \max\nolimits_{j\in J_p} \left( \tilde{f}_{pj}\right)$~--- 
+время завершения последней работы проекта; $\omega_p$~--- весовой 
+коэффициент, определяющий приоритетность проекта.
+  
+  Таким образом, может быть сформулирована следующая оптимизационная 
+задача:
+  \begin{equation}
+  \tilde{f}_{\mathrm{TPD}}\to \min
+  \label{e4-zac}
+  \end{equation}
+при условиях
+\begin{gather}
+\tilde{l}_{pj}\geq 1\ \forall p\in P\,,\  j\in J_p\,;\label{e5-zac}\\
+\hspace*{-10mm}\sum\limits_{p\in P} \sum\limits_{j\in A_{pe}(t)}\max\left( 0; \tilde{l}_{pj}-
+c_{pe}^{\mathrm{local}} \right) \leq c_e^{\mathrm{global}}\notag\\
+\hspace*{30mm} \forall e\in E\,,\ t\in [0,T]\,;\label{e6-zac}\\
+A_{pe}(t)={}\hspace*{50mm}\notag\\
+{}=\left\{ i\in J_p\vert \tilde{s}_{pj}\leq t< \tilde{s}_{pj} +\tilde{d}_{pj}\,, \ 
+\mathrm{Spec}\,(j)=e\right\}\,;\label{e7-zac}\\
+\tilde{s}_{pj}+\tilde{d}_{pj}\leq \tilde{s}_{pj^\prime}\ \forall p\in P\,,\ j^\prime \in 
+J_p\,,\ j\in \mathrm{Pre}\left(j^\prime\right)\,;\label{e8-zac}\\
+\tilde{s}_{pj}\geq \tilde{s}_p\ \forall p\in P\,,\ j\in J_p\,.
+\label{e9-zac}
+\end{gather}
+  Здесь $T$~--- это верхняя оценка времени завершения всех проектов из 
+портфеля; $A_{pe}(t)$~--- множество работ проекта~$p$, требующих 
+специализации~$e$ и~находящихся в~состоянии выполнения в~момент 
+времени~$t$. Согласно~(\ref{e5-zac}) у каждой задачи должен быть хотя бы 
+один исполнитель, (\ref{e6-zac}) задает ограничение на число единовременно 
+используемых трудовых ресурсов, (\ref{e8-zac}) отражает ограничения 
+предшествования, а~(\ref{e9-zac})~--- ограничение на дату старта проекта.
+  
+\section{Описание алгоритма решения задачи сетевого 
+планирования}
+  
+  В случае применения известных арифметик нечетких чисел, основанных на 
+принципе обобщения Л.~Заде~\cite{5-zac}, в~дополнение к~проблемам, 
+обозначенным во введении, решение поставленной задачи потребует задания 
+операции сравнения нечетких треугольных чисел. Известные варианты 
+реализации операции сравнения не обеспечивают однозначного 
+результата~\cite{5-zac, 8-zac}. Использование же W-ал\-геб\-ры при решении 
+задачи проектного планирования, как продемонстрировано  
+в~работе~\cite{10-zac}, позволяет избежать сравнения нечетких чисел, так как 
+результат может быть представлен как линейная комбинация решений четких 
+задач. Представим нечеткие трудозатраты в~виде выпуклой линейной 
+комбинации граничных значений левой~$q^L_{pj}(\alpha)$ 
+и~правой~$q^R_{pj}(\alpha)$ функций W-чис\-ла при $\alpha\hm=0$ 
+и~$1$:
+  \begin{equation}
+  \left.
+  \begin{array}{rl}
+  q^L_{pj}(\alpha)&= q^L_{pj}(0)+\left( q^L_{pj}(1)-q^L_{pj}(0)\right)\alpha\,;\\[6pt]
+  q^R_{pj}(\alpha) &=q^R_{pj}(0) +\left( q^R_{pj}(1)-q^R_{pj}(0)\right)\alpha\,.
+  \end{array}
+  \right\}
+  \label{e10-zac}
+  \end{equation}
+  
+  Тогда для треугольных чисел необходимо решить отдельно четкие задачи для 
+трех детерминированных значений:  $q^L_{pj}(0)$;
+$q^L_{pj}(1)\hm=q^R_{pj}(1)$; $q^R_{pj}(0)$. Полученные 
+решения могут быть использованы для представления результата в~виде  
+W-чи\-сел~(\ref{e10-zac}). Например, нечеткое число 
+исполнителей~$\tilde{l}_{pj}$, выделенных на выполнение работы, будет иметь 
+вид:
+  \begin{align*}
+  l^L_{pj}(\alpha) &=l^L_{pj}(0) +\left( l^L_{pj}(1) - l^L_{pj}(0)\right)\alpha\,; 
+\\
+  l^R_{pj}(\alpha) &=l^R_{pj}(0)+\left( l^R_{pj}(1)-l^R_{pj}(0)\right)\alpha\,.
+  %  \label{e11-zac}
+  \end{align*}
+  
+  Теперь алгоритм решения задачи~(\ref{e4-zac})--(\ref{e9-zac}) можно 
+рассматривать как решение трех детерминированных задач с~их последующей 
+комбинацией вида~(\ref{e10-zac}).
+  
+  Доказано, что задача проектного планирования в~условиях ресурсных 
+ограничений относится\linebreak к~классу NP-труд\-ных~\cite{15-zac}, поэтому 
+большинство исследований в~данной области рассматривают возможности 
+применения различных эвристических подходов для поиска субоптимальных 
+решений~\cite{16-zac}.
+  
+  В данной работе для решения поставленной оптимизационной задачи был 
+реализован генетический алгоритм, сочетающий ряд подходов из  
+работ~\cite{12-zac, 13-zac, 14-zac}. Подробности реализации приводятся далее.
+
+ \begin{table*}[b]\small %tabl1
+ \vspace*{-14pt}
+  \begin{center}
+  \Caption{Трудовые ресурсы проектов}
+  \vspace*{2ex}
+  
+  \begin{tabular}{|l|c|c|c|}
+  \hline %\multicolumn{1}{|c|}{\raisebox{-6pt}[0pt][0pt]{
+\multicolumn{1}{|c|}{\raisebox{-6pt}[0pt][0pt]{Ресурсы}}&
+\multicolumn{3}{c|}{Число работников}\\
+\cline{2-4}
+&Специализации 1&Cпециализации 2&Cпециализации 3\\
+\hline
+Проекта 1&5&3&3\\
+Проекта 2&2&4&3\\
+Дополнительные&2&3&1\\
+\hline
+\end{tabular}
+\end{center}
+%\vspace*{-6pt}
+\end{table*}
+  
+  \subsection{Представление решения}
+  
+Возможное решение задачи кодируется хромосомой, которая соответствует 
+ровно одному возможному расписанию работ и~распределению\linebreak трудовых 
+ресурсов. Каждый ген хромосомы пред\-став\-лен идентификатором работы 
+и~числом выделенных на нее исполнителей. При этом порядок\linebreak генов 
+в~хромосоме отражает приоритет соответствующих работ. Расписание работ 
+может быть получено по данному представлению в~результате следующей 
+последовательной процедуры. Начиная с~пустого расписания, будем получать 
+новое промежуточное расписание путем размещения следующей по приоритету 
+работы на самое раннее время так, чтобы не нарушить ограничения 
+предшествования и~ресурсные ограничения. Такая процедура называется 
+последовательной схемой генерации расписания. Стоит отметить, что, хотя 
+каждому закодированному таким образом решению соответствует ровно одно 
+возможное расписание, обратное не верно. Одинаковое расписание может быть 
+получено из различных решений, вследствие чего при таком подходе 
+повторный обход уже рассмотренных решений будет происходить чаще. 
+Однако, так как любое получаемое решение всегда будет удовлетворять всем 
+необходимым требованиям, это позволяет избежать модификации функции 
+приспособленности внесением штрафа за нарушение ограничений. Поэтому 
+в~качестве функции приспособленности использовалась величина, обратная 
+суммарному времени выполнения проектов~(\ref{e4-zac}). Кроме того, 
+использование списка приоритетов решает проблему непрерывного времени, 
+которая может возникать при непосредственном кодировании времен начала 
+работ.
+
+\vspace*{-6pt}
+  
+  \subsection{Начальная популяция}
+  
+  Для обеспечения разнообразия особей начальная популяция генерируется 
+случайным образом. Процедура получения случайной хромосомы начинается 
+с~пустого списка генов. На каждом шаге процедуры в~список добавляется ген, 
+кодирующий случайную работу $j\hm\in J_p$ из списка тех работ, чьи 
+предшественники уже были добавлены в~хромосому ранее. Число 
+исполнителей, выделенных на эту работу, определяется случайным образом 
+в~промежутке $[1; c_{pe}^{\mathrm{local}}\hm+c_e^{\mathrm{global}}]$ с~учетом шага 
+дискретизации~$0{,}1$, где $\mathrm{Spec}(j)\hm=e$.
+  
+  Получаемые экземпляры очевидным образом удовлетворяют ограничениям 
+предшествования. Теперь необходимо таким образом определить операции 
+скрещивания и~мутации, чтобы получаемые решения также не нарушали 
+необходимые требования.
+
+\vspace*{-6pt}
+  
+  \subsection{Метод селекции}
+  
+  На каждой итерации алгоритма необходимо отбирать особей, подлежащих 
+дальнейшему скрещиванию с~учетом их оценки приспособленности. В~работе 
+был использован турнирный метод отбора с~размером подгруппы, равным~3.
+
+\vspace*{-6pt}
+  
+  \subsection{Операция скрещивания}
+  
+  Операция скрещивания позволяет скомбинировать два родительских 
+решения, чтобы получить двух потомков, наследующих признаки родителей. 
+Операция применяется независимо к~спискам работ и~соответствующим 
+спискам выделенных ресурсов.
+  
+  Сначала случайным образом определяется точка~$k$, делящая родительские 
+хромосомы на две час\-ти. Все работы из первой части первого (второго) 
+родителя в~том же порядке перемещаются в~первого (второго) наследника, 
+а~оставшиеся работы до\-бав\-ля\-ют\-ся в~том порядке, в~каком они расположены во 
+втором (первом) родителе.
+
+
+  
+  Распределения ресурсов скрещиваются согласно равномерной схеме. Для 
+каждой $i$-й работы независимым образом берется случайное число $p_i\hm \in 
+[0,1]$. Если $p_i\hm\geq 0{,}5$, то первый (второй) ребенок наследует число 
+исполнителей этой работы от первого (второго) родителя. В~противном случае 
+первый (второй) ребенок наследует число исполнителей от второго (первого) 
+родителя.
+
+\vspace*{-6pt}
+  
+  \subsection{Операция мутации}
+  
+  Операция мутации вносит случайные изменения в~решения, получаемые 
+после скрещивания. Операция мутации также применяется отдельно 
+к~приоритетам работ и~выделенным ресурсам.
+  
+  Для каждой $i$-й работы независимо берется случайное число $p_i\hm\in 
+[0,1]$. Если $p_i\hm\leq P_{\mathrm{PM}}$, где $P_{\mathrm{PM}}$~--- заранее заданная 
+вероятность мутации, то $i$-я\linebreak и~$(i\hm+1)$-я работы меняются местами, если 
+это не нарушает ограничений предшествования.
+  
+  Число исполнителей каждой работы с~ве\-ро\-ят\-ностью~$P_{\mathrm{MM}}$ меняется на 
+случайное, взятое аналогичным с~описанным в~разделе о генерации начальной 
+популяции образом.
+
+\vspace*{-6pt}
+  
+\section{Численный пример и~обсуждение результатов}
+
+\vspace*{-2pt}
+  
+  Решение задачи~(\ref{e4-zac})--(\ref{e9-zac}) иллюстрируется на следующем 
+тестовом примере. Пусть портфель состоит из двух одинаково приоритетных 
+проектов. Число выделенных на проекты трудовых ресурсов трех 
+специализаций приведено в~табл.~1. В~табл.~2 указаны структурные 
+и~ресурсные требования для работ обоих проектов. Нечеткие переменные 
+в~табл.~2 и~3\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\end{multicols}
+
+\begin{table*}\small %tabl2
+  \begin{center}
+  \Caption{Список работ проектов}
+  \vspace*{2ex}
+  
+  \begin{tabular}{|c|c|c|c|c|c|}
+  \hline
+Проект&\tabcolsep=0pt\begin{tabular}{c}Дата\\ запуска \\ 
+проекта\end{tabular}&
+Работа&Специализация&Предшественники&\tabcolsep=0pt\begin{tabular}{c}
+Нечеткие\\ трудозатраты, $\tilde{q}_{pj}$\end{tabular}\\
+\hline
+\multicolumn{1}{|c|}{\raisebox{-36pt}[0pt][0pt]{№\,1}}&
+\multicolumn{1}{c|}{\raisebox{-36pt}[0pt][0pt]{0}}&1&2&&(14; 16; 17)\\
+&&2&1&&(18; 20; 21)\\
+&&3&3&&(17; 19; 20)\\
+&&4&1&1, 2&(17; 17; 20)\\
+&&5&3&4&(24; 25; 27)\\
+&&6&2&5&(23; 25; 27)\\
+&&7&1&5&(31; 33; 35)\\
+&&8&3&3, 6, 7&(30; 31; 33)\\
+\hline
+\multicolumn{1}{|c|}{\raisebox{-36pt}[0pt][0pt]{№\,2}}&
+\multicolumn{1}{c|}{\raisebox{-36pt}[0pt][0pt]{4}}&1&2&&(8; 9; 11)\\
+&&2&3&1&(14; 16; 17)\\
+&&3&1&&(21; 22; 24)\\
+&&4&2&3&(17; 19; 20)\\
+&&5&1&2, 4&(15; 16; 18)\\
+&&6&3&4&(40; 42; 42)\\
+&&7&3&5, 6&(13; 13; 13)\\
+&&8&1&2, 4&(11; 11; 13)\\
+  \hline
+  \end{tabular}
+  \end{center}
+  \vspace*{-3pt}
+  %\end{table*}
+  %  
+  %\begin{table*}\small %tabl3
+  \begin{center}
+  \Caption{Результаты решения задачи}
+  \vspace*{2ex}
+  
+  \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+  \hline
+\multicolumn{1}{|c|}{\raisebox{-8pt}[0pt][0pt]{Проект}}&
+\multicolumn{1}{c|}{\raisebox{-8pt}[0pt][0pt]{Работа}}&\multicolumn{3}{c|}{Нечеткое время старта работы}&
+\tabcolsep=0pt\begin{tabular}{c}Число \end{tabular}&
+\multicolumn{3}{c|}{Нечеткое время окончания работы}\\
+\cline{3-5}
+&&&&&&&&\\[-9pt]
+\cline{7-9}
+&&&&&&&&\\[-9pt]
+&&\ \ \ \ \ $s^L_{pj}$\ \ \ \ \ &\ \ \ \ \  $s^m_{pj}$\ \ \ \ \ &$s^R_{pj}$&исполнителей&
+\ \ \ \ \ \ \ $f^L_{pj}$\ \ \ \ \ \ \  &\ \ \ \ \ \ \ $f^m_{pj}$\ \ \ \ \ \ \ &$f^R_{pj}$\\[3pt]
+\hline
+&&&&&&&&\\[-9pt]
+\multicolumn{1}{|c|}{\raisebox{-36pt}[0pt][0pt]{№\,1}}&1&0\hphantom{,00}&0\hphantom{,00}&0\hphantom{,00}&3\hphantom{,9}&4,67&\hphantom{9}5,33&\hphantom{9}4,72\\
+&2&0\hphantom{,00}&0\hphantom{,00}&0\hphantom{,00}&5,3&2,69&\hphantom{9}3,77&\hphantom{0}6,18\\
+&3&0\hphantom{,00}&0\hphantom{,00}&2,69&1,9&7,05&10\hphantom{,99}&10,53\\
+&4&4,67&5,33&6,18&5\hphantom{,9}&8,07&\hphantom{9}8,73&\hphantom{9}9,12\\
+&5&8,07&8,73&9,12&3\hphantom{,9}&15,57\hphantom{0}&17,07&16,83\\
+&6&15,57\hphantom{9}&17,07\hphantom{9}&16,83\hphantom{9}&5,9&19,6\hphantom{99}&21,3\hphantom{9}&22,02\\
+&7&15,57\hphantom{9}&17,07\hphantom{9}&16,83\hphantom{9}&6,8&20,26\hphantom{9}&21,92&22,48\\
+&8&20,26\hphantom{9}&21,92\hphantom{9}&22,48\hphantom{9}&3,9&28,16\hphantom{9}&29,87&30,73\\
+\hline
+\multicolumn{1}{|c|}{\raisebox{-36pt}[0pt][0pt]{№\,2}}&1&4\hphantom{,99}&4\hphantom{,99}&4\hphantom{,99}&3,8&6,29&\hphantom{9}6,37&5,8\\
+&2&6,29&6,37&5,8\hphantom{9}&3,2&10,29\hphantom{9}&11,37&13,19\\
+&3&4\hphantom{,99}&4\hphantom{,99}&4\hphantom{,99}&4\hphantom{,9}&9,25&9,5&10\hphantom{,00}\\
+&4&9,25&9,5\hphantom{9}&10\hphantom{,999}&6,8&11,83\hphantom{9}&12,29&13,28\\
+&5&11,83\hphantom{9}&12,29\hphantom{9}&13,28\hphantom{9}&2,3&18,97\hphantom{9}&19,25&24,53\\
+&6&11,83\hphantom{9}&12,29\hphantom{9}&13,28\hphantom{9}&4\hphantom{,9}&22,64\hphantom{9}&22,79&25,63\\
+&7&22,64\hphantom{9}&22,79\hphantom{9}&25,63\hphantom{9}&2,8&26,83\hphantom{9}&27,44&30,11\\
+&8&11,83\hphantom{9}&21,92\hphantom{9}&13,28\hphantom{9}&3,3&20,29\hphantom{9}&25,25&19,19\\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{-3pt}
+\end{table*}
+
+  \begin{multicols}{2}
+  
+  \begin{figure*}
+   \vspace*{1pt}
+    \begin{center}  
+  \mbox{%
+ \epsfxsize=144.026mm 
+ \epsfbox{zac-1.eps}
+ }
+
+\vspace*{3pt}
+
+    {\small Диаграмма Ганта для полученного нечеткого решения для
+    проектов~1~(\textit{а}) и~2~(\textit{б})}
+     \end{center}
+          \vspace*{-9pt}
+  \end{figure*}
+  
+  
+   \noindent
+   для удобства восприятия заданы тремя точками~--- на границах 
+при $\alpha\hm=0$ и~в~моде при $\alpha\hm=1$.
+  
+ 
+  
+  При решении использовались следующие параметры генетического 
+алгоритма: размер популяции~--- 150; число поколений~--- 40; вероятность 
+мутации~--- 0,04.
+  
+   Результаты решения задачи приведены в~табл.~3. Полученные значения 
+могут быть использованы для составления нечеткой диаграммы Ганта 
+(см.\ рисунок), дающей наглядное представление о сетевом графике с~учетом 
+нечеткой неопределенности. Каж\-дый четырехугольник на диаграмме 
+определяет расположение во времени соответствующей работы
+ одного из 
+проектов. Треугольниками обозначены нечеткие времена начала и~конца работ.
+  
+  
+  
+  
+  При анализе результатов табл.~3 следует обратить внимание на случаи, когда 
+обе компоненты нечеткого числа отклоняются от моды в~одну сторону. В~этом 
+случае, как показано в~\cite{8-zac}, рассматривается только доминирующая 
+компонента. 
+
+Полученное решение позволяет оценить время завершения не 
+только каждой работы, но и~проектов в~целом. При этом дается оценка 
+возможности как задержки, так и~опережения планируемых сроков. Например, 
+работа~1~первого проекта может быть выполнена с~опережением почти 
+на~0,7~временн$\acute{\mbox{ы}}$х единиц, а задержки не предвидится; аналогичная ситуация 
+со сроком выполнения проекта~2~--- возможно опережение почти 
+на~6~временн$\acute{\mbox{ы}}$х единиц. Время выполнения проекта~1 может задержаться 
+на~0,9~временн$\acute{\mbox{ы}}$х единиц, но существует и~возможность опережения срока 
+на~1,7~временн$\acute{\mbox{ы}}$х единиц.
+  
+  
+  Кроме того, результаты решения позволяют оптимально с~точки зрения 
+занятости распределить исполнителей по работам с~учетом их специализации. 
+Дробное число исполнителей означает неполную занятость на конкретной 
+работе.
+
+\vspace*{-6pt}
+  
+\section{Заключение}
+
+\vspace*{-2pt}
+  
+  Представленные в~статье методические подходы к~сетевому планированию 
+демонстрируют возможности тео\-рии нечетких множеств при описании 
+неопределенностей, возникающих при планировании проектных работ. 
+Такой 
+подход может служить альтернативой, например, известному методу PERT\linebreak
+(Project Evaluation and Review Technique), 
+исполь-\linebreak зующему $\beta$-рас\-пре\-де\-ле\-ние времени выполнения
+работ~\cite{4-zac}, отличаясь от него большими воз\-мож\-но\-стя\-ми при учете 
+неопределенностей. Так, в~рас\-смотренном примере была учтена 
+неопределенность эффек\-тив\-ности работы исполнителей, не предусмат\-ри\-ва\-емая 
+методом PERT. Разработанный подход может быть применен при 
+ситуационном управ\-ле\-нии одновременно проводящимися мероприятиями 
+с~ограниченным со\-ста\-вом исполни\-телей. 
+
+\vspace*{-8pt}
+  
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ 
+ \vspace*{-4pt}
+ 
+\bibitem{1-zac}
+Из выступления Президента России Владимира Путина  
+на VI~Международном форуме технологического развития <<Технопром-2018>> 
+27~августа 2018~г. {\sf http://www.kremlin.ru/events/president/news/58391}.
+\bibitem{2-zac}
+О~стратегии на\-уч\-но-тех\-но\-ло\-ги\-че\-ско\-го развития Российской Федерации: Указ 
+Президента РФ от 01.12.2016 №\,642. {\sf 
+http://static.kremlin.ru/media/ events/files/ru/uZiATIOJiq5tZsJgqcZLY9YyL8PWTX Qb.pdf}.
+\bibitem{3-zac}
+\Au{Зацаринный А.\,А., Киселев~Э.\,В., Козлов~С.\,В., Колин~К.\,К.} Информационное 
+пространство цифровой экономики России. Концептуальные основы и~проб\-ле\-мы 
+формирования.~--- М.: ФИЦ ИУ РАН, 2018. 236~с.
+\bibitem{4-zac}
+\Au{Таха Х.\,А.} Введение в~исследование операций~/ Пер. с~англ.~--- М.: Вильямс, 2016. 
+912~с. (\Au{Taha~H.\,A.} Operations research: An introduction.~--- 8th ed.~--- Prentice Hall, 
+2006. 838~p.)
+\bibitem{5-zac}
+\Au{Piegat A.} Fuzzy modeling and control.~--- Berlin--Heidelberg: Springer, 2001. 371~p.
+\bibitem{6-zac}
+\Au{Балашов В.\,Г., Заложнев~А.\,Ю., Новиков~Д.\,А.} Механизмы управления 
+организационными проектами.~--- М.: ИПУ РАН, 2003. 84~с.
+\bibitem{7-zac}
+\Au{Матвеев~М.\,Г.} Анализ и~решение задач выбора с~параметрической нечеткостью~// 
+Вестник Юж\-но-Ураль\-ско\-го государственного университета. Сер. Математическое 
+моделирование и~программирование, 2015. №\,8(4). С.~14--29.
+\bibitem{8-zac}
+\Au{Шевляков~А.\,О., Матвеев~М.\,Г.} Сравнение различных нечетких арифметик~// 
+Искусственный интеллект и~принятие решений, 2017. №\,4. С.~60--68.
+\bibitem{9-zac}
+\Au{Шевляков А.\,О., Матвеев~М.\,Г.} Алгебра трапециевидных чисел для обработки 
+нечеткой информации~// Искусственный интеллект и~принятие решений, 2018. №\,4.  
+С.~53--60.
+\bibitem{10-zac}
+\Au{Матвеев~М.\,Г., Алейникова~Н.\,А.} Математическое\linebreak моделирование задачи сетевого 
+планирования с~по\-мощью нечеткой математики~// Вестник 
+Воронежского государственного университета. Сер. Системный анализ 
+и~информационные технологии, 2018. №\,3. С.~155--162.
+\bibitem{11-zac}
+\Au{Шевляков А.\,О., Матвеев~М.\,Г.} Решение RCPSP при нечетких трудозатратах 
+выполнения операций~// Вестник Воронежского государственного университета. 
+Сер. Системный анализ и~информационные 
+технологии, 2015. №\,4. С.~121--125.
+\bibitem{12-zac}
+\Au{Blazewicz J., Lenstra~J.\,K., Rinnooy Kan~A.\,H.\,G.} Scheduling subject to resource 
+constraints: Classification and complexity~// Discrete Appl. Math., 1983. Vol.~5. No.\,1. 
+P.~11--24.
+
+\bibitem{14-zac} %13
+\Au{Hartmann S.} Project scheduling with multiple modes: A~genetic algorithm~// Ann. 
+Oper. Res., 2001. Vol.~102. No.\,1-4. P.~111--135.
+\bibitem{13-zac} %14
+\Au{Abdolshah M.} A~Review of Resource-Constrained Project Scheduling Problems (RCPSP) 
+approaches and solutions~// Int. T.~J.~Eng. Manage. Appl. Sci. 
+Technol., 2014. Vol.~5. No.\,4. P.~253--286.
+
+\bibitem{15-zac}
+\Au{Kumanan S., Jose~G.\,J., Raja~K.} Multi-project scheduling using a heuristic and a genetic 
+algorithm~// Int. J.~Adv. Manuf. Tech., 2006. Vol.~31. No.\,3-4. 
+P.~360--366.
+\bibitem{16-zac}
+\Au{Yannibelli V., Amandi~A.} A~knowledge-based evolutionary assistant to software development 
+project scheduling~// Expert Syst.  Appl., 2011. Vol.~38. No.\,7. P.~8403--8413.
+
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 28.03.19}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-29pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{MODELING THE~PROCESS OF~NETWORK PLANNING OF~A~PORTFOLIO OF 
+PROJECTS WITH~HETEROGENEOUS RESOURCES UNDER~FUZZINESS}
+
+
+\def\titkol{Modeling the~process of~network planning of~a~portfolio of 
+projects with~heterogeneous resources under~fuzziness}
+
+\def\aut{A.\,A.~Zatsarinny$^1$, V.\,V.~Korotkov$^2$, and~M.\,G.~Matveev$^2$}
+
+\def\autkol{A.\,A.~Zatsarinny, V.\,V.~Korotkov, and~M.\,G.~Matveev}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+\noindent
+  $^1$Federal Research Center ``Computer Science and Control'' of the Russian 
+Academy of Sciences, 44-2~Vavilov\linebreak
+$\hphantom{^1}$Str., Moscow 119333, Russian Federation
+  
+  \noindent
+   $^2$Voronezh State University, 1~Universitetskaya Pl., Voronezh 394018, Russian 
+Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{6pt}
+     
+  
+  \Abste{The paper discusses the problem of project portfolio scheduling subject to resource 
+constraints and fuzzy activity durations. Employees of various specializations are considered as the 
+only type of resource. Fuzzy W-algebra was used to avoid such difficulties and limitations of 
+traditional fuzzy arithmetics as the support size extension, the need of fuzzy 
+number comparison, 
+and some others. The proposed model provides a~fuzzy estimation of project execution times and 
+optimal resource allocation. To solve the problem,
+the genetic algorithm based on activity list representation was 
+implemented. The paper also provides a~numerical example which 
+demonstrates advantages of applying the approach to organizations' workflow in the case of making 
+estimates for decision making under uncertainty.}
+  
+  \KWE{project management; W-algebra; fuzzy arithmetic; combinatorial optimization; genetic 
+algorithm}
+  
+  
+ 
+  
+  
+  \DOI{10.14357/19922264190213}
+
+\vspace*{-14pt}
+
+\Ack
+  \noindent
+  The work was partly supported by the Russian Foundation for Basic Research 
+(grant No.\,17-01-00251).
+
+
+
+%\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-zac-1}
+Iz vystupleniya Prezidenta Rossii na VI Mezhdunarodnom forume 
+tekhnologicheskogo razvitiya ``Tekhnoprom-2018'' [From the speech of the 
+President of Russia at the 6th  Forum (International) of Technological 
+Development ``Technoprom-2018'']. Available at: 
+{\sf http://www.\linebreak kremlin.ru/events/president/news/58391} (accessed May~14, 
+2019).
+\bibitem{2-zac-1}
+O~strategii nauchno-tekhnologicheskogo razvitiya Ros\-siy\-skoy Federatsii: 
+ukaz Prezidenta ot 01.12.2016 No.\,642 [About strategy of scientific and 
+technological development of the Russian Federation. Presidential Decree 
+No.\,642 dated 01.12.2016]. Available at:  
+{\sf http://static.\linebreak
+ kremlin.ru/media/events/files/ru/uZiATIOJiq5tZsJgqc ZLY9YyL8PWTXQb.pdf}
+ (accessed May~14, 2019).
+\bibitem{3-zac-1}
+\Aue{Zatsarinny, A.\,A., E.\,V.~Kiselev, S.\,V.~Kozlov, and K.\,K.~Kolin.} 2018. 
+\textit{Informatsionnoe prostranstvo tsifrovoy ekonomiki Rossii. Kontseptual'nye 
+osnovy i~problemy formirovaniya} [Information space of the digital economy 
+of Russia. Conceptual framework and problems of formation]. Moscow: 
+FRC CSC RAS. 236~p.
+\bibitem{4-zac-1}
+\Aue{Taha, H.\,A.} 2006. \textit{Operations research: An introduction}. 8th ed. 
+Prentice Hall. 838~p.
+\bibitem{5-zac-1}
+\Aue{Piegat, A.} 2001. \textit{Fuzzy modeling and control.} Berlin--Heidelberg:
+Springer. 371~p.
+\bibitem{6-zac-1}
+\Aue{Balashov, V.\,G., A.\,Yu.~Zalozhnev, and D.\,A.~Novikov.} 2003. \textit{Mekhanizmy 
+upravleniya organizatsionnymi proektami} [Organizational project 
+management mechanisms]. Moscow: ICS RAS. 84~p.
+\bibitem{7-zac-1}
+\Aue{Matveev, M.\,G.} 2015. Analiz i~reshenie zadach vybora s~parametricheskoy 
+nechetkost'yu [Analyzing and solving problems of decision making
+with parametric 
+fuzzy]. \textit{Bulletin of 
+the South Ural State University. Ser. Mathematical Modelling, 
+Programming \& Computer Software} 8(4):14--29.
+\bibitem{8-zac-1}
+\Aue{Shevlyakov, A.\,O., and M.\,G.~Matveev.} 2017. Sravnenie razlichnykh 
+nechetkikh arifmetik [A~comparison of different fuzzy arithmetics]. 
+\textit{Artificial Intelligence  
+Decision Making} 4:60--68.
+\bibitem{9-zac-1}
+\Aue{Shevlyakov, A.\,O., and M.\,G.~Matveev.} 2018. Algebra trapetsievidnykh chisel 
+dlya obrabotki nechetkoy informatsii [Algebra of
+trapezoidal fuzzy numbers for fuzzy information processing]. 
+\textit{Artificial 
+Intelligence Decision Making} 4:53--60.
+\bibitem{10-zac-1}
+\Aue{Matveev, M.\,G., and N.\,A.~Aleynikova.} 2018. Ma\-te\-ma\-ti\-che\-skoe 
+modelirovanie zadachi setevogo planirovaniya s~pomoshch'yu nechetkoy 
+matematiki [Mathematical modeling of the problem of network planning by means of 
+fuzzy mathematics]. \textit{Proceedings of Voronezh State University.
+Ser. Systems Analysis 
+and Information Technologies} 3:155--162.
+\bibitem{11-zac-1}
+\Aue{Shevlyakov, A.\,O., and M.\,G.~Matveev.} 2015. Reshenie RCPSP pri 
+nechetkikh trudozatratakh vypolneniya ope\-ra\-tsiy [Solving RCPSP with 
+ uncertain duration times of
+activities]. \textit{Proceedings of Voronezh State University.
+Ser. Systems Analysis 
+and Information Technologies} 4:121--125.
+\bibitem{12-zac-1}
+\Aue{Blazewicz, J., J.\,K.~Lenstra, and A.\,H.\,G.~Rinnooy Kan.} 1983. Scheduling 
+subject to resource constraints: Classification and complexity. \textit{Discrete 
+Appl. Math.} 5(1):11--24.
+
+\bibitem{14-zac-1} %13
+\Aue{Hartmann, S.} 2001. Project scheduling with multiple modes: A~genetic 
+algorithm. \textit{Ann. Oper. Res.} 102(1-4):\linebreak 111--135.
+
+\bibitem{13-zac-1} %14
+\Aue{Abdolshah, M.} 2014. A~Review of Resource-Constrained Project Scheduling 
+Problems (RCPSP) approaches and solutions. \textit{Int. T.~J.~Eng. Manage. Appl. 
+Sci.  Technol.}  5(4):253--286.
+
+\bibitem{15-zac-1}
+\Aue{Kumanan, S., G.\,J.~Jose, and K.~Raja.} 2006. Multi-project scheduling using 
+a~heuristic and a~genetic algorithm. \textit{Int. J.~Adv. 
+Manuf. Tech.} 31(3-4):360--366
+\bibitem{16-zac-1}
+\Aue{Yannibelli, V., and A.~Amandi.} 2011. A knowledge-based evolutionary 
+assistant to software development project scheduling. \textit{Expert Syst. 
+Appl.} 38(7):8403--8413.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received March 28, 2019}}
+
+%\pagebreak
+
+%\vspace*{-18pt}
+  \Contr
+  
+  \noindent
+  \textbf{Zatsarinny Alexander A.} (b.\ 1951)~--- Doctor of Science in 
+technology, professor, Deputy Director, Federal Research Center ``Computer 
+Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., 
+Moscow 119333, Russian Federation; \mbox{AZatsarinny@ipiran.ru}
+  
+  \vspace*{3pt}
+  
+  \noindent
+  \textbf{Korotkov Vladislav V.} (b.\ 1993)~--- PhD student, Department of 
+Information Technologies of Management, Computer Science Faculty, Voronezh 
+State University, 1~Universitetskaya Pl., Voronezh 394018, Russian Federation; 
+\mbox{chasecrunk@gmail.com}
+  
+  \vspace*{3pt}
+  
+  \noindent
+  \textbf{Matveev Mikhail G.} (b.\ 1949)~--- Doctor of Science in technology, 
+professor, Head of Department of Information Technologies of 
+Management, Computer Science Faculty, Voronezh State University, 
+1~Universitetskaya Pl., Voronezh 394018, Russian Federation; 
+\mbox{mgmatveev@yandex.ru}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}  

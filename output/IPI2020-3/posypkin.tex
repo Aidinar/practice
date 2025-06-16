@@ -1,0 +1,648 @@
+\def\stat{popov}
+
+\def\tit{АППРОКСИМАЦИЯ МНОЖЕСТВА РЕШЕНИЙ СИСТЕМ НЕЛИНЕЙНЫХ НЕРАВЕНСТВ 
+С~ИСПОЛЬЗОВАНИЕМ ГРАФИЧЕСКИХ УСКОРИТЕЛЕЙ$^*$}
+
+\def\titkol{Аппроксимация множества решений систем нелинейных неравенств 
+с~использованием графических ускорителей}
+
+\def\aut{М.\,В.~Попов$^1$, М.\,А.~Посыпкин$^2$}
+
+\def\autkol{М.\,В.~Попов, М.\,А.~Посыпкин}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Попов М.\,В.}
+\index{Посыпкин М.\,А.}
+\index{Popov M.\,V.}
+\index{Posypkin M.\,A.}
+ 
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при частичной поддержке РНФ (проект 16-19-00148).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{alvopim@gmail.com}}
+\footnotetext[2]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{mposypkin@gmail.com}}
+
+\vspace*{-6pt}
+
+\Abst{Существует множество задач, сводящихся к~решению системы неравенств. Точное 
+получение множества решений в~подобных задачах не всегда возможно, из-за чего 
+прибегают к~различным методам аппроксимации данного множества. При повышении 
+точности аппроксимации искомого множества увеличивается объем необходимых 
+вычислений и, соответственно, время работы алгоритмов. В~работе для увеличения 
+быстродействия алгоритмов поиска аппроксимируемого множества применяются 
+параллельные вычисления на графических ускорителях. Приводится описание и~реализация 
+последовательного метода аппроксимации системы неравенств и~предлагается параллельный 
+гибридный алгоритм, сочетающий перебор на равномерной сетке и~идеи метода ветвей 
+и~границ. Этот алгоритм хорошо подходит для реализации на графических ускорителях и~не 
+приводит к~избыточному перебору. Приведено сравнение эффективности работы 
+последовательного и~двух вариантов параллельного алгоритмов на примере прикладной 
+задачи аппроксимации рабочей области робота. Рабочая область состоит из множества 
+возможных положений инструмента и~служит одной из ключевых характеристик робота.}
+
+\KW{оптимизация; параллельные вычисления; графический ускоритель, GPU; CUDA; 
+нелинейные неравенства}
+
+\DOI{10.14357/19922264200303} 
+ 
+%\vspace*{-6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+     В статье рассматривается задача построения внутренней и~внешней 
+аппроксимаций множества, задаваемого системой нелинейных неравенств. Для 
+решения этой задачи разработаны подходы~[1], основной недостаток которых 
+заключается в~высокой трудоемкости. В~данной работе показано, что 
+упомянутая проблема может быть преодолена с~помощью методов 
+высокопроизводительных вычислений. 
+     
+     В качестве платформы для высокопроизводительных вычислений 
+рассматриваются современные графические ускорители (GPU, graphics processing units)~[2]. 
+Данный тип 
+устройств получил широкое распространение в~последнее время благодаря 
+наилучшему соотношению це\-на/про\-из\-во\-ди\-тель\-ность. В~то же время 
+разработка программ для этой платформы является нетривиальной задачей 
+в~силу особенностей ее архитектуры. Современные графические ускорители 
+обладают большим числом ядер, но возможности взаимодействия между 
+потоками существенно ограничены по отношению к~центральному про\-цес\-сору.
+      
+     В работе предлагается гибридный алгоритм, сочетающий перебор на 
+равномерной сетке и~идеи метода ветвей и~границ. Предложенный алгоритм 
+хорошо подходит для реализации на графических ускорителях и~не приводит 
+к~избыточному пе\-ре\-бору. 
+     
+\section{Последовательный алгоритм}
+
+     Рассматривается задача нахождения множества решений системы 
+неравенств вида:
+     \begin{equation}
+     \left.
+     \begin{array}{rl}
+     f_j(x)\leq 0\,, & j\in [1,m]\,;\\[6pt]
+     a_i\leq x_i\leq b_i\,, & i\in [1,n]\,.
+     \end{array}
+     \right\}
+     \label{e1.1-pos}
+     \end{equation}
+      
+     Для поиска решения необходимо задать изначальные границы, внутри 
+которых будет находиться искомая область~--- $n$-мер\-ный параллелепипед 
+$X\hm\in R^n$. Далее задается точность аппроксимации~$d$ получаемого 
+решения, представляющая собой минимальный размер аппроксимирующего 
+параллелепипеда. Под размером будем понимать длину максимального 
+измерения. После этого параллелепипед~${X}$ разбивается на 
+меньшие параллелепипеды~$P_k$ равномерной сеткой. Число точек сетки по 
+измерению~$j$  задается формулой:
+ $$
+ k_j= \left\lceil \fr{b_j- a_j}{d}\right\rceil\,.
+ $$
+ 
+  Для 
+каждого из полученных параллелепипедов проверяется выполнение следующих 
+условий:
+     \begin{equation}
+     \max\limits_{j\in [1,m]} \max\limits_{x\in P_k} f_j(x)<0\,;
+     \label{e1.2-pos}
+     \end{equation}
+\begin{equation}
+\max\limits_{j\in [1,m]} \min\limits_{x\in P_k} f_{x\in P_k}(x)>0\,.
+\label{e1.3-pos}
+\end{equation}
+
+Можно выделить три основных случая:
+\begin{enumerate}[(1)]
+\item выполнено условие~(\ref{e1.2-pos})~--- параллелепипеды полностью 
+лежат внутри искомой области;
+\item выполнено условие~(\ref{e1.3-pos})~--- параллелепипед лежит вне 
+искомой области;
+\item оба условия не выполнены~--- параллелепипед классифицируется как 
+<<граничный>>.
+\end{enumerate}
+
+     Метод перебора на равномерной сетке удобен тем, что можно заранее 
+рассчитать число операций, необходимых для получения аппроксимирующего 
+покрытия фигуры, образованной функциями из~(\ref{e1.1-pos}). 
+     
+     Для последовательного алгоритма перебора на равномерной сетке число 
+рассматриваемых параллелепипедов определяется по формуле 
+$\prod\nolimits^m_{j=1} k_j$. Для каждого параллелепипеда $P_k\hm\in X$ 
+проводится проверка выполнения условий~(\ref{e1.2-pos}) и~(\ref{e1.3-pos}) для 
+каждой функции~$f_j$. Время проверки~$t_c$ не отличается для разных 
+параллелепипедов. Таким образом, общее время составляет $t_c  
+\prod\nolimits^m_{j=1} k_j$. 
+      
+     Недостаток данного алгоритма состоит в~необходимости полного 
+перебора всех параллелепипедов, число которых существенно возрастает 
+с~уменьшением значения точности аппроксимации. Для преодоления 
+указанного недостатка может применяться метод <<ветвей и~границ>>, 
+адаптированный для данной задачи. Отличие заключается в~том, что сетка не 
+задается сразу, а параллелепипеды формируются рекурсивно. Приведем 
+описание алгоритма.
+     \begin{enumerate}[I.]
+\item В текущий список помещается $m$-мерный параллелепипед $X\hm\in 
+R^m$, который полностью содержит в~себе искомую область.
+\item Из текущего списка извлекается параллелепипед и~делится на две части 
+по наибольшему из измерений.
+\item Выполняется проверка условий~(2) и~(3) для полученных делением 
+параллелепипедов и~в~за\-ви\-си\-мости от результата проверки проводится одно 
+из следующих действий:
+\begin{enumerate}[(1)]
+\item если выполнено условие~(\ref{e1.2-pos}), то параллелепипед 
+помещается в~список полученных прямоугольников для последующего 
+отоб\-ра\-же\-ния;
+ \item если выполнено условие~(\ref{e1.3-pos}), то параллелепипед 
+далее не рассматривается;
+\item если параллелепипед оказывается граничным, но его максимальное 
+измерение превосходит величину точности аппрокси\-мации, то он помещается 
+в~текущий список и~выполняется переход к~шагу~2. В~противном случае 
+параллелепипед добавляется к~множеству граничных параллелепипедов.
+ \end{enumerate}
+ \end{enumerate}
+     
+     Данный метод не позволяет заранее рассчитать число получаемых 
+параллелепипедов для покрытия искомой области, но, как показывает 
+эксперимент, оно будет много меньше, чем при методе равномерной сетки. 
+Минус данного метода~--- его рекурсивность, из-за чего данный алгоритм 
+сложен для распараллеливания. 
+
+\section{Параллельный алгоритм}
+
+     Реализация метода равномерной сетки для параллельных вычислений на 
+графическом ускорителе позволяет сократить число выполняемых операций 
+и~время вычислений в~десятки раз. Главное\linebreak отличие параллельного алгоритма 
+от последовательного состоит в~том, что обработка параллелепипедов 
+выполняется одновременно разными потоками графической карты. 
+     
+     Алгоритм равномерной сетки (рис.~1) для параллельной аппроксимации 
+множества решений системы неравенств состоит в~разбиении параллелепипеда, 
+содержащего исследуемую область, на параллелепипеды меньшего размера 
+с~их последующей параллельной обработкой. Параллельная\linebreak\vspace*{-12pt}
+
+{ \begin{center}  %fig1
+ \vspace*{12pt}
+    \mbox{%
+ \epsfxsize=79mm 
+ \epsfbox{pos-1.eps}
+ }
+
+\vspace*{6pt}
+
+\noindent
+{{\figurename~1}\ \ \small{
+Алгоритм равномерной сетки
+}}
+\end{center}}
+
+%\vspace*{6pt}
+
+{ \begin{center}  %fig2
+ \vspace*{-2pt}
+    \mbox{%
+ \epsfxsize=79mm 
+ \epsfbox{pos-2.eps}
+ }
+
+\vspace*{6pt}
+
+\noindent
+{{\figurename~2}\ \ \small{
+Алгоритм двойной сетки
+}}
+\end{center}}
+
+
+\vspace*{6pt}
+
+
+\noindent
+ обработка 
+выполняется на графическом ускорителе~--- один поток обрабатывает 
+несколько ячеек сетки. При этом координаты ячеек не пересылаются на GPU, 
+а~генерируются исходя из номера потока.
+     
+      
+
+     
+     Алгоритм равномерной сетки идеально подходит для реализации на 
+графических ускорителях, так как обработка ячеек равномерной сетки может 
+выполняться абсолютно независимо. Независимость потоков создает 
+предпосылки для массивного\linebreak параллелизма без синхронизации. Недостаток 
+данного алгоритма~--- высокая ресурсоемкость: при\linebreak увеличении точности 
+аппроксимации количество обрабатываемых параллелепипедов существенно 
+возрастает и~превышает пределы графической памяти. 
+     
+     Преодолеть указанный недостаток позволяет алгоритм двойной сетки 
+(рис.~2), сочетающий элементы метода ветвей и~границ и~перебора на 
+равномерной сетке. Сначала на центральном процессоре (CPU,
+central processing unit) проводится 
+предварительная обработка ячеек крупной равномерной сетки. В~результате 
+часть таких параллелепипедов классифицируется как внешние или внутренние, 
+сохраняется и~далее не рассматривается. Граничные параллелепипеды 
+передаются графическому ускорителю по одному, где они обрабатываются так 
+же, как исходный параллелепипед в~алгоритме равномерной сетки.
+     
+
+     
+     Результатом обработки равномерной сетки на GPU служит массив, 
+содержащий значения~0, 1, 2 в~зависимости от принадлежности 
+параллелепипеда к~искомому множеству аппроксимации. Далее в~зависимости 
+от индекса элемента массива для него вычисляются координаты 
+параллелепипеда.
+     
+     Для графического отображения полученного множества используется 
+язык Python и~библиотека Matplotlib. При большом числе отображаемых 
+параллелепипедов сильно возрастает время вывода изображения 
+и~задействуется большой объем оперативной памяти. Для оптимизации 
+процесса было принято решение объединять параллелепипеды, лежащие 
+внутри искомого множества, в~крупные. Таким образом удалось существенно 
+уменьшить затраты времени и~оперативной памяти. 
+
+\section{Реализация и~экспериментальные исследования}
+
+     Предложенные методы были реализованы с~помощью языка~C 
+и~технологии CUDA (Compute Unified Device Architecture). 
+В~качестве примера прикладного применения 
+рассмотренных методов выбрана задача аппроксимации рабочей области 
+(множества всех возможных положений рабочего инструмента) плоского 
+параллельного робота. Роботы параллельной структуры характеризуются 
+замкнутой кинематической цепью, сочетают высокую точность 
+позиционирования и~жесткость конструкции~\cite{3-pos}. Для экспериментов 
+выбран планарный робот с~двумя степенями свободы (\mbox{2-RPR}). Схематично 
+данное устройство представлено на рис.~3. Рабочий инструмент робота, 
+закрепленный в~точке~$X$, приводится в~движение двумя призматическими 
+двигателями, которые изменяют длины штанг~$AX$ и~$BX$.
+
+
+
+Рабочая область данного робота определяется следующей системой неравенств:
+\begin{align*}
+f_1\left( x_1, x_2\right) &=x_1^2+x_2^2-\left( l_1^{\max}\right)^2\leq0\,;\\
+f_2\left(x_1, x_2\right)&= \left( l_1^{\min}\right)^2 -x_1^2-x_2^2\leq0\,;\\
+f_3\left( x_1, x_2\right)&= \left(x_1-l_0\right)^2 +x_2^2-\left( 
+l_2^{\max}\right)^2\leq0\,;\\
+f_4\left(x_1, x_2\right)& = \left( l_2^{\min}\right)^2 -\left( x_1-l_0\right)^2-x_2^2\leq 
+0\,,
+\end{align*}
+где
+$$
+-l_1^{\max}\leq x_1 \leq l_0+l_2^{\max}\,;\
+0\leq x_2\leq \min\left( l_1^{\max}, l_2^{\max}\right)\,.
+$$
+
+\setcounter{figure}{3}
+\begin{figure*}[b] %fig4
+\vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=162.252mm 
+ \epsfbox{pos-4.eps}
+ }
+ \end{center}
+   \vspace*{-9pt}
+\Caption{Искомые множества: (\textit{а})~точ\-ность $d\hm=0{,}1$;
+(\textit{б})~точность $d\hm=0{,}01$}
+
+\vspace*{6pt}
+
+{\small
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\multicolumn{5}{c}{Время выполнения методов в~зависимости от точности аппроксимации 
+(мс)}\\
+\multicolumn{5}{c}{\ }\\[-6pt]
+\hline
+\tabcolsep=0pt\begin{tabular}{c}Точность\\ аппроксимации\end{tabular}&
+\tabcolsep=0pt\begin{tabular}{c}Последовательный\\ метод равномерной\\ сетки\end{tabular}&
+\tabcolsep=0pt\begin{tabular}{c}Метод\\ ветвей\\ 
+и~границ\end{tabular}&
+\tabcolsep=0pt\begin{tabular}{c}Параллельный\\ метод равномерной\\ сетки
+\end{tabular}&
+\tabcolsep=0pt\begin{tabular}{c}Параллельный\\ метод двойной\\ сетки\end{tabular}\\
+\hline
+0,1\hphantom{99}&\hphantom{9}13&\hphantom{99}8&47&54\\
+0,05\hphantom{9}&\hphantom{9}41&\hphantom{9}27&47&54\\
+0,01\hphantom{9}&945&889&92&54\\
+0,005&4\,003\hphantom{9}&3\,950\hphantom{9}&140\hphantom{9}&54\\
+0,001&99\,100\hphantom{99}&132\,300\hphantom{999}&510\hphantom{9}&102\hphantom{9}\\
+\hphantom{9}0,0001&$>$2,5~ч&$>$2,5~ч&---&4\,400\hphantom{99}\\
+\hline
+\end{tabular}
+\end{center}
+}
+%\end{table*}
+\end{figure*}
+
+
+{ \begin{center}  %fig3
+ \vspace*{-2pt}
+    \mbox{%
+ \epsfxsize=79mm 
+ \epsfbox{pos-3.eps}
+ }
+
+\vspace*{6pt}
+
+\noindent
+{{\figurename~3}\ \ \small{
+Схема плоского робота 2-RPR
+}}
+\end{center}}
+
+
+\vspace*{6pt}
+
+
+\noindent
+Значения $l_{1,2}$ изменяются в~диапазоне $8\hm\leq l_{1,2}\hm\leq 12$, т.\,е.\ 
+$l_1^{\min}\hm= 8$; $l_1^{\max}\hm=12$. Расстояние между точками 
+закрепления штанг составляет $l_0\hm=5$. Требуется аппроксимировать 
+область, в~которой, исходя из конструктивных особенностей длин звеньев, 
+может находиться точка $X(x_1,x_2)$ закрепления рабочего инструмента. Для 
+получения гарантированных оценок минимума и~максимума функций в~левых 
+частях неравенств применялись методы интервального  
+анализа~\cite{4-pos, 5-pos}.
+     
+     Реализованные методы тестировались на персональном компьютере 
+с~Intel Core~I7 с~базовой тактовой частотой 2,8~ГГц, 16~ГБ ОЗУ, видеокартой 
+Nvidia GeForce~1060: 3~ГБ оперативной памяти, 1280~ядер с~базовой тактовой 
+частотой от 1506~МГц. Тестирование проводилось для поставленной задачи со 
+значениями точности аппроксимации, равными 0,1; 0,05; 0,01; 0,005; 0,001 
+и~0,0001.
+     
+     Аппроксимации рабочей области для разных значений точности, 
+полученные методом двойной сетки, приведены на рис.~4.
+
+
+
+
+На рис.~4,\,\textit{б} убраны линии, выделяющие получаемые параллелепипеды, 
+поскольку при высокой точности аппроксимации толщина отображаемых 
+линий становится соизмерима с~высотой параллелепипедов, из-за чего линии 
+сливаются. Таким образом, для точности $d\hm=0{,}01$ высота 
+параллелепипедов, которые не объединены друг с~другом, слишком мала для 
+графического отображения на целой фигуре. 
+     
+Время работы алгоритмов в~миллисекундах представлено в~таблице.
+
+
+
+
+Проведенные эксперименты позволяют сделать следующие выводы.
+\begin{enumerate}[1.]
+\item При низкой точности аппроксимации (0,1 или~0,05) параллельные 
+варианты работают с~невысокой эффективностью, что означает 
+недостаточную загруженность вычислительных мощностей видеокарты. 
+Применение GPU при таком объеме вычислений нецелесообразно.
+\item При повышении точности возрастает объем вычислений 
+и~загруженность ядер графической карты, что приводит к~увеличению 
+эффективности расчетов. С~по\-мощью параллельного алгоритма 
+равномерной сетки не удается получать решения при высокой точ\-ности 
+аппроксимации в~силу превышения максимально допустимых значений 
+числа обрабатываемых потоков или пределов локальной памяти. 
+\item Принцип дополнительного разбиения исходной области, заложенный 
+в~параллельном алгоритме двойной сетки, позволяет снизить объем 
+вычислений и~данных, обрабатываемых на графической карте, благодаря 
+чему возможно получение более высокой точности аппроксимации.
+\end{enumerate}
+
+\section{Заключение}
+     
+     В данной работе разработаны два параллельных алгоритма для численной 
+аппроксимации решения системы нелинейных неравенств, ориентированные на 
+графические ускорители: алгоритм равномерной сетки и~алгоритм двойной 
+сетки. Результаты экспериментов показали, что параллельные методы 
+с~вычислениями на графическом ускорителе оказались существенно 
+эффективнее последовательных однопоточных методов на центральном 
+процессоре. Параллельный алгоритм двойной сетки оказался наиболее 
+эффективным по скорости работы и~наилучшим по точности аппроксимации. 
+Этот метод сочетает в~себе аппроксимацию на равномерной сетке, которая 
+хорошо распараллеливается, и~метод ветвей и~границ, позволяющий сократить 
+число операций за счет эффективного отсева <<неперспективных>> областей 
+на начальном этапе.
+     
+     В~дальнейшем планируется рассмотреть роботов более сложной 
+конструкции~\cite{6-pos}, что неизбежно приведет к~необходимости 
+привлечения большей вычислительной мощности для расчетов. Предполагается 
+использование серверов, оснащенных несколькими графическими 
+ускорителями, установленных в~центре обработки данных ФИЦ ИУ 
+РАН~\cite{7-pos}.
+
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+  \bibitem{1-pos}
+  \Au{Evtushenko Yu., Posypkin~M., Rybak~L., Turkin~A.} Approximating a~solution set of 
+nonlinear inequalities~// J.~Global Optim., 2018. Vol.~71. Iss.~1. P.~129--145. 
+  \bibitem{2-pos}
+  \Au{Cheng J., Grossman~M., McKercher~T.} Professional Cuda~C programming.~--- New 
+York, NY, USA: John Wiley \& Sons, 2014. 499~p.
+  \bibitem{3-pos}
+  \Au{Merlet J.\,P.} Parallel robots.~--- Solid mechanics and its  
+applications ser.~--- Springer Science \& Business Media, 2006. Vol.~128. 402~p.
+  \bibitem{4-pos}
+  \Au{Moore R.\,E., Bierbaum~F.} 
+  Methods and applications of interval analysis.~---  SIAM studies 
+in applied and numerical mathematics ser.~--- Soc. for 
+Industrial \& Applied Math., 1979. 201~p.
+  \bibitem{5-pos}
+  \Au{Hansen~E., Walster~G.\,W.} Global optimization using interval 
+  analysis: Revised and 
+expanded.~--- Pure and applied mathematics ser.~--- CRC Press, 2003. 
+Book~264. 728~p.
+  \bibitem{6-pos}
+  \Au{Malyshev D., Rybak~L., Behera~L., Mohan~S.} Workspace modelling of a~parallel robot 
+with relative manipulation mechanisms based on optimization methods~// 
+Robotics and mechatronics~/ Eds. C.\,H.~Kuo, P.\,C.~Lin, T.~Essomba, 
+G.\,C.~Chen.~--- Cham: Springer, 2019. Vol.~78. P.~151--163.
+  \bibitem{7-pos}
+  \Au{Zatsarinny A.\,A., Gorshenin~A.\,K., Kondrashev~V.\,A., Volovich~K.\,I., Denisov~S.\,A.} 
+Toward high performance solutions as services of research digital platform~// 
+Procedia Comput. Sci., 2019. Vol.~150. P.~622--627.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 08.10.19}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{APPROXIMATION OF~THE~SET OF~SOLUTIONS OF~SYSTEMS OF~NONLINEAR 
+INEQUALITIES USING~GRAPHIC ACCELERATORS}
+
+
+\def\titkol{Approximation of~the~set of~solutions of~systems of~nonlinear 
+inequalities using~graphic accelerators}
+
+
+
+\def\aut{M.\,V.~Popov and M.\,A.~Posypkin}
+
+\def\autkol{M.\,V.~Popov and M.\,A.~Posypkin}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 
+44-2~Vavilov Str., Moscow 119133, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+
+
+\Abste{Solutions of certain problems can be reduced to the solution 
+of some systems of inequalities. But the computation of the set of 
+exact solutions may not be feasible. Thus, various methods for 
+approximation of the solution set have been developed. The more 
+accurate approximation is required, the bigger number of 
+calculations must be performed and, consequently, the runtime of 
+the algorithms increases. Nowadays, it is common to speed up algorithms 
+by paralleling computations on graphics accelerators. The paper 
+describes the serial method for approximation of the solution of systems 
+of inequalities and proposes the parallel hybrid algorithm that combines 
+iterations on the uniform grid and the branch and bound method. This 
+algorithm is suited for direct implementation on graphics accelerators 
+and does not suffer from the excessive enumeration of possible solution 
+candidates. The\linebreak\vspace*{-12pt}}
+
+\Abstend{sequential algorithm and the two versions of the 
+parallel algorithm are compared through one example: the problem of 
+approximation of the working area of the robot which consists of 
+the set of robot's tool positions and is the key robot's characteristic.}
+
+\KWE{optimization; parallel computing; graphics accelerator, GPU; CUDA; 
+nonlinear inequalities}
+
+
+
+\DOI{10.14357/19922264200303} 
+
+%\vspace*{-20pt}
+
+\Ack
+\noindent
+The paper was partially supported by the Russian Science Foundation  (project  16-19-00148).
+
+%\vspace*{6pt}
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{1-pos-1}
+\Aue{Evtushenko, Yu.\,G., M.\,A.~Posypkin, L.\,A.~Rybak, and A.\,V.~Turkin.} 2018. Approximating 
+a~solution set of nonlinear inequalities. \textit{J.~Global Optim.} 71(1):129--145. 
+\bibitem{2-pos-1}
+\Aue{Cheng, J., M.~Grossman, and T.~McKercher.} 2014. \textit{Professional Cuda~C programming}. 
+New York, NY: John Wiley \&~Sons. 499~p.
+\bibitem{3-pos-1}
+\Aue{Merlet, J.\,P.} 2006. \textit{Parallel robots}. 
+Solid mechanics and its  
+applications ser.
+Springer Science \&~Business Media. Vol.~128. 402~p.
+\bibitem{4-pos-1}
+\Aue{Moore, R.\,E., and  F.~Bierbaum.} 1979. 
+\textit{Methods and applications of interval analysis}.
+ SIAM studies in applied and numerical mathematics ser.
+{Soc. for Industrial \&~Applied Math.} 201~p.
+\bibitem{5-pos-1}
+\Aue{Hansen, E., and G.\,W.~Walster.} 2003. 
+\textit{Global optimization using interval analysis: Revised 
+and expanded.} Pure and applied mathematics ser.
+CRC Press. Book~264. 728~p.
+\bibitem{6-pos-1}
+\Aue{Malyshev, D., L.\,A.~Rybak, L.~Behera, and S.~Mohan.} 2019. Workspace modelling of a parallel 
+robot with relative manipulation mechanisms based on optimization methods. 
+\textit{Robotics and 
+mechatronics}. Eds. C.\,H.~Kuo, P.\,C.~Lin, T.~Essomba, 
+and G.\,C.~Chen. Cham: Springer. 78:151--163.
+\bibitem{7-pos-1}
+\Aue{Zatsarinny, A.\,A., A.\,K.~Gorshenin, V.\,A.~Kondrashev, K.\,I.~Volovich, and S.\,A.~Denisov.} 
+2019. Toward high performance solutions as services of research digital
+ platform. \textit{Procedia Comput. 
+Sci.} 150:622--627.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received October 8, 2019}}
+
+%\pagebreak
+
+%\vspace*{-24pt}
+
+\Contr
+
+\noindent
+\textbf{Popov Mikhail V.} (b.\ 1995)~--- PhD student, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, 
+Russian Federation; \mbox{alvopim@gmail.com}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Posypkin Mikhail A.} (b.\ 1974)~--- 
+Doctor of Science in physics and mathematics, associate professor, principal scientist, 
+Federal Research Center ``Computer Science 
+and Control'' of the Russian Academy of Sciences, 44-2~Vavilov 
+Str., Moscow 119333, Russian Federation; \mbox{mposypkin@gmail.com}
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

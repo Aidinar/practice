@@ -1,0 +1,754 @@
+\def\stat{torshin}
+
+\def\tit{О ФОРМИРОВАНИИ МНОЖЕСТВ ПРЕЦЕДЕНТОВ НА~ОСНОВЕ ТАБЛИЦ 
+РАЗНОРОДНЫХ ПРИЗНАКОВЫХ ОПИСАНИЙ МЕТОДАМИ ТОПОЛОГИЧЕСКОЙ 
+ТЕОРИИ АНАЛИЗА ДАННЫХ$^*$}
+
+\def\titkol{О формировании множеств прецедентов на~основе таблиц 
+разнородных признаковых описаний} % методами топологической  теории анализа данных}
+
+\def\aut{И.\,Ю.~Торшин$^1$}
+
+\def\autkol{И.\,Ю.~Торшин}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Торшин И.\,Ю.}
+\index{Torshin I.\,Yu.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при поддержке гранта РНФ (проект 23-21-00154) с~использованием инфраструктуры 
+Центра коллективного пользования <<Высокопроизводительные вычисления и~большие данные>> (ЦКП 
+<<Информатика>>) ФИЦ ИУ РАН (г.~Москва).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{tiy135@yahoo.com}}
+
+\vspace*{-8pt}
+
+
+
+\Abst{Факторизация вкладов различных переменных при анализе раз\-но\-род\-ных 
+признаковых описаний~--- насущная задача интеллектуального анализа слож\-ных данных. 
+В~работе пред\-ло\-же\-но развитие решеточного формализма топологической тео\-рии анализа 
+данных, в~рам\-ках которого получены новые способы по\-рож\-де\-ния па\-ра\-мет\-ри\-че\-ских 
+оценок и~мет\-рик на решетках, образованных над топологиями мно\-жеств объектов. 
+Формализм был апро\-би\-ро\-ван на задаче формирования множеств прецедентов для 
+проведения хемомикробиомного анализа. Тогда как по\-рож\-де\-ние множества исходных 
+информаций на основе регрессионных коэффициентов и~раз\-ности значений материала 
+обуче\-ния соответствовало крайне низ\-кой обобщающей спо\-соб\-ности на\-стра\-и\-ва\-емых 
+алгоритмов (коэффициент корреляции на контроле~--- $0{,}32\hm\pm 0{,}20$), 
+использование пред\-ла\-га\-емых оценок для по\-рож\-де\-ния множеств прецедентов в~задачах 
+хе\-мо\-мик\-ро\-био\-ми\-ки позволило существенно повысить обоб\-ща\-ющую спо\-соб\-ность 
+со\-от\-вет\-ст\-ву\-ющих алгоритмов (коэффициент корреляции на контроле~--- $0{,}79\hm\pm 
+0{,}21$).}
+
+\KW{топологический анализ данных; тео\-рия решеток; па\-ра\-мет\-ри\-за\-ция решеточных 
+тер\-мов; мик\-ро\-би\-ом человека; фармакоинформатика, ал\-геб\-ра\-и\-че\-ский подход 
+Ю.\,И.~Жу\-рав\-лёва}
+
+ \DOI{10.14357/19922264230301}{AQEUYO}
+  
+%\vspace*{-2pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+     В биомедицинских исследованиях объектом служит формализованное 
+описание со\-сто\-яния пациента, вклю\-ча\-ющее булевы (диагнозы, прием 
+лекарств и~др.), чис\-ло\-вые (лабораторные анализы) и~категорные (показатели 
+демографии и~др.)\ переменные, графы (формулы лекарств), временн$\acute{\mbox{ы}}$е ряды 
+и~изображения (результаты обследования пациента аппаратными методами). 
+При формализации таких задач важ\-но выделить независимые вклады 
+пе\-ре\-мен\-ных-при\-зна\-ков в~таргетную переменную (отклик) таким образом, 
+чтобы получить\linebreak высокое качество работы алгоритмов 
+рас\-по\-зна\-ва\-ния/клас\-си\-фи\-ка\-ции. Топологический анализ данных, раз\-ви\-ва\-емый 
+в~рамках ал\-геб\-ра\-и\-че\-ско\-го \mbox{подхода} к~распознаванию научной школы 
+Ю.\,И.~Журавлёва и~К.\,В.~Рудакова~[1, 2], поз\-во\-ля\-ет сис\-те\-ма\-ти\-че\-ски 
+исследовать воз\-мож\-ные решения этой за\-дачи. 
+     
+     В настоящей работе данный подход апробирован на задаче 
+формирования множества прецедентов для проведения хе\-мо\-мик\-ро\-би\-ом\-но\-го 
+анализа лекарств~[3]. В~этой при\-клад\-ной задаче (оцен\-ка вли\-яния лекарств на 
+микробиоту) факт использования лекарства, как правило, описан булевым 
+при\-зна\-ком, а~от\-кли\-ком служит уровень той или иной бактерии мик\-ро\-био\-ма 
+(чис\-ло\-вая переменная).\linebreak Для выделения независимых вкла\-дов булевых 
+переменных в~чис\-ло\-вые таргетные переменные предложен сис\-тем\-ный 
+подход к~по\-рож\-де\-нию па\-ра\-мет\-ри\-зо\-ван\-ных оценок на решетке (решеточных 
+термов) и~со\-от\-вет\-ст\-ву\-ющих мет\-рик. Такой подход пред\-став\-ля\-ет собой 
+тео\-ре\-ти\-че\-ское обобщение <<рас\-щеп\-ле\-ния>> эмпирической функции 
+распределения булевым признаком~\cite{2-tor} и~тесно связан 
+с~по\-рож\-де\-ни\-ем мет\-ри\-че\-ских функций рас\-сто\-яния и~с~проб\-ле\-ма\-ти\-кой так 
+на\-зы\-ва\-емых <<оценок ин\-фор\-ма\-тив\-ности>> (точ\-нее, весовых функций 
+при\-зна\-ков), ис\-поль\-зу\-емых в~комбинаторной тео\-рии раз\-ре\-ши\-мости~[4].
+
+\vspace*{-6pt}
+     
+\section{Основные понятия}
+
+     Основы формализма изложены в~\cite{2-tor, 5-tor}. Задано множество 
+ис\-ход\-ных описаний объектов $\mathbf{X}\hm= \{x_1, \ldots , x_{N_0}\}$, 
+$\mathbf{X}\hm\subseteq {S}$, множества значений признаков $I_k\hm= \{ 
+\lambda_{k_1}, \lambda_{k_2}, \ldots , \lambda_{k_b}, \ldots , 
+\lambda_{k_{\vert I_k\vert -1}}, \Delta\}$,\linebreak $b\hm= 1,\ldots , \vert I_k\vert$, 
+функции $\Gamma_k: S \hm\to I_k$, $k\hm=1,\ldots ,n \hm+l$\linebreak 
+ ($n$~--- чис\-ло признаков; $l$~--- чис\-ло таргетных (про\-гно\-зи\-ру\-емых) 
+переменных; $\Delta$~--- не\-опре\-де\-лен\-ность). Определено пространство 
+до\-пус\-ти\-мых при\-зна\-ко\-вых описаний объектов 
+$J_{\mathrm{ob}}\hm\subseteq I_i\times I_f$ ($I_i\hm\subseteq I_1\times 
+\cdots\times I_n$, $I_f\hm\subseteq I_{n+1} \times\cdots\times I_{n+1}$), 
+функции $D: S\hm\to J_{\mathrm{ob}}$, $D(x_\alpha)\hm=(\Gamma_1(x_\alpha)\times \cdots$\linebreak $\cdots\times 
+\Gamma_k (x_\alpha)\times\cdots\times \Gamma_{n+1}(x_\alpha))_\Delta$ 
+и~$\varphi(\mathbf{X}) \hm= \{ D(x_\alpha)\vert x_\alpha \hm\in \mathbf{X}\}$. 
+Принимается, что множества~$\mathbf{X}$ и~$Q\hm= \varphi(\mathbf{X})$, 
+$\vert Q\vert \hm= N$, \textit{регулярны}, т.\,е.\ $N_0\hm= N$ и~$\exists\,  
+D^{-1}: \forall x\hm\in \mathbf{X}$, $x\hm= D^{-1}(D(x))$~\cite{5-tor}. 
+Множество $U(\mathbf{X})\hm=\{\Gamma_k^{-1}(\lambda_{k_b})\}$, 
+образованное функциями пол\-ных прообразов значений 
+при\-зна\-ков~$\lambda_{k_b}$, рас\-смат\-ри\-ва\-ет\-ся как пред\-ба\-за 
+\textit{топологии} $T(\mathbf{X})\hm=\{\varnothing, I, a\cup b, a\cap b: a,b 
+\hm\in U(\mathbf{X})\}$, где $I\hm=\{\mathbf{X}\}$. 
+Топологии~$T(\mathbf{X})$ соответствует \textit{решетка} 
+$L(T(\mathbf{X}))\hm=\{a\vee b, a\wedge b: a,b\hm\in T(\mathbf{X})\}$. При 
+ре\-гу\-ляр\-ности~$\mathbf{X}$ и~$Q$ ре\-шет\-ка $L(T(\mathbf{X}))$~--- 
+булева~\cite{2-tor}.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~1.}\ \textit{Произвольной цепи $\langle u_1, \ldots, 
+u_m\rangle$ решетки $L(T(\mathbf{X}))$ мож\-но сопоставить чис\-ло\-вой 
+при\-знак с~множеством значений} $I_t\hm= (\lambda_{t_1}, \ldots, 
+\lambda_{t_b}, \ldots , \lambda_m)$, $\lambda_{t_{i-1}}\hm\leq \lambda_{t_1} 
+\hm\leq \lambda_{t_{i+1}}$. 
+     
+     \smallskip
+     
+     Справедливость тео\-ре\-мы следует из того, что линейный порядок любой 
+конечной цепи $\langle u_1\hm \supseteq u_2\cdots \supseteq u_i\cdots \supseteq 
+u_m\rangle$ изоморфен линейному порядку на конечном множестве чисел 
+$\{\lambda_{t_i}\}$, $\lambda_{t_{i-1}} \hm\leq \lambda_{t_i}$, $i\hm=  
+2, \ldots , m$.
+     
+     \smallskip
+     
+     \noindent
+     \textbf{Следствие~1.}\ \textit{Любая цепь~$A_t$ в~$L(T(\mathbf{X}))$ 
+пред\-ста\-ви\-ма в~виде $A_t\hm= \langle u(\lambda_{t_1}), \ldots , 
+u(\lambda_{t_i}),\ldots , u(\lambda_{t_m})\rangle$, $u(\lambda_{t_i})\hm= 
+\mathop{\bigcup}_{\beta=1}^i \Gamma^{-1}_t(\lambda_{t_\beta})$, где 
+$I_t\hm= (\lambda_{t_1}, \ldots , \lambda_m)$ монотонна}.
+     
+     \smallskip
+     
+     \noindent
+     \textbf{Следствие~2.} \textit{При дополнении наблюда\-емой 
+об\-ласти~$I_t$ значений $t$-го чис\-ло\-во\-го при\-зна\-ка 
+не\-опре\-де\-лен\-ностью~$\Delta$ и~принятии со\-гла\-ше\-ния 
+$\Gamma_t(\varnothing)\hm=\Delta$ со\-от\-вет\-ст\-ву\-ющая цепь~$A_t$~--- 
+максимальная цепь решетки}~$L(T(\mathbf{X}))$. 
+     
+     \smallskip
+     
+     \noindent
+\textbf{Следствие~3.} \textit{Для произвольной цепи} $t$\textit{-го чис\-ло\-во\-го 
+при\-зна\-ка определена эмпирическая функция распределения}  
+$\mathrm{cdf}\,(\lambda, A_k(\mathbf{X})) \hm= \vert u(\lambda_{k_b})\vert /N \big\vert \lambda_{k_{b-1}} \hm\leq \lambda\hm\leq \lambda_{k_b}$. 
+
+\section{Решеточные термы и~операции над~ними}
+
+     В топологическом анализе данных булевой решетке   
+со\-по\-став\-ля\-ет\-ся \textit{мет\-ри\-че\-ское пространство значений при\-зна\-ков} 
+$M_L(L(T(\mathbf{X})), \rho_L)$ с~мет\-ри\-кой $\rho_L: L^2\hm\to 
+R^+$~\cite{2-tor}. Метрики~$\rho_L$ могут определяться на основании 
+формализма оценок (см.\ ниже) или же на основе известных подходов 
+(расстояния Танимото, Амана, Твер\-ско\-го, Со\-ка\-ла--Сни\-са,\linebreak  
+Гоу\-эра--Ле\-жанд\-ра и~др.)~\cite{6-tor}. При заданной~$\rho_L$ 
+\textit{расстояние} $\rho_A: \mathbf{A}(\mathbf{X})^2\hm\to R^+$ 
+\textit{меж\-ду цепями} $a\hm= \langle a_1, \ldots , a_i,\ldots\rangle$ и~$b\hm= 
+\langle b_1, \ldots , b_j,\ldots\rangle$ определено так, что существует 
+однозначное соответствие элементов цепей~$a$ и~$b$ (например, 
+$\rho_A(a,b)\hm= \min ( \sum_{i=1,\vert a\vert} \rho_L(a_i, \argmin_{b_j\in b} 
+\rho_L(a_i, b_j)),$\linebreak $\sum_{i=1,\vert b\vert} \rho_L(b_j, \argmin_{a_i\in a} \rho_L 
+(b_j, a_i))$. При заданных~$\rho_L$, $\rho_A$, $A_k(\mathbf{X})$ 
+и~множества до\-пус\-ти\-мых цепей $A(\mathbf{X})_{1,n}$ (содержит цепи 
+с~длинами от~1 до~$n$) иско\-мый ($\varepsilon$-кор\-рект\-ный) алгоритм 
+со\-от\-вет\-ст\-ву\-ет решению задачи комбинаторной оптимизации~\cite{5-tor}: $$
+    % aa= 
+    \argmin\limits_{a\in \mathbf{A}(\mathbf{X})_{1,n}} \rho_A \left( 
+A_k(\mathbf{X}), a\right)\vert A(\mathbf{X})_{1,n}\hm\subset 
+\mathbf{A}(\mathbf{X}).
+     $$
+При порождении мет\-ри\-че\-ских пространств над произвольной решеткой   
+вводится понятие решеточного тер\-ма или \textit{оценки} $v: L\hm\to R^+$, 
+для которой выполнено \textit{условие оценки} (\textbf{yO}: $\forall_L a,b: 
+v[a]\hm+v[b]\hm= v[a\wedge b]\hm+ v[a\vee b]$) и~\textit{условие 
+изотонности} (\textbf{уИ}: $\forall_L a,b: a\hm\supseteq b \hm \Rightarrow 
+v[a]\hm\geq v[b]$). Изо\-тон\-ность оцен\-ки $v[\,]$ важ\-на потому, что поз\-во\-ля\-ет 
+определить мет\-ри\-ку $\rho(x,y) \hm= v[x\vee y] \hm- v[x\wedge y]$~\cite{2-tor}.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~2.}\ \textit{Линейная комбинация $v[\,]\hm= \sum \omega_i 
+v_i[\,]$, $i\hm=1, \ldots, m,$ произвольного чис\-ла изотонных  
+оценок $v_i[\,]$~--- изотонная оцен\-ка при $v[\,]\hm\geq0$.}
+
+\smallskip
+ 
+     Теорема доказывается через линейные преобразований условий уО$_i$ 
+и~уИ$_i$ для $m$ оценок~$v_i[\,]$.
+     
+     
+     \smallskip
+     
+     \noindent
+\textbf{Следствие~1.}\ \textit{Сумма произвольного чис\-ла (изотонных) 
+оценок~--- оценка}.
+
+     \smallskip
+     
+     \noindent
+\textbf{Следствие~2.} \textit{Раз\-ность (изотонных) оценок становится 
+оцен\-кой только при условии положительной опре\-де\-лен\-ности}.
+
+     \smallskip
+     
+     \noindent
+\textbf{Следствие~3.} \textit{Пусть индекс~$i$ в~выражении 
+для~$v[\,]$ изменяется от $i\hm=0$, $v_0\hm\equiv 1$. Тогда мож\-но 
+по\-до\-брать такое значение~$\omega_0$, что} $v[\,]\hm\geq 0$. 
+    
+\smallskip
+
+При произвольном нелинейном преобразовании $f: R^+\hm\to R^+$, 
+при\-ме\-ня\-емом к~(изотонной) оцен\-ке~$v[\,]$, вы\-пол\-ни\-мость уО неочевидна. 
+Если $v[\,]$ изотонна, то $f(v[\,])$ может быть изотонна только при условии 
+мо\-но\-тон\-ности~$f$ (сигмоида, степенная функция и~др.). Для оценки 
+вы\-пол\-ни\-мости уО/уИ $f(v[\,])$ на подмножестве решетки~$L$ воз\-мож\-но 
+применение аналитических или комбинаторных подходов. Например, лег\-ко 
+показать, что для $f(x)\hm= x^\alpha$ при $\alpha\hm=2$ или~0,5 выражение 
+$f(v[\,])$ служит оцен\-кой только на элементах произвольной цепи решетки~$L(T(\mathbf{X}))$. 
+
+\section{Параметрические оценки на~основе <<опорного 
+элемента>>} 
+
+Выберем подмножество объектов~$\mathbf{X}$, $\alpha \hm\in 
+L(T(\mathbf{X}))$. Подмножество~$\alpha$ может соответствовать 
+$k^\prime$-му булеву при\-зна\-ку в~исходном при\-зна\-ко\-вом описании (тогда 
+$\alpha\hm= \Gamma^{-1}_{k^\prime} (1)$) или синтетическому булеву 
+при\-зна\-ку, что разбивает~$\mathbf{X}$ на~$\alpha$ и~$\overline{\alpha}\hm= 
+\mathbf{X}\backslash \alpha$ и~определяет $\nu_\alpha \hm= \vert \alpha \vert / 
+\vert \mathbf{X}\vert \hm= \vert\alpha\vert / N$ 
+и~$\nu_{\overline{\alpha}}\hm=1\hm- \nu_\alpha$. 
+     
+     <<Опираясь>> на множество~$\alpha$ как параметр, мож\-но породить 
+несколько изотонных решеточных оценок на основе базовой оцен\-ки, рав\-ной 
+высоте элемента~$u_i$ в~$L(T(\mathbf{X}))$, $h[u_i] \hm= \vert u_i\vert$, 
+час\-тот~$\nu_\alpha$ и~$\nu_{\overline{\alpha}}$. Оцен\-ка $v_\alpha^+ [u_i] 
+\hm= \vert u_i \cap \alpha \vert / \vert\alpha\vert$ соответствует час\-то\-те 
+встре\-ча\-емости элементов из $u_i\hm\subseteq \mathbf{X}$ в~$\alpha \subset 
+\mathbf{X}$; оцен\-ка $v_\alpha^-[u_i]\hm= \vert u_i \cap \overline{\alpha}\vert / 
+\vert \overline{\alpha}\vert \hm= \vert u_i \backslash\alpha\vert / (N\hm- 
+\vert\alpha\vert)$~--- встре\-ча\-емость элементов~$u_i$ в~$\overline{\alpha}$. 
+В~соответствии с~тео\-ре\-мой~2 линейные комбинации оценок~$v_\alpha^+$ 
+и~$v_\alpha^-$ так\-же изотонны при условии положительной опре\-де\-лен\-ности. 
+     
+     \medskip
+     
+     \noindent
+\textbf{Теорема~3.} \textit{Изотонная оцен\-ка $d_\alpha [\,]\hm= 
+v_\alpha^+[\,] \hm- v_\alpha^-[\,]$ существует, когда объекты из 
+множества~$\alpha$ встречаются в~оце\-ни\-ва\-емых множествах~$u_i$ не 
+реже, чем в~сред\-нем по множеству всех объектов}~$\mathbf{X}$.
+
+\medskip
+
+     Рассмотрим функционал $\mathrm{d}_\alpha [u_i] \hm= v_\alpha^+[u_i] 
+\hm+ \omega v_\alpha^- [u_i]$, $\omega\hm\in R$, и~покажем, что 
+$d_\alpha[\,]$~--- линейная комбинация мет\-ри\-ки $\rho(u_i,\alpha)$ 
+и~оценки $h[u_i]\hm=\vert u_i\vert$. Приведем~$v^+_\alpha$ и~$v_\alpha^-$ 
+к~общему знаменателю, рав\-но\-му $\vert \alpha \vert (N\hm- \vert\alpha\vert)$. 
+Подставляя 
+$$
+\vert u_i \cap \alpha \vert = 0{,}5 (\vert u_i\vert + \vert\alpha\vert - \rho(u_i,\alpha)),
+$$
+ после упрощения получим (для 
+произвольного~$u_i$), что 
+$$
+{d}_\alpha [u_i] = k_\alpha \vert\alpha\vert + b_\alpha\vert u_i\vert - k_\alpha \rho(u_i,\alpha)\,,
+$$
+ где 
+\begin{align*}
+b_\alpha&= \fr{1/v_\alpha+\omega-1}{2(N-\vert\alpha\vert)}\,;\\
+k_\alpha&= \fr{1/v_\alpha -\omega-1}{2(N-\vert\alpha\vert)}\,.
+\end{align*}
+
+ Рас\-смот\-рим 
+функционал~${d}_\alpha[\,]$ (который служит изотонной оцен\-кой 
+для всех $\omega\hm>0$) в~случае $\omega\hm<0$ и~запишем его в~виде 
+${d}_\alpha[\,] \hm= v_\alpha^+ [\,] \hm- \vert\omega\vert v_\alpha^-[\,]$. 
+Условию ${d}_\alpha [u_i] \hm\geq 0$ со\-от\-вет\-ст\-вует 
+     $$
+     \fr{1/v_\alpha+\vert\omega\vert-1}{N-\vert\alpha\vert}\,\vert u_i\bigcap \alpha 
+\vert \geq \fr{\vert\omega\vert \vert u_i\vert}{N-\vert\alpha\vert}\,,
+     $$ 
+     т.\,е.\
+     $$
+     \fr{\vert i_i\cap \alpha\vert}{\vert u_i\vert} \geq 
+\fr{\vert\omega\vert}{1/v_\alpha +\vert\omega\vert-1}\,.
+     $$
+      Это условие выделяет подмножество $\{u_i\}\hm\subset 
+L(T(\mathbf{X}))$, где ${d}_\alpha[\,]$ изотонна. При 
+$\vert\omega\vert \hm\sim 1$ по\-лу\-чаем 
+     $\vert u_i\cap \alpha\vert/\vert u_i\vert\hm\geq \nu_\alpha,$
+      соответствующее условию тео\-ре\-мы. Тео\-ре\-ма до\-ка\-зана.
+
+     \medskip
+     
+     \noindent
+\textbf{Следствие~1.}\ 
+$$
+{d}_\alpha^\prime [u_i] =\begin{cases}
+v_\alpha^\prime [u_i]-v_\alpha^\prime[u_i] & \mbox{\textit{при}\ } \fr{\vert u_i\cap \alpha \vert}{\vert u_i\vert} \geq \nu_\alpha\,;\\
+0 & \mbox{\textit{в\ противном\ случае}}
+\end{cases}
+$$
+\textit{есть изотонная оценка}.
+    
+     \medskip
+
+Функционал $d_\alpha[u_i]$ интересен тем, что может быть увязан 
+с~конструктами не\-па\-ра\-мет\-ри\-че\-ской ста\-ти\-сти\-ки, разработанными в~научной 
+школе А.\,Н.~Колмогорова~\cite{7-tor}. Как известно, для 
+не\-па\-ра\-мет\-ри\-че\-ских тес\-тов используется так на\-зы\-ва\-емое максимальное 
+уклонение~$D$, рав\-ное супремуму модуля раз\-ности значений двух функций 
+распределения (тео\-ре\-ти\-че\-ской и~эмпирической или двух эмпирических 
+функций распределения) по всей их об\-ласти опре\-де\-ле\-ния.
+
+     \medskip
+     
+     \noindent
+\textbf{Теорема~4.}\ \textit{Для <<опор\-но\-го>> множества~$\alpha$ 
+и~произвольной цепи $U\hm= \langle u_1, \ldots , u_i, \ldots\rangle$ 
+$$
+D=\mathrm{sup}\,\vert d_\alpha[u_i]\vert
+$$ 
+при $\omega\hm= -1$~--- максимальное уклонение Кол\-мо\-го\-рова.}
+
+     \medskip
+
+     \noindent
+     Доказательство проводится исходя из тео\-ре\-мы~1 для любой цепи 
+$A\hm= \langle u_i\rangle$, $u_i\hm= u(\lambda_{k_i})$ и~анализа чис\-ло\-во\-го 
+при\-зна\-ка с~множеством значений~$I_k$ в~двух цепях, образованных 
+пересечением каж\-до\-го элемента~$u_i$ цепи~$A$ с~множествами~$\alpha$ 
+и~$\overline{\alpha}$ со\-от\-вет\-ст\-венно.
+
+     \medskip
+     
+     \noindent
+\textbf{Следствие~1.} \textit{Статистическая до\-сто\-вер\-ность значения~$D$ 
+оценивается по критерию Кол\-мо\-го\-ро\-ва--Смир\-нова}.
+
+     \medskip
+
+    Оценки $v_\alpha^+$, $v_\alpha^-$, $d_\alpha$ и~др.\ могут строиться 
+для набора <<опор\-ных>> множеств. Пусть задан 
+набор $\bm{\alpha}\hm\subset L(T(\mathbf{X}))$ подмножеств объектов 
+(т.\,е.\ элементов решетки): $\bm{\alpha}\hm= \{\alpha_1, \alpha_2, \ldots , 
+\alpha_i\ldots\}$. Каж\-дое из множеств в~наборе~$\bm{\alpha}$ по\-рож\-да\-ет 
+(изотонную) па\-ра\-мет\-ри\-че\-скую оцен\-ку~$v_{\alpha_i}$ (например, 
+$v^+_{\alpha_i}$, $v^-_{\alpha_i}$, их линейные комбинации). Тогда 
+в~соответствии с~тео\-ре\-мой~2 может быть по\-рож\-де\-на и~на\-стра\-и\-ва\-емая 
+изотонная оцен\-ка 
+$$
+v_\alpha= \sum\limits_{i=0,\vert \bm{\alpha}\vert} \!\omega_i 
+v_{\alpha_i},\quad v_{\alpha_0} \equiv 1\,.
+$$
+ Альтернативно на основании 
+набора~$\bm{\alpha}$ для каж\-до\-го $a\hm\in L(T(\mathbf{X}))$ может быть 
+вы\-чис\-лен вектор оценок $(v_{\alpha_1}[a], v_{\alpha_2}[a], \ldots , 
+v_{\alpha_i}[a], \ldots)$, $v_{\alpha_i}[a]\hm\in R^+$, и~введены мет\-ри\-ки уже на 
+про\-стран\-ст\-ве таких векторов ($l_p$-мет\-ри\-ки, рас\-сто\-яния Пен\-роу\-за, 
+Мотыки, Брея--Кур\-ти\-са, кореляционные  
+рас\-сто\-яния)~\cite{6-tor}. Формирование наборов~$\bm{\alpha}$ может 
+проводиться на основе <<ин\-фор\-ма\-тив\-ности>> со\-от\-вет\-ст\-ву\-ющих 
+$\alpha_i\hm\in \bm{\alpha}$ методами мет\-ри\-че\-ско\-го анализа данных 
+и~др.~\cite{4-tor}. 
+
+\begin{table*}[b]\small
+\vspace*{6pt}
+
+\begin{center}
+\begin{tabular}{|l|c|c|c|}
+\multicolumn{4}{p{148mm}}{Результаты вычислительных экспериментов на 
+вы\-бор\-ке~156\,327~измерений хе\-мо\-мик\-ро\-би\-ом\-ной био\-ло\-ги\-че\-ской ак\-тив\-ности 
+(2173~пациентов). Оценены эффекты~122~лекарств. Приведены значения коэффициентов 
+ранговой корреляции для различных моделей формирования множеств пре\-це\-ден\-тов. Эксперименты проводились 
+в~рамках \mbox{кросс-ва}\-ли\-да\-ци\-он\-но\-го дизайна (10~разбиений в~соотношении  
+<<слу\-чай--конт\-роль>> $6:1$). \mbox{Поиск} оптимальных значений па\-ра\-мет\-ров проводился 
+муль\-ти\-стар\-то\-вой сто\-ха\-сти\-че\-ской оптимизацией}\\
+\multicolumn{4}{c}{\ }\\[-6pt]
+\hline 
+\multicolumn{1}{|c|}{Вычислительный эксперимент}&$n_{\mathrm{акт}}$&$r$&$r_c$\\
+\hline
+Коэффициент многопараметрической регрессии, $p(D)=0{,}20$&1250&$0{,}72\pm0{,}23$&$0{,}32\pm 
+0{,}20$\\
+Коэффициент многопараметрической регрессии, $p(D)=0{,}05$&\hphantom{9}730&$0{,}73\pm 
+0{,}39$&$0{,}38\pm 0{,}18$\\
+Разность значений, $p(D)=0{,}20$&1192&$0{,}74\pm 0{,}19$&$0{,}34\pm 0{,}22$\\
+Разность значений, $p(D)=0{,}05$&\hphantom{9}787&$0{,}78\pm 0{,}36$&$0{,}39\pm 
+0{,}25$\\
+Доля разности значений, $p(D)=0{,}20$&1292&$0{,}80\pm 0{,}22$&$0{,}46\pm 0{,}14$\\
+Доля разности значений, $p(D)=0{,}10$&1291&$0{,}80\pm 0{,}27$&$0{,}62\pm 0{,}18$\\
+\textbf{Доля разности значений}, 
+{\boldmath{$p(D)=0{,}05$}}&\hphantom{9}\textbf{868}&{\boldmath{$0{,}76\pm 0{,}37$}}&{\boldmath{$0{,}77\pm 0{,}22$}}\\
+Уклонение $D$ со знаком, $p(D)=0{,}20$&1286&$0{,}81\pm 0{,}21$&$0{,}48\pm 0{,}15$\\
+Уклонение $D$ со знаком, $p(D)=0{,}10$&1306&$0{,}80\pm 0{,}26$&$0{,}63\pm 0{,}18$\\
+\textbf{Уклонение $\bm D$ со знаком}, 
+{\boldmath{$p(D)=0{,}05$}}&\hphantom{9}\textbf{836}&{\boldmath{$0{,}80\pm 0{,}38$}}&{\boldmath{$0{,}79\pm 0{,}21$}}\\
+\hline
+\multicolumn{4}{p{148mm}}{\footnotesize \hspace*{3mm}\textbf{Обозначения:} $r$ и~$r_c$~--- коэффициенты ранговой корреляции на обуче\-нии и~на
+контроле соответственно;  $n_{\mathrm{акт}}$~--- число различных типов хе\-мо\-мик\-ро\-биом\-ной ак\-тив\-ности, по 
+которым проводилось усред\-не\-ние~$r$ и~$r_c$; $p(D)$~--- верхний порог статистической 
+зна\-чи\-мости по тес\-ту Кол\-мо\-го\-ро\-ва--Смир\-но\-ва.}
+\end{tabular}
+\end{center}
+\end{table*}
+
+\section{О параметрических оценках на~основе <<опорной цепи>>}
+
+     Крайне перспективным пред\-став\-ля\-ет\-ся на\-прав\-ле\-ние по\-рож\-де\-ния 
+оценок, в~котором заданная максимальная цепь~$A_t$ используется 
+в~качестве <<опор\-ной>>, т.\,е.\ для по\-рож\-де\-ния па\-ра\-мет\-ри\-че\-ских \mbox{оценок}. 
+Данное на\-прав\-ле\-ние будет по\-дроб\-но рас\-смот\-ре\-но в~отдельной работе. 
+Вкратце: произвольная цепь $A\hm= \langle u_i\rangle$ пред\-ста\-ви\-ма в~виде 
+$\langle u(\lambda_{t_i})\rangle$ для некоторого упорядоченного множества 
+чисел~$I_t$ (тео\-ре\-ма~1). Значение функции~$\Gamma_t$ (включая 
+не\-опре\-де\-лен\-ность), вы\-чис\-ли\-мое для любого объекта в~$\mathbf{X}$, 
+рав\-но~$\Gamma_t(q)$ для каж\-до\-го решеточного атома $\{q\}\hm\in 
+L(T(\mathbf{X}))$, ($h[\{q\}] \hm\equiv \vert \{q\}\vert \hm\equiv 1$), так что 
+любому $u\hm\in L(T(\mathbf{X}))$ соответствует множество 
+$\bm{\Gamma}_t (u)\hm= \{ \Gamma_t(q), q\hm\in u\}$. Определим 
+\textit{оператор} $\hat{\phi}(x)$ для \textit{формирования эмпирической 
+функции распределения}  конечного множества $A\hm= \{a_1, a_2, \ldots , a_i, 
+\ldots , a_n\}$, $a_i\hm\in R$, как 
+$$
+\hat{\phi}(x) A=\mathrm{sup}\,\fr{\vert \{ 
+B\hm\subseteq A\vert \forall\ a\in B: a\hm\leq x\}\vert }{\vert A\vert},\enskip x\in R\,,
+$$
+ и~\textit{оператор вы\-чис\-ле\-ния математического ожидания}~$\hat{\mu}$. 
+     
+     Итак, при задании опорной цепи~$A_t$ (т.\,е.\ опорного чис\-ло\-во\-го 
+при\-зна\-ка с~об\-ластью значений~$I_t$) любому элементу решетки $u\hm\in 
+L(T(\mathbf{X}))$ со\-по\-став\-ле\-но множество чисел~$\bm{\Gamma}_t(u)$, 
+числовая функция $\hat{\phi}(x)\bm{\Gamma}_t(u)$ одной переменной 
+$x\hm\in R$, не\-три\-ви\-аль\-но определенная в~каж\-дой точке отрезка 
+$[\lambda_{t_1}, \lambda_{t_{\vert I_t\vert-1}}]$, и~ряд функционалов 
+(в~част\-ности, $\hat{\mu}\hat{\phi}(x)\bm{\Gamma}_t(u)$). При выполнении 
+условия ре\-гу\-ляр\-ности для $\mathbf{X}/Q$ решетка $L(T(\mathbf{X}))$ 
+однозначно со\-по\-став\-ле\-на решетке, образованной чис\-ло\-вы\-ми множествами 
+$\bm{\Gamma}_t(u)$, для каж\-до\-го элемента которой вы\-чис\-ли\-ма функция 
+$\hat{\phi}\bm{\Gamma}_t(u)$. Множества~$\bm{\Gamma}_t(u)$, функции 
+$\hat{\phi}\bm{\Gamma}_t(u)$ и~функционалы наподобие 
+$\hat{\mu}\hat{\phi}\bm{\Gamma}_t(u)$ могут быть использованы для 
+определения оценок в~решетке $L(T(\mathbf{X}))$, по\-рож\-да\-емых на осно\-ве 
+выбранного опорного при\-знака. 
+
+\section{Экспериментальная апробация формализма}
+
+     Формализм был апробирован на задаче формирования множеств 
+прецедентов для проведения хе\-мо\-мик\-ро\-биом\-но\-го анализа~\cite{3-tor, 8-tor}. 
+В~исходной таб\-ли\-це признаковых описаний пред\-став\-ле\-ны булевы 
+переменные, со\-от\-вет\-ст\-ву\-ющие~122~лекарствам, которые влияют 
+на~1533~чис\-ло\-вые переменные, со\-от\-вет\-ст\-ву\-ющие уров\-ням отдельных 
+бактерий или их групп. 
+     
+     Для квантификации вклада лекарства~$\alpha$ в~изменение уров\-ней $t$-й 
+бактерии среди разработанных оценок использовалось уклонение~$D$ со 
+знаком (тео\-ре\-мы~3 и~4). Для учета на\-прав\-ле\-ния изменения уров\-ней 
+бактерий уклонение~$D$ необходимо до\-мно\-жить на знак d$_\alpha [\,]$. По 
+тес\-ту Кол\-мо\-го\-ро\-ва--Смир\-но\-ва вы\-чис\-ля\-лось значение 
+ста\-ти\-сти\-че\-ской до\-сто\-вер\-ности $p(D)$ для отсечения наименее до\-сто\-вер\-ных 
+ассоциаций <<ле\-карст\-во--эф\-фект>>. Так\-же использовались более 
+очевидные подходы: коэффициенты линейной мно\-го\-па\-ра\-мет\-ри\-че\-ской 
+регрессии (с~отбором признаков по модели <<лассо>>), раз\-ность значений 
+     $\hat{\mu}\hat{\phi}\bm{\Gamma}_t(\alpha) \hm- \hat{\mu} \hat{\phi} 
+\bm{\Gamma}_t(\overline{\alpha})$, доля раз\-ности $1\hm- \hat{\mu} \hat{\phi} 
+\bm{\Gamma}_t(\overline{\alpha})/ \hat{\mu} \hat{\phi} 
+\bm{\Gamma}_t(\alpha)$. 
+     
+     Лекарства с~известной химической структурой описывались на осно\-ве 
+хемогр$\acute{\mbox{а}}$фов~$G_j$, а~в~качестве множества начальных 
+информаций~$I_i$ использовалось множество хемоинвариантов над 
+алфавитом элементных меток. \mbox{Алгоритмы}\linebreak $f_{\theta_k}: I_i\hm\to R$ 
+строились в~виде композиций вло\-жен\-ных кор\-рек\-ти\-ру\-ющих функций 
+ниж\-не\-го уров\-ня (т.\,е.\ по\-рож\-де\-ния синтетических при\-зна\-ков) для 
+фиксированного чис\-ла моделей  $n_{\mathrm{mod}}: f_{\theta_k} \hm=$
+$= g 
+(f_1(\sum \omega_k^j x_k), \ldots , f_l(\sum \omega_k^j x_k),\ldots)$, $l\hm=1, 
+\ldots$\linebreak $\ldots , n_{\mathrm{mod}}$, как в~работе~\cite{5-tor}. Тес\-ти\-ро\-ва\-ние 
+ал\-го\-рит\-мов~$f_{\theta_k}$ проводилось на выборке данных о~пациентах 
+(см.\ таб\-лицу).
+     
+
+    
+Результаты экспериментов показывают, что по\-рож\-де\-ние множества 
+исходных информаций на основе регрессионных коэффициентов и~раз\-ности 
+значений материала обуче\-ния соответствует крайне низкой обоб\-ща\-ющей 
+спо\-соб\-ности на\-стра\-и\-ва\-емых алгоритмов. При этом ужес\-то\-че\-ние порога на 
+значение $p(D)$, давая  снижение чис\-ла раз\-лич\-ных типов 
+хе\-мо\-мик\-ро\-биом\-ной ак\-тив\-ности, не приводило к~увеличению качества 
+ал\-го\-рит\-мов. Наилучший результат был получен при использовании 
+в~качестве исходной информации значения уклонения~$D$ со знаком 
+($r\hm=0{,}80\pm0{,}38$, $r_c\hm=0{,}79\hm\pm 0{,}21$), а~более низ\-кие 
+значения порога $p(D)$ приводили к~повышению качества распознавания. 
+Отметим не\-пло\-хой результат и~для такого прос\-то\-го функционала, как доля 
+раз\-ности значений (см.\ таб\-ли\-цу).
+
+\vspace*{-5pt}
+
+\section{Заключение}
+
+\vspace*{-1pt}
+
+    В работе впервые проведено сис\-те\-ма\-ти\-че\-ское рас\-смот\-ре\-ние способов 
+введения оценок на решетке (высота элемента, оцен\-ки на основании булевых 
+и~чис\-ло\-вых переменных, линейные комбинации вы\-ше\-пе\-ре\-чис\-лен\-ных 
+оценок~и~др.). Введение оценок на~$L(X)$, по аналогии с~понятием меры 
+в~функциональном анализе, поз\-во\-ля\-ет по\-рож\-дать па\-ра\-мет\-ри\-че\-ские 
+решеточные оценки и~затем вво\-дить проб\-лем\-но-ори\-ен\-ти\-ро\-ван\-ные мет\-ри\-ки, 
+оце\-ни\-ва\-ющие рас\-сто\-яние между вершинами решетки. Разработанный 
+формализм был применен для до\-сти\-же\-ния практической цели на\-сто\-ящей 
+статьи~--- на\-хож\-де\-ния оптимального способа оцен\-ки вкладов переменных 
+при анализе слож\-ных данных хе\-мо\-мик\-ро\-би\-ом\-ных исследований. 
+Разработанный формализм пред\-остав\-ля\-ет инструментарий для поиска 
+аде\-кват\-ной формализации задач классификации и~прогнозирования.
+
+\vspace*{-5pt}
+
+{\small\frenchspacing
+ { %\baselineskip=12pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+ 
+ \vspace*{-1pt}
+ 
+\bibitem{1-tor}
+\Au{Журавлёв Ю.\,И.} Избранные научные труды.~--- М.: Магистр, 1998. 420~с. 
+\bibitem{2-tor}
+\Au{Torshin I.\,Yu., Rudakov~K.\,V.} On the theoretical basis of metric analysis of poorly 
+formalized problems of recognition and classification~// Pattern Recognition Image Analysis, 2015. 
+Vol.~25. No.\,4. P.~577--587. doi: 10.1134/ S1054661815040252.
+\bibitem{3-tor}
+\Au{Торшин И.\,Ю., Громова~О.\,А., Захарова~И.\,Н., Мак\-си\-мов~В.\,А.} 
+Хе\-мо\-мик\-ро\-би\-ом\-ный ана\-лиз Лак\-ти\-то\-ла~// Экспериментальная и~клиническая 
+гаст\-ро\-эн\-те\-ро\-ло\-гия, 2019. Т.~164. №\,4. С.~111--121. doi:  
+10.31146/1682-8658-ecg-164-4-111-121.
+\bibitem{4-tor}
+\Au{Рудаков К.\,В., Торшин~И.\,Ю.} Анализ информативности мотивов на основе 
+критерия раз\-ре\-ши\-мости в~задаче рас\-по\-зна\-ва\-ния вторичной структуры белка~// 
+Информатика и~её применения, 2012. Т.~6. Вып.~1. С.~79--90.
+\bibitem{5-tor}
+\Au{Торшин И.\,Ю.} О~задачах оптимизации, воз\-ни\-ка\-ющих при применении 
+топологического анализа данных к~поиску алгоритмов прогнозирования 
+с~фиксированными корректорами~// Информатика и~её применения, 2023. Т.~17. Вып.~2. 
+С.~2--10.  doi: 10.14357/ 19922264230201. EDN: IGSPEW.
+\bibitem{6-tor}
+\Au{Деза Е.\,И., Деза~М.\,М.} Энциклопедический словарь рас\-сто\-яний~/
+Пер.\ с~англ.~--- М.: Наука, 2008. 444~с.
+(\Au{Deza~E., Deza~M.-M.} Dictionary of distances.~---  Elsevier B.V., 2006. 412~p.)
+\bibitem{7-tor}
+\Au{Колмогоров A.\,H., Фомин~С.\,В.} Элементы тео\-рии функций и~функционального 
+анализа.~--- М.: Наука, 1989. 624~с.
+\bibitem{8-tor}
+\Au{Forslund~S.\,K., Chakaroun~R., Stumvoll~M., Bork~P.} Combinatorial, additive and  
+dose-dependent drug-microbiome associations~// Nature, 2021. Vol.~600. No.\,7889.  
+P.~500--505. doi: 10.1038/s41586-021-04177-9.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-8pt}
+
+\hfill{\small\textit{Поступила в~редакцию 02.02.23}}
+
+\vspace*{6pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{ON THE FORMATION OF SETS OF~PRECEDENTS BASED ON~TABLES 
+OF~HETEROGENEOUS FEATURE DESCRIPTIONS BY~METHODS 
+OF~TOPOLOGICAL THEORY OF~DATA ANALYSIS}
+
+
+\def\titkol{On the formation of sets of~precedents based on~tables 
+of~heterogeneous feature descriptions} % by~methods  of~topological theory of~data analysis}
+
+
+\def\aut{I.\,Yu.~Torshin}
+
+\def\autkol{I.\,Yu.~Torshin}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-14pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy 
+of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+\Abste{Factorization of the contributions of various variables in the analysis of 
+heterogeneous feature descriptions is an urgent task of complex data mining. The 
+paper proposes the development of the lattice formalism of the\linebreak\vspace*{-12pt}}
+
+\Abstend{ topological theory 
+of data analysis, within which new methods for generating parametric estimates 
+and metrics on lattices formed over the topologies of sets of objects are obtained. 
+The formalism was tested on the problem of
+forming sets of precedents for 
+conducting chemomicrobiome analysis. Whereas the generation of a~set of initial 
+information based on regression coefficients and the difference in the values of the 
+learning material corresponded to an extremely low generalizing ability of custom 
+algorithms (correlation coefficient in the control $0.32 \pm 0.20$), the use of the 
+proposed estimates for generating sets of precedents in chemomicrobiomics 
+problems made it possible 
+to significantly increase the generalizing ability of the 
+corresponding algorithms (correlation coefficient in control $0.79\pm 0.21$).}
+
+\KWE{topological data analysis; lattice theory; parametrization of lattice terms; human 
+microbiome; pharmacoinformatics, algebraic approach of Yu.\,I.~Zhu\-rav\-lev.}
+
+
+
+ \DOI{10.14357/19922264230301}{AQEUYO}
+
+\vspace*{-18pt}
+
+\Ack
+\noindent
+The research was funded by the Russian Science Foundation, project No.\,23-21-00154. The 
+research was carried out using the infrastructure of the Shared Research Facilities ``High 
+Performance Computing and Big Data'' (CKP ``Informatics'') of FRC CSC RAS (Moscow).
+  
+
+\vspace*{6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9} 
+\bibitem{1-tor-1}
+\Aue{Zhuravlev, Yu.\,I.} 1998. \textit{Iz\-bran\-nye na\-uch\-nye trudy} [Selected scientific works]. 
+Moscow: Magistr. 420~p.
+\bibitem{2-tor-1}
+\Aue{Torshin, I.\,Y., and K.\,V.~Rudakov.} 2015. On the theoretical basis of metric analysis of 
+poorly formalized problems of recognition and classification. \textit{Pattern Recognition Image 
+Analysis} 25(4):577--587. doi: 10.1134/S1054661815040252.
+\bibitem{3-tor-1}
+\Aue{Torshin, I.\,Yu., O.\,A.~Gromova, I.\,N.~Za\-kha\-rova, and V.\,A.~Mak\-si\-mov.} 2019. 
+ Khe\-mo\-mik\-ro\-biom\-nyy ana\-liz Lak\-ti\-to\-la [Hemomikrobiomny lactitol analysis]. 
+\textit{Eks\-pe\-ri\-men\-tal'\-naya i~kli\-ni\-che\-skaya gast\-ro\-en\-te\-ro\-lo\-giya} [Experimental and Clinical 
+Gastroenterology]. 164(4):111--121. doi: 10.31146/1682-8658-ecg-164-4-111-121.
+\bibitem{4-tor-1}
+\Aue{Rudakov, K.\,V., and I.\,Yu.~Tor\-shin.} 2012. Ana\-liz in\-for\-ma\-tiv\-nosti mo\-ti\-vov 
+na osno\-ve kri\-te\-riya raz\-re\-shi\-mosti v~za\-da\-che ras\-po\-zna\-va\-niya vto\-rich\-noy 
+struk\-tu\-ry bel\-ka [Analysis of the informativeness of motives based on the criterion of 
+solvability in the problem of recognizing the secondary structure\linebreak\vspace*{-12pt}
+
+\columnbreak
+
+\noindent
+ of a~protein]. 
+\textit{Informatika i~ee Primeneniya~--- Inform Appl.} 6(1):79--90.
+\bibitem{5-tor-1}
+\Aue{Torshin, I.\,Yu.} 2023. O~za\-da\-chakh op\-ti\-mi\-za\-tsii, voz\-ni\-ka\-yushchikh  
+pri pri\-me\-ne\-nii to\-po\-lo\-gi\-che\-sko\-go ana\-li\-za dan\-nykh k~pois\-ku al\-go\-rit\-mov 
+prog\-no\-zi\-ro\-va\-niya s~fik\-si\-ro\-van\-ny\-mi kor\-rek\-to\-ra\-mi [On optimization 
+problems arising from the application of topological data analysis to the search for forecasting 
+algorithms with fixed correctors]. \textit{Informatika i~ee Primeneniya~--- Inform Appl.} 
+17(2):2--10. doi: 10.14357/19922264230201. EDN: IGSPEW.
+\bibitem{6-tor-1}
+\Aue{Deza, E., and M.-M.~Deza.} 2006. \textit{Dictionary of distances}.  Elsevier B.V. 412~p.
+\bibitem{7-tor-1}
+\Aue{Kolmogorov, A.\,N., and S.\,V.~Fo\-min.} 1989. \textit{Ele\-men\-ty teo\-rii funk\-tsiy 
+i~funk\-tsi\-o\-nal'\-no\-go ana\-li\-za} [Elements of the theory of functions and functional 
+analysis]. Moscow: Nauka. %\linebreak 
+624~p.
+\bibitem{8-tor-1}
+\Aue{Forslund, S.\,K., R.~Chakaroun, M.~Stumvoll, and P.~Bork.} 2021. Combinatorial, 
+additive and dose-dependent drug-microbiome associations. \textit{Nature} 600(7889):500--505. 
+doi: 10.1038/s41586-021-04177-9.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received February 2, 2023}} 
+
+  \Contrl
+  
+  \noindent
+  \textbf{Torshin Ivan Y.} (b.\ 1972)~--- Candidate of Science (PhD) in physics and mathematics, 
+Candidate of Science (PhD) in chemistry, senior scientist, A.\,A.~Dorodnicyn Computing Center, 
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 
+40~Vavilov Str., Moscow 119333, Russian Federation; \mbox{tiy135@yahoo.com}
+
+
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

@@ -1,0 +1,522 @@
+
+%\newtheorem{thmi}{Теорема}
+%\newtheorem{thm}{Теорема}
+% MATH -----------------------------------------------------------
+\newcommand{\norm}[1]{\left|#1\right|}
+\newcommand{\abs}[1]{\left|#1\right|}
+%\newcommand{\set}[1]{\left\{#1\right\}}
+
+%\newcommand{\eps}{\varepsilon}
+
+
+
+% ----------------------------------------------------------------
+
+
+
+\def\stat{shestakov}
+
+\def\tit{ОБ УСТОЙЧИВОСТИ РЕКОНСТРУКЦИИ ИЗОБРАЖЕНИЙ В~ЗАДАЧАХ ЭМИССИОННОЙ ТОМОГРАФИИ$^*$}
+\def\titkol{Об устойчивости реконструкции изображений в задачах эмиссионной томографии} 
+
+\def\autkol{О.\,В. Шестаков}
+\def\aut{О.\,В. Шестаков$^1$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}}\footnotetext[1]
+{Работа выполнена при финансовой поддержке РФФИ, грант 08-01-00567.}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет им.\ М.\,В.~Ломоносова, 
+кафедра математической статистики факультета вычислительной математики и кибернетики, oshestakov@cs.msu.su}
+
+\Abst{В работе рассматривается задача реконструкции изображений по проекционным данным
+в условиях математической модели эмиссионной томографии. Приводятся оценки точности
+реконструкции при использовании конечного числа проекций.}
+
+\KW{эмиссионная томография; преобразование Радона; проекции; оценки близости}
+
+
+      \vskip 24pt plus 9pt minus 6pt
+
+      \thispagestyle{headings}
+
+      \begin{multicols}{2}
+
+      \label{st\stat}
+      
+\section{Введение}
+
+В задачах эмиссионной томографии возникает проблема
+обращения преобразования Радона с поглощением, отличающегося от классического преобразования 
+Радона наличием весовой функции, имеющей специальный вид~[1]. Вопрос о возможности обращения 
+преобразования Радона с поглощением долгое время оставался открытым, однако в последние годы 
+проблема была успешно решена и были получены различные формулы обращения~[1--3], 
+использующие полный набор проекционных данных. Однако на практике известно лишь конечное 
+число проекций, а в этом случае задача обращения уже не имеет единственного решения даже 
+в случае классического преобразования Радона, что приводит к так называемому парадоксу 
+компьютерной томографии~[4]. Этот парадокс рассматривался в работах~[4--6] для классического 
+и экспоненциального преобразований Радона, и были получены оценки близости между функциями, имеющими 
+одинаковые или близкие проекции по конечному числу заданных направлений. В данной работе эти результаты 
+будут обобщены на случай преобразования Радона с поглощением.
+
+\section{Преобразование Радона с~поглощением}
+
+Пусть $a(x)$~--- достаточно гладкая известная функция с компактным носителем. Положим
+$$
+Da(\theta, x)=\int\limits_{0}^{\infty}a(x+t\theta)\,dt\,,
+\quad x\in\mathbf{R}^2\,,\quad \theta\in S^1\,,
+$$
+где $S^1$~--- множество направлений, задаваемых единичными векторами в
+$\mathbf{R}^2$ с центром в начале координат. Функция~$a(x)$ имеет смысл коэффициента поглощения в данной точке~$x$. 
+Преобразование Радона с поглощением определяется выражением
+\begin{multline}
+R_af(\theta,s)=\int\limits_{x\theta=s}f(x)e^{-Da(x,\theta^{\perp})}\,dx\,,\\
+\theta\in S^1\,,\quad s\in\mathbf{R}\,,
+\end{multline}
+где $f(x)$~--- функция
+изображения, описывающая распределение и интенсивность источников излучения~[7], а
+интеграл берется вдоль прямой $x \theta=s$.
+Здесь $\theta=(\cos\varphi,\sin\varphi)$, а
+$\theta^{\perp}=(-\sin\varphi,\cos\varphi)$. По аналогии с классическим преобразованием 
+Радона будем называть интегральные преобразования вида~(1) проекциями. Если в $(1)$ $a(x)=0$, то
+$R_af(\theta,s)$ превращается в классическое преобразование
+Радона, а если~$a(x)$ равна константе $\mu$ на носителе~$f(x)$,
+$R_af(\theta,s)$ превращается в экспоненциальное преобразование
+Радона.
+
+Всюду в дальнейшем будем предполагать выполнение следующих условий:
+\begin{enumerate}[(1)]
+\item функции $f(x)$ и $a(x)$ неотрицательны, а их носителем является круг~$U$ единичного радиуса 
+с центром в начале координат;
+\item функция~$f(x)$ нормирована:
+$$
+\iint\limits_{U}f(x)\,dx=1
+$$
+(т.\,е.\ представляет собой вероятностную плотность распределения);
+\item функция $a(x)$ непрерывно диф\-фе\-рен\-ци\-ру\-ема, $\sup\limits_{U}a(x)\leq\mu$ для некоторой константы~$\mu$, 
+а~$\sup\limits_{\mathbf{R^2}}\norm{\mbox{grad}\,a(x)}=G_a$.
+\end{enumerate}
+
+Соответствующие классы всех функций~$f(x)$ и~$a(x)$, удовлетворяющих этим условиям, будем обозначать через 
+$F_U$ и $A_U$.
+
+Формула обращения для преобразования Радона с поглощением выглядит следующим образом[2]:
+\begin{multline}
+f(x)=\fr{1}{4\pi}\times{}\\
+\!\!\!\!{}\times 
+\mathrm{Re}\ \mathrm{div}\int\limits_{S^1}\theta e^{Da(x,\theta^{\perp})}\left(
+e^{-h}He^h R_af\right )\left (\theta,x\theta\right )\,d\theta\,.\!
+\label{e2sh}
+\end{multline}
+Здесь 
+$$
+h=\fr{1}{2}\,(Ra+iHRa)\,,
+$$ 
+$Ra(\theta,s)$~--- преобразование Радона от функции~$a(x)$, а~$H$~--- преобразование Гильберта
+$$
+Hg(s)=\fr{1}{\pi}\int\limits_{\mathbf{R}}\fr{g(t)}{s-t}\,dt\,,
+$$ 
+действующее на вторую переменную~$Ra(\theta,s)$.
+В~пространстве Фурье для преобразования Гильберта справедливо следующее соотношение~[2]:
+$$
+\widehat{Hg}(\omega)=\fr{sgn(\omega)}{i}\,\hat{g}(\omega)\,.
+$$
+
+Формулу~(\ref{e2sh}) можно преобразовать к более удобному виду. 
+Введем функцию $Q_af=\mathrm{Re}\, e^{-h}He^{h}R_af$. 
+Полагая $h=h_1+ih_2$, где $h_1=(1/2)Ra$, $h_2=$\linebreak $=\;(1/2)HRa$, имеем
+\begin{multline*}
+Q_af=e^{-h_1}\cos{h_2}H(e^{h_1}\cos{h_2}R_af)+{}\\
+{}+e^{-h_1}\sin{h_2}H(e^{h_1}\sin{h_2}R_af)\,.
+\end{multline*}
+Тогда формула~(\ref{e2sh}) преобразуется к виду
+$$
+f(x)=\fr{1}{4\pi}\,\mathrm{div}\int\limits_{S^1}\theta e^{Da(x,\theta^{\perp})}Q_af(\theta,x\theta)\,d\theta\,.
+$$
+Внося оператор div под знак интеграла, получаем
+\begin{multline}
+f(x)=\fr{1}{4\pi}\int\limits_{S^1}e^{Da\left (x,\theta^{\perp}\right )}Q'_af\left (\theta,x\theta\right )\,d\theta+{}\\
+{}+\fr{1}{4\pi}\int\limits_{S^1}\fr{\partial}{\partial\theta}\,Da(x,\theta^{\perp})e^{Da\left ( x,\theta^{\perp}\right )}
+Q_af(\theta,x\theta)\,d\theta\,,
+\label{e3sh}
+\end{multline}
+где $Q'_af(\theta,s)$~--- производная функции $Q_af(\theta,s)$ по второй переменной, 
+а~$\partial/(\partial\theta)$ обозначает производную функции $Da(x,\theta^{\perp})$ по направлению~$\theta$ 
+по первой переменной.
+
+\section{Оценки точности реконструкции по конечному числу проекций}
+
+Задача реконструкции является некорректно поставленной~[7], и кроме того, в практических 
+приложениях проекции регистрируются только по конечному числу направлений. Поэтому вмес\-то точной 
+формулы~(\ref{e2sh}) или~(\ref{e3sh}) нужно использовать ее регуляризованный вариант, в котором преобразование 
+Гильберта~$H$ заменяется на преобразование~$H_{\sigma}$, для которого
+$$
+\widehat{H_{\sigma}g}(\omega)=\fr{\mathrm{sgn}\,(\omega)}{i}\,\hat{g}\left (\omega\right )W_{\sigma}(w)\,,
+$$ 
+где множитель $W_{\sigma}(w)$ играет роль регуляризатора (окна). В результате вместо точной функции~$f(x)$ 
+получается приближенная функция~$f_\sigma(x)$, но метод реконструкции становится устойчивым к погрешностям 
+в проекционных данных. В дальнейшем будем использовать регуляризатор вида
+$$
+W_{\sigma}(w)=e^{-\omega^2\sigma^2/2}\,.
+$$
+При выполнении условий~(1)--(3), сформулированных в предыдущем разделе, для регуляризованной формулы обращения можно 
+получить оценку точности реконструкции функции по конечному числу проекций. Справедлива следующая теорема.
+\medskip
+
+\noindent
+\textbf{Теорема 1.}\ \textit{Пусть $N=2n$, где $n$~--- натуральное чис\-ло, и
+$\theta_{1},\ldots,\theta_{N}$~--- направления на плоскости $\mathbf{R}^{2}$, выбранные следующим
+образом:}
+\begin{align*}
+\theta_{j}&=\fr{(\nu_{j},-1)}{(\nu_{j}^{2}+1)^{1/2}}\,, &j&=1,\ldots, n\,,\\
+\theta_{j}&=\fr{(1,\nu_{j-n})}{(\nu_{j-n}^{2}+1)^{1/2}}\,, &j&=n+1,\ldots,2n\,,
+\end{align*}
+\textit{где}
+$$
+\nu_{k}=\cos\fr{\pi(2k-1)}{2n}\,,\quad k=1,\ldots,n\,.
+$$
+\textit{Если $a\in A_U$, $f, g\in F_U$ и проекции функций~$f$ и~$g$ по прямым в направлениях~$\theta_{j}$ 
+и~$-\theta_{j}$ $(j=1,\ldots,N)$ совпадают, т.\,е.}
+$$
+R_af(\pm\theta_j,s)=R_ag(\pm\theta_j,s)\,,\ \ s\in\mathbf{R}\,,\ \ j=1,\ldots,N\,,
+$$
+\textit{тогда}
+%
+%\noindent
+\begin{equation*}
+\!\!\sup_{x\in\mathbf{R}^{2}}\abs{f_{\sigma}(x)-g_{\sigma}(x)}\leq\fr{e^{3\mu}}{n\sigma^2}
+\left(4G_a+\fr{\mu}{\sigma^2}+\fr{\sqrt{\pi}}{\sigma\sqrt{2}}\right)+{}
+\end{equation*}
+\begin{multline}
+{}+\fr{e^{3\mu}}{n\sigma}\left(\fr{3\sqrt{\pi}}{\sqrt{2}}\,G_a+\fr{\sqrt{\pi}\mu}{2\sqrt{2}\sigma^2}\right)
+\left( 
+\vphantom{\fr{\sqrt{2}}{\sigma\sqrt{\pi}}}
+4G_a+{}\right.\\
+\left.{}+\fr{\mu}{\sigma^2}+\fr{\sqrt{2}}{\sigma\sqrt{\pi}}\right)\,.
+\label{e4sh}
+\end{multline}
+
+\medskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ Используя формулу~(\ref{e3sh}),\linebreak имеем
+\begin{multline}
+\abs{f_{\sigma}(x)-g_{\sigma}(x)}=\left|\fr{1}{4\pi}\int\limits_{S^1}e^{Da(x,\theta^{\perp})}
+Q'_a(\theta,x\theta)\,d\theta+\right.{}\\
+\left. {}+\fr{1}{4\pi}\int\limits_{S^1}\fr{\partial}{\partial\theta}Da(x,\theta^{\perp})
+e^{Da(x,\theta^{\perp})}Q_a(\theta,x\theta)d\theta\right|\,,\label{e5sh}
+\end{multline}
+где $Q_a=Q_af-Q_ag$, и в определениях~$Q_af$ и~$Q_ag$ вместо преобразования Гильберта используется его 
+регуляризованный аналог. Обозначим первое слагаемое в~(\ref{e5sh})
+через~$I_1$, а второе~--- через~$I_2$ и оценим отдельно каждое из них. 
+Для всех $\theta\in[\theta_j-\Delta\theta,\theta_j+\Delta\theta)$, $j=1,\ldots ,N$,
+где $\theta_j-\Delta\theta$ и $\theta_j+\Delta\theta$~--- направления, отстоящие на угол~$\pi/(2n)$ 
+влево и вправо от на\-прав\-ле\-ния $\theta_j$, имеем 
+\begin{multline*}
+\abs{Q'_a(\theta,s)}={}\\
+{}= \left|
+\vphantom{{}=\left.\left.+e^{-h_1}\sin{h_2}H_\sigma(e^{h_1}\sin{h_2}q_a)(\theta,s)\right)'_s\right| \leq{}}
+\left(e^{-h_1}\cos{h_2}H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta,s)+{}\right.\right.\\
+{}\left.\left.+e^{-h_1}\sin{h_2}H_\sigma(e^{h_1}\sin{h_2}q_a)(\theta,s)\right)'_s\right| \leq{}\\
+{}\leq\left| \left(e^{-h_1}\cos{h_2}H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta,s)\right)'_s\right|+{}\\
+{}+\left| \left(e^{-h_1}\sin{h_2}H_\sigma(e^{h_1}\sin{h_2}q_a)(\theta,s)\right)'_s\right| \,,
+\end{multline*}
+где $q_a=R_af-R_ag$. Оценим первое слагаемое (второе оценивается аналогично):
+\begin{multline*}
+\left| \left(e^{-h_1}\cos{h_2}H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta,s)\right)'_s\right| ={}\\
+{}=\left| 
+\vphantom{{}\left.\left.+e^{-h_1}\sin{h_2}H_\sigma(e^{h_1}\sin{h_2}q_a)(\theta,s)\right)'_s\right| \leq{}}
+\left((e^{-h_1}\cos{h_2})(\theta,s)\left [H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta,s)-{}\right.\right.\right.\\
+{}\left.\left.\left.-H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta_j,s)\right ]\right)'_s\right| ={}\\
+{}=\left| \left[(e^{-h_1}\cos{h_2})(\theta,s)\right]'_s\left [H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta,s)-{}\right.\right.\\
+\left.{}\left.-H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta_j,s)\right ]
+\vphantom{\left.\left.+e^{-h_1}\sin{h_2}H_\sigma(e^{h_1}\sin{h_2}q_a)(\theta,s)\right)'_s\right| \leq{}}\!
+\right|
+%\vphantom{\left.\left.+e^{-h_1}\sin{h_2}H_\sigma(e^{h_1}\sin{h_2}q_a)(\theta,s)\right)'_s\right| \leq{}}
+ +{}\\
+{}+\left| 
+\vphantom{\left.\left.+e^{-h_1}\sin{h_2}H_\sigma(e^{h_1}\sin{h_2}q_a)(\theta,s)\right)'_s\right| \leq{}}
+(e^{-h_1}\cos{h_2})(\theta,s)\left [H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta,s)-{}\right.\right.\\
+\left.\left.{}-H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta_j,s)\right ]'_s\right| \,.
+\end{multline*}
+Введем обозначение $q_{\mathrm{mod}}(\theta,s)=e^{h_1}\cos{h_2}q_a(\theta,s)$. 
+Тогда
+
+\noindent
+\begin{equation*}
+\!\!\!\!\left|[H_\sigma q_{\mathrm{mod}}(\theta,s)-H_\sigma q_{\mathrm{mod}}(\theta_j,s)]'_s\right|={}
+\end{equation*}
+\begin{multline*}
+{}=\Bigg\vert \fr{1}{\sqrt{2\pi}}\int\limits_{\mathbf{R}}\abs{\omega}e^{-\sigma^2\omega^2/2}(\hat{q}_{\mathrm{mod}}
+(\theta,\omega)-{}\\
+{}-\hat{q}_{\mathrm{mod}}(\theta_j,\omega))e^{i\omega s}d\omega\Bigg\vert\,.
+\end{multline*}
+Учитывая, что $a\in A_U$ и~$f, g\in F_U$, можно показать, что для всех 
+$\theta\in[\theta_j-\Delta\theta,\theta_j+\Delta\theta)$ и 
+$\theta\in[-\theta_j-\Delta\theta,-\theta_j+\Delta\theta)$,\ $j=1,\ldots ,N$, 
+(а значит, для всех $\theta\in S^1$) при использовании регуляризованного преобразования Гильберта
+\begin{multline}
+\abs{\hat{q}_{\mathrm{mod}}(\theta,\omega)-\hat{q}_{\mathrm{mod}}(\theta_j,\omega)}\leq{}\\
+{}\leq\fr{\sqrt{\pi} e^\mu}{\sqrt{2}n}
+\left(4G_a+\fr{\mu}{\sigma^2}+\abs{\omega}\right)\,.
+\label{e6sh}
+\end{multline}
+Следовательно,
+\begin{multline*}
+\left|[H_\sigma q_{\mathrm{mod}}(\theta,s)-H_\sigma q_{\mathrm{mod}}(\theta_j,s)]'_s\right|\leq{}\\
+{}\leq\fr{e^\mu}{n\sigma^2}\left(4G_a+\fr{\mu}{\sigma^2}+\fr{\sqrt{\pi}}{\sigma\sqrt{2}}\right)\,.
+\end{multline*}
+Далее
+\begin{multline}
+\left|H_\sigma q_{\mathrm{mod}}(\theta,s)-H_\sigma q_{\mathrm{mod}}(\theta_j,s)\right|={}\\
+{}=\Bigg \vert \fr{1}{\sqrt{2\pi}}\int\limits_{\mathbf{R}}\fr{\mathrm{sgn}(\omega)}{i}\,e^{-\sigma^2\omega^2/2}
+\left (\hat{q}_{\mathrm{mod}}
+(\theta,\omega) -{}\right.\\
+\left.{}-\hat{q}_{\mathrm{mod}}(\theta_j,\omega)\right )e^{i\omega s}d\omega\Bigg \vert \leq{}\\
+{}\leq\fr{\sqrt{2\pi}e^\mu}{2n\sigma}\left(4G_a+\fr{\mu}{\sigma^2}+\fr{\sqrt{2}}{\sigma\sqrt{\pi}}\right)\,.
+\label{e7sh}
+\end{multline}
+Также можно показать, что
+\begin{equation}
+\left|\left[(e^{-h_1}\cos{h_2})(\theta,s)\right]'_s\right| \leq G_a+\fr{\mu}{2\sigma^2}\,.
+\label{e8sh}
+\end{equation}
+Учитывая~(\ref{e6sh})--(\ref{e8sh}), получаем
+\begin{multline*}
+\left|Q'_a(\theta,s)\right|\leq\fr{2e^\mu}{n\sigma^2}\left(4G_a+\fr{\mu}{\sigma^2}+\fr{\sqrt{\pi}}{\sigma\sqrt{2}}\right)+{}\\
+{}+\fr{2e^\mu}{n\sigma}\left(\fr{\sqrt{\pi}}{\sqrt{2}}\,G_a+\fr{\sqrt{\pi}\mu}{2\sqrt{2}\sigma^2}\right)
+\left(4G_a+\fr{\mu}{\sigma^2}+\fr{\sqrt{2}}{\sigma\sqrt{\pi}}\right)\,.
+\end{multline*}
+Следовательно,
+\begin{multline*}
+\!\!I_1\leq\fr{1}{4\pi}\int\limits_{S^1}e^{Da(x,\theta^{\perp})}\max\limits_{\theta,s}(Q'_a(\theta,s))d\theta\leq{}\\
+\!\!\!\!\!\!\!\!\!\!\!\!\!\!{}\leq\fr{e^{3\mu}}{n\sigma^2}\left(
+4G_a+\fr{\mu}{\sigma^2}+\fr{\sqrt{\pi}}{\sigma\sqrt{2}}\right)+{}\hspace*{10mm}
+\end{multline*}
+\begin{multline}
+\ \ \ \ \ \ {}+\fr{e^{3\mu}}{n\sigma}\left(\fr{\sqrt{\pi}}{\sqrt{2}}\,G_a+\fr{\sqrt{\pi}\mu}{2\sqrt{2}\sigma^2}\right)
+\left(
+\vphantom{\fr{\sqrt{2}}{\sigma\sqrt{\pi}}}
+4G_a+{}\right.\\
+{}\left.+\fr{\mu}{\sigma^2}+\fr{\sqrt{2}}{\sigma\sqrt{\pi}}\right)\,.
+\label{e9sh}
+\end{multline}
+
+Оценим теперь слагаемое~$I_2$. Учитывая условия, которым удовлетворяет функция~$a(x)$, можно показать, что
+$$
+\fr{\partial}{\partial\theta}\,Da(x,\theta^{\perp})\leq 2G_a\,.
+$$
+Следовательно, с учетом~(\ref{e7sh}) имеем
+\begin{equation}
+I_2\leq\fr{\sqrt{2\pi}e^{3\mu}G_a}{n\sigma}\left(4G_a+\fr{\mu}{\sigma^2}+\fr{\sqrt{2}}{\sigma\sqrt{\pi}}\right)\,.
+\label{e10sh}
+\end{equation}
+Объединяя~(\ref{e9sh}) и~(\ref{e10sh}), получаем~(\ref{e4sh}). Теорема доказана.
+
+\medskip
+
+В практических ситуациях в силу несовершенства оборудования и наличия шума проекции регистрируются с 
+некоторой погрешностью. Если предположить, что погрешность не превосходит заданного уровня~$\eps$, 
+то можно получить оценку точности реконструкции с учетом этой погрешности. Справедлива следующая теорема.
+\bigskip
+
+\noindent
+\textbf{Теорема 2.}\ \textit{Пусть проекции от $f,g\in\mathbf{F}_{U}$ по
+прямым в направлениях $\theta_{j}$ и $-\theta_{j}$ $(j=1,\ldots,N)$, где
+$\theta_{j}$ те же, что и в предыдущей теореме, отличаются не
+более чем на $\eps$, т.\,е.\ для некоторого фиксированного
+$\varepsilon\in(0,1)$
+\begin{multline*}
+\left|R_{a}f(\pm\theta_j,s)-R_{a}g(\pm\theta_j,s)\right|\leq\varepsilon\,,\\
+s\in\mathbf{R},\quad j=1,\ldots, N\,,
+\end{multline*}
+и $a\in A_U$, тогда
+\begin{multline}
+\!\!\sup_{x\in\mathbf{R}^{2}}\left|f_{\sigma}(x)-g_{\sigma}(x)\right|
+\leq\fr{e^{3\mu}}{n\sigma^2}\left(4G_a+\fr{\mu}{\sigma^2}+
+\fr{\sqrt{\pi}}{\sigma\sqrt{2}}\right)+{}\\
+{}+\fr{e^{3\mu}}{n\sigma}\left(\fr{3\sqrt{\pi}}{\sqrt{2}}\,G_a+\fr{\sqrt{\pi}\mu}{2\sqrt{2}\sigma^2}\right)
+\left(4G_a+\fr{\mu}{\sigma^2}+\fr{\sqrt{2}}{\sigma\sqrt{\pi}}\right)+{}\\
+{}+\fr{2\eps e^{3\mu}}{\sigma\sqrt{2\pi}}\left(5G_a+\fr{3\mu}{2\sigma^2}+\fr{\sqrt{2}}{\sigma\sqrt{\pi}}+{}\right.\\
+\left.{}+
+\fr{1}{n}\left(G_a+\fr{\mu}{2\sigma^2}\right)\left(\pi G_a+\fr{\sqrt{\pi}}{\sigma\sqrt{2}}\right)\right)\,.
+\label{e11sh}
+\end{multline}
+}
+\bigskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ 
+Поступая так же, как в предыду\-щей теореме при оценивании $I_1$, имеем
+\begin{equation}
+\left|Q'_a(\theta,s)\right|\leq\abs{Q'_a(\theta_j,s)}+\abs{Q'_a(\theta,s)-Q'_a(\theta_j,s)}\,.
+\label{e12sh}
+\end{equation}
+Можно показать, что
+\begin{equation}
+\left|Q'_a(\theta_j,s)\right|
+\leq \fr{4\eps e^{\mu}}{\sigma\sqrt{2\pi}}\left(G_a+\fr{\mu}{2\sigma^2}\right)+
+\fr{4\eps e^{\mu}}{\sigma^2\pi}\,.
+\label{e13sh}
+\end{equation}
+Далее
+\begin{multline*}
+\left|Q'_a(\theta,s)-Q'_a(\theta_j,s)\right|\leq{}\\
+{}\leq\left| 
+\vphantom{{}\left.\left.+e^{-h_1}\sin{h_2}H_\sigma(e^{h_1}\sin{h_2}q_a)(\theta,s)\right)'_s\right| \leq{}}
+\left(e^{-h_1}\cos{h_2}H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta,s)-{}\right.\right.\\
+\left.\left.{}-e^{-h_1}\cos{h_2}H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta_j,s)\right)'_s\right| +{}\\
+{}+\left|
+\vphantom{{}\left.\left.+e^{-h_1}\sin{h_2}H_\sigma(e^{h_1}\sin{h_2}q_a)(\theta,s)\right)'_s\right| \leq{}}
+ \left(e^{-h_1}\sin{h_2}H_\sigma(e^{h_1}\sin{h_2}q_a)(\theta,s)-{}\right.\right.\\
+{}-\left.\left.e^{-h_1}\sin{h_2}H_\sigma(e^{h_1}\sin{h_2}q_a)(\theta_j,s)\right)'_s\right| \,.
+\end{multline*}
+Оценим первое слагаемое (второе оценивается аналогично):
+\begin{multline*}
+\Big|\left( e^{-h_1}\cos{h_2}H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta,s)-{}\right.\\
+{}-\left.e^{-h_1}\cos{h_2}H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta_j,s)\right)'_s \Big|\leq{}\\
+{}\leq\left|
+\vphantom{{}\left.\left.+e^{-h_1}\sin{h_2}H_\sigma(e^{h_1}\sin{h_2}q_a)(\theta,s)\right)'_s\right| \leq{}}
+\left[e^{-h_1}\cos{h_2}(\theta,s)\left(H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta,s)-{}\right.\right.\right.\\
+{}-\left.\left.\left.H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta_j,s)\right)\right]'_s\right| +{}\\
+{}+\Big| 
+\left[H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta_j,s)\left(e^{-h_1}\cos{h_2}(\theta,s)-{}\right.\right.\\
+{}-\left.\left.e^{-h_1}\cos{h_2}(\theta_j,s)\right)\right]'_s\Big| \,.
+\end{multline*}
+Так же, как в предыдущей теореме, убеждаемся, что
+\begin{multline}
+\left|
+\vphantom{\left.\left.+e^{-h_1}\sin{h_2}H_\sigma(e^{h_1}\sin{h_2}q_a)(\theta,s)\right)'_s\right| \leq{}}
+\left[e^{-h_1}\cos{h_2}(\theta,s)\left(H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta,s)-{}\right.\right.\right.\\
+{}-\left.\left.\left. H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta_j,s)\right)\right]'_s\right|\leq{}\\
+{}\leq\fr{e^\mu}{n\sigma^2}\left(4G_a+\fr{\mu}{\sigma^2}+\fr{\sqrt{\pi}}{\sigma\sqrt{2}}\right)+{}\\
+{}+\fr{e^\mu}{n\sigma}\left(\fr{\sqrt{\pi}}{\sqrt{2}}G_a+\fr{\sqrt{\pi}\mu}{2\sqrt{2}\sigma^2}\right)
+\left(
+\vphantom{\fr{\sqrt{2}}{\sigma\sqrt{\pi}}}
+4G_a+{}\right.\\
+\left.{}+\fr{\mu}{\sigma^2}+\fr{\sqrt{2}}{\sigma\sqrt{\pi}}\right)\,.
+\label{e14sh}
+\end{multline}
+
+Далее можно показать, что при выполнении условий теоремы
+\begin{align*}
+\abs{H_\sigma\left ( e^{h_1}\cos{h_2}q_a\right )(\theta_j,s)}&
+\leq\fr{2\eps e^{\mu}}{\sigma\sqrt{2\pi}}\,,\\
+\abs{\left[H_\sigma\left (e^{h_1}\cos{h_2}q_a\right )(\theta_j,s)\right]'_s}&
+\leq\fr{2\eps e^{\mu}}{\sigma^2\pi}\,,\\
+\abs{\left[\left (e^{-h_1}\cos{h_2}\right )(\theta,s)\right]'_s}&
+\leq G_a+\fr{\mu}{2\sigma^2}
+\end{align*}
+и
+\begin{multline*}
+\abs{\left(e^{-h_1}\cos{h_2}(\theta,s)-e^{-h_1}\cos{h_2}(\theta_j,s)\right)}\leq\\
+{}\leq \fr{\pi}{2n}\left(G_a+\fr{\mu}{2\sigma^2}\right)\,.
+\end{multline*}
+Следовательно,
+\begin{multline}
+\left|
+\vphantom{{}\left.\left.+e^{-h_1}\sin{h_2}H_\sigma(e^{h_1}\sin{h_2}q_a)(\theta,s)\right)'_s\right| \leq{}}
+\left[H_\sigma\left ( e^{h_1}\cos{h_2}q_a\right )
+(\theta_j,s)\left(e^{-h_1}\cos{h_2}(\theta,s)-{}\right.\right.\right.\\
+\left.{}-\left.\left.e^{-h_1}\cos{h_2}(\theta_j,s)\right)\right]'_s\right| \leq{}\\
+{}\leq 2\eps e^{\mu}\left(\fr{\sqrt{2}}{\sigma\sqrt{\pi}}+\fr{1}{2n\sigma^2}\right)\left(G_a+\fr{\mu}{2\sigma^2}\right)\,.
+\label{e15sh}
+\end{multline}
+При оценивании~$I_2$ имеем
+\begin{equation}
+\abs{Q_a(\theta,s)}\leq\abs{Q_a(\theta_j,s)}+\abs{Q_a(\theta,s)-Q_a(\theta_j,s)}\,.
+\label{e16sh}
+\end{equation}
+Можно показать, что
+\begin{equation}
+\abs{Q_a(\theta_j,s)}\leq \fr{4\eps e^{\mu}}{\sigma\sqrt{2\pi}}\,.
+\label{e17sh}
+\end{equation}
+Далее
+\begin{multline*}
+\left|Q_a(\theta,s)-Q_a(\theta_j,s)\right|\leq{}\\
+{}\leq\left|\left(e^{-h_1}\cos{h_2}H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta,s)-{}\right.\right.\\
+{}-\left.\left.e^{-h_1}\cos{h_2}H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta_j,s)\right)\right|+{}\\
+{}+\left.\left(e^{-h_1}\sin{h_2}H_\sigma(e^{h_1}\sin{h_2}q_a)(\theta,s)-{}\right.\right.\\
+{}-\left.\left.e^{-h_1}\sin{h_2}H_\sigma(e^{h_1}\sin{h_2}q_a)(\theta_j,s)\right)\right|\,.
+\end{multline*}
+Оценим первое слагаемое (второе оценивается аналогично):
+\begin{multline*}
+\left|
+%\vphantom{{}\left.\left.+e^{-h_1}\sin{h_2}H_\sigma(e^{h_1}\sin{h_2}q_a)(\theta,s)\right)'_s\right| \leq{}}
+\left(e^{-h_1}\cos{h_2}H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta,s)-{}\right.\right.\\
+{}-\left.\left.e^{-h_1}\cos{h_2}H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta_j,s)\right)\right|\leq{}\\
+{}\leq\left|\left[e^{-h_1}\cos{h_2}(\theta,s)\left(H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta,s)-{}\right.\right.\right.\\
+{}-\left.\left.\left. H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta_j,s)\right)\right]\right|+{}\\
+{}+\left|
+%\vphantom{{}\left.\left.+e^{-h_1}\sin{h_2}H_\sigma(e^{h_1}\sin{h_2}q_a)(\theta,s)\right)'_s\right| \leq{}}
+\left[H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta_j,s)\left(e^{-h_1}\cos{h_2}(\theta,s)-{}\right.\right.\right.\\
+{}-\left.\left.\left.e^{-h_1}\cos{h_2}(\theta_j,s)\right)\right]\right|\,.
+\end{multline*}
+Так же, как в предыдущей теореме, убеждаемся, что
+\begin{multline*}
+\left|\left[e^{-h_1}\cos{h_2}(\theta,s)\left(H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta,s)-{}\right.\right.\right.\\
+\left.\left.\left.{}-H_\sigma(e^{h_1}\cos{h_2}q_a)(\theta_j,s)\right)\right]\right|\leq{}\\
+{}\leq\fr{\sqrt{2\pi}e^\mu}{2n\sigma}\left(4G_a+\fr{\mu}{\sigma^2}+\fr{\sqrt{2}}{\sigma\sqrt{\pi}}\right)\,.
+\end{multline*}
+Следовательно,
+\begin{multline}
+\left|Q_a(\theta,s)-Q_a(\theta_j,s)\right|\leq{}\\
+{}\leq\fr{\sqrt{2\pi}e^\mu}{n\sigma}\left(4G_a+\fr{\mu}{\sigma^2}+\fr{\sqrt{2}}{\sigma\sqrt{\pi}}\right)+{}\\
+{}+
+\fr{\eps\sqrt{2\pi} e^\mu}{n\sigma}\left(G_a+\fr{\mu}{2\sigma^2}\right)\,.
+\label{e18sh}
+\end{multline}
+Объединяя~(\ref{e12sh})--(\ref{e18sh}) и используя~(\ref{e5sh}), получаем~(\ref{e11sh}). Теорема доказана.
+\smallskip
+
+Правая часть в оценке~(\ref{e4sh}) из теоремы~1 с ростом~$n$ убывает со
+скоростью~$O(1/n)$, а правая часть в оценке~(\ref{e11sh}) из теоремы~2 с
+ростом~$n$ и уменьшением~$\eps$ убывает со скоростью
+$O(\eps)+O(1/n)$. Это означает, что использование регуляризованной формулы обращения~(\ref{e5sh}) 
+приводит к устойчивому методу реконструкции.
+
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+\addcontentsline{toc}{section}{Литература}
+\begin{thebibliography}{9}    
+\bibitem{1sh}
+\Au{Arbuzov~E.\,V., Bukhgeim~A.\,L., Kazantsev~S.\,G.}
+Two-dimensional tomogra\-phy problems and the theory of A-analytic
+functions~// Siberian Adv. Math., 1998. Vol.~8. P.~1--20.
+
+\bibitem{3sh}
+\Au{Natterer~F.} 
+Inversion of the attenuated Radon transform~// Inverse Problems, 2001. Vol.~17. P.~113--119.
+
+\bibitem{2sh}
+\Au{Novikov R.\,G.} 
+An inversion formula for the attenuated X-ray transformation~// Ark. Mat., 2002. Vol.~40. P.~145--167.
+
+\bibitem{4sh}
+\Au{Khalfin L.\,A., Klebanov~L.\,B.} 
+A solution of the computer tomography paradox and estimating the distances between the densities of measures with the same marginals~// 
+The Annals of Probability, 1994. Vol.~22. No.\,4. P.~2235--2241.
+
+\bibitem{5sh}
+\Au{Шестаков О.\,В., Савенков~Т.\,Ю.} 
+Оценка расстояния между плотностями вероятностных мер, имеющих близкие проекции~// Вестн. Моск. ун-та.
+Сер.~15. Вычисл. матем. и киберн., 2001. №\,4. С.~44--46.
+
+\bibitem{6sh}
+\Au{Шестаков О.\,В.} 
+Оценка точности восстановления функции по ее экспоненциальному преобразованию Радона при использовании
+конечного числа проекций~// Вестн. Моск. ун-та. Сер.~15. Вычисл. матем. и киберн., 2006. №\,4. С.~22--25.
+
+\label{end\stat}
+
+\bibitem{7sh}
+\Au{Федоров Г.\,А.} 
+Вычислительная эмиссионная томография.~--- М.: Энергоатомиздат, 1990.
+\end{thebibliography}
+}
+}
+\end{multicols}
+  

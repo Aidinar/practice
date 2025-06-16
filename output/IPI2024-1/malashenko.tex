@@ -1,0 +1,778 @@
+\def\ora{\overrightarrow}
+\def\ol{\overline}
+
+
+\def\stat{malashenko}
+
+\def\tit{СРАВНИТЕЛЬНЫЙ АНАЛИЗ УЗЛОВЫХ МУЛЬТИПОТОКОВ В~МНОГОПОЛЬЗОВАТЕЛЬСКОЙ 
+СЕТЕВОЙ СИСТЕМЕ}
+
+\def\titkol{Сравнительный анализ узловых мультипотоков в~многопользовательской 
+сетевой системе}
+
+\def\aut{Ю.\,Е.~Малашенко$^1$, И.\,А.~Назарова$^2$}
+
+\def\autkol{Ю.\,Е.~Малашенко, И.\,А.~Назарова}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Малашенко Ю.\,Е.}
+\index{Назарова И.\,А.}
+\index{Malashenko Yu.\,E.}
+\index{Nazarova I.\,A.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнена при финансовой поддержке РНФ (проект 21-71-10135).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, \mbox{malash09@ccas.ru}}
+\footnotetext[2]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, \mbox{irina-nazar@yandex.ru}}
+
+\vspace*{-12pt}
+
+
+ 
+
+\Abst{В рамках вычислительных экспериментов изучаются монопольные 
+и~предельные режимы передачи исходящих узловых мультипотоков в~многопользовательской сетевой системе. Анализируются межузловые потоки разных 
+видов, которые передаются всеми корреспондентами из всех узлов по всем 
+кратчайшим маршрутам. В~рамках алгоритмической схемы вычисляются равные  
+межузловые   потоки. Найденные значения выступают в~качестве  компонент  вектора 
+мультипотока, исходящего из каждого уз\-ла-ис\-точ\-ни\-ка во все 
+уз\-лы-ад\-ре\-са\-ты, и~интерпретируются как гарантированные многокритериальные оценки показателей  
+функционирования  многопользовательской  системы. Для оценки минимальных 
+удельных затрат для каждого узла используется  монопольный режим передачи 
+исходящего мультипотока без учета всех остальных. Для поиска максимально 
+достижимого межузлового потока  рассматривается предельный режим передачи, при 
+котором полностью  загружены все  ребра  сети. Исследуются сети с~различными 
+структурными особенностями и~одинаковой суммарной пропускной способностью.}
+
+\KW{многопродуктовая потоковая модель;  распределение 
+узловых исходящих мультипотоков; удельные  затраты при передаче потока}
+
+\DOI{10.14357/19922264240106}{AKCMCQ}
+  
+%\vspace*{-6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+\section{Введение}
+
+Работа продолжает исследование функциональных характеристик сетевых 
+телекоммуникационных  систем при различных способах передачи потока, 
+распределения ресурсов и~управ\-ле\-ния~[1--6]. В~\cite{Mal23-1, Mal23-3, Mal23-6} в~качестве 
+многопараметрической оценки функциональных возможностей многопользовательской 
+сети используются векторы исходящих узловых мультипотоков. Компонентами вектора 
+выступают все межузловые потоки с~источником в~выбранной вершине и~стоками в~остальных узлах сети. В~ходе вычислительных экспериментов вначале определяются 
+распределения  межузловых потоков, которые передаются корреспондентами по 
+кратчайшим маршрутам. Затем на основе найденных значений  формируются допустимые 
+векторы исходящих мультипотоков,  передаваемых в~монопольном режиме без учета 
+потоков для остальных узлов сети. Анализируются  величины  узловых исходящих  
+потоков в~ситуациях, когда внешняя нагрузка превышает нормативные ограничения.
+
+В работе изучаются пиковые распределения при полной загрузке сети и~максимальном 
+суммарном межузловом потоке. В~рамках  модели  пропускная способность  ребер 
+сети рассматривается как вектор ресурсов. Ресурсы распределяются  для 
+обеспечения  передачи потоков соответствующих видов.  Для каждого узла 
+оцениваются требуемые  затраты ресурсов  при  передаче всех исходящих межузловых 
+потоков, для которых  данный узел служит источником.   Предложенный способ  
+моделирования дает возможность сравнивать и~выявлять различия в~распределении 
+ресурсов при использовании  различных диспетчерских правил стратегий.  
+Полученные  оценки можно трактовать как ограничения на величину исходящих 
+узловых мультипотоков, которые можно будет передать в~сети одновременно с~потоками из других узлов, если  условия совместной передачи на остальные виды 
+потоков не будут нарушены.
+
+Результаты, полученные в~ходе экспериментов,  можно также рассматривать как 
+описание  функциональных возможностей сети при предельных внешних входных 
+потоках. Появляется возможность  на этапе предпроектного анализа проследить  
+взаимосвязь узловых исходящих мультипотоков и~требуемых затрат ресурсов --- 
+пропускной способности ребер сети~--- при использовании монопольных и~уравнительных диспетчерских правил.
+
+\vspace*{-9pt}
+
+\section{Математическая модель}
+
+\vspace*{-3pt}
+
+Для описания многопользовательской сетевой системы связи  воспользуемся 
+следующей математической записью модели передачи многопродуктового потока.
+Сеть~$G$ задается множествами\linebreak  $\langle V,\ R, \ U,\ P \rangle$:
+узлов (вершин) сети  $V \hm= \{ v_1, v_2, \ldots\linebreak \ldots, v_n, \ldots, v_N \}$;
+неориентированных ребер $R \hm= \{ r_1, r_2, \ldots, r_k, \ldots, r_E \}$;
+ориентированных дуг\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+  $U \hm= \{ u_1, u_2, \ldots, u_k, \ldots, u_{2E}\}$
+и~пар уз\-лов-кор\-рес\-пон\-ден\-тов $P \hm= \{ p_1, p_2, \ldots, p_M\}$.
+Предполагается, что в~сети отсутствуют петли и~сдвоенные ребра.
+
+
+Ребро $r_k \in R$ соединяет \textit{смежные} вершины $v_{n_k}$ и~$v_{j_k}$.
+Каждому ребру~$r_k$ ставятся в~соответствие две ориентированные дуги~$u_k$ 
+и~$u_{k+E}$ из множества~$U$.\linebreak
+Дуги $\{u_k, u_{k+E}\}$ определяют прямое и~обратное направ\-ле\-ние передачи потока 
+по  ребру~$r_k$ между концевыми вершинами $v_{n_k}$ и~$v_{j_k}$. Для каждой 
+вершины~$v_n$ формируется список~$K(n)$ номеров инцидентных ей ребер: $K(n) \hm= 
+\{k_1, k_2, \ldots, k_a\}$, где $a$~--- число инцидентных ребер для~$v_n$.
+
+В многопользовательской сети~$G$ рассматривается $M \hm= N (N\hm-1)$ независимых, 
+невзаимозаменяемых и~равноправных межузловых потоков различных видов.
+Каждой паре уз\-лов-кор\-рес\-пон\-ден\-тов~$p_m$ из множества~$P$ соответствуют:
+вер\-ши\-на-ис\-точ\-ник с~номером~$s_m$,  из~$s_m$  входной поток $m$-го вида поступает в~сеть;
+вер\-ши\-на-при\-ем\-ник с~номером ${t_m}$, из  ${t_m}$ поток $m$-го вида покидает сеть.
+Для каждой вершины $v_n \hm\in V$, $n \hm= \ol {1, N}$, определяется подмножество~$P(v_n)$ 
+всех пар-кор\-рес\-пон\-ден\-тов, для которых вершина~$v_n$ служит уз\-лом-ис\-точ\-ни\-ком:
+$$
+P(v_n) =\left \{ p_m | s_m = n, t_m \not = n, t_m = \ol{1, N} \right\},
+$$
+а для каждого $P(v_n)$~--- список номеров~$M(n)$ пар~$p_m$, входящих в~подмножество~$P(v_n)$:
+$$
+M(n) = \left\{m_1(n), m_2(n), \ldots , m_{N-1}(n)\right\}.
+$$
+
+Обозначим через~$z_m$ величину \textit{межузлового} потока $m$-го вида, 
+поступающего в~сеть через узел с~номером~$s_m$ и~покидающего сеть из узла с~номером~$t_m$;
+$x_{mk}$ и~$x_{m(k + E)}$~---  поток $m$-го вида, который передается по дугам 
+$u_k$ и~$u_{k + E}$ согласно направлению передачи, $x_{mk} \hm\ge 0$, $x_{m(k + 
+E)}\hm\ge 0$, $m \hm= \ol{1, M}$, $k \hm= \ol {1, E}$;
+$S(v_n)$~--- множество номеров исходящих дуг, по ним поток покидает узел~$v_n$;
+$T(v_n)$~--- множество номеров входящих дуг, по ним поток поступает в~узел~$v_n$.
+Состав множеств~$S(v_n)$ и~$T(v_n)$ однозначно формируется в~ходе выполнения 
+следующей процедуры. Пусть некоторое ребро $r_k \hm\in R$ соединяет вершины с~номерами~$n$ и~$j$, такими что $n \hm< j$. Тогда ориентированная дуга $u_k \hm= (v_n, 
+v_j)$, направленная из вершины~$v_n$ в~$v_j$, считается \textit{исходящей} из 
+вершины~$v_{n}$, и~ее номер~$k$ заносится в~множество~$S(v_n)$, 
+а~дуга~$u_{k+E}$, направленная из~$v_j$ в~$v_n$,~--- \textit{входящей} для~$v_{n}$, и~ее номер $k\hm+E$ помещается в~список~$T(v_n)$.
+Дуга~$u_k$ является \textit{входящей} для~$v_j$, и~ее номер~$k$ попадает в~$T(v_j)$, а~дуга~$u_{k+E}$~--- \textit{исходящей}, и~номер $k\hm+E$ вносится 
+в~список исходящих дуг~$S(v_j)$.
+
+Во всех узлах сети $v_n \hm\in V$, $n = \ol{1,N}$,  для каж\-до\-го вида потока должны 
+выполняться условия сохранения потоков:
+
+\noindent
+\begin{multline}
+\sum\limits_{i \in S(v_n)}{x_{mi}} - \sum\limits_{i \in T(v_n)}{x_{mi}} ={}\\
+{}=
+\begin{cases}
+\ \ z_m, & \mbox{если } v_n = v_{s_m}, \\
+- z_m, & \mbox{если } v_n = v_{t_m}, \\
+\ \ 0 & \mbox{в\ остальных\ случаях,}
+\end{cases}
+\\
+n = \ol {1, N},\  m \hm= \ol {1, M},\  x_{mi} \hm\ge 0,\  z_m \hm\ge 0\,.
+\label{e1-mal}
+\end{multline}
+Величина $z_m$ равна входному межузловому потоку $m$-го вида, проходящему от 
+источника~$s_m$ к~приемнику~$t_m$ пары~$p_m$ при распределении  потоков~$x_{mi}$ 
+по дугам сети.
+
+Каждому ребру $r_k \in R$ приписывается неотрицательное число~$d_k$~--- 
+суммарный предельно допустимый поток, который можно передать по реб\-ру~$r_k$ в~обоих направлениях. В~исходной сети 
+\mbox{компоненты} вектора пропускных способностей   
+$\mathbf{d} \hm= (d_1, d_2, \ldots, d_k, \ldots, d_E)$~---  положительные числа $d_k \hm> 
+0$.  Вектор~$\mathbf{d}$ определяет следующие ограничения на сумму потоков всех 
+видов, передаваемых по ребру~$r_k$ одновременно:
+\begin{multline}
+\sum\limits_{m=1}^{M} {(x_{mk}+ x_{m(k+E)})} \le d_k,  \\
+  x_{mk} \ge 0, \enskip  
+x_{m(k+E)} \ge 0, \enskip   k =\ol{1, E}. \label{e2-mal}
+\end{multline}
+
+Ограничения~(1) и~(2) задают множество  до\-пус\-ти\-мых значений компонент вектора 
+межузловых потоков
+$\mathbf{z} \hm= (z_1, z_2, \ldots, z_m, \ldots, z_M)$:
+\begin{multline*} 
+\mathcal{Z}(\mathbf{d}) = \{\mathbf{z} \ge 0 \ |\  \exists \ \mathbf{x} \ge 0: \ 
+(\mathbf{z}, \mathbf{x}) \\
+ \mbox{ удовлетворяют}\ (1), (2)\}.
+\end{multline*}
+
+В рамках формализма модели для каждой вершины $v_n \hm\in V$, $n \hm= \ol{1, N}$, 
+формируется VMF-век\-тор (от \textit{англ.}\ vertex multiflow) исходящего мультипотока 
+$\ora{\mathbf{z}}(n)$, $\ora{\mathbf{z}}(n)\hm \in \mathcal{Z}(\mathbf{d})$, 
+компонентами которого выступают $z_j(n) \hm= 0$, $j \not \in M(n)$, $z_j(n) \hm= z_m$, 
+$j \hm= m$, $m \hm\in M(n)$. Таким образом, ненулевыми компонентами 
+$\ora{\mathbf{z}}(n)$ становятся межузловые потоки $z_m\hm > 0$ для всех пар $p_m 
+\hm\in P(v_n)$ с~уз\-ла\-ми-ис\-точ\-ни\-ками~$s_m$, расположенными в~вершине~$v_n$.
+
+\vspace*{-9pt}
+
+\section{Уравнительное распределение в~монопольном и~предельном режимах}
+
+\vspace*{-2pt}
+
+При проведении вычислительных экспериментов векторы~$\ora{\mathbf{z}}(n)$ 
+формируются  на основе найденных распределений совместно до\-пус\-ти\-мых межузловых 
+потоков~$z_m$, $p_m \hm\in P(v_n)$, передаваемых \mbox{одновременно}. Для каждой пары 
+уз\-лов-кор\-рес\-пон-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+ден\-тов $p_m \hm\in P$, для некоторого заданного допустимого 
+межузлового потока~$\tilde{z}_m$ и~соответствующих значений дуговых потоков~$\tilde{x}_{mk}$,  $k\hm = \ol{1, 2E}$, \mbox{величина}
+
+\vspace*{2pt}
+
+\noindent
+$$
+\tilde{y}_m = \sum\limits_{i=1}^{2E} \tilde{x}_{mi}, \ m = \ol{1, M},
+$$
+
+\vspace*{-2pt}
+
+\noindent
+характеризует результирующую межузловую \textit{нагрузку} (далее~--- RI-на\-груз\-ку, 
+от \textit{англ.}\ resulting internodal load) на ребра сети  при передаче  межузлового 
+потока~$\tilde{z}_m$ из уз\-ла-ис\-точ\-ни\-ка~$s_m$  в~узел-при\-ем\-ник~$t_m$. Величина 
+$\tilde{y}_m$ показывает, какая суммарная пропускная способность сети 
+потребуется для передачи дуговых потоков~$\tilde{x}_{mk}$. В~рамках модели 
+отношение RI-на\-груз\-ки и~межузлового потока
+
+\vspace*{2pt}
+
+\noindent
+$$
+ \tilde{w}_m = \fr{\tilde{y}_m}{\tilde{z}_m},  \ m = \ol{1, M},
+ $$
+
+ \vspace*{-2pt}
+
+\noindent
+можно трактовать как удельные \textit{затраты}  ресурсов сети при передаче 
+единичного   потока $m$-го вида между узлами~$s_m$ и~$t_m$ при  дуговых потоках~$\tilde{x}_{mi}$.
+
+Для получения гарантированных оценок VMF-век\-то\-ров предполагается, что межузловые 
+потоки передаются по маршрутам, содержащим минимальное число ребер (далее~--- 
+MER-марш\-ру\-ты, от \textit{англ.}\ mi\-ni\-mum edge route).
+При проведении вычислительных экспериментов для оценки величин <<расщепленного>> 
+потока на первом этапе для каждой пары узлов $p_m\hm = (s_m, t_m)$ в~сети~$G(1)$ 
+формируется набор~$H_m(1)$ всех  путей, которые далее используются как MER-марш\-ру\-ты передачи $m$-го вида потока:
+
+\vspace*{2pt}
+
+\noindent
+$$
+H_m(1) = \left\{ h_m^1(1), h_m^2(1), \ldots, h_m^j(1), \ldots, h_m^{J_m(1)}(1)\right\},
+$$
+
+\vspace*{-2pt}
+
+\noindent
+где $h_m^j(1)$~--- список номеров дуг в~$j$-м  пути в~сети $G(1)$ между узлами~$s_m$ и~$t_m$;  $\mu_m(1)$~--- минимальное число ребер в~MER-марш\-ру\-те 
+$h_m^j(1)$; $J_m(1)$~--- число MER-марш\-ру\-тов для $m$-й пары.
+
+Для каждой пары $p_m \hm\in P$ по всем MER-марш\-ру\-там из~$H_m(1)$ передается 
+единичный межузловой поток~$z_m$ и~подсчитываются значения индикаторной функции:
+
+\noindent
+$$ 
+\eta_k^j(m) = \begin{cases}
+ 1, & \mbox{если}\ k \in h_m^j(1); \\
+ 0 & \mbox{в\ остальных\ случаях.}
+\end{cases}
+ $$
+ 
+ \vspace*{-2pt}
+
+\noindent
+Определяются  дуговые потоки для пары~$p_m$:
+\begin{equation}
+x_{mk}^0 (1) = \sum\limits_{j=1}^{J_m(1)} \eta_k^j(m), \ \ m = \ol{1, M}, \ \ k = 
+\ol{1, 2E}. \label{e3-mal}
+\end{equation}
+
+\vspace*{-2pt}
+
+
+Межузловой поток по MER-марш\-ру\-там (далее~---  MER-по\-ток) $z_{m}^0(1)$ между 
+узлами~$s_m$ и~$t_m$ вычисляется  по формулам~(1) и~(3). Рассчитываются  
+нормирующий коэффициент
+
+\vspace*{2pt}
+
+\noindent
+\begin{equation*}
+\omega_m^0(1) = \fr{1}{z_{m}^0(1)}, \ z_{m}^0(1) \not = 0, \ \ m = \ol{1, M}, %\label{e4-mal}
+\end{equation*}
+
+\noindent
+и дуговые потоки
+\begin{equation}
+x_{mk}^0 = \omega_m^0 x_{mk}^0(1), \ \ m = \ol{1, M}, \ \ k = \ol{1, 2E}.\label{e5-mal}
+\end{equation}
+При передаче всех потоков $x_{mk}^0$ по ребрам сети межузловой поток из узла~$s_m$ в~узел~$t_m$ равен единице для всех $p_m \hm\in P$.
+
+Распределение совместно допустимых межузловых потоков последовательно 
+определяется на основе MER-марш\-ру\-тов и~дуговых потоков~$x_{mk}^0$. Для каждого 
+VMF-вектора вычисляются равные значения исходящих мультипотоков, которые могут 
+передаваться одновременно в~сети~$G(1)$ без учета остальных корреспондентов. 
+Указанный способ называется далее \textit{монопольным} режимом передачи VMF-по\-тока.
+
+\smallskip
+
+\noindent
+\textbf{Задача~1.} Для заданной вершины~$v_n$ найти 
+
+\noindent
+$$
+\beta^*(n) =  \max\limits_{\beta} \beta
+$$
+
+\vspace*{-4pt}
+
+\noindent
+при условиях: 
+$$
+\beta \!\!\!\sum\limits_{m \in M(n)} \left[ x_{mk}^0+  x_{m(k+E)}^0\right] 
+\le d_k(1), \ \beta \ge 0, \  \  k =\ol{1, E}.
+$$
+
+\begin{figure*}[b] %fig1
+%\vspace*{6pt}
+      \begin{center}
+     \mbox{%
+\epsfxsize=153.408mm 
+\epsfbox{mal-1.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Базовая~(\textit{а}) и~кольцевая~(\textit{б}) сети}
+%\end{figure*}
+%\begin{figure*} %fig2
+\vspace*{12pt}
+      \begin{center}
+     \mbox{%
+\epsfxsize=163mm 
+\epsfbox{mal-3.eps}
+}
+\end{center}
+\vspace*{-9pt}
+ \Caption{Узловые мультипотоки и~ресурсы в~базовой~(\textit{а}) 
+ и~в~кольцевой~(\textit{б}) сетях }
+\end{figure*}
+
+\vspace*{-2pt}
+
+С помощью решения задачи~1 для всех $p_m \hm\in P$, $m \hm\in M(n)$, вычисляются VMF-век\-то\-ры~$\ora{\mathbf{z}}^*(n)$, 
+все компоненты которых равны~$\beta^*(n)$, 
+т.\,е.\ $z_m^*(n) \hm= \beta^*(n)$, $m \hm\in M(n)$,  $n \hm=\ol{1, N}$. Для каждого ребра~$r_k$, $k \hm=\ol{1, E}$, определяется
+$$ 
+\Delta_k^*(n) =  \beta^*(n)\!\!\! \sum\limits_{m \in M(n)} \left[ x_{mk}^0+  x_{m(k+E)}^0\right], \ \  
+k =\ol{1, E}.
+$$
+
+\vspace*{-3pt}
+
+\noindent
+Векторы ресурсов $\ora\Delta^*(n) \hm= \{\Delta_1^*(n), \Delta_2^*(n), \ldots\linebreak$ $\ldots ,
+\Delta_E^*(n)\}$ показывают, какие затраты пропускной способности требуются при 
+передаче исходящих межузловых потоков из вершины~$v_n$ в~монопольном режиме без 
+учета всех остальных корреспондентов. Для каждого VMF-век\-то\-ра подсчитываются
+
+\noindent
+\begin{equation*}
+\zeta(n) = \!\!\!\!\sum\limits_{m \in M(n)}\!\! \!\!\!\!z_m^*(n) = \beta^*(n) (N - 1);\enskip
+\delta(n) 
+=\sum\limits_{k = 1}^E \Delta_k^{*}(n);
+\end{equation*}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline*}
+\left\|\ora{\mathbf{z}}^{*}(n)\right\| = \beta^*(n)(N - 1)^{1/2}; \\
+\left\|\ora\Delta^{*}(n)\right\|  = \left[\sum\limits_{k = 1}^E (\Delta_k^*(n))^2\right]^{1/2}, \enskip n =\ol{1, N}\,.
+\end{multline*}
+
+\vspace*{-3pt}
+
+\noindent
+Для оценки VMF-векторов при полной загрузке всех ребер сети сформируем вектор  
+$\ora{\mathbf{z}}^{**}(n)$, компоненты которого определяются по следующему 
+правилу: для каждого узла~$v_n$  и~всех пар $p_m\hm \in P(v_n)$, которые не 
+являются смежными узлами и~кратчайший маршрут соединения для них состоит из двух и~более ребер, поток $z^{**}_m(n) \hm= 0$. Для всех пар $p_a \hm\in P(v_n)$, для 
+которых кратчайшим маршрутом соединения служит некоторое ребро~$r_k$, поток 
+$z^{**}_a(n) \hm= d_k(1)/2$, где $d_k(1)$~--- пропускная способность ребра~$r_k$ в~сети~$G(1)$.
+
+При одновременной передаче всех VMF-по\-то\-ков $\ora{\mathbf{z}}^{**}(n)$ из всех 
+узлов~$v_n$, $n \hm= \ol{1, N}$, достигается полная загрузка всех ребер сети~$G(1)$, 
+и~максимальное суммарное значение допустимых межузловых потоков~$z^{**}$ 
+равно 
+$$ 
+z^{**} = \sum\limits_{n = 1}^N \sum_{m = 1}^{M(n)} z^{**}_m(n) = \sum\limits_{k = 1}^E 
+d_k(1) = D(0). 
+$$
+
+Вычисляется норма векторов
+\begin{multline*}
+||\ora{\mathbf{z}}^{**}(n)|| = \left[\sum\limits_{k \in 
+K(n)}\left(\fr{d_k(1)}{2}\right)^2\right]^{1/2} = {}\\[4pt]
+{}=  ||\ora\Delta^{**}(n)||,\enskip n  = \ol{1, N},
+\end{multline*}
+где $\ora\Delta^{**}(n)$~--- вектор ресурсов, необходимых при передаче 
+мультипотока~$\ora{\mathbf{z}}^{**}(n)$.
+Значения~$x_{mk}^0$ из~(\ref{e5-mal}) позволяют формировать VMF-век\-тор равных межузловых 
+потоков $\ora{\mathbf{z}}^{(=)}(n)$, которые могут передаваться одновременно из 
+всех узлов сети.
+
+\smallskip
+
+\noindent
+\textbf{Задача~2.} Найти 
+$$
+\alpha^*(n) = \max\limits_{\alpha} \alpha
+$$
+
+\noindent
+при условиях:
+
+\noindent
+$$  \alpha \sum\limits_{m=1}^M [ x_{mk}^0+  x_{m(k+E)}^0] \le 
+d_k(1), \ \alpha \ge 0, \  \  k =\ol{1, E}\,.
+$$
+
+\smallskip
+
+Из решения задачи~2 определяется $z_m^{(=)} \hm= \alpha^*$ для всех $p_m \hm\in P$ 
+и,~соответственно, для всех VMF-век\-то\-ров $\ora{\mathbf{z}}^{(=)}(n) \hm= \alpha^*$, $n \hm= \ol{1, N}$:
+
+\noindent
+$$
+\left\|\ora{\mathbf{z}}^{(=)}(n)\right\| = \alpha^*(N - 1)^{1/2}. $$
+
+\vspace*{-14pt}
+
+\section{Вычислительный эксперимент }
+
+\vspace*{-2pt}
+
+Вычислительный эксперимент проводился на моделях сетевых систем, представленных 
+на рис.~1. В~каждой сети~69~узлов. В~ходе вычислительного эксперимента 
+проводилась нормировка, и~суммарная пропускная способность в~обеих сетях была 
+одинакова:
+$\sum\nolimits_{k=1}^{E} d_k(1)\hm = D(0)\hm= 68\,256$.
+
+
+
+\begin{figure*} %fig3
+\vspace*{1pt}
+      \begin{center}
+     \mbox{%
+\epsfxsize=163mm 
+\epsfbox{mal-5.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Удельные затраты в~базовой~(\textit{а}) и~в~кольцевой~(\textit{б}) сетях }
+\end{figure*}
+
+На диаграммах, представленных на рис.~2, для  VMF-век\-то\-ров 
+$\ora{\mathbf{z}}(n)$ в~базовой и~кольцевой сетях по горизонтальной оси 
+откладываются суммарные значения мультипотока~$\zeta(n)$, а по вертикальной  
+$\delta(n)$ --- со\-от\-вет\-ст\-ву\-ющие значения требуемой  суммарной пропускной 
+способности при передаче  в~монопольном режиме. На рис.~2,\,\textit{а} группа точек, для 
+которых $\zeta(n)\hm\le 1000$, относится к~висячим вершинам и~суммарный исходящий 
+поток ограничен величиной пропускной способности инцидентного ребра. Для большой 
+группы узлов суммарный исходящий межузловой поток находится в~диапазоне  $1\,300\hm\le \zeta(n)\hm\le 1\,500$, поскольку в~монопольном режиме используется 
+уравнительная стратегия для\linebreak всех исходящих потоков.
+В~кольцевой сети <<средняя>> длина кратчайшего пути меньше, чем в~базовой. В~результате, как следует из рис.~2,\,\textit{б}, 
+\mbox{затраты} ресурсов~--- пропускной способности~--- 
+значительно меньше практически для всех VMF-по\-то\-ков и~$\delta(n) \hm\le 10\,000$.
+
+На рис.~3 представлены диаграммы  распределения удельных затрат $w(n) \hm= 
+\delta(n)/\zeta(n)$ передачи единичного потока из узла~$v(n)$.
+Значения $w(n)$ откладываются по вертикальной оси, а~относительные номера узлов 
+$\nu(n)\hm = n/N$, $n = \ol{1, N}$,  указываются по горизонтальной оси. Удельные 
+затраты в~кольцевой сети меньше, чем в~базовой, поскольку добавление ребер 
+приводит к~уменьшению \textit{длины} кратчайших путей для большого чис\-ла пар-кор\-рес\-пон\-ден\-тов. Для висячих узлов, соединенных единственным реб\-ром с~сетью, 
+удельные затраты выше,
+чем для вершин, расположенных в~центре. Самая
+правая 
+точка на рис.~3,\,\textit{а} со значением $w^*(n)\hm< 6$ соответствует центральному узлу в~базовой сети. 
+
+\vspace*{-9pt}
+
+\section{Заключение }
+
+\vspace*{-3pt}
+
+Построенные априорные оценки VMF-век\-то\-ров позволяют анализировать ситуации, 
+когда внешняя (входная) нагрузка на сеть превышает допустимые нормативные 
+значения. Исходящие взаимно допустимые мультипотоки  $\ora{\mathbf{z}}(n)$ 
+указывают на возможные ограничения, отказы в~обслуживании и/или возникновение 
+очередей на входе в~сис\-те\-му. Оценив удельные затраты, полученные на основе VMF-
+векторов, можно выделить группы уз\-лов-кор\-рес\-пон\-ден\-тов, требующих б$\acute{\mbox{о}}$льших 
+ресурсов для передачи соответствующих потоков. Анализ структурных потоковых 
+характеристик, их взаимосвязи и~взаимовлияния может быть использован на 
+предпроектном этапе создания сетей различного назначения~[7--9].
+
+%\columnbreak
+
+\vspace*{-9pt}
+
+{\small\frenchspacing
+ { %\baselineskip=10.6pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+ 
+\vspace*{-2pt}
+ 
+ \bibitem{Kung05} %1
+\Au{Kung~H.\,T., Wu~C.\,H.} Content networks: Taxonomy 
+and new approaches~// The Internet as a~large-scale complex system.~--- Oxford: 
+Oxford University Press,    2005. P.~203--225. doi: 10.1093/oso/9780195157208.003.0007.
+
+\bibitem{Yang12} %2
+\Au{Yang~R., van der Mei~R.\,D., Roubos~D., \textit{et al.}} 
+Resource optimization in distributed real-time multimedia applications~// 
+Multimed. Tools Appl., 2012. Vol.~59. Р.~941--971. doi: 10.1007/s11042-011-0782-5.
+
+\bibitem{Beben13} %3
+\Au{Beben~A., Batalla~J.\,M., Chai~W.\,K., 
+Sliwinski~J.} Multi-criteria decision algorithms for efficient content delivery 
+in content networks~// Ann. Telecommun., 2013. Vol.~68.  P.~153--165.
+doi: 10.1007/s12243-012-0321-z.
+    
+\bibitem{Mal23-1}  %4
+\Au{Малашенко~Ю.\,Е., Назарова~И.\,А.} Оценки 
+распределения ресурсов в~многопользовательской сети при равных межузловых 
+нагрузках~// Информатика и~её применения, 2023. Т.~17. Вып.~1. С.~83--88.
+doi: 10.14357/19922264230111. EDN: BUKVGV.
+
+\bibitem{Mal23-3}  %5
+\Au{Малашенко~Ю.\,Е., Назарова~И.\,А.} Анализ загрузки  
+многопользовательской сети при расщеплении потоков по кратчайшим маршрутам~// 
+Информатика и~её применения, 2023. Т.~17. Вып.~3. С.~33--38.
+doi: 10.14357/19922264230305. EDN: NLUSQJ.
+
+%\pagebreak
+
+\bibitem{Mal23-6} %6
+\Au{Малашенко~Ю.\,Е., Назарова~И.\,А.} Анализ узловых  
+мультипотоков в~многопользовательской сис\-те\-ме при уравнительных стратегиях  
+управ\-ле\-ния~// Известия РАН. Теория и~сис\-те\-мы управ\-ле\-ния, 2023.  №\,6. С.~137--149.
+
+
+
+\bibitem{Kach11}  %7
+\Au{Качанов~С.\,А., Медведев~Н.\,В.} Алгоритм 
+выравнивания загрузки узлов мобильной ин\-фор\-ма\-ци\-он\-но-ком\-му\-ни\-ка\-ци\-он\-ной сети~//  
+Технологии гражданской безопас\-ности, 2011. Т.~8. №\,1. С.~26--29. EDN: NQUSAR.
+
+
+
+\bibitem{Zhang14} %8
+\Au{Zhang~H.\,P., Yin~B.\,Q., Lu~X.\,N.} Modeling and 
+analysis for streaming service systems // Int. J. Automation 
+Computing, 2014.  Vol.~11. P.~449--458.    doi: 10.1007/s11633-014-\mbox{0812-7}. 
+
+\bibitem{Sim2016} %9
+\Au{Симаков~Д.\,В.} Управление трафиком в~сети с~высокой динамикой метрик сетевых маршрутов~// Науковедение, 
+2016. Т.~8. №\,1. Ст.~60TVN116.
+
+    \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-10pt}
+
+\hfill{\small\textit{Поступила в~редакцию 04.12.23}}
+
+\vspace*{4pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+\vspace*{-6pt}
+
+\def\tit{ANALYSIS OF NODE  MULTIFLOWS IN~A~MULTIUSER NETWORK~SYSTEM\\[-7pt]}
+
+
+\def\titkol{Analysis of node  multiflows in~a~multiuser network system}
+
+
+\def\aut{Yu.\,E.~Malashenko and~I.\,A.~Nazarova}
+
+\def\autkol{Yu.\,E.~Malashenko and~I.\,A.~Nazarova}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-14.9pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of 
+Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 1}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 1
+\hfill \textbf{\thepage}}}
+
+\vspace*{2pt}
+
+
+
+
+
+\Abste{Within the framework of computational experiments, 
+exclusive and limit modes of transmission of outgoing node multiflows in 
+a~multiuser network system are studied. Internodal flows of different types 
+ that are transmitted from all nodes along all shortest routes are 
+analyzed. Within 
+the framework of the algorithmic scheme,  the transmission of all internodal 
+flows is calculated. The found values act as components of the multiflow vector 
+originating from each source node to all destination nodes and are interpreted 
+as guaranteed multicriteria estimates of the functioning of a multiuser system.  
+To estimate the minimum unit cost for each node, the monopole mode of 
+transmitting the outgoing multiflow is used without taking into account all the 
+others. To search for the maximum achievable internodal flow, the limiting 
+transmission mode is considered in which all edges of the network are 
+completely loaded. The networks with different structural features and the same 
+total capacity are studied.}
+
+
+\KWE{multicommodity flow model; distribution of node 
+multiflows;  unit cost of flow transmission}
+
+\DOI{10.14357/19922264240106}{AKCMCQ}
+
+%\vspace*{1pt}
+
+%\Ack
+%\vspace*{-4pt}
+%\noindent
+
+
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {\baselineskip=10.5pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9} 
+ 
+% \vspace*{-7pt}
+ 
+ \bibitem{Kung05-a} %1
+\Aue{Kung, H.\,T., and C.\,H.~Wu.} 2005. Content networks: Taxonomy and 
+new approaches. \textit{The Internet as a~large-scale complex system}. Oxford: 
+Oxford University Press. 203--225. doi: 10.1093/oso/9780195157208.003.0007.
+
+%\vspace*{-2pt}
+
+\bibitem{Yang12-a} %2
+\Aue{Yang, R., R.\,D.~van der Mei, D.~Roubos,  \textit{et al.}} 2012. 
+Resource optimization in distributed real-time multimedia applications. 
+\textit{Multimed. Tools Appl.} 59(3):941--971. doi: 10.1007/s11042-011-0782-5.
+
+\bibitem{Beben13-a} %3
+\Aue{Beben, A., J.\,M.~Batalla, W.\,K.~Chai, and J.~Sliwinski.} 2013. 
+Multi-criteria decision algorithms for efficient content delivery in content 
+networks. \textit{Ann. Telecommun.} 68:153--165. doi: 10.1007/s12243-012-0321-z.
+
+\bibitem{Mal23-1a} %4
+\Aue{Malashenko, Yu.\,E., and I.\,A.~Nazarova.} 2023. Otsenki 
+raspredeleniya resursov v~mnogopol'zovatel'skoy seti pri ravnykh 
+mezhuzlovykh nagruzkakh [Estimates of the resource distribution in the multiuser 
+network with equal internodal loads]. \textit{Informatika i~ee Primeneniya~--- 
+Inform. Appl.} 17(1):83--88. doi: 10.14357/19922264230111. EDN: BUKVGV.
+
+\bibitem{Mal23-3a} %5
+\Aue{Malashenko, Yu.\,E., and I.\,A.~Nazarova.} 2023.  Analiz zagruzki  
+mnogopol'zovatel'skoy seti pri rasshcheplenii potokov po kratchayshim 
+marshrutam [Multiuser network load analysis by splitting flows along the 
+shortest routes]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 
+17(3):33--38. doi: 10.14357/19922264230305. EDN: NLUSQJ.
+
+
+\bibitem{Mal23-6a} %6
+\Aue{Malashenko, Yu.\,E., and I.\,A.~Nazarova.} 2023. Analysis of nodal 
+multi-flows in a multiuser system with equalizing management strategies. 
+\textit{J. Comput. Sys. Sc. Int.} 62(6):1022--1033.
+
+\bibitem{Kach11-a} %7
+\Aue{Kachanov, S.\,A., and N.\,V.~Medvedev.} 2011. Algoritm 
+vyravnivaniya zagruzki uzlov mobil'noy informatsionno-kommunikatsionnoy seti 
+[Algorithm of leveling loading of mobile information and communication centers 
+net]. \textit{Tekhnologii grazhdanskoy bezopasnosti} [Civil Security 
+Technologies] 8(1):26--29. EDN: NQUSAR.
+
+\bibitem{Zhang14-a} %8
+\Aue{Zhang, H.\,P., B.\,Q.~Yin, and X.\,N.~Lu.} 2014. Modeling and 
+analysis for streaming service systems. \textit{Int. J. 
+Automation Computing} 11:449--458. doi: 10.1007/s11633-014-0812-7.
+
+\bibitem{Sim2016-a} %9
+\Aue{Simakov, D.\,V.} 2016. Upravlenie trafikom v~seti s~vysokoy dinamikoy metrik setevykh marshrutov [Traffic engineering for networks 
+with high dynamics of routing metrics]. \textit{Naukovedenie} [Science Studies] 8(1):60TVN116.
+
+
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-8pt}
+
+\hfill{\small\textit{Received December 4, 2023}} 
+
+\vspace*{-22pt}
+ 
+      \Contr
+
+\vspace*{-4pt}
+
+\noindent
+\textbf{Malashenko Yuri E.} (b.\ 1946)~--- Doctor of Science in physics and 
+mathematics, principal scientist, Federal Research Center ``Computer Science 
+and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 
+119333, Russian Federation; \mbox{malash09@ccas.ru }
+
+%\vspace*{3pt}
+
+\noindent
+\textbf{Nazarova Irina A.} (b.\ 1966)~--- Candidate of Science (PhD) in physics 
+and mathematics, scientist, Federal Research Center ``Computer Science and 
+Control'' of the Russian Academy of Sciences, 44-2 Vavilov Str., Moscow 119333, 
+Russian Federation; \mbox{irina-nazar@yandex.ru}
+
+
+
+
+        
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

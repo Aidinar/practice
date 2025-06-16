@@ -1,0 +1,869 @@
+\def\stat{strijov}
+
+\def\tit{ВВЕДЕНИЕ ОТНОШЕНИЯ ПОРЯДКА НА~МНОЖЕСТВЕ ПАРАМЕТРОВ 
+АППРОКСИМИРУЮЩИХ МОДЕЛЕЙ$^*$}
+
+\def\titkol{Введение отношения порядка на множестве параметров 
+аппроксимирующих моделей}
+
+\def\aut{А.\,В.~Грабовой$^1$, О.\,Ю.~Бахтеев$^2$, В.\,В.~Стрижов$^3$}
+
+\def\autkol{А.\,В.~Грабовой, О.\,Ю.~Бахтеев, В.\,В.~Стрижов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Грабовой А.\,В.}
+\index{Бахтеев О.\,Ю.}
+\index{Стрижов В.\,В.}
+\index{Grabovoy A.\,V.}
+\index{Bakhteev O.\,Yu.}
+\index{Strijov V.\,V.}
+ 
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при поддержке РФФИ (проекты 19-07-01155 и~19-07-00875) 
+и~НТИ (проект 13/1251/2018).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский физико-технический институт, 
+grabovoy.av@phystech.edu}
+\footnotetext[2]{Московский физико-технический институт, 
+bakhteev@phystech.edu}
+\footnotetext[3]{Вычислительный центр имени А.\,А.~Дородницына 
+Федерального исследовательского центра <<Информатика и~управление>> 
+Российской академии наук; Московский физико-технический институт, 
+\mbox{strijov@phystech.edu}}
+
+%\vspace*{-6pt}
+
+
+\Abst{Исследуется проблема введения отношения порядка на множестве 
+параметров сложных аппроксимирующих моделей. В~качестве параметрических 
+моделей исследуются линейные и~нейросетевые модели. Порядок на множестве 
+параметров задается при помощи ковариационной матрицы градиентов функции 
+ошибки по параметрам модели. Предлагается использовать заданный порядок 
+для фиксации параметров модели во время решения оптимизационной задачи. 
+Предполагается, что после небольшого числа итераций алгоритма оптимизации 
+некоторые параметры модели можно зафиксировать без значимой потери 
+качества модели. Это позволит существенно понизить размерность задачи 
+оптимизации. В~вычислительном эксперименте сравниваются модели, в~которых 
+параметры фиксируются в~соответствии с~предложенным порядком, с~моделями, 
+в~которых параметры фиксируются произвольным образом.}
+
+
+\KW{аппроксимация выборки; линейная модель; нейросеть; выбор модели; 
+функция ошибки}
+
+
+\DOI{10.14357/19922264200208} 
+ 
+%\vspace*{9pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+
+\section{Введение}
+
+Оптимизация глубоких нейронных сетей относится к~задачам высокой 
+сложности и~требует больших вычислительных 
+мощностей~\cite{sutskever2014}. При этом алгоритм оптимизации сходится по 
+большинству параметров сети уже после небольшого числа 
+итераций~\cite{Chunyan2016}. Своевременное определение начала сходимости 
+параметров позволит существенно снизить вычислительные затраты на 
+обучение моделей с~большим числом параметров.
+
+Примером задания порядка на множестве параметров служит 
+$l_1$-ре\-гу\-ля\-ри\-за\-ция~\cite{Tibshirani1996} и~регуляризация 
+ElasticNet~\cite{Hastie2005} для линейных моделей. Порядок, заданный на 
+множестве значений коэффициентов регуляризации, индуцирует порядок на 
+множестве признаковых описаний и~указывает на важность признаков.
+В~случае нейросетей для регуляризации параметров используется метод 
+исключения параметров~\cite{srivastava2014, molchanov2017}. Данный метод 
+также задает порядок на множестве параметров модели.
+
+В~\cite{cun1990} вводится понятие релевантности па\-ра\-мет\-ров нейросетевой 
+модели. Оно задает естественный порядок на множестве параметров модели от 
+наименее релевантных до наиболее релевантных. В~\cite{grabovoy2019} 
+предложен метод определения релевантности параметров аппроксимирующих 
+моделей при помощи метода Белсли. Релевантность параметров 
+в~работе~\cite{grabovoy2019} определяется на основе ковариационной 
+матрицы параметров модели.
+
+В данной работе предлагается метод введения отношения порядка на 
+множестве па\-ра\-мет\-ров сложных параметрических моделей, таких как 
+нейросеть. Рассматривается порядок, заданный при помощи ковариационной 
+матрицы градиентов функции ошибки по параметрам модели~\cite{Mandt2017}. 
+В~работе~\cite{Chunyan2016} предложен итерационный метод для поиска 
+ковариационной матрицы градиентов. Данный итерационный метод 
+интегрируется в~градиентный метод оптимизации Adam~\cite{Kingma2014}.
+
+Множество параметров упорядочивается по возрастанию дис\-пер\-сии: от 
+параметра с~минимальной дис\-пер\-си\-ей до параметра с~максимальной дис\-пер\-си\-ей 
+градиента функции ошибки по со\-от\-вет\-ст\-ву\-юще\-му параметру модели. 
+Предполагается, что малая дисперсия градиента указывает на то, что 
+соответствующий параметр можно зафиксировать.
+
+Для задания порядка на множестве параметров при помощи ковариационной 
+матрицы вводится предположение о~том, что фиксация параметров происходит 
+в~момент, когда все параметры модели находятся в~некоторой окрестности 
+локального минимума функции ошибки. Данное условие накладывается для 
+корректного использования итерационного метода поиска ковариационной 
+матрицы градиентов.
+
+Заданный порядок на множестве параметров модели используется для фиксации 
+тех параметров модели, которые оказываются предстоящими с~точки зрения 
+заданного порядка. Сначала фиксируются те параметры, которые имеют 
+минимальную дисперсию градиента в~окрестности локального минимума функции 
+ошибки.
+
+Для анализа свойств предложенного метода задания порядка на множестве 
+параметров про\-во\-дится вычислительный эксперимент. В~качестве\linebreak моделей 
+рассматриваются модели различной структурной сложности: линейные модели, 
+нейросетевые модели. Предложенный метод задания порядка сравнивается 
+с~методом, в~котором порядок задан произвольным образом.
+
+\section{Постановка задачи}
+
+Задана выборка:
+\begin{equation*}
+%\label{eq:st:1}
+\mathfrak{D} = \left\{\left(\mathbf{x}_i, y_i\right)\right\}_{i=1}^{m}, 
+\quad \mathbf{x}_{i} \in \mathbb{X} = \mathbb{R}^{n}, \quad y_i \in 
+\mathbb{Y}\,,
+\end{equation*}
+где $n$~---~размерность признакового пространства; $m$~---~число объектов 
+в~выборке. Пространство ответов
+$$
+\mathbb{Y} = \begin{cases}
+\mathbb{R} & \mbox{в~случае\ задачи\ регрессии}\,;\\
+ \{1,\cdots, K\} & \mbox{в~случае\ задачи\ классификации},\hspace*{-1.76707pt}
+ \end{cases}
+ $$
+  где~$K$~---~число классов.
+
+Задано семейство моделей, параметрических функций с~наперед заданной 
+структурой:
+\begin{equation}
+\left.
+\begin{array}{rl}
+\mathfrak{F} &= \left\{f\left(\mathbf{w}\right):\mathbb{X} \to 
+\mathbb{Y}~| \mathbf{w} \in \mathbb{R}^{p}\right\}; \\[6pt]
+\mathbf{h}\left(\mathbf{w}, \mathbf{x}\right) &= 
+\mathbf{W}_1\boldsymbol{\sigma}\left(\mathbf{W}_2\boldsymbol{\sigma}\left
+(\cdots\boldsymbol{\sigma}\left(
+\mathbf{W}_r\mathbf{x}\right)\cdots\right)\right);\\[6pt]
+f_{\mathrm{cl}}\left(\mathbf{w}, \mathbf{x}\right) &= \arg \max\limits_{j 
+\in \left\{1,\cdots, K\right\}} 
+\mathrm{softmax}\left(\mathbf{h}\left(\mathbf{w}, 
+\mathbf{x}\right)\right)_{j};\! \\[6pt]
+\!\!\!f_{\mathrm{reg}}\left(\mathbf{w}, \mathbf{x}\right) & = 
+\mathbf{h}\left(\mathbf{w}, \mathbf{x}\right),
+\end{array}\!\!
+\right\}\!
+\label{eq:st:2}
+\end{equation}
+где $p$~---~размерность пространства параметров; $r$~---~число слоев 
+нейросети; $\mathbf{w} = \mathrm{vec}\left[\mathbf{W}_1, \mathbf{W}_2, 
+\ldots, \mathbf{W}_r\right]$; $\boldsymbol{\sigma}$~---~функция 
+активации. 
+В~случае задачи регрессии структура модели имеет вид~$f_{\mathrm{reg}}$, 
+а~в~случае классификации имеет вид~$f_{\mathrm{cl}}$.
+%В качестве $\tau$ рассматривается~$\tau\bigr(\textbf{x}\bigr)~=~\textbf{x}$ в~случае 
+%задачи регрессии, в~случае задачи многоклассовой классификации  
+%$\boldsymbol{\sigma}\bigr(\textbf{x}\bigr)~=~\text{softmax}\bigr(\textbf{x}\bigr)$.
+Задана функция потерь:
+\begin{equation}
+\left.
+\begin{array}{rl}
+\mathcal{L}\left(\mathbf{w}, \mathfrak{D}\right) &=\displaystyle 
+\fr{1}{m}\sum\limits_{i=1}^{m}l\left(\mathbf{x}_{i}, y_i, 
+\mathbf{w}\right);\\[6pt]
+l_{\mathrm{reg}}\left(\mathbf{x}, y, \mathbf{w}\right) &= \left(y - 
+f\left(\mathbf{w}, \mathbf{x}\right)\right)^{2};\\[6pt]
+l_{\mathrm{cl}}\left(\mathbf{x}, y, \mathbf{w}\right) &= \\
+&\hspace*{-40pt}\displaystyle{}= -
+\sum\limits_{j=1}^{K}\left([y = 
+j]\ln\mathop{\mathrm{softmax}}\limits_j\left(\mathbf{h}\left(\mathbf{w}, 
+\mathbf{x}\right)\right)\right),
+\end{array}
+\right\}
+\label{eq:st:3}
+\end{equation}
+где $l_{\mathrm{reg}}$~---~это функция ошибки на одном элементе для 
+задачи регрессии; $l_{\mathrm{cl}}$~---~для задачи классифика-\linebreak\columnbreak
+
+\noindent
+ции.
+Оптимальный вектор параметров $\hat{\mathbf{w}}$ получим минимизацией 
+функции потерь:
+\begin{equation*}
+%\label{eq:st:0:1}
+%\begin{aligned}
+\hat{\mathbf{w}} = \arg \min\limits_{\mathbf{w}\in\mathbb{R}^{p}} 
+\mathcal{L}\left(\mathbf{w}, \mathfrak{D}\right).
+%\end{aligned}
+\end{equation*}
+
+ \subsection{Задание отношение порядка на~множестве параметров}
+
+Для поиска оптимальных параметров модели используется градиентный метод 
+оптимизации:
+\begin{equation}
+\label{eq:st:4}
+\left.\begin{array}{rl}
+\mathbf{w}_{t} &= \mathbf{w}_{t-1} + 
+\Delta\mathbf{w}\left(\mathbf{g}_{S,t}, \mathbf{w}_{t-1}, \mathbf{w}_{t-
+2}, \ldots\right); \\
+\mathbf{g}_{S,t}&=\fr{\partial 
+\mathcal{L}\left(\mathbf{w}_{t}, \mathbf{X}_{S}, 
+\mathbf{Y}_{S}\right)}{\partial \mathbf{w}}\,,
+\end{array}
+\right\}
+\end{equation}
+где $t$~---~номер итерации; $\mathbf{g}_{S,t}$~---~значение градиента на 
+подвыборке размера~$S$;  
+$\Delta\mathbf{w}$~---~приращение вектора параметров.
+
+
+Порядок на множестве параметров модели задается при помощи ковариационной 
+матрицы~$\mathbf{C}$ градиентов функции ошибки~$\mathcal{L}$ по 
+параметрам модели~$\mathbf{w}$. Для вычисления ковариационной 
+матрицы~$\mathbf{C}$ используется итерационная 
+формула~\cite{Chunyan2016}, которая вычисляется на каждой 
+итерации~\eqref{eq:st:4} градиентного метода оптимизации параметров:
+\begin{equation*}
+%\label{eq:st:5}
+%\begin{aligned}
+\mathbf{C}_t = \left(1-\kappa_t\right)\mathbf{C}_{t-1}+
+\kappa_t\left(\mathbf{g}_{1,t}-
+\mathbf{g}_{S,t}\right)\left(\mathbf{g}_{1,t}-
+\mathbf{g}_{S,t}\right)^{\mathsf{T}},
+%\end{aligned}
+\end{equation*}
+ где $t$~---~номер итерации; $\mathbf{g}_{S,t}$~---~значение градиента на 
+подвыборке размера~$S$;  
+$\mathbf{g}_{1,t}$~---~значение градиента на первом элементе подвыборки; 
+$\kappa_t={1}/{t}$~---~параметр сглаживания; $\mathbf{C}_0$ 
+инициализируются из равномерного распределения.
+
+Пусть известно $t_0$~---~число итераций, после которого все параметры 
+находятся в~некоторой локальной окрестности минимума, тогда, как показано 
+в~работе~\cite{Chunyan2016}, матрица~$\mathbf{C}_{t_0}$ аппроксимирует 
+истинную ковариационную матрицу~$\mathbf{C}$. Ковариационная 
+матрица~$\mathbf{C}_{t_0}$ используется для упорядочения параметров 
+модели~$\mathbf{w}_{t_0}$.
+
+Пусть $\mathcal{I}$~---~ упорядоченный вектор индексов $[1, 2, \ldots, 
+p]$. Обозначим $\mathcal{I}_{\mathbf{w}_{t_0}}$ вектор индексов, порядок 
+которого задан при помощи ковариационной матрицы~$\mathbf{C}_{t_0}$.
+
+
+\begin{table*}[b]\small %[h!t]
+\begin{center}
+\begin{tabular}{|l|c|c|c|c|}
+
+\multicolumn{5}{c}{Описание выборок, используемых в~эксперименте}\\
+\multicolumn{5}{c}{\ }\\[-6pt]
+%\label{tb:ex:1}
+\hline
+    \multicolumn{1}{|c|}{Выборка~$\mathfrak{D}$}& Тип & 
+\tabcolsep=0pt\begin{tabular}{c}Число\\ признаков~$n$\end{tabular}& 
+Модель& 
+\tabcolsep=0pt\begin{tabular}{c}Число\\ параметров~$p$\end{tabular}\\
+    \hline
+    Boston Housing&
+    Регрессия& \hphantom{9}13& Нейросеть& 301\\
+    %\hline
+    MNIST&
+    Классификация& 784& Нейросеть& 7960\hphantom{9}\\
+   % \hline
+    Synthetic~3&
+    Регрессия& 200& Линейная& 200\\
+   % \hline
+    Synthetic~2&
+    Классификация& 200& Линейная& 200\\
+   % \hline
+    Synthetic~1&
+    Регрессия& 200& Нейросеть& 4041\hphantom{9}\\
+\hline
+\end{tabular}
+\end{center}
+\end{table*}
+
+
+Например, если ковариационная матрица~$\mathbf{C}_{t_0}$ имеет вид:
+ $$
+\begin{bmatrix}
+0{,}3& 0 & 0\\
+0& 0{,}2 & 0\\
+0& 0 & 0{,}25\\
+\end{bmatrix},
+ $$
+ то вектор индексов $\mathcal{I}_{\mathbf{w}_{t_0}}\hm = [3,1,2]$.
+
+
+\subsection{Фиксация параметров}
+
+Для фиксации параметров $\mathbf{w}_{t_0}$ при помощи вектора индексов 
+$\mathcal{I}_{\mathbf{w}_{t_0}}$ используется бинарный вектор 
+$\boldsymbol{\alpha}(k)$:
+\begin{equation}
+\label{eq:st:6}
+%\begin{aligned}
+\alpha_i(k) = \begin{cases}
+ 1, &\mbox{если }\mathcal{I}_{\mathbf{w}_{t_0}}[j] \leq k;\\
+ 0 &\mbox{иначе},
+ \end{cases}
+%\end{aligned}
+\end{equation}
+ где $k$~---~число фиксирующих параметров.
+
+ Учитывая~\eqref{eq:st:6}, уравнение~\eqref{eq:st:4} приводится к~виду:
+ \begin{equation}
+\label{eq:st:7}
+%\begin{aligned}
+\mathbf{w}_{t} = \mathbf{w}_{t-1} + 
+\boldsymbol{\alpha}\left(k\right)\cdot\Delta\mathbf{w}\left(\mathbf{g}_{S
+,t}, \mathbf{w}_{t-1}, \mathbf{w}_{t-2}, \ldots\right).
+%\end{aligned}
+\end{equation}
+После умножения на 
+бинарный вектор $\boldsymbol{\alpha}$ часть параметров не оптимизируется, 
+что приводит к~фиксации параметров.
+
+\section{Вычислительный эксперимент}
+
+Для анализа результатов, полученных предложенным алгоритмом, проводится 
+вычислительный эксперимент. В качестве данных используются синтетические 
+и~реальные данные, которые описаны в~таблице. Выборки MNIST~\cite{mnist} 
+и~Boston~Housing~\cite{Boston} рассматриваются в~качестве реальных 
+данных, для которых решается задача классификации и~регрессии 
+соответственно. Синтетические выборки задаются следующим образом:
+%\begin{equation}
+%\left.
+\begin{align*}
+\mathfrak{D}_{\mathrm{reg}} &= \bigl\{\left(\mathbf{x}_i, y_i \right) 
+|\mathbf{x}_{i}\sim\mathcal{N}\left(\mathbf{0}, 
+\mathbf{I}_{n}\right),\\
+&\left.\hspace*{15pt}y_{i}\sim\mathcal{N}\left(\mathbf{w}^{\mathsf{T}}
+\mathbf{x}_{i}, \mathbf{I}_{n}\right),~ \mathbf{w} \sim 
+\mathcal{N}\left(\mathbf{0}, \mathbf{I}_{n}\right)\right\};\\
+\mathfrak{D}_{\mathrm{cl}} &= \bigl\{\left(\mathbf{x}_i, y_i \right) 
+|\mathbf{x}_{i}\sim\mathcal{N}\left(\mathbf{0}, 
+\mathbf{I}_{n}\right),\\
+&\left.\hspace*{15pt}y_{i}\sim\mathcal{B}e\left(\mathbf{w}^{\mathsf{T}}
+\mathbf{x}_{i}\right),~ \mathbf{w} \sim \mathcal{N}\left(\mathbf{0}, 
+\mathbf{I}_{n}\right)\right\}.
+\end{align*}
+%\right\}
+%\label{eq:ex:1}
+%\end{equation}
+
+В качестве аппроксимирующих моделей рас\-смат\-ри\-ва\-ют\-ся линейные 
+и~нейросетевые модели~\eqref{eq:st:2}. В~качестве функции ошибки для 
+задачи регрессии рассматривается MSELoss, а~для задачи классификации~--- 
+CrossEntropyLoss~\eqref{eq:st:3}.
+
+Предварительно для каждой модели и~выборки определяется число~$t_0$~---
+~номер итерации, после которой все параметры модели находятся в~некоторой 
+окрестности локального минимума. Параметр~$t_0$ устанавливается 
+экспериментальным путем для каж\-дой модели и~выборки отдельно из условия, 
+что качество модели меняется незначительно при числе итераций~$t\hm>t_0$.
+
+После~$t_0$ шагов алгоритма оптимизации часть параметров модели 
+фиксируется в~соответствии с~формулами~\eqref{eq:st:6} и~\eqref{eq:st:7}. 
+Результат работы получается усреднением по~25 независимым запускам 
+оптимизации модели. Значение функции ошибки~$\mathcal{L}$ усредняется по 
+разным запускам алгоритма оптимизации. В~ходе эксперимента проводится 
+анализ вектора $\boldsymbol{\alpha}$, который также усредняется по разным 
+запускам алгоритма оптимизации. Усредненное значение бинарного 
+вектора~$\boldsymbol{\alpha}$ обозначим~$\hat{\boldsymbol{\alpha}}$.
+
+
+
+
+\paragraph*{Выборка Synthetic~1.}
+Эксперимент проводился на синтетически построенных данных. В~качестве 
+модели использовалась двухслойная нейросеть~--- перцептрон.
+На рис.~\ref{fg:ex:syn3:1},\,\textit{а} показаны графики за\-ви\-си\-мости 
+функции 
+потерь~$\mathcal{L}$ от числа фик\-си\-ру\-емых па\-ра\-мет\-ров. В~случае фиксации 
+параметров предложенным методом функция потерь~$\mathcal{L}$ растет 
+медленней, чем в~случае фиксации параметров произвольным образом.
+
+На рис.~\ref{fg:ex:syn3:2} показана зависимость 
+векторов~$\hat{\boldsymbol{\alpha}}(k)$ от числа фиксируемых параметров. 
+Каждый столбец соответствует одному 
+вектору~$\hat{\boldsymbol{\alpha}}(k)$. На 
+рис.~\ref{fg:ex:syn3:2},\,\textit{а} и~\ref{fg:ex:syn3:2},\,\textit{в} 
+видно, что $\hat{\boldsymbol{\alpha}}(k)$ имеет большое число компонент 
+вектора, близких к~1. Так как~$\hat{\boldsymbol{\alpha}}(k)$ является 
+усреднением вектора с~компонентами~0 или~1, то предложенный порядок 
+задает некоторый устойчивый порядок на множестве параметров модели. На 
+рис.~\ref{fg:ex:syn3:2},\,\textit{б} и~\ref{fg:ex:syn3:2},\,\textit{г} 
+видно, что в~случае произвольной фиксации параметров компоненты вектора 
+$\hat{\boldsymbol{\alpha}}(k)$ имеют одинаковые значения; следовательно, 
+никакого порядка на множестве параметров нет.
+
+\begin{figure*} %fig1
+\vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=155.885mm 
+\epsfbox{str-1.eps}
+ }
+ \end{center}
+\vspace*{-9pt}
+\Caption{Зависимость качества модели от числа зафиксированных параметров: 
+(\textit{а})~Synthetic~1;
+(\textit{б})~Boston Housing;
+(\textit{в})~Synthetic~3; 
+(\textit{г})~MNIST; левый столбец~--- на обучающей выборке; 
+правый столбец~--- на тестовой выборке; 
+\textit{1}~--- предложенный метод; \textit{2}~--- 
+произвольная фиксация}
+\label{fg:ex:syn3:1}
+\end{figure*}
+
+\paragraph*{Выборка Boston Housing.}
+Эксперимент проводился на реальных данных.
+На рис.~1,\,\textit{б} показаны графики зависимости функции 
+потерь~$\mathcal{L}$ от числа фиксируемых параметров. В случае фиксации 
+параметров предложенным методом функция потерь~$\mathcal{L}$ растет так 
+же, как и~в~случае фиксации параметров произвольным образом.
+Данный результат следует из того, что нейросеть оказалась избыточно 
+слож-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\end{multicols}
+
+
+
+
+\begin{figure*} %fig2
+\vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=159.749mm 
+ \epsfbox{str-2.eps}
+ }
+ \end{center}
+\vspace*{-9pt}
+\Caption{Визуализация векторов $\hat{\boldsymbol{\alpha}}(k)$ 
+в~зависимости от числа фиксируемых параметров (выборка Synthetic~1): (\textit{а})~все параметры 
+модели упорядочены предложенным методом; (\textit{б})~все параметры 
+модели упорядочены произвольным образом; (\textit{в})~часть параметров 
+модели упорядочена предложенным методом; (\textit{г})~часть параметров 
+модели упорядочена произвольным образом}
+\label{fg:ex:syn3:2}
+\end{figure*}
+\begin{figure*} %fig3
+\vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=156.749mm 
+ \epsfbox{str-4.eps}
+ }
+ \end{center}
+\vspace*{-9pt}
+\Caption{Визуализация векторов $\hat{\boldsymbol{\alpha}}(k)$ 
+в~зависимости от числа фиксируемых параметров
+(выборка Boston Housing):  
+(\textit{а})~все параметры модели упорядочены предложенным методом; 
+(\textit{б})~все параметры модели упорядочены произвольным образом; 
+(\textit{в})~часть параметров модели упорядочена предложенным методом; 
+(\textit{г})~часть параметров модели упорядочена произвольным образом}
+\label{fg:ex:bost:2}
+\end{figure*}
+
+\begin{multicols}{2}
+
+\noindent
+ной моделью с~большим числом параметров. После фиксации значимого 
+числа параметров у~модели оставалась большое число параметров для 
+дообучения.
+
+На рис.~3 показана зависимость 
+векторов~$\hat{\boldsymbol{\alpha}}(k)$ от числа фиксируемых параметров. 
+На рис.~3,\,\textit{а} и~3,\,\textit{в} 
+видно, что $\hat{\boldsymbol{\alpha}}(k)$ меняется незначительно от 
+запуска к~запуску алгоритма. Следовательно, пред-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\end{multicols}
+
+\begin{figure*} %fig4
+\vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=157.349mm 
+ \epsfbox{str-6.eps}
+ }
+ \end{center}
+\vspace*{-9pt}
+\Caption{Визуализация векторов $\hat{\boldsymbol{\alpha}}(k)$ 
+в~зависимости от числа фиксируемых параметров (выборка Synthetic~3): (\textit{а})~все параметры 
+модели упорядочены предложенным методом; (\textit{б})~все параметры 
+модели упорядочена произвольным образом; (\textit{в})~часть параметров 
+модели упорядочена предложенным методом; (\textit{г})~часть параметров 
+модели упорядочена произвольным образом}
+\label{fg:ex:syn1:2}
+\end{figure*}
+
+
+
+\begin{multicols}{2}
+
+\noindent
+ложенный порядок задает 
+устойчивый к~разным запускам порядок на множестве параметров модели. На 
+рис.~3,\,\textit{б} и~\ref{fg:ex:bost:2},\,\textit{г} 
+видно, что в~случае произвольной фиксации параметров вектор 
+$\hat{\boldsymbol{\alpha}}(k)$ является произвольным и~никакого порядка 
+на множестве параметров нет.
+
+
+
+
+\paragraph*{Выборка Synthetic~3.}
+Эксперимент проводился на синтетически построенных данных. В~качестве 
+модели использовалась линейная модель регрессии.
+На рис.~1,\,\textit{в} показаны графики зависимости функции 
+потерь~$\mathcal{L}$ от числа фиксируемых параметров. В случае фиксации 
+параметров предложенным методом функция потерь~$\mathcal{L}$ растет 
+значительно медленней в~сравнении со случаем фиксации па\-ра\-мет\-ров 
+произвольным образом. Дисперсия функции ошибки также значительно меньше 
+в~случае фиксации параметров предложенным методом.
+
+
+
+
+
+На рис.~4 показано, что 
+вектор~$\hat{\boldsymbol{\alpha}}(k)$ не меняется от запуска к~запуску. 
+Так как данная модель линейная, то порядок на параметрах модели 
+индуцирует некоторый порядок на множестве признаков.
+
+\paragraph*{Выборка MNIST.}
+В эксперименте рассматривался двухслойный перцептрон для классификации 
+изоб\-ра\-же\-ний. В~качестве входных данных рассматривались изображения 
+размера $28\times28$, на которых изображены цифры.
+
+
+\begin{figure*} %fig5
+\vspace*{1pt}
+ \begin{center}
+ \mbox{%
+ \epsfxsize=159.749mm 
+ \epsfbox{str-8.eps}
+ }
+ \end{center}
+\vspace*{-9pt}
+\Caption{Визуализация векторов $\hat{\boldsymbol{\alpha}}(k)$ 
+в~зависимости от числа фиксируемых параметров
+(выборка MNIST): (\textit{а})~все параметры 
+модели упорядочены предложенным методом; (\textit{б})~все параметры 
+модели упорядочены произвольным образом; (\textit{в})~часть параметров 
+модели упорядочена предложенным методом; (\textit{г})~часть параметров 
+модели упорядочена произвольным образом}
+\label{fg:ex:mnist:2}
+\end{figure*}
+
+
+На рис.~1,\,\textit{г} показано, что графики функции ошибки похожи 
+в~случае фиксации па\-ра\-мет\-ров предложенным методом и~в~случае 
+произвольной фиксации. Данный результат есть следствие того факта, что 
+нейросеть является заведомо переусложненной моделью. После фиксации 
+большого числа параметров у~нейросети все еще остается значимое число 
+параметров модели для дообучения.
+
+На рис.~5 показано, что в~случае модели со значимым 
+числом оптимизационных параметров предложенный метод упорядочения 
+параметров устойчив от запуска к~запуску.
+
+\vspace*{-6pt}
+
+\section{Заключение}
+
+\vspace*{-2pt}
+
+В данной работе рассмотрена проблема задания порядка на множестве 
+параметров сложных аппроксимирующих моделей. Исследован метод задания 
+порядка на основе анализа стохастических свойств градиента функции ошибки 
+$\mathcal{L}$ по па\-ра\-мет\-рам модели. Для задания порядка использовалась 
+ковариационная матрица градиентов па\-ра\-мет\-ров~$\mathbf{C}_{\eta_0}$, 
+которая рассчитывалась итеративно, в~течение $t_0$ итераций градиентного 
+метода параллельно оптимизации. Число итераций~$t_0$ выбиралось заранее 
+экспериментально.
+
+Предложенный метод был проанализирован в~вычислительном эксперименте. 
+Было показано, что порядок, заданный при помощи ковариационной матрицы 
+$\mathbf{C}_{\eta_0}$, является адекватным, так как фиксация параметров 
+в~заданном порядке позволяет зафиксировать значимое число параметров без 
+заметной потери качества.
+
+Отдельно стоит заметить, что параметры упорядочиваются в~процессе 
+оптимизации параметров модели. Как было показано в~эксперименте, данный 
+порядок устойчив и~не меняется от запуска к~запуску метода оптимизации.
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+\bibitem{sutskever2014}
+    \Au{Sutskever I., Vinyals~O., Le~Q.} Sequence to sequence learning 
+with neural networks~// Adv. Neur. Inf., 
+2014. Vol.~2. P.~3104--3112.
+    
+\bibitem{Chunyan2016}
+    \Au{Li C., Chen C., Carlson~D., Carin~L.} Preconditioned stochastic 
+gradient Langevin dynamics for deep neural networks~// 13th AAAI 
+Conference on Artificial Intelligence.~--- Phoenix, AZ, USA, 2016. P.~1788--1794.
+    
+\bibitem{Tibshirani1996}
+    \Au{Tibshirani R.} Regression shrinkage and selection via the 
+Lasso~// J.~R.~Stat. Soc., 1996. Vol.~58. P.~267--288.
+    
+\bibitem{Hastie2005}
+    \Au{Zou H., Hastie T.} Regularization and variable selection via 
+the Elastic Net~// J.~R.~Stat. Soc., 2005. Vol.~67. P.~301--320.
+    
+\bibitem{srivastava2014}
+    \Au{Srivastava N., Hinton~G., Krizhevsky~A., Sutskever~I., 
+Salakhutdinov~R.} Dropout: A~simple way to prevent neural networks from 
+overfitting~// J.~Mach. Learn. Res., 2014. Vol.~15. P.~1929--1958.
+    
+\bibitem{molchanov2017}
+    \Au{Molchanov D., Ashukha~A., Vetrov~D.} Variational dropout 
+sparsifies deep neural networks~// 34th  Conference (International) on 
+Machine Learning.~--- Sydney, Australia, 2017. Vol.~70. P.~2498--2507.
+    
+\bibitem{cun1990}
+    \Au{LeCun Y., Denker~J., Solla~S.} Optimal brain damage~// Adv. 
+Neur. Inf., 1989. Vol.~2. P.~598--605.
+    
+\bibitem{grabovoy2019}
+    \Au{Грабовой А.\,В., Бахтеев~О.\,Ю., Стрижов~В.\,В.} Определение 
+релевантности параметров нейросети~// Информатика и~её применения, 2019. 
+Т.~13. Вып.~2. С.~62--70.
+
+\bibitem{Mandt2017}
+    \Au{Mandt S., Hoffman~M., Blei~D.} Stochastic gradient descent as 
+approximate Bayesian inference~// J.~Mach. Learn. Res., 2017. 
+Vol.~18. P.~1--35.
+    
+\bibitem{Kingma2014}
+    \Au{Kingma D., Ba L.} Adam: A~method for stochastic optimization~// 
+3rd Conference (International) on Learning Representations.~--- San 
+Diego, CA, USA, 2015. {\sf https://hdl.handle.net/11245/1.505367}.
+
+
+
+\bibitem{mnist}
+    \Au{LeCun Y., Cortes~C., Burges~C.} The MNIST dataset of 
+handwritten digits, 1998. {\sf 
+http://yann.lecun.com/\linebreak exdb/mnist/index.html}.
+
+\bibitem{Boston}
+    \Au{Harrison D., Rubinfeld~D.} Hedonic prices and the demand for 
+clean air~// J.~Environ. Econ. Manag., 1991. Vol.~5. P.~81--102.
+
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 07.10.19}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{ORDERING THE SET OF~NEURAL NETWORK PARAMETERS}
+
+
+\def\titkol{Ordering the set of neural network parameters}
+
+\def\aut{A.\,V.~Grabovoy$^1$, O.\,Yu.~Bakhteev$^1$, and~V.\,V.~Strijov$^{1,2}$}
+
+\def\autkol{A.\,V.~Grabovoy, O.\,Yu.~Bakhteev, and~V.\,V.~Strijov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+$^1$Moscow Institute of Physics and Technology, 9 Institutskiy Per., Dolgoprudny, Moscow Region 
+141700, Russian\linebreak
+$\hphantom{^1}$Federation
+
+\noindent
+$^2$A.\,A.~Dorodnicyn Computing Center, Federal Research Center ``Computer Science and Control'' of the 
+Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 40~Vavilov Str., Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+    
+
+\Abste{ This paper investigates a~method for setting order on a~set of the model parameters. It 
+considers linear models and neural networks. The set is ordered by the covariance matrix of the 
+gradients. It is proposed to use a~given order to freeze the model parameters during the optimization 
+procedure. It is assumed that, after few iterations of the optimization algorithm, most of the model 
+parameters can be frozen without significant loss of the model quality. It reduces the dimensionality of 
+the optimization problem. This method is analyzed in the computational experiment on the real data. 
+The proposed order is compared with the random order on the set of the model parameters.}
+
+\KWE{sample approximation; linear model; neural network; model selection; error function}
+
+\DOI{10.14357/19922264200208} 
+
+\vspace*{-12pt}
+
+\Ack
+
+\vspace*{-3pt}
+
+\noindent
+ This research was supported by the Russian Foundation for Basic Research 
+ (projects 19-07-01155 and 19-07-00875) and NTI (project 13/1251/2018).
+
+%\vspace*{6pt}
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+\bibitem{1-str}
+\Aue{Sutskever, I., O.~Vinyals, and Q.~Le}. 2014. Sequence to sequence learning with neural 
+networks. \textit{Adv. Neur. Inf.} 2:3104--3112.
+\bibitem{2-str}
+\Aue{Li, C., C. Chen, D.~Carlson, and L.~Carin.} 2016. Preconditioned stochastic gradient Langevin 
+dynamics for deep neural networks. \textit{13th AAAI Conference on Artificial Intelligence 
+Proceedings}. Phoenix, AZ. 1788--1794.
+\bibitem{3-str}
+\Aue{Tibshirani, R.} 1998. Regression shrinkage and selection via the Lasso. 
+\textit{J.~R.~Stat. Soc.} 58:267--288.
+\bibitem{4-str}
+\Aue{Zou, H., and T.~Hastie.} 2005. Regularization and variable selection
+ via the Elastic Net. \textit{J.~R.~Stat. Soc.} 67:301--320.
+\bibitem{5-str}
+\Aue{Srivastava, N., G. Hinton, A.~Krizhevsky, I.~Sutskever, and R.~Salakhutdinov.} 2014. Dropout: 
+A~simple way to prevent neural networks from overfitting. \textit{J.~Mach. Learn.
+Res.}  15:1929--1958.
+\bibitem{6-str}
+\Aue{Molchanov, D., A.~Ashukha, and D.~Vetrov.} 2017. Variational dropout sparsifies deep neural 
+networks. \textit{34th Conference (International) on Machine Learning} 70:2498--2507.
+\bibitem{7-str}
+\Aue{LeCun, Y., J. Denker, and S.~Solla.} 1989. Optimal brain damage. 
+\textit{Adv.  Neur. Inf.} 2:598--605.
+\bibitem{8-str}
+\Aue{Grabovoy, A.\,V., O.\,Yu.~Bakhteev, and V.\,V.~Strijov.} 2019. Opredelenie relevantnosti 
+parametrov neyroseti [Estimation of the relevance of the neural network parameters]. \textit{Informatika 
+i ee Primeneniya~--- Inform. Appl.} 13(2):62--70.
+\bibitem{9-str}
+\Aue{Mandt, S., M. Homan, and D.~Blei.} 2017. Stochastic gradient descent as approximate Bayesian 
+inference. \textit{J.~Mach. Learn. Res.} 18:1--35.
+\bibitem{10-str}
+\Aue{Kingma, D., and L.~Ba.} 2015. Adam: A~method for stochastic optimization. \textit{3rd 
+Conference (International) on Learning Representations}. Available at: {\sf 
+https://hdl.\linebreak handle.net/11245/1.505367} (accessed May~ 26, 2020). 
+
+\bibitem{12-str}
+\Aue{LeCun, Y., C. Cortes, and C.~Burges.} 1998. The MNIST dataset of handwritten digits. Available 
+at: {\sf http://yann.\linebreak lecun.com/exdb/mnist/index.html} (accessed May~26, 2020).
+
+
+\bibitem{11-str}
+\Aue{Harrison, D., and D. Rubinfeld.} 1991. Hedonic prices and the demand for clean air. 
+\textit{J.~Environ. Econ. Manag.} 
+ 5:81--102. 
+ 
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Received October 7, 2019}}
+
+%\pagebreak
+
+\vspace*{-18pt}
+
+
+\Contr
+
+\vspace*{-6pt}
+
+\noindent
+\textbf{Grabovoy Andrey V.} (b.\ 1997)~--- student, Moscow Institute of Physics and Technology, 
+9~Institutskiy Per., Dolgoprudny, Moscow Region 141701, Russian Federation; 
+\mbox{grabovoy.av@phystech.edu}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Bakhteev Oleg Yu.} (b.\ 1993)~--- PhD student, Moscow Institute of Physics and Technology, 
+9~Institutskiy Per., Dolgoprudny, Moscow Region, 141701, Russian Federation; 
+\mbox{bakhteev@phystech.edu}
+\vspace*{3pt}
+
+\noindent
+\textbf{Strijov Vadim V.} (b.\ 1967)~--- Doctor of Science in physics and mathematics, leading 
+scientist, A.\,A.~Dorodnicyn Computing Center, Federal Research Center ``Computer Science and 
+Control'' of the Russian Academy of Sciences, 40~Vavilov Str., Moscow 119333, Russian Federation; 
+professor, Moscow Institute of Physics and Technology, 9~Institutskiy Per., Dolgoprudny, Moscow 
+Region 141701, Russian Federation; \mbox{strijov@ccas.ru}
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

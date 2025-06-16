@@ -1,0 +1,1359 @@
+\def\stat{agasandyan}
+
+\def\tit{ВЫЧИСЛЕНИЕ ПОКАЗАТЕЛЕЙ ОПТИМАЛЬНЫХ ПО CC-VaR ПОРТФЕЛЕЙ НА 
+РЫНКАХ ОПЦИОНОВ$^*$}
+
+\def\titkol{Вычисление показателей оптимальных по CC-VaR портфелей на 
+рынках опционов}
+
+\def\aut{Г.\,А.~Агасандян$^1$}
+
+\def\autkol{Г.\,А.~Агасандян}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Агасандян Г.\,А.}
+\index{Agasandyan G.\,A.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при финансовой поддержке РФФИ (проект 17-01-00816).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Вычислительный центр им.\ А.\,А.~Дородницына Федерального исследовательского 
+центра <<Информатика и~управ\-ле\-ние>> Российской академии наук, 
+\mbox{agasand17@yandex.ru}}
+
+%\vspace*{-2pt}
+        
+  
+  
+  \Abst{Работа продолжает исследования автора по проблеме применения на финансовых 
+рынках континуального критерия VaR (CC-VaR). Речь идет о проецировании идей 
+и~методов, разработанных для задачи инвестирования на теоретическом однопериодном 
+рынке с~одним базовым активом, на дискретный по страйкам рынок опционов с~небольшим 
+числом сценариев. Основное внимание уделяется методам расчета функций распределения 
+дохода и~доходности, среднего дохода и~средней доходности для оптимального по CC-VaR 
+портфеля опционов и~его рандомизированных версий~--- как полных, так и~частичных. 
+Предлагаются эффективные по скорости и~точности алгоритмы вычислений для разных 
+вариантов задач оптимизации. Исследование иллюстрируется на примере  
+с~бе\-та-рас\-пре\-де\-лен\-ны\-ми рыночными ценами базового актива и~прогнозом 
+инвестора, сопровождаемом графиками.}
+  
+  \KW{континуальный критерий VaR (CC-VaR); функция рисковых предпочтений (ф.р.п.); 
+сценарии; опционы; процедура Ней\-ма\-на--Пир\-со\-на; индикаторы; баттерфляи; полная 
+и~частичная рандомизации; оптимальный портфель; доход; доходность}
+
+\DOI{10.14357/19922264190311} 
+  
+%\vspace*{1pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+  
+  \section{Введение}
+  
+  Работа продолжает исследования автора по проб\-ле\-ме применения на 
+финансовых рынках континуального критерия VaR (CC-VaR)~[1, 2]. Речь идет 
+о проецировании идей и~методов, разработанных для задачи инвестирования на 
+теоретическом однопериодном рынке с~одним базовым активом, на дискретный 
+рынок с~небольшим числом сценариев (уже близкий к~реальному). 
+  
+  В значительной мере вопросы такого проецирования на сценарные рынки 
+были изучены уже в~\cite{1-aga, 2-aga, 3-aga, 4-aga}. Здесь основное внимание 
+уделяется распространению аналогичных методов на дискретные по страйкам 
+\textit{опционные} рынки и~их рандомизированные версии. Обсуждается 
+инструментарий опционных рынков. Для него предлагается базис из 
+простейших нормированных баттерфляев, в~котором можно строить 
+инвестиционные портфели. 
+  
+  Приводятся формулы расчета основных числовых показателей оптимальных 
+портфелей и~вычислительные алгоритмы, специально при\-спо\-соб\-лен\-ные к~части 
+возникающих при этом задач и~демонстрирующие свою эффективность. 
+Исследование иллюстрируется на примере с~бета-распределенными рыночными 
+ценами базового актива и~прогнозом инвестора. Приводятся графики функций 
+распределения дохода для вариантов инвестиционного портфеля. 
+  
+  \section{Теоретический однопериодный $\delta$-рынок 
+и~опционы}
+  
+  Напомним основные понятия и~обозначения для теоретического 
+однопериодного $\delta$-рын\-ка и~распространим его конструкции на 
+опционные инструменты. Известная на начало периода цена базового 
+актива~$\boldsymbol{X}$ в~его конце образует случайную 
+величину~${X}$, принимающую значения~$x$ из континуального 
+множества ${\sf X}\hm\subset \mathfrak{R}_+$ (или даже~$\mathfrak{R}$). На 
+рынке обращаются  
+$\delta$-\textit{инструменты} $\boldsymbol{D}(s)$, $s\hm\in {\sf X}$, платежная 
+функция которых равна $\delta$-функ\-ции относительно~$s$: 
+
+\vspace*{-3pt}
+
+\noindent
+$$
+\pi(x;  \boldsymbol{D}(s))\hm\equiv \delta (x\hm-s)\,. 
+$$
+
+\vspace*{-3pt}
+  
+  Заданы \textit{прогнозная} $p(x)$ и~\textit{стоимостная}~$c(x)$, $x\hm\in 
+{\sf X}$, плотности. На рынке, называемом $\delta$-\textit{рын\-ком}, можно 
+торговать любым инструментом~$\boldsymbol{G}$ с~доходом, представимым 
+в~виде произвольной неотрицательной измеримой функции~$g(x)$, $x\hm\in 
+{\sf X}$. Ее называем \textit{платежной функцией} инструмента и~обозначаем 
+$\pi (x; \boldsymbol{G})$, $x\hm\in {\sf X}$, т.\,е.\ $g(x) \hm= \pi(x; \boldsymbol{G})$; 
+также $\pi(x; \boldsymbol{X}) \hm= x$. Цена инструмента~$\boldsymbol{G}$ 
+обозначается $\vert\boldsymbol{G}\vert$, а средний доход от него~---
+~$\|\boldsymbol{G}\|$. 
+  
+  В частности, инструментами $\delta$-\textit{рын\-ка} являются индикаторы 
+множеств~$\boldsymbol{H}\{M\}$, $M\hm\subset {X}$, играющие роль 
+\textit{базисных} инструментов для \textit{сценарных} рынков.
+ Аналогичную 
+роль на рассматриваемых далее рын-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+ках обычных опционов (коллов и~путов) 
+играют простейшие нормированные баттерфляи. В~терминах теоретического 
+$\delta$-рын\-ка основные опционы, такие как коллы~$\boldsymbol{C}_s$, 
+путы~$\boldsymbol{P}_s$, спрэды быка~$\boldsymbol{S}_s^+$ 
+и~медведя~$\boldsymbol{S}_s^-$, баттерфляи~$\boldsymbol{B}_s$, $s\hm\in {\sf 
+X}$, их платежные функции и~теоремы паритета имеют представления: 
+  \begin{align*}
+  \boldsymbol{C}_s&=\!\!\!\int\limits_{\{x\geq s\}}\! \!(x-s) \boldsymbol{D}(x)\,dx\,,\enskip 
+  \pi\left(x; \boldsymbol{C}_s\right) = \max (0, x-s);\\
+  \boldsymbol{P}_s&=\!\!\!\int\limits_{\{x<s\}}\!\! (s-x) \boldsymbol{D}(x)\,dx\,,\ \pi\left(x; 
+\boldsymbol{P}_s\right) =\max(0, s-x);\\
+&\hspace*{20mm}\boldsymbol{C}_s-\boldsymbol{P}_s=\boldsymbol{X}-s\boldsymbol{U};
+  \end{align*}
+  
+  \vspace*{-12pt}
+  
+  \noindent
+  \begin{multline}
+%  \left.
+%  \begin{array}{c}
+  \boldsymbol{S}^+_{s;h} =\boldsymbol{C}_{s-h}- \boldsymbol{C}_s 
+=h\boldsymbol{U} +\boldsymbol{P}_{s-h} -\boldsymbol{P}_s\,,\\
+  \pi\left( x; \boldsymbol{S}^+_{s;h} \right)= \min \left( h,\max \left( 0,x-(s-
+h)\right)\right)\,;
+%\end{array}
+%\right\}
+\label{e1-aga}
+\end{multline}
+\ \vspace*{-12pt}
+  
+  \noindent
+  \begin{multline}
+  \boldsymbol{S}^-_{s;h} =\boldsymbol{P}_{s+h}-
+\boldsymbol{P}_s=h\boldsymbol{U} +\boldsymbol{C}_{s+h} -
+\boldsymbol{C}_s\,,\\[6pt]
+  \pi\left( x; \boldsymbol{S}^-_{s;h}\right) =\min(h,\max(0,(s+h)-x))\,;
+  %\end{array}
+ % \right\}
+ \label{e2-aga}
+  \end{multline}
+  
+  \vspace*{-12pt}
+  
+  \noindent
+  \begin{multline}
+  \boldsymbol{B}_{s;h} =\boldsymbol{S}^+_{s;h}+\boldsymbol{S}^-
+_{s;h}=\boldsymbol{C}_{s-h} -2\boldsymbol{C}_s +\boldsymbol{C}_{s+h} 
+={}\\
+{}=\boldsymbol{P}_{s-h} -2\boldsymbol{P}_s+\boldsymbol{P}_{s+h}={}\\
+  {}= h\boldsymbol{U} +\boldsymbol{P}_{s-h} -\boldsymbol{P}_s-
+\boldsymbol{C}_s +\boldsymbol{C}_{s+h}\,,\enskip\\
+  \pi\left( x; \boldsymbol{B}_{s;h}\right) =\max (0,h-\vert x-s\vert )\,,
+  \label{e3-aga}
+  \end{multline}
+где $s$~--- страйк колла и~пута, короткого колла или пута у спрэда 
+и~центральный у~баттерфляя; $h$~--- расстояние между соседними страйками, 
+$h\hm> 0$. (При необходимости формируются и~несимметричные баттерфляи.) 
+
+  Из специально нормированных баттерфляев можно строить сходящиеся 
+к~$\delta$-ин\-стру\-мен\-там последовательности, как это делалось  
+в~\cite{4-aga} из индикаторов на сценарном рынке. И,~наконец, CC-VaR 
+требует, чтобы порождаемый портфелем инвестора доход~$q$ удовлетворял 
+неравенствам: 
+  $$
+   {\sf P}\left\{ q\geq \phi(\varepsilon)\right\} \geq 1-\varepsilon \ 
+   \mbox{для \textit{всех }} \varepsilon \hm\in 
+[0,1].
+   $$
+   Здесь ${\sf P}\{M\}$~--- вероятностная мера множества~$M$ в~соответствии 
+с~прогнозом инвестора; $\phi(\varepsilon)$~--- не\-от\-ри\-ца\-тель\-ная монотонно 
+возрастающая и~непрерывная \textit{функция рисковых предпочтений} (ф.р.п.)\ 
+инвестора со значениями в~$[0, 1]$. 
+  
+  \section{Опционная дискретизация $\delta$-рынка}
+  
+  Напомним~\cite{2-aga, 4-aga}, что сценарная дискретизация рынка вводится 
+разбиением множества ${\sf X}\hm= [x_0, x_n)$ на~$n$ сценариев $S_i\hm= 
+[x_{i-1}, x_i)\hm\subset {\sf X}$, $x_{i-1}\hm< x_i$, $i\hm\in I \hm= \{1, \ldots, n\}$. 
+Равномерное разбиение выделяется правилом $x_i\hm = x_0 \hm+ ih$, $h \hm= 
+(x_n \hm- x_0)/n$, $i\hm\in I$. Рыночные цены базисных инструментов 
+$\boldsymbol{D}_i \hm= \boldsymbol{H}\{S_i\}$, $i\hm\in I$, и~\textit{прогнозные 
+вероятности} сценариев образуют векторы~$\boldsymbol{c}^S$ 
+и~$\boldsymbol{p}^S$ с~компонентами 
+  \begin{multline}
+  c_i^S=\left\vert \boldsymbol{D}_i\right\vert =\int\limits_{x_{i-1}}^{x_i} 
+c(x)\,dx\,;\\
+p_i^S=\left\| \boldsymbol{D}_i \right\| =
+\int\limits_{x_{i-1}}^{x_i} p(x)\,dx\,,\ i\in I\,.
+  \label{e4-aga}
+  \end{multline}
+  
+  На сценарной основе  строится и~\textit{опционная} дискретизация рынка, для 
+которой страйки опционов совпадают с~серединами сценариев. С~ней 
+связывается также иная система интервалов: 
+  \begin{equation}
+   \boldsymbol{K}=\left\{ 
+    K_i=\left[ \kappa_i,\kappa_{i+1}\right)\,,\enskip
+  i\in I_0\right\}\,,
+  \label{e5-aga}
+  \end{equation}
+где $I_0=\{0\}\cup I$; $\kappa_i$, $i\hm\in I$,~--- страйки опционов:
+      \begin{equation*}
+   \kappa_i=\fr{x_{i-1}+x_i}{2} =\fr{i}{n}-\fr{1}{2n}\,, %\enskip i\in I\,.
+     \end{equation*}
+ также 
+доопределяем $\kappa_0\hm=a$, $\kappa_{n+1}\hm= b$. Новые элементы 
+порождают вероятностный вектор~$\boldsymbol{p}^K$ с~компонентами 
+\begin{equation}
+p_i^K =\int\limits_{\kappa_i}^{\kappa_{i+1}} p (x)\,dx\,,\enskip i\in I_0\,,\ 
+\sum\limits_{i\in I_0} p_i^K=1\,.
+\label{e6-aga}
+\end{equation}
+  
+  Применяются еще обозначения:
+  $$
+  I^\prime = I\backslash \{n\} = \{1, 
+\ldots , n-1\};\ I^{\prime\prime}= \{2, \ldots , n\hm-2\}.
+$$ 
+  
+  На опционном рынке роль базисных инструментов играют 
+\textit{нормированные} баттерфляи~$\boldsymbol{B}_i$, $i\hm\in I^\prime$, 
+вместе с~двумя крайними \textit{нормированными} спрэдами. Ограничимся 
+тремя вариантами базисов: ($i$)~только из коллов, ($ii$)~только из путов 
+и~($iii$)~смешанным так называемого \textit{естественного} происхождения, 
+а~именно (индекс~$i$ в~обозначениях опционов соответствует страйку~$s_i$, 
+$i\hm\in I$): 
+  \begin{enumerate}[($i$)]
+  \item  $\boldsymbol{B}_1 = \boldsymbol{U} + (\boldsymbol{C}_2 \hm- 
+\boldsymbol{C}_1)/h$,  $\boldsymbol{B}_i \hm= (\boldsymbol{C}_{i-1}\hm- 
+2\boldsymbol{C}_i \hm+ \boldsymbol{C}_{i+1})/h$, $i \hm= 2,\ldots , n-1$,  
+$\boldsymbol{B}_n \hm= (\boldsymbol{C}_{n-1} \hm- \boldsymbol{C}_n)/h$; 
+  \item  $\boldsymbol{B}_1 \hm= (\boldsymbol{P}_2 \hm- \boldsymbol{P}_1)/h$,   
+$\boldsymbol{B}_i \hm= (\boldsymbol{P}_{i-1}\hm- 2\boldsymbol{P}_i \hm+ 
+\boldsymbol{P}_{i+1})/h$,  $i \hm= 2,\ldots , n\hm-1$,  $\boldsymbol{B}_n \hm= 
+\boldsymbol{U} \hm+ (\boldsymbol{P}_{n-1}\hm- \boldsymbol{P}_n)/h$; 
+  \item  выделяется некоторый внутренний страйк, \textit{центр рынка}, 
+с~индексом~$\nu$, и~для него используется смешанный баттерфляй 
+$\boldsymbol{B}_\nu \hm= \boldsymbol{U} \hm+ (\boldsymbol{P}_{\nu-1}\hm- 
+\boldsymbol{P}_\nu \hm - \boldsymbol{C}_\nu \hm+ \boldsymbol{C}_{\nu +1})/h$, 
+остальные базисные инструменты с~меньшими индексами состоят только из 
+путов, с~б$\acute{\mbox{о}}$льшими~--- только из коллов.
+  \end{enumerate}
+  
+  Крайние спрэды в~базисе также называем (\textit{усеченными}) 
+\textit{баттерфляями}.
+  
+  Платежные функции базисных инструментов, которым даются специальные 
+обозначения $\beta_i(x)$, $i\hm\in I$, в~соответствии  
+с~(\ref{e1-aga})--(\ref{e3-aga}) принимают вид:
+  \begin{align*}
+  \beta_1(x)&=\max \left( 0,\min\left( 1,\, 1+\fr{s_1-x}{h}\right)\right)\,;\\
+  \beta_n(x)&=\max\left( 0, \min \left( 1,\ 1-\fr{s_n-x}{h}\right)\right)\,;\\
+  \beta_i(x)&=\max \left( 0,\, 1-\fr{\left\vert s_i-x\right\vert}{h}\right)\,,\enskip 
+i=2,\ldots , n-1\,.
+  \end{align*}
+  
+  Легко видеть, что для всех опционных базисных инструментов, как и~для 
+сценарных, интегралы от их платежных функций равны~$h$. Кроме того, 
+  $$
+  \sum\limits_{i\in I} \boldsymbol{D}_i=\sum\limits_{i\in I} \boldsymbol{B}_i 
+=\boldsymbol{U}\,.
+  $$
+   
+  Интегрированием платежных функций по мерам с~плотностями~$c(x)$ 
+и~$p(x)$ находятся векторы~$\boldsymbol{c}^B$ и~$\boldsymbol{p}^B$ 
+с~компонентами 
+  \begin{multline}
+  c_i^B=\vert \boldsymbol{B}_i\vert =\int\limits_{\sf X} \beta_i(x) c(x) \,dx\,;\\
+  p_i^B=\left\| \boldsymbol{B}_i\right\|=\int\limits_{\sf X} \beta_i(x) p(x)\,dx\,,\ 
+i\in I\,.
+  \label{e7-aga}
+  \end{multline}
+  %
+  Величина~$c_i^B$ означает стоимость $i$-го базисного баттерфляя, 
+$p_i^B$~--- средний доход, который также называем \textit{суррогатной} 
+вероятностью $i$-го сценария. %, $i\hm\in I$. 
+  
+  \section{Алгоритм оптимизации на~рынке опционов}
+  
+  Для опционного рынка нахождение весов оптимального портфеля реализует 
+практически тот же дискретный алгоритм, основанный на процедуре  
+Ней\-ма\-на--Пир\-со\-на~\cite{5-aga}, что и~для сценарного рынка, только 
+вместо векторов~$\boldsymbol{p}^S$ и~$\boldsymbol{c}^S$ применяются 
+векторы~$\boldsymbol{p}^B$ и~$\boldsymbol{c}^B$, хотя назначение 
+вероятностей производится тем же вектором~$\boldsymbol{p}^S$. Подчеркнем, 
+что сначала речь идет о портфеле с~детерминированными весами. Имеем 
+(в~сокращенном виде): 
+  \begin{description}
+  \item $\boldsymbol{\rho} =\boldsymbol{p}^B/\boldsymbol{c}^B$~--- вектор 
+(длины $n$) относительных доходов; 
+  \item $\boldsymbol{\xi} = \mathbf{O}(\boldsymbol{\rho})$~--- вектор, 
+задающий на множестве сценариев позиции компонент 
+вектора~$\boldsymbol{\rho}$ в~порядке их возрастания; 
+  \item $\boldsymbol{\eta} = \mathbf{O}(\boldsymbol{\xi})$~--- обратный 
+к~$\boldsymbol{\xi}$ вектор, задает порядок возрастания 
+компонент~$\boldsymbol{\rho}$;
+  \item $\boldsymbol{d} = \boldsymbol{p}^S(\boldsymbol{\xi})$~--- суперпозиция 
+векторов~$\boldsymbol{p}^S$ и~$\boldsymbol{\xi}$, ее компоненты 
+упорядочены по возрастанию компонент вектора~$\boldsymbol{\rho}$ 
+(подчеркнем использование вектора~$\boldsymbol{p}^S$);
+  \item $\mathbf{T} = \left[t_{ij} = \{1, i\leq j; t_{ij} = 0,\ i>j\}\right]$~--- 
+треугольная матрица, применяемая для последовательного суммирования 
+компонент векторов, начиная с~первой;
+  \item $\boldsymbol{\varepsilon} = \mathbf{T}\boldsymbol{d}$~--- вектор 
+кумулятивных вероятностей для вектора~$\boldsymbol{d}$; в~дополнение 
+к~вектору~$\boldsymbol{\varepsilon}$ принимается также $\varepsilon_0\hm = 0$. 
+  \end{description}
+  
+  На основе вектора~$\boldsymbol{\varepsilon}$ вводятся и~последовательные 
+полуинтервалы: 
+  \begin{multline}
+  {\sf E}_i=\left[ \underline{e}_i, \overline{e}_i\right)\,,\enskip
+  \underline{e}_i=\varepsilon_{\eta_i-1}(=0,\,\eta_i=1)\,,\\
+  \overline{e}_i = \varepsilon_{\eta_i}\,,\enskip \overline{e}_i-\underline{e}_i 
+=p_i^S\,,\enskip i\in I\,.
+    \label{e8-aga}
+  \end{multline}
+  
+  При назначении вектора~$\boldsymbol{b}$ (и~$\boldsymbol{g}\hm= 
+\boldsymbol{b}(\boldsymbol{\eta}))$ весов портфеля предлагается вариант 
+модификации~$\boldsymbol{\varepsilon}_{\mathrm{opt}}$ 
+вектора~$\boldsymbol{\varepsilon}$, для чего вводится новый 
+вектор~$\boldsymbol{d}^\prime$: 
+  \begin{equation}
+  \left.
+  \begin{array}{c}
+  \boldsymbol{\varepsilon}_{\mathrm{opt}} = 
+\underline{\boldsymbol{e}}\left(\boldsymbol{\xi}\right)+\boldsymbol{d}^\prime\,,\
+  d_i^\prime= d_i-\fr{i-1}{n-1}\,,\ i\in I\,;\\[6pt]
+   \boldsymbol{b}=\phi 
+(\boldsymbol{\varepsilon}_{\mathrm{opt}});\enskip  \boldsymbol{g} = 
+\boldsymbol{b}(\boldsymbol{\eta})\,.
+\end{array}
+\right\}
+  \label{e9-aga}
+  \end{equation}
+  
+  Этот вариант связан с~опционным характером платежной функции, 
+распространяется на всю область ее значений $[0, 1)$, но применяется только 
+для детерминированной схемы. В~большей мере это оправдано, когда минимум 
+портфельного дохода достигается на внутренних сценариях. 
+  
+  Основными \textit{числовыми} показателями портфелей служат его 
+стоимость~$A$ (средняя, если применяется рандомизация), средний 
+доход~$R$, средний относительный доход~$R /A$, средняя доходность~$y$ 
+и~стандартное отклонение~$\delta$ доходности. Имеем ($(\boldsymbol{u}, 
+\boldsymbol{v})$~--- скалярное произведение векторов~$\boldsymbol{u}$ 
+и~$\boldsymbol{v}$) запись результатов:
+  \begin{align*}
+  A^B &= \left(\boldsymbol{g},\boldsymbol{c}^{B}\right) = 
+\left(\boldsymbol{b},\boldsymbol{c}^B(\boldsymbol{\xi})\right);\\
+  \boldsymbol{R}^B &= \left(\boldsymbol{g},\boldsymbol{p}^B\right) = 
+  \left(\boldsymbol{b}, \boldsymbol{p}^B\left(\boldsymbol{\xi}\right)\right); \\
+   y &=  \fr{R}{A}- 1\,.     
+  \end{align*}
+  
+  В иллюстративных расчетах и~при построении графиков на протяжении 
+большей части изложения принимается, что плотности~$p(\cdot)$ и~$c(\cdot)$ 
+подчиняются бе\-та-рас\-пре\-де\-ле\-нию с~параметрами $(2, 1{,}5)$ и~$(3, 
+2{,}5)$ соответственно:
+  \begin{multline}
+  p(x)=x^2\fr{(1-x)^{1{,}5}}{B(3,2{,}5)};\quad
+  c(x)=x\fr{(1-x)^{0{,}5}}{B(2,1{,}5)}\,,\\
+  x\in {\sf X}=[0,\,1)\,,
+  \label{e10-aga}
+  \end{multline}
+где $B(\cdot\,,\,\cdot)$~--- бе\-та-функ\-ция, $B(3, 2{,}5) \hm= 19{,}6875$, $B(2, 
+1{,}5) \hm= 3{,}75$; $x_0\hm = 0$; $x_n = 1$. Эту задачу считаем\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+ прямой, но 
+при проведении некоторого сравнительного анализа приводятся и~результаты 
+решения обратной задачи, в~которой плотности меняются ролями. 
+
+  В качестве ф.р.п.\ инвестора принимается функция $\phi(\varepsilon) \hm= 
+\varepsilon^2$, $\varepsilon\hm\in [0, 1]$, и~потому функция 
+распределения доходов оптимального теоретического портфеля~\cite{2-aga, 4-aga}
+$$
+{\sf   F}_0(z) = \phi^{\leftarrow}(z)= z^{1/2},\enskip  z\in [0, 1]\,. 
+$$
+  
+  Приближенные значения показателей теоретической континуальной модели, 
+с~которыми будем соотносить получаемые далее результаты, 
+получены на дискретной модели с~2000~сценариев~\cite{4-aga}: 
+ \begin{alignat*}{2}
+   A_0 &= 0{,}265439\,;&\enskip   R_0 &= 0{,}333729\,;\\
+     y_0 &= 0{,}257275\,;&\enskip  \sigma_0 &= 
+1{,}1242\,. 
+\end{alignat*}
+  
+  Напомним~\cite{2-aga}, что для показателя~$R_0$ в~случае 
+$\phi(\varepsilon)\hm= \varepsilon^\lambda$ точное теоретическое значение 
+равно ($1\hm+\lambda)^{-1}$, что при $\lambda\hm = 2$ дает $1/3 \hm\approx 
+0{,}333333$. 
+  
+  На рис.~1 приведены графики важных для оптимизации функций 
+относительных доходов $\rho(x)\hm = p(x)/c(x)$ в~прямой задаче 
+с~плотностями~(\ref{e10-aga})~(\textit{1}) и~обратной~(\textit{2}), 
+в~которой плотности меняются ролями. 
+
+
+  
+  Внешний вид этих графиков говорит о том, что инвестор сталкивается 
+с~игрой на волатильности. По рыночной терминологии речь идет о ее продаже 
+и~покупке соответственно, правда, к~ней примешивается и~некоторая слабо 
+выраженная игра на понижение в~первом случае и~на повышение~--- во втором. 
+  
+  В примерах используется дискретизация, как и~в~\cite{4-aga}, с~$n\hm=5$ 
+сценариями как в~сценарной, так
+и~в~опционной версиях. (Намеренно 
+выбирается столь малое число сценариев, чтобы высветить\linebreak\vspace*{-12pt}
+
+  { \begin{center}  %fig1
+ \vspace*{18pt}
+  \mbox{%
+ \epsfxsize=79mm 
+ \epsfbox{aga-1.eps}
+ }
+
+
+\end{center}
+
+
+\noindent
+{{\figurename~1}\ \ \small{Графики функции~$\rho$ в~прямой~(\textit{1}) и~обратной~(\textit{2}) задачах}}
+}
+
+%\vspace*{9pt}
+
+\addtocounter{figure}{1}
+
+\noindent
+  проблемы, 
+связанные именно с~дискретизацией, поскольку при возрастании~$n$ решение 
+все более походит на теоретическое для континуальной схемы.)
+
+
+
+
+  Интегрированием~(\ref{e4-aga}) находятся \textit{сценарные} векторы: 
+  \begin{align*}
+  \boldsymbol{p}^S &= \{0{,}0412; 0{,}206; 0{,}341; 0{,}309; 0{,}104\};\\
+  \boldsymbol{c}^S &= \{0{,}070; 0{,}187; 0{,}263; 0{,}284; 0{,}197\}.
+  \end{align*}
+  %
+    Применение алгоритма с~$\boldsymbol{p}^S$ и~$\boldsymbol{c}^S$ дает 
+векторы \textit{сценарного} рынка: 
+  \begin{gather*}
+  \boldsymbol{\xi}  = \{5, 1, 4, 2, 3\};\quad \boldsymbol{\eta} = \{2, 4, 5, 3, 1\};\\
+  \boldsymbol{\varepsilon} = \{0,{1}04; 0{,}145; 0{,}454; 0{,}659; 1\}.
+  \end{gather*}
+   
+  Рандомизация проводится введением случайных весов  
+портфеля~\cite{2-aga, 4-aga}:
+  \begin{equation}
+  \boldsymbol{G}=\sum\limits_{i\in I} \omega_i \boldsymbol{
+    D}_i\,, \enskip \omega_i=\phi\left( \theta_i\right)\,,
+   \label{e11-aga}
+   \end{equation}
+где $\theta_i\sim {\sf R}\{ {\sf E}_i\}$, $i\hm\in I$,~--- равномерно 
+распределенные случайные величины на последовательных полуинтервалах 
+${\sf E}_i$~(\ref{e8-aga}), для которых 
+\begin{align*}
+  \underline{\boldsymbol{e}} &= \{ 0{,}104; 0{,}454; 0{,}659; 0{,}145; 0\}; \\
+  \overline{\boldsymbol{e}} &= \{0{,}145; 0{,}659; 1; 0{,}454; 0{,}104\}.
+  \end{align*}
+  
+  Функция распределения ${\sf F}_\zeta(\cdot)$ доходов~$\zeta$ 
+портфеля~(\ref{e11-aga}) определяется правилом:
+  \begin{equation}
+  \left.
+  \begin{array}{rl}
+{\sf F}_{\omega;i}(z) &= \fr{\phi^\leftarrow (z)-\underline{e}_i}{p_i^S}\,,
+  \enskip
+  \phi\left( \underline{e}_i\right) \leq z\leq \phi\left( \overline{e}_i\right)\,,\\
+  &\hspace*{45mm}
+  i\in I\,;\\[6pt]
+{\sf F}_\zeta(z)&=\phi^\leftarrow (z)\,,\enskip z\in [0,1)\,.
+  \end{array}
+  \right\}
+  \label{e12-aga}
+  \end{equation}
+  
+  При рандомизации вектор~$\boldsymbol{\varepsilon}_{\mathrm{opt}}$ не существен, 
+а~из-за случайности величины~$A$ для анализа относительного дохода 
+потребуется специальный подход. 
+  
+  При применении алгоритма к~\textit{опционным} рынкам используются 
+векторы, получаемые по формулам~(\ref{e7-aga}) и,~по 
+необходимости,~(\ref{e6-aga}): 
+  \begin{align*}
+  \boldsymbol{p}^B &= \{0{,}049; 0{,}204; 0{,}333; 0{,}301; 0{,}113\};\\
+  \boldsymbol{c}^B &= \{0{,}075; 0{,}185; 0{,}261; 0{,}280; 0{,}200\};\\
+  \boldsymbol{p}^K &= \{0{,}006; 0{,}115; 0{,}288; 0{,}350; 0{,}220; 0{,}021\}. 
+  \end{align*}
+  
+  В результате применения алгоритма (с~$\boldsymbol{p}^B$, 
+$\boldsymbol{c}^B$ и~частично~$\boldsymbol{p}^S$) получаем:
+  $$
+  \boldsymbol{\xi} = \{1, 5, 2, 4, 3\};\quad 
+  \boldsymbol{\eta} = \{1, 3, 5, 4, 2\}\,. 
+  $$
+  
+  В~рассматриваемом примере эта пара векторов $(\boldsymbol{\xi}, 
+\boldsymbol{\eta})$ отличается от сценарного рынка, что вполне\linebreak\vspace*{-12pt}
+
+ { \begin{center}  %fig2
+ \vspace*{-3pt}
+ \mbox{%
+ \epsfxsize=79mm 
+ \epsfbox{aga-2.eps}
+ }
+
+
+\vspace*{6pt}
+
+
+\noindent
+{{\figurename~2}\ \ \small{Графики платежных функций  $\boldsymbol{G}^B$~(\textit{1}) 
+и~$\boldsymbol{G}^S$~(\textit{2})}}
+\end{center}
+}
+
+\vspace*{9pt}
+
+\addtocounter{figure}{1}
+
+\noindent
+ возможно при 
+малом числе сценариев. И~показатели~$\boldsymbol{b}$, $\boldsymbol{g}$ 
+и~$A$ для опционного рынка, тем более в~связи с~(\ref{e9-aga}), должны быть 
+несколько иными по сравнению со сценарным. Для детерминированной 
+схемы имеем: 
+  \begin{align}
+  {\boldsymbol{\varepsilon}}_{\mathrm{opt}}& = \{0; 0{,}114; 0{,}299; 0{,}608; 1 \}; \notag\\
+ {\boldsymbol{b}} & = \phi\left({\boldsymbol{\varepsilon}}_{\mathrm{opt}}\right) = \{0; 0{,}013; 
+0{,}090; 0{,}370; 1\}; \notag\\
+  {\boldsymbol{g}} & = \boldsymbol{b}(\boldsymbol{\eta}) = \{ 0{,}013; 0{,}370; 1; 
+0{,}090; 0 \};\label{e13-aga}
+\end{align}
+\begin{equation}
+\left.
+\begin{array}{rlrl}
+  A &= 0{,}358244;&\enskip R &= 0{,}444829;\\[6pt]
+  y &= 0{,}241692;&\enskip  \sigma &= 1{,}162.
+  \end{array}
+  \right\}
+    \label{e14-aga}
+  \end{equation}
+  
+  На рис.~2 (для прямой задачи) приводятся графики платежных функций 
+$\pi(x; \boldsymbol{G}^B)$~(\textit{1}) и~$\pi(x; \boldsymbol{G}^S)$~(\textit{2}), 
+$x\hm\in [0, 1]$. Первая из функций образована $(n\hm+1)$-м 
+линейным участком $\psi_i(x)$, $i\hm\in I_0$, по правилу 
+ \begin{align*}
+  \psi_0(x)&=g_1\,;\\
+  \psi_i(x)&=\fr{g_i(\kappa_{i+1}-x)+g_{i+1}(x-\kappa_i)}{h}\,;\\ 
+  \psi_n(x)&=g_n\,;
+\end{align*}
+
+
+
+  \section{Детерминированный портфель}
+  
+  Оптимальный детерминированный портфель задается вектором 
+весов~(\ref{e13-aga}) с~нормированными баттерфляями в~качестве базисных 
+инструментов: 
+  $$
+  \boldsymbol{G}=\sum\limits_{i\in I} g_i \boldsymbol{B}_i\,.
+  $$
+  
+  Функцию распределения дохода $\zeta\hm= \psi(\mathrm{X})$ определяем 
+в~системе интервалов~$\mathbf{K}$~(\ref{e5-aga}) для $z\hm\in [0, 1]$: 
+  \begin{equation}
+  {\sf F}_\zeta(z)=\Phi_0(z) +\Phi_n(z)+\sum\limits_{i=1}^{n-1}\Phi_i(z)\,,
+    \label{e15-aga}
+    \end{equation}
+    где
+$$
+  \Phi_i(z)={\sf P}\left\{ \zeta<z,\ \mathrm{X}\in \mathrm{K}_i\right\}\,,\enskip 
+i\in I_0\,.
+  $$
+
+Для $i = 1$ и~$n$ доходы постоянны и~равны~$g_1$ и~$g_n$ соответственно, 
+и~потому (здесь и~далее ${\sf u}(w)$~---  \textit{характеристическая функция} 
+множества $w\hm\geq  0$)
+$$
+\Phi_0(z)=p_0^K{\sf u}\left(z-g_1\right)\,;\enskip \Phi_n(z)=p_n^K{\sf u}\left( z-
+g_n\right)\,.
+$$
+  
+  Но для $ i\hm\in I^\prime$ уже сказывается опционный характер платежной 
+функции, и~потому доходы и~частные функции распределения соответственно 
+равны:
+  \begin{align*}
+  \psi_i(x)&=\fr{g_i(\kappa_{i+1}-x)+g_{i+1}(x-\kappa_i)}{h}\,,\enskip x\in 
+\mathrm{K}_i\,;\\
+  \Phi_i(z)&=\int\limits_{\kappa_i}^{\kappa_{i+1}} {\sf u}\left(z-\psi_i(x)\right) 
+p(x)\,dx\,.
+  \end{align*}
+  
+  Все слагаемые суммы ${\sf F}_\zeta(z)$ в~(\ref{e15-aga}) находятся прос\-тым 
+интегрированием. Из функции распределения можно определять и~запись 
+результатов, но в~детерминированном случае этого и~не требуется, так как она 
+уже получена выше~(\ref{e14-aga}). 
+  
+  График ${\sf F}_\zeta$ представлен (под обозначением~${\sf F}_d$) на 
+  рис.~3~(\textit{1}), на нем приводится для сравнения и~теоретический 
+график~${\sf F}_0$~(\textit{2}). 
+
+
+  Функция распределения \textit{относительного} дохода $\chi\hm= \zeta/A$ 
+находится при этом простым увеличением аргумента в~$1/A$~раз:
+  $$
+  {\sf F}_\chi(z)={\sf F}_\zeta(Az)\,,\enskip z\in [0, 1/A]\,.
+  $$
+  
+  Далее рассматриваются варианты рандомизации. В~силу специфики 
+опционного рынка наряду с~полной оправдан и~вариант частичной 
+рандомизации.
+  
+  \section{Полная рандомизация}
+  
+  При полной рандомизации все веса портфеля базисных 
+баттерфляев~$\omega_i$, $i\hm\in I$, являются случайными величинами. 
+В~основе определения функции распределения дохода вновь лежит 
+пред\-став\-ле\-ние~(\ref{e15-aga}), но теперь вместо детерминированных 
+весов~$g_i$ вводятся случайные величины $\omega_i\hm= \phi(\theta_i)$, 
+$i\hm\in I$, и~тогда доход $\zeta\hm= \psi(x; \boldsymbol{t})$, где 
+$\boldsymbol{t}\hm= \{ t_1, \ldots , t_n\}$~--- вектор значений случайного 
+вектора~$\boldsymbol{\theta}$. Итак, 
+  \begin{equation}
+  {\sf F}_\zeta(z)=\sum\limits_{i\in I_0} \Phi_i(z)\,,
+    \label{e16-aga}
+    \end{equation}
+    где
+    $$
+  \Phi_i(z)={\sf P}\left\{ \zeta\leq z,\enskip x\in \mathrm{K}_i\right\}\,,\enskip i\in I_0\,.
+$$
+  %
+  Для $i = 0$ и~$n$ из~(\ref{e12-aga}) следует, что соответственно 
+  \begin{alignat}{2}
+  \Phi_0(z) &= \fr{p_0^K (\phi^\leftarrow (z)-\underline{e}_1)}{p_1^S}\,,&\  
+z&\in \left[ \phi\left( \underline{e}_1\right), \phi\left( 
+\overline{e}_1\right)\right)\,;\label{e17-aga}\\
+  \Phi_n(z) &= \fr{p_n^K (\phi^\leftarrow (z)-\underline{e}_n)}{p_n^S}\,,&\ 
+z&\in \left[ \phi\left( \underline{e}_n\right), \phi\left( 
+\overline{e}_n\right)\right)\,.\!\!
+\label{e17-aga-1}
+\end{alignat}
+ % 
+  В каждом из остальных слагаемых в~(\ref{e16-aga}), т.\,е.\ для 
+$\mathrm{K}_i$, $i\hm\in I^\prime$, следует проводить интегрирование по 
+$x\hm\in{\sf X}$ и~по всем $n$-мер\-ным векторам~$\boldsymbol{t}$ (хотя, по 
+сути, лишь по всем парам $\{t_i, t_{i+1}\}$ значений для $\{\theta_i, \theta_{i+1}\}$, 
+$t_i\hm\in \mathrm{E}_i$, $t_{i+1}\hm\in \mathrm{E}_{i+1}$). Имеем: 
+  \begin{multline}
+  \psi_i\left(x; t_i,t_{i+1}\right)= {}\\
+  {}=\fr{\phi(t_i)(\kappa_{i+1}-x) +\phi(t_{i+1}) (x-
+\kappa_i)}{h}\,,\\
+x\in \mathrm{K}_i\,,\enskip 
+i\in I^\prime\,;
+\end{multline}
+
+\vspace*{-12pt}
+
+\noindent
+\begin{multline}
+  \Phi_i(z)={}\\
+  {}=\!\! \iint\limits_{\mathrm{E}_i\times \mathrm{E}_{i+1}}\!\!\! \left(
+\int\limits_{\,\kappa_i}^{\kappa_{i+1}}\!\! {\sf u}\left( z-
+\psi_i\left(x;t_i,t_{i+1}\right)\right) p(x)\,dx \!\right)\!\! \fr{dt_i dt_{i+1}}{p_i^S 
+p_{i+1}^S},\\
+i\in I^\prime\,.
+  \label{e18-aga}
+  \end{multline}
+  Здесь численное интегрирование реализуемо для любого значения $z\hm\in 
+[0, 1]$. С~его помощью и~строится график функции~(\ref{e16-aga}) (например, 
+интерполяцией). Он представлен на рис.~3 под обозначением~${\sf F}_f$~(\textit{3}). 
+  
+  Использование стандартных программ интегрирования не работает в~более 
+сложных случаях, например для \textit{относительного дохода}, когда 
+требуется шестикратное интегрирование. Тем не менее для демонстрации 
+общности подхода протестируем на оценивании функции  
+${\sf F}_\zeta(z)$~(\ref{e16-aga}) также конт\-ро\-ли\-ру\-емый и~учитывающий 
+специфику задачи детерминированный аналог метода Мон\-те-Кар\-ло, уже 
+применявшийся в~\cite{4-aga} для сценарного рынка.
+
+ { \begin{center}  %fig3
+ \vspace*{9pt}
+\mbox{%
+ \epsfxsize=78.856mm 
+ \epsfbox{aga-3.eps}
+ }
+
+
+\vspace*{6pt}
+
+
+\noindent
+{{\figurename~3}\ \ \small{Графики функций  ${\sf F}_d$~(\textit{1}),
+ ${\sf F}_0$~(\textit{2}),
+${\sf F}_f$~(\textit{3}) и~${\sf F}_p$~(\textit{4})}}
+\end{center}
+}
+
+%\vspace*{9pt}
+
+\addtocounter{figure}{1}
+
+
+  
+  С учетом рандомизации вводятся решетки значений случайных 
+величин~$\theta_i$, $i\hm\in I$, определяемые параметром~$n_J$ и~множеством 
+$J\hm = \{1, 2, \ldots , n_J\}$: 
+  \begin{equation}
+  t_{ij} =\underline{e}_i+\fr{p_i^S\left( j-1/2\right)}{n_J}\,,\enskip j\in J\,,\ i\in I\,.
+  \label{e19-aga}
+  \end{equation}
+  
+  Для построения решетки реализуемых \textit{доходов} для 
+системы~$\mathbf{K}$ интервалов~(\ref{e5-aga}) (за исключением интервалов 
+$\mathrm{K}_0$ и~$\mathrm{K}_n$) образуются дополнительные решетки 
+значений цены базового актива~$\pi_{il}$, $l\hm\in L$, $i\hm\in I^\prime$, 
+определяемые параметром~$n_L$ и~множеством $L\hm = \{0, 1, \ldots , n_L\}$, 
+и~вычисляются соответ\-ст\-ву\-ющие вероятности: 
+  \begin{gather*}
+  r_{0,j_1} =\phi\left( t_{1,j_1}\right);\enskip 
+  r_{n,j_n}=\phi\left( t_{n,j_n}\right)\,,\enskip j_1, j_n\in 
+J\,;\\
+ \hspace*{-10mm}r_{i,j_i, j_{i+1},l}=\phi\left( t_{i,j_i}\right) \left( 1-\fr{\left( l-
+1/2\right)}{n_L}\right)+{}\\
+{}+\phi\left( t_{i+1, j_{i+1}}\right) \fr{l-1/2}{n_L}\,,\enskip 
+l\in L\,,\ j_i\in J\,,\ i\in I^{\prime}\,;\\
+  \pi_{i,l} = \kappa_i+\fr{l-1/2}{nn_L}\,;\\
+  p^X_{i,l}  =\!\!\int\limits_{\pi_{i,l}-1/(2nn_S)}^{\pi_{i,l}+1/(2nn_S)}
+   \hspace*{-6mm}p(x)\,dx\,;\enskip
+  p_0^K +
+  \sum\limits_{\substack{{i\in I^\prime,}\\ {l\in L}}} \!\! p^X_{i,l} +p_n^K=1\,.
+  \end{gather*}
+  
+
+  
+  В результате получается приближение для функции распределения в~виде: 
+  \begin{multline}
+  {\sf F}_\zeta(z)={}\\
+  {}=\fr{p_0^K}{n_J} \sum\limits_{j_1\in J} {\sf u}\left( z-
+r_{0,j_1}\right) +\fr{p_n^K}{n_J}\sum\limits_{j_n\in J}  {\sf u}\left( z-
+r_{n,j_n}\right)+{}\\
+  {}+\sum\limits_{\substack{{i\in I^\prime,}\\ 
+  {j_1, j_{i+1}\in J,}\\
+  {l\in L}}} \fr{p^X_{i,l}}{n_J^2}{\sf 
+u}\left( z-r_{i,j_i, j_{i+1},l}\right)\,.
+  \label{e20-aga}
+  \end{multline}
+  
+  Построенный по~(\ref{e20-aga}) график визуально не отличим от 
+графика~${\sf F}_f$ на рис.~3, что косвенно подтверждает правильность обоих 
+подходов. 
+  
+  На основе~(\ref{e20-aga}) строятся и~представления для моментов: 
+  \begin{align*}
+  \mu_m&= \fr{p_0^K}{n_J}\sum\limits_{j_1\in J} r^m_{0,j_1} +\fr{p_n^K}{n_J} 
+\sum\limits_{j_n\in J} r^m_{n,j_n}+{}\\
+&\hspace*{10mm}{}+\sum\limits_{\substack{{i\in I^\prime,}\\
+{j_i, j_{i+1}\in J,}\\
+{l\in  L}}} \fr{p^X_{i,l}}{n_J^2}\,r_{i,j_i, j_{i+1},l}\,,\ m=1,2;\\
+  \sigma^2&= \mu_2-\mu_1^2\,.
+  \end{align*}
+  %
+    %\substack{{i=\overline{1,n}}\\ {j=\overline{1,l}}}
+  %
+  По ним определяются числовые показатели портфеля:
+  $$
+  {\sf E}\zeta = 0{,}326928\,;\ {\sf E}\zeta^2 = 0{,}161734\,;\ \sigma = 
+0{,}234204\,,
+  $$
+а средняя сумма ${\sf E}A$ находится далее при оценивании 
+\textit{относительного} дохода.
+
+  Требуемое для расчетов время $\sim  n n_J^2n_L$.
+  
+  Подобный подход без труда распространяется и~на распределение 
+\textit{относительного дохода}~$\chi$. Формула~(\ref{e16-aga}) 
+переписывается применительно к~случайной величине 
+$$
+\chi = \psi(x; \theta_1, 
+\ldots , \theta_n) = \psi(x; \boldsymbol{\theta}) = 
+\fr{\zeta}{A(\boldsymbol{\theta})},
+$$
+ где $A(\boldsymbol{\theta}) \hm= 
+\sum\nolimits_{\iota\in I} c_{\iota}^B\phi(\theta_{\iota})$~--- случайная инвестиционная 
+сумма со значениями $A(\boldsymbol{t}) \hm= \sum\nolimits_{\iota \in I} 
+c_{\iota}^B \phi(t_{\iota})$:
+  \begin{equation}
+  {\sf F}_\chi(z)=\sum\limits_{i\in I_0} \Phi_i(z)\,,
+    \label{e21-aga}
+    \end{equation}
+    где
+    $$
+   \Phi_i(z)={\sf P}\left\{ \chi\leq 
+z\,,\ x\in \mathrm{K}_i\right\}\,,\
+ i\in I_0\,,
+$$
+а формулы~(\ref{e17-aga})--(20) приобретают вид: 
+\begin{align*}
+\psi_0(x; \boldsymbol{t}) &=\fr{\phi(t_1)}{A(\boldsymbol{t})}\,,\enskip  x\in 
+\mathrm{K}_0\,;\\
+\psi_n(x; \boldsymbol{t}) &=\fr{\phi(t_n)}{A(\boldsymbol{t})}\,,\enskip 
+x\in \mathrm{K}_n\,,\\
+\psi_i(x; \boldsymbol{t})&=h \fr{\phi(t_i) (\kappa_i-x) +\phi(t_{i+1}) (x-
+\kappa_{i+1})} {A(\boldsymbol{t})}\,,\\
+& \hspace*{40mm}x\in \mathrm{K}_i\,,\ i\in I^\prime\,;\\
+  \Phi_i(z)&=\!\!\!\!\!\int\limits_{\prod\nolimits_{i=1,\ldots , n} \mathrm{E}_i} \! \left( 
+\int\limits_{\kappa_i}^{\kappa_{i+1}} \fr{{\sf u}\left( z-\psi_i(x; 
+\boldsymbol{t})\right) p(x)}{A(\boldsymbol{t})}\,dx \right) \times{}\\
+&\hspace*{27mm}{}\times
+\fr{\prod\nolimits_{i=1,\ldots , n} dt_i}{\prod\nolimits_{i=1,\ldots , n} p_i^S}\,,\enskip i\in 
+I_0\,.
+  \end{align*}
+  
+  Решетка для инвестиционной суммы $A(\boldsymbol{t})$ в~соответствии 
+с~(\ref{e19-aga}) имеет вид:
+  $$
+  a_{j_1,\ldots , j_n}=\sum\limits_{\iota\in I}
+   c_\iota^B \phi\left(t_{\iota,j_\iota}\right)\,,\
+  j_i\in J\,,\ i\in I\,.
+  $$
+  
+  Функция распределения относительного дохода, а также его моменты 
+и~дисперсия определяются приближенными формулами, фактически 
+реализующими шестикратное (при $n \hm= 5$) интегрирование:
+
+\noindent 
+  \begin{multline}
+  {\sf F}_\chi(z)=\fr{p_0^K}{n_J^n} 
+  \sum\limits_{j_1,\ldots, j_n\in J}\hspace*{-3mm} {\sf u}\left( 
+z-\fr{r_{0,j_1}}{a_{j_1,\ldots, j_n}}\right) +{}\\
+{}+\fr{p_n^K}{n_J^n} 
+\sum\limits_{j_1,\ldots ,j_n\in J} \hspace*{-3mm}{\sf u}\left( z-\fr{r_{n,j_n}}{a_{j_1,\ldots, 
+j_n}}\right)+{}\\
+  {}+\sum\limits_{\substack{{i\in I^\prime,}\\
+  {j_1,\ldots , j_n\in J,}\\
+  {l\in L}}}
+  \fr{p^X_{i,l}}{n_J^n} 
+{\sf u} \left( z-\fr{r_{i,j_i,j_{i+1},l}}{a_{j_1,\ldots ,j_n}}\right)\,;\label{e22-aga}
+  \end{multline}
+  
+  \vspace*{-12pt}
+  
+  \noindent
+  \begin{multline}
+  \mu_m=\fr{p_0^K}{n_J^n} \sum\limits_{j_1,\ldots ,j_n\in J} 
+\fr{r^m_{0,j_1}}{a^m_{j_1,\ldots , j_n}}+{}\\
+{}+
+  \fr{p_n^K}{n_J^n} \sum\limits_{j_1,\ldots , j_n\in J} 
+\fr{r^m_{n,j_n}}{a^m_{j_1,\ldots , j_n}}+  \sum\limits_{\substack{
+  {i\in I^\prime,}\\
+  {j_1,\ldots , j_n\in J,}\\
+  {l\in L}}} \fr{p^X_{i,l}}{n_J^n} 
+\,
+ \fr{r_{i,j_1, j_{i+1},l}}{a_{j_1,\ldots , j_n}}\,,\\
+   m=1, 2;\enskip \sigma^2=\mu_2-\mu_1^2\,.
+  \label{e23-aga}
+  \end{multline}
+  
+  Выборочные моменты и~дисперсия определяются по~(\ref{e23-aga}):
+  $$
+  {\sf E}\chi = 1{,}21373; \ {\sf E}\chi^2 = 2{,}1483;\ \sigma = 0{,}821676
+  $$
+  (при $n_L = 8$, $n_J = 6$). 
+  
+Из подобных~(\ref{e23-aga}) формул также ${\sf E}A \hm= 0{,}268748$, ${\sf 
+E}(1/A) \hm= 3{,}83142$. 
+
+  Построенный по~(\ref{e22-aga}) график ${\sf F}_\chi(\cdot)$ походит на 
+растянутый по оси абсцисс график~${\sf F}_\zeta(\cdot)$ с~коэффициентом, 
+близким к~${\sf E}(1/A)$, и~в работе не приводится. 
+  
+  Требуемое для расчетов время $\sim  n n_J^nn_L$. 
+  
+  \section{Частичная рандомизация}
+  
+  Под частичной рандомизацией понимается вариант рандомизации, в~котором 
+случайными становятся лишь веса~$\omega_1$ и~$\omega_n$ базисных 
+баттерфляев в~портфеле для крайних страйков. Суть в~том, что уже сами 
+платежные функции опционов, исключая эти страйки, реализуют некоторое 
+сглаживание, но лишь для внутренних страйков. И~частичной рандомизации 
+может оказаться достаточно. 
+  
+  При частичной рандомизации \textit{доход} $\zeta\hm=\psi(x; t_1, t_n)$. Вновь 
+исходим из~(\ref{e16-aga}) и~для крайних интервалов~$\mathrm{K}_i$, $i\hm = 
+0, n$, применяем формулы~(\ref{e17-aga}) и~(18): 
+  \begin{align*}
+  \Phi_0(z) &= p_0^K 
+  \fr {\phi^{\leftarrow} (z) -\underline{e}_1}{p_1^S}\,,\ z\in \left[ \phi\left( 
+\underline{e}_1\right), \phi\left( \overline{e}_1\right)\right)\,;\\
+  \Phi_n(z) &=p_n^K \fr{\phi^\leftarrow (z) -\underline{e}_n}{p_n^S}\,,\ z\in \left( 
+\phi\left( \underline{e}_n\right) \phi\left( \overline{e}_n\right)\right)\,.
+  \end{align*}
+  
+  Для $i\hm\in I^{\prime\prime}$ применяются формулы детерминированной 
+схемы, а для $i\hm = 1, n\hm-1$ формулы приобретают гибридный вид, 
+сочетающий в~себе характерные черты как рандомизированной, так 
+и~детерминированной схем. Имеем: 
+  \begin{align*}
+  \psi_1\left(x;t_1,t_n\right)& =h\left( \psi(t_1)\left( \kappa_1-x\right) +g_2\left( x-
+\kappa_2\right)\right)\,,\\
+&\hspace*{40mm}x\in \mathrm{K}_1\,;\\
+  \psi_{n-1}\left( x; t_1, t_n\right) &=h\left( g_{n-1}\left( \kappa_{n-1}-x\right) 
++{}\right.\\
+&\left.{}+\phi(t_n)\left( x-\kappa_n\right)\right)\,,\ x\in \mathrm{K}_{n-1}\,,\\
+  \psi_i\left( x; t_1, t_n\right) &=h\left( g_i\left( \kappa_{i+1} -x\right) +g_{i+1} \left( 
+x-\kappa_i\right)\right)\,,\\
+&\hspace*{30mm} x\in \mathrm{K}_i\,,\ i\in I^{\prime\prime}\,,\\
+  \Phi_i(z) &={}\\
+&\hspace*{-20mm}{}=\iint\limits_{\mathrm{E}_1\times\mathrm{E}_2} \!\left(  
+\int\limits_{\kappa_i}^{\kappa_{i+1}} {\sf u} \left( z-\psi_i(x; t_1,t_n)\right) 
+p(x)\,dx\right)\! \fr{dt_1 dt_n}{p_1^S p_n^S}\,,\\
+&\hspace*{47mm} i\in I^\prime\,.
+  \end{align*}
+  %
+  На этот раз решетка~(\ref{e19-aga}) применяется лишь для крайних 
+сценариев: 
+  \begin{equation}
+  t_{i,j} =\underline{e}_i+p_i^S\fr{\left( j-1/2\right)}{n_J}\,,\ j\in J\,,\ i=1,n\,.
+  \label{e24-aga}
+  \end{equation}
+По ней строится и~решетка доходов: 
+\begin{gather*}
+r_{0,j_1} =\phi\left( t_{1,j_1}\right)\,,\enskip r_{n,j_n} =\phi\left( 
+t_{n,j_n}\right)\,,\enskip  j_1, j_n\in J\,;\\
+r_{1,j_1,l} =\phi \left( t_{1,j_1}\right) \left( 1- \fr{l-1/2}{n_L}\right) +g_2 \fr{l-
+1/2}{n_L}\,,\\
+ \hspace*{46mm}j_1\in J\,,\ l\in L\,;\\
+r_{n-1, j_n, l} =g_{n-1} \left( 1-\fr{l-1/2}{n_L}\right) +\phi\left( t_{n,j_n}\right) 
+\fr{l-1/2}{n_L}\,,\\
+\hspace*{50mm} j_n\in J\,,\ l\in L\,;\\
+r_{i,l} =g_i\left( 1-\fr{l-1/2}{n_L}\right) +g_{i+1} \fr{l-1/2}{n_L}\,,\\
+ \hspace*{50mm}l\in  L\,,\enskip i\in I^{\prime\prime}\,.
+\end{gather*}
+
+  Наконец, находится аппроксимация функции распределения дохода: 
+  \begin{multline}
+  \hspace*{-8pt}{\sf F}_{\zeta}(z) =\!\sum\limits_{j_1\in J} \fr{p_0^K}{n_J}\,{\sf u} \left( z-
+r_{0,j_1}\right) +\!\sum\limits_{j_n\in J} \fr{p_n^K}{n_J}\, {\sf u} \left( z-
+r_{n,j_n}\right)+{}\\
+  {}+ \sum\limits_{\substack{
+  {j_1\in J,}\\
+  {l\in L}}}\! \!\fr{p^X_{1,l}}{n_J}\, {\sf u}
+  \left( z-
+r_{1,j_1,l}\right) +\sum\limits_{\substack{{j_n\in J,}\\ {l\in L} }}\!\!
+\fr{p^X_{n-1,l}}{n_J}\, {\sf u}\left( z-
+r_{n-1, j_n,l}\right) +{}\\
+{}+\sum\limits_{\substack{{i\in I^{\prime\prime},}\\ {l\in L}}} 
+\fr{p^X_{i,l}}{n_J^2}\, {\sf u}\left( z-r_{i,l}\right)\,.
+  \label{e25-aga}
+  \end{multline}
+ % 
+  На ее основе строится график функции распределения дохода. Выборочные 
+моменты и~дисперсия определяются формулами:
+
+\noindent
+  \begin{multline*}
+  \mu_m=\sum\limits_{j_1\in J} \fr{p_0^K}{n_J} \,r^m_{0,j_1} 
++\sum\limits_{j_n\in J} \fr{p_n^K}{n_J}\,r^m_{n,j_n} +{}\\
+{}+\sum\limits_{\substack{{j_1\in J,}\\ 
+{l\in  L}}} \fr{p^X_{1,l}}{n_J} \, r^m_{1, j_1, l} +
+\sum\limits_{\substack{{j_n\in J,}\\ {l\in L}}} 
+\fr{p^X_{n-1,l}}{n_J}\,r^m_{n-1, j_n, l}+{}\\
+  {}+ \sum\limits_{\substack{{i\in I^{\prime\prime},}\\ {l\in L}}} 
+\fr{p^X_{i,l}}{n_J^2}\,r^m_{i,l}\,,\ m=1,2;\\[-6pt] 
+\sigma^2=\mu_2-\mu_1^2\,.
+  \end{multline*}
+%      
+  Из них находим ${\sf E}\zeta\hm=  0{,}436903$, ${\sf E}\zeta^2\hm = 
+0{,}292945$ и~$\sigma \hm= 0{,}319469$ (при $n_L \hm= 100$ и~$n_J\hm= 50$). 
+Требуемое для расчетов время $\sim  n n_J^2n_L$.
+  
+  График функции~(\ref{e25-aga}) представлен на рис.~3 под 
+обозначением~${\sf F}_p$~(\textit{4}). 
+  
+  
+  Для \textit{относительного дохода} имеем 
+    $$
+  \chi = \psi(x; \theta_1, \theta_n) 
+= \fr{\zeta}{A(\theta_1,\theta_n)}\,,
+$$
+ где
+  $A(\theta_1,\theta_n)\hm =c_1^B\phi (\theta_1)\hm+\sum\nolimits_{\iota=2,\ldots , n-1} c_\iota^B 
+g_\iota\hm +c_n^B \phi(\theta_n)$~--- случайная инвестиционная сумма со значениями 
+$\mathrm{A}(t_1, t_n)$. Вновь исходим из пред\-став\-ле\-ния~(\ref{e21-aga}), при этом для компонент с~$i 
+\hm= 0$ и~$n$ формулы те же, что и~для полной рандомизации,  а~для $i\hm\in I^\prime$ требуются 
+очевидные изменения:
+
+\noindent
+   \begin{align*}
+   \psi_0(x;\boldsymbol{t}) &= \fr{\phi (t_1)}{A(\boldsymbol{t})}\,,\enskip 
+   x\in \mathrm{K}_0\,;\\ 
+   \psi_n(x; \boldsymbol{t})&=\fr{\psi(t_n)}{A(\boldsymbol{t})}\,,\enskip x\in \mathrm{K}_n\,;\\
+      \psi_1\left(x; t_1, t_n\right) &=
+      \fr{h(\phi(t_1) (\kappa_1-x)+g_2(x-\kappa_2))}{A(t_1,t_n)}\,,\\ 
+      &\hspace*{40mm}x\in  \mathrm{K}_1\,;\\
+   \psi_{n-1}\left( x; t_1, t_n\right) &={}\\
+   &\hspace*{-22mm}{}=\fr{h(g_{n-1}(\kappa_{n-1}-x) +\phi(t_n) (x-
+\kappa_n))}{A(t_1,t_n)}\,,\enskip x\in \mathrm{K}_{n-1}\,;\\
+   \psi_i\left( x; t_1, t_n\right)& =\fr{h(g_i(\kappa_{i+1}-x) +g_{i+1}(x-\kappa_i))}{A(t_1,t_n)}\,,\\
+&\hspace*{30mm}x\in \mathrm{K}_i,\ i\in I^{\prime\prime}\,;\\
+\Phi_i(z)&={}\\
+&  \hspace*{-22mm}{}=\!\!\iint\limits_{\mathrm{E}_1\times\mathrm{E}_n} \left( \int\limits_{\kappa_i}^{\kappa_{i+1}} 
+{\sf u} \left( z-\phi_i(x; t_1, t_n)\right) p(x)\,dx\right)\!
+\fr{dt_1dt_n}{p_1^S p_n^S}\,,\\
+& \hspace*{45mm}i\in I_0\,.
+   \end{align*}
+   
+   \vspace*{-2pt}
+  
+  На этот раз также образуется двумерная решетка~(\ref{e24-aga}), и~на ее 
+основе формируется решетка стоимости портфеля:
+
+\noindent
+\begin{multline*}
+  a_{j_1,j_n}=c_1^B\phi\left( t_{1,j_1}\right) +\sum\limits_{\iota=2,\ldots , n-1} \!\!
+c_\iota^B g_\iota +c_n^B \phi \left( t_{n,j_n}\right)\,,\\ j_1, j_n\in J\,.
+\end{multline*}
+  
+  Аппроксимацию функции распределения для~$\chi$ дает представление:
+  
+  \noindent
+  \begin{multline*}
+  {\sf F}_\chi (z) =\fr{p_0^K}{n_J^2}\sum\limits_{j_1, j_n\in J} {\sf u}\left( z-
+\fr{r_{0,j_1}}{a_{j_1,j_n}}\right) +{}\\
+{}+\fr{p_n^K}{n_J^2} \sum\limits_{j_1, j_n\in J} 
+{\sf u} \left( z- \fr{r_{n,j_n}}{a_{j_1,j_n}}\right) +{}\\
+  {}+ \sum\limits_{\substack{{j_1, j_n\in J,}\\
+  { l\in L}}} \fr{p^X_{1,l}}{n_J^2}{\sf u} \left( z-
+\fr{r_{1,j_1,l}}{a_{j_1,j_n}}\right)+ {}\\
+{}+
+\sum\limits_{\substack{{j_1, j_n\in J,}\\
+{ l\in L}}} \fr{p^X_{n-1, l}}{n_J^2} {\sf u} 
+\left( z-\fr{r_{n-1, j_n,l}}{a_{j_1, j_n}}\right)+{}\\
+  {}+ \sum\limits_{
+  \substack{{i\in I^{\prime\prime},}\\
+  {j_1, j_n\in J,}\\
+  {l\in L}}} \fr{p^X_{i,l}}{n_J^2} 
+{\sf u} \left( z-\fr{r_{i,l}}{a_{j_1,j_n}}\right)\,.
+  \end{multline*}
+  
+  Выборочные моменты и~дисперсия определяются формулами:
+  
+  \noindent
+  \begin{multline*}
+  \mu_m=\fr{p_0^K}{n_J^2} \sum\limits_{j_1,j_n\in J} 
+\fr{r^m_{0,j_1}}{a^m_{j_1,j_n}}+ \fr{p_n^K}{n_J^2} \sum\limits_{j_1,j_n\in J} 
+\fr{r^m_{n,j_n}}{a^m_{j_1,j_n}}+{}\\
+{}+\sum\limits_{\substack{{j_1,j_n\in J,}\\ {l\in L} }}
+\fr{p^X_{1,l}}{n_J^2}\, \fr{r^m_{1,j_1,l}}{a^m_{j_1, j_n}}+
+  \sum\limits_{\substack{{j_1,j_n\in J,}\\
+  { l\in L}}} \fr{p^X_{n-1,l}}{n_J^2}\, 
+  \fr{r^m_{n-1, j_n, l}}{a^m_{j_1,j_n}} + {}\\
+  {}+
+  \sum\limits_{\substack{{i\in I^{\prime\prime},}\\
+  {j_1,j_n\in J,}\\
+  {l\in L}}} 
+\fr{p^X_{i,l}}{n_J^2} \,\fr{r^m_{i,l} }{a^m_{j_1, j_n}}\,,\enskip
+  m=1,2\,;
+    \end{multline*}
+    
+    \vspace*{-9pt}
+    
+    \noindent
+    $$
+  \sigma^2=\mu_2-\mu_1^2\,.
+  $$
+   %
+  Из них находим ${\sf E}\chi = 1{,}22723$, ${\sf E}\chi^2 \hm= 2{,}31133$ 
+и~$\sigma\hm = 0{,}897355$ (при $n_L \hm= 50$ и~$n_J \hm= 6$), а из аналогичных 
+им формул~--- также ${\sf E}A\hm = 0{,}356003$ и~${\sf E}(1/A) \hm= 
+2{,}80898$. Кстати, ${\sf E}A\times {\sf E}(1/A) \hm= 1{,}0000035$, что 
+косвенно подтверждает близость графиков для детерминированной и~частично 
+рандомизированной схем. 
+  
+  Требуемое для расчетов время $\sim n n_J^2 n_L$. 
+  
+  \vspace*{-4pt}
+  
+  \section{Заключение}
+  
+    \vspace*{-4pt}
+  
+  Завершаем описание алгоритмов нахождения функций распределения 
+доходов и~относительного дохода в~задаче оптимизации по CC-VaR портфеля 
+опционов. Результаты расчетов на примере с~бе\-та-рас\-пре\-де\-ле\-ни\-ями 
+для прямой задачи (продажи
+ волатильности) проиллюстрированы на графиках 
+рис.~3. 
+  
+
+  Разумеется, при дискретизации задачи в~случае небольшого числа сценариев 
+результаты должны %\linebreak\vspace*{-12pt}
+
+{ \begin{center}  %fig4
+ \vspace*{-4pt}
+\mbox{%
+ \epsfxsize=78.3mm 
+ \epsfbox{aga-4.eps}
+ }
+
+
+\end{center}
+
+
+\noindent
+{{\figurename~4}\ \ \small{Функции  ${\sf F}_d$~(\textit{1}),  ${\sf F}_d$~(\textit{2}),
+${\sf F}_f$~(\textit{3}) и~${\sf F}_p$~(\textit{4}) для обратной задачи}}
+}
+
+\vspace*{12pt}
+
+\addtocounter{figure}{1}
+
+
+\noindent
+ отличаться от теоретической схемы. И~интерес 
+представляет сравнение полученных результатов, в~частности с~обратной 
+задачей~--- покупкой волатильности. На рис.~4 представлены для нее 
+аналогичные результаты, полученные тем же алгоритмом. Значительное 
+расхождение результатов в~большей степени объясняется различием задач, 
+очевидным по рис.~1.
+
+  
+  В прямой задаче частичная рандомизация дает практически тот же результат, 
+что и~детерминированная схема (см.\ рис.~3), что легко объясняется 
+незначительным вкладом в~картину доходов крайними сценариями, на которые 
+частичная рандомизация только и~распространяется. А~потому выбор 
+предстоит делать между детерминированной схемой и~полной рандомизацией. 
+При этом полная рандомизация дает более сглаженную и~более близкую 
+к~теоретической схеме кривую, а детерминированная~--- более надежную 
+в~выполнении CC-VaR. 
+  
+  В обратной задаче (см.\ рис.~4) все три аппроксимации дают результаты, 
+достаточно близкие к~тео\-ре\-ти\-че\-ским, что можно объяснять полноценным 
+вкладом в~итоговый результат всех пяти сценариев. И~частичная 
+рандомизация, почти совпадающая с~детерминированной кривой в~области 
+пониженных доходов и~с полной рандомизированной~--- в~зоне повышенных, 
+участвует в~этом в~наибольшей степени и~даже представляется наилучшей из 
+трех схем. 
+  
+  В целом, на рынках с~малым числом сценариев при рассмотрении вариантов 
+назначения весов портфеля инвестору придется при выборе варианта 
+дополнительно руководствоваться критериями близости функции 
+распределения к~теоретической, степени выполнения CC-VaR, средней 
+доходности и~пр. 
+  
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+  \bibitem{1-aga}
+  \Au{Agasandian G.\,A.} Optimal behavior of an investor in option market~// 
+  Conference (International) on Neural Networks. The 2002 IEEE World Congress on Computational 
+Intelligence.~--- Honolulu, Hawaii, 2002. P.~1859--1864.
+{\looseness=1
+
+} 
+  \bibitem{2-aga}
+  \Au{Агасандян Г.\,А.} Применение континуального критерия VaR на финансовых  
+рынках.~--- М.: ВЦ РАН, 2011. 299~с. 
+
+
+
+  \bibitem{3-aga}
+  \Au{Агасандян Г.\,А.} Континуальный критерий VaR на многомерных рынках  
+опционов.~--- М.: ВЦ РАН, 2015. 297~с. 
+  \bibitem{4-aga}
+  \Au{Агасандян Г.\,А.} Континуальный критерий VaR на сценарных рынках~// 
+Информатика и~её применения, 2018. Т.~12. Вып.~1. С.~32--40. 
+  \bibitem{5-aga}
+  \Au{Крамер Г.} Математические методы статистики~/ Пер. с~англ.~--- М.: Мир, 1975. 
+750~с. (\Au{Cramer~H.} Mathematical methods of statistics.~--- Princeton, NJ, USA: Princeton 
+University Press, 1946. 575~p.)
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Поступила в~редакцию 18.12.18}}
+
+\vspace*{6pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+\vspace*{-2pt}
+
+\def\tit{PERFORMANCE ESTIMATIONS FOR~OPTIMAL-ON-CC-VaR 
+PORTFOLIOS IN~OPTION MARKETS}
+
+
+\def\titkol{Performance estimations for optimal-on-CC-VaR 
+portfolios in~option markets}
+
+\def\aut{G.\,A.~Agasandyan}
+
+\def\autkol{G.\,A.~Agasandyan}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+\noindent
+  A.\,A.~Dorodnicyn Computing Center, Federal Research Center ``Computer 
+Science and Control'' of the Russian Academy of Sciences, 40~Vavilov Str., Moscow 
+119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+    
+   
+  \Abste{The paper continues investigations of the author about using continuous VaR-criterion 
+(CC-VaR) in financial markets. The problem of projecting ideas and methods elaborated for 
+investments in the ideal theoretical one-period market and its discrete scenario analog onto 
+a~discrete-in-strikes option market is considered. The main focus
+is on the methods of 
+calculating distribution function of income and return relative, and also their mean for option 
+portfolios optimal on CC-VaR and their randomized versions, both full and partial. A~discrete 
+optimization algorithm as the result of projecting the theoretical algorithm based on the 
+Newman--Pearson procedure onto scenario market is suggested. The optimal vector of weights derived from 
+this algorithm is applied to the basis of normalized simplest butterflies. If randomizing portfolios are 
+admissible, then special algorithms based on the ideas of the Monte-Carlo method that determine 
+distribution functions of income and return relative are suggested. The exposition is illustrated by 
+examples with  
+beta-distributed underlier's prices and investor's probability forecast, which deal with the problems 
+of volatility selling and buying. The respective diagrams are adduced.}
+  
+  \KWE{continuous VaR-criterion (CC-VaR); investor's risk-preferences function (r.p.f.);  
+Newman--Pearson procedure; scenarios; options; indicators; butterflies; full and partial 
+randomizing; optimal portfolio; income; yield}
+  
+  
+  
+\DOI{10.14357/19922264190311} 
+
+\vspace*{-18pt}
+
+\Ack
+  \noindent
+  The work was supported by the Russian Foundation for Basic Research (project 
+17-01-00816). 
+
+
+%\vspace*{-6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+  \bibitem{1-aga-1}
+  \Aue{Agasandian, G.\,A.} 2002. Optimal behavior of an investor in option market. 
+  \textit{Conference (International) on Neural Networks. The 2002 IEEE World Congress on Computational 
+Intelligence}. Honolulu, Hawaii. 1859--1864. 
+  \bibitem{2-aga-1}
+  \Aue{Agasandyan, G.\,A.} 2011. \textit{Primenenie kontinual'nogo kriteriya VaR na 
+finansovykh rynkakh} [Application of continuous VaR-criterion in financial markets]. Moscow: 
+CC RAS. 299~p.
+  \bibitem{3-aga-1}
+  \Aue{Agasandyan, G.\,A.} 2011. \textit{Kontinual'nyy kriteriy VaR na mnogomernykh rynkakh 
+optsionov} [Continuous VaR-criterion in multidimensional option markets]. Moscow: CC RAS. 297~p.
+  \bibitem{4-aga-1}
+  \Aue{Agasandyan, G.\,A.} 2018. Kontinual'nyy kriteriy VaR na stsenarnykh rynkakh 
+[Continuous VaR-Criterion in scenario markets]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 
+12(1):32--40. 
+  \bibitem{5-aga-1}
+  \Aue{Cramer, H.} 1946. \textit{Mathematical methods of statistics}. Princeton, NJ: Princeton 
+University Press. 575~p. 
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received December 18, 2018}}
+
+%\pagebreak
+
+\vspace*{-22pt} 
+  
+  \Contrl
+  
+  \noindent
+  \textbf{Agasandyan Gennady A.} (b.\ 1941)~--- Doctor of Science in physics and 
+mathematics, leading scientist, A.\,A.~Dorodnicyn Computing Center, Federal 
+Research Center ``Computer Science and Control'' of the Russian Academy of 
+Sciences, 40~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{agasand17@yandex.ru}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}    
+
+   
+
+   

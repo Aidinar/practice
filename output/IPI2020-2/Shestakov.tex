@@ -1,0 +1,884 @@
+\newcommand{\Riss}{\textit{I}}
+\newcommand{\absv}[1]{\left|#1\right|}
+
+
+\def\stat{shestakov}
+
+\def\tit{АСИМПТОТИКА ОЦЕНКИ СРЕДНЕКВАДРАТИЧНОГО РИСКА
+ В~ЗАДАЧЕ ОБРАЩЕНИЯ ПРЕОБРАЗОВАНИЯ РАДОНА
+ПО~ПРОЕКЦИЯМ, РЕГИСТРИРУЕМЫМ НА~СЛУЧАЙНОЙ СЕТКЕ$^*$}
+
+\def\titkol{Асимптотика оценки среднеквадратичного риска в~задаче 
+обращения преобразования Радона по проекциям} % , регистрируемым на случайной сетке}
+
+\def\aut{О.\,В.~Шестаков$^1$}
+
+\def\autkol{О.\,В.~Шестаков}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Шестаков О.\,В.}
+\index{Shestakov O.\,V.}
+ 
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при финансовой поддержке РФФИ (проект 18-07-00252).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет им.\ 
+М.\,В.~Ломоносова, кафедра математической статистики факультета 
+вычислительной математики и~кибернетики; Институт проблем информатики 
+Федерального исследовательского центра <<Информатика и~управление>> 
+Российской академии наук, \mbox{oshestakov@cs.msu.ru}}
+
+\vspace*{6pt}
+
+
+\Abst{При реконструкции томографических изображений необходимо 
+использовать методы регуляризации, так как задача обращения 
+преобразования Радона, лежащего в~основе математических моделей 
+большинства томографических экспериментов, относится к~некорректно 
+поставленным. Методы регуляризации, основанные на аппарате 
+вейв\-лет-ана\-ли\-за, приобрели популярность благодаря адаптации к~локальным 
+особенностям изображений и~вычислительной эффективности. Анализ 
+погрешностей в~томографических изображениях представляет собой важную 
+практическую задачу, поскольку дает возможность оценить качество как 
+самих методов, так и~используемого оборудования. Иногда нет возможности 
+регистрировать проекционные данные на равномерной сетке отсчетов. Если 
+точки отсчетов по каждой координате образуют вариационный ряд, 
+построенный по выборке из равномерного распределения, то использование 
+обычных процедур пороговой обработки оказывается адекватным. В~данной 
+работе проведен анализ оценки среднеквадратичного риска при обращении 
+преобразования Радона и~показано, что если функция изображения 
+равномерно регулярна по Липшицу, то данная оценка является сильно 
+состоятельной и~асимптотически нормальной.}
+
+ \KW{пороговая обработка; преобразование Радона; случайная сетка; оценка 
+среднеквадратичного риска}
+
+\DOI{10.14357/19922264200204} 
+ 
+%\vspace*{6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+
+\section{Введение}
+
+Вычислительная томография используется в~медицинской диагностике, 
+астрономии, сейс\-мо\-ло\-гии, электронной микроскопии, диагностике плазмы и~во 
+многих других областях. Большинство задач вычислительной томографии 
+основано на обращении преобразования Радона. Если в~проекционных данных 
+содержится шум, то необходимо применять методы регуляризации, так как 
+задача обращения преобразования Радона некорректно по\-став\-лена. 
+{\looseness=1
+
+}
+
+Большой 
+популярностью пользуются методы подавления шума, основанные на 
+вейв\-лет-раз\-ло\-же\-нии и~пороговой обработке. Для решения задач вычислительной 
+томографии эти методы рас\-смат\-ри\-ва\-лись в~работах~\cite{D94, Kol94, Lee97}, 
+в~которых оценивается порядок среднеквадратичного риска и~описываются 
+алгоритмы вычисления оптимальных па\-ра\-мет\-ров пороговой обработки.
+
+ Также 
+изучены свойства оценки сред\-не\-квад\-ра\-тич\-но\-го рис\-ка, позволяющей судить 
+о~качестве реконструкции на основе только наблюдаемых данных. Показано, 
+что при определенных условиях она является сильно состоятельной 
+и~асимптотически нормальной~\cite{SH16, SH16-1}.
+
+В некоторых ситуациях невозможно (или сложно) регистрировать проекционные 
+данные на равномерной сетке отсчетов~\cite{CB98}. В~работе~\cite{CB99} 
+показано, что если точки отсчетов образуют \mbox{вариационный} ряд, построенный 
+по выборке из равномерного распределения на отрезке регистрации данных, 
+то при использовании обычной пороговой обработки вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов 
+порядок среднеквадратичного риска остается с~точностью до 
+логарифмического множителя равным оптимальному порядку в~классе функций, 
+регулярных по Липшицу. 
+
+В~данной работе рас\-смат\-ри\-ва\-ет\-ся статистическая 
+оценка среднеквадратичного риска пороговой обработки коэффициентов при 
+обращении преобразования Радона и~показывается, что статистические 
+свойства этой оценки так\-же не меняются при переходе от фиксированной 
+равномерной сетки отсчетов к~случайной. Оценка сохраняет асимптотическую 
+регулярность, т.\,е.\ остается сильно состоятельной и~асимптотически 
+нормальной.
+
+
+
+\section{Обращение преобразования Радона}
+
+Математическая модель задачи реконструкции томографических изображений 
+основана на так называемом преобразовании Радона. Обозначим через 
+$\mathrm{Lip}(\gamma)$ класс функций, равномерно регулярных по Липшицу 
+с~показателем $\gamma\hm>0$. Пусть изоб\-ра\-же\-ние описывается функцией 
+$f(x,y)\hm\in\mathrm{Lip}(\gamma)$ с~компактным носителем (без 
+ограничения общ\-ности будем считать, что это круг единичного радиуса 
+с~центром в~начале координат). Преобразованием Радона функции~$f$ 
+называется преобразование вида:
+%
+\begin{equation*}
+Rf(s,\theta) = \int\limits_{L_{s,\theta}} f(x,y)\, dl\,,
+\end{equation*}
+где
+\begin{equation*}
+L_{s,\theta} = \left\{(x,y)\colon x\cos\theta + y\sin\theta - s = 0 
+\right\}.
+\end{equation*}
+
+Одним из возможных методов обращения преобразования $Rf$ является метод 
+вейвлет--вейг\-лет-раз\-ло\-же\-ния~\cite{D94}.
+
+Пусть заданы $\phi(x)$ и~$\psi(x)$~--- отцовская и~материнская вейв\-лет-функции.
+Определим
+%
+\begin{equation}
+\left.
+\begin{array}{rl}
+\psi_{j,k_1,k_2}^{[1]} (x,y) &= 2^j \phi(2^j x - k_1) \psi(2^j y - 
+k_2);\\[6pt]
+\psi_{j,k_1,k_2}^{[2]} (x,y) &= 2^j \psi(2^j x - k_1) \phi(2^j y - 
+k_2);\\[6pt]
+\psi_{j,k_1,k_2}^{[3]} (x,y) &= 2^j \psi(2^j x - k_1) \psi(2^j y - k_2).
+\end{array}
+\right\}
+\label{vaguelette_2d}
+\end{equation}
+Семейство $\{\psi^{[\lambda]}_{j,k_1,k_2}\}$
+образует ортонормированный базис в~$L^2(\mathbb{R}^2)$. Индекс $j$ 
+в~(\ref{vaguelette_2d}) называется масштабом, а~индексы $k_1$ и~$k_2$~---
+сдвигами. В данной работе предполагается, что используются вейвлеты 
+Мейера~\cite{Mall99}, имеющие $M$ непрерывных производных 
+($M\hm\geqslant\gamma$).
+
+Вейвлет-разложение функции~$f$ имеет вид:
+%
+\begin{equation} 
+\label{waveletdecomp}
+f = \sum\limits_{\lambda,j,k_1,k_2} \left\langle 
+f,\psi^{[\lambda]}_{j,k_1,k_2}\right\rangle \psi^{[\lambda]}_{j,k_1,k_2}.
+\end{equation}
+В силу условий на~$f$ и~вейвлет-функции коэффициенты разложения 
+в~\eqref{waveletdecomp} удовлетворяют неравенству:
+\begin{equation*} 
+%\label{Coeff_Decay}
+\absv{\left\langle f,\psi^{[\lambda]}_{j,k_1,k_2}\right\rangle} \leqslant 
+\fr{A}{2^{j(\gamma+1)}}\,,
+\end{equation*}
+где $A$~--- некоторая положительная константа~\cite{Mall99}.
+
+Определим функции $\xi_{j,k_1,k_2}^{[\lambda]}(s,\theta)$:
+%
+\begin{equation*}
+\xi_{j,k_1,k_2}^{[\lambda]}(s,\theta) = \fr{2^{-j/2}}{4\pi}
+\Riss^{-1}\left[R\psi_{j,k_1,k_2}^{[\lambda]}\right](s,\theta),
+\end{equation*}
+где $\Riss^{\alpha}$~--- потенциал Рисса, определяемый в~пространстве 
+Фурье по формуле $\widehat{\Riss^{\alpha} g}(\omega) \hm= |w|^{-\alpha} 
+\widehat{g}(\omega)$.
+Эти функции называются <<вейглетами>>~\cite{D94}. Для них справедливо 
+соотношение:
+\begin{equation*}
+\left\langle f,\psi_{j,k_1,k_2}^{[\lambda]}\right\rangle=2^{j/2}\left\langle Rf, 
+\xi_{j,k_1,k_2}^{[\lambda]}\right\rangle.
+\end{equation*}
+Последовательность $\{\xi_{j,k_1,k_2}^{[\lambda]}\}$ образует устойчивый 
+базис~\cite{Lee97}, и~вейв\-лет--вейг\-лет-раз\-ло\-же\-ние~$f$ имеет вид:
+\begin{equation} \label{WVD}
+f = \sum\limits_{\lambda,j,k_1,k_2} 2^{j/2}\left\langle Rf, 
+\xi_{j,k_1,k_2}^{[\lambda]}\right\rangle \psi^{[\lambda]}_{j,k_1,k_2}.
+\end{equation}
+В разложении~\eqref{WVD} используются только проекционные данные, и~оно 
+служит основой метода реконструкции.
+
+
+\section{Модель данных и~метод подавления шума}
+
+В практических задачах проекционные данные описываются дискретными 
+отсчетами некоторой функции. Предположим, что отсчеты регист\-ри\-ру\-ют\-ся 
+в~случайных точках и~содержат аддитивный белый гауссов шум, т.\,е.\ 
+рассмотрим следующую модель данных:
+\begin{equation*}
+Y_{i,j} = R f\left(s_i,\theta_i\right) + e_{i,j} \enskip i = 1, \ldots, 
+N\,, \ j = 1, \ldots, N\,,
+\end{equation*}
+где $N=2^J$ для некоторого $J\hm>0$; $s_1,\ldots,s_N$~--- независимая 
+выборка из равномерного распределения на $[-1,1]$; 
+$\theta_1,\ldots,\theta_N$~--- независимая выборка из равномерного 
+распределения на $[0,\pi]$ (выборки из~$s_i$ и~$\theta_i$ также 
+независимы); $e_{i,j}$ независимы между собой и~от~$x_i$ и~$y_i$ 
+и~имеют нормальное распределение с~нулевым средним 
+и~дисперсией~$\sigma^2$.
+Пусть $0\hm\leqslant s_{(1)}<\cdots< s_{(N)}\hm\leqslant 1$~--- 
+вариационный ряд, построенный по выборке~$s_i$, $i\hm=1,\ldots,N$, 
+а~$0\hm\leqslant \theta_{(1)}<\cdots< \theta_{(N)}\hm\leqslant 1$~--- 
+вариационный ряд, построенный по выборке $\theta_i$, $i\hm=1,\ldots,N$. 
+Тогда, перенумеровав~$Y_{i,j}$ и~$e_{i,j}$, получаем модель:
+\begin{multline}
+\label{rand_sample}
+Y_{i,j} = R f(s_{(i)},\theta_{(i)}) + e_{i,j}, \\ 
+\enskip i = 1, \ldots, N\,, \ j = 1, \ldots, N\,.
+\end{multline}
+Наряду с~\eqref{rand_sample} рассмотрим выборку с~равными расстояниями 
+между отсчетами:
+\begin{multline}
+\label{eqspace_sample}
+Z_{i,j} = R f\left(-1+\fr{2i}{N},\fr{j\pi}{N}\right) + e_{i,j},\\
+ \enskip i = 1, \ldots, N\,, \ j = 1, \ldots, N\,.
+\end{multline}
+
+Применяя к~\eqref{eqspace_sample} дискретный аналог вейглет-
+преобразования~\cite{ESH14}, можно перейти к~моделям дискретных 
+коэффициентов:
+\begin{equation}
+W_{j,k_1,k_2}^{[\lambda]} = \mu_{j,k_1,k_2}^{[\lambda]} + 
+e_{j,k_1,k_2}^{[\lambda]},
+\label{WVD_model}
+\end{equation}
+где 
+
+\vspace*{-2pt}
+
+\noindent
+$$\mu_{j,k_1,k_2}^{[\lambda]} = 2^J\left\langle Rf, 
+\xi_{j,k_1,k_2}^{[\lambda]}\right\rangle;
+$$
+$e^{[\lambda]}_{j,k_1,k_2}$ имеют 
+нормальное распределение с~нулевым средним 
+и~дисперсией~$\sigma^2_\lambda$, но уже не являются независимыми. 
+Значение $\sigma^2_\lambda$ зависит от выбранного вейвлет-базиса 
+и~$\lambda$, но не зависит от~$k_1$, $k_2$ и~$j$.
+
+Популярным методом подавления шума служит пороговая обработка 
+эмпирических коэффициентов. К~коэффициентам в~\eqref{WVD_model} 
+применяется функция жесткой пороговой обработки 
+$\rho_{H}(x,T)\hm=y\mathbf{1}(\absv{x}\hm>T)$ или мягкой пороговой 
+обработки $\rho_{S}(x,T)\hm=\mathrm{sgn}\,(x)\left(\absv{x}\hm-
+T\right)_{+}$ с~порогом~$T$. Смысл пороговой обработки заключается 
+в~удалении достаточно маленьких коэффициентов, которые считаются шумом.
+
+Если применить дискретный аналог вейг\-лет-пре\-об\-ра\-зо\-ва\-ния 
+к~\eqref{rand_sample}, то получится набор эмпирических коэффициентов:
+\begin{equation*}
+V_{j,k_1,k_2}^{[\lambda]} = \nu_{j,k_1,k_2}^{[\lambda]} + 
+e_{j,k_1,k_2}^{[\lambda]}.
+\end{equation*}
+В общем случае $V_{j,k_1,k_2}^{[\lambda]}$ не равны 
+$W_{j,k_1,k_2}^{[\lambda]}$, а~$\nu_{j,k_1,k_2}^{[\lambda]}$ не равны 
+$\mu_{j,k_1,k_2}^{[\lambda]}$. Однако к~$V_{j,k_1,k_2}^{[\lambda]}$ можно 
+применить ту же процедуру, что и~к~коэффициентам 
+$W_{j,k_1,k_2}^{[\lambda]}$, и~получить 
+оценки~$\widehat{V}_{j,k_1,k_2}^{[\lambda]}$. В~следующем разделе 
+обсуждаются свойства полученных оценок.
+
+Среднеквадратичный риск пороговой обработки для выборки со случайными 
+точками отсчетов определим как
+\begin{equation*}
+R_{\nu}(f) = \sum\limits_{j = 0}^{J - 1}\sum_{k_1=0}^{2^j-1}
+\sum\limits_{k_2=0}^{2^j-1}\sum\limits_{\lambda=1}^3 
+2^j\mathbb{E}\left(\widehat{V}_{j,k_1,k_2}^{[\lambda]}-
+\mu_{j,k_1,k_2}^{[\lambda]} \right)^2. 
+%\label{Risk_Definition}
+\end{equation*}
+Также определим среднеквадратичный риск для выборки с~равными 
+расстояниями между отсчетами:
+\begin{equation*} % \label{Risk_Eq}
+R_{\mu}(f) = \sum\limits_{j = 0}^{J - 1}\sum\limits_{k_1=0}^{2^j-
+1}\sum_{k_2=0}^{2^j-1}\sum\limits_{\lambda=1}^3 
+2^j\mathbb{E}\left(\widehat{W}_{j,k_1,k_2}^{[\lambda]}-
+\mu_{j,k_1,k_2}^{[\lambda]} \right)^2.
+\end{equation*}
+
+Используя результаты работы~\cite{D94}, можно убедиться, что справедливо 
+следующее утверждение о~порядке~$R_{\mu}(f)$.
+
+\smallskip
+
+\noindent
+\textbf{Теорема 1.}\ \textit{При выборе асимптотически оптимального 
+порога для жесткой и~мягкой пороговой обработки справедливо соотношение}
+
+\noindent
+\begin{equation*}
+R_{\mu}(f) \leqslant 
+C2^{6J/(2\gamma+3)}J^{(2\gamma+6)/(2\gamma+3)},
+\end{equation*}
+\textit{где $C$~--- некоторая положительная константа}.
+
+\columnbreak
+
+Асимптотически оптимальный порог в~теореме~1 при $J\hm\to\infty$ 
+удовлетворяет соотношению:
+$$
+T_\gamma\simeq\sigma\sqrt{\fr{6\gamma+3}{2\gamma+3}\,
+\ln2^{2J}}\,.
+$$
+
+Также, повторяя рассуждения работы~\cite{CB99}, можно показать, что 
+аналогичное утверждение справедливо для~$R_{\nu}(f)$. Таким образом, 
+замена равноотстоящих точек отсчета на случайные не оказывает влияния на 
+оценку порядка среднеквадратичного риска. 
+
+% ограничение $\gamma\hm>1/2$ из статьи~\cite{CB99} здесь не нужно, 
+%поскольку если $f$ 
+%регулярна по Липшицу с~$\gamma\hm>0$, то $Rf$ регулярна по Липшицу 
+%с~$\gamma>1/2$ %(с операторами там % 
+%сразу условия на регулярность~$Kf$, а~не на~$f$, все время об этом 
+%забываю). Для получения оценки типа  
+%леммы~3 и~оценки между суммами из квадратов коэффициентов~--- там 
+%получается оценка погрешности  
+%%численного  
+%вычисления 2-мерного интеграла (нормы), она имеет такой же порядок, 
+%как в~
+%одномерном случае, но число отсчетов равно квадрату числа отсчетов 
+%одномерного %случая. Однако деление в~ 
+%ЦПТ на $2^{2J}$ -- этого хватает. Update: ограничение  
+%$\gamma>1/2$ нужно ниже все равно, т.к. случайные величины зависимы, 
+%и~оно  
+%фигурирует в~асимптотике дисперсии и~других работах.
+
+\section{Свойства оценки среднеквадратичного риска}
+
+На практике вычислить значение среднеквадратичного риска нельзя, 
+поскольку оно зависит от ненаблюдаемых <<чистых>> коэффициентов. Однако 
+можно построить его оценку, используя только наблюдаемые данные. Эта 
+оценка определяется выражением:
+\begin{equation}
+\label{MSE_Estimate}
+\widehat{R}_{\nu}(f)=\sum\limits_{j = 0}^{J - 1}\sum\limits_{k_1=0}^{2^j-
+1}\sum\limits_{k_2=0}^{2^j-1}\sum\limits_{\lambda=1}^3 
+2^jF\left[V_{j,k_1,k_2}^{[\lambda]}\right],
+\end{equation}
+где
+\begin{multline*}
+\!F[V_{j,k_1,k_2}^{[\lambda]}]=\left(\left[V_{j,k_1,k_2}^{[\lambda]}\right]^2\!\!-
+\sigma^2\right)\mathbf{1}\left(\left|V_{j,k_1,k_2}^{[\lambda]}\right|\leqslant T\right)+{}\\
+{}+\sigma^2\mathbf{1}\left(\left|V_{j,k_1,k_2}^{[\lambda]}\right|>T\right)
+\end{multline*}
+в случае жесткой пороговой обработки и
+\begin{multline*}
+\!F[V_{j,k_1,k_2}^{[\lambda]}]=\left(\left[V_{j,k_1,k_2}^{[\lambda]}\right]^2\!\!-
+\sigma^2\right)\mathbf{1}\left(\left|V_{j,k_1,k_2}^{[\lambda]}\right|\leqslant T\right)+{}\\
+{}+(\sigma^2+T^2)\mathbf{1}\left(\left|V_{j,k_1,k_2}^{[\lambda]}\right|>T\right)
+\end{multline*}
+ в~случае мягкой пороговой обработки~\cite{Mall99}.
+
+Выражение~\eqref{MSE_Estimate} дает возможность получить представление 
+о~погрешности, с~которой оценивается функция~$f$. Докажем утверждение 
+о~ее асимптотической нормальности.
+
+\smallskip
+
+\noindent
+\textbf{Теорема 2.}\ \textit{Пусть $f\hm\in\mathrm{Lip}(\gamma)$ 
+с~$\gamma\hm>1/2$ и~вейвлет-функ\-ция удовлетворяет перечисленным выше 
+условиям. Пусть $T\hm=T_\gamma$. Тогда при жесткой или мягкой пороговой 
+обработке} 
+% условие $\gamma>1/2$ появляется из-за асимптотики дисперсии в~работе 
+%с~Ерошенко.
+\begin{equation*}
+%\label{MSE_CLT}
+{\sf P}\left(\fr{\widehat{R}_{\nu}(f)-R_{\nu}(f)}{D_J}<x\right)\to 
+\Phi(x)\;\;\mbox{\textit{при}}\;J\to\infty. %\notag
+\end{equation*}
+Здесь $\Phi(x)$~--- функция распределения стандартного нормального 
+закона; $D_J\hm=C_R2^{2J}$, где константа $C_R$ зависит от 
+используемого вейвлет-базиса. Метод вычисления этой константы описан 
+в~\cite{SH16}.
+
+% У Маркина в~предположении о~независимости 
+%$D_J=2^{2J}\sqrt{2(2^{4}-1)^{-1}(\sigma_1^4+\sigma_2^4+\sigma_3^4)}$.
+
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о.\ \ Докажем теорему для случая 
+жесткой пороговой обработки. В~случае мягкой пороговой обработки 
+доказательство аналогично.
+
+Наряду с~$\widehat{R}_{\nu}(f)$ рассмотрим
+\begin{equation*}
+\widehat{R}_{\mu}(f)=\sum\limits_{j = 0}^{J - 1}\sum\limits_{k_1=0}^{2^j-
+1}\sum\limits_{k_2=0}^{2^j-1}\sum\limits_{\lambda=1}^3 
+2^jF\left[W_{j,k_1,k_2}^{[\lambda]}\right] 
+\end{equation*}
+и запишем разность $\widehat{R}_{\nu}(f)-R_{\nu}(f)$ в~виде:
+$$
+\widehat{R}_{\nu}(f)-R_{\nu}(f)=\widehat{R}_{\mu}(f)-
+R_{\mu}(f)+\widetilde{R}\,,
+$$
+где
+$$
+\widetilde{R}=\widehat{R}_{\nu}(f)-\widehat{R}_{\mu}(f)-(R_{\nu}(f)-
+R_{\mu}(f)).
+$$
+В~\cite{SH16} показано, что
+\begin{equation*}
+%\label{MSE_CLT}
+{\sf P}\left(\fr{\widehat{R}_{\mu}(f)-R_{\mu}(f)}{D_J}<x\right)\to 
+\Phi(x)\;\;\mbox{при}\;J\to\infty\,. %\notag
+\end{equation*}
+Следовательно, для доказательства теоремы достаточно показать, что
+$$
+\fr{\widetilde{R}}{2^{2J}}\xrightarrow{{\sf P}} 
+0\;\;\mbox{при}\;J\to\infty\,.
+$$
+В силу теоремы~1 и~аналогичного утверждения для $R_{\nu}(f,T)$
+$$
+\fr{R_{\nu}(f)-R_{\mu}(f)}{2^{2J}}\to 0\;\;\mbox{при}\;J\to\infty\,.
+$$
+Далее пусть
+$$
+j_0\approx\fr{2J}{2\gamma+3}+\fr{1}{2\gamma+3}\,\log_2 J\,.
+$$
+Представим $\widehat{R}_{\nu}(f,T_\gamma)-\widehat{R}_{\mu}(f,T_\gamma)$ 
+в~виде:
+$$
+\widehat{R}_{\nu}(f,T_\gamma)-\widehat{R}_{\mu}(f,T_\gamma)=S_1+S_2,
+$$
+где
+$$
+S_1=\!\sum\limits_{j = 0}^{J_0 - 1}\sum\limits_{k_1=0}^{2^j-
+1}\sum\limits_{k_2=0}^{2^j-1}\sum\limits_{\lambda=1}^3 
+2^j\left(F[V_{j,k_1,k_2}^{[\lambda]}]-
+F[W_{j,k_1,k_2}^{[\lambda]}]\right);
+$$
+$$
+S_2=\!\sum\limits_{j = j_0}^{J - 1}\sum\limits_{k_1=0}^{2^j-
+1}\sum\limits_{k_2=0}^{2^j-1}\sum\limits_{\lambda=1}^3 
+2^j\left(F[V_{j,k_1,k_2}^{[\lambda]}]-
+F[W_{j,k_1,k_2}^{[\lambda]}]\right).
+$$
+Поскольку как в~случае жесткой, так и~в~случае мягкой пороговой обработки
+\begin{equation}
+\left.
+\begin{array}{rl}
+\absv{F\left[V_{j,k_1,k_2}^{[\lambda]}\right]}&\leqslant 
+T_\gamma^2+\sigma_\lambda^2;\\[6pt]
+\absv{F\left[W_{j,k_1,k_2}^{[\lambda]}\right]}
+&\leqslant T_\gamma^2+\sigma_\lambda^2
+\end{array}
+\mbox{ п.\ в.,}
+\label{Term_Bound}
+\right\}
+\end{equation}
+то
+$$
+\fr{S_1}{2^{2J}}\xrightarrow{\sf P} 0\;\;\mbox{при}\;J\to\infty\,.
+$$
+Далее
+\begin{multline}
+\label{Sums}
+S_2=\sum\limits_{j = j_0}^{J - 1}\sum\limits_{k_1=0}^{2^j-1}
+\sum\limits_{k_2=0}^{2^j-1}\sum\limits_{\lambda=1}^3 
+2^j\left(F\left[V_{j,k_1,k_2}^{[\lambda]}\right]-{}\right.\\
+\left.{}-
+F\left[W_{j,k_1,k_2}^{[\lambda]}\right]\right)={}\\
+{}=\sum\limits_{j = j_0}^{J - 1}\sum\limits_{k_1=0}^{2^j-1}
+\sum\limits_{k_2=0}^{2^j-1}\sum\limits_{\lambda=1}^3 
+2^j\left(\left[V_{j,k_1,k_2}^{[\lambda]}\right]^2-
+\left[W_{j,k_1,k_2}^{[\lambda]}\right]^2\right)+{}\\
+{}+\sum\limits_{j = j_0}^{J - 1}\sum\limits_{k_1=0}^{2^j-1}
+\sum\limits_{k_2=0}^{2^j-1}\sum\limits_{\lambda=1}^3 
+2^j\left(\left[W_{j,k_1,k_2}^{[\lambda]}\right]^2-2\sigma^2\right)
+\times{}\\ 
+{}\times
+\mathbf{1}\left(\left\vert V_{j,k_1,k_2}^{[\lambda]}\right\vert \leqslant T_\gamma, 
+\left\vert W_{j,k_1,k_2}^{[\lambda]}\right\vert > T_\gamma\right)+{}\\
+{}+\sum\limits_{j = j_0}^{J - 1}\sum\limits_{k_1=0}^{2^j-1}
+\sum\limits_{k_2=0}^{2^j-1}\sum\limits_{\lambda=1}^3 
+2^j\left(2\sigma^2-\left[V_{j,k_1,k_2}^{[\lambda]}\right]^2\right)
+\times{}\\ {}\times
+\mathbf{1}\left(\left\vert V_{j,k_1,k_2}^{[\lambda]}\right\vert > T_\gamma, 
+\left\vert W_{j,k_1,k_2}^{[\lambda]}\right\vert \leqslant T_\gamma\right)+{}\\
+{}+ \sum\limits_{j = j_0}^{J - 1}\sum\limits_{k_1=0}^{2^j-1}
+\sum\limits_{k_2=0}^{2^j-1}\sum\limits_{\lambda=1}^3 
+2^j\left(\left[W_{j,k_1,k_2}^{[\lambda]}\right]^2-
+\left[V_{j,k_1,k_2}^{[\lambda]}\right]^2\right)
+\times{}\\ {}\times
+\mathbf{1}\left(\left\vert V_{j,k_1,k_2}^{[\lambda]}\right\vert > T_\gamma, 
+\left\vert W_{j,k_1,k_2}^{[\lambda]}\right\vert > T_\gamma\right).
+\end{multline}
+Рассмотрим сумму: 
+\begin{multline*}
+\sum\limits_{j = j_0}^{J - 1}\sum\limits_{k_1=0}^{2^j-
+1}\sum\limits_{k_2=0}^{2^j-1}\sum\limits_{\lambda=1}^3 
+2^j\left(\left[V_{j,k_1,k_2}^{[\lambda]}]^2-[W_{j,k_1,k_2}^{[\lambda]}\right]^2\right)={}\\
+{}=\sum\limits_{j = j_0}^{J - 1}\sum\limits_{k_1=0}^{2^j-1}
+\sum\limits_{k_2=0}^{2^j-1}\sum\limits_{\lambda=1}^3 
+2^j\left(\left[\nu_{j,k_1,k_2}^{[\lambda]}]^2-
+[\mu_{j,k_1,k_2}^{[\lambda]}\right]^2\right)+{}\\
+{}+2\sum\limits_{j = j_0}^{J - 
+1}\sum\limits_{k_1=0}^{2^j-1}\sum\limits_{k_2=0}^{2^j-
+1}\sum\limits_{\lambda=1}^3 2^j 
+e_{j,k_1,k_2}^{[\lambda]}\left(\nu_{j,k_1,k_2}^{[\lambda]}-
+\mu_{j,k_1,k_2}^{[\lambda]}\right).
+\end{multline*}
+Учитывая результаты работ~\cite{CB99, SH19}, можно показать, что условное 
+распределение этой суммы при фиксированных $s_i$ и~$\theta_i$ нормально 
+с~математическим ожиданием
+$\sum\nolimits_{j = j_0}^{J - 1}\sum\nolimits_{k_1=0}^{2^j-1}
+\sum\nolimits_{k_2=0}^{2^j-1}\sum\nolimits_{\lambda=1}^3 
+2^j\left(\left[\nu_{j,k_1,k_2}^{[\lambda]}\right]^2-\right.$\linebreak
+$\left.-\left[\mu_{j,k_1,k_2}^{[\lambda]}\right]^2\right)$
+и дисперсией, не превосходящей
+$C_{R}\sigma^2\sum\limits_{j = j_0}^{J - 1}\sum\limits_{k_1=0}^{2^j-1}
+\sum\limits_{k_2=0}^{2^j-1}\sum\limits_{\lambda=1}^3 
+2^{2j}\left(\nu_{j,k_1,k_2}^{[\lambda]}-\mu_{j,k_1,k_2}^{[\lambda]}\right)^2$,
+где константа $C_{R}$ зависит от выбранного базиса.
+
+Так как $f\hm\in\mathrm{Lip}(\gamma)$, то, повторяя рассуждения 
+работы~\cite{SH19}, можно показать, что
+\begin{multline*}
+\fr{1}{2^{2J}}{\sf E}_{s\theta}%\absv
+{\Biggl\vert\sum\limits_{j = j_0}^{J - 1}
+\sum\limits_{k_1=0}^{2^j-1}\sum\limits_{k_2=0}^{2^j-1}
+\sum\limits_{\lambda=1}^3 
+2^j\left(\left[\nu_{j,k_1,k_2}^{[\lambda]}\right]^2-{}\right.}\\
+{\left.{}-\left[\mu_{j,k_1,k_2}^{[\lambda]}\right]^2\right)\Biggr\vert}\to 0\,;
+\end{multline*}
+
+%\vspace*{-12pt}
+
+\noindent
+\begin{equation*}
+%\label{VAR_Decay}
+\!\fr{1}{2^{2J}}\,{\sf E}_{s\theta}\!\sum\limits_{j = j_0}^{J - 
+1}\sum\limits_{k_1=0}^{2^j-1}\sum\limits_{k_2=0}^{2^j-
+1}\sum\limits_{\lambda=1}^3 2^{2j}\left(\nu_{j,k_1,k_2}^{[\lambda]}-
+\mu_{j,k_1,k_2}^{[\lambda]}\right)^{\!2}\!\to 0
+\end{equation*}
+при $J\to\infty$. Следовательно, применяя неравенство Маркова, получаем, 
+что
+\begin{multline*}
+\fr{1}{2^{2J}}\sum\limits_{j = j_0}^{J - 1}\sum\limits_{k_1=0}^{2^j-
+1}\sum\limits_{k_2=0}^{2^j-1}\sum\limits_{\lambda=1}^3 
+2^j\left(\left[\nu_{j,k_1,k_2}^{[\lambda]}\right]^2-{}\right.\\
+\left.{}-
+\left[\mu_{j,k_1,k_2}^{[\lambda]}\right]^2\right)\xrightarrow{\sf P} 0\,;
+\end{multline*}
+
+%\vspace*{-12pt}
+
+\noindent
+\begin{equation*}
+\fr{1}{2^{2J}}\sum\limits_{j = j_0}^{J - 1}\sum\limits_{k_1=0}^{2^j-
+1}\sum\limits_{k_2=0}^{2^j-1}\sum\limits_{\lambda=1}^3 
+2^{2j}\left(\nu_{j,k_1,k_2}^{[\lambda]}-
+\mu_{j,k_1,k_2}^{[\lambda]}\right)^2\xrightarrow{\sf P} 0
+\end{equation*}
+при $J\to\infty$. Таким образом,
+\begin{multline*}
+\!\!\fr{1}{2^{2J}}
+\sum\limits_{j = j_0}^{J - 1}\sum\limits_{k_1=0}^{2^j-
+1}\sum\limits_{k_2=0}^{2^j-1}\sum\limits_{\lambda=1}^3 
+2^{j}\left(\left[V_{j,k_1,k_2}^{[\lambda]}\right]^2-{}\right.\\
+\left.{}-
+\left[W_{j,k_1,k_2}^{[\lambda]}\right]^2\right)
+\xrightarrow{\sf P} 0 \enskip \mbox{при}\;J\to\infty.
+\end{multline*}
+
+
+В оставшихся суммах в~\eqref{Sums} содержатся индикаторы, в~которых либо 
+$|V_{j,k_1,k_2}^{[\lambda]}|\hm> T_\gamma$, либо 
+$|W_{j,k_1,k_2}^{[\lambda]}|\hm> T_\gamma$. Повторяя рассуждения из 
+работы~\cite{SH19}, можно показать, что эти суммы при делении на~$2^{2J}$ 
+также сходятся к~нулю по вероятности. Теорема доказана.
+
+\smallskip
+
+Помимо асимптотической нормальности оценка~\eqref{MSE_Estimate} также 
+обладает свойством сильной состоятельности.
+
+\smallskip
+
+\noindent
+\textbf{Теорема 3.}\ \textit{Пусть выполнены условия теоремы~2. Тогда при 
+жесткой или мягкой пороговой обработке для любого $\alpha>2$}
+\begin{equation*}
+\fr{\widehat{R}_{\nu}(f)-R_{\nu}(f)}{2^{\alpha J}}\rightarrow 0 
+\;\mbox{{\it п.\ в.\ при }} J\rightarrow\infty\,.
+\end{equation*}
+
+Поскольку выполнено~\eqref{Term_Bound}, при фиксированных $x_i$, 
+к~\eqref{MSE_Estimate} применимо неравенство Боска~\cite{JS97}. 
+Следовательно, доказательство этого утверждения практически полностью 
+повторяет доказательство соответствующего свойства оценки риска 
+в~работе~[5]. %\cite{SH16-1}.
+{\looseness=1
+
+}
+% здесь, в~отличие от неслучайных отсчетов, требуется регулярность по 
+%Липшицу из-за порядка 
+ %теоретического риска, но так как она требуется для~$f$, а~не~$Rf$, то 
+%лишнего ограничения  
+%не %возникает.
+
+
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+
+
+\bibitem{Kol94} %1
+\Au{Kolaczyk E.\,D.} Wavelet methods for the inversion of certain 
+homogeneous linear operators in the presence of noisy data.~--- 
+Stanford, CA, USA: Stanford University, 1994. PhD Diss. 152~p. 
+
+\bibitem{D94} %2
+\Au{Donoho D.} Nonlinear solution of linear inverse problems by 
+wavelet-vaguelette decomposition~// Appl. Comput. Harmon.~A., 1995. Vol.~2. 
+P.~101--126.
+
+\bibitem{Lee97}
+\Au{Lee N.} Wavelet-vaguelette decompositions and homogenous equations.~--- 
+West Lafayette, IN, USA: Purdue University, 1997. PhD Diss. 103~p.
+
+\bibitem{SH16}
+\Au{Шестаков О.\,В.} Вероятностно-статистические методы анализа 
+и~обработки сигналов на основе вейвлет-ал\-го\-рит\-мов.~--- М.:~АРГАМАК-МЕДИА, 
+2016. 200~с.
+
+\bibitem{SH16-1}
+\Au{Шестаков О.\,В.} Усиленный закон больших чисел для оценки риска 
+в~задаче реконструкции томографических изображений из проекций 
+с~коррелированным шумом~// Информатика и~её применения, 2016. Т.~10. 
+Вып.~3. С.~41--45.
+
+\bibitem{CB98}
+\Au{Cai T., Brown L.} Wavelet shrinkage for nonequispaced samples~// Ann. 
+Stat., 1998. Vol.~26. No.\,5.  
+P.~1783--1799.
+
+\bibitem{CB99}
+\Au{Cai T., Brown L.} Wavelet estimation for samples with random uniform 
+design~// Stat. Probabil. Lett., 1999. Vol.~42. P.~313--321.
+
+\bibitem{Mall99}
+\Au{Mallat S.} A~wavelet tour of signal processing.~--- New York, NY, 
+USA:~Academic Press, 1999. 857~c.
+
+\bibitem{ESH14}
+\Au{Ерошенко А.\,А., Шестаков~О.\,В.} Асимптотические свойства оценки 
+риска в~задаче восстановления изоб\-ра\-же\-ния с~коррелированным шумом при 
+обращении преобразования Радона~// Информатика и~её применения, 2014. 
+Т.~8. Вып.~4. 
+С.~32--40.
+
+\bibitem{SH19}
+\Au{Шестаков О.\,В.} Свойства вейвлет-оценок сигналов, регистрируемых 
+в~случайные моменты времени~// Информатика и~её применения, 2019. Т.~13. 
+Вып.~2. С.~16--21.
+
+\bibitem{JS97}
+\textit{Johnstone I.\,M., Silverman B.\,W.} Wavelet threshold estimates 
+for data with correlated noise~// J.~Roy. Stat. Soc.~B, 1997. 
+Vol.~59. P.~319--351.
+
+%\bibitem{SH16-2}
+%\textit{Шестаков О.\,В.} Усиленный закон больших чисел для оценки риска 
+%в~задаче реконструкции томографических изображений из проекций 
+%с~коррелированным шумом~// Информатика и~её применения, 2016. Т.~10. 
+%Вып.~3. С.~41--45.
+
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+%\vspace*{-12pt}
+
+\hfill{\small\textit{Поступила в~редакцию 07.04.20}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{ASYMPTOTICS OF THE MEAN-SQUARE RISK ESTIMATE IN~THE~PROBLEM 
+OF~INVERTING THE~RADON TRANSFORM FROM~PROJECTIONS REGISTERED 
+ON~A~RANDOM GRID}
+
+
+\def\titkol{Asymptotics of the mean-square risk estimate in the problem 
+of inverting the Radon transform from 
+projections} % registered on a~random  grid }
+
+\def\aut{O.\,V.~Shestakov$^{1,2}$}
+
+\def\autkol{O.\,V.~Shestakov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+
+\noindent
+$^1$Department of Mathematical Statistics, Faculty of Computational 
+Mathematics and Cybernetics, M.\,V.~Lomo-\linebreak
+$\hphantom{^1}$nosov Moscow State University,  
+1-52~Leninskiye Gory, GSP-1, Moscow 119991, Russian %\linebreak
+$\hphantom{^1}$Federation
+
+\noindent
+$^2$Institute of Informatics Problems, Federal Research Center ``Computer 
+Science and Control'' of 
+the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2020\ \ \ volume~14\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{6pt} 
+
+
+\Abste{ When reconstructing tomographic images, it is necessary to use regularization methods, since 
+the problem of inverting the Radon transform, which is the basis of mathematical models of most 
+tomographic experiments, is ill-posed. Regularization methods based on wavelet analysis have become 
+popular due to their adaptation to local image features and computational efficiency. The analysis of 
+errors in tomographic images is an important practical task, since it makes it possible to evaluate the 
+quality of both the methods themselves and the equipment used. Sometimes, it is not possible to register 
+projection data on a~uniform grid of samples. If sample points for each coordinate form a~variation 
+series based on a~sample from a~uniform distribution, then the use of the usual threshold processing 
+procedure is adequate. In this paper, the author analyzes the estimate of the mean-square risk in the 
+Radon transform inversion problem and demonstrates that if the image function is uniformly 
+Lipschitz-regular, then this estimate is strongly consistent and asymptotically normal.}
+\KWE{threshold processing; Radon transform; random grid; mean-square risk estimate}
+
+\DOI{10.14357/19922264200204}
+
+\vspace*{-18pt}
+
+\Ack
+\noindent
+This research is supported by the Russian Foundation for Basic Research (project No.\,18-07-00252).
+
+\vspace*{3pt}
+
+ \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+
+
+\bibitem{2-sh}
+\Aue{Kolaczyk, E.\,D.} 1994. Wavelet methods for the inversion of certain homogeneous linear 
+operators in the presence of noisy data. 
+ Stanford, CA: Stanford University.  PhD Diss. 152~p. 
+ 
+ \bibitem{1-sh}
+\Aue{Donoho, D.} 1995. Nonlinear solution of linear inverse problems by wavelet-vaguelette 
+decomposition. \textit{Appl. Comput. Harmon.~A.} 
+ 2:101--126.
+ 
+\bibitem{3-sh}
+\Aue{Lee, N.} 1997. Wavelet-vaguelette decompositions and homogenous 
+equations.  West 
+Lafayette, IN: Purdue University.  PhD Diss. 103~p.
+\bibitem{4-sh}
+\Aue{Shestakov, O.\,V.} 2016. \textit{Veroyatnostno-statisticheskie metody analiza i obrabotki signalov 
+na osnove veyvlet-algoritmov} [Probabilistic-statistical methods of signal analysis and processing based 
+on wavelet algorithms]. Moscow: ARGAMAK-MEDIA. 200~p.
+\bibitem{5-sh}
+\Aue{Shestakov, O.\,V.} 2016. Usilennyy zakon bol'shikh chisel dlya otsenki riska v~zadache 
+rekonstruktsii to\-mo\-gra\-fi\-che\-skikh izobrazheniy iz proektsiy s korrelirovannym shumom [The strong law 
+of large numbers for the risk estimate in the problem of tomographic image 
+reconstruction from 
+projections with a~correlated noise]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 10(3):41--
+45.
+\bibitem{6-sh}
+\Aue{Cai, T., and L. Brown.} 1998. Wavelet shrinkage for nonequispaced samples. \textit{ Ann. 
+Stat.} 26(5):1783--1799.
+\bibitem{7-sh}
+\Aue{Cai, T., and L. Brown.} 1999. Wavelet estimation for samples with random uniform design. 
+\textit{Stat. Probabil. Lett.} 42:313--321.
+\bibitem{8-sh}
+\Aue{Mallat, S.} 1999. \textit{A~wavelet tour of signal processing}. New York, NY: Academic Press. 
+857~p.
+\bibitem{9-sh}
+\Aue{Eroshenko, A.\,A., and O.\,V.~Shestakov.} 2014. Asimp\-to\-ti\-che\-skie svoystva otsenki riska 
+v~zadache vos\-sta\-nov\-le\-niya izob\-ra\-zhe\-niya s~korrelirovannym shumom pri 
+obrashchenii preobrazovaniya 
+Radona [Asymptotic properties of risk estimate in the problem of reconstructing images with correlated 
+noise by inverting the Radon transform]. \textit{Informatika i ee Primeneniya~--- Inform. Appl.} 
+8(4):32--40.
+\bibitem{10-sh}
+\Aue{Shestakov, O.\,V.} 2019. Svoystva veyvlet-otsenok signalov registriruemykh v~sluchaynye 
+momenty vremeni [Properties of wavelet estimates of signals recorded at random time points]. 
+\textit{Informatika i ee Primeneniya~--- Inform. Appl.} 13(2):16--21.
+
+%\pagebreak
+
+\bibitem{11-sh}
+\Aue{Johnstone, I.\,M., and B.\,W.~Silverman.} 1997. Wavelet threshold estimates for data with 
+correlated noise. \textit{J.~Roy. Stat. Soc.~B} 59:319--351.
+%\bibitem{12-sh}
+%\Aue{Shestakov, O.\,V.} 2016. Usilennyy zakon bol'shikh chisel dlya otsenki riska v~zadache 
+%rekonstruktsii to\-mo\-gra\-fi\-che\-skikh izobrazheniy iz proektsiy s~korrelirovannym shumom [The strong law 
+%of large numbers for the risk estimate in the problem of tomographic image reconstruction from 
+%projections with a~correlated noise]. \textit{Informatika i ee Primeneniya~--- Inform. Appl.} 10(3):41--
+%45.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received April 7, 2020}}
+
+%\pagebreak
+
+%\vspace*{-24pt}
+
+\Contrl
+
+\noindent
+\textbf{Shestakov Oleg V.} (b.\ 1976)~--- Doctor of Science in physics and mathematics, professor, 
+Department of Mathematical Statistics, Faculty of Computational Mathematics and Cybernetics, 
+M.\,V.~Lomonosov Moscow State University, 1-52~Leninskiye Gory, GSP-1, Moscow 119991, 
+Russian Federation; senior scientist, Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 
+119333, Russian Federation; \mbox{oshestakov@cs.msu.su}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 

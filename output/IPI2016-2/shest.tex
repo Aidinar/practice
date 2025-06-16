@@ -1,0 +1,590 @@
+
+\def\stat{shestakov}
+
+\def\tit{СТАТИСТИЧЕСКИЕ СВОЙСТВА МЕТОДА ПОДАВЛЕНИЯ ШУМА,
+ОСНОВАННОГО НА СТАБИЛИЗИРОВАННОЙ ЖЕСТКОЙ ПОРОГОВОЙ
+ОБРАБОТКЕ$^*$}
+
+\def\titkol{Статистические свойства метода подавления шума,
+основанного на стабилизированной жесткой пороговой
+обработке}
+
+\def\aut{О.\,В.~Шестаков$^1$}
+
+\def\autkol{О.\,В.~Шестаков}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Шестаков О.\,В.}
+\index{Shestakov O.\,V.}
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при частичной финансовой поддержке РФФИ (проект 16-07-00736).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Московский государственный университет им.\ М.\,В.~Ломоносова, кафедра 
+математической статистики факультета вычислительной математики и~кибернетики; 
+Институт проблем информатики Федерального исследовательского
+центра <<Информатика и~управление>> Российской академии наук, oshestakov@cs.msu.su}
+
+\vspace*{-12pt}
+
+\Abst{Методы пороговой обработки коэффициентов вейв\-лет-раз\-ло\-же\-ния 
+функций сигналов и~изоб\-ра\-жений стали популярным аппаратом для подавления 
+шума благодаря своей простоте, вычислительной эффективности и~возможности 
+адаптации к~функциям, имеющим на разных участках различную степень регулярности. 
+Рассматривается предложенный недавно стабилизированный метод жесткой 
+пороговой обработки, в~котором устранены основные недостатки мягкой и~жесткой 
+пороговой обработки, и~исследуются статистические свойства этого метода. 
+В~модели данных с~аддитивным гауссовским шумом проводится анализ несмещенной оценки 
+среднеквадратичного риска и~показывается, что при определенных условиях данная оценка 
+является сильно состоятельной и~асимптотически нормальной. Данные свойства позволяют 
+строить асимптотические доверительные интервалы для теоретического средне\-квад\-ратичного 
+риска метода.}
+
+\KW{вейвлеты; пороговая обработка; несмещенная оценка риска; асимптотическая 
+нормальность; сильная состоятельность}
+
+\DOI{10.14357/19922264160207} 
+
+%\vspace*{-4pt}
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+При применении методов подавления шума в~сигналах или изображениях важным 
+условием является <<экономное>> представление функций сигналов в~некотором 
+специальном базисе. Данное условие позволяет применять популярные процедуры 
+мягкой и~жесткой пороговой обработки~[1] к~коэффициентам разложения функций сигналов. 
+Эти процедуры просты, не затратны и~часто позволяют достичь удовлетворительных 
+результатов. Однако они имеют свои недостатки. Жесткая по\-роговая обработка использует 
+разрывную пороговую функцию, что приводит к~появлению дополнительных артефактов, 
+отсутствию устойчивости при выборе порога~[2] и~невозможности построения несмещенной 
+оценки среднеквадратичной погрешности~[3]. При мягкой пороговой обработке все 
+коэффициенты подвергаются изменению, вследствие чего в~оценке функции сигнала 
+появляется дополнительное смещение. 
+
+В~работе~[4] предложен стабилизированный 
+вариант жесткой пороговой обработки, позволяющий обойти указанные недостатки. 
+Для выбора па\-ра\-мет\-ров данного метода и~анализа погрешности можно использовать 
+несмещенную оценку среднеквадратичного риска~[5]. В~данной работе исследуются 
+статистические свойства этой оценки при разложении функции сигнала по вейв\-лет-ба\-зи\-су 
+и~выборе <<универсального>> порога. Для метода мягкой пороговой обработки подобные 
+исследования проводились в~работах~[6--9].
+
+
+\section{Метод пороговой обработки}
+
+Для функции сигнала $f\hm\in L^2(\mathbb{R})$ разложение по вейв\-лет-ба\-зи\-су имеет вид:
+\begin{equation}
+f=\sum\limits_{j,k\in Z}\langle f,\psi_{jk}\rangle\psi_{jk}\,,
+\label{Wavelet_Decomp}
+\end{equation}
+где $\psi_{jk}(t)=2^{j/2}\psi(2^jt-k)$, а $\psi(t)$~--- некоторая 
+вейв\-лет-функ\-ция (семейство $\{\psi_{jk}\}_{jk\in Z}$ образует ортонормированный 
+базис в~$L^2(\mathbb{R})$). Индекс~$j$ в~\eqref{Wavelet_Decomp} называется 
+масштабом, а индекс~$k$~--- сдвигом.\linebreak
+В~данной работе рассматриваются функции сигнала на конечном отрезке $[a,b]$, 
+равномерно регулярные по Липшицу с~некоторым показателем $\gamma\hm>0$. 
+Кроме того, предполагается, что вейв\-лет-функ\-ция~$\psi$ имеет~$M$~непрерывных 
+производных ($M\hm\geqslant\gamma$), $M$~нулевых моментов и~удовлетворяет условию:
+$$
+\int\limits_{-\infty}^{\infty}\abs{t^{\gamma}\psi(t)}dt<\infty\,.
+$$
+В этом случае найдется такая константа $C_f\hm>0$, что~[10]
+\begin{equation}
+\label{Wavelet_CoeffDecacy}
+\abs{\langle f,\psi_{j,k}\rangle}\leq\fr{C_f}{2^{j\left(\gamma+1/2\right)}}\,.
+\end{equation}
+
+Модель данных, рассматриваемая в~данной работе, предполагает, что функция сигнала задана в~дискретных отсчетах и~наблюдения содержат шум:
+\begin{equation*}
+X_i = f_i + \epsilon_i\,, \qquad i = 1, \dots, 2^J\,,
+\label{Data_Model}
+\end{equation*}
+где $2^J$~--- количество отсчетов функции сигнала;
+$f_i$~--- незашумленные значения функции сигнала; $\epsilon_i$~--- 
+независимые нормально распределенные случайные величины с~нулевым средним 
+и~дисперсией~$\sigma^2$.
+После применения дискретного вейв\-лет-пре\-об\-ра\-зо\-ва\-ния получается следующая 
+модель зашумленных вейв\-лет-ко\-эф\-фи\-ци\-ентов:
+\begin{equation*}
+Y_{jk}=\mu_{jk}+\epsilon^W_{jk}\,,\enskip j=0,\ldots,J-1,\;k=0,\ldots,2^{j}-1\,,
+\end{equation*}
+где $\epsilon^W_{jk}$ независимы и~имеют такое же распределение, 
+как и~$\epsilon_i$, а $\mu_{jk}\hm\approx 2^{J/2}\langle f,\psi_{jk}\rangle$~[10].
+
+Для построения оценки функции сигнала к~коэффициентам~$Y_{jk}$ 
+обычно применяется функция жесткой пороговой обработки 
+$\rho_{H}(y,T)\hm=x\Ik(\abs{y}\hm>T)$ или функция мягкой пороговой 
+обработки $\rho_{S}(y,T)\hm=\mathrm{sgn}\left(x\right)
+\left(\abs{y}-T\right)_{+}$ с~порогом~$T$.
+
+Как уже отмечалось, функция~$\rho_{H}$ разрывна, что приводит 
+к~отсутствию устойчивости, а функция~$\rho_{S}$ приводит к~появлению 
+дополнительного смещения в~оценке функции сигнала. 
+В~работе~[4] предложен новый метод пороговой обработки, являющийся 
+сглаженным аналогом жесткой пороговой обработки. В~этом методе оценки~$\mu_{jk}$ 
+вычисляются по формулам:
+\begin{equation*}
+\widehat{\mu}_{jk}=\Expect \left[\rho_{H}(Y_{jk}+\lambda\xi_{jk},T)|Y_{jk}\right]\,,
+\end{equation*}
+где случайные величины~$\xi_{jk}$ имеют стандартное нормальное распределение 
+и~не зависят от~$Y_{jk}$, а~$\lambda\hm>0$~--- 
+параметр стабилизации, отвечающий за степень сглаживания. Вычисляя математическое 
+ожидание, получаем:
+\begin{multline*}
+\widehat{\mu}_{jk}=Y_{jk}\left[\Phi\left(-\fr{T+Y_{jk}}{\lambda}\right)+
+1-\Phi\left(\fr{T-Y_{jk}}{\lambda}\right)\right]+{}\\
+{}+
+\lambda\left[\phi\left(\fr{T-Y_{jk}}{\lambda}\right)-
+\phi\left(\fr{T+Y_{jk}}{\lambda}\right)\right]\,.
+\end{multline*}
+Достоинством такого метода является бесконечная 
+дифференцируемость~$\widehat{\mu}_{jk}$ по~$Y_{jk}$, что приводит к~более 
+устойчивым оценкам~[4]. Заметим также, что при $\lambda\hm\to0$ 
+получается обычный метод жесткой пороговой обработки.
+
+\section{Несмещенная оценка среднеквадратичного риска и~ее~свойства}
+
+Среднеквадратичная погрешность (риск) описанного выше метода определяется по формуле:
+\begin{equation}
+\label{Risk}
+R_J(T)=\sum\limits_{j=0}^{J-1}\sum\limits_{k=0}^{2^j-1}\Expect
+\left(\widehat{\mu}_{jk}-\mu_{jk}\right)^2.
+\end{equation}
+В~[4] показано, что
+\begin{multline*}
+\Expect\left(\widehat{\mu}_{jk}-\mu_{jk}\right)^2={}\\
+{}=
+\Expect\left[(Y_{jk}-\widehat{\mu}_{jk})^2+2\sigma^2
+\fr{\partial}{\partial Y_{jk}}\,\widehat{\mu}_{jk}\right]-\sigma^2\!,
+\end{multline*}
+где
+\begin{multline*}
+\!\!\!\hspace*{-1.55032pt}\fr{\partial}{\partial Y_{jk}}\,\widehat{\mu}_{jk}=
+\left[\Phi\left(-\fr{T+Y_{jk}}{\lambda}\right)+1-
+\Phi\left(\fr{T-Y_{jk}}{\lambda}\right)\right]+{}\\
+{}+
+\fr{T}{\lambda}\left[\phi\left(\fr{T-Y_{jk}}{\lambda}\right)+
+\phi\left(\fr{T+Y_{jk}}{\lambda}\right)\right].
+\end{multline*}
+Таким образом, величина
+\begin{multline}
+\label{Risk_Estimate}
+\widehat{R}_J(T)={}\\
+{}=\sum\limits_{j=0}^{J-1}\sum\limits_{k=0}^{2^j-1}
+\left[(Y_{jk}-\widehat{\mu}_{jk})^2+2\sigma^2\fr{\partial}{\partial Y_{jk}}\,
+\widehat{\mu}_{jk}-\sigma^2\right]
+\end{multline}
+является несмещенной оценкой~$R_J(T)$, не зависящей от ненаблюдаемых 
+<<чистых>> значений~$\mu_{jk}$.
+
+В данной работе параметр~$\lambda$ будем полагать фиксированным, 
+а~в~качестве~$T$ рассмотрим так называемый <<универсальный>> порог 
+$T_U\hm=\sigma\sqrt{2\ln 2^J}$, который позволяет достичь хороших результатов 
+при подавлении шума и~обеспечивает близость среднеквадратичного риска 
+к~минимальному при жесткой и~мягкой пороговых обработках~[10].
+
+Покажем, что оценка~(\ref{Risk_Estimate}) является асимптотически нормальной. 
+Это свойство позволяет строить асимптотические доверительные интервалы для 
+риска~(\ref{Risk}).
+
+\smallskip
+
+\noindent
+\textbf{Теорема~1.}\
+\textit{Пусть~$f$ задана на конечном отрезке и~является равномерно регулярной по 
+Липшицу с~параметром $\gamma\hm>0$. Тогда}
+\begin{equation}
+\label{Normality}
+\mbox{P}\left(\fr{\widehat{R}_J(T_U)-R_J(T_U)}{\sigma^2\sqrt{2^{J+1}}}<x\right)
+\Rightarrow\Phi(x)\,.
+\end{equation}
+
+\smallskip
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \  
+Выберем~$p$ такое, что $(2\gamma\hm+1)^{-1}\hm<p\hm<1$. Обозначим слагаемые 
+в~(\ref{Risk_Estimate}) через $F_{jk}(T)$ и~запишем 
+разность $\widehat{R}_J(T_U)\hm-R_J(T_U)$ в~виде:
+\begin{multline}
+\label{Two_Sums}
+\hspace*{-5.65323pt}\!\widehat{R}_J(T_U)-R_J(T_U)=\sum\limits_{j=0}^{[pJ]}\sum\limits_{k=0}^{2^j-1}
+\left[F_{jk}(T_U)-\Expect F_{jk}(T_U)\right]\;+{}\hspace*{-1.11108pt}\\
+{}+
+\sum\limits_{j=[pJ]+1}^{J-1}\sum\limits_{k=0}^{2^j-1}
+\left[F_{jk}(T_U)-\Expect F_{jk}(T_U)\right].
+\end{multline}
+Число слагаемых в~первой сумме не превосходит $2^{[pJ]+1}$. Кроме того, 
+существует такая константа $C_F\hm>0$, что
+\begin{equation}
+\label{Bounds}
+\abs{F_{jk}(T_U)-\Expect F_{jk}(T_U)}\leqslant C_FT_U\;\;\mbox{п.в.}
+\end{equation}
+Применяя неравенство Хеффдинга и~учитывая вид~$T_U$, 
+получаем, что для любого $\delta\hm>0$ найдется константа $C_\delta\hm>0$ такая, что
+\begin{multline*}
+\hspace*{-7.24762pt}\mathrm{P}\left(\fr{\abs{\sum\nolimits_{j=0}^{[pJ]}\sum\nolimits_{k=0}^{2^j-1}
+\left[F_{jk}(T_U)-\Expect F_{jk}(T_U)\right]}}{\sigma^2\sqrt{2^{J+1}}}>\delta\right)
+\leqslant{}\\
+{}\leqslant \exp\left\{-C_\delta\fr{2^{J-pJ}}{J}\right\},
+\end{multline*}
+т.\,е.
+\begin{multline}
+\label{First_Sum}
+\fr{\sum\nolimits_{j=0}^{[pJ]}\sum\nolimits_{k=0}^{2^j-1}
+\left[F_{jk}(T_U)-\Expect F_{jk}(T_U)\right]}
+{\sigma^2\sqrt{2^{J+1}}}\stackrel{\mathrm{P}}{\to}0\\ 
+\mbox{при}\enskip J\to\infty.
+\end{multline}
+Для всех слагаемых во второй сумме в~(\ref{Two_Sums}) в~силу~(\ref{Wavelet_CoeffDecacy})
+выполнено $\mu_{jk}\hm\to0$ при $J\hm\to\infty$.
+Рас\-смот\-рим дисперсии слагаемых в~этой сумме. Имеем 
+$\D F_{jk}(T_U)\hm=\D [Y^2_{jk}-\sigma^2+U_{jk}(T_U)]$, где
+\begin{multline*}
+U_{jk}(T_U)=F_{jk}(T_U)-Y^2_{jk}+\sigma^2={}\\
+{}=
+\left(\widehat{\mu}_{jk}-2Y_{jk}\right)\widehat{\mu}_{jk}+2\sigma^2
+\fr{\partial}{\partial Y_{jk}}\widehat{\mu}_{jk}.
+\end{multline*}
+Пусть $A_J=\sigma\sqrt{A\ln 2^J}$, где $0<A<2$. Тогда
+\begin{multline*}
+\D U_{jk}(T_U)\leqslant \Expect U^2_{jk}(T_U)={}\\
+{}=\Expect 
+\left[\Ik(\abs{Y_{jk}}>A_J)U^2_{jk}(T_U)\right]+{}\\
+{}+
+\Expect\left[\Ik(\abs{Y_{jk}}\leqslant A_J)U^2_{jk}(T_U)\right].
+\end{multline*}
+Поскольку $T_U-A_J\to\infty$ при $J\hm\to\infty$, учитывая 
+определение~$\widehat{\mu}_{jk}$ и~$({\partial}/{\partial Y_{jk}})\widehat{\mu}_{jk}$, 
+заключаем, что найдется такое $\varepsilon_J\hm>0$, что 
+$\abs{\Ik(\abs{Y_{jk}}\hm\leqslant A_J)U^2_{jk}(T_U)}\hm\leqslant\varepsilon_J$ п.в.\ 
+и~$\varepsilon_J\hm\to0$ при $J\hm\to\infty$. Следовательно, 
+$\Expect[\Ik(\abs{Y_{jk}}\hm\leqslant A_J)U^2_{jk}(T_U)]\hm\to 0$ при $J\hm\to\infty$.
+
+Далее найдется такая константа $C\hm>0$, что 
+$\Expect [\Ik(\abs{Y_{jk}}\hm>A_J)U^2_{jk}(T_U)]\hm\leqslant 
+C\Expect[\Ik(\abs{Y_{jk}}\hm>A_J)Y^4_{jk}]\hm\to0$ при $J\hm\to\infty$. Таким образом, 
+учитывая очевидное соотношение для дисперсии суммы случайных величин $X+Y$: 
+$(\sqrt{\D X}\hm-\sqrt{\D Y})^2\hm\leqslant\D(X+Y)
+\hm\leqslant(\sqrt{\D X}\hm+\sqrt{\D Y})^2$, получаем:
+\begin{multline}
+\label{Var_Lim1}
+\hspace*{-9.58pt}\lim\limits_{J\to\infty}\fr{\D\sum\nolimits_{j=[pJ]+1}^{J-1}
+\sum\nolimits_{k=0}^{2^j-1}\left[F_{jk}(T_U)-\Expect F_{jk}(T_U)\right]}
+{\D\sum\nolimits_{j=[pJ]+1}^{J-1}\sum\nolimits_{k=0}^{2^j-1}Y^2_{jk}}={}\\
+{}=1\,.
+\end{multline}
+Кроме того, поскольку~$Y_{jk}$ независимы, $\D Y^2_{jk}\hm=
+2\sigma^4\hm+4\sigma^2\mu^2_{jk}$ и~в~(\ref{Var_Lim1}) $\mu_{jk}\hm\to0$ при 
+$J\hm\to\infty$, получаем:
+\begin{equation}
+\label{Var_Lim2}
+\lim\limits_{J\to\infty}\fr{\D\sum\nolimits_{j=[pJ]+1}^{J-1}
+\sum\nolimits_{k=0}^{2^j-1}Y^2_{jk}}{\sigma^42^{J+1}}=1\,.
+\end{equation}
+
+Наконец, выполнено условие Линдеберга: для любого $\epsilon\hm>0$ при $J\hm\to\infty$
+\begin{multline}
+\label{Norm_Cond}
+\fr{1}{D^2_J}\sum\limits_{j=[pJ]+1}^{J-1}\sum\limits_{k=0}^{2^j-1} \Expect  
+\left[
+\vphantom{\left((T_U)\right)^2}\left( F_{jk}(T_U)-{}\right.\right.\\
+\left.\left.{}-\Expect F_{jk}(T_U)\right)^2\Ik\left( 
+\left\vert F_{jk}(T_U)-\Expect F_{jk}(T_U)\right\vert >\epsilon D_J\right)
+\right]\rightarrow{}\\
+{}\rightarrow 0\,,
+\end{multline}
+где 
+$$
+D^2_J=\D\sum\limits_{j=[pJ]+1}^{J-1}\sum\limits_{k=0}^{2^j-1}
+[F_{jk}(T_U)-\Expect F_{jk}(T_U)]\,.
+$$
+
+Действительно, в~силу~(\ref{Bounds}), (\ref{Var_Lim1}) и~(\ref{Var_Lim2}) начиная 
+с~некоторого~$J$ все индикаторы в~(\ref{Norm_Cond}) обращаются 
+в~ноль. Объединяя~(\ref{First_Sum})--(\ref{Norm_Cond}), получаем~(\ref{Normality}). 
+Теорема доказана.
+
+\smallskip
+
+Докажем теперь свойство сильной состоятельности оценки~(\ref{Risk_Estimate}), 
+справедливое при более слабых ограничениях на функцию сигнала.
+
+\smallskip
+
+\noindent
+\textbf{Теорема~2.}\ 
+\textit{Пусть $f\in  L^2(\mathbb{R})$ и~задана на конечном отрезке, тогда при 
+любом $\alpha>1/2$ имеет место сходимость}:
+\begin{equation}
+\label{Strong_Con}
+\fr{\widehat{R}_J(T_U)-R_J(T_U)}{2^{\alpha J}}\rightarrow 0 \enskip \mbox{п.в.\ при}\enskip 
+J\rightarrow\infty.
+\end{equation}
+
+\noindent
+Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \  
+Используя неравенство Хеффдинга с~учетом~(\ref{Bounds}) и~вида~$T_U$, получаем, 
+что для любого $\delta\hm>0$ найдется константа $C_\delta\hm>0$ такая, что
+\begin{multline}
+\label{Prob_Conv}
+p_J=\p\left(\fr{\abs{\widehat{R}_J(T_U)-R_J(T_U)}}{2^{\alpha J}}>\delta\right)
+\leqslant{}\\
+{}\leqslant \exp\left\{-C_\delta\fr{2^{2\alpha J-J}}{J}\right\}.
+\end{multline}
+Далее
+\begin{equation*}
+\sum\limits_{J=1}^{\infty}p_J<\infty
+\end{equation*}
+и в~силу леммы Бо\-ре\-ля--Кан\-тел\-ли осуществляется лишь конечное число событий 
+под вероятностью в~(\ref{Prob_Conv}). Следовательно, выполнено~(\ref{Strong_Con}). 
+Теорема доказана.
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-sh}
+\Au{Donoho D., Johnstone I.\,M.} Ideal spatial adaptation via wavelet shrinkage~// 
+Biometrika, 1994. Vol.~81. No.\,3. P.~425--455.
+
+\bibitem{2-sh}
+\Au{Breiman L.} Heuristics of instability and stabilization in model selection~// 
+Ann. Statist., 1996. Vol.~24. No.\,6. P.~2350--2383.
+
+\bibitem{3-sh}
+\Au{Jansen M.} Noise reduction by wavelet thresholding.~--- 
+Lecture notes in statistics ser.~--- Springer Verlag, 2001. 
+ Vol.~161. 218~p.
+
+\bibitem{4-sh}
+\Au{Huang H.-C., Lee T.\,C.\,M.} Stabilized thresholding with
+generalized sure for image denoising~// IEEE
+17th  Conference (International) on Image Processing Proceedings.~---
+IEEE, 2010. P.~1881--1884.
+
+\bibitem{5-sh}
+\Au{Stein C.} Estimation of the mean of a~multivariate normal distribution~// 
+Ann. Stat., 1981. Vol.~9. No.\,6. P.~1135--1151.
+
+\bibitem{6-sh}
+\Au{Маркин А.\,В.} Предельное распределение оценки риска при пороговой обработке 
+вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов~// Информатика и~её применения, 2009. Т.~3. 
+Вып.~4. С.~57--63.
+
+\bibitem{7-sh}
+\Au{Маркин А.\,В., Шестаков~О.\,В.} 
+О~состоятельности оценки риска при пороговой обработке вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов~// 
+Вестн. Моск. ун-та. Сер.~15. Вычисл. матем. и~киберн., 2010. №\,1. C.~26--34.
+
+\bibitem{8-sh}
+\Au{Шестаков О.\,В.}  Асимптотическая нормальность оценки риска пороговой обработки 
+вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов при выборе адаптивного порога~// 
+Докл. РАН, 2012. Т.~445. №\,5. С.~513--515.
+
+\bibitem{9-sh}
+\Au{Шестаков О.\,В.} О~точности приближения распределения оценки риска 
+пороговой обработки вейв\-лет-ко\-эф\-фи\-ци\-ен\-тов 
+сигнала нормальным законом при неизвестном уровне шума~// Системы и~средства 
+информатики, 2012. Т.~22. №\,1. С.~142--152.
+
+\bibitem{10-sh}
+\Au{Mallat S.} A~wavelet tour of signal processing.~--- New York, NY, USA: 
+Academic Press, 1999. 857~p.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 22.01.16}}
+
+\vspace*{8pt}
+
+%\newpage
+
+%\vspace*{-24pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{8pt}
+
+
+
+\def\tit{STATISTICAL PROPERTIES OF~THE~DENOISING METHOD BASED~ON~THE~STABILIZED 
+HARD THRESHOLDING}
+
+\def\titkol{Statistical properties of the denoising method based on~the~stabilized 
+hard thresholding}
+
+\def\aut{O.\,V.~Shestakov$^{1,2}$}
+
+\def\autkol{O.\,V.~Shestakov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+\noindent
+$^1$Department of Mathematical Statistics, Faculty of Computational Mathematics 
+and Cybernetics,\linebreak
+$\hphantom{^1}$M.\,V.~Lomonosov Moscow State University, 1-52~Leninskiye Gory, 
+GSP-1, Moscow 119991, Russian\linebreak
+$\hphantom{^1}$Federation
+
+\noindent
+$^2$Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control''
+of the Russian\linebreak
+$\hphantom{^1}$Academy of Sciences, 44-2~Vavilov Str., Moscow 119333,  Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2016\ \ \ volume~10\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2016\ \ \ volume~10\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+\Abstend{The thresholding techniques for the wavelet coefficients of the signal 
+and image functions have become a popular denoising tool because of their simplicity, 
+computational efficiency, and possibility to adapt to the functions with different 
+amounts of smoothness in different locations. The paper considers the recently proposed 
+stabilized hard thresholding method which avoids the main disadvantages of the popular 
+soft and hard thresholding techniques. The statistical properties of this method are 
+studied. The unbiased risk estimate is analyzed in the model with an additive Gaussian 
+noise. Wavelet thresholding risk analysis is an important practical task, 
+because it allows determining the quality of the techniques themselves and 
+the equipment which is being used. The paper proves that under certain conditions, 
+the unbiased risk estimate is strongly consistent and asymptotically normal. 
+These properties allow constructing the asymptotic confidence intervals for the 
+theoretical mean squared risk of the method.}
+
+\KWE{wavelets; thresholding; unbiased risk estimate; asymptotic normality; 
+strong consistency}
+
+
+\DOI{10.14357/19922264160207}
+
+%\vspace*{-12pt}
+
+\Ack
+\noindent
+The work was partly supported by the Russian Foundation for Basic
+Research (project 16-07-00736).
+
+
+%\vspace*{3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+ \bibitem{1-sh-1}
+\Aue{Donoho, D., and I.\,M.~Johnstone}. 1994. 
+Ideal spatial adaptation via wavelet shrinkage. \textit{Biometrika} 81(3):425--455.
+
+\bibitem{2-sh-1}
+\Aue{Breiman, L.} 1996. Heuristics of instability and stabilization in model selection. 
+\textit{Ann. Stat.} 24(6):2350--2383.
+
+\bibitem{3-sh-1}
+\Aue{Jansen, M.} 2001. \textit{Noise reduction by wavelet thresholding}. 
+Lecture notes in statistics ser. Springer Verlag.  Vol.~161. 218~p.
+
+\bibitem{4-sh-1}
+\Aue{Huang, H.-C., and T.\,C.\,M.~Lee}. 2010. 
+Stabilized thresholding with generalized sure for image denoising. 
+\textit{IEEE
+17th  Conference (International) on Image Processing Proceedings}.
+IEEE. 1881--1884.
+
+\bibitem{5-sh-1}
+\Aue{Stein, C.} 1981. Estimation of the mean of a~multivariate normal distribution. 
+\textit{Ann. Stat.} 9(6):1135--1151.
+
+\bibitem{6-sh-1}
+\Aue{Markin, A.\,V.} 2009. Predel'noe raspredelenie otsenki riska pri porogovoy 
+obrabotke veyvlet-koeffitsientov [Limit distribution of risk estimate of wavelet 
+coefficient thresholding].
+\textit{Informatika i~ee Primeneniya}~--- \textit{Inform. Appl.} 3(4):57--63.
+
+\bibitem{7-sh-1}
+\Aue{Markin, A.\,V., and O.\,V.~Shestakov}. 2010. 
+Consistency of risk estimation with 
+thresholding of wavelet coefficients. 
+\textit{Moscow Univ. Comput. Math. Cybern}. 34(1):22--30.
+
+\bibitem{8-sh-1}
+\Aue{Shestakov, O.\,V.} 2012. 
+Asymptotic normality of adaptive wavelet thresholding risk estimation.
+\textit{Dokl. Math.} 86(1):556--558.
+
+\bibitem{9-sh-1}
+\Aue{Shestakov, O.\,V.} 2012. O~tochnosti priblizheniya raspredeleniya otsenki 
+riska porogovoy obrabotki veyvlet-ko\-ef\-fi\-tsi\-en\-tov signala normal'nym zakonom pri 
+neizvestnom urovne shuma [On the accuracy of normal approximation for risk estimate 
+distribution when thresholding signal wavelet coefficients in case of unknown 
+noise level]. \textit{Sistemy i~Sredstva Informatiki}~--- \textit{Systems and Means of 
+Informatics} 22(1):142--152.
+
+\bibitem{10-sh-1}
+\Aue{Mallat, S.} 1999. \textit{A~wavelet tour of signal processing}. 
+New York, NY:  Academic Press. 857~p.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Received January 22, 2016}}
+
+\Contrl
+
+\noindent
+\textbf{Shestakov Oleg V.} (b.\ 1976)~--- 
+Doctor of Science in physics and mathematics, associate professor, 
+Department of Mathematical Statistics, Faculty of Computational Mathematics 
+and Cybernetics, M.\,V.~Lomonosov Moscow State University, 1-52~Leninskiye Gory, 
+GSP-1, Moscow 119991, Russian Federation; senior scientist, 
+Institute of Informatics Problems, Federal Research Center 
+``Computer Science and Control''
+of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, 
+Russian Federation; oshestakov@cs.msu.su
+
+
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература}

@@ -1,0 +1,3473 @@
+<?xml version="1.0" encoding="utf-8"?>
+<papers>
+  <paper>
+    <metadata>
+      <annotation value="\Abst{Рассмотрена задача прогнозирования значений одной переменной по значениям другой методами регрессионного анализа. В перечень сравниваемых процедур регрессионного анализа были включены следующие методы оценивания параметров модели: обычный наименьших квадратов, наименьших квадратов на основе знаковых статистик, нулевой корреляции на основе ранговых статистик. Реализация метода наименьших квадратов на основе знаковых статистик потребовала построения эффективной процедуры обработки данных, для чего был описан и исследован вариант метода наискорейшего спуска. В сложной ситуации ку соч но-по сто ян ной целевой функции получен работоспособный вариант соответствующего алгоритма. Проведенный сравнительный анализ процедур регрессионного анализа в реальных условиях, когда данные не подчиняются нормальному распределению, показал преимущества непараметрических методов. Принимая во внимание алгоритмические аспекты, в рассматриваемом случае предпочтение надо отдать процедурам, основанным на рангах, а не на знаках. Достоинства непараметрических методов позволяют повысить точность согласования двух способов измерения хромогранина A, широко используемого в качестве иммуногистохимического маркера нейроэндокринной дифференцировки.}"/>
+      <keywords>
+        <braces>
+          <text value="\KW{регрессионный анализ; ранговые и знаковые процедуры; качество прогноза; согласование результатов измерений}"/>
+        </braces>
+      </keywords>
+    </metadata>
+    <fulltext>
+      <literature/>
+      <text value="krivenko"/>
+      <text value="СРАВНИТЕЛЬНЫЙ АНАЛИЗ ПРОЦЕДУР РЕГРЕССИОННОГО АНАЛИЗА"/>
+      <text value="Сравнительный анализ процедур регрессионного анализа"/>
+      <text value="М."/>
+      <text value="П. Кривенко$^1$"/>
+      <text value="М."/>
+      <text value="П. Кривенко"/>
+      <command value="\titel">
+        <braces>
+          <braces>
+            <text value="{}"/>
+            <command value="\tit">
+              <braces/>
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <command value="\aut">
+                    <braces/>
+                    <braces>
+                      <braces>
+                        <text value="{}"/>
+                        <command value="\autkol">
+                          <braces/>
+                          <braces>
+                            <braces>
+                              <text value="{}"/>
+                              <command value="\titkol">
+                                <braces/>
+                              </command>
+                            </braces>
+                          </braces>
+                        </command>
+                      </braces>
+                    </braces>
+                  </command>
+                </braces>
+              </braces>
+            </command>
+          </braces>
+        </braces>
+      </command>
+      <command value="\renewcommand">
+        <braces>
+          <braces>
+            <text value="{}"/>
+            <command value="\thefootnote">
+              <braces/>
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <command value="\arabic">
+                    <braces>
+                      <braces>
+                        <text value="{}"/>
+                        <text value="footnote"/>
+                      </braces>
+                    </braces>
+                    <braces/>
+                    <braces/>
+                  </command>
+                </braces>
+              </braces>
+            </command>
+          </braces>
+        </braces>
+      </command>
+      <command value="\footnotetext">
+        <braces>
+          <text value="\footnotetext[1]{}"/>
+        </braces>
+      </command>
+      <text value="Институт проблем информатики Российской академии наук, mkrivenko@ipiran.ru"/>
+      <command value="\vskip">
+        <braces>
+          <text value="12pt plus 9pt minus 6pt"/>
+        </braces>
+      </command>
+      <command value="\thispagestyle">
+        <braces>
+          <braces>
+            <text value="{}"/>
+            <text value="headings"/>
+          </braces>
+        </braces>
+        <braces/>
+      </command>
+      <command value="\begin">
+        <braces>
+          <braces>
+            <text value="{}"/>
+            <text value="2"/>
+          </braces>
+        </braces>
+        <braces/>
+      </command>
+      <command value="\label">
+        <braces>
+          <braces>
+            <text value="{}"/>
+            <text value="st"/>
+            <command value="\stat">
+              <braces/>
+            </command>
+          </braces>
+        </braces>
+      </command>
+      <section id="id1">
+        <braces>
+          <text value="\section{}"/>
+        </braces>
+        <text value="Введение"/>
+        <text value="Если в ходе регрессионного анализа появляются свидетельства того, что распределение данных существенно отличается от нормального (в частности, присутствуют аномальные наблюдения), появляются сомнения в эффективности общепринятых методов и приходится обращаться к робастным методам. Соответствующая мотивация дана во множестве работ (см., в частности, гл. 2 в"/>
+        <text value="1"/>
+        <text value="или разд. 1 в"/>
+        <text value="2"/>
+        <text value="). В данной работе рассматривается задача линейного регрессионного анализа двухмерных данных и использование результатов ее решения для прогнозирования значений одной переменной с помощь другой."/>
+      </section>
+      <section id="id2">
+        <braces>
+          <text value="\section{}"/>
+        </braces>
+        <text value="Методы линейного регрессионного анализа"/>
+        <text value="Классический параметрический метод подбора вида зависимости между переменными основывается на методе наименьших квадратов, он обладает оптимальными свойствами при выполнении условий независимости и гомоскедастичности. Дополнительное предположение о нормальности распределения данных приводит к простым статистическим процедурам описания получающихся оценок. Для данных примем следующую модель:$$Y=XA+E"/>
+        <text value=",$$где"/>
+        <formula id="id3" value="$Y=(y_1, \ldots , y_n)^{\mathrm{T}}$"/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="зависимая переменная,"/>
+        <formula id="id4" value="$X\hm=&#10;\begin{pmatrix} 1 &amp;amp; \cdots &amp;amp; 1\\&#10;x_1 &amp;amp; \cdots &amp;amp; x_n\end{pmatrix}^{\mathrm{^T}}$"/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="независимая переменная (предиктор),"/>
+        <formula id="id5" value="$A\hm= (a_1, a_2)^{\mathrm{T}}$"/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="параметры модели,"/>
+        <formula id="id6" value="$E\hm=&#10;(\varepsilon_1, \ldots , \varepsilon_n )^{\mathrm{T}}$"/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="ошибка представления$Y$с"/>
+        <command value="\mbox">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="помощью"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="$X$. Обычные оценки наименьших квадратов (OLS-оценки) являются решением следующей задачи:"/>
+          </braces>
+        </command>
+        <command value="\begin">
+          <braces>
+            <text value="S_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\mathrm">
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="OLS"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces/>
+                <braces>
+                  <text value="(a_1, a_2)"/>
+                </braces>
+              </command>
+              <command value="\underset">
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="a_1,a_2"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <command value="\Longrightarrow">
+                      <braces/>
+                    </command>
+                    <command value="\min"/>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <text value="."/>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="equation*"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="Здесь"/>
+          </braces>
+        </command>
+        <formula id="id7" value="$S_{\mathrm{OLS}} (a_1,a_2) =\sum\limits_{i=1}^n (y_i -a_1 -x_ia_2)^2$"/>
+        <text value="и имеют вид:$$a_2^* ="/>
+        <command value="\fr">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\sum"/>
+              <command value="\limits">
+                <braces>
+                  <text value="_"/>
+                </braces>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="i=1"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces>
+                  <text value="^n (x_i -"/>
+                </braces>
+              </command>
+              <command value="\overline">
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="x"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces>
+                  <text value=")y_i"/>
+                </braces>
+                <braces/>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <command value="\sum"/>
+                    <command value="\limits">
+                      <braces>
+                        <text value="_"/>
+                      </braces>
+                      <braces>
+                        <braces>
+                          <text value="{}"/>
+                          <text value="i=1"/>
+                        </braces>
+                      </braces>
+                      <braces/>
+                      <braces>
+                        <text value="^n (x_i-"/>
+                      </braces>
+                    </command>
+                    <command value="\overline">
+                      <braces>
+                        <braces>
+                          <text value="{}"/>
+                          <text value="x"/>
+                        </braces>
+                      </braces>
+                      <braces/>
+                      <braces>
+                        <text value=")^2"/>
+                      </braces>
+                      <braces/>
+                    </command>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <text value=";"/>
+        <command value="\quad">
+          <braces>
+            <text value="a_1^*="/>
+          </braces>
+        </command>
+        <command value="\overline">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="y"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="-a_2^*"/>
+          </braces>
+        </command>
+        <command value="\overline">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="x"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <text value=",$$где верхняя горизонтальная черта означает выборочное среднее. Здесь и далее аббревиатуры типа OLS формировались на основе общепринятых англоязычных терминов. Оценки параметров линейной регрессии с помощью непараметрических методов строятся путем применения идей OLS-оценки и использования аналогов обычных статистик (см., например, разд. 8 в"/>
+        <text value="3"/>
+        <text value="), причем объектом анализа становятся так называемые остатки, т."/>
+        <text value="е."/>
+        <text value="величины"/>
+        <formula id="id8" value="$y_i\hm- a_1 \hm-&#10;x_i a_2$"/>
+        <text value=","/>
+        <formula id="id9" value="$i\hm= 1, \ldots , n$"/>
+        <text value=". Регрессия на основе линейных ранговых статистик Манна--Уитни--Вилкоксона использует коэффициент корреляции общего вида с заменой значений остатков на их ранги, что приводит к уравнению для получения оценок параметров регрессионной модели, имеющему следующий вид:"/>
+        <formula id="id10" value="Token(TokenType.FORMULA&amp;quot;, &amp;quot;\begin{equation}&#10;     S_{\mathrm{RZE}} (a_1, a_2)=0\,,&#10;     \label{e1-kri}&#10;     \end{equation}&amp;quot;, line=113, col=22)"/>
+        <text value="где"/>
+        <command value="\begin">
+          <braces>
+            <text value="S_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\mathrm">
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="RZE"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces/>
+                <braces>
+                  <text value="(a_1, a_2) ="/>
+                </braces>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <braces>
+          <text value="{}"/>
+          <text value="="/>
+          <command value="\sum"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="i=1"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^n (x_i-"/>
+            </braces>
+          </command>
+          <command value="\overline">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="x"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value=")"/>
+            </braces>
+          </command>
+        </braces>
+        <command value="\mathrm">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="rank"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\left">
+          <braces>
+            <text value="( y_i -a_1 -a_2 (x_i-"/>
+          </braces>
+        </command>
+        <command value="\overline">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="x"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=")"/>
+          </braces>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")"/>
+          </braces>
+        </command>
+        <text value="."/>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="multline*"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="Принимая во внимание инвариантность рангов относительно сдвига, получаем, что (1) эквивалентно следующему уравнению для нахождения уже только оценки для$a_2$:"/>
+          </braces>
+        </command>
+        <formula id="id11" value="Token(TokenType.FORMULA&amp;quot;, &amp;quot;\begin{equation}&#10;     T(a_2) =0\,,&#10;     \label{e2-kri}&#10;     \end{equation}&amp;quot;, line=127, col=22)"/>
+        <text value="где$$T(a_2) ="/>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="i=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^n x_i"/>
+          </braces>
+        </command>
+        <command value="\mathrm">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="rank"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\left">
+          <braces>
+            <text value="( y_i -a_2 x_i"/>
+          </braces>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=") -"/>
+          </braces>
+        </command>
+        <command value="\fr">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="n(n+1)"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="2"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\overline">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="x"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <text value=".$$Трудности решения (2) возникают в силу того, что"/>
+        <formula id="id12" value="$T(u)$"/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="кусочно-постоянная функция. Если предположить, что"/>
+        <formula id="id13" value="$x_j\not=&#10;x_i$"/>
+        <text value="для всех допустимых неравных значений$i$и$j$, и ввести обозначения"/>
+        <formula id="id14" value="$b_{ij} \hm= (y_j-y_i)/(x_j-x_i)$"/>
+        <text value=", то оказывается, что функция"/>
+        <formula id="id15" value="$T(u)$"/>
+        <text value="не меняет своего значения при любых$u$, лежащих между двумя последующими значениями"/>
+        <formula id="id16" value="$b_{ij}$"/>
+        <text value=". При этом в общем случае решения (2) может и не быть. В качестве выхода из создавшегося положения предлагалось рассматривать"/>
+        <formula id="id17" value="$T(u)$"/>
+        <text value="как аппроксимацию некоторой непрерывной функции и использовать линейную интерполяцию между двумя соседними значениями$u$, для которых"/>
+        <formula id="id18" value="$T(u)$"/>
+        <text value="принимает различные по знаку значения (см."/>
+        <text value="разд. 8.1.2 в"/>
+        <text value="3"/>
+        <text value="). Таким образом может быть найдена оценка"/>
+        <formula id="id19" value="$a_2^*$"/>
+        <text value="для$a_2$. Но для задачи прогнозирования важна оценка и другого параметра регрессионной модели. Существуют различные варианты ее получения (см."/>
+        <text value="разд. 8.1.5 в"/>
+        <text value="3"/>
+        <text value="), один из них основывается на предположениях относительно наблюденных значений и является действенным и простым. Для выбранной модели данных остатки вида"/>
+        <formula id="id20" value="$y_i \hm- a_2 x_i$"/>
+        <text value="для"/>
+        <formula id="id21" value="$i\hm= 1, \ldots ,n$"/>
+        <text value="имеют идентичные распределения с медианой, близкой к$a_1$. Поэтому идея метода оценивания$a_1$состоит в получении выборочной медианы для наблюденных значений"/>
+        <formula id="id22" value="$y_i\hm- a_2^*x_i$"/>
+        <text value=". Это замечание завершает описание шагов по оцениванию параметров$a_1$и$a_2$. Знаковые оценки параметров модели вводятся на основе знаковых критериев значимости и их статистик (см."/>
+        <text value="гл. 3 в"/>
+        <text value="4"/>
+        <text value="). Они являются решением задачи"/>
+        <formula id="id23" value="Token(TokenType.FORMULA&amp;quot;, &amp;quot;\begin{equation}&#10;     S_{\mathrm{SLS}}(a_1,a_2) \underset{a_1,a_2}{\Longrightarrow} \min\,,&#10;     \label{e3-kri}&#10;     \end{equation}&amp;quot;, line=162, col=22)"/>
+        <text value="где"/>
+        <command value="\begin">
+          <braces>
+            <text value="S_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\mathrm">
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="SLS"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces/>
+                <braces>
+                  <text value="(a_1,a_2) ="/>
+                </braces>
+              </command>
+              <command value="\left">
+                <braces>
+                  <text value="("/>
+                </braces>
+              </command>
+              <command value="\sum"/>
+              <command value="\limits">
+                <braces>
+                  <text value="_"/>
+                </braces>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="i=1"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces>
+                  <text value="^n"/>
+                </braces>
+              </command>
+              <command value="\mathrm">
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="sign"/>
+                  </braces>
+                </braces>
+                <braces/>
+              </command>
+              <command value="\left">
+                <braces>
+                  <text value="( y_i -a_1 -x_i a_2"/>
+                </braces>
+              </command>
+              <command value="\right">
+                <braces>
+                  <text value=")"/>
+                </braces>
+              </command>
+              <command value="\right">
+                <braces>
+                  <text value=")^2 +"/>
+                </braces>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <braces>
+          <text value="{}"/>
+          <text value="+"/>
+          <command value="\left">
+            <braces>
+              <text value="("/>
+            </braces>
+          </command>
+          <command value="\sum"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="i=1"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^n x_i"/>
+            </braces>
+          </command>
+          <command value="\mathrm">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="sign"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\left">
+            <braces>
+              <text value="( y_i -a_1 -x_i a_2"/>
+            </braces>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")"/>
+            </braces>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")^2"/>
+            </braces>
+          </command>
+        </braces>
+        <text value="."/>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="multline*"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="К сожалению, предложенные в"/>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="4"/>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="решения этой задачи даже применительно к простой двухпараметрической регрессионной модели далеки от завершения. Поэтому для того, чтобы провести сравнительный анализ методов оценивания, пришлось сначала предложить и исследовать приемы построения знаковых оценок. Введем ряд функций от одной переменной$u$, зависящих от наборов векторных параметров$r$,$v$,$w$(всех или части из них), и исследуем их свойства. Они будут играть ключевую роль при решении задачи (3). Начнем с функции следующего вида:$$"/>
+          </braces>
+        </command>
+        <command value="\psi">
+          <braces>
+            <text value="_0 (r,v,w,u) ="/>
+          </braces>
+        </command>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="i=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^n r_i"/>
+          </braces>
+        </command>
+        <command value="\mathrm">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="sign"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\left">
+          <braces>
+            <text value="( v_i-w_iu"/>
+          </braces>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")"/>
+          </braces>
+        </command>
+        <text value=".$$Выделим в сумме слагаемые с"/>
+        <formula id="id24" value="$w_i\hm=0$"/>
+        <text value=", что приведет к следующим представлениям:"/>
+        <command value="\noindent">
+          <braces>
+            <text value="\noindent"/>
+          </braces>
+        </command>
+        <command value="\begin"/>
+        <command value="\psi">
+          <braces>
+            <text value="_0(r,v,w,u) ="/>
+          </braces>
+        </command>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\substack">
+                <braces>
+                  <braces>
+                    <text value="{i=1,\ldots , n}"/>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <braces>
+          <text value="{}"/>
+          <text value="w_i=0"/>
+        </braces>
+        <text value="r_i"/>
+        <command value="\mathrm">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="sign"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\left">
+          <braces>
+            <text value="(v_i"/>
+          </braces>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=") +"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+            </braces>
+          </braces>
+        </command>
+        <braces>
+          <text value="{}"/>
+          <text value="+"/>
+          <command value="\sum"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{\substack{{i=1,\ldots ,n}\\{w_i\not=0}}}"/>
+                <text value="r_i"/>
+                <command value="\mathrm">
+                  <braces>
+                    <braces>
+                      <text value="{}"/>
+                      <text value="sign"/>
+                    </braces>
+                  </braces>
+                  <braces/>
+                </command>
+                <command value="\left">
+                  <braces>
+                    <text value="(v_i-w_i u"/>
+                  </braces>
+                </command>
+                <command value="\right">
+                  <braces>
+                    <text value=")="/>
+                  </braces>
+                </command>
+              </braces>
+            </braces>
+          </command>
+        </braces>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\substack">
+                <braces>
+                  <braces>
+                    <text value="{i=1,\ldots , n}"/>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <braces>
+          <text value="{}"/>
+          <text value="w_i=0"/>
+        </braces>
+        <text value="r_i"/>
+        <command value="\mathrm">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="sign"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\left">
+          <braces>
+            <text value="(v_i"/>
+          </braces>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=") +"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+            </braces>
+          </braces>
+        </command>
+        <braces>
+          <text value="{}"/>
+          <text value="+"/>
+          <command value="\sum"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <command value="\substack">
+                  <braces>
+                    <braces>
+                      <text value="{i=1,\ldots ,n}"/>
+                    </braces>
+                  </braces>
+                </command>
+              </braces>
+            </braces>
+          </command>
+        </braces>
+        <braces>
+          <text value="{}"/>
+          <text value="w_i"/>
+          <command value="\not">
+            <braces>
+              <text value="=0"/>
+            </braces>
+            <braces/>
+            <braces/>
+            <braces/>
+            <braces>
+              <text value="r_i"/>
+            </braces>
+          </command>
+          <command value="\mathrm">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="sign"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\left">
+            <braces>
+              <text value="(w_i"/>
+            </braces>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")"/>
+            </braces>
+          </command>
+          <command value="\mathrm">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="sign"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\left">
+            <braces>
+              <text value="("/>
+            </braces>
+          </command>
+          <command value="\fr">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="v_i"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="w_i"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="-u"/>
+            </braces>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")="/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+              </braces>
+            </braces>
+          </command>
+        </braces>
+        <braces>
+          <text value="{}"/>
+          <text value="="/>
+          <command value="\sum"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <command value="\substack">
+                  <braces>
+                    <braces>
+                      <text value="{i=1,\ldots , n}"/>
+                    </braces>
+                  </braces>
+                </command>
+              </braces>
+            </braces>
+          </command>
+        </braces>
+        <braces>
+          <text value="{}"/>
+          <text value="w_i=0"/>
+        </braces>
+        <text value="r_i"/>
+        <command value="\mathrm">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="sign"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\left">
+          <braces>
+            <text value="(v_i"/>
+          </braces>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=") +"/>
+          </braces>
+        </command>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\substack">
+                <braces>
+                  <braces>
+                    <text value="{i=1,\ldots ,n}"/>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <braces>
+          <text value="{}"/>
+          <text value="w_i"/>
+          <command value="\not">
+            <braces>
+              <text value="=0"/>
+            </braces>
+            <braces/>
+            <braces/>
+            <braces/>
+          </command>
+          <command value="\tilde">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="r"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="_i"/>
+            </braces>
+          </command>
+          <command value="\mathrm">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="sign"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\left">
+            <braces>
+              <text value="("/>
+            </braces>
+          </command>
+          <command value="\tilde">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="v"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="_i- u"/>
+            </braces>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")"/>
+            </braces>
+          </command>
+        </braces>
+        <text value=","/>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="multline*"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="где"/>
+          </braces>
+        </command>
+        <formula id="id25" value="$\tilde{r} =r_i \mathrm{sign}\left(w_i\right)$"/>
+        <text value=";"/>
+        <formula id="id26" value="$\tilde{v}_i = v_i/w_i$"/>
+        <text value="."/>
+        <command value="\pagebreak">
+          <braces>
+            <text value="Рассмотрим сумму, содержащую только слагаемые с"/>
+          </braces>
+        </command>
+        <formula id="id27" value="$w_i\not= 0$"/>
+        <text value=", а именно:$$"/>
+        <command value="\psi">
+          <braces>
+            <text value="_1 ("/>
+          </braces>
+        </command>
+        <command value="\tilde">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="r"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=","/>
+          </braces>
+        </command>
+        <command value="\tilde">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="v"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=", u) ="/>
+          </braces>
+        </command>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="i=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^m"/>
+          </braces>
+        </command>
+        <command value="\tilde">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="r"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="_i"/>
+          </braces>
+        </command>
+        <command value="\mathrm">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="sign"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\left">
+          <braces>
+            <text value="("/>
+          </braces>
+        </command>
+        <command value="\tilde">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="v"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="_i-u"/>
+          </braces>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")"/>
+          </braces>
+        </command>
+        <text value=".$$Упорядочим значения"/>
+        <formula id="id28" value="$\tilde{v}_i$"/>
+        <text value="по возрастанию, что даст последовательность"/>
+        <formula id="id29" value="$\{ \tilde{v}_{(i)}\}$"/>
+        <text value=". После перестановки индексов получим эквивалентную запись суммы:$$"/>
+        <command value="\psi">
+          <braces>
+            <text value="_1("/>
+          </braces>
+        </command>
+        <command value="\tilde">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="r"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=","/>
+          </braces>
+        </command>
+        <command value="\tilde">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="v"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value=",u) ="/>
+          </braces>
+        </command>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="i=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^m"/>
+          </braces>
+        </command>
+        <command value="\tilde">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="r"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="i("/>
+              <command value="\tilde">
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="v"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces>
+                  <text value="_"/>
+                </braces>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="(i)"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces>
+                  <text value=")"/>
+                </braces>
+                <braces/>
+              </command>
+              <command value="\mathrm">
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="sign"/>
+                  </braces>
+                </braces>
+                <braces/>
+              </command>
+              <command value="\left">
+                <braces>
+                  <text value="("/>
+                </braces>
+              </command>
+              <command value="\tilde">
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="v"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces>
+                  <text value="_"/>
+                </braces>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="(i)"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces>
+                  <text value="- u"/>
+                </braces>
+              </command>
+              <command value="\right">
+                <braces>
+                  <text value=")"/>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <text value=",$$где"/>
+        <formula id="id30" value="$i(\tilde{v}_{(i)})$"/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="индекс значения"/>
+        <formula id="id31" value="$\tilde{v}_{(i)}$"/>
+        <text value="в наборе"/>
+        <formula id="id32" value="$\left\{&#10;\tilde{v}_i\right\}$"/>
+        <text value="до упорядочивания. Тогда верны следующие утверждения:"/>
+        <itemize/>
+        <text value="Справедливость перечисленных утверждений следует непосредственно из вида рассматриваемых функций. Объединим обозначения для множеств точек, где кусочно-постоянная функция принимает некоторое значение, следующим образом:"/>
+        <formula id="id33" value="$\langle\tilde{v}_{(i)}, \delta_i\rangle$"/>
+        <text value=", где"/>
+        <formula id="id34" value="$\delta_i\hm=0$"/>
+        <text value=", когда речь идет о точке, и"/>
+        <formula id="id35" value="$\delta_i \hm= \tilde{v}_{(i+1)} \hm-&#10;\tilde{v}_{(i)}\hm&amp;gt;0$"/>
+        <text value=", когда речь идет об интервале. Для пар"/>
+        <formula id="id36" value="$\langle\tilde{v}_{(i)},&#10;\delta_i\rangle$"/>
+        <text value="действует обычный лексикографический порядок, а для множества пар определен минимальный элемент. Теперь можно перейти к описанию поведения квадратов введенных функций. Функции вида"/>
+        <formula id="id37" value="$\psi_0^2(r,v,w,u)$"/>
+        <text value="или"/>
+        <formula id="id38" value="$\psi_1^2(\tilde{r},&#10;\tilde{v},u)$"/>
+        <text value="достигают своего минимума либо в точке"/>
+        <formula id="id39" value="$\tilde{v}_{(i)}$"/>
+        <text value=", либо на интервале"/>
+        <formula id="id40" value="$\left(\tilde{v}_{(i)}, \tilde{v}_{(i+1)}\right)$"/>
+        <text value="для некоторого значения$i$; этот минимум может быть найден с помощью перебора пар"/>
+        <formula id="id41" value="$\langle\tilde{v}_{(i)}, \delta_i\rangle$"/>
+        <text value=". Аналогичные выводы справедливы и для функции$$"/>
+        <command value="\varphi">
+          <braces>
+            <text value="_0(r,v,w,u) ="/>
+          </braces>
+        </command>
+        <command value="\psi">
+          <braces>
+            <text value="_0^2(1,v,w,u)+"/>
+          </braces>
+        </command>
+        <command value="\psi">
+          <braces>
+            <text value="_0^2(r,v,w,u)"/>
+          </braces>
+        </command>
+        <text value=",$$где"/>
+        <formula id="id42" value="$1=(1, \ldots , 1)^{\mathrm{T}}$"/>
+        <text value=". Введем дополнительные ограничения на вектор$r$и рассмотрим следующую функцию:$$"/>
+        <command value="\psi">
+          <braces>
+            <text value="_2(r,v,u) ="/>
+          </braces>
+        </command>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="i=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^m r_i"/>
+          </braces>
+        </command>
+        <command value="\mathrm">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="sign"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\left">
+          <braces>
+            <text value="(v_i-u"/>
+          </braces>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")"/>
+          </braces>
+        </command>
+        <text value=","/>
+        <command value="\enskip">
+          <braces>
+            <text value="r_i&amp;gt;0"/>
+          </braces>
+        </command>
+        <command value="\mbox">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="для всех"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="i"/>
+          </braces>
+        </command>
+        <text value=".$$Для нее выполняется дополнительное свойство: переход через каждую точку"/>
+        <formula id="id43" value="$v_{(i)}$"/>
+        <text value="при возрастании$u$уменьшает значение"/>
+        <formula id="id44" value="$\psi_2(r,v,u)$"/>
+        <text value="дважды на величину"/>
+        <formula id="id45" value="$r_{i(v(i))}$"/>
+        <text value=". Далее понадобятся свойства функции"/>
+        <formula id="id46" value="$\psi_2(1,v,u)$"/>
+        <text value=". Она достигает нулевого значения при"/>
+        <formula id="id47" value="$\langlev_{(m/2)}, v_{(m/2)+1}-v_{(m/2)}\rangle$"/>
+        <text value=", если$m$четно, или при"/>
+        <formula id="id48" value="$\langlev_{\lfloor m/2\rfloor +1},0\rangle$"/>
+        <text value=", если$m$нечетно. Для"/>
+        <formula id="id49" value="$\varphi_2^2(r,v,u)$"/>
+        <text value="поиск минимума перебором точек"/>
+        <formula id="id50" value="$v_{(i)}$"/>
+        <text value="можно сделать более эффективным. Дело в том, что функция"/>
+        <formula id="id51" value="$\psi_2^2(r,v,u)$"/>
+        <text value="не возрастает в области, где"/>
+        <formula id="id52" value="$\psi_2(r,v,u)\hm&amp;gt;0$"/>
+        <text value=", и не убывает, где"/>
+        <formula id="id53" value="$\psi_2(r,v,u)\hm&amp;lt;0$"/>
+        <text value="; этим можно воспользоваться для завершения последовательного перебора пар"/>
+        <formula id="id54" value="$\langlev_{(i)}, \delta_i\rangle$"/>
+        <text value="для"/>
+        <formula id="id55" value="$i\hm= 1, 2,\ldots$"/>
+        <text value="Функция"/>
+        <formula id="id56" value="$\psi_2^2(1,v,u)$"/>
+        <text value="достигает своего нулевого минимального значения при"/>
+        <formula id="id57" value="$\langlev_{(m/2)}, v_{(m/2)+1}\hm-v_{(m/2)}\rangle$"/>
+        <text value=", если$m$четно, или при"/>
+        <formula id="id58" value="$\langlev_{\lfloor m/2\rfloor +1},0\rangle$"/>
+        <text value=", если$m$нечетно. Как следствие, становится возможным сократить перебор и для функции вида:$$"/>
+        <command value="\varphi">
+          <braces>
+            <text value="_2(r,v,u) ="/>
+          </braces>
+        </command>
+        <command value="\psi">
+          <braces>
+            <text value="_2^2"/>
+          </braces>
+        </command>
+        <command value="\left">
+          <braces>
+            <text value="(1,v,u"/>
+          </braces>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")+"/>
+          </braces>
+        </command>
+        <command value="\psi">
+          <braces>
+            <text value="_2^2(r,v,u)"/>
+          </braces>
+        </command>
+        <text value=".$$Просмотр точек разрыва"/>
+        <formula id="id59" value="$v_{(i)}$"/>
+        <text value="для"/>
+        <formula id="id60" value="$i\hm=1, 2,\ldots$"/>
+        <text value="следует прекратить для такого наименьшего"/>
+        <formula id="id61" value="$i\hm=k$"/>
+        <text value=", при котором"/>
+        <formula id="id62" value="$\psi_2(1,v,v_{(k)}) \hm&amp;lt;0$"/>
+        <text value="и"/>
+        <formula id="id63" value="$\psi_2(r,v,v_{(k)})\hm&amp;gt; \psi_2(r,v,v_{(k-1)})$"/>
+        <text value=". Вернемся к задаче (3), решение которой будет формироваться каким-либо итерационным методом. Приближение на$t$-м шаге итерации обозначим как"/>
+        <formula id="id64" value="$\left( a_1^{(t)}, a_2^{(t)}\right)$"/>
+        <text value="и рассмотрим получение"/>
+        <formula id="id65" value="$\left( a_1^{(t+1)},&#10;a_2^{(t+1)}\right)$"/>
+        <text value="на следующем шаге итерации. Зная"/>
+        <formula id="id66" value="$\left( a_1^{(t+1)},&#10;a_2^{(t+1)}\right)$"/>
+        <text value=", можно вычислить соответствующее значение"/>
+        <formula id="id67" value="$S_{\mathrm{SLS}}\left(&#10;a_1^{(t+1)}, a_2^{(t+1)}\right)$"/>
+        <text value="и сравнить его с тем, что получено на предыдущем шаге итерации. Процесс уточнения оценок будет завершаться при многократном повторении одинаковых значений целевой функции. Уже понятно, что решением оптимизационных задач может быть либо отдельное значение, либо интервал. Для того чтобы в дальнейшем обеспечить однозначность при использовании оценок параметров модели, во втором случае в качестве решения будем выдавать некоторое значение из интервала, полученное случайным образом, а именно: если минимум некоторой функции достигается при значениях"/>
+        <formula id="id68" value="$\langlev,\delta\rangle$"/>
+        <text value=", где"/>
+        <formula id="id69" value="$\delta \hm&amp;gt;0$"/>
+        <text value=", то итоговое решение"/>
+        <formula id="id70" value="$v^*\hm= \mathrm{Random}\left (v, v+\delta \right)$"/>
+        <text value=", где"/>
+        <formula id="id71" value="$\mathrm{Random}\left(c,d\right)$"/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="случайная величина, равномерно распределенная на интервале"/>
+        <formula id="id72" value="$(a,b)$"/>
+        <text value=". Руководствуясь условиями далее рассматриваемой реальной задачи, предположим, что"/>
+        <formula id="id73" value="$x_i\hm&amp;gt;0$"/>
+        <text value="для"/>
+        <formula id="id74" value="$i\hm= 1,\ldots , n$"/>
+        <text value=". Теперь опишем возможные методы решения (3), ограничившись заданием очередного шага итерации."/>
+        <command value="\smallskip">
+          <braces>
+            <text value="\smallskip"/>
+          </braces>
+        </command>
+        <command value="\textbf">
+          <braces>
+            <text value="\textbf{}"/>
+          </braces>
+          <text value="Метод поэлементно-покоординатного спуска."/>
+        </command>
+        <text value="Будем сначала решать задачу$$"/>
+        <command value="\left">
+          <braces>
+            <text value="("/>
+          </braces>
+        </command>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="i=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^n"/>
+          </braces>
+        </command>
+        <command value="\mathrm">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="sign"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\left">
+          <braces>
+            <text value="( y_i-a_1-x_ia_2^"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="(t)"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")"/>
+          </braces>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")^2"/>
+          </braces>
+        </command>
+        <command value="\underset">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="a_1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\Rightarrow">
+                <braces/>
+              </command>
+              <command value="\min">
+                <braces>
+                  <text value="$$или$$"/>
+                </braces>
+              </command>
+              <command value="\psi">
+                <braces>
+                  <text value="_2^2(1,v,u)"/>
+                </braces>
+              </command>
+              <command value="\underset">
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="u"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <command value="\Rightarrow">
+                      <braces/>
+                    </command>
+                    <command value="\min"/>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <text value=",$$где"/>
+        <formula id="id75" value="$v_i=y_i-x_i a_2^{(t)}$"/>
+        <text value=". Ранее было указано, что"/>
+        <formula id="id76" value="$\min\limits_u \psi_2^2(1,v,u)\hm=0$"/>
+        <text value="и он достигается при"/>
+        <formula id="id77" value="$a_1^{(t+1)}\hm\in \left(v_{(n/2)+1}-v_{(n/2)}\right)$"/>
+        <text value=", если$n$четно, или при"/>
+        <formula id="id78" value="$a_1^{(t+1)} \hm= v_{\lfloor n/2\rfloor +1}$"/>
+        <text value=", если$n$нечетно. После этого будем решать задачу$$"/>
+        <command value="\left">
+          <braces>
+            <text value="("/>
+          </braces>
+        </command>
+        <command value="\sum"/>
+        <command value="\limits">
+          <braces>
+            <text value="_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="i=1"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="^n x_i"/>
+          </braces>
+        </command>
+        <command value="\mathrm">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="sign"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\left">
+          <braces>
+            <text value="( y_i -a_1^"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="(t+1)"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="-x_i a_2"/>
+          </braces>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")"/>
+          </braces>
+        </command>
+        <command value="\right">
+          <braces>
+            <text value=")^2"/>
+          </braces>
+        </command>
+        <command value="\underset">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="a_2"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\Rightarrow">
+                <braces/>
+              </command>
+              <command value="\min">
+                <braces>
+                  <text value="$$или$$"/>
+                </braces>
+              </command>
+              <command value="\psi">
+                <braces>
+                  <text value="_2^2(r,v,u)"/>
+                </braces>
+              </command>
+              <command value="\underset">
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="u"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <command value="\Rightarrow">
+                      <braces/>
+                    </command>
+                    <command value="\min"/>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <text value=",$$где"/>
+        <formula id="id79" value="$r_i=x_i$"/>
+        <text value=";"/>
+        <formula id="id80" value="$v_i\hm= (y_i -a_1^{(t+1)})/x_i$"/>
+        <text value=". В итоге будет получено"/>
+        <formula id="id81" value="$\left( a_1^{(t+1)}, a_2^{(t+1)}\right)$"/>
+        <text value=". Такой вариант алгоритма был предложен в"/>
+        <command value="\S"/>
+        <text value="3.1"/>
+        <text value="4"/>
+        <text value=", где отмечается, что &amp;lt;&amp;lt;теоретически его сходимость не доказана, но во всех многочисленных случаях его применений мы получили правильные результаты&amp;gt;&amp;gt;."/>
+        <command value="\smallskip">
+          <braces>
+            <text value="\smallskip"/>
+          </braces>
+        </command>
+        <command value="\textbf">
+          <braces>
+            <text value="\textbf{}"/>
+          </braces>
+          <text value="Метод покоординатного спуска."/>
+        </command>
+        <text value="Будем сначала решать задачу$$S_"/>
+        <braces>
+          <text value="{}"/>
+          <command value="\mathrm">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="SLS"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces/>
+          </command>
+          <command value="\left">
+            <braces>
+              <text value="(a_1, a_2^"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="(t)"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")"/>
+            </braces>
+          </command>
+          <command value="\underset">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="a_1"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <command value="\Rightarrow">
+                  <braces/>
+                </command>
+                <command value="\min"/>
+              </braces>
+            </braces>
+          </command>
+        </braces>
+        <text value=",$$где"/>
+        <command value="\begin">
+          <braces>
+            <text value="S_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\mathrm">
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="SLS"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces/>
+              </command>
+              <command value="\left">
+                <braces>
+                  <text value="( a_1,a_2^"/>
+                </braces>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="(t)"/>
+                  </braces>
+                </braces>
+                <braces/>
+              </command>
+              <command value="\right">
+                <braces>
+                  <text value=") ="/>
+                </braces>
+              </command>
+              <command value="\left">
+                <braces>
+                  <text value="("/>
+                </braces>
+              </command>
+              <command value="\sum"/>
+              <command value="\limits">
+                <braces>
+                  <text value="_"/>
+                </braces>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="i=1"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces>
+                  <text value="^n"/>
+                </braces>
+              </command>
+              <command value="\mathrm">
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="sign"/>
+                  </braces>
+                </braces>
+                <braces/>
+              </command>
+              <command value="\left">
+                <braces>
+                  <text value="( y_i -a_1 - x_ia_2^"/>
+                </braces>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="(t)"/>
+                  </braces>
+                </braces>
+                <braces/>
+              </command>
+              <command value="\right">
+                <braces>
+                  <text value=")"/>
+                </braces>
+              </command>
+              <command value="\right">
+                <braces>
+                  <text value=")^2+"/>
+                </braces>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <braces>
+          <text value="{}"/>
+          <text value="+"/>
+          <command value="\left">
+            <braces>
+              <text value="("/>
+            </braces>
+          </command>
+          <command value="\sum"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="i=1"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^n x_i"/>
+            </braces>
+          </command>
+          <command value="\mathrm">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="sign"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\left">
+            <braces>
+              <text value="( y_i -a_1 - x_i a_2^"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="(t)"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")"/>
+            </braces>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")^2"/>
+            </braces>
+          </command>
+        </braces>
+        <text value=","/>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="multline*"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="или$$"/>
+          </braces>
+        </command>
+        <command value="\varphi">
+          <braces>
+            <text value="_0(r,v,1,u)"/>
+          </braces>
+        </command>
+        <command value="\underset">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="u"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\Rightarrow">
+                <braces/>
+              </command>
+              <command value="\min"/>
+            </braces>
+          </braces>
+        </command>
+        <text value=",$$где"/>
+        <formula id="id82" value="$r_i= x_i$"/>
+        <text value=";"/>
+        <formula id="id83" value="$v_i=y_i\hm- x_i a_2^{(t)}$"/>
+        <text value=". Ее решение даст значение"/>
+        <formula id="id84" value="$a_1^{(t+1)}$"/>
+        <text value=". После чего перейдем к задаче$$S_"/>
+        <braces>
+          <text value="{}"/>
+          <command value="\mathrm">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="SLS"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces/>
+          </command>
+          <command value="\left">
+            <braces>
+              <text value="( a_1^"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="(t+1)"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value=", a_2"/>
+            </braces>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")"/>
+            </braces>
+          </command>
+          <command value="\underset">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="a_2"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <command value="\Rightarrow">
+                  <braces/>
+                </command>
+                <command value="\min"/>
+              </braces>
+            </braces>
+          </command>
+        </braces>
+        <text value=",$$где"/>
+        <command value="\begin">
+          <braces>
+            <text value="S_"/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\mathrm">
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="SLS"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces/>
+              </command>
+              <command value="\left">
+                <braces>
+                  <text value="( a_1^"/>
+                </braces>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <text value="(t+1)"/>
+                  </braces>
+                </braces>
+                <braces/>
+                <braces>
+                  <text value=",a_2"/>
+                </braces>
+              </command>
+              <command value="\right">
+                <braces>
+                  <text value=") ="/>
+                </braces>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <braces>
+          <text value="{}"/>
+          <text value="="/>
+          <command value="\left">
+            <braces>
+              <text value="("/>
+            </braces>
+          </command>
+          <command value="\sum"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="i=1"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^n"/>
+            </braces>
+          </command>
+          <command value="\mathrm">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="sign"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\left">
+            <braces>
+              <text value="( y_i -a_1^"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="(t+1)"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="-x_ia_2"/>
+            </braces>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")"/>
+            </braces>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")^2+"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+              </braces>
+            </braces>
+          </command>
+        </braces>
+        <braces>
+          <text value="{}"/>
+          <text value="+"/>
+          <command value="\left">
+            <braces>
+              <text value="("/>
+            </braces>
+          </command>
+          <command value="\sum"/>
+          <command value="\limits">
+            <braces>
+              <text value="_"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="i=1"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="^n x_i"/>
+            </braces>
+          </command>
+          <command value="\mathrm">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="sign"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\left">
+            <braces>
+              <text value="( y_i -a_1^"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="(t+1)"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="-x_i a_2"/>
+            </braces>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")"/>
+            </braces>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")^2"/>
+            </braces>
+          </command>
+        </braces>
+        <text value=","/>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="multline*"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="или$$"/>
+          </braces>
+        </command>
+        <command value="\varphi">
+          <braces>
+            <text value="_0(r,v,1,u)"/>
+          </braces>
+        </command>
+        <command value="\underset">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="u"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\Rightarrow">
+                <braces/>
+              </command>
+              <command value="\min"/>
+            </braces>
+          </braces>
+        </command>
+        <text value=",$$где"/>
+        <formula id="id85" value="$r_i =x_i$"/>
+        <text value=";"/>
+        <formula id="id86" value="$v_i\hm= (y_i-a_1^{(t+1)})/x_i$"/>
+        <text value=". Таким образом будет получено значение для"/>
+        <formula id="id87" value="$a_2^{(t+1)}$"/>
+        <text value="."/>
+        <command value="\smallskip">
+          <braces>
+            <text value="\smallskip"/>
+          </braces>
+        </command>
+        <command value="\textbf">
+          <braces>
+            <text value="\textbf{}"/>
+          </braces>
+          <text value="Метод &amp;lt;&amp;lt;наискорейшего&amp;gt;&amp;gt; спуска."/>
+        </command>
+        <text value="Возникающие при применении описанных методов проблемы побуждали к разработке процедур, обеспечивающих гарантированное получение минимума функции. Рассмотрим прямую, проведенную под углом"/>
+        <formula id="id88" value="$\alpha$"/>
+        <text value="к горизонтальной оси и проходящую через точку"/>
+        <formula id="id89" value="$\left( a_1^{(t)}, a_2^{(t)}\right)$"/>
+        <text value=". Положение точки"/>
+        <formula id="id90" value="$(a_1,a_2)$"/>
+        <text value="на этой прямой будет определяться относительно"/>
+        <formula id="id91" value="$\left( a_1^{(t)}, a_2^{(t)}\right)$"/>
+        <text value="с помощью величины$u$, т."/>
+        <text value="е."/>
+        <text value="координаты этой точки принимают вид"/>
+        <formula id="id92" value="$\left( u&#10;\cos\alpha \hm+ a_1^{(t)}, u\sin\alpha\hm+a_2^{(t)}\right)$"/>
+        <text value=". Тогда получаем:"/>
+        <command value="\begin">
+          <braces>
+            <text value="y_i -a_1 -x_ia_2 ="/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+            </braces>
+          </braces>
+        </command>
+        <braces>
+          <text value="{}"/>
+          <text value="= y_i -"/>
+          <command value="\left">
+            <braces>
+              <text value="( u"/>
+            </braces>
+          </command>
+          <command value="\cos"/>
+          <command value="\alpha">
+            <braces>
+              <text value="+ a_1^"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="(t)"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=") -x_i"/>
+            </braces>
+          </command>
+          <command value="\left">
+            <braces>
+              <text value="( u"/>
+            </braces>
+          </command>
+          <command value="\sin"/>
+          <command value="\alpha">
+            <braces>
+              <text value="+ a_2^"/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="(t)"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\right">
+            <braces>
+              <text value=")="/>
+            </braces>
+            <braces>
+              <braces>
+                <text value="{}"/>
+              </braces>
+            </braces>
+          </command>
+        </braces>
+        <braces>
+          <text value="{}"/>
+          <text value="= y_i -a_1^"/>
+        </braces>
+        <braces>
+          <text value="{}"/>
+          <text value="(t)"/>
+        </braces>
+        <text value="-x_i a_2^"/>
+        <braces>
+          <text value="{}"/>
+          <text value="(t)"/>
+        </braces>
+        <text value="-"/>
+        <command value="\left">
+          <braces>
+            <text value="("/>
+          </braces>
+        </command>
+        <command value="\cos"/>
+        <command value="\alpha">
+          <braces>
+            <text value="+x_i"/>
+          </braces>
+        </command>
+        <command value="\sin"/>
+        <command value="\alpha"/>
+        <command value="\right">
+          <braces>
+            <text value=") u"/>
+          </braces>
+        </command>
+        <text value="."/>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="multline*"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="В результате приходим к задаче"/>
+          </braces>
+        </command>
+        <formula id="id93" value="Token(TokenType.FORMULA&amp;quot;, &amp;quot;\begin{equation}&#10;     \varphi_0(r,v,w,u)\underset{u}{\Rightarrow}\min\,,&#10;     \label{e4-kri}&#10;     \end{equation}&amp;quot;, line=418, col=22)"/>
+        <text value="где"/>
+        <formula id="id94" value="$r_i=x_i$"/>
+        <text value=";"/>
+        <formula id="id95" value="$v_i=y_i\hm- a_1^{(t)} \hm- x_i a_2^{(t)}$"/>
+        <text value=";"/>
+        <formula id="id96" value="$w_i\hm= \cos\alpha&#10;\hm+ x_i\sin\alpha$"/>
+        <text value=". Решение (4) даст"/>
+        <formula id="id97" value="$\left( a_1^{(t+1)}, a_2^{(t+1)}\right)$"/>
+        <text value=". При этом значение"/>
+        <formula id="id98" value="$S_{\mathrm{SLS}} \left( a_1^{(t+1)}, a_2^{(t+1)}\right)$"/>
+        <text value="может относительно"/>
+        <formula id="id99" value="$S_{\mathrm{SLS}} \left( a_1^{(t)}, a_2^{(t)}\right)$"/>
+        <text value="и не уменьшиться. Чтобы по возможности предотвратить это, найдем пары"/>
+        <formula id="id100" value="$\left( a_1^{(t+1)},&#10;a_2^{(t+1)}\right)$"/>
+        <text value="для различных значений"/>
+        <formula id="id101" value="$\alpha$"/>
+        <text value="и выберем среди них ту оценку параметров модели, которой отвечает наименьшее значение"/>
+        <formula id="id102" value="$S_{\mathrm{SLS}}(a_1,a_2)$"/>
+        <text value=". В данной работе был опробован вариант с набором углов"/>
+        <formula id="id103" value="$\alpha$"/>
+        <text value="вида"/>
+        <formula id="id104" value="$ \left\{ 0, (1/m)\pi,\ldots , ((m-1)/m)\pi\right\}$"/>
+        <text value="для"/>
+        <formula id="id105" value="$m\hm&amp;gt;1$"/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="число$m$перебираемых углов. Была сформулирована и опробована еще одна процедура, реализующая условно названный метод опорных точек &amp;lt;&amp;lt;наискорейшего&amp;gt;&amp;gt; спуска. Далее описывается ее основной шаг. Искомое решение"/>
+        <formula id="id106" value="$(a_1^*, a_2^*)$"/>
+        <text value="задачи (3) есть некоторая прямая на плоскости, разделяющая точки"/>
+        <formula id="id107" value="$(x_i,y_i)$"/>
+        <text value="на три подмножества: точки, для которых"/>
+        <formula id="id108" value="$y_i\hm- a_1^* \hm- x_i a_2^*\hm&amp;lt;0$"/>
+        <text value="; точки, для которых"/>
+        <formula id="id109" value="$y_i\hm- a_1^* \hm- x_i a_2^*\hm=0$"/>
+        <text value="; точки, для которых"/>
+        <formula id="id110" value="$y_i\hm-&#10;a_1^*\hm- x_ia_2^*\hm&amp;gt;0$"/>
+        <text value=". Рассмотрим ситуацию, когда некоторая прямая с коэффициентами"/>
+        <formula id="id111" value="$(a_1,a_2)$"/>
+        <text value="проходит по крайне мере через одну точку"/>
+        <formula id="id112" value="$(x_l,y_l)$"/>
+        <text value=", т."/>
+        <text value="е."/>
+        <formula id="id113" value="$y_l\hm-a_1\hm- x_la_2\hm=0$"/>
+        <text value="или"/>
+        <formula id="id114" value="$a_1\hm= y_l\hm- x_la_2$"/>
+        <text value=". В результате имеем:"/>
+        <command value="\begin">
+          <braces>
+            <text value="y_i- a_1 - x_ia_2 = y_i - (y_l- x_la_2) - x_ia_2="/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+            </braces>
+          </braces>
+        </command>
+        <braces>
+          <text value="{}"/>
+          <text value="= (y_i - y_l)- (x_i- x_l)a_2"/>
+        </braces>
+        <text value="."/>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="multline*"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="Тогда получаем задачу:$$"/>
+          </braces>
+        </command>
+        <command value="\varphi">
+          <braces>
+            <text value="_0(r,v,w,u)"/>
+          </braces>
+        </command>
+        <command value="\underset">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="u"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\Rightarrow">
+                <braces/>
+              </command>
+              <command value="\min"/>
+            </braces>
+          </braces>
+        </command>
+        <text value=",$$где"/>
+        <formula id="id115" value="$r_i = x_i$"/>
+        <text value=";"/>
+        <formula id="id116" value="$v_i\hm= y_i\hm-y_l$"/>
+        <text value=";"/>
+        <formula id="id117" value="$w_i\hm= x_i\hm-x_l$"/>
+        <text value=". Таким образом, с помощью перебора всех пар"/>
+        <formula id="id118" value="$(x_l,y_l)$"/>
+        <text value="может быть получено решение задачи (3), правда, при дополнительном условии, что"/>
+        <formula id="id119" value="$y_l\hm- a_1\hm- x_la_2\hm=0$"/>
+        <text value="по крайне мере для одного из"/>
+        <formula id="id120" value="$l\hm= 1,\ldots ,n$"/>
+        <text value=". Выяснить, нужно ли анализировать ситуации, когда прямая с коэффициентами"/>
+        <formula id="id121" value="$(a_1,a_2)$"/>
+        <text value="проходит между всеми точками"/>
+        <formula id="id122" value="$(x_i,y_i)$"/>
+        <text value=","/>
+        <formula id="id123" value="$i\hm= 1,\ldots ,n$"/>
+        <text value=", а также, если в этом есть необходимость, как искать минимум в этом случае, пока не удалось. При этом процедура продемонстрировала свою жизнеспособность, хотя и требует дальнейшего развития. При найденных оценках параметров регрессии прогнозом для заданного значения$x$называется величина"/>
+        <formula id="id124" value="$y^*\hm= a_1^*\hm+ a_2^*x$"/>
+        <text value=". При сравнении различных"/>
+        <command value="\linebreak">
+          <braces>
+            <text value="\linebreak"/>
+          </braces>
+        </command>
+        <text value="способов получения &amp;lt;&amp;lt;новых&amp;gt;&amp;gt; значений$y^*$необходимо определиться с понятием качества прогнозирования и методами оценивания выбранного"/>
+        <command value="\linebreak">
+          <braces>
+            <text value="\linebreak"/>
+          </braces>
+        </command>
+        <text value="показате"/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <command value="\linebreak">
+          <braces>
+            <text value="\linebreak"/>
+          </braces>
+        </command>
+        <text value="отличие между предсказанным$y^*$и истинным значением$y$. В данной работе интерес представляет случай, когда истинное значение$y$отсутствует, а имеется лишь результат его измерения с некоторой ошибкой. При этом предполагается, что при использовании переменных важны не столько их точные значения, сколько интервалы (диапазоны) значений, в которые они попадают. По этой причине в качестве показателя качества был выбран следующий. Разобьем диапазон возможных значений переменной$y$на$k$интервалов группировки (эти интервалы не пересекаются, их объединение дает весь диапазон значений$y$) и представим отдельное$y$с помощью номера интервала, которому оно принадлежит. Считается, что прогноз осуществлен с ошибкой (индикатор ошибки равен 1), когда для некоторой пары"/>
+        <formula id="id125" value="$(x,y)$"/>
+        <text value="значения$y^*$и$y$"/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="0). Тогда ошибка прогноза есть среднее значение индикатора ошибки. Простейший способ оценивания ошибки прогноза заключается в повторном использовании данных сначала для оценивания параметров регрессии, а затем для подсчета выборочного среднего индикатора ошибки. Понятно, что получающийся результат будет излишне оптимистичен и требует улучшения, которого можно достичь за счет использования различных частей исходных данных для подбора значений параметров модели и оценивания качества этого подбора. С учетом реально действующего условия на малый объем исходных данных приходим к следующим подходам:"/>
+        <itemize/>
+        <text value="Бутстреп-метод, безусловно, имеет более общий характер, нежели метод перепроверки, но для его реализации фактически остается только непараметрический подход, так как не существует работоспособных параметрических моделей для пары случайных переменных при отклонении от предположения о нормальном распределении (а иначе не имело бы смысла затевать исследование непараметрических методов линейного регрессионного анализа). Непараметрический же бутстреп-метод в случае выборок малого объема привносит дополнительные вопросы: например, что делать с повторяющимися данными в бутстреп-выборке. Поэтому в данной работе использовался метод перепроверки при"/>
+        <formula id="id126" value="$V\hm=n$"/>
+        <text value="(осуществляется исключение единственного наблюдения для оценки ошибки прогноза)."/>
+      </section>
+      <section id="id127">
+        <braces>
+          <text value="\section{}"/>
+        </braces>
+        <text value="Эксперименты"/>
+        <text value="Совместно со специалистами ФГБУ &amp;lt;&amp;lt;НИИ урологии&amp;gt;&amp;gt; Минздрава России Сивковым А."/>
+        <text value="В., Кешишевым Н."/>
+        <text value="Г., Ковченко Г."/>
+        <text value="А., Никоновой Л."/>
+        <text value="М. реша"/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="иммуногистохимического маркера нейроэндокринной дифференцировки. В России официально зарегистрированы две соответствующие тест-систе"/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="компании Euro-Diagnostica (ED). Для исследования диагностической ценности двух тест-сис"/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="это контрольная группа. Результаты исследований показали, что референсные значения принципиально разнились. С помощью линейного регрессионного анализа была описана функциональная связь между измерениями, полученными тест-система"/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="CgA"/>
+        <command value="\_D">
+          <braces>
+            <text value="и CgA"/>
+          </braces>
+        </command>
+        <command value="\_E">
+          <braces>
+            <text value="соответственно). Наличие альтернативных методов измерения одного и того же показателя привело к необходимости их сравнительного анализа, при этом преследовались следующие цели:"/>
+          </braces>
+        </command>
+        <itemize/>
+        <text value="Проведенные исследования показали, что эффективность использования обеих тест-систем практически одинакова. При этом референсные значения для системы DAKO требуют корректировки, для чего можно использовать выявленную функциональную связь между измерениями, полученными различными способами. Эта связь также позволяет использовать в диагностике обе тест-системы. При формировании статистических моделей для собранных данных было выяснено, в частности, следующее: для измерений CgA"/>
+        <command value="\_D">
+          <braces>
+            <text value="и CgA"/>
+          </braces>
+        </command>
+        <command value="\_E">
+          <braces>
+            <text value="нет предпосылок принять гипотезу о нормальном распределении, что побуждает к осторожности при использовании методов, ориентированных на эту модель данных. В контексте данной работы становится интересным, можно ли повысить качество прогноза CgA"/>
+          </braces>
+        </command>
+        <command value="\_D">
+          <braces>
+            <text value="по CgA"/>
+          </braces>
+        </command>
+        <command value="\_E">
+          <braces>
+            <text value=", отказываясь от модели нормального распределения. Для сравнительного анализа были взяты следующие методы оценивания:"/>
+          </braces>
+        </command>
+        <itemize/>
+        <text value="Анализ остатков для OLS-оценки с помощью гистограммы, приведенной на рисунке, подтверждает сомнения в использовании модели нормального распределения (наличие явной асимметрии)."/>
+        <figure id="id128" value="Token(TokenType.COMMAND&amp;quot;, &amp;quot;\begin{figure*}&#10;      \vspace*{1pt}&#10;\begin{center}&#10;\mbox{%&#10;\epsfxsize=140mm&#10;\epsfbox{kri-1.eps}&#10;}&#10;\vspace*{4pt}&#10;&#10;\noindent&#10;      {\small Гистограмма остатков для OLS-оценки}&#10;      \end}&#10;%      \vspace*{-3mm}&#10;      \end{figure*}&amp;quot;, line=591, col=22)">
+          <text value="Наибольшую трудность в смысле реализации представляет получение SLS-оценок. Дело в том, что заверения авторов"/>
+          <text value="4"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="росту значений"/>
+          <formula id="id129" value="$S_{\mathrm{SLS}}(a_1,a_2)$"/>
+          <text value=". Отказ от поэлементной оптимизации и использование классического метода покоординатного спуска давал еще более плачевные результаты. Причина такого положения дел кроется в разрывности функции"/>
+          <formula id="id130" value="$S_{\mathrm{SLS}}(a_1,a_2)$"/>
+          <text value=". В предлагаемом методе &amp;lt;&amp;lt;наискорейшего&amp;gt;&amp;gt; спуска за счет перебора углов"/>
+          <formula id="id131" value="$\alpha$"/>
+          <text value="удалось преодолеть описанную трудность. При этом работоспособная реализация была достигнута при следующей схеме"/>
+          <command value="\mbox">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="задания"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="значений рассматриваемых углов: на первом шаге итерации"/>
+            </braces>
+          </command>
+          <formula id="id132" value="$m\hm= 11$"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="101, на"/>
+          <command value="\mbox">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="третьем"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="10"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <formula id="id133" value="$m\hm= 100\,003$"/>
+          <text value=". Дальнейшего увеличения номера итерационного шага не понадобилось, так как при всех последующих экспериментах по крайне мере на двух последних итерациях целевая функция своего значения не меняла. Основные характеристики принятых значений$m$(простые числа в качестве значений, возрастание при увеличении номера шага итерации, увеличение на порядок) были установлены экспериментально. В качестве начального приближения при получении SLS-оценки бралась OLS-оценка. Оценивание качества прогноза проводилось методом перепроверки следующим образом. Пусть из массива исходных данных исключено$i$-е наблюдение,"/>
+          <formula id="id134" value="$i\hm=1, \ldots ,n$"/>
+          <text value=". Найдем по оставшимся данным"/>
+          <command value="\linebreak">
+            <braces>
+              <text value="\linebreak"/>
+            </braces>
+          </command>
+          <command value="\vspace*">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="-12pt"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\noindent">
+            <braces>
+              <text value="\noindent"/>
+            </braces>
+          </command>
+          <braces>
+            <text value="{}"/>
+            <command value="\small"/>
+            <command value="\vspace*">
+              <braces>
+                <braces>
+                  <text value="{}"/>
+                  <text value="-3pt"/>
+                </braces>
+              </braces>
+              <braces/>
+            </command>
+          </braces>
+          <center/>
+          <command value="\vspace*">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="7pt"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+          <command value="\noindent">
+            <braces>
+              <text value="\noindent"/>
+            </braces>
+          </command>
+          <text value="одну из сравниваемых оценок зависимости и с ее помощью построим прогноз для исключенного наблюдения, полученный результат сравним с известным исключенным значением маркера. Если они попадают в один из$k$"/>
+          <command value="\specialsymbol">
+            <braces>
+              <text value="~---"/>
+            </braces>
+          </command>
+          <text value="как неуспешный. По всем$n$подобным экспериментам посчитаем относительную частоту полученных успехов. Соответствующие результаты приведены в таблице."/>
+          <braces>
+            <text value="{}"/>
+          </braces>
+          <text value="Из полученных результатов видно, что прогноз на основе SLS-оценки лучше, чем с помощью OLS-оценки (частота случаев, когда SLS не хуже OLS, составляет 89"/>
+          <text value="), а прогноз на основе RZE-оценки лучше, чем с помощью SLS-оценки (частота случаев, когда RZE не хуже SLS, составляет 94"/>
+          <text value="). Для верификации полученного вывода о целесообразности отказа от модели нормального распределения в пользу предположений общего характера можно проделать следующее: предположить, что распределение данных есть нормальное с параметрами, совпадающими с соответствующими выборочными характеристиками (моментами и регрессионной связью), и смоделировать для него"/>
+          <command value="\mbox">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="набор"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="наблюденных значений, к которым применить"/>
+            </braces>
+          </command>
+          <command value="\linebreak">
+            <braces>
+              <text value="\linebreak"/>
+            </braces>
+          </command>
+          <text value="описанную ранее процедуру обработки данных, а именно: нахождение OLS-, SLS-,"/>
+          <command value="\mbox">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="RZE-оценок"/>
+              </braces>
+            </braces>
+            <braces/>
+            <braces>
+              <text value="и сравнение качества прогноза с помощью метода перепроверки. Тогда если полученные выводы о нецелесообразности использования модели нормального распределения верны, то для смоделированных данных никаких преимуществ перехода к непараметрическим методам анализа не должно быть обнаружено. Это полностью подтвердилось, в частности частота случаев, когда SLS не хуже OLS, составляет 44"/>
+            </braces>
+          </command>
+          <text value=", а частота случаев, когда RZE не хуже OLS, составляет 56"/>
+          <text value=". Таким образом, обобщение модели данных приводит при ограниченном объеме наблюдений не к снижению, а к повышению качества принимаемых решений, что становится дополнительным доводом для отказа от использования нормального распределения."/>
+          <command value="\vspace*">
+            <braces>
+              <braces>
+                <text value="{}"/>
+                <text value="-6pt"/>
+              </braces>
+            </braces>
+            <braces/>
+          </command>
+        </figure>
+      </section>
+      <section id="id135">
+        <braces>
+          <text value="\section{}"/>
+        </braces>
+        <text value="Заключение"/>
+        <text value="В перечень сравниваемых процедур регрессионного анализа были включены следующие методы оценивания параметров модели: обычный наименьших квадратов, наименьших квадратов на основе знаковых статистик, нулевой корреляции на основе ранговых статистик. Реализация метода наименьших квадратов на основе знаковых статистик потребовала построения эффективной процедуры обработки данных, для чего был описан и исследован вариант метода &amp;lt;&amp;lt;наискорейшего&amp;gt;&amp;gt; спуска. В сложной ситуации кусочно-постоянной целевой функции получен работоспособный вариант соответствующего алгоритма. Проведенный сравнительный анализ процедур регрессионного анализа в реальных условиях, когда данные не подчиняются нормальному распределению, показал преимущества непараметрических методов. Принимая во внимание алгоритмические аспекты, в рассматриваемом случае предпочтение надо отдать процедурам, основанным на рангах, а не на знаках. Рассмотренные непараметрические процедуры содержат элементы, носящие скорее эвристический, нежели теоретически обоснованный характер (например, аналогия как принцип построения непараметрических методов, принцип подбора значений параметра$a_1$в ранговых процедурах и т."/>
+        <text value="п.). Это побуждает к дальнейшему развитию предлагаемых решений (например, в духе разд. 4 и 5"/>
+        <command value="\cite">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="8-kri"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <text value="), что, в свою очередь, влечет за собой необходимость в проведении обширных экспериментов по сравнительному анализу получающихся модификаций методов и процедур обработки данных."/>
+          </braces>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\small"/>
+              <command value="\frenchspacing">
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <command value="\addcontentsline">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="toc"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="section"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="References"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\begin">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="9"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <item id="id136" value="\bibitem">
+          <braces>
+            <text value="\bibitem{1-kri}"/>
+          </braces>
+        </item>
+        <author value="\Au{}"/>
+        <text value="Ryan T."/>
+        <text value="P."/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="Hoboken, NJ: Wiley, 2008. 672 p."/>
+        <item id="id137" value="\bibitem">
+          <braces>
+            <text value="\bibitem{2-kri}"/>
+          </braces>
+        </item>
+        <author value="\Au{}"/>
+        <text value="Heritier S., Cantoni E., Copt S., Victoria-Feser M.-P."/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="Chichester, U.K.: Wiley, 2009. 294 p."/>
+        <item id="id138" value="\bibitem">
+          <braces>
+            <text value="\bibitem{3-kri}"/>
+          </braces>
+        </item>
+        <author value="\Au{}"/>
+        <text value="Sprent P., Smeeton N."/>
+        <text value="C."/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="London, U.K.: Chapman"/>
+        <text value="Hall/CRC, 2001. 470 p."/>
+        <item id="id139" value="\bibitem">
+          <braces>
+            <text value="\bibitem{4-kri}"/>
+          </braces>
+        </item>
+        <author value="\Au{}"/>
+        <text value="Болдин М."/>
+        <text value="В., Симонова Г."/>
+        <text value="И., Тюрин Ю."/>
+        <text value="Н."/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="М.: Наука, 1997. 288 с."/>
+        <item id="id140" value="\bibitem">
+          <braces>
+            <text value="\bibitem{5-kri}"/>
+          </braces>
+        </item>
+        <author value="\Au{}"/>
+        <text value="Stone M."/>
+        <text value="Cross-validatory choice and assessment of statistical predictions (with discussion) // J. Roy. Statist. Soc. Ser. B, 1974. Vol. 36. No."/>
+        <text value="2. P. 111--147."/>
+        <item id="id141" value="\bibitem">
+          <braces>
+            <text value="\bibitem{6-kri}"/>
+          </braces>
+        </item>
+        <author value="\Au{}"/>
+        <text value="Efron B."/>
+        <text value="Bootstrap methods: Another look at the jackknife // Ann. Statist., 1979. Vol. 7. No."/>
+        <text value="1. P. 1--26."/>
+        <item id="id142" value="\bibitem">
+          <braces>
+            <text value="\bibitem{8-kri}"/>
+          </braces>
+        </item>
+        <author value="\Au{}"/>
+        <text value="Maronna R."/>
+        <text value="A., Martin D."/>
+        <text value="R., Yohai V."/>
+        <text value="J."/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="Chichester, U.K.: Wiley, 2006. 436 p."/>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="thebibliography"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces/>
+          <braces/>
+        </command>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="multicols"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\vspace*">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="-6pt"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\hfill">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\small"/>
+            </braces>
+          </braces>
+        </command>
+        <command value="\textit">
+          <braces>
+            <text value="\textit{}"/>
+          </braces>
+          <text value="Поступила в редакцию 14.07.14"/>
+        </command>
+        <command value="\vspace*">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="12pt"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\hrule"/>
+        <command value="\vspace*">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="2pt"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\hrule"/>
+        <text value="COMPARATIVE ANALYSIS OF REGRESSION ANALYSIS PROCEDURES"/>
+        <text value="Comparative analysis of regression analysis procedures"/>
+        <text value="M."/>
+        <text value="P. Krivenko"/>
+        <text value="M."/>
+        <text value="P. Krivenko"/>
+        <command value="\titel">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\tit">
+                <braces/>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <command value="\aut">
+                      <braces/>
+                      <braces>
+                        <braces>
+                          <text value="{}"/>
+                          <command value="\autkol">
+                            <braces/>
+                            <braces>
+                              <braces>
+                                <text value="{}"/>
+                                <command value="\titkol">
+                                  <braces/>
+                                </command>
+                                <command value="\vspace*">
+                                  <braces>
+                                    <braces>
+                                      <text value="{}"/>
+                                      <text value="-9pt"/>
+                                    </braces>
+                                  </braces>
+                                  <braces/>
+                                </command>
+                              </braces>
+                            </braces>
+                          </command>
+                        </braces>
+                      </braces>
+                    </command>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <command value="\noindent">
+          <braces>
+            <text value="\noindent"/>
+          </braces>
+        </command>
+        <text value="Institute of Informatics Problems, Russian Academy of Sciences, 44-2 Vavilov Str., Moscow 119333, Russian"/>
+        <text value="Federation"/>
+        <command value="\small">
+          <braces>
+            <braces>
+              <text value="{}"/>
+            </braces>
+          </braces>
+        </command>
+        <command value="\textbf">
+          <braces>
+            <text value="\textbf{}"/>
+          </braces>
+        </command>
+        <command value="\thepage">
+          <braces/>
+        </command>
+        <command value="\hfill"/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="INFORMATICS AND APPLICATIONS"/>
+        <text value="2014"/>
+        <text value="volume 8"/>
+        <text value="issue"/>
+        <text value="2"/>
+        <command value="\small">
+          <braces>
+            <braces>
+              <text value="{}"/>
+            </braces>
+          </braces>
+        </command>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="INFORMATICS AND APPLICATIONS"/>
+        <text value="2014"/>
+        <text value="volume 8"/>
+        <text value="issue"/>
+        <text value="3"/>
+        <command value="\hfill"/>
+        <command value="\textbf">
+          <braces>
+            <text value="\textbf{}"/>
+          </braces>
+        </command>
+        <command value="\thepage">
+          <braces/>
+          <braces/>
+          <braces/>
+        </command>
+        <command value="\vspace*">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="6pt"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <annotation value="\Abst{The article considers the problem of forecasting the values of one variable from the values of another variable using regression analysis techniques. The list of compared regression analysis procedures included the following parameter estimation methods: ordinary least squares, least squares based on the sign statistics, and zero correlation based on rank statistics. To implement the method of least squares on the basis of sign statistics, it is necessary to construct efficient data processing procedures. An efficient variant of the corresponding algorithm was realized for a difficult situation, when the goal function is piecewise constant. The comparative analysis of regression analysis procedures in real conditions, when data are not normally distributed, showed that nonparametric techniques are advantageous. In this case, taking into account algorithmic aspects, the preference should be given to procedures based on rank, not on signs. Advantages of nonparametric methods can improve the accuracy of measuring chromogranin A, widely used as an immunohistochemical marker of neuroendocrine differentiation.}"/>
+        <keywords>
+          <braces>
+            <text value="\KWE{regression analysis; rank and sign-based procedures; prediction quality; adjustment of measurement results}"/>
+          </braces>
+        </keywords>
+        <command value="\vspace*">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="9pt"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\begin">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="2"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\renewcommand">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\bibname">
+                <braces/>
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <command value="\protect"/>
+                    <command value="\rmfamily">
+                      <braces>
+                        <text value="References"/>
+                      </braces>
+                      <braces/>
+                    </command>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+        <braces>
+          <text value="{}"/>
+          <command value="\small"/>
+          <command value="\frenchspacing">
+            <braces>
+              <braces>
+                <text value="{}"/>
+              </braces>
+            </braces>
+          </command>
+        </braces>
+        <command value="\addcontentsline">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="toc"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="section"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="References"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\begin">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="9"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <item id="id143" value="\bibitem">
+          <braces>
+            <text value="\bibitem{1-k1-1}"/>
+          </braces>
+        </item>
+        <author value="\Aue{}"/>
+        <text value="Ryan, T."/>
+        <text value="P."/>
+        <text value="2008."/>
+        <command value="\textit">
+          <braces>
+            <text value="\textit{}"/>
+          </braces>
+          <text value="Modern regression methods"/>
+        </command>
+        <text value=". 2nd ed. Hoboken, NJ: Wiley. 672 p."/>
+        <item id="id144" value="\bibitem">
+          <braces>
+            <text value="\bibitem{2-k1-1}"/>
+          </braces>
+        </item>
+        <author value="\Aue{}"/>
+        <text value="Heritier, S., E. Cantoni, S. Copt, and M.-P. Victoria-Feser"/>
+        <text value=". 2009."/>
+        <command value="\textit">
+          <braces>
+            <text value="\textit{}"/>
+          </braces>
+          <text value="Robust methods in biostatistics"/>
+        </command>
+        <text value=". Chichester, U.K.: Wiley. 294 p."/>
+        <item id="id145" value="\bibitem">
+          <braces>
+            <text value="\bibitem{3-k1-1}"/>
+          </braces>
+        </item>
+        <author value="\Aue{}"/>
+        <text value="Sprent, P., and N."/>
+        <text value="C. Smeeton"/>
+        <text value=". 2001."/>
+        <command value="\textit">
+          <braces>
+            <text value="\textit{}"/>
+          </braces>
+          <text value="Applied nonparametric statistical methods"/>
+        </command>
+        <text value=". 3rd ed. London, U.K.: Chapman"/>
+        <text value="Hall/CRC. 470 p."/>
+        <item id="id146" value="\bibitem">
+          <braces>
+            <text value="\bibitem{4-k1-1}"/>
+          </braces>
+        </item>
+        <author value="\Aue{}"/>
+        <text value="Boldin, M."/>
+        <text value="V., G."/>
+        <text value="I. Simonova, and Yu."/>
+        <text value="N. Tyurin"/>
+        <text value=". 1997."/>
+        <command value="\textit">
+          <braces>
+            <text value="\textit{}"/>
+          </braces>
+          <text value="Sign-based methods in linear models"/>
+        </command>
+        <text value=". Providence: AMS. 236 p."/>
+        <item id="id147" value="\bibitem">
+          <braces>
+            <text value="\bibitem{5-k1-1}"/>
+          </braces>
+        </item>
+        <author value="\Aue{}"/>
+        <text value="Stone, M."/>
+        <text value="1974. Cross-validatory choice and assessment of statistical predictions (with discussion)."/>
+        <command value="\textit">
+          <braces>
+            <text value="\textit{}"/>
+          </braces>
+          <text value="J. Roy. Statist. Soc. ser. B."/>
+        </command>
+        <text value="36(2):111--147."/>
+        <item id="id148" value="\bibitem">
+          <braces>
+            <text value="\bibitem{6-k1-1}"/>
+          </braces>
+        </item>
+        <author value="\Aue{}"/>
+        <text value="Efron, B."/>
+        <text value="1979. Bootstrap methods: Another look at the jackknife."/>
+        <command value="\textit">
+          <braces>
+            <text value="\textit{}"/>
+          </braces>
+          <text value="Ann. Statist."/>
+        </command>
+        <text value="7(1):1--26."/>
+        <item id="id149" value="\bibitem">
+          <braces>
+            <text value="\bibitem{8-k1-1}"/>
+          </braces>
+        </item>
+        <author value="\Aue{}"/>
+        <text value="Maronna, R."/>
+        <text value="A., D."/>
+        <text value="R. Martin, and V."/>
+        <text value="J. Yohai"/>
+        <text value=". 2006."/>
+        <command value="\textit">
+          <braces>
+            <text value="\textit{}"/>
+          </braces>
+          <text value="Robust statistics: Theory and methods"/>
+        </command>
+        <text value=". Chichester, U.K.: Wiley. 436 p."/>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="thebibliography"/>
+            </braces>
+          </braces>
+          <braces/>
+          <braces/>
+          <braces/>
+        </command>
+        <command value="\end">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="multicols"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\vspace*">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="-6pt"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\hfill">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <command value="\small"/>
+            </braces>
+          </braces>
+        </command>
+        <command value="\textit">
+          <braces>
+            <text value="\textit{}"/>
+          </braces>
+          <text value="Received July 14, 2014"/>
+        </command>
+        <command value="\vspace*">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="-12pt"/>
+            </braces>
+          </braces>
+          <braces/>
+        </command>
+        <command value="\Contrl"/>
+        <command value="\noindent">
+          <braces>
+            <text value="\noindent"/>
+          </braces>
+        </command>
+        <command value="\textbf">
+          <braces>
+            <text value="\textbf{}"/>
+          </braces>
+          <text value="Krivenko Michail P."/>
+        </command>
+        <text value="(b."/>
+        <command value="\specialsymbol">
+          <braces>
+            <text value="~---"/>
+          </braces>
+        </command>
+        <text value="Doctor of Science in technology, principal scientist, Institute of Informatics Problems, Russian Academy of Sciences, 44-2 Vavilov Str., Moscow 119333, Russian Federation; mkrivenko@ipiran.ru"/>
+        <command value="\label">
+          <braces>
+            <braces>
+              <text value="{}"/>
+              <text value="end"/>
+              <command value="\stat">
+                <braces/>
+              </command>
+              <command value="\renewcommand">
+                <braces>
+                  <braces>
+                    <text value="{}"/>
+                    <command value="\bibname">
+                      <braces/>
+                      <braces>
+                        <braces>
+                          <text value="{}"/>
+                          <command value="\protect"/>
+                          <command value="\rm">
+                            <braces>
+                              <text value="Литература"/>
+                            </braces>
+                            <braces/>
+                          </command>
+                        </braces>
+                      </braces>
+                    </command>
+                  </braces>
+                </braces>
+              </command>
+            </braces>
+          </braces>
+        </command>
+      </section>
+    </fulltext>
+  </paper>
+</papers>

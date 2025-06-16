@@ -1,0 +1,1182 @@
+\def\stat{sinitsin}
+
+\def\tit{СОВМЕСТНАЯ ФИЛЬТРАЦИЯ И~РАСПОЗНАВАНИЕ
+НОРМАЛЬНЫХ ПРОЦЕССОВ В~СТОХАСТИЧЕСКИХ СИСТЕМАХ,
+НЕ~РАЗРЕШЕННЫХ ОТНОСИТЕЛЬНО ПРОИЗВОДНЫХ}
+
+\def\titkol{Совместная фильтрация и~распознавание
+нормальных процессов в~СтС, %стохастических системах,
+не~разрешенных относительно производных}
+
+\def\aut{И.\,Н.~Синицын$^1$}
+
+\def\autkol{И.\,Н.~Синицын}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Синицын И.\,Н.}
+\index{Sinitsyn I.\,N.}
+
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнена при поддержке Министерства науки и~высшего образования Российской Федерации (проект 
+%075-15-2020-799).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук; 
+Московский авиационный институт, \mbox{sinitsin@dol.ru}} %kafedra802@yandex.ru
+
+\vspace*{-12pt}
+
+
+\Abst{Разработано методическое и~алгоритмическое обеспечение аналитического моделирования, оценивания и~идентификации
+ для существенно нестационарных процессов (например, ударных) в~стохастических сис\-те\-мах (СтС),
+ не разрешенных относительно производных (НРОП).  Дан обзор профильных пуб\-ли\-ка\-ций и~изучены 
+ основные классы регрессионных уравнений СТС НРОП. Основные результаты: (1)~для общего вида нелинейных СтС НРОП приведены оптимальные 
+ алгоритмы совместной фильтрации и~распознавания; (2)~для линейных гауссовских СтС НРОП  получены простые алгоритмы; 
+ (3)~для СтС НРОП, линейных относительно состояния~$X_t$ и~нелинейных~$Y_t$ наблюдений, 
+ получены соответствующие алгоритмы; (4)~в~случае~(3) методом нормальной аппроксимации получен  простой алгоритм.
+  Приводится иллюстративный пример скалярной нелинейной гауссовской СтС НРОП. Обсуждаются возможные обобщения разработанных алгоритмов.}
+
+
+\KW{стохастические системы, не разрешенные относительно производных; совместная фильтрация и~распознавание;
+регрессионная модель}
+
+\DOI{10.14357/19922264220211}
+  
+\vspace*{-6pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+\vspace*{-3pt}
+
+
+В~[1] рассмотрены вопросы синтеза  нелинейных  субоптимальных гауссовских фильтров (НСОФ) для 
+дифференциальных СтС НРОП. Представлены уравнения 
+состояния и~наблюдения нелинейных дифференциальных СтС НРОП. 
+Синтез НСОФ выполнен при следующих условиях: 
+%\begin{enumerate}[(1)]
+%\item 
+(1)~отсутствуют пуассоновские шумы в~наблюдениях; 
+%\item коэффициент 
+(2)~при гауссовском шуме не зависит от состояния.
+%\end{enumerate}
+ Подробно рассмотрен синтез НСОФ при аддитивных 
+шумах в~уравнениях состояния и~наблюдения.
+
+В~[2] для нелинейных интегродифференциальных СтС (ИДСтС), не разрешенных 
+относительно производных и~приводимых к~дифференциальным методом сингулярных ядер, 
+разработаны\linebreak алгоритмы аналитического моделирования нормальных стохастических процессов (СтП), при этом нелинейность 
+под интегралом может быть разрывной, а~так\-же синтеза НСОФ для он\-лайн-об\-ра\-бот\-ки информации в~ИДСтС.
+ Предложены алгоритмы оценки качества НСОФ на основе теории чувствительности.
+
+В~[3] разработано методическое обеспечение для негладких правых частей уравнений СтС НРОП. 
+Рассмотрены вопросы аналитического моделирования нормальных СтП на основе нелинейных регрессионных 
+моделей. Особое внимание уделено методам гауссовской фильт\-ра\-ции и~экстраполяции. 
+Изучены вопросы услов\-но-оп\-ти\-маль\-ной фильт\-ра\-ции и~экстраполяции для СтС НРОП с~параметрическими
+ шумами.
+
+Для систем, стохастически НРОП, в~[4] разработано два %\linebreak
+ подхода к~сведению 
+таких сис\-тем к~детерминированным уравнениям, не разрешенным относительно математических 
+ожиданий и~ковариационных характеристик, а~также математических {ожиданий} и~координатных функций
+ канонических\linebreak разложений. После сведения таких сис\-тем к~детерминированным используются известные результаты.
+Рассмотрены вопросы фильтрации, экстраполяции, идентификации и~калибровки для \mbox{приведенных} моделей.
+Алгоритмы положены в~основу инструментального программного обеспечения для решения задач надежности 
+и~безопас\-ности технических сис\-тем.
+{\looseness=-1
+
+}
+
+В~[5] дано развитие на случай типовых существенно нестационарных, в~первую очередь ударных, возмущений.
+Рассмотрены вопросы аналитического моделирования нормальных СтП в~\mbox{скалярных} и~векторных СтС 
+НРОП с~помощью\linebreak общих, а~также основанных на канонических разложениях (КР) нелинейных 
+корреляционных методов. Изучены случаи широкополосных, узкополосных и~ударных возмущений. 
+Отдельный \mbox{раздел}\linebreak посвящен вопросам оптимизации, оценивания, идентификации и~калибровки.
+
+Следуя~[2--6], поставим задачу совместной гауссовской фильтрации и~распознавания классов 
+процессов в~СтС НРОП.
+В разд.~2 рассмотрены классы регрессионных уравнений для СтС НРОП. Основные четыре утверж\-де\-ния 
+сформулированы и~обосно\-ва\-ны в~разд.~3. Иллюстративный пример дан в~разд.~4. 
+Заключение содержит выводы и~некоторые обобщения.
+
+\vspace*{-6pt}
+
+\section{Классы регрессионных уравнений для~стохастических систем, не~разрешенных относительно производных}
+
+\vspace*{-1pt}
+
+\textbf{2.1.}\ Рассмотрим векторную систему уравнений
+    \begin{equation}
+    \Phi = \Phi \left( t, X_t, \bar X_t, Y_t, U_t \right)=0\,.
+    \label{e2.1-sin}
+    \end{equation}
+Здесь $X_t$~--- вектор состояния; $\bar X_t \hm= \lk X_t^{\mathrm{T}} \cdots (X_t^{(l)})^{\mathrm{T}}\rk^{\mathrm{T}}$~--- 
+расширенный вектор состояния; $Y_t$~--- вектор наблюдений; $U_t$~--- вектор возмущений; $\Phi$~--- 
+нелинейная функция переменных $\bar{\bar X}_t\hm = \lk X_t^{\mathrm{T}} \bar X_t^{\mathrm{T}} U_t^{\mathrm{T}}\rk^{\mathrm{T}}$, 
+допускающая среднеквадратичную  оптимальную регрессионную оценку $\hat\Phi (\bar{\bar x}_t)$
+ регрессии  $m^\Phi (\bar{\bar x}_t)\hm= \mathsf{M} \lk \Phi | \bar{\bar x}_t\rk$ 
+ в~классе функций~${\cal A}^\Phi$. Эта регрессия содержится в~классе функций ${\cal A}^\Phi$,
+  в~которой ищется оценка; в~частности, если ${\cal A}^\Phi$ совпадает с~множеством 
+  всех функций переменной~$\bar{\bar x}_t$, то оптимальной среднеквадратичной  оценкой регрессии
+   служит сама регрессия. Регрессия является единственной среднеквадратичной оценкой, 
+   реализующей минимум условного математического ожидания квадрата модуля ошибки аппроксимации 
+   при данном значении~$x_t$.
+
+Необходимым и~достаточным условием оптимальности служит равенство~\cite{7-sin}:
+    \begin{equation*}
+    \mathrm{tr}\ \lf \mathrm{M} \lk \hat\Phi \left(\bar{\bar X}_t\right) - \Phi\rk \psi
+    \left(\bar{\bar X}_t\right)^*\rf =0,
+    %\label{e2.2-sin}
+    \end{equation*}
+где $\psi(\bar{\bar X}_t)\hm\in \Psi$~--- производная функция класса ${\cal A}^\Psi$; 
+$\hat\Phi(\bar{\bar X}_t)$~--- среднеквадратичная  оптимальная оценка~$\Phi$ в~классе~${\cal A}^\Psi$; 
+$*$~--- символ транспонирования с~заменой всех элементов соответствующими сопряженными числами.
+
+Как известно~[7], линейные регрессионные модели описываются уравнениями двух видов:
+\begin{gather*}
+\hat\Phi(\bar{\bar X}_t) = g \bar{\bar X}_t\,, \enskip \psi (\bar{\bar X}_t) = h \bar{\bar X}_t\,,
+   \\
+    g\Gamma_{\bar{\bar x}_t} = \Gamma_{\Phi \bar{\bar x}_t}, \enskip 
+    \Gamma_{x_t} = \mathrm{M} \lk \bar{\bar X}_t \ \bar{\bar X}_t^*\rk, \enskip 
+    \Gamma_{\Phi \bar{\bar x}_t} = 
+    \mathrm{M} \lk \Phi\ \bar{\bar X}_t^*\rk\!;
+    %    \label{e2.3-sin}
+   \\
+    \hat{\bar \Phi} (\bar{\bar X}_t) = g\bar{\bar X}_t + a,\enskip 
+    \psi (\bar{\bar X}_t) = h \bar{\bar X}_t +b\,, 
+   \\
+    K_{\Phi \bar{\bar x}_t}= 
+    \mathrm{M} (\Phi -m^\Phi)(\bar{\bar X}_t -m^{\bar{\bar x}_t})^*,
+   \\
+    gK_{\bar{\bar x}_t} = K_{\Phi \bar{\bar x}_t},\enskip 
+    a= m^\Phi - g m^{\bar{\bar x}_t}, \enskip  
+    b= -h m^{\bar{\bar x}_t},\\
+    K_{\bar{\bar x}_t} = 
+    \mathrm{M} (\bar{\bar X}_t- m^{\bar{\bar x}_t})(\bar{\bar X}_t -m^{\bar{\bar x}_t})^*.
+   %    \label{e2.4-sin}
+\end{gather*}
+
+Рассмотренные регрессионные модели~--- детерминированные. Для их нахождения в~линейном случае 
+достаточно знать математические ожидания $m^\Phi$ и~$m^{\bar{\bar x}_t}$ и~ковариационные 
+матрицы $K_{\bar{\bar x}_t}$ и~$K_{\Phi \bar{\bar x}_t}$. Для получения стохастической 
+регрессионной модели достаточно представить функцию~$\Phi$ в~виде
+   \begin{equation*}
+   \Phi = m^\Phi (\bar{\bar X}) + Z_{1t}\,; %\label{e2.5-sin}
+   \qquad
+\Phi = \hat\Phi(\bar{\bar X})+Z_{2t}\,. %\label{e2.6-sin}
+\end{equation*}
+
+\vspace*{-2pt}
+
+\noindent
+Для нахождения стохастической регрессионной модели необходимо еще знать распределение~$\Phi$ при 
+любом~$\bar{\bar X}$ или по крайней мере ее математическое ожидание~$m^\Phi (\bar{\bar x}_t)$, 
+ регрессию и~ковариационную матрицу~$K_\Phi (\bar{\bar x}_t)$, совпадающую с~ковариационной 
+ матрицей~$K_{z}(\bar{\bar x}_t)$ для~$Z_{1t}$ и~$Z_{2t}$.
+
+Более общая задача наилучшего приближения регрессии конечной линейной комбинацией заданных
+ функций классов ${\cal A}_1\tr {\cal A}_n$ сводится к~задаче наилучшего линейного приближения регрессии~\cite{7-sin}.
+
+В дальнейшем будем основываться на сле\-ду\-ющих допущениях,
+ лежащих в~основе приведения уравнения~(\ref{e2.1-sin}) к~виду, разрешенному относительно производных.
+\begin{enumerate}[1.]
+\item Стохастический процесс $X_t$ и~его производные обладают конечными моментами второго порядка и~являются гауссовскими.
+
+\item Векторная детерминированная функция~$\Phi$ допускает линейную гауссовскую 
+регрессионную линеаризацию относительно всех производных вплоть до  старшей производной~$X_t^{(l)}$:
+   \begin{equation*}
+   \Phi \approx\Phi_0 +\sss_{j=1}^l  k_{xj}^\Phi X_t^{(j)} + k_U^\Phi U_t^0.
+   %\label{e2.7-sin}
+   \end{equation*}
+   
+   \vspace*{-2pt}
+
+\item Вектор возмущения $U_t$ обладает конечными моментами второго порядка и~связан c гауссовским 
+белым шумом~$V_0$ линейным уравнением формирующего фильтра:
+\begin{equation}
+\dot U_t = a_t^U U_t+ a_{0t}^U + b_t^U V_0,\label{e2.8-sin}
+\end{equation}
+
+\vspace*{-3pt}
+
+\noindent
+где
+    $$
+    \mathsf{M} V_0 =0\,, \enskip \mathsf{M} \lk V_0 (t) V_0 (t)^{\mathrm{T}}\rk = \nu_0 \delta (t-\tau);
+    $$
+$\nu_0 =\nu_0(t)$~--- матрица интенсивностей векторного белого шума~$V_0$.
+\end{enumerate}
+
+\noindent
+\textbf{Утверждение~2.1.}\ \textit{Пусть векторное детерминированное уравнение}~(\ref{e2.1-sin}) 
+\textit{удовлетворяет условиям}~1--3. Тогда СтС НРОП при условиях
+
+\vspace*{2pt}
+
+\noindent
+   $$
+    \det k_{Xl}^\Phi \ne 0\,, \enskip \det k_U^\Phi \ne 0
+    $$
+    
+    \vspace*{-2pt}
+    
+    \noindent
+    приводится к виду:
+    
+    \noindent
+    %\label{e2.9-sin}
+    \begin{gather*}
+    \dot{\bar X}_{1t} =\bar X_{2t}\tr \dot{\bar X}_{(l-1)t} = \bar X_{lt},\\
+    \dot{\bar X}_{lt} =-\left(k_{Xl}^\Phi\right)^{-1} \bar X_t^{(l)} - 
+    \left(k_{Xl}^\Phi\right)^{-1} \left(k_U^\Phi\right)^{-1}     U_t
+   %    \label{e2.10-sin}
+    \end{gather*}
+    
+    \vspace*{-2pt}
+    
+    \noindent
+\textit{и}~(\ref{e2.8-sin}). 
+\textit{Матрицы коэффициентов $k_{Xl}^\Phi$ и~$k_U^\Phi$ неявно зависят от первых 
+двух вероятностных моментов переменных $\bar X_t$  и~$U_t$}.
+
+
+
+\section{Основные результаты}
+
+\textbf{3.1.}\ Пусть СтС НРОП~(\ref{e2.1-sin}) удовлетворяет условиям утверждения~2.1 
+и~приведена к~гауссовской дифференциальной СтС, а~измерительная сис\-те\-ма вполне 
+наблюдаема. Кроме того, будем считать, что наблюдения гауссовские и~они влияют 
+на ее наблюдаемую регрессионную модель. В~качестве исходных приведенных уравнений примем сле\-ду\-ющие:
+   \begin{align}
+   \dot X_t &= a \left(X_t, Y_t,\alpha, t\right) + b\left(X_t, Y_t, \alpha, t\right) V_0\,;\label{e3.1-sin}\\
+    Z_t&= \dot Y_t= a_1 \left(X_t,Y_t,t\right) + b_1 \left(X_t, Y_t,t\right) V_0\,.\label{e3.2-sin}
+    \end{align}
+Здесь $a$, $a_1$, $b$ и~$b_1$~--- известные век\-тор\-но-мат\-рич\-ные 
+функции отмеченных переменных, причем уравнение наблюдения~(\ref{e3.2-sin}) 
+описывается уравнением, разрешенным относительно~$Y_t$; $\alpha$~--- 
+вектор па\-ра\-мет\-ров в~уравнении со\-сто\-яния~(\ref{e3.1-sin}); 
+$V_0$~--- векторный гауссовский белый шум с~нулевым математическим ожиданием  $\mathsf{M} V_0 \hm=0$ 
+и~интенсивностью $\nu_0 \hm= \nu_0(t)$.
+
+Во многих задачах распознавания наблюда\-емой случайной величиной 
+(СВ) является некоторая функция СтП, определяемого стохастическим
+ дифференциальным уравнением, зависящим от того, к~какому из
+распознаваемых классов относится этот СтП. В~непрерывных СтС задача сводится\linebreak
+ к~оцениванию неизвестного
+параметра в~дифференциальных уравнениях, стохастически не разрешенных относительно производных. 
+Предположим, что входящие в~эти уравнения функции\linebreak зависят
+от неизвестного параметра~$\alpha$, который может принимать одно
+значение из конечного множества значений $\alpha_1\tr \alpha_N$,
+соответствующих распознаваемым классам $A_1 \tr A_N$. Тогда задача
+распознавания сведется к~решению вопроса о том, какое из значений
+$\alpha_1\tr \alpha_N$ принимает параметр~$\alpha$ для данного
+наблюдаемого сигнала. Но значение параметра~$\alpha$, выдаваемое
+системой распознавания, можно рассматривать как его оценку.
+Для решения задачи распознавания можно применить прием расширения
+вектора состояния системы, включив параметр $\alpha\hm=\alpha_t$
+$(\dot\alpha_t\hm=0)$ в~вектор состояния~$X_t$. Единственное отличие
+состоит в~том, что в~задаче оценки неизвестных параметров параметр~$\alpha$ 
+неизвестен и~априори может принимать
+любые значения, а в~задаче распознавания~$\alpha$ может принимать
+лишь одно из конечного множества заранее известных значений
+$\alpha_1\tr \alpha_N$.
+
+Решение о том, к~какому из $N$ классов $A_1 \tr A_N$
+ относится наблюдаемый сигнал, обычно принимается по критерию
+ максимума апостериорной вероятности: за значение параметра
+ $\alp$ принимается то из значений $\alpha_1\tr \alpha_N$,
+ которое имеет наибольшую апостериорную вероятность. Иными
+ словами, модель распознавания принимает  $\hat
+\alpha\hm =\alpha_h$, если апостериорная вероятность~$\alpha_h$
+больше (или по крайней мере не меньше) апостериорных
+вероятностей всех остальных значений  $\alpha_1\tr \alpha_{h-1},
+\alpha_{h-1} \tr \alpha_N$. Поэтому модель распознавания должна
+вычислять апостериорные вероятности всех классов (т.\,е.\ всех значений
+$\alpha_1\tr \alpha_N$).
+
+\textbf{3.2.}\ Следуя~\cite{6-sin}, в~силу $\dot\alpha_t\hm=0$ для сред\-не\-квад\-ра\-тич\-ной  
+гауссовской фильтрации будем основываться на следующем фильтрационном уравнении для 
+апостериорной характеристической функции вектора  $\lk \bar{\bar X}_t^{\mathrm{T}} \ \alpha_t^{\mathrm{T}}\rk^{\mathrm{T}}$:
+    \begin{multline*}
+    dg_t (\lambda,\mu) = \mathsf{M} \Big[\Big\{ i\lambda^{\mathrm{T}} a (\bar{\bar X}_t,Y_t,\alpha_t, t)-{}\\
+{}-\fr{1}{2}\,\lambda^{\mathrm{T}} \left(b\nu_0 b^{\mathrm{T}}\right)
+\left(\bar{\bar X}_t,Y_t,\alpha_t,t\right)\Big\} \times{}\\
+{}\times
+e^{i\lambda^{\mathrm{T}} \bar{\bar X}_t    +i\mu^{\mathrm{T}}\alpha_t} \mid Y_{t_0}^t\Big] dt+
+\mathsf{M}\Big[\Big\{ a_1 \left(\bar{\bar X}_t,Y_t, \alpha_t,t\right)^{\mathrm{T}} -{}\\
+{}-\hat a^{\mathrm{T}}_1
+    +i\lambda^{\mathrm{T}} \left(b\nu_0 b_1^{\mathrm{T}}\right) \left(x_t,Y_t,\alpha_t, t\right)\Big\}
+     e^{i\lambda^{\mathrm{T}}X_t+i\mu^{\mathrm{T}}\alpha_t} \mid Y_{t_0}^t \Big]\times{}\\
+     {}\times
+    \left(b_1\nu_0 b_1^{\mathrm{T}}\right)^{-1} (Y_t,t) \left(dY_t -a_{1} \,dt\right).
+   % \label{e3.3-sin}
+    \end{multline*}
+Положив, что  $\lambda\hm=0$, найдем стохастический дифференциал
+апостериорной характеристической функции~$g_t' (\mu)$ вектора
+$ g_t' (\mu) \hm= \mathsf{M}\lk e^{i\mu^{\mathrm{T}}\alpha_t}\mid
+Y_{t_0}^t\rk \hm= g_t (0,\mu)$:
+   \begin{multline}
+    dg_t' (\mu) = \mathsf{M}\left[ \left\{ a_1 \left(\bar{\bar X}_t,Y_t,\alpha_t,t\right)^{\mathrm{T}}-
+    \hat a^{\mathrm{T}}_1\right\} \times{}\right.\\
+    \left.{}\times e^{i\mu^{\mathrm{T}}\alpha_t}
+    \mid Y_{t_0}^t
+    \vphantom{\left\{ a_1 \left(\bar{\bar X}_t,Y_t,\alpha_t,t\right)^{\mathrm{T}}-
+    \hat a^{\mathrm{T}}_1\right\}}
+    \right] \left(b_1\nu_0 b_1^{\mathrm{T}}\right)^{-1} \left(Y_t,t\right) \left(dY_t-\hat a_1 \,dt\right).\label{e3.4-sin}
+\end{multline}
+Принимая во внимание~(\ref{e3.1-sin}), получим
+\begin{multline}
+dg_t(\lambda) = {}\\
+{}=\mathsf{M} \left[ \left\{ i\lambda^{\mathrm{T}} a \left(X_t,Y_t,t\right) -
+\fr{1}{2}\, \lambda^{\mathrm{T}} (b\nu b^{\mathrm{T}}) \left(X_t,Y_t,t\right) \lambda\right\}\!\times{}\right.\hspace*{-0.50635pt}\\
+\left.{}\times
+    e^{i\lambda^{\mathrm{T}} X_t}\mid Y_{t_0}^t
+    \vphantom{\fr{1}{2}}
+    \right] dt+ \mathsf{M} \Big[ \Big\{ 
+    a_1 \left(X_t,Y_t,t\right)^{\mathrm{T}} -{}\\
+    {}-{\hat a}_1^{\mathrm{T}} +i\lambda^{\mathrm{T}} \left(b\nu_0 b^{\mathrm{T}}_1\right)
+    \left(X_t,Y_t,t\right)\Big\} e^{i\lambda^{\mathrm{T}} X_t}\mid
+    Y_{t_0}^t\Big] \times{}\\
+    {}\times \left(b_1\nu_0 b_1^{\mathrm{T}}\right)^{-1} (Y_t,t) \left(dY_t-{\hat a}_1
+    \,dt\right).\label{e3.5-sin}
+    \end{multline}
+Здесь введены обозначения:
+\begin{align*}
+\left(b\nu_0 b^{\mathrm{T}}\right)\left(X_t,Y_t,t\right)& = b\left(X_t,Y_t,t\right) \nu(t) b\left(X_t,Y_t,t\right)^{\mathrm{T}};\\
+     \left(b\nu_0 b_1^{\mathrm{T}}\right) \left(X_t,Y_t,t\right) &=b\left(X_t,Y_t,t\right) \nu_0(t)
+    b_1 \left(Y_t,t\right)^{\mathrm{T}};
+    \\
+     \left(b_1\nu_0 b_1^{\mathrm{T}}\right)^{-1} \left(Y_t,t\right) &=\left[b_1 \left(Y_t,t\right) \nu_0(t)
+    b_1\left(Y_t,t\right)^{\mathrm{T}}\right]^{-1};
+   \end{align*}
+   
+   \vspace*{-9pt}
+   
+\noindent
+   $$
+    {\hat a}_1 =\int\limits_{-\infty}^\infty a_1 p_t (x) \,dx= \mathsf{M}\left[a_1 \left(X_t, Y_t,t\mid
+    Y_{t_0}^t\right)\right].
+   % \label{e3.6-sin}
+$$
+Правая часть здесь~--- функционал от характеристической функции
+$g_t(\la)$, рассматриваемой как функция~$\lambda$, поскольку
+апостериорное распределение вектора  $X_t$ полностью и~однозначно
+определяется этой характеристической функцией. Поэтому~(\ref{e3.5-sin})
+представляет собой стохастическое дифференциальное уравнение для
+апостериорной характеристической функции~$g_t(\lambda)$. Это уравнение
+нелинейно, поскольку  ${\hat a}_1\hm= \mathsf{M}
+[a_1 (X_t,Y_t,t)\mid Y_{t_0}^t]$ тоже является функционалом
+от~$g_t (\lambda)$. В~начальный момент~$t_0$ функция~$g_{t_0} (\lambda)$
+будет условной характеристической функцией величины~$X_0$
+ относительно~$Y_0$. Это служит начальным условием для уравнения~(\ref{e3.5-sin}).
+
+Но  $\alpha_t$~--- дискретная СВ с~возможными
+значениями  $\alpha_1\tr\alpha_N$. Поэтому, обозначив
+апостериорные вероятности этих значений соответственно через
+$q_1(t) \tr q_N (t)$:
+       \begin{equation}
+    q_k (t) = \mathsf{P} \left(\alpha_t =\alpha_k \mid Y_{t_0}^t \right) \enskip (k=1\tr N),
+    \label{e3.7-sin}
+    \end{equation}
+будем иметь следующие равенства:
+    \begin{equation}
+    g_t' (\mu) = \sum\limits_{k=1}^N q_k (t)
+    e^{i\mu^{\mathrm{T}}\alpha_k};\label{e3.8-sin}
+    \end{equation}
+    
+    \vspace*{-12pt}
+    
+    \noindent
+    \begin{multline}
+    \mathsf{M}\lk a_1 \left(\bar{\bar X}_t,Y_t,t\right)^{\mathrm{T}} e^{i\mu^{\mathrm{T}}}\mid Y_{t_0}^t\rk={}\\
+    \!\!{}= \sum\limits_{k=1}^N q_k (t)e^{i\mu^{\mathrm{T}}\alpha_k}\mathsf{M}\!\lk a_1 \left(\bar{\bar X}_t,Y_t,\alpha_k,t\right)^{\mathrm{T}} \mid
+    Y_{t_0}^t\rk;\!\!
+    \label{e3.9-sin}
+    \end{multline}
+     \begin{equation}
+     \hat a_1 =\sum\limits_{k=1}^N q_k(t) \mathsf{M}\lk a_1 \left(\bar{\bar X}_t,Y_t,\alpha_k,t\right)^{\mathrm{T}} \mid
+    Y_{t_0}^t\rk.\label{e3.10-sin}
+    \end{equation}
+ Подставив эти выражения в~(\ref{e3.4-sin}) и~положив для
+ краткости
+        \begin{multline}
+        \hat a_{1h} =\mathsf{M}\lk a_1 \left(\bar{\bar X}_t,Y_t,\alpha_h,t\right) \mid
+    Y_{t_0}^t\rk\\
+     (h=1\tr N),
+     \label{e3.11-sin}
+    \end{multline}
+придем к~равенству:
+    \begin{multline}
+    \sum\limits_{k=1}^N e^{i\mu^{\mathrm{T}}\alpha_k}\dot q_k (t) = 
+    \left\{ \sum\limits_{k=1}^N q_k (t)\hat a_1^{\mathrm{T}}
+    e^{i\mu^{\mathrm{T}}\alpha_k}-{}\right.\\
+\left.{}-\sum\limits_{k=1}^N \sum\limits_{h=1}^N q_k (t)q_h(t) \hat a_{1h}^{\mathrm{T}} e^{i\mu^{\mathrm{T}}\alpha_k}\right\}
+    \left(b_1\nu_0 b_1^{\mathrm{T}}\right)^{-1}\times{}\\
+    {}\times \left( \dot Y_t -
+    \sum\limits_{h=1}^N q_h (t)\hat a_{1h}^{\mathrm{T}} \right).
+    \label{e3.12-sin}
+\end{multline}
+Сравнив коэффициенты при одинаковых показательных функциях в~левой
+и~правой частях этого равенства, получим:
+
+\noindent
+  \begin{multline}
+  \dot q_k (t) = \left( a_{1k}^{\mathrm{T}} -
+    \sum\limits_{h=1}^N q_h (t)\hat a_{1h}^{\mathrm{T}} \right) q_k (t)
+    \left(b_1\nu_0 b_1^{\mathrm{T}}\right)^{-1}\times{}\\
+    {}\times \left( \dot Y_t -
+    \sum\limits_{h=1}^N q_h (t)\hat a_{1h}^{\mathrm{T}} \right)\enskip
+    (k=1\tr N).
+    \label{e3.13-sin}
+    \end{multline}
+Величины~(11)
+зависят от  распределений процесса $\bar{\bar X}_t$ при  $\alpha\hm =\alpha_1\tr
+\alpha_N$. Лишь после решения уравнения  относительно
+апостериорных характеристических функций, вычисления апостериорных плотностей 
+сигнала~$\bar{\bar X}_t$ при $\alpha \hm=\alpha_1,\ldots, \alp_N$ и~вычисления величин
+$\hat a_{1k}$ как функций~$Y_t$ и~$t$ равенства~(\ref{e3.13-sin})
+становятся уравнениями, определяющими $q_1 (t)\tr q_N(t)$.
+
+Таким образом, задача оптимального распознавания сигнала решается
+лишь после решения уравнений~(\ref{e3.13-sin})  при
+соответствующих условиях. При этом уравнения определяют
+апостериорные вероятности классов $q_1(t)\tr q_N(t)$ при всех
+$t\hm\ge t_0$, если за их начальные значения при  $t\hm=t_0$ взять
+соответствующие условные вероятности классов относительно величины~$Y_0$.
+
+Задачу оптимального распознавания сигнала можно решать 
+с~одновременным оцениванием вектора состояния сис\-те\-мы~$\bar{\bar X}_t$. При
+этом оптимальная оценка~$\bar{\bar X}_t$ определяется формулой:
+  \begin{equation}
+    \hat{\bar{\bar X}}_t = \sum\limits_{k=1}^N q_k (t) \hat{\bar{\bar X}}_{t,k},
+    \label{e3.15-sin}
+ \end{equation}
+где $\hat{\bar{\bar X}}_{t,k}$~--- условная оптимальная оценка вектора  $\bar{\bar X}_t$ 
+в~предположении, что  $\alpha\hm=\alpha_k$ $(k\hm=1\tr N)$. При этом 
+в~вектор~$x_t$ могут входить и~неизвестные па\-ра\-мет\-ры, от которых
+могут зависеть функции~$a$, $\psi$ и~$a_1$.
+
+Таким образом, задачу оптимального по критерию максимума апостериорной
+вероятности распознавания можно решать с~одновременным среднеквадратичным
+оптимальным оцениванием вектора состояния системы и~всех
+неизвестных па\-ра\-мет\-ров.
+{\looseness=1
+
+}
+
+\medskip
+
+\noindent
+\textbf{Утверждение 3.1.}\
+\textit{Пусть СтС НРОП}~(\ref{e2.1-sin}) 
+\textit{приведена к~виду}~(\ref{e3.1-sin}), (\ref{e3.2-sin}). 
+\textit{Тогда в~условиях полного наблюдения задачу оптимального по критерию максимума
+ апостериорной вероятности распознавания можно решать с~одновременной среднеквадратичной 
+ оптимальной фильтрацией вектора состояния на основе соотношений}~(\ref{e3.4-sin}), 
+ (\ref{e3.7-sin})--( \ref{e3.15-sin}).
+
+\smallskip
+
+\textbf{3.3.}\
+В случае линейных гауссовских уравнений~(\ref{e3.1-sin}), 
+(\ref{e3.2-sin}) сигналы~$Y_t$ и~$\bar{\bar X}_t$ определяются
+ для различных классов сигналов, т.\,е.\ для значений $\alpha_1\tr \alpha_N$
+ параметра~$\alpha$, уравнениями ($k\hm=1\tr N$):
+ 
+ \noindent
+    \begin{equation}
+    \left.
+    \begin{array}{l}
+    \dot{\bar X}_t = 
+    \left[ \bar a\left(\alpha_k,t\right)Y_t + \bar a_1\left(\alpha_k,t\right)\bar{\bar X}_t +{}\right.\\[6pt]
+\left.    \hspace*{25mm}{}+ \bar a_0    \left(\alpha_k,t\right)
+   \vphantom{\bar{\bar X}_t}
+     \right]+   \bar b\left(\alpha_k,t\right)V_0 ,\\[6pt]
+    \hspace*{1mm}\dot Y_t= \left[ c\left(\alpha_k,t\right)Y_t+c_1 \left(\alpha_k,t\right)\bar{\bar X}_t +{}\right.\\[6pt]
+\left.   \hspace{30mm}{}+ c_0      \left(\alpha_k,t\right)
+\vphantom{\bar{\bar X}_t}
+\right]  +\bar b_1 (t) V_0\,.
+    \end{array}
+    \right\}
+    \label{e3.16-sin}
+\end{equation}
+ В~этом случае
+\begin{multline*}
+a_{1k} = c\left(\alpha_k,t\right)Y_t + c_1 \left(\alpha_k,t\right)\hat{\bar{\bar X}}_{t,k} + c_0 
+\left(\alpha_k,t\right)\\ 
+    (k=1\tr N).
+    %\label{e3.17-sin}
+    \end{multline*}
+Здесь $\hat{\bar{\bar X}}_{t,1} \tr \hat{\bar{\bar X}}_{t,N}$~--- условные оптимальные оценки
+вектора состояния~$\bar{\bar X}_t$ при  $\alpha\hm=\alpha_1\tr
+\alpha_k$, определяемые уравнениями:
+    \begin{multline}
+    \dot{\hat{\bar{\bar X}}}_{t,k} = {}\\
+    {}= \lk\bar a(\alpha_k,t)Y_t + 
+    \bar a_1 (\alpha_k,t)\hat{\bar{\bar X}}_{t,k} +
+     \bar a_0 (\alpha_k,t)\rk + \beta_k \left\{ \dot Y_t -{}\right.\\
+\left.     {}-\lk c\left(\alpha_k,t\right)Y_t + 
+c_1 \left(\alpha_k,t\right)\hat{\bar{\bar X}}_{t,k} + c_0 \left(\alpha_k,t\right)\rk \right\},
+\label{e3.18-sin}
+\end{multline}
+где параметры линейного
+фильт\-ра~$\beta_k$ и~$R_k$ удовле\-тво\-ря\-ют уравнениям      $(k=1\tr N)$:
+\begin{multline}
+\beta_k = \left[ R_k c_1\left(\alpha_k,t\right)^{\mathrm{T}} + {}\right.\\
+\left.{}+\left(\bar b\nu_0\bar b_1^{\mathrm{T}}\right)^{-1} 
+\left(\alpha_k,t\right)
+\vphantom{\left(\bar b\nu_0\bar b_1^{\mathrm{T}}\right)^{-1}}
+\right]
+    \left(\bar b_1\nu_0\bar b_1^{\mathrm{T}}\right)^{-1};
+\label{e3.19-sin}
+    \end{multline}
+    
+    \vspace*{-12pt}
+    
+    \noindent
+    \begin{multline}
+\dot R_k = \bar a\left(\alpha_k,t\right) R_k + R_k \bar a \left(\alpha_k,t\right)^{\mathrm{T}} + 
+\left(\bar b\nu_0\bar b^{\mathrm{T}}\right)
+\left(\alpha_k,t\right) -{}\\
+{}- \left[ R_k c_1\left(\alpha_k,t\right)^{\mathrm{T}} + 
+ \left(\bar b\nu_0\bar b_1^{\mathrm{T}}\right)\left(\alpha_k,t\right)\right] 
+\left(\bar b_1\nu_0\bar b_1^{\mathrm{T}}\right)^{-1} (t)\times{}\\
+{}\times \left[ c_1\left(\alpha_k,t\right)R_k +
+    \left(\bar b_1\nu_0\bar b_1^{\mathrm{T}}\right) \left(\alpha_k,t\right)\right].
+    \label{e3.20-sin}
+    \end{multline}
+Уравнения (\ref{e3.13-sin}) для апостериорных вероятностей классов при этом
+принимают вид $(k=1\tr N)$:
+ \begin{multline}
+ \hspace*{-3.62953pt}\dot q_k (t) = \biggl\{ Y_t^{\mathrm{T}} c\left(\alpha_k,t\right)^{\mathrm{T}} +\hat{\bar{\bar X}}_{t,k}^{\mathrm{T}} c_1\left(\alpha_k,t\right)^{\mathrm{T}} + 
+    c_0 \left(\alpha_k,t\right)^{\mathrm{T}} -{}\\
+{}-\sss_{h=1}^N q_h (t) \left[ Y_t^{\mathrm{T}} c(\alpha_k,t)^{\mathrm{T}} + \hat{\bar{\bar X}}_{t,h}^{\mathrm{T}} c_1\left(\alpha_k,t\right)^{\mathrm{T}}
+    +{}\right.\\
+\left.    {}+ c_0 \left(\alpha_k,t\right)^{\mathrm{T}} \right]\biggr\} 
+ q_k (t) \left(\bar b_1\nu_0\bar b_1^{\mathrm{T}}\right)^{-1} (t)
+ \left\{ 
+% \vphantom{\sss_{h=1}^N}
+ \dot Y_t -{}\right.\\
+{}-\sss_{h=1}^N q_h(t)\left[ c\left(\alpha_k,t\right)Y_t +
+    c_1 \left(\alpha_k,t\right)\hat{\bar{\bar X}}_{t,h} +{}\right.\\
+\left.\left.    {}+ c_0\left(\alpha_k,t\right)
+\vphantom{\hat{\bar{\bar X}}_{t,h}}
+\right] 
+\vphantom{\left(\bar b_1\nu_0\bar b_1^{\mathrm{T}}\right)^{-1}}
+\right\}.
+    \label{e3.21-sin}
+    \end{multline}
+
+
+Оптимальная оценка вектора состояния~$X_t$ определяется после
+этого формулой~(\ref{e3.15-sin}).
+  %\begin{equation}
+  %\hat{\bar{\bar X}}_t =\sss_{k=1}^N q_k (t)\hat{\bar{\bar X}}_{t,k}.
+  %\label{e3.22-sin}
+  %\end{equation}
+     
+   \smallskip
+
+\noindent
+\textbf{Утверждение~3.2.}\ \textit{Пусть СтС НРОП}~(\ref{e2.1-sin}) \textit{приведена 
+к~виду}~(\ref{e3.16-sin}). \textit{Тогда уравнениями совместной среднеквадратичной 
+фильтрации и~распознавания по критерию максимума апостериорной вероятности служат 
+уравнения}~(\ref{e3.15-sin}), (\ref{e3.18-sin})--(\ref{e3.21-sin}).
+
+
+
+\smallskip
+
+
+\textbf{3.4.}\ 
+Теперь рассмотрим случай, когда приведенные уравнения линейны относительно~$X_t$, но нелинейны 
+относительно наблюдений~$Y_t$:
+    \begin{multline}
+    \dot{\bar{\bar X}}_t = \lk  \tilde a_1\left(Y_t,\alpha_k,t\right)\bar{\bar X}_t + 
+    \tilde a_0 \left(Y_t,\alpha_k,t\right)\rk + {}\\
+    {}+\tilde b\left(Y_t,\alp_k,t\right)V_0;
+    \label{e3.23-sin}
+    \end{multline}
+    
+    \vspace*{-12pt}
+    
+    \noindent
+\begin{multline}
+\dot Y_t =\lk \tilde c_1\left(Y_t,\alpha_k,t\right)\bar{\bar X}_t+ 
+ \tilde c_0 \left(Y_t,\alpha_k,t\right)\rk  +{}\\
+ {}+\tilde b_1 \left(Y_t,t\right) V_0;
+ \label{e3.24-sin}
+ \end{multline}
+ 
+     \vspace*{-12pt}
+    
+    \noindent
+    \begin{multline}
+    \hat b_{1k} =  \tilde c_1 \left(Y_t,\alpha_k,t\right)\hat X_{t,k} +
+    \tilde c_0 \left(Y_t,\alpha_k,t\right)\\
+     (k=1\tr N),\label{e3.25-sin}
+    \end{multline}
+где оптимальные оценки $\hat{\bar{\bar X}}_{t,1} \tr \hat{\bar{\bar X}}_{t,N}$  вектора
+ $\bar{\bar X}_t$ при  $\alpha\hm=\alpha_1\tr \alpha_N$ определяются
+уравнениями~\cite{7-sin}  $(k=1\tr N)$:
+   \begin{multline}
+   \dot{\bar{\bar X}}_{t,k} = \left[  \tilde a_1 \left(Y_t,\alpha_k,t\right)\hat{\bar{\bar X}}_{t,k} + \tilde a_0 
+    \left(Y_t,\alpha_k,t\right)\right] +{}\\[2pt]
+{}+ \left[ R_k \tilde c_1 \left(Y_t,\alpha_k,t\right)^{\mathrm{T}}+
+\left(\tilde b\nu_0\tilde b_1^{\mathrm{T}}\right) \left(Y_t,\alpha_k,t\right)\right] \times{}\\[2pt]
+{}\times
+\left(\tilde b\nu_0\tilde b_1^{\mathrm{T}}\right)^{-1} 
+    \left(Y_t,t\right)
+    \left\{ 
+    \vphantom{\hat{\bar{\bar X}}_{t,k}}
+    \dot Y_t -{}\right.\\[2pt]
+\left.    {}-\left[ \tilde c_1 \left(Y_t,\alpha_k,t\right)^{\mathrm{T}}\hat{\bar{\bar X}}_{t,k}+
+     \tilde c_0 \left(Y_t,\alpha_k,t\right)\right] \right\};
+     \label{e3.26-sin}
+     \end{multline}
+     
+     \vspace*{-12pt}
+     
+     \noindent
+     \begin{multline}
+\dot R_k = \tilde a_1\left(Y_t,\alpha_k,t\right) R_k + R_k \tilde a_1 
+\left(Y_t,\alpha_k,t\right)^{\mathrm{T}} +{}\\[2pt]
+{}+ \left(\tilde b\nu_0\tilde b^{\mathrm{T}}\right)\left(Y_t,\alpha_k,t\right) -
+ \left[ 
+ \vphantom{\left(\tilde b\nu_0\tilde b_1^{\mathrm{T}}\right)}
+ R_k \tilde c_1\left(Y_t,\alpha_k,t\right)^{\mathrm{T}} + {}\right.\\[2pt]
+\left. {}+\left(\tilde b\nu_0\tilde b_1^{\mathrm{T}}\right)\left(Y_t,\alpha_k,t\right)\right] 
+\left(\tilde b_1\nu_0\tilde b_1^{\mathrm{T}}\right)^{-1} (Y_t,t)\times{}\\[2pt]
+    {}\times \lk \tilde c_1\left(Y_t,\alpha_k,t\right)R_k +
+    \left(\tilde b_1\nu_0\tilde b_1^{\mathrm{T}}\right) 
+    \left(Y_t,\alpha_k,t\right)\rk.\label{e3.27-sin}
+    \end{multline}
+Уравнения~(\ref{e3.18-sin}) для апостериорных вероятностей классов при этом
+принимают вид $(k=1\tr N)$:
+
+\noindent
+\begin{multline}
+\dot q_k  = \biggl\{ \hat{\bar{\bar X}}_{t,k}^{\mathrm{T}} \tilde c_1 (Y_t,\alpha_k,t)^{\mathrm{T}} + 
+\tilde c_0 \left(Y_t,\alpha_k,t\right)^{\mathrm{T}} -{}\\
+{}-\sss_{h=1}^N q_h (t) \lk  \hat{\bar{\bar X}}_{t,h}^{\mathrm{T}} \tilde c_1
+\left(Y_t,\alpha_h,t\right)^{\mathrm{T}} + \tilde c_0 \left(Y_t,\alpha_h,t\right)^{\mathrm{T}} \rk\biggr\} \times{}
+\\
+{}\times q_k (t) \left(\tilde b_1\nu_0\tilde b_1^{\mathrm{T}}\right)^{-1} (Y_t,t)
+\left\{
+\vphantom{\sss_{h=1}^N}
+ \dot Y_t -{}\right.\\
+\hspace*{-3mm}\!\!\left.{}-\sss_{h=1}^N q_h(t)\lk \tilde c_1\left(Y_t,\alpha_h,t\right)\hat{\bar{\bar X}}_{t,h}
+    + \tilde c_0\left(Y_t,\alpha_h,t\right)\rk \right\}\!.\!
+     \label{e3.28-sin}
+    \end{multline}
+
+%\smallskip
+
+\noindent
+\textbf{Утверждение~3.3.}\ \textit{Пусть СтС НРОП}~(\ref{e2.1-sin}) 
+\textit{приведена к~линейным относительно~$X_t$ и~нелинейным относительно~$Y_t$ 
+уравнениям}~(\ref{e3.23-sin})--(\ref{e3.25-sin}). 
+\textit{Тогда уравнения совместной среднеквадратичной фильт\-ра\-ции и~распознавания 
+по критерию максимума апостериорной вероятности имеют вид}~(\ref{e3.26-sin})--(\ref{e3.28-sin}).
+
+\smallskip
+
+\textbf{3.5.}\ В~рамках метода нормальной аппроксимации (МНА)~\cite{6-sin} 
+апостериорной плотности вероятности, учитывая, что
+гауссовское (нормальное) распределение, аппроксимирующее
+апостериорное распределение вектора~$\bar{\bar X}_t$, полностью определяется
+апостериорными математическим ожиданием~$\hat{\bar{\bar X}}_t$\linebreak 
+и~ковариационной мат\-ри\-цей~$R_t$ вектора~$\bar{\bar X}_t$, при аппроксимации
+апостериорного распределения вектора~$\bar{\bar X}_t$ нормальным
+распределением все математические ожидания будут
+представлять собой\linebreak \mbox{стохастические} дифференциальные уравнения,
+опре\-де\-ля\-ющие~$\hat{\bar{\bar X}}_t$ и~$R_t$:
+ \begin{multline}
+ \hspace*{-5pt}\dot{\bar{\bar X}}_t = f \left(\hat{\bar{\bar X}}_t, Y_t,R_t,t\right)dt +
+      h\left(\hat{\bar{\bar X}}_t,Y_t, R_t,t\right)dt\left[ 
+      \vphantom{\left(\hat{\bar{\bar X}}_t,Y_t,
+    R_t,t\right)}
+    dY_t -{}\right.\\
+\left.    {}- f^{(1)} \left(\hat{\bar{\bar X}}_t,Y_t,
+    R_t,t\right)dt\right];
+    \label{e3.29-sin}
+    \end{multline}
+    
+     \vspace*{-12pt}
+     
+     \noindent
+     \begin{multline}
+     \dot R_t=\left\{
+     \vphantom{\left({\hat{\bar{\bar X}}}_t, Y_t,R_t,t\right)^{\mathrm{T}}}
+      f^{(2)}\left(\hat{\bar{\bar X}}_t, Y_t,R_t,t\right)-
+     h\left(\hat{\bar{\bar X}}_t, Y_t,R_t,t\right)\right.\times{}\\
+     \left.{}\times b_1\nu_0 b_1^{\mathrm{T}} \left(Y_t,t\right)
+          h \left({\hat{\bar{\bar X}}}_t, Y_t,R_t,t\right)^{\mathrm{T}}\right\} dt+{}\\
+          {}+
+     \sss_{r=1}^{n_y} \rho_r \left({\hat{\bar{\bar X}}}_t,Y_t, R_t,t\right)\left[
+     \vphantom{\left({\hat{\bar{\bar X}}}_t,Y_t, R_t,t\right)}
+    dY_r -{}\right.\\
+\left.    {}-f_r^{(1)}\left({\hat{\bar{\bar X}}}_t,Y_t, R_t,t\right) dt\right].
+\label{e3.30-sin}
+    \end{multline}
+    
+    \vspace*{-4pt}
+    
+\noindent
+Здесь
+
+\vspace*{-6pt}
+
+\noindent
+    \begin{multline}
+    f\left(\hat{\bar{\bar X}}_t, Y_t,R_t,t\right)=
+    \lk(2\pi)^n \left\vert
+    R_t\right\vert \rk^{-1/2}\int\limits_{-\infty}^\infty a(Y_t,x,t) \times{}\\
+    {}\times \exp \lf -\left(x^{\mathrm{T}}
+    -\hat{\bar{\bar X}}_t^{\mathrm{T}}\right) R_t^{-1} \fr{x -\hat{\bar{\bar X}}_t}{2}\rf
+    dx\,;\label{e3.31-sin}
+    \end{multline}
+    
+ \vspace*{-12pt}
+     
+     \noindent
+     \begin{multline}
+     f^{(1)}\left(\hat{\bar{\bar X}}_t, Y_t,R_t,t\right)=
+     \lf
+      f_r^{(1)} \left( \hat{\bar{\bar X}}_t, Y_t, R_t, t\right)\rf={}\\
+{}=\lk (2\pi)^{n_x}\left\vert
+    R_t\right\vert \rk^{-1/2}\int\limits_{-\infty}^\infty\! a_1(Y_t,x,t)\times{}\\
+    {}\times \exp \left\{
+    -\left(x^{\mathrm{T}} -\hat{\bar{\bar X}}_t^{\mathrm{T}}\right) R_t^{-1} \fr{x -\hat{\bar{\bar X}}_t}{2}\right\}
+    dx\,;\label{e3.32-sin}
+    \end{multline}
+     
+     \vspace*{-12pt}
+     
+     \noindent
+     \begin{multline*}
+     h\left(\hat{\bar{\bar X}}_t, Y_t,R_t,t\right)=
+     \bigg\{ \lk (2\pi)^{n_x}\left\vert
+         R_t\right\vert \rk^{-1/2}\times{}\\
+         {}\times \int\limits_{-\infty}^\infty\!\!
+    \lk xa_1\left(Y_t,x,t\right)^{\mathrm{T}} + b\nu_0 b_1^{\mathrm{T}}\left(Y_t,x,t\right)\rk\times{}
+    \end{multline*}
+    
+\noindent
+         \begin{multline}
+{}\times \exp \lf -\left(x^{\mathrm{T}} -\hat{\bar{\bar X}}_t^{\mathrm{T}}\right) R_t^{-1} 
+\fr{x -\hat{\bar{\bar X}}_t}{2}\rf dx-{}\\[0.5pt]
+{}-
+    \hat{\bar{\bar X}}_t f^{(1)}\left(\hat{\bar{\bar X}}_t, Y_t,R_t,t\right)^{\mathrm{T}}\bigg\}
+     \left(b_1\nu_0 b_1^{\mathrm{T}}\right)^{-1} \left(Y_t,t\right);
+     \label{e3.33-sin}
+\end{multline}
+
+ \vspace*{-12pt}
+     
+     \noindent
+     \begin{multline}
+         f^{(2)}\left(\hat{\bar{\bar X}}_t, Y_t,R_t,t\right)={}\\[0.5pt]
+         {}=\lk (2\pi)^{n_x}\left\vert
+    R_t\right\vert \rk^{-1/2}\int\limits_{-\infty}^\infty
+    \biggl\{  (x-\hat{\bar{\bar X}}_t)a(Y_t,x,t)^{\mathrm{T}} + {}\\[0.5pt]
+{}+ a \left(Y_t,x,t\right) \left(x^{\mathrm{T}}-\hat{\bar{\bar X}}_t^{\mathrm{T}}\right) +b\nu_0 b_1^{\mathrm{T}} 
+\left(Y_t,x,t\right)\biggr\}\times{}\\[0.5pt]
+{}\times \exp \lf -\left(x^{\mathrm{T}} -\hat{\bar{\bar X}}_t^{\mathrm{T}}\right) R_t^{-1} \fr{x -\hat{\bar{\bar X}}_t}{2}\rf
+    dx\,;\label{e3.34-sin}
+    \end{multline}
+    
+     \vspace*{-12pt}
+     
+     \noindent
+     \begin{multline}
+\rho_r\left(\hat{\bar{\bar X}}_t,Y_t, R_t,t\right)=\lk (2\pi)^{n_x}\left\vert
+    R_t\right\vert \rk^{-1/2}\times{}\\[0.5pt]
+    {}\times \int\limits_{-\infty}^\infty
+    \biggl\{  \left(x-\hat{\bar{\bar X}}_t\right)\left(x^{\mathrm{T}}-\hat{\bar{\bar X}}_t^{\mathrm{T}}\right) 
+    a_r \left(Y_t,x,t\right)+ {}\\[0.5pt]
+{}+ \left(x-\hat{\bar{\bar X}}_t\right) b_r\left(Y_t,x,t\right)^{\mathrm{T}} 
+\left(x^{\mathrm{T}}-\hat{\bar{\bar X}}_t^{\mathrm{T}}\right)+{}\\[0.5pt]
+{}+ b_r \left(Y_t,x,t\right) 
+\left(x^{\mathrm{T}}-\hat{\bar{\bar X}}_t^{\mathrm{T}}\right)\biggr\} 
+ \exp \left\{ 
+ \vphantom{\fr{x -\hat{\bar{\bar X}}_t}{2}}
+ -\left(x^{\mathrm{T}} -\hat{\bar{\bar X}}_t^{\mathrm{T}}\right)\times{}\right.\\[0.5pt]
+ \left.{}\times R_t^{-1} 
+\fr{x -\hat{\bar{\bar X}}_t}{2}\right\} dx\enskip  \left(r=1\tr n_y\right),
+ \label{e3.35-sin}
+\end{multline}
+где $a_r$~---  $r$-й элемент мат\-ри\-цы-стро\-ки $(a_1^{\mathrm{T}}\hm-{\hat a}_1^{\mathrm{T}}) (b_1\nu_0 b_1^{\mathrm{T}})^{-1}$; 
+$b_{kr}$~--- элемент $k$-й строки и~$r$-го столб\-ца мат\-ри\-цы~$(b_1\nu_0 b_1^{\mathrm{T}})^{-1}$. 
+Тогда, обозначив через
+$b_r$ $r$-й столбец матрицы
+$b\nu_0 b_1^{\mathrm{T}}(b_1\nu_0 b_1^{\mathrm{T}})^{-1}$, имеем $b_r\hm = [ b_{1r}\cdots
+b_{pr}]^{\mathrm{T}}$ $(r\hm=1\tr n_1)$.
+
+Число уравнений МНА одномерного апостериорного распределения
+определяется по формуле:
+  \begin{equation*}
+  Q_{\mathrm{МНА}} = n_x + \fr{n_x (n_x+1)}{2} = \fr{n_x(n_x+3)}{2}\,.
+  %\label{e3.36-sin}
+  \end{equation*}
+  
+  \vspace*{-2pt}
+
+За начальные значения $\hat{\bar{\bar X}}_t$ и~$R_t$  при интегрировании
+уравнений~(\ref{e3.29-sin}) и~(\ref{e3.30-sin}), естественно, следует принять
+условные математическое ожидание и~ковариационную матрицу величины~$\bar{\bar X}_0$ относительно~$Y_0$:
+  \begin{equation}
+  \left.
+  \begin{array}{rl}
+  \hat{\bar{\bar X}}_0 &= \mathsf{M}_N\lk \bar{\bar X}_0 \mid Y_0\rk;\\[9pt]
+   R_0 &= \mathsf{M} \lk \left(\bar{\bar X}_0 -\hat{\bar{\bar X}}_0\right) 
+   \left(\bar{\bar X}_0^{\mathrm{T}} -\hat{\bar{\bar X}}_0^{\mathrm{T}}\right)\mid
+    Y_0\rk.
+    \end{array}
+    \right\}
+    \label{e3.37-sin}
+    \end{equation}
+ Если нет
+информации об условном распределении $\bar{\bar X}_0$ относительно~$Y_0$, то
+начальные условия можно взять в~виде  
+\begin{align*}
+\hat{\bar{\bar X}}_0 &=\mathsf{M}_N \bar{\bar X}_0\,;\\
+R_0&= \mathsf{M}_N\left(\bar{\bar X}_0-\mathsf{M}_N \bar{\bar X}_0\right) \left(\bar{\bar X}_0^{\mathrm{T}} \mathsf{M}_N \bar{\bar X}_0^{\mathrm{T}}\right).
+\end{align*}
+ Если
+же и~об этих величинах нет никакой информации, то начальные
+значения~$\hat{\bar{\bar X}}_t$ и~$R_t$ приходится задавать произвольно.
+
+
+Из формулы~(\ref{e3.35-sin}) видно, что если функция~$a_1$ линейна
+относительно~$\bar{\bar X}_t$, а функция~$b$ не зависит от~$\bar{\bar X}_t$, то при
+нормальной аппроксимации апостериорного распределения все матрицы~$\rho_r$ 
+равны нулю, вследствие чего уравнение~(\ref{e3.30-sin}) не содержит~$\dot Y_t$.
+{\looseness=1
+
+}
+
+\smallskip
+
+\noindent
+\textbf{Утверждение~3.4.}\ \textit{Пусть выполнены условия утверждения}~3.2, 
+\textit{а~фильт\-ра\-ци\-он\-ные уравнения допускают решение МНА. 
+Тогда уравнения совместной среднеквадратичной фильтрации и~распознавания по критерию 
+максимума апостериорной вероятности имеют вид}~(\ref{e3.29-sin})--(\ref{e3.35-sin}) 
+\textit{при условиях}~(\ref{e3.37-sin}).
+
+
+
+\section{Пример}
+
+Рассмотрим скалярную систему сле\-ду\-юще\-го \mbox{вида}:
+    \begin{align}
+    \varphi&=\varphi_1\left(\dot X_t\right)+\gamma X_t+U_t =0\,;\label{e4.1-sin}\\
+     \dot U_t &= \rho U_t + b^U V_0\,;\notag %\label{e4.2-sin}
+     \\
+     Z_t &= \dot Y_t = c_1 X_t + b^Z V_0\,.\label{e4.3-sin}
+     \end{align}
+Здесь $X_t$, $\dot X_t$, $U_t$, $\dot U_t$ и~$Z_t \hm=\dot Y_t$~--- скалярные переменные; $V_0$~--- 
+гауссовский  скалярный белый шум интенсивности~$\nu_0$; $\varphi_1$~--- 
+известная нелинейная функция~$\dot X_t$; $\gamma$, $\rho$, $b^U$, $c_1$ и~$b^Z$~--- 
+известные параметры. Заменим функцию~$\varphi_1$ линейной регрессией
+ \begin{equation}
+ \varphi_1 \approx \varphi_{10} + k_{\dot X}^{\varphi_1} \dot X_t,
+ \label{e4.4-sin}
+ \end{equation}
+где $\varphi_{10}\hm=\varphi_{10}( m_t^{\dot X}, D_t^{\dot X})$; 
+$k_{\dot X}^{\varphi_1}\hm = k_{\dot X}^{\varphi_1} (m_t^{\dot X}, D_t^{\dot X})$~--- коэффициенты 
+регрессии.
+
+Уравнение~(\ref{e4.1-sin}) с~учетом~(\ref{e4.4-sin}) 
+при условии $k_{\dot X}^{\varphi_1}\hm\ne 0$ может быть представлено в~виде линейного уравнения, 
+параметрически зависящего от~$m_t^{\dot X}$ и~$D_t^{\dot X}$:
+ \begin{equation}
+ \dot X_t =-\left( k_{\dot X}^{\varphi_1}\right)^{-1}\left(\varphi_{10} -\gamma X_t - U_t\right).
+ \label{e4.5-sin}
+ \end{equation}
+Поставим задачу обнаружения несущего информацию сигнала~$X_t$, определяемого линейным уравнением~(\ref{e4.5-sin}) 
+в~случае приема сигнала $Z_t \hm=\dot Y_t$ согласно~(\ref{e4.3-sin}).
+
+В таком случае параметр  $\alpha_t$ имеет два значения: $\alpha_1 \hm=1$ (информационный сигнал 
+присутствует в~принимаемом сигнале) и~$\alpha_2 \hm=0$ (принимается один шум). 
+Уравнение, определяющее сигнал~$X_t$, имеет вид:
+    $$
+    \dot X_t = - \alpha_t \left(k_{\dot X}^{\varphi_1}\right)^{-1} \left(\varphi_{10} - \gamma X_t-U_t\right).
+    %\eqno(4.6)
+    $$
+
+Уравнения~(\ref{e3.18-sin}), определяющие условные оптимальные оценки сигнала~$X_t$ при 
+гипотезах $\alpha\hm=1$  и~$0$, можно представить в~виде:
+
+\noindent
+  \begin{align*}
+    \dot X_{t,1}' &= \bar a \left(\alpha_1,t\right) Y_t + \bar a_1 \left(\alpha_1, t\right) \hat X_{t,1}' +
+    \bar a_0 (\alpha_1,t) +{}\\
+&   \hspace*{40mm}{}+
+    \beta_1 \left(\dot Y_t- c_1 \hat X_{t,1}'\right);
+    %\eqno(4.7)
+ \\
+    \dot X_{t,2}' &=\beta_2 \left(\dot Y_t - c_1 \hat X_{t,2}'\right). %\eqno(4.8)
+\end{align*}
+Апостериорная вероятность~$q_1$ присутствия сигнала, в~силу условия $q_1 \hm+q_2 \hm=1$, 
+определяется из уравнения~(\ref{e3.21-sin}):
+ \begin{multline*}
+    \dot q_1 =(\hat X_{t,1}^{'T} c_1^{\mathrm{T}} - q_1 \hat X_{t,1}^{'T} \bar b_1^{\mathrm{T}} - q_2 \hat X_{t,2}^{'T} \bar B_1^{\mathrm{T}}) 
+    q_1 \left(\bar b_1 \nu_0 \bar b_1\right)^{-1}\times{}\\
+    {}\times \left(Z_t - q_1 c_1 \hat X_{t,1}' - q_2 c_1 \hat X_{t,2}'\right).
+    %\eqno(4.9)
+\end{multline*}
+В результате оптимальная оценка состояния определяется по формуле~(\ref{e3.15-sin}):
+    $$
+    \hat X_{t}' = q_1 \hat X_{t,1}' + q_2 \hat X_{t,2}'\enskip \left(q_1 + q_2 =1\right).
+    %\eqno(4.10)
+    $$
+
+Таким образом, оптимальная система обнаружения представляет собой, 
+во-пер\-вых, последовательное соединение двух параллельно соединенных фильтров Кал\-ма\-на--Бью\-си, 
+вырабатывающих условные оценки $\hat X_{t,1}'$ и~$\hat X_{t,2}'$ сигнала~$\hat X_{t}'$, во-вто\-рых, 
+интегрирующего устройства дифференциального уравнения для~$q_1$ и,~в-треть\-их, 
+порогового устройства, выдающего сигнал тревоги (сигнал о~присутствии~$X_t'$ в~случае, когда~$q_1$ 
+становится больше~$1/2$).
+
+
+\section{Заключение}
+
+Рассмотрены вопросы общей теории совместной среднеквадратичной гауссовской фильтрации и~распознавания
+ по критерию максимума апостериорной вероятности распознавания. Предполагается, что в~уравнения 
+ наблюдаемой системы входит вектор наблюдений.
+
+Разработаны частные алгоритмы для случаев линейной и~нелинейной зависимости уравнений 
+от наблюдений. Приведен иллюстративный пример.
+
+Результаты допускают обобщение на случай, когда уравнения СтС  НРОП могут быть 
+приведены к~дискретными гауссовским системам.
+
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+%1
+\bibitem{1-sin}
+\Au{Синицын И.\,Н.}
+Аналитическое моделирование и~оценивание нестационарных нормальных процессов в~стохастических 
+системах, не разрешенных относительно производных~// Системы и~средства информатики, 2022. Т.~32. 
+ №\,2. С.~58--71.
+
+%2
+\bibitem{2-sin}
+\Au{Синицын И.\,Н.}
+Аналитическое моделирование и~фильт\-ра\-ция нормальных процессов в~интегродифференциальных 
+стохастических системах, не разрешенных относительно производных~// Системы и~средства\linebreak информатики, 2021. 
+Т.~31. №~1. С.~31--56.
+
+
+%3
+\bibitem{3-sin}
+\Au{Sinitsyn I.\,N.}
+Analytical modeling and estimation of normal processes defined by stochastic differential equations with unsolved 
+derivates~// J.~Mathematics Statistics Research, 2021. Vol.~3. Iss.~1. Art.~139. 
+7~p. doi: 10.36266/JMSR/139.
+
+%\columnbreak
+
+%4
+\bibitem{4-sin}
+\Au{Синицын И.\,Н.}
+Нормализация систем, стохастически не разрешенных относительно производных~// 
+Информатика и~её применения, 2022. Т.~16. Вып.~1. С.~32--38.
+
+
+
+%5
+\bibitem{5-sin}
+\Au{Пугачёв В.\,С., Синицын~И.\,Н.}
+Стохастические дифференциальные системы. Анализ и~фильтрация.~--- М.:
+Наука,  1990.  632~с. 
+
+%6
+\bibitem{6-sin}
+\Au{Синицын И.\,Н.}
+Фильтры Калмана и~Пугачева.~--- 2-е изд.~--- М.: Логос, 2007. 776~с.
+
+%7
+\bibitem{7-sin}
+\Au{Пугачёв В.\,С.}
+Теория вероятностей и~математическая статистика.~--- 2-е изд.~--- М.: Физ\-мат\-лит, 2002. 496~с.
+{\looseness=1
+
+}
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-14pt}
+
+\hfill{\small\textit{Поступила в~редакцию 09.06.21}}
+
+\vspace*{6pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+\vspace*{-3pt}
+
+\def\tit{JOINT FILTRATION AND~RECOGNITION OF~NORMAL PROСESSES IN~STOCHASTIC SYSTEMS WITH~UNSOLVED DERIVATIVES}
+
+
+\def\titkol{Joint filtration and~recognition of~normal proсesses in~stochastic systems with~unsolved derivatives}
+
+
+\def\aut{I.\,N.~Sinitsyn$^{1,2}$}
+
+\def\autkol{I.\,N.~Sinitsyn}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-15pt}
+
+
+\noindent
+$^1$Federal Research Center ``Computer Science and Control'' of the
+ Russian Academy of Sciences, 44-2~Vavilov\linebreak
+ $\hphantom{^1}$Str., Moscow 119333, Russian Federation
+
+\noindent
+$^2$Moscow State Aviation Institute (National Research University), 
+4~Volokolamskoe Shosse, Moscow 125933,\linebreak
+ $\hphantom{^1}$Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt} 
+
+
+
+\Abste{Methodological and algorithmic support for analytical modeling, estimation, 
+identification, and calibration for essentially nonstationary (e.\,g., shock) stochastic 
+systems with unsolved derivatives (StS USD) is worked out. It is supposed that state 
+equations contain observation vector. After survey, classes of regression equations 
+for StS USD are considered. Basic results: ($i$)~for general StS USD, optimal algorithms of joint filtration
+ and recognition are presented; ($ii$)~for linear Gaussian equations, optimal algorithms of joint 
+ linear filtration and recognition are given; ($iii$)~for StS USD, linear relatively on $X_t$ 
+ and nonlinear relatively on $Y_t$ algorithm is described; and ($i\nu$)~in case of result~($iii$), 
+ using the method of normal approximation, the corresponding algorithm is developed. 
+ A~scalar example of nonlinear StS USD with Gaussian noise corresponding algorithm 
+ is given and discussed. Some potential generalizations are presented.}
+
+\KWE{stochastic systems with unsolved derivatives; joint filtration and recognition;  regression model}
+
+\DOI{10.14357/19922264220211}
+
+
+
+%\Ack
+%\noindent
+
+
+
+
+\vspace*{-7pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{1-sin-1}
+\Aue{Sinitsyn, I.\,N.} 2022. 
+Analiticheskoe modelirovanie i~otsenivanie nestatsionarnykh normal'nykh protsessov 
+v~stokhasticheskikh sistemakh, ne razreshennykh otnositel'no proizvodnykh
+ [Anatlytical modeling and estmation of nonstationary normal processes with unsolved derivatives]. 
+ \textit{Sistemy i~Sredstva Informatiki~--- Systems and Means of Informatics} 32(2):58--71.
+\bibitem{2-sin-1}
+\Aue{Sinitsyn, I.\,N.} 2021. Analiticheskoe modelirovanie 
+i~fil't\-ra\-tsiya normal'nykh protsessov v~in\-teg\-ro\-dif\-fe\-ren\-tsi\-al'\-nykh stokhasticheskikh sistemakh, 
+ne raz\-re\-shen\-nykh otnositel'no proizvodnykh [Analytical modeling and filtering in integrodifferential
+ systems with unsolved derivatives]. \textit{Sistemy i~Sredstva Informatiki~--- 
+ Systems and Means of Informatics} 31(1):37--56.
+\bibitem{3-sin-1}
+\Aue{Sinitsyn, I.\,N.} 2021. Analytical modeling and estimation of normal processes defined
+ by stochastic differential equations with unsolved derivates. \textit{J.~Mathematics Statistics Research} 
+ 3(1):139. 7~p. doi: 10.36266/JMSR/139. 
+\bibitem{4-sin-1}
+\Aue{Sinitsyn, I.\,N.} 2022. Normalizatsiya sistem, stokhasticheski ne razreshennykh otnositel'no 
+proizvodnykh [Normalization of systems with stochastically unsolved derivatives]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 16(1):32--38.
+\bibitem{5-sin-1}
+\Aue{Pugachev, V.\,S., and I.\,N.~Sinitsyn.} 1987. 
+\textit{Stochastic differential systems. Analysis and filtering}. Chichester, New York: John Wiley \& Sons. 549~p.
+\bibitem{6-sin-1}
+\Aue{Sinitsyn, I.\,N.} 2007. 
+\textit{Fil'try Kalmana i~Pugacheva} [Kalman and Pugachev filters]. 2nd ed. Moscow: Logos. 776~p.
+\bibitem{7-sin-1}
+\Aue{Pugachev, V.\,S.} 2002. 
+\textit{Teoriya veroyatnostey i~ma\-te\-ma\-ti\-che\-skaya statistika} [Probability theory and mathematical statistics]. 
+2nd ed. Moscow: Fizmatlit. 496~p.
+  \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-12pt}
+
+\hfill{\small\textit{Received June 9, 2021}}
+
+%\vspace*{-12pt}
+
+\pagebreak
+
+\Contrl
+
+\noindent
+\textbf{Sinitsyn Igor N.} (b.\ 1940)~--- 
+Doctor of Science in technology, professor, Honored scientist of RF, principal scientist,
+ Institute of Informatics Problems, Federal Research Center ``Computer Science and Control'' 
+ of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; professor,
+  Moscow State Aviation Institute (National Research University), 4~Volokolamskoe Shosse, Moscow 125933, 
+  Russian Federation; \mbox{sinitsin@dol.ru}
+  
+\label{end\stat}
+
+
+\renewcommand{\bibname}{\protect\rm Литература}   
+\renewcommand{\figurename}{\protect\bf Рис.}
+\renewcommand{\tablename}{\protect\bf Таблица}

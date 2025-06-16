@@ -1,0 +1,898 @@
+\def\stat{bosov}
+
+\def\tit{СТАБИЛИЗАЦИЯ АВТОНОМНОГО ЛИНЕЙНОГО ВЫХОДА МАРКОВСКОЙ ЦЕПИ 
+ПО~КВАДРАТИЧНОМУ КРИТЕРИЮ НА~БЕСКОНЕЧНОМ ГОРИЗОНТЕ$^*$}
+
+\def\titkol{Стабилизация автономного линейного выхода марковской цепи 
+по~квадратичному критерию} % на бесконечном горизонте}
+
+\def\aut{А.\,В.~Босов$^1$}
+
+\def\autkol{А.\,В.~Босов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Босов А.\,В.}
+\index{Bosov A.\,V.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнялась с~использованием инфраструктуры Центра коллективного пользования 
+<<Высокопроизводительные вы\-чис\-ле\-ния и~большие данные>> 
+(ЦКП <<Информатика>>) ФИЦ ИУ РАН 
+(г.~Москва).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{ABosov@frccsc.ru}}
+
+\vspace*{-6pt}
+
+
+\Abst{Решение задачи оптимального управления линейным выходом 
+стохастической дифференциальной системы на бесконечном горизонте 
+адаптировано для одного частного случая косвенных наблюдений. Роль 
+динамической системы выполняет эргодическая цепь Маркова, а~фор\-ми\-ру\-емый 
+ею автономный линейный выход обеспечивает косвенные зашумленные 
+наблюдения о~состоянии цепи. Цель управления формулируется как стабилизация 
+выхода в~положениях, определяемых цепью и~периодически изменяющихся при 
+изменениях состояния цепи. Решение, как и~в~аналогичной задаче с~полной 
+информацией, получено как предельная форма оптимального управ\-ле\-ния 
+в~соответствующей задаче с~конечным горизонтом. Достаточные условия 
+существования управления оказываются типовыми для ли\-ней\-но-квад\-ра\-тич\-ных 
+задач условиями стационарности, детектируемости и~стабилизируемости. Из-за 
+специального вида задачи, обеспечиваемого структурой оптимального фильт\-ра 
+Вонэма, в~управ\-ле\-нии присутствуют только линейные компоненты, а~вся 
+нелинейность ограничена уравнением оценки фильт\-ра\-ции, поэтому условия 
+существования включают только требования к~решению автономного уравнения 
+Риккати. Обсуждается чис\-лен\-ный эксперимент для модели механического 
+привода, использованной в~предыду\-щих исследованиях. Цель эксперимента~--- 
+показать разницу в~использовании оптимального управ\-ле\-ния и~его автономного 
+варианта.}
+
+\KW{цепь Маркова с~непрерывным временем; фильтр Вонэма; линейная 
+дифференциальная сис\-те\-ма; оптимальное управ\-ле\-ние; стабилизация; 
+квадратичный критерий}
+
+\DOI{10.14357/19922264240305}{XVTFLH}
+  
+\vspace*{-2pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+     Типовым вариантом классической задачи ли\-ней\-но-квад\-ра\-тич\-но\-го 
+гауссовского (LQG, linear-quadratic-Gaussian) управ\-ле\-ния~[1] можно считать постановку 
+с~бесконечным горизонтом управления~[2, 3], причем отличий между 
+случаями с~полной информацией и~косвенными наблюдениями за\linebreak состоянием 
+системы нет. Обеспечивается это уникальными свойствами оптимальной 
+оценки, описываемой фильтром Кал\-ма\-на--Бью\-си~[4], или, \mbox{другими} 
+словами, двойственностью задач LQG-управ\-ле\-ния и~фильтрации, которая 
+все вопросы сводит к~анализу поведения решения дифференциального 
+уравнения Риккати на бесконечности. В~отсутствие  
+ли\-ней\-но-гаус\-сов\-ских условий изучать задачу с~бесконечным 
+горизонтом становится сложно из-за трудностей, связанных с~записью 
+уравнений для оценки оптимальной фильтрации. Лучше всего для 
+формирования модели наблюдения могли бы подойти общие уравнения 
+нелинейной фильтрации на основе обновляющих процессов~[5], но их 
+конструкция такова, что не дает шансов для практической реализации. 
+Занимающим промежуточное положение можно считать фильтр Вонэма~[6], 
+описывающий оценку состояния непрерывной цепи Маркова по косвенным 
+линейно-гауссовским наблюдениям. Поведение цепи Маркова на 
+бесконечности прекрасно изучено~[7], требование эргодичности хорошо 
+согласуется с~духом задачи с~непрерывным временем. Таким образом, 
+логичным представляется полученное ранее в~[8] оптимальное автономное 
+управ\-ле\-ние в~задаче управ\-ле\-ния линейным выходом стохастической 
+дифференциальной системы на бесконечном горизонте в~случае полной 
+информации дополнить оптимальным автономным управ\-ле\-ни\-ем в~задаче 
+стабилизации линейного выхода стохастической дифференциальной сис\-те\-мы 
+на бесконечном горизонте в~случае косвенных\linebreak наблюдений за состоянием 
+фор\-ми\-ру\-ющей выход дискретной цепи Маркова.
+
+\vspace*{-4pt}
+     
+\section{Постановка задачи}
+
+     На каноническом вероятностном пространстве $(\Omega, 
+\mathcal{F},\mathcal{P}, \mathcal{F}_t)$, $t\hm\in [0,\infty)$, рассмотрим 
+автономную линейную дифференциальную стохастическую сис\-те\-му 
+с~управ\-ля\-емым вектором выхода $z_t \hm\in \mathbb{R}^{n_z}$:
+     \begin{multline}
+     dz_t= ay_t\,dt+bz_t\,dt+cu_t\,dt+\sigma \,dw_t,\\ z_0=Z,\enskip t\in [0,\infty).
+     \label{e1-bos}
+     \end{multline}
+      
+      В отличие от обычной линейной системы траектории~$z_t$ в~(1) 
+имеют систематическую со\-став\-ля\-ющую, которую задает марковский 
+скачкообразный процесс~$y_t$~--- цепь с~конечным числом \mbox{состояний} 
+и~значениями в~множестве $\{ e_1, \ldots, e_{n_y}\}$, состоящем из 
+единичных координатных векторов в~евклидовом 
+пространстве~$\mathbb{R}^{n_y}$. Цепь~$y_t$ предполагается 
+эргодической, поэтому матрица интенсивностей переходов~$\Lambda$ не 
+зависит от времени, предельное распределение обозначается~$\pi_*$, 
+начальное распределение~--- $y_0\hm=Y$. Остальные величины 
+в~уравнении~(1):
+      \begin{itemize}
+        \item $w_t\in \mathbb{R}^{n_w}$~--- стандартный векторный винеровский процесс;
+        \item $Z\in \mathbb{R}^{n_z}$~--- гауссовский случайный вектор с~известным 
+математическим ожиданием и~ковариацией, $w_t$, $y_t$ и~$Z$ независимы в~совокупности;
+        \item $u_t\in\mathbb{R}^{n_u}$~--- управление~--- случайный процесс с~конечным 
+вторым моментом;
+        \item $a\in \mathbb{R}^{n_z\times n_y}$, $b\hm\in \mathbb{R}^{n_z\times n_z}$, $c\hm\in 
+\mathbb{R}^{n_z\times n_u}$ и~$\sigma\hm\in \mathbb{R}^{n_z\times n_w}$~--- заданные 
+матрицы.
+\end{itemize}
+     
+     Состояние цепи~$y_t$ предполагается неизвестным, так что~$z_t$ 
+выполняет роль косвенных наблюдений. Соответственно, допустимые 
+управления предполагаются $\mathcal{F}_t^z$-из\-ме\-ри\-мы\-ми 
+(через~$\mathcal{F}_t^z$ обозначена $\sigma$-ал\-геб\-ра наблюдений и~выполнено 
+$\mathcal{F}_t^z\hm\subseteq \mathcal{F}_t \hm\subseteq \mathcal{F}$). Кроме 
+того, c учетом бесконечного времени $t\hm\in[0,\infty)$ и~марковского 
+характера задачи класс~$U_0^\infty$ допустимых управлений сформирован 
+автономными (не зависящими прямо от времени) управлениями с~полной 
+обратной связью, т.\,е.\ функциями вида 
+$$
+u_t= u(z)\in  \mathbb{R}^{n_u},\enskip z\in \mathbb{R}^{n_z},
+$$ в~предположении, что 
+соответствующая реализация $u_t\hm= u(z_t)$ обеспечивает выполнение 
+условий существования решения~(1) для $u\hm\in U_0^\infty$. Поскольку 
+состояние~$y_t$ от управ\-ле\-ния~$u_t$ не зависит, а~выход~$z_t$ 
+описывается линейным автономным уравнением с~винеровским процессом, 
+то данное формальное требование ограничивает допустимые управления 
+процессами второго порядка, что обеспечивает существование решения~(1) 
+на любом конечном интервале $t\hm\in [0,T]$. Для управления на интервале 
+$[0,\infty)$ дополнительно потребуются типовые условия 
+стабилизируемости~[2, 3], обсуждаемые далее.
+     
+     Качество управления $U_0^\infty$ определяется целевым 
+функционалом сле\-ду\-юще\-го вида:
+     \begin{multline}
+          J\left(U_0^\infty\right) =\lim\limits_{T\to\infty} J\left(U_0^T\right),\enskip
+              J\left(U_0^T\right)= {}\\
+              {}= \mathbb{E}\left\{ \fr{1}{T} \int\limits_0^T \left\| Py_t+Qz_t+R 
+u_t\right\|_s^2\,dt\right\},
+ \label{e2-bos}
+ \end{multline}
+
+\vspace*{-4pt}
+
+\noindent
+где $P\in \mathbb{R}^{n_J\times n_y}$, $Q\hm\in \mathbb{R}^{n_J\times 
+n_z}$, $R\hm\in \mathbb{R}^{n_J\times n_u}$ и~$S\hm\in 
+\mathbb{R}^{n_J\times n_J}$ ($S\hm\geq 0$, $S\hm= S^\prime$)~--- заданные 
+матрицы, весовая функция $\| x\|_S^2\hm= x^\prime Sx$; единичной матрице 
+$S\hm=E$ соответствует евклидова норма $\| x\|^2_E\hm= \vert x\vert^2$; 
+<<${}^\prime$>>~--- операция транспонирования; $\mathbb{E}\{\cdot\}$~--- 
+оператор математического ожидания (далее еще используется обозначение 
+$\mathbb{E}\{\cdot\vert\mathcal{F}\}$ для условного математического 
+ожидания относительно $\sigma$-ал\-геб\-ры~$\mathcal{F}$). Кроме того, 
+предполагается выполненным обычное условие невырожденности, 
+в~используемых обозначениях принимающее вид $R^\prime SR>0$.
+
+     В отношении физического смысла критерия~(\ref{e2-bos}) заметим, что 
+цепь~$y_t$, изменив состояние, некоторое время сохраняет постоянное 
+значение, которое и~вносит в~уравнение~(1) упомянутую систематическую 
+составляющую. Аналогично в~целевом функционале присутствуют 
+слагаемые, фор\-ми\-ру\-емые <<ступеньками>> на интервалах 
+постоянства~$y_t$. Таким образом,~(\ref{e2-bos}) формализует цель управ\-ле\-ния, 
+состоящую в~стабилизации выхода~$z_t$ около из\-ме\-ня\-ющих\-ся  
+ку\-соч\-но-по\-сто\-ян\-ных положений, задаваемых состоянием цепи~$y_t$. 
+Иными словами, эти положения можно назвать на\-прав\-ле\-ни\-ями дрейфа, 
+а~целью управ\-ле\-ния~--- обеспечение дрейфа выхода сис\-те\-мы~$z_t$ 
+в~заданном и~периодически изменяющемся направлении. Задача со\-сто\-ит, 
+таким образом, в~поиске $(U^*)_0^\infty\hm= \{u^*(z), z\hm\in 
+\mathbb{R}^{n_z}\}$~--- допустимого управления, реализации $u_t^*\hm= 
+u^*(z_t^*)$, $t\hm\in [0,\infty)$, которого доставляют минимум 
+квадратичному функционалу~$J(U_0^\infty)$:
+     \begin{equation}
+     \left( U^*\right)_0^\infty =\argmin\limits_{u\in U_0^\infty} J\left( 
+U_0^\infty\right).
+     \label{e3-bos}
+     \end{equation} 
+     
+     \vspace*{-4pt}
+
+     
+     Далее через~$z_t^*$ обозначается решение~(1), отвечающее~$u_t^*$  
+и~учитывается, что~$y_t$ от~$u_t$ не зависит.
+
+
+\vspace*{-9pt}
+
+
+\section{Основной результат}
+
+\vspace*{-3pt}
+
+     Как и~в постановке с~полной информацией, рассмотренной в~[8], здесь 
+также основу для решения~(\ref{e3-bos}) обеспечивает решение 
+соответствующей задачи с~конечным горизонтом, которое получено в~[9]. 
+Ключевую роль в~этом решении играет оценка оптимальной фильтрации 
+состояния~$y_t$ по наблюдениям $\{z_\tau, 0\hm\leq \tau\hm\leq t\}$, т.\,е.\ 
+условное матема-\linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+тическое ожидание $\hat{y}_t\hm= \mathbb{E}\{ y_t\vert 
+\mathcal{F}_t^z\}$, которое задается фильтром Вонэма~[2, 10]:
+
+\vspace*{-6pt}
+
+\noindent
+     \begin{multline}
+     d\hat{y}_t=\Lambda^\prime \hat{y}_t \,dt +\left( 
+\mathrm{diag}\,(\hat{y}_t) - \hat{y}_t \hat{y}_t^\prime\right) 
+a^\prime(\sigma\sigma^\prime)^{-1}\times{}\\
+     {}\times \left( dz_t-a\hat{y}_t\,dt -bz_t\,dt -cu_t\,dt\right) ,\enskip
+     \hat{y}_0=\mathbb{E}\{Y\}.
+     \label{e4-bos}
+     \end{multline}
+     
+     \vspace*{-3pt}
+     
+     Для удобства записи функциональную зависимость оценки от 
+наблюдений, определяемую уравнением~(\ref{e4-bos}), обозначим 
+$\hat{y}(z)$, так чтобы $\hat{y}_t\hm= \hat{y}(z_t)$.
+     
+     Для корректного предельного перехода от постановки с~конечным 
+горизонтом к~бесконечному времени требуется выполнение ряда условий, 
+объединенных в~сле\-ду\-ющем утверж\-де\-нии.
+     
+     \smallskip
+     
+     \noindent
+     \textbf{Теорема.} \textit{Решение задачи}~(\ref{e3-bos}) \textit{может 
+быть записано в~виде}
+
+\vspace*{-4pt}
+
+\noindent
+     \begin{multline}
+     u^*(z) =-\fr{1}{2} \left( R^\prime SR\right)^{-1} \left( c^\prime 
+(2\alpha_*z+\beta_* \hat{y}(z))+{}\right.\\
+\left.{}+2R^\prime S \left( P\hat{y}(z)+Qz\right)\right),
+     \label{e5-bos}
+     \end{multline}
+     
+          \vspace*{-3pt}
+          
+          \noindent
+\textit{где симметричная неотрицательно определенная мат\-ри\-ца 
+$\alpha_*\hm\in \mathbb{R}^{n_z\times n_z}$ и~прямоугольная мат\-ри\-ца 
+$\beta_*\hm\in \mathbb{R}^{n_z\times n_y}$ представляют собой решения 
+уравнений}
+
+\vspace*{-4pt}
+
+\noindent
+\begin{multline}
+\left( b^\prime -Q^\prime SR\left(R^\prime SR\right)^{-1} c^\prime\right)\alpha_* 
++{}\\
+{}+\alpha_* \left( b-c\left( R^\prime SR\right)^{-1} R^\prime SQ\right)+{}\\
+{}+ Q^\prime \left( S-SR\left( R^\prime SR\right)^{-1} R^\prime S\right) Q-{}\\
+{}-
+\alpha_* c \left( R^\prime SR\right)^{-1} c^\prime \alpha_*=0\,;
+\label{e6-bos}
+\end{multline}
+
+\noindent
+\begin{equation}
+\beta_*\Lambda^\prime +M_* -N_*\beta_*=0\,,
+\label{e7-bos}
+\end{equation}
+
+\vspace*{-3pt}
+
+\noindent
+где
+
+\vspace*{-6pt}
+
+\noindent
+\begin{multline*}
+M_*= 2\left( \left(a^\prime -P^\prime SR\left( R^\prime SR\right)^{-1} 
+c^\prime\right) \alpha_* +{}\right.\\
+\left.{}+P^\prime\left( S-SR\left( R^\prime SR\right)^{-1} R^\prime S\right) Q\right)\,;
+\end{multline*}
+$$
+N_*= b-c\left( R^\prime SR\right)^{-1} R^\prime SQ -c\left( R^\prime SR\right)^{-
+1} c^\prime \alpha_*\,,
+$$
+
+\vspace*{-4pt}
+
+\noindent
+\textit{если для параметров системы наблюдения~$y_t$, $z_t$ и~целевого 
+функционала}~(\ref{e2-bos}) \textit{выполнены следующие условия}:
+\begin{enumerate}[(1)]
+\item  \textit{матрица~$b$ устойчива};
+\item  \textit{матрицы $(K_b, c)$ стабилизируемы}, $K_b\hm= b\hm- 
+c(R^\prime SR)^{-1} R^\prime SQ$;
+\item  \textit{матрицы $(K_b^\prime, K_Q)$ стабилизируемы}; 
+\item  $K_Q\hm= Q^\prime S^{1/2} (E\hm- S^{1/2} R (R^\prime SR)^{-1} 
+R^\prime S^{1/2})$.
+\end{enumerate}
+     
+     \noindent
+     Д\,о\,к\,а\,з\,а\,т\,е\,л\,ь\,с\,т\,в\,о\,.\ \  Перечисленные в~теореме 
+условия обеспечивают существование предельного решения 
+соответствующей~(\ref{e3-bos}) задачи с~конечным горизонтом, т.\,е.\ 
+управления 
+$$
+\left(U^\#\right)_0^T =\argmin\nolimits_{u_t\in U_0^T} J\left(U_0^T\right),
+$$
+
+\vspace*{-4pt}
+
+\noindent
+ где 
+$U_0^T\hm= \{u_t(z,T), z\hm\in \mathbb{R}^{n_z}, t\hm\in [0,T]\}$. 
+Оптимальное управ\-ле\-ние $u_t^\# \hm= u_t^\#(z_t^\#, T)$ получено в~[9] 
+в~результате разделения задач управ\-ле\-ния и~фильт\-ра\-ции в~виде
+
+\vspace*{-2pt}
+
+\noindent
+     \begin{multline}
+     u_t^{\#} =u_t^{\#}(z,T) =-\fr{1}{2} \left( R^\prime SR\right)^{-1} \left(
+ c^\prime \left( 2\alpha_t z+{}\right.\right.\\
+\left.\left.{}+\beta_t \hat{y}(z)\right) +2R^\prime S\left( 
+P\hat{y}(z) +Qz\right)\right),
+     \label{e8-bos}
+     \end{multline}
+     
+     \vspace*{-2pt}
+
+\noindent
+где матричные коэффициенты $\alpha_t \hm= \alpha_t(T)\hm\in 
+\mathbb{R}^{n_z\times n_z}$ и~$\beta_t\hm= \beta_t(T)\hm\in 
+\mathbb{R}^{n_z\times n_y}$ {представляют собой} решения задач 
+Коши для уравнения Риккати
+
+\vspace*{-6pt}
+
+\noindent
+\begin{multline}
+\fr{d\alpha_t}{dt} +\left( b^\prime - Q^\prime SR\left( R^\prime SR\right)^{-1} 
+c^\prime\right)\alpha_t+{}\\
+{}+ \alpha_t\left( b-c\left( R^\prime SR\right)^{-1} R^\prime SQ\right)+{}\\
+{}+ Q^\prime \left( S-SR\left(R^\prime SR\right)^{-1} R^\prime S\right)Q -{}\\
+{}-
+\alpha_t c \left( R^\prime SR\right)^{-1} c^\prime \alpha_t =0\,,\enskip 
+\alpha_T=Q^\prime SQ\,,
+\label{e9-bos}
+\end{multline}
+
+\vspace*{-4pt}
+
+\noindent
+и линейного уравнения
+\begin{equation}
+\fr{d\beta_t}{dt}= \beta_t\Lambda^\prime +M_t -N_t\beta_t=0\,,\enskip
+\beta_T=2Q^\prime_T S_T P_T\,,
+\label{e10-bos}
+\end{equation}
+
+\vspace*{-2pt}
+
+\noindent
+где
+
+\vspace*{-7pt}
+
+\noindent
+\begin{multline*}
+M_t= M_t(T) =2\left(\left( a^\prime -P^\prime SR \left( R^\prime SR\right)^{-1} 
+c^\prime \right) \alpha_t +{}\right.\\[-1pt]
+\left.{}+P^\prime \left( S-SR\left( R^\prime SR\right)^{-1} R^\prime S\right) 
+Q\right)\,;
+\end{multline*}
+
+\vspace*{-14pt}
+
+\noindent
+\begin{multline*}
+N_t = N_t(T) ={}\\
+{}= b - c\left(R^\prime SR\right)^{-1} R^\prime SQ -c\left( R^\prime 
+SR\right)^{-1} c^\prime \alpha_t.
+%\label{e11-bos}
+\end{multline*}
+
+\vspace*{-4pt}
+
+     
+     Условия 1--3 теоремы~--- это условия существования предельного 
+решения уравнения Рикатти\linebreak $\alpha_*\hm= \lim_{T\to\infty} \alpha_t(T)$ 
+и~оптимального решения в~классической задаче  
+ли\-ней\-но-квад\-ра\-тич\-но\-го гауссовского управления с~бесконечным 
+временем (ис\-поль\-зу\-емые в~рас\-смат\-ри\-ва\-емой задаче обозначения приведены к~формулировкам условий тео\-ре\-мы~12.2 из монографии~[2]). Отсюда 
+получаем, что существует мат\-ри\-ца $N_*\hm= \lim_{T\to \infty} N_t(T)$ 
+(предел существует и~не зависит от~$t$, так как~$N_t(T)$ выражается 
+линейно через $\alpha_t(T)$). Более того, эта же тео\-ре\-ма утверж\-да\-ет, что 
+матрица~$N_*$ устойчива, что вместе с~изначально предполагаемой 
+эргодичностью~$y_t$ дает устойчивость уравнения~(\ref{e10-bos}), т.\,е.\ 
+существование предельной матрицы~$\beta_*$, что завершает 
+до\-ка\-за\-тель\-ство.
+     
+     \smallskip
+     
+     Отметим, что для предельного перехода $\beta_*\hm= \lim_{T\to\infty} 
+\beta_t(T)$ не потребовались дополнительные условия. Это связано со 
+специальным видом нелинейной динамики рассматриваемой системы, 
+заданным фильт\-ром Вонэма~(\ref{e4-bos}), а~именно: данная 
+модель отвечает частному случаю линейного сноса в~задаче управления 
+линейным дифференциальным выходом общего вида, рассмотренному 
+подробно в~[11]. Более того, снос~$\Lambda^\prime \hat{y}_t$ не просто 
+линейный, а аффинный, без свободного члена, что предельно упрощает вид 
+управления и~приводит к~тому, что для сходимости достаточно 
+эр\-го\-дич\-ности~$y_t$.
+
+%\pagebreak
+     
+     Также можно заметить, что в~[11] решение\linebreak включает еще и~конечный 
+вид функции Беллмана. Нетрудно показать, что эти соотношения \mbox{можно} 
+трансформировать и~для рассматриваемой задачи~(\ref{e3-bos}), но кроме 
+формального значения практического смысла в~них нет.
+     
+     Наконец, надо отметить, что по сравнению с~задачей с~полной 
+информацией, рассмотренной\linebreak в~[9], здесь оптимальное  
+управ\-ле\-ние~(\ref{e5-bos}) нелинейным считается лишь формально, 
+а~именно: нелинейность управлению~$u^*$ дает только оценка фильтрации 
+$\hat{y}_t\hm= \hat{y}(z_t)$. Если же рассматривать\linebreak \mbox{управление}~$u^*$ как 
+функцию двух переменных~$z_t$ и~$\hat{y}_t$, то оно оказывается 
+линейным. Такое свойство управ\-ле\-ния в~[12] названо сильным принципом 
+разделения.
+     
+\section{Численный эксперимент}
+
+     Для иллюстрации того, как работает оптимальное автономное 
+управление $u^*\hm= u^*(z)$, предлагается сравнить его с~оптимальным 
+неавтономным управлением $u_t^\# \hm= u_t^\# (z,T)$, т.\,е.\ 
+проанализировать, как происходит переход системы~$y_t, z_t$ 
+в~стационарный режим и~как влияет неоптимальность автономного 
+управления на результат на конечном горизонте. Для этого использована 
+детально исследованная в~[9] модель простого механического привода
+     \begin{equation}
+     \left.
+\begin{array}{rl}
+     \hspace*{-2mm}dx_t&=v_t\,dt,\ t\in (0,T],\enskip T=10\,;\\[6pt]
+     \hspace*{-2mm}dv_t&=ax_t\,dt +bv_t\,dt +cy_t\,dt+h u_t\,dt +{}\\[6pt]
+     &\hspace*{40mm}{}+\sqrt{g}\,dw_t.
+     \end{array}
+     \!\right\}
+     \label{e12-bos}
+     \end{equation}
+     
+     Цепь имеет размерность $n_y\hm=3$, начальное распределение 
+     $$
+     Y= (1,0,0)^\prime;\enskip
+     \lambda = \begin{pmatrix}
+     -\fr{1}{2} & \fr{1}{2} &0\\
+     \fr{1}{2} & -1 & \fr{1}{2}\\
+     0 & \fr{1}{2} & -\fr{1}{2}
+     \end{pmatrix}.
+     $$
+      Начальные условия~$x_0$ и~$v_0$ предполагаются 
+независимыми гауссовскими случайными величинами с~нулевым средним 
+и~дисперсиями $\sigma_x^2\hm=\sigma_v^2\hm=1$. Остальные параметры: 
+$a\hm= -1$; $b\hm= -1/2$; $h\hm=10$; $g\hm= 0{,}01$; $c\hm= (c_1, c_2, 
+c_3) \hm= (-1,0,1)$. Устойчивость системы~(\ref{e12-bos}) обеспечивается 
+тем, что $b\hm<0$ и~$b^2\hm+4a\hm= -3{,}75\hm<0$, поскольку~$b$ 
+и~$b^2\hm+4a$~--- собственные числа матрицы системы $\begin{pmatrix}
+     0& 1\\
+     a &b\end{pmatrix}$.
+     
+     Цель управления состоит в~отслеживании приводом формируемого 
+цепью дрейфа $cy_t$, для чего используется целевой функционал:
+%\noindent
+     \begin{equation}
+     J\left( U_0^T\right) =\mathbb{E}\left\{ \int\limits_0^T \left( \left\vert C y_t-
+x_t \right\vert^2 +R\left\vert u_t\right\vert^2\right) dt\right\},
+     \label{e13-bos}
+     \end{equation}
+где 
+$$
+C=\left( -\fr{c_1}{a}, -\fr{c_2}{a}, -\fr{c_3}{a}\right) = (-1,0,1) =c;\enskip 
+R=0{,}001.
+$$
+
+\setcounter{figure}{1}
+\begin{figure*} %fig2
+\vspace*{1pt}
+  \begin{center}
+ \mbox{%
+ \epsfxsize=163mm 
+\epsfbox{bos-2.eps}
+ }
+\end{center}
+\vspace*{-9pt}
+\Caption{Формирование $\alpha_t$~(\textit{а}) и~$\beta_t$~(\textit{б}) предельных значений~$\alpha_*$~(\textit{а}) 
+и~$\beta_*$~(\textit{б}): 
+\textit{1}~--- $(\alpha_t)_{11}$; \textit{2}~--- $(\alpha_t)_{12}$; \textit{3}~--- 
+$(\alpha_t)_{22}$; \textit{4}~--- $(\beta_t)_{11}$; \textit{5}~--- $(\beta_t)_{13}$;  
+\textit{6}~--- $(\beta_t)_{21}$; \textit{7}~--- $(\beta_t)_{23}$}
+%\end{figure*}
+%\begin{table*}\small
+\vspace*{9pt}
+\begin{center}
+{\small \begin{tabular}{|c|c|c|c|c|}
+\multicolumn{5}{c}{Результаты управления $J(U_0^T)$}\\
+\multicolumn{5}{c}{\ }\\[-6pt] 
+\hline
+$u_t^{(0)}=0$&$u_t^*=u^*(z_t^*)$&$u_t^{**}=u^*(y_t, z_t^{**})$&$u_t^\#= u_t^\# 
+(z_t^\#, T)$ &$u_t^\# =u_t^\# (y_t, z_t^\#, T)$\\
+\hline
+8,418&1,094&0,654&1,093&0,653\\
+\hline
+\end{tabular}
+}
+\end{center}
+%\end{table*}
+\end{figure*}
+     
+    
+
+     
+     Перечисленные параметры формируют самый типовой вариант 
+расчета, когда система~(\ref{e12-bos}) обладает устойчивостью, отслеживает 
+дрейф цепи и~без управ\-ле\-ния, т.\,е.\ при $u_t\hm=0$, не возникают изуча\-емые 
+в~[9] нюансы в~поведении чис\-лен\-ных реализаций фильт\-ра Вонэма, а~само 
+оптимальное управ\-ле\-ние действует очень эффективно. Для иллюстрации\linebreak 
+последнего утверж\-де\-ния на рис.~1 наряду с~траекториями~$x_t^*$ 
+и~$x_t^{(0)}$, фор\-ми\-ру\-емы\-ми соответственно оптимальным автономным 
+управ\-ле\-ни\-ем\linebreak $u_t^*\hm= u^*(z_t^*)$ и~нулевым управ\-ле\-нием $u_t^{(0)} \hm= 
+u^{(0)}(z_t^{(0)})\hm=0$, приведена еще траектория оптимального 
+управ\-ле\-ния с~полной информацией $u_t^{**}\hm= u^{**}(y_t, z_t^{**})$, 
+которое вы\-чис\-ля\-ет\-ся так же, как
+ управ\-ле\-ние~(\ref{e8-bos}), но с~заменой 
+оценки~$\hat{y}_t$ на точ\-ное значение~$y_t$ (оп\-ти\-маль\-ность этого управ\-ле\-ния
+в~задаче с~полной информацией и~конечным горизонтом доказана 
+в~[9]).
+
+
+
+
+     Рисунок~1 позволяет качественно оценить эффективность управления 
+приводом и~показать высокую точность оценивания состояния цепи. Кроме 
+того, можно видеть, что и~неуправляемая система
+  обозначает своей целью 
+слежение за состоянием цепи, т.\,е.\
+передвижение привода в~направлении\linebreak\vspace*{-12pt}
+
+{ \begin{center}  %fig1
+ \vspace*{9pt}
+   \mbox{%
+ \epsfxsize=79mm 
+\epsfbox{bos-1.eps}
+ }
+
+\end{center}
+
+\vspace*{-2pt}
+
+\noindent
+{{\figurename~1}\ \ \small{Типовая траектория положения привода~$x_t$ для управлений 
+$u_t^*$~(\textit{1}), $u_t^{**}$~(\textit{2}) и~$u_t^{(0)}$~(\textit{3}); \textit{4}~--- 
+направление дрейфа $Cy_t$
+}}}
+
+%\vspace*{6pt}
+
+\noindent 
+дрейфа, но инерция системы при этом слишком велика, чтобы говорить хоть  
+о~ка\-кой-то эффективности.
+     
+     Надо отметить, что траектории на рис.~1 сформированы именно 
+автономным управлением, т.\,е.\ 
+  вместо коэффициентов~$\alpha_t$ 
+и~$\beta_t$  
+из~(\ref{e9-bos}) и~(\ref{e10-bos}) использованы предельные 
+значения~$\alpha_*$ и~$\beta_*$ из~(\ref{e6-bos}) и~(\ref{e7-bos}). 
+Оказалось, что управ\-ле\-ния, учи\-ты\-ва\-ющие переходный процесс 
+и~использующие коэффициенты~$\alpha_t$ и~$\beta_t$, визуализировать не 
+имеет смысла, так как отличить траектории привода, сформированные 
+автономным и~оптимальным управ\-ле\-ни\-ями, невозможно. 
+Проиллюстрировать протекание переходного процесса и~формирование 
+стационарного режима для автономного управ\-ле\-ния можно графиками для 
+коэффициентов~$\alpha_t$ и~$\beta_t$ (рис.~2).
+
+
+     Не приведены графики двух элементов матрицы~$\beta_t$, для которых 
+выполнено $(\beta_t)_{12}\hm=0$ и~$(\beta_t)_{22}\hm=0$. Можно заметить, что 
+для расчета управ\-ле\-ния~(\ref{e5-bos}) в~модели~(\ref{e12-bos}) используется 
+только часть элементов~$\alpha_*$ и~$\beta_*$, а~именно: вторые столбцы 
+этих матриц. Это объясняется вырожденностью модели~(\ref{e12-bos}) 
+и~отсутствием управ\-ле\-ния в~первом уравнении для~$v_t$, что дает 
+в~каноническом виде~(\ref{e1-bos}) коэффициент $c^\prime\hm= (0,h)$. Это 
+замечание не отменяет значимости остальных элементов~$\alpha_*$ 
+и~$\beta_*$. Все элементы этих коэффициентов управ\-ле\-ния не зависят от 
+того, как в~модели реализовано аддитивное управ\-ле\-ние, но все могут 
+оказаться используемыми для стабилизации разных компонентов вектора 
+выхода.
+     
+     Из графиков, показанных на рис.~2, понятно, что переходный процесс 
+очень быст\-рый и,~по сути, почти на всей моделируемой траектории в~любом 
+случае применяется именно оптимальное автономное управ\-ле\-ние. Для 
+формального под\-тверж\-де\-ния этого вывода приведена таб\-ли\-ца, 
+в~которой указаны величины целевой функции~(\ref{e13-bos}) для всех 
+типов использованных управ\-ле\-ний.
+
+Таким образом, разница по критерию между автономным и~оптимальным управ\-ле\-ни\-ем 
+проявляется только в~третьем знаке, а~с~ростом времени, естественно, 
+будет уменьшаться дальше. Отметим, что связано это не только с~собственной устой\-чи\-востью сис\-те\-мы~(\ref{e12-bos}), 
+но и~с~высокой эф\-фек\-тив\-ностью управ\-ле\-ний~$u_t^\#$  и~$u_t^*$, 
+которые, решая задачу отслеживания заданного дрейфа, еще и~ускоряют (практически выполяют мгно\-вен\-но) 
+про\-хож\-де\-ние переходного процесса и~переход сис\-те\-мы в~стационарный режим.
+
+ 
+   
+ %  \vspace*{-12pt}  
+     
+\section{Заключение}
+
+  % \vspace*{-3pt}
+
+     Статья завершает изучение задачи оптимального управ\-ле\-ния линейным 
+выходом сто\-ха\-сти\-че\-ской сис\-те\-мы по квад\-ра\-тич\-но\-му критерию 
+с~бесконечным временем. Рас\-смот\-рен\-ная в~[8] постановка этой задачи 
+с~полной информацией дополнена вариантом с~косвенными наблюдениями. 
+В~качестве модели со\-сто\-яния использована эргодическая цепь Маркова. 
+Выбор этого част\-но\-го случая продиктован, во-пер\-вых, его практической 
+значимостью,\linebreak так как марковская цепь представляет исключительно удобный 
+инструмент для описания не\-конт\-ро\-ли\-ру\-емых внеш\-них воздействий, 
+имеющих скачкообразный характер. Вторая причина носит \mbox{технический} 
+характер. Если бы моделью со\-сто\-яния был произвольный марковский 
+процесс, то на первый план при реализации вышла бы задача фильт\-ра\-ции. 
+Теоретическому исследованию это бы не помешало. Общие уравнения 
+фильт\-ра\-ции поз\-во\-ли\-ли бы применить принцип разделения и~записать 
+оптимальное автономное управ\-ле\-ние, выразив его через оптимальную оценку 
+фильт\-ра\-ции. Это хорошо продемонстрировано в~ключевой 
+в~рас\-смат\-ри\-ва\-емой об\-ласти исследований работе~[12]. Однако 
+при\-бли\-зить\-ся к~практической реализации такого результата позволил только 
+част\-ный случай марковской цепи, а~точ\-нее, оптимальная оценка фильт\-ра\-ции, 
+описываемая фильтром Вонэма. Нелинейная, слож\-ная для компьютерной 
+реализации оценка в~рас\-смот\-рен\-ной по\-ста\-нов\-ке обеспечила результат, по 
+сути, укла\-ды\-ва\-ющий\-ся в~рамки традиционной LQG-за\-да\-чи, по крайней 
+мере достаточными условиями существования оказались обычные условия 
+ста\-би\-ли\-зи\-ру\-е\-мости и~де\-тек\-ти\-ру\-е\-мости самого известного в~теории 
+управ\-ле\-ния уравнения Риккати.
+
+
+
+{\small\frenchspacing
+ { %\baselineskip=11.5pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-bos}
+\Au{Athans M.} The role and use of the stochastic linear-quadratic-Gaussian problem in control 
+system design~// IEEE T. Automat. Contr., 1971. Vol.~16. No.\,6. P.~529--552.  doi: 
+10.1109/TAC.1971.1099818.
+\bibitem{2-bos}
+\Au{Wonham W.\,M.} Linear multivariable control. A~geometric approach.~--- Lecture notes in 
+economics and mathematical systems ser.~--- Berlin: Springer-Verlag, 1974. Vol.~101. 347~p.
+\bibitem{3-bos}
+\Au{Девис М.\,Х.\,А.} Линейное оценивание и~стохастическое управление~/ Пер. с~англ.~--- 
+М.: Наука, 1984. 206~с. (\Au{Davis~M.\,H.\,A.} Linear estimation and stochastic control.~--- 
+London: Chapman and Hall, 1977. 224~p.)
+\bibitem{4-bos}
+\Au{Kalman R.\,E., Bucy~R.\,S.} New results in linear filtering and prediction theory~// J.~Basic Eng.~--- 
+T.~ASME, 1965. No.\,83. P.~95--108. doi: 10.1115/1.3658902.
+\bibitem{5-bos}
+\Au{Липцер Р.\,Ш., Ширяев~А.\,Н.} Статистика случайных процессов (нелинейная 
+фильтрация и~смежные вопросы).~--- Серия <<Тео\-рия вероятностей и~математическая статистика>>.~--- М.: Наука, 1974. 696~с.
+\bibitem{6-bos}
+\Au{Wonham W.\,M.} Some applications of stochastic differential equations to optimal nonlinear 
+filtering~// SIAM J. Control, 1965. No.\,2. P.~347--369. doi: 10.1137/0302028.
+\bibitem{7-bos}
+\Au{Ширяев А.\,Н.} Вероятность.~--- 2-е изд.~--- М.: Наука, 1989. 640~с.
+\bibitem{8-bos}
+      \Au{Босов А.\,В.} Управление линейным выходом автономной дифференциальной 
+системы по квадратичному критерию на бесконечном горизонте~// Информатика и~её 
+применения, 2024. Т.~18. Вып.~1. С.~18--25. doi: 10.14357/19922264240103. EDN: UEESFO.
+
+\bibitem{9-bos}
+\Au{Босов А.\, В.} Стабилизация и~слежение за траекторией линейной системы со 
+скачкообразно изменяющимся дрейфом~// Автоматика и~телемеханика, 2022. №\, 4.  
+С.~27--46. doi: 10.31857/S0005231022040031.
+\bibitem{10-bos}
+\Au{Elliott R.\,J., Aggoun~L., Moore~J.\,B.} Hidden Markov models: Estimation and control.~--- 
+New York, NY, USA: Springer-Verlag, 1995. 382~p. doi: 10.1007/978-0-387-84854-9.
+
+\bibitem{12-bos}
+\Au{Босов А.\,В.} Задача управления линейным выходом нелинейной неуправляемой 
+стохастической дифференциальной системы по квадратичному критерию~// Известия 
+РАН. Теория и~системы управления, 2021. №\,5. C.~52--73. doi: 
+10.31857/S000233882104003X. EDN: ESNCSX.
+
+\bibitem{11-bos}
+\Au{Rishel R.} A~strong separation principle for stochastic control systems driven by a hidden 
+Markov model~// SIAM J. Control Optim., 1994. Vol.~32. P.~1008--1020. doi: 
+10.1137/S0363012992232233.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 19.03.24}}
+
+\vspace*{6pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+
+\def\tit{AUTONOMOUS LINEAR OUTPUT\\ OF~THE~MARKOV CHAIN STABILIZATION\\ 
+BY~SQUARE CRITERION ON~AN~INFINITE HORIZON}
+
+
+\def\titkol{Autonomous linear output of~the~Markov chain stabilization 
+by~square criterion on~an~infinite horizon}
+
+
+\def\aut{A.\,V.~Bosov}
+
+\def\autkol{A.\,V.~Bosov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-8pt}
+
+
+\noindent
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of 
+Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2024\ \ \ volume~18\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{4pt}
+      
+       
+      
+      \Abste{The solution of the linear output of the stochastic differential system optimal control 
+problem on an infinite horizon is adapted for one particular case of indirect observation. The ergodic 
+Markov chain plays the role of a~dynamic system and the autonomous linear output formed by it provides 
+indirect noisy observations on\linebreak\vspace*{-12pt}}
+
+\Abstend{the state of the chain. The control purpose is formulated as output 
+stabilization in positions determined by the chain and periodically changing with chain state changes. 
+The solution, as in a~similar problem with complete information, is obtained as the limit form of optimal 
+control in the corresponding problem with a finite horizon. Sufficient conditions for the control existence 
+turn out to be typical conditions for linear-quadratic problems of structure of the optimal Wonham filter, 
+only linear components are present in the control and all nonlinearity is limited by the equation of the 
+filtering estimate. Due to this, the existence conditions include only the requirements for the autonomous 
+Riccati equation solution. A~numerical experiment for the mechanical drive model used in previous 
+studies is discussed. The purpose of the experiment is to show the difference in the use of optimal control 
+and its autonomous version.}
+      
+      \KWE{Markov chain with continuous time; Wonham filter; linear differential system; optimal 
+control; stabilization; square criterion}
+      
+      
+
+
+\DOI{10.14357/19922264240305}{XVTFLH}
+
+\vspace*{-12pt}
+
+
+     \Ack
+     
+     \vspace*{-3pt}
+     
+      \noindent
+      The research was carried out using the infrastructure of the Shared Research Facilities ``High 
+Performance Computing and Big Data'' (CKP ``Informatics'') of FRC CSC RAS (Moscow).
+
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99} 
+      \bibitem{1-bos-1}
+      \Aue{Athans, M.} 1971. The role and use of the stochastic linear-quadratic-Gaussian problem in 
+control system design. \textit{IEEE T. Automat. Contr.} 16(6):529--552. doi: 
+10.1109/TAC.1971.1099818.
+      \bibitem{2-bos-1}
+      \Aue{Wonham, W.\,M.} 1974. \textit{Linear multivariable control. A~geometric approach}. 
+Lecture notes in economics and mathematical systems ser. Berlin: Springer-Verlag. 347~p.
+      \bibitem{3-bos-1}
+      \Aue{Davis, M.\,H.\,A.} 1977. \textit{Linear estimation and stochastic control}. London: 
+Chapman and Hall. 224~p.
+      \bibitem{4-bos-1}
+      \Aue{Kalman, R.\,, and R.\,S.~Bucy.} 1965. New results in linear filtering and prediction theory. 
+\textit{J. Basic Eng.~--- T.~ASME}  83(1):95--108. doi: 10.1115/1.3658902.
+    \bibitem{5-bos-1}
+    \Aue{Liptser, R.\,S., and A.\,N.~Shiryaev.} 1974. \textit{Statistika sluchaynykh protsessov (nelineynaya 
+fil'tratsiya i~smezhnye voprosy)} [Statistics of random processes. Nonlinear filtering and related 
+problems]. Seriya ``Teorya ve\-ro\-yat\-no\-stey i~matematicheskaya statistika'' [Probability theory and mathematical statistics ser.]. Moscow: Nauka. 696~p.
+      \bibitem{6-bos-1}
+      \Aue{Wonham, W.\,M.} 1965. Some applications of stochastic differential equations to optimal 
+nonlinear filtering. \textit{SIAM J. Control}  2(3):347--369. doi: 10.1137/0302028.
+      \bibitem{7-bos-1}
+      \Aue{Shiryayev, A.\,N.} 1989. \textit{Veroyatnost'} [Probability]. 2nd ed. Moscow: Nauka. 
+640~p.
+      \bibitem{8-bos-1}
+      \Aue{Bosov, A.\,V.} 2024. Upravlenie lineynym vykhodom avtonomnoy differentsial'noy 
+sistemy po kvadratichnomu kriteriyu na beskonechnom gorizonte [Autonomous differential system linear 
+output control by square criterion on an infinite horizon]. \textit{Informatika i~ee Primeneniya~--- 
+Inform. Appl.} 18(1):18--25. doi: 10.14357/19922264240103. EDN: UEESFO.
+      \bibitem{9-bos-1}
+      \Aue{Bosov, A.\,V.} 2022. Stabilization and tracking of the trajectory of a linear system with 
+jump drift. \textit{Automat. Rem. Contr.} 83(4):520--535. doi: 10.1134/S0005117922040026.
+      \bibitem{10-bos-1}
+      \Aue{Elliott, R.\,J., L.~Aggoun, and J.\,B.~Moore.} 1995. \textit{Hidden Markov models: 
+Estimation and control}. New York, NY: Springer-Verlag. 382~p. doi: 10.1007/978-0-387-84854-9.
+
+\bibitem{12-bos-1}
+      \Aue{Bosov, A.\,V.} 2021. The problem of controlling the linear output of a nonlinear 
+uncontrollable stochastic differential system by the square criterion. \textit{J.~Comput. Sys. Sc. Int.}  
+60(5):719--739. doi: 10.1134/S1064230721040031. EDN: ESNCSX.
+      \bibitem{11-bos-1}
+      \Aue{Rishel, R.} 1994. A strong separation principle for stochastic control systems driven by 
+a~hidden Markov model. \textit{SIAM J.~Control Optim.} 32(4):1008--1020. doi: 
+10.1137/S0363012992232233.
+      
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received March 19, 2024}} 
+
+\vspace*{-18pt}
+
+
+\Contrl
+
+\vspace*{-3pt}
+      
+      \noindent
+      \textbf{Bosov Alexey V.} (b.\ 1969)~--- Doctor of Science in technology, principal scientist, 
+Federal Research Center ``Computer Science and Control`` of the Russian Academy of Sciences,  
+44-2~Vavilov Str., Moscow 119333, Russian Federation; \mbox{avbosov@ipiran.ru}
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 
+
+      

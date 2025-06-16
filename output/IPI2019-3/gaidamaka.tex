@@ -1,0 +1,910 @@
+\def\stat{gaidamaka}
+
+\def\tit{ФОРМАЛИЗАЦИЯ МЕТОДА РАНЖИРОВАНИЯ АЛЬТЕРНАТИВ ДЛЯ~ПРОЦЕССА ГРУППОВОГО 
+ПРИНЯТИЯ РЕШЕНИЙ ПРИ~АНАЛИЗЕ СОЦИАЛЬНЫХ СЕТЕЙ$^*$}
+
+\def\titkol{Формализация метода ранжирования альтернатив для~процесса CDM % группового принятия решений 
+при~анализе социальных сетей}
+
+\def\aut{А.\,А.~Гайдамака$^1$, Н.\,В.~Чухно$^2$, О.\,В.~Чухно$^3$, 
+К.\,Е.~Самуйлов$^4$, С.\,Я.~Шоргин$^5$}
+
+\def\autkol{А.\,А.~Гайдамака, Н.\,В.~Чухно, О.\,В.~Чухно и~др.} 
+%К.\,Е.~Самуйлов$^4$, С.\,Я.~Шоргин$^5$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Гайдамака А.\,А.}
+\index{Чухно Н.\,В.}
+\index{Чухно О.\,В.} 
+\index{Самуйлов К.\,Е.}
+\index{Шоргин С.\,Я.}
+\index{Gaidamaka A.\,A.}
+\index{Chukhno N.\,V.}
+\index{Chukhno O.\,V.} 
+\index{Samouylov K.\,E.}
+\index{Shorgin S.\,Ya.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Публикация подготовлена при поддержке Программы РУДН <<5-100>> и~при финансовой поддержке РФФИ 
+(проекты 18-07-00576 и~18-00-01555 (18-00-01685)).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Российский университет дружбы народов, aagajdamaka@sci.pfu.edu.ru}
+\footnotetext[2]{Российский университет дружбы народов, nvchukhno@gmail.com}
+\footnotetext[3]{Российский университет дружбы народов, olgachukhno95@gmail.com}
+\footnotetext[4]{Российский университет дружбы народов; Институт проблем информатики Федерального исследовательского 
+центра <<Информатика и~управление>> Российской академии наук, \mbox{samuylov-ke@rudn.ru}}
+\footnotetext[5]{Институт проблем информатики Федерального исследовательского центра 
+<<Информатика и~управление>> Российской академии наук, 
+  \mbox{sshorgin@ipiran.ru}}
+
+%\vspace*{-2pt}
+
+   
+  
+\Abst{Распространение и~доступность интернет-технологий позволили по-новому взглянуть 
+на социальные сети. Если раньше этот онлайн-сервис имел в~большей степени 
+развлекательный характер, то сегодня, с~повышением скоростей передачи данных 
+и~появлением возможности общения пользователей в~реальном времени, социальные сети, 
+на платформе которых можно легко организовать опрос или провести голосование, 
+становятся мощным механизмом достижения консенсуса в~процессе принятия решений. 
+В~статье предложен обзор известных моделей группового принятия решений
+(\textit{англ}.\ group decision making, GDM) и~формальное 
+описание разработанного на его основе алгоритма принятия решений,
+ис\-поль\-зу\-юще\-го большой 
+объем данных в~социальной сети. Особенностью алгоритма является возможность выбора 
+экспертом из огромного числа альтернатив ограниченного набора, представляющего для 
+него интерес, а также учет масштабирования сети с~точки зрения числа экспертов, 
+привлекаемых к~процессу группового принятия решений. Представлен метод экстраполяции 
+значений оценок при масштабировании сети. Разработан и~исследован кейс для иллюстрации 
+работы алгоритма.}
+
+\KW{групповое принятие решений; анализ социальных сетей; нечеткая логика; набор 
+языковых выражений}
+
+\DOI{10.14357/19922264190310} 
+  
+\vspace*{2pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+  С помощью интернет-технологий люди из разных стран мира могут 
+присоединяться к~социальным сетям, создавать новые ресурсы и~контент\linebreak 
+и~взаимодействовать с~другими пользователями~[1]. Социальные сети~--- одна 
+из самых последних тенденций, обеспечивающих общение, взаимодействие, 
+обмен информацией и~связь пользователей в~виртуальной среде~[2]. 
+  
+  В последние годы исследователи в~области группового принятия решений 
+ проявили интерес к~анализу социальных 
+сетей, так как последние могут быть успешно использованы для моделирования 
+процесса взаимодействия между лицами, принимающими решения. Тем не 
+менее социальная сеть имеет некоторые особенности, которые отличают ее от 
+классических сценариев GDM~[1].
+
+ C~одной стороны, внутри социальной сети 
+взаимодействуют тысячи пользователей, однако многие из них не принимают 
+непосредственного участия в~процессе голосования. Кроме того, пользователи 
+общаются в~режиме реального времени~[3, 4]. С другой стороны, зачастую 
+некоторые участники могут мешать достижению консенсуса, настаивая на 
+своем варианте и~не уступая другим экспертам. 
+
+Таким образом, групповое 
+принятие решений~--- это, во-пер\-вых, процесс, состоящий в~выборе 
+наилучшей альтернативы или множества альтернатив из всех возможных, 
+учитывая мнения, выраженные группой лиц~\cite{3-gai, 5-gai}. Во-вто\-рых, это 
+процесс, ориентированный на людей с~их субъективностью 
+и~неопределенностью в~выставлении оценок. Поэтому в~исследованиях GDM, 
+как правило, используется теория нечеткой логики (\textit{англ}.\ fuzzy  
+logic)~\cite{6-gai, 7-gai, 8-gai}.
+  
+  Традиционные алгоритмы GDM рассматривают небольшую группу 
+экспертов и~альтернатив~\cite{5-gai}. Однако сегодня чрезвычайно важно 
+разрабатывать такие методы GDM, которые помогут пользователям принимать 
+консенсусные решения~\cite{4-gai, 9-gai, 10-gai}. Такие методы могут быть 
+использованы в~новых услугах сети интернет, например при оценке удобства 
+пользования социальной сетью~\cite{5-gai, 9-gai}. 
+  
+  В~\cite{4-gai} выявлены важные направления дальнейших исследований 
+в~рассматриваемой области. Одной из новых задач является разработка 
+структур предпочтений и~их применение в~социальных сетях. Этой проблеме 
+посвящена настоящая статья, которая организована следующим образом: в~разд.~2
+с~использованием языка UML (Unified Modeling Language) формально описана модель 
+группового принятия решений в~социальной сети~[11]. Раздел~3 
+демонстрирует модули алгоритма ранжирования альтернатив. В~разд.~4
+предлагается метод оценки альтернатив при масштабировании сети. 
+Раздел~5 посвящен анализу кейса при оценке удобства пользования 
+социальной сетью. В~заключении подведены итоги и~поставлены задачи 
+дальнейших исследований.
+
+\section{Модель группового принятия решений в~социальных сетях}
+
+  Людям комфортнее выражать свои предпочтения с~помощью слов. Однако 
+компьютеры работают с~числами. В~связи с~этим возникает проблема 
+непонимания между человеком и~вычислительной машиной: человеку может 
+быть сложно передать свои идеи компьютеру, а компьютеру понять их 
+и~работать с~полученной информацией~\cite{6-gai, 12-gai, 13-gai}. Работа 
+с~неопределенностью всегда была сложной задачей, для решения которой 
+применяются различные аналитические инструменты. В~статье исследована 
+лингвистическая модель принятия решений, в~которой эксперты выставляют 
+оценки альтернативам, используя набор языковых выражений (\textit{англ}.\ linguistic 
+term set, LTS)~\cite{8-gai, 12-gai, 14-gai}. Подход основан на упорядочении 
+лингвистических терминов в~наборе LTS, использует индексирование 
+и~предполагает, что все выражения одинаково информативны и~симметрично 
+распределены. Каждый эксперт выбирает удобный для собственного 
+оценивания набор LTS. В~конечном счете для определения итоговой оценки 
+все предоставленные предпочтения выражаются с~помощью одного и~того же 
+набора языковых выражений, называемого базовым (\textit{англ}.\ basic LTS, 
+BLTS)~\cite{5-gai, 12-gai}.
+  
+  Обозначим символом~$e$ некоторого эксперта, а~символом~$x$ некоторую 
+альтернативу принимаемого решения. Пронумеруем экспертов и~альтернативы. 
+Тогда ${{E}}\hm= \{ e_1,\ldots , e_K\}$~--- множество экспертов, такое что 
+$\vert {E}\vert \hm=K\hm<\infty$, где $K$~--- число экспертов, и~${X}\hm= 
+\{x_1, \ldots ,x_M\}$~--- множество альтернатив, такое что $\vert {X}\vert 
+\hm=M\hm<\infty$, где $M$~--- число альтернатив. $X_k\hm\subseteq X$~--- 
+подмножество альтернатив, выбранных экспертом~$e_k$, $e_k\hm\in E$. 
+Значение предпочтения эксперта~$e_k$ для альтернативы~$x_i$ по отношению 
+к~альтернативе~$x_j$ обозначим переменной~$p_{ij}(k)$, $i\not=j$,  $x_i, 
+x_j\hm\in X$.
+  
+  Цель исследуемого процесса GDM~--- упорядочение альтернатив от 
+наилучшей к~наихудшей~\cite{4-gai}. В~статье рассматривается формальная 
+модель процесса GDM, состоящая из двух модулей, как показано на рис.~1 
+в~диаграмме, построенной на языке UML. 
+  
+\begin{figure*} %fig1
+   \vspace*{1pt}
+    \begin{center}  
+  \mbox{%
+ \epsfxsize=156.612mm 
+ \epsfbox{gai-1.eps}
+ }
+\end{center}
+\vspace*{-9pt}
+\Caption{Модель группового принятия решений~--- ранжирования альтернатив}
+\end{figure*}
+
+   \begin{figure*}[b] %fig2
+      \vspace*{1pt}
+    \begin{center}  
+  \mbox{%
+ \epsfxsize=77.522mm 
+ \epsfbox{gai-2.eps}
+ }
+\end{center}
+\vspace*{-9pt}
+\Caption{Иллюстрация величины $\beta(t)$ при переводе оценок из шкалы $S(t)$ 
+в~шкалу~$S(t^\prime)$ }
+\end{figure*}
+
+\section{Модули алгоритма ранжирования альтернатив}
+
+Модуль~1 алгоритма <<Оценивание альтернатив экспертами>> отвечает за 
+вычисление предпочтений экспертов и~включает~7~шагов.
+\begin{enumerate}[1.]
+\item \textit{Определение множества экспертов $E\hm= \{ e_1,\ldots , e_K\}$ 
+и~множества альтернатив} $X\hm= \{ x_1,\ldots ,x_M\}$.
+\item \textit{Выбор экспертом подмножества альтернатив}. 
+
+  Модель предусматривает, что эксперт~$e_k$ вы\-став\-ля\-ет оценки для 
+некоторого подмножества~$X_k$ из множества альтернатив~$X$.
+\item \textit{Сравнение альтернатив.}
+\begin{enumerate}[3.1]
+  \item \textit{Выбор LTS.} Пусть~$t$~--- уровень иерархии набора языковых 
+выражений LTS и~$n(t)$~--- число оценок по шкале оценок уровня~$t$, 
+$t\hm=1,\ldots , T$, причем $n(t)\hm< n(t+1)$. Обозначим $S(t)\hm= \left\{ s_1(t), 
+\ldots, s_{n(t)}(t)\right\}$ шкалу уровня~$t$, а~$s_l(t)$ символьную оценку из 
+набора оценок этой шкалы, $l\hm\in \{1, \ldots, n(t)\}$, $\vert S(t)\vert \hm= n(t)$. 
+Считаем оценки упорядоченными по возрастанию значений предпочтений: 
+$s_1(t)\prec s_2(t)\prec \cdots \prec s_{n(t)}(t)$. 
+  
+  Заметим, что каждый эксперт самостоятельно делает выбор шкалы, с~которой 
+он будет работать. При этом эксперты, которые выбирают шкалу с~высокой 
+сте\-пенью детализации, вероятнее всего, готовы дать более точную оценку, 
+а~в~случаях, когда эксперт не чувствует себя уверенным при сравнении 
+альтернатив, он может пользоваться шкалами оценок уровня ниже. Тогда 
+множество экспертов~$E$ представимо в~виде 
+$$
+E= \bigcup\limits_{t=1}^T 
+E(t)\,,
+$$
+ где 
+\begin{multline*}
+\hspace*{-9.5pt}E(t)={}\\
+ \hspace*{-3.5pt} {}= \left\{ e_k \in E:\ \mbox{эксперт}~e_k\ \mbox{выбрал\ 
+LTS}~S(t)\right\}.\hspace*{-6.24257pt}
+\end{multline*}
+  
+  \item  \textit{Предоставление информации.} Для всех пар ($x_i,x_j$), таких 
+что $i\not= j$, $x_i, x_j\hm\in X$,\linebreak эксперт~$e_k$ указывает свою оценку~$s_l(t)$ 
+в~качестве значения элемента~$p_{ij}(k)$. Полученные значения формируют 
+матрицу предпочтений $\mathbf{P}_k\hm= \left( p_{ij}(k)\right)_{i,j\in \{1,\ldots 
+,M\}}$, $p_{ij}(k)\hm\in \{ s_1(t),\ldots , s_{n(t)}(t)\}$. 
+  \end{enumerate}
+  
+\item \textit{Перевод оценок эксперта~$e_k$ в~численные значения}. 
+
+  Для перевода оценок может быть использован один из известных 
+методов~\cite{7-gai}, выбор которого не существен с~точки зрения 
+представленных в~данной статье результатов. Матрица 
+предпочтений~$\mathbf{P}_k$ модифицируется в~матрицу предпочтений 
+$\mathbf{V}_k\hm= \left( v_{ij}(k)\right)_{i,j\in \{1,\ldots, M\}}$, например 
+путем замены для каждого элемента символьной оценки~$s_l(t)$ на 
+значение~$l$.
+\item \textit{Выбор базового набора языковых выражений BLTS. }
+
+  В качестве базового может быть выбран любой из имеющихся наборов 
+языковых выражений LTS, а по умолчанию выбирается шкала оценок 
+с~наибольшей детализацией. В~предположении, что шкалы упорядочены по 
+возрастанию числа оценок, т.\,е. $S(1)\prec S(2)\prec \cdots \prec S(T)$, по 
+умолчанию базовым набором является набор уровня~$T$, а~именно: 
+$S(t^\prime)\hm= S(T)$.
+\item \textit{Перевод оценок из LTS в~BLTS. }
+
+  Пусть $B(t)$~--- множество пар вида 
+  $(s_l(t),\alpha)$, таких что $s_l(t)\hm\in 
+S(t)$ и~$\alpha \hm\in [-0{,}5, 0{,}5)$, т.\,е.
+     \begin{equation}
+     B(t)=S(t)\times [-0{,}5, 0{,}5)\,.
+     \label{e1-gai}
+     \end{equation}
+  
+  Определим функцию~$F$, такую что
+  \begin{equation*}
+  F:\ B(t)\to B\left( t^\prime\right)\,.
+ % \label{e2-gai}
+  \end{equation*}
+  
+  Введем действительную величину $\beta(t^\prime)\hm\in \left( 0, 
+n(t^\prime)\right]$. Величина~$\beta(t^\prime)$ необходима для определения 
+оценки $s_{l^\prime}(t^\prime)\hm\in S(t^\prime)$, в~которую переводится оценка 
+$s_l(t)\hm\in S(t)$, поставленная экспертами по шкале~$S(t)$. Заметим, что 
+в~(\ref{e1-gai}) для значений~$\alpha$ выбран интервал $[-0{,}5; 0{,}5)$ 
+потому, что для получения числовой оценки~$l^\prime$ 
+величина~$\beta(t^\prime)$ будет округляться до ближайшего целого по 
+шкале~$S(t^\prime)$. Чтобы оценке~$s_l(t)$ по шкале~$S(t)$ поставить 
+в~соответствие некоторое численное значение~$l^\prime$ по 
+шкале~$S(t^\prime)$, необходимо определить положение со\-от\-вет\-ст\-ву\-ющей 
+величины~$\beta(t^\prime)$ на отрезке $(0,n(t^\prime)]$. При этом 
+величиной~$\alpha$ обозначено смещение величины~$\beta(t^\prime)$ 
+относительно ближайшего целого числа~$l^\prime$, соответствующего 
+символьной оценке~$s_{l^\prime}(t^\prime)\hm\in S(t^\prime)$. Заметим, что для 
+шкалы~$S(t)$ величина $\beta(t)\hm= l$ принимает целые значения, 
+$\beta(t)\hm\in \{1,\ldots, n(t)\}$, а~смещение~$\alpha$ равно нулю. На рис.~2 
+введенные обозначения про\-ил\-люст\-ри\-ро\-ва\-ны для оценки $l\hm=2$ по шкале 
+уровня $t\hm=3$, которой в~базовом наборе языковых выражений уровня 
+$t^\prime\hm= 5$ будет соответствовать оценка $l^\prime\hm=3$.
+   
+
+
+  Будем строить отображение~$F$ так, чтобы оно было взаимно однозначным. 
+Поскольку~$F$ строится для наборов языковых выражений со шкалами~$S(t)$ 
+и~$S(t^\prime)$, то смещение будем выбирать таким образом, чтобы 
+выполнялось соотношение:
+  \begin{equation}
+  \fr{\beta(t^\prime)}{\beta(t)}=\fr{n(t^\prime)}{n(t)}\,.
+  \label{e3-gai}
+  \end{equation}
+  
+  Значение $\beta(t^\prime)$, соответствующее оценке 
+$s_{l^\prime}(t^\prime)\hm\in S(t^\prime)$, должно быть получено  
+из~(\ref{e3-gai}) по известной после шага~3 модуля~1 оценке $s_l(t)\hm\in S(t)$. 
+  
+  Введем отображение~$\Delta$ следующим образом:
+  \begin{equation*}
+  \Delta\left( \beta(t^\prime)\right)=\left( 
+s_{l^\prime}\left(t^\prime\right),\alpha\right)\,.
+  %\label{e4-gai}
+  \end{equation*}
+  
+  Очевидно, что $\alpha\hm= \beta(t^\prime)\hm- [ \beta(t^\prime)]$, 
+$l^\prime\hm=[\beta(t^\prime)]$, поэтому, положив
+
+\noindent
+  \begin{equation*}
+  \Delta\left( \beta (t^\prime)\right) =\left( s_{[\beta(t^\prime)]}(t^\prime), 
+\beta(t^\prime)-\left[ \beta(t^\prime)\right]\right)\,,
+  %\label{e5-gai}
+  \end{equation*}
+имеем:
+\begin{equation*}
+\beta(t^\prime)= \Delta^{-1} \left( s_{[\beta(t^\prime)]}(t^\prime), \beta(t^\prime)-
+\left[ \beta(t^\prime)\right]\right)\,.
+%\label{e6-gai}
+\end{equation*}
+  
+  Поскольку $F\hm= \Delta(\beta(t^\prime))$, $t^\prime\hm= 1,\ldots , T$, то 
+получена формула для перевода оценок из шкалы~$S(t)$ в~$S(t^\prime)$ 
+и~доказана следующая теорема.
+  
+  \smallskip
+  
+  \noindent
+  \textbf{Теорема~1.}\ \textit{Если $S(t)\prec S(t^\prime)$ 
+и~$\beta(t^\prime)/\beta(t)\hm= n(t^\prime)/n(t)$, то отображение $F:\ B(t)\hm\to 
+B(t^\prime)$ является взаимно однозначным и~определяется формулой}:
+  \begin{multline*}
+  F\left( s_{\beta(t)}(t),0\right)=\Delta 
+  \left( \beta(t^\prime)\right) ={}\\
+  {}=\left( 
+s_{[\beta(t^\prime)]}, \beta(t^\prime)-\left[ \beta(t^\prime)\right]\right)\,,
+ % \label{e7-gai}
+  \end{multline*}
+\textit{где}
+\begin{equation*}
+\beta(t^\prime) =\fr{\beta(t) n(t^\prime)}{n(t)}\,.
+%\label{e8-gai}
+\end{equation*}
+\item \textit{Обновление матрицы предпочтений экспертов. }
+
+  По матрице предпочтений~$\mathbf{V}_k$ должна быть вычислена матрица 
+предпочтений $\tilde{\mathbf{V}}_k\hm= \left( \tilde{v}_{ij}(k)\right)_{i,j\in 
+1,\ldots M}$, полученная с~помощью алгоритма перевода численных оценок из 
+LTS в~BLTS. Результатом работы модуля~1 алгоритма являются матрицы 
+предпочтений экспертов, представленных в~численном виде в~едином базовом 
+наборе языковых выражений.
+  \end{enumerate}
+  
+  \smallskip
+  
+  
+  %\begin{figure*}
+  \begin{center}
+  {\small
+  \hrule
+\vspace*{6pt}
+
+  \textbf{Алгоритм перевода численных оценок из LTS в~BLTS}
+  
+  \vspace*{6pt}
+  
+  \hrule
+  
+  \vspace*{6pt}
+  
+  \begin{tabular}{l}
+    \textbf{Data:}\    Численные оценки экспертов\\
+    \hphantom{\textbf{Data:}\ }$v_{ij}(k)=1,\ldots, n(t)$, 
+$e_k\hm\in E(t)$, $S(t)$, $S(t^\prime)$\\
+        \hspace*{3mm}\textbf{procedure} $\mathbf{V}_k\to 
+\tilde{\mathbf{V}}_k$\\
+     \hspace{6mm}\textbf{for} all $e_k$, $k=1$ to~$K$\\
+          \hspace*{9mm}\textbf{if} $S(t)\not= S(t^\prime)$ \textbf{do}\\
+          \hspace*{12mm}\textbf{for all} $v_{ij}(k)_{i,j\in 1,\ldots M}$ \textbf{do}\\
+          \hspace*{12mm}$\beta(t)=v_{ij}(k)$\\
+          \hspace*{12mm}$\beta(t^\prime)=\fr{\beta(t)n(t^\prime)}{n(t)}$\\
+    \hspace*{12mm}$\tilde{v}_{ij}(k)=\beta(t^\prime)$\\
+     \hspace*{12mm}\textbf{end for}\\
+       \hspace*{9mm}\textbf{else} $\tilde{v}_{ij}(k)=v_{ij}(k)$\\
+          \hspace*{9mm}\textbf{end if}\\
+          \hspace{6mm}\textbf{end for}\\
+       Вывести новые оценки экспертов $\tilde{v}_{ij}(k)$\\
+         \textbf{end procedure} $\mathbf{V}_k\to \tilde{\mathbf{V}}_k$
+         \end{tabular}
+  
+  \vspace*{6pt}
+  
+  \hrule
+}
+\end{center}
+
+\smallskip
+%\end{figure*}
+
+Модуль~2 алгоритма <<Расчет средних оценок, создание рейтинга альтернатив 
+и~анализ степени участия экспертов>> отвечает за вычисление матрицы 
+усредненных оценок, полученных на основании матриц предпочтений 
+экспертов~$\tilde{\mathbf{V}}_k$, а~также за формирование ранжированного 
+списка альтернатив. Матрица $\tilde{\mathbf{V}}\hm= (\tilde{v}_{ij})_{i,j\in 
+1,\ldots, M}$ содержит сумму всех значений предпочтений, предоставленных 
+экспертами:
+
+\noindent
+\begin{equation}
+\tilde{\mathbf{V}}=\sum\limits^K_{k=1} \tilde{\mathbf{V}}_k\,.
+\label{e9-gai}
+\end{equation}
+  
+  Матрица~$\mathbf{N}_k$ содержит информацию об альтернативах, 
+выбранных для сравнения экспертом~$e_k$:
+  \begin{equation}
+  n_{ij}(k)=\begin{cases}
+  1\,, & x_i, x_j\in X_k\,;\\
+  0\,, & x_i, x_j\not\in X_k\,.
+  \end{cases}
+  \label{e10-gai}
+  \end{equation}
+  
+  Тогда матрица $\mathbf{N}\hm= (n_{ij})_{i,j\in 1,\ldots , M}$, содержащая 
+информацию о числе экспертов, участвующих в~попарном сравнении 
+альтернатив~$x_i$ и~$x_j$, может быть вычислена по формуле:
+
+\noindent
+  \begin{equation}
+  \mathbf{N}=\sum\limits^K_{k=1} \mathbf{N}_k\,.
+  \label{e11-gai}
+  \end{equation}
+  
+  Элементы матрицы усредненных оценок $\overline{\mathbf{V}} \hm= 
+(\overline{v}_{ij})_{i,j\in 1,\ldots ,M}$ вычисляются следующим образом:
+
+\vspace*{2pt}
+
+\noindent
+  \begin{equation}
+  \overline{v}_{ij} = \fr{\tilde{v}_{ij}}{n_{ij}}\,.
+  \label{e12-gai}
+  \end{equation}
+  
+  \vspace*{-2pt}
+  
+  Для ранжирования альтернатив используются, например, операторы $\mathrm{GDD}$ 
+(\textit{англ}.\ Guided Dominance Degree) и~$\mathrm{GNDD}$ (\textit{англ}.\ 
+Guided 
+Non Dominance Degree)~\cite{10-gai, 14-gai}. При этом оператор $\mathrm{GDD}$ 
+показывает, насколько оце\-ни\-ва\-емая альтернатива доминирует над всеми 
+остальными, т.\,е.\ насколько\linebreak эта альтернатива лучше всех остальных, 
+а~оператор $\mathrm{GNDD}$~--- насколько %\linebreak
+ оце\-ни\-ва\-емая аль\-тер\-натива не доминируется
+остальными. Усредняя значения~$\mathrm{GDD}$ и~$\mathrm{GNDD}$, получаем значение 
+ранжирования~$\mathrm{RV}$ (\textit{англ}.\ Ranking Value):
+\begin{equation}
+\mathrm{RV}_i = \fr{ \mathrm{GDD}_i+\mathrm{GNDD}_i}{2}\,,\enskip i=1,\ldots , M\,,
+  \label{e15-gai}
+  \end{equation}
+  
+  \vspace*{-2pt}
+  
+  \noindent
+  где
+  
+  \vspace*{-6pt}
+  
+\noindent
+  \begin{align*}
+  \mathrm{GDD}_i&= \sum\limits^M_{j=1} \overline{v}_{ij}\,,\enskip i=1,\ldots ,M\,;
+  %\label{e13-gai}
+  \\
+  \mathrm{GNDD}_i&=\! \sum\limits^M_{j=1} \max\left\{ \overline{v}_{ji}-
+\overline{v}_{ij},1\right\}\,,\enskip  i=1,\ldots , M\,.
+ % \label{e14-gai}
+    \end{align*}
+    
+    \vspace*{1pt}
+  
+  Из значений ранжирования формируется рейтинг альтернатив по 
+возрастанию степени значимости~--- предпочтительнее будет альтернатива, 
+которая имеет более высокое значение~$\mathrm{RV}$.
+
+ \begin{figure*}[b] %fig3
+      \vspace*{1pt}
+    \begin{center}  
+  \mbox{%
+ \epsfxsize=104.051mm 
+ \epsfbox{gai-3.eps}
+ }
+\end{center}
+\vspace*{-9pt}
+\Caption{Лепестковая диаграмма~--- рейтинг альтернатив}
+\end{figure*}
+  
+  Заключительный шаг модуля~2 процесса GDM посвящен оценке 
+достоверности полученных результатов. Коэффициент участия (\textit{англ}.\ 
+Participation Rate) служит одним из ключевых показателей эффективности 
+процесса группового принятия решений. Высокий коэффициент 
+свидетельствует о~том, что полученные оценки достаточно точны, а~результаты 
+процесса GDM надежны. Так как в~процессе принятия решения эксперты 
+сравнивают не все альтернативы, а только выбранное ими подмножество 
+альтернатив, то данный коэффициент необходимо вычислить для каждой 
+альтернативы:
+  \begin{equation}
+ \mathrm{PR}_i=\fr{1}{M}\sum\limits^M_{j=1} n_{ij}\,,\enskip i=1,\ldots , M\,.
+  \label{e16-gai}
+  \end{equation}
+Общий коэффициент участия (\textit{англ}.\ the overall participation rate) определим, как 
+среднее по всем~$\mathrm{PR}_i$, т.\,е.
+\begin{equation*}
+\mathrm{PR}=\fr{1}{M}\sum\limits^M_{i=1} \mathrm{PR}_i\,.
+%\label{e17-gai}
+\end{equation*}
+  
+  Результатом работы модуля~2 алгоритма является ранжированный список 
+альтернатив и~коэффициенты участия для каждой альтернативы.
+
+\section{Метод оценки альтернатив при~масштабировании сети}
+
+  Привлечение дополнительного эксперта к~процессу оценивания альтернатив 
+не вызывает необходимости пересчитывать усредненные оценки по 
+формулам~(\ref{e9-gai})--(\ref{e12-gai}). Пусть $\tilde{\mathbf{V}}_{K+1}$~--- 
+матрица предпочтений эксперта~$e_{K+1}$. Тогда матрица усредненных 
+оценок~$\overline{\mathbf{V}}$ для нового набора экспертов $E_{K+1}\hm= 
+E_K\bigcup \left\{ e_{K+1}\right\}$ может быть вычислена по формуле:
+\vspace*{-2pt}
+
+\noindent
+  \begin{multline*}
+  \overline{v}_{ij}(K+1)=\fr{1}{n_{ij}(K+1)}\,\tilde{v}_{ij} (K+1)+{}\\
+  {}+\left( 1- \fr{1} 
+{n_{ij}(K+1)}\right) \overline{v}_{ij}(K)\,.
+ % \label{e18-gai}
+  \end{multline*}
+  
+\vspace*{-16pt}
+
+\section{Численный эксперимент}
+
+\vspace*{-6pt}
+
+  При выполнении численного эксперимента был проведен опрос с~целью 
+определения, какая из~27~социальных сетей, представленных на рис.~3, 
+наиболее удобна для общения по мнению~20~экспертов. 
+  
+  С использованием изложенной выше методики и~алгоритма было 
+разработано программное средство для расчета значений ранжирования по 
+формуле~(\ref{e15-gai}), проиллюстрированных на рис.~3.
+   
+  
+
+  По формуле~(\ref{e16-gai}) для каждой из~27~альтернатив был рассчитан 
+коэффициент участия~$\mathrm{PR}_i$, показанный в~таблице.
+    Из таблицы видно, что наиболее удобными для общения, по 
+мнению~20~экспертов из России, оказались сети
+ Vkontakte (альтернатива~$x_1$)\linebreak\vspace*{-10pt}
+
+\pagebreak
+
+%\begin{table*}
+{\small
+  \begin{center}
+  \tabcolsep=7pt
+  \begin{tabular}{|l|c|}
+  \multicolumn{2}{p{32mm}}{Коэффициент учас\-тия каждой альтернативы}\\
+  \multicolumn{2}{c}{\ }\\[-6pt]
+  \hline
+$x_i$&$\mathrm{PR}_i$\\
+\hline
+$x_1$&3\hphantom{,99999}\\
+$x_2$&1,33333\\
+$x_3$&1,62963\\
+$x_4$&3\hphantom{,99999}\\
+$x_5$&1,66667\\
+$x_6$&0,62963\\
+$x_7$&1,07407\\
+$x_8$&2,62963\\
+$x_9$&2,18519\\
+$x_{10}$&0,92593\\
+$x_{11}$&0,74074\\
+$x_{12}$&0,37037\\
+$x_{13}$&0,18519\\
+$x_{14}$&0,74074\\
+$x_{15}$&0,22222\\
+$x_{16}$&0,22222\\
+$x_{17}$&0,37037\\
+$x_{18}$&0,37037\\
+$x_{19}$&0,18519\\
+$x_{20}$&1,92593\\
+$x_{21}$&2,33333\\
+$x_{22}$&0,62963\\
+$x_{23}$&1\hphantom{,99999}\\
+$x_{24}$&0,22222\\
+$x_{25}$&1\hphantom{,99999}\\
+$x_{26}$&0,88889\\
+$x_{27}$&1,44444\\
+  \hline
+  \end{tabular}
+  \end{center}
+  }
+%  \end{table*}
+
+\vspace*{9pt}
+
+\noindent
+ и~YouTube (альтернатива~$x_4$), а~сеть Kindernet 
+(альтернатива~$x_{19}$) наименее удобна. Общий коэффициент участия 
+$\mathrm{PR}\hm=1{,}1454$, т.\,е.\ в~среднем всего~1~эксперт предоставил информацию 
+для каждой пары альтернатив. Поскольку коэффициент участия достаточно 
+низок, полученные результаты не являются надежными. Для получения точных 
+результатов следует привлечь к~процессу GDM большее число экспертов.
+
+\section{Заключение}
+
+  С каждым годом пользователи сети интернет становятся более 
+вовлеченными в~процесс предо\-став\-ле\-ния информации, что приводит 
+к~созданию в~рамках социальных сетей среды хранения огромного объема 
+доступных каждому пользователю данных. В~статье представлен новый метод 
+группового принятия решений, который предназначен для работы с~такими 
+типами сред. Задачей дальнейших исследований является применение метода 
+в~масштабных численных экспериментах. При этом помимо вычисления 
+усредненных величин планируется также оценивать другие показатели 
+эффективности процесса принятия решений, в~том числе старшие моменты 
+исследуемых характеристик. Еще одной важной задачей является измерение 
+и~оценка достигнутого экспертами консенсуса, поскольку при невысокой 
+степени согласованности экспертов полученный результат нельзя считать 
+надежным. 
+  
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-gai}
+\Au{Wasserman S., Faust~K.} Social network analysis: Methods and applications.~--- 
+Cambridge: Cambridge University Press, 1994. Vol.~8. 857~p.
+\bibitem{2-gai}
+\Au{Wu J., Xiong R., Chiclana~F.} Uninorm trust propagation and aggregation methods for 
+group decision making in social network with for tuple information~// Knowl.-Based 
+Syst., 2016. Vol.~96. P.~29--39.
+\bibitem{3-gai}
+\Au{Urea R., Cabrerizo~F.\,J., Morente-Molinera~J.\,A., Herrera-Viedma~E.} GDM-R: 
+A~new framework in R to support fuzzy group decision making processes~// Inform. 
+Sciences, 2016. Vol.~357. P.~161--181.
+\bibitem{4-gai}
+\Au{Herrera-Viedma E., Cabrerizo~F., Chiclana~F., Wu~J., Cobo~M., Samuylov~K.} 
+Consensus in group decision making and social networks~// Stud. Inform.  Control, 2017. 
+Vol.~26. Iss.~3. P.~259--268.
+\bibitem{5-gai}
+\Au{Herrera-Viedma E., Cabrerizo~F.\,J., Kacprzyk~J., Pedrycz~W.} A~review of soft 
+consensus models in a fuzzy environment~// Inform. Fusion, 2014. Vol.~17. P.~4--13.
+\bibitem{6-gai}
+\Au{Zadeh L.\,A.} Fuzzy sets~// Inform. Control, 1965. Vol.~8. Iss.~3. P.~338--353.
+
+\bibitem{8-gai} %7
+\Au{Zadeh L.\,A.} Fuzzy logic\;=\;computing with words~// IEEE T.~Fuzzy Syst., 1996. 
+Vol.~4. Iss.~2. P.~103--111.
+\bibitem{7-gai} %8
+\Au{Torra V.} Hesitant fuzzy sets~// Int. J.~Intell. Syst., 2010. Vol.~25. 
+Iss.~6. P.~529--539.
+
+\bibitem{9-gai}
+\Au{Kacprzyk J.} Group decision making with a fuzzy linguistic majority~// Fuzzy Set. 
+Syst., 1986. Vol.~18. P.~105--118.
+\bibitem{10-gai}
+\Au{Chiclana F., Tapia Garcia~J., del Moral~M.\,J., Herrera-Viedma~E.} A~statistical 
+comparative study of different similarity measures of consensus in group decision making~// 
+Inform. Sciences, 2013. Vol.~221. P.~110--123.
+\bibitem{11-gai}
+\Au{Самуйлов К.\,Е., Серебренникова~Н.\,В., Чукарин~А.\,В., Яркина~Н.\,В.} Основы 
+формальных методов описания биз\-нес-про\-цес\-сов.~--- М.: РУДН, 
+2011. 130~c.
+
+\bibitem{13-gai} %11
+\Au{Tanino T.} Fuzzy preference orderings in group decision making~// Fuzzy Set.  Syst., 
+1984. Vol.~12. P.~117--131. 
+\bibitem{12-gai} %12
+\Au{Herrera F., Martinez~L.\,A.} 2-tuple fuzzy linguistic representation model for computing 
+with words~// IEEE T.~Fuzzy Syst., 2000. Vol.~8. Iss.~6. P.~746--752.
+\bibitem{14-gai} %13
+\Au{Herrera F., Herrera-Viedma~E.} Choice functions and mechanisms for linguistic 
+preference relations~// Eur. J.~Oper. Res., 2000. Vol.~120. Iss.~1. P.~144--161.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 01.07.19}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{FORMALIZATION OF~THE~ALTERNATIVES RANKING METHOD FOR~GROUP DECISION MAKING 
+IN~SOCIAL NETWORKS}
+
+
+\def\titkol{Formalization of~the~alternatives ranking method for~group decision making 
+in~social networks}
+
+\def\aut{A.\,A.~Gaidamaka$^1$, N.\,V.~Chukhno$^1$, O.\,V.~Chukhno$^1$, 
+K.\,E.~Samouylov$^{1,2}$, and~S.\,Ya.~Shorgin$^2$}
+
+\def\autkol{A.\,A.~Gaidamaka, N.\,V.~Chukhno, O.\,V.~Chukhno, et al.} 
+%K.\,E.~Samouylov, and~S.\,Ya.~Shorgin}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+\noindent
+$^1$Peoples' Friendship University of Russia (RUDN University), 6~Miklukho-Maklaya Str., 
+Moscow 117198, Russian\linebreak
+$\hphantom{^1}$Federation
+
+\noindent
+$^2$Institute of Informatics Problems, Federal Research Center ``Computer Science and Control'' of the 
+Russian\linebreak
+$\hphantom{^1}$Academy of Sciences; 44-2~Vavilov Str., Moscow 119333, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2019\ \ \ volume~13\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}  
+
+ 
+
+\Abste{The expansion and accessibility of Internet technology has allowed a new look at social 
+networks. A few decades ago, this online service was more entertaining in nature. However, today, 
+with increasing transmission rates and the possibility of real-time communication, social networks, 
+on which platform a~poll or vote can be easily organized, become a~powerful mechanism for 
+achieving consensus in decision making process. The paper offers an overview of the
+known models of 
+group decision making (GDM) and a~formal description of the decision-making algorithm 
+developed on the basis of the overview taking into account a~large amount of data in a social 
+network. A~feature of the algorithm is the ability for an expert to choose a~limited subset of 
+interest from a huge number of alternatives, as well as taking into account network scaling in terms 
+of the number of experts involved in the GDM process. The method of 
+extrapolating the values of the estimates for network scaling is proposed. 
+A~numerical case for an 
+illustration of the algorithm is developed and presented.} 
+
+
+\KWE{group decision making; social network analysis; fuzzy logic; LTS}
+
+
+  
+ 
+\DOI{10.14357/19922264190310} 
+
+%\vspace*{-14pt}
+
+\Ack
+\noindent
+The publication has been prepared with the support of the ``RUDN University Program 5-100'' and funded by the 
+Russian Foundation for Basic Research according to the research projects
+ Nos.\,18-07-00576 and 18-00-01555  
+(18-00-01685).
+
+
+%\vspace*{-6pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-gai-1}
+\Aue{Wasserman, S., and K.~Faust.} 1994. \textit{Social network analysis: Methods and 
+applications}. Cambridge: Cambridge University Press.  Vol.~8. 857~p.
+\bibitem{2-gai-1}
+\Aue{Wu, J., R.~Xiong, and F.~Chiclana.} 2016. Uninorm trust propagation and aggregation 
+methods for group decision making in social network with for tuple information. 
+\textit {Knowl.-Based Syst.} 96:29--39.
+\bibitem{3-gai-1}
+\Aue{Urea, R., F.\,J.~Cabrerizo, J.\,A.~Morente-Molinera, and E.~Herrera-Viedma.} 2016. 
+GDM-R: A~new framework in~R to support fuzzy group decision making processes. 
+\textit{Inform. Sciences} 357:161--181.
+\bibitem{4-gai-1}
+\Aue{Herrera-Viedma, E., F.~Cabrerizo, F.~Chiclana, J.~Wu, M.~Cobo, and K.~Samuylov}. 
+2017. Consensus in group decision making and social networks. \textit{Stud. Inform. 
+Control} 26(3):259--268.
+\bibitem{5-gai-1}
+\Aue{Herrera-Viedma, E., F.\,J.~Cabrerizo., J.~Kacprzyk, and W.~Pedrycz.} 2014. A~review 
+of soft consensus models in a~fuzzy environment. \textit{Inform. Fusion} 17:4--13.
+\bibitem{6-gai-1}
+\Aue{Zadeh, L.\,A.} 1965. Fuzzy sets. \textit{Inform. Control} 8(3):338--353.
+
+\bibitem{8-gai-1}
+\Aue{Zadeh, L.\,A.} 1996. Fuzzy logic\;=\;computing with words. \textit{IEEE T.~Fuzzy 
+Syst.} 4(2):103--111.
+\bibitem{7-gai-1}
+\Aue{Torra, V.} 2010. Hesitant fuzzy sets. \textit{Int. J.~Intell. Syst.} 
+25(6):529--539.
+
+\bibitem{9-gai-1}
+\Aue{Kacprzyk, J.} 1986. Group decision making with a fuzzy linguistic majority. \textit{Fuzzy 
+Set. Syst.} 18:105--118.
+\bibitem{10-gai-1}
+\Aue{Chiclana, F., J.~Tapia Garcia, M.\,J.~del Moral, and E.~Herrera-Viedma.} 2013. 
+A~statistical comparative study of different similarity measures of consensus in group decision 
+making. \textit{Inform. Sciences} 221:110--123.
+\bibitem{11-gai-1}
+\Aue{Samouylov, K.\,E., N.\,V.~Serebrennikova, A.\,V.~Chukarin, and N.\,V.~Jarkina.} 2011. 
+\textit{Osnovy formal'nykh metodov opisaniya biznes-protsessov} [Basics of 
+formal methods of describing business processes].  Moscow: RUDN. 130~p.
+
+\bibitem{13-gai-1} %11
+\Aue{Tanino, T.} 1984. Fuzzy preference orderings in group decision making. 
+\textit{Fuzzy Set. Syst.} 12:117--131.
+\bibitem{12-gai-1} %12
+\Aue{Herrera, F., and L.\,A.~Martinez.} 2000. 2-tuple fuzzy linguistic representation model for 
+computing with words. \textit{IEEE T.~Fuzzy Syst.} 8(6):746--752.
+
+\bibitem{14-gai-1}
+\Aue{Herrera, F., and E.~Herrera-Viedma.} 2000. Choice functions and mechanisms for 
+linguistic preference relations. \textit{Eur. J.~Oper. Res.} 120(1):144--161.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+%\vspace*{-7pt}
+
+\hfill{\small\textit{Received July 1, 2019}}
+
+%\pagebreak
+
+%\vspace*{-22pt}
+
+\Contr
+
+\noindent
+\textbf{Gaidamaka Anna A.} (b.\ 1997)~--- Master Student of 
+Applied Probability and Informatics Department, Peoples' 
+Friendship University of Russia (RUDN University), 6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation; 
+\mbox{aagajdamaka@sci.pfu.edu.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Chukhno Nadezhda V.} (b.\ 1995)~--- Master Student of Applied Probability and 
+Informatics Department, Peoples' Friendship University of Russia (RUDN University), 
+6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation; \mbox{nvchukhno@gmail.com}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Chukhno Olga V.} (b.\ 1995)~--- Master Student of Applied Probability and 
+Informatics 
+Department, Peoples' Friendship University of Russia (RUDN University), 6~Miklukho-Maklaya 
+Str., Moscow 117198, Russian Federation; \mbox{olgachukhno95@gmail.com}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Samouylov Konstantin E.} (b.\ 1955)~--- Doctor of Science in technology, professor, 
+Head of Department, Director of Institute, Peoples' Friendship University of Russia (RUDN 
+University), 6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation; senior scientist, 
+Institute of Informatics Problems, Federal Research Center ``Computer Science and Control'' of the 
+Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{samuylov-ke@rudn.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Shorgin Sergey Ya.} (b.\ 1952)~--- 
+Doctor of Science in physics and mathematics, professor, principal 
+scientist, Institute of Informatics Problems, Federal Research Center ``Computer Science and Control'' of 
+the Russian Academy of Sciences; 44-2~Vavilov Str., Moscow 119333, Russian Federation; 
+\mbox{sshorgin@ipiran.ru}
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}  

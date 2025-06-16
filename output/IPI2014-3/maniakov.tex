@@ -1,0 +1,472 @@
+\def\stat{maniakov}
+
+\def\tit{ТЕКСТУРИРОВАНИЕ ВОКСЕЛЬНЫХ МОДЕЛЕЙ НА ОСНОВЕ
+ЦВЕТОВОЙ ИНФОРМАЦИИ ОБ ОПОРНЫХ ТОЧКАХ}
+
+\def\titkol{Текстурирование воксельных моделей на основе
+цветовой информации об опорных точках}
+
+\def\aut{О.\,П.~Архипов$^1$, Ю.\,А.~Маньяков$^2$}
+
+\def\autkol{О.\,П.~Архипов, Ю.\,А.~Маньяков}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Орловский филиал Института проблем информатики Российской академии наук, arkhipov12@yandex.ru}
+\footnotetext[2]{Орловский филиал Института проблем информатики Российской академии наук,
+maniakov\_yuri@mail.ru}
+
+\vspace*{3pt}
+
+
+\Abst{Описана технология текстурирования воксельных моделей на основе
+имеющейся цветовой информации об опорных точках (ОТ). Опорные точки представляют
+собой особые точки в трехмерном пространстве, описывающие определенную часть
+поверхности объекта и содержащие обобщенную информацию о цвете соответствующей
+им области.
+  Цвет воксела в области, ограниченной ОТ, определяется цветом каждой
+из ОТ, ограничивающих эту область. Вес цветовой со\-став\-ля\-ющей каждой
+ОТ при расчете цвета воксела обратно пропорционален евклидову расстоянию
+от воксела до нее. Пред\-став\-лен механизм расчета весовых коэффициентов
+цветовых компонент ОТ для вычисления цветов вокселов, зависящих от
+рас\-сто\-яния до каждой ОТ, ограничивающей область. Приведены описание и
+результаты экспериментов, в рамках которых осуществлялось текстурирование
+синтетических моделей и моделей натурных объектов.}
+
+\KW{трехмерная реконструкция; текстурирование; воксельная модель}
+
+\DOI{10.14357/19922264140311}
+
+\vspace*{16pt}
+
+\vskip 14pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+
+
+    В современных условиях роста популярности медиатехнологий и
+востребованности компьютерной графики решение проблемы быстрого
+создания трехмерных моделей натурных объектов и их анимации является
+одной из наиболее актуальных задач. Трехмерная реконструкция является
+одним из перспективных направлений в области компьютерной графики с
+точки зрения повышения скорости и уменьшения сложности процесса
+трехмерного моделирования.
+
+   Результатом применения трехмерной реконструкции являются
+трехмерные модели объектов, которые могут быть представлены в
+различных форматах.
+%
+Одним из наиболее перспективных способов
+представления трехмерных моделей является воксельное представление.
+Воксельные модели, в частности, позволяют легко отображать деформации и
+разрушения объектов, а также их внутреннюю структуру, что может быть
+весьма полезно при создании анимации различных взаимодействий объектов.
+
+  Одним из этапов трехмерной реконструкции является текстурирование.
+В~случае с воксельными моделями этот термин подразумевает присвоение
+цветов вокселам трехмерной модели. На сегодняшний день большинство
+технологий текстурирования подразумевают достаточно большое количество
+творческой, сложно автоматизируемой работы.
+
+  Перспективной является технология, основанная на понятии
+<<мегатекстура>>, которая позволяет работать с воксельными объектами и
+используется в игровом графическом движке id~Tech~4 и id~Tech~5~[1].
+Данная технология относится к методике распределения текстур, когда вся
+поверхность трехмерной сцены покрывается одной большой текстурой с
+заданным уровнем детализации вместо множества мелких. Однако такой
+подход используется в основном для текстурирования достаточно прос\-тых
+поверхностей, например ландшафтов, и не подходит для объектов со
+сложной геометрией.
+
+  Целью настоящей работы является разработка технологии
+текстурирования воксельной модели, позволяющей на основе цветовой
+информации, содержащейся в ОТ, производить перенос цветовой
+информации с изображений натурного объекта на его воксельную модель.
+
+  Опорную точку можно представить в виде кортежа
+  $  \langle x, y, z, r, g, b\rangle,$
+где ($x, y, z$)~--- координаты ОТ в трехмерном пространстве, $(r, g, b)$~---
+цветовые координаты ОТ в пространстве RGB (red, green, blue).
+{\looseness=1
+
+}
+
+  Опорные точки генерируются на основе смещенных изображений,
+получаемых в результате круговой съемки объекта, что позволяет создать
+замкнутое описание поверхности модели объекта в трехмерном
+пространстве~[2]. При этом цветом ОТ является цвет соответствующего ей
+сегмента, полученного в результате аппроксимации на основе
+сгенерированной палитры различимых цветов.
+
+  Технология построения воксельной модели~[3] подразумевает, что на
+основе известных координат ОТ в трехмерном пространстве производится
+интерполяция координат вокселов, заключенных между ОТ. Таким образом,
+единичной областью интерполяции как декартовых координат вокселов
+модели, так и их цветовых координат в пространстве RGB является область,
+ограниченная пространственным треугольником, образованным тремя
+взаимно ближайшими (ограничива\-ющи\-ми)~ОТ.
+
+  Цвет воксела в области, ограниченной ОТ, определяется цветом каждой из
+ОТ, ограничивающих эту область. Вес цветовой составляющей каждой ОТ
+при расчете цвета воксела обратно пропорционален евклидову расстоянию от
+воксела до нее. Таким образом, необходимо вычислить коэффициенты
+пропорциональности цветовых значений каждого воксела расстоянию до
+  $i$-й ОТ, ограничивающей область:
+  $$ k_i=\fr{1}{dd_i}\,,\quad d=\sum\limits_{i=1}^3 \fr{1}{d_i}\,,
+  $$
+где $d_i$~--- евклидово расстояние от рассматриваемого воксела до $i$-й ОТ.
+
+  Сумма произведений соответствующих коэффициентов и цветовых
+составляющих каждой ограничивающей ОТ образует цвет каждого воксела.
+
+  Таким образом, зависимость, описывающая способ вычисления цвета
+воксела в области, ограниченной ОТ, может быть представлена в виде:
+  $$
+  f(c)=\sum\limits_{i=1}^3 c_i k_i\,,
+  $$
+где $c_i$~--- значение цвета $i$-й ограничивающей ОТ:
+$$
+c=\begin{bmatrix}
+r\\[-2pt]
+g\\
+b
+\end{bmatrix}\,.
+$$
+
+  В результате получим текстурированную воксельную модель, которую
+можно формально представить в виде совокупности вокселов:
+  $$
+  V_T= \mathop{\bigcup}\limits_{i=1}^m v_i\,,
+  $$
+где $m$~--- количество вокселов модели;
+$v$~--- воксел модели; представляющий собой структуру вида
+$v = \langle x,y,z,r,g,b\rangle,$
+в которой ($x, y, z$)~--- координаты воксела в трехмерном пространстве,
+$(r, g, b)$~--- координаты цвета воксела в пространстве RGB.
+
+{\small \begin{center}
+\begin{tabular}{|c|r|r|c|r|r|r|}
+\multicolumn{7}{c}{Координаты ОТ контрольной модели}\\[6pt]
+\hline
+№ ОТ&$X$&$Y$&$Z$&$R$&$G$&$B$\\
+\hline
+1&10&$-39$&0&255&0&0\\
+2&$-10$&17&0&0&255&0\\
+3&14&17&0&0&0&255\\
+\hline
+\end{tabular}
+\end{center}
+}
+%\end{table*}
+
+\vspace*{9pt}
+
+  На основе представленной модели был создан алгоритм и реализующий
+его программный\linebreak модуль, а также были проведены экспериментальные
+исследования. Экспериментальные исследования про\-водились на
+совокупности тестовых воксель\-ных моделей. В~ходе исследования
+осуществлялось текстурирование данных моделей с использованием
+информации об ОТ, на основе которых они были построены, в
+соответствии с технологией пофрагментного анализа и представления
+натурного объекта и изменения его пространственного положения с
+последующей интеграцией полученных данных в трехмерные
+изображения~[4].
+
+  На начальном этапе с целью повышения точности проверки корректности
+работы алгоритма использовалась контрольная воксельная модель,
+представляющая собой пространственный треугольник с расположенными в
+вершинах ОТ разных цветов, координаты которых представлены в таблице.
+
+
+%\begin{table*}\small
+
+
+  Результат текстурирования модели, пред\-став\-лен\-ный на рис.~1, показывает,
+что цвета составля-\linebreak
+
+\vspace*{3pt}
+
+\noindent
+\begin{center}  %fig1
+\mbox{%
+\epsfxsize=60mm %78mm
+\epsfbox{man-1.eps}
+}
+  \end{center}
+
+%  \vspace*{3pt}
+
+\noindent
+{{\figurename~1}\ \ \small{Визуализация текстурированной контрольной модели}}
+
+
+%\vspace*{8pt}
+
+\addtocounter{figure}{1}
+
+\end{multicols}
+
+\begin{figure} %fig2
+\vspace*{1pt}
+\begin{center}
+\mbox{%
+\epsfxsize=160mm
+\epsfbox{man-2.eps}
+}
+\end{center}
+\vspace*{-6pt}
+\Caption{Тестовые воксельные модели}
+%\end{figure*}
+%\begin{figure*} %fig3
+\vspace*{24pt}
+\begin{center}
+\mbox{%
+\epsfxsize=160mm
+\epsfbox{man-3.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Визуализация текстурированных тестовых воксельных моделей:
+(\textit{а})~текстурирование синтетической воксельной модели;
+(\textit{б})~текстурирование модели натурного объекта}
+\end{figure}
+
+\begin{multicols}{2}
+
+
+\noindent
+ющих ее вокселов образуют плавный градиентный
+переход между цветами ОТ, расположенными в вершинах
+треугольника.
+
+  В связи с тем, что алгоритм текстурирования работает с совокупностью
+пространственных треугольников, аппроксимирующих трехмерную \mbox{модель},
+учитывая корректность текстурирования контрольной модели, можно
+сделать вывод о корректности работы алгоритма и модуля текстурирования
+воксельных моделей. Это подтверждают исследования с использованием
+других тестовых моделей, представленных на рис.~2.
+
+
+
+  В результате текстурирования рассмотренных моделей были получены
+результаты, представленные на рис.~3.
+  При этом стоит уточнить, что источником исходной информации для
+генерации ОТ для тестовой модели натурного объекта (рис.~3,\,\textit{б}) в
+соответствии с технологией представления натурного объекта и изменения
+его пространственного положения~[4] являлись фотоснимки натурного
+объекта, один из которых представлен на рис.~4.
+
+	Таким образом, можно заключить, что рассмотренная технология
+текстурирования позволяет с  необходимой точностью получить отображение\linebreak
+
+\noindent
+\begin{center}  %fig1
+\mbox{%
+\epsfxsize=78mm
+\epsfbox{man-4.eps}
+}
+  \end{center}
+
+%  \vspace*{3pt}
+
+\noindent
+{{\figurename~4}\ \ \small{Изображение исходного натурного объекта для создания тестовой модели
+(см.\ рис.~3,\,\textit{б})}}
+
+
+\vspace*{8pt}
+
+%\addtocounter{figure}{1}
+
+
+\noindent
+цветов поверхности натурного объекта на воксельной модели при условии
+ограниченного объема информации о цветах ОТ. Необходимая точность
+текстурирования достигается путем варьирования уровня детализации
+модели, который, в свою очередь, определяется количеством ОТ.
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+\bibitem{1-man}
+Использование мегатекстур (megatexture, clipmaps)~// Gamedev.ru. 9~ноября
+2007. {\sf http://www.gamedev.ru/ code/articles/Megatexture}.
+\bibitem{2-man}
+\Au{Архипов О.\,П., Маньяков Ю.\,А., Сиротинин~Д.\,О.} Метод генерации
+виртуальной сетки опорных точек на цветных изображениях~//
+Информационные технологии в науке, образовании и производстве
+(ИТНОП-2012): Мат-лы V Междунар. науч.-технич. конф.~--- Орел:
+Госуниверситет-УНПК, 2012. CD-ROM.
+\bibitem{3-man}
+\Au{Маньяков Ю.\,А.} Технология регистрации поведения объектов в
+трехмерном пространстве~// Информационные технологии в науке,
+образовании и производстве (ИТНОП-2010): Мат-лы IV Междунар.
+науч.-технич. конф.~--- Орел: ОрелГТУ, 2010. Т.~3. С.~182--186.
+\bibitem{4-man}
+\Au{Архипов О.\,П., Маньяков Ю.\,А., Сиротинин~Д.\,О.} Информационная
+модель технологии представления натурного объекта и изменения его
+пространственного положения~// Информатика и её применения, 2014. Т.~8.
+Вып.~1. С.~71--76.
+
+
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-9pt}
+
+\hfill{\small\textit{Поступила в редакцию 03.06.14}}
+
+%\newpage
+
+\vspace*{12pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{12pt}
+
+\def\tit{VOXEL MODELS TEXTURING BASED ON~REFERENCE POINTS'
+COLOR INFORMATION}
+
+\def\titkol{Voxel models texturing based on~reference points'
+color information}
+
+\def\aut{O.\,P.~Arkhipov and Y.\,A.~Maniakov}
+
+\def\autkol{O.\,P.~Arkhipov and Y.\,A.~Maniakov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-9pt}
+
+\noindent
+Orel Branch of Institute of Informatics Problems, Russian Academy of Sciences,
+137 Moskovskoe Highway, Orel 302025, Russian Federation
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2014\ \ \ volume~8\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2014\ \ \ volume~8\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{6pt}
+
+\Abste{The article describes a technology for texturing voxel models based on color information
+contained in reference points. Reference points are
+special points in three-dimensional space which describe a definite part of an object
+surface and contain generalized color information about a corresponding area.
+  The color of each voxel located in the area bounded by reference points is
+defined by each reference point bounding this area. The color components weights
+of each reference point are proportional to Euclidean distance from each voxel to
+these reference points. The article presents a method for calculating
+reference points color components weights
+based on dependence on the distance from reference points to voxels.
+This method is used for calculating colors of voxels. The
+description and the results of experiments are also provided. The
+experiments consisted in texturing generated models and real objects models.}
+
+\KWE{three-dimensional reconstruction; texture mapping; voxel model}
+
+\DOI{10.14357/19922264140311}
+
+\vspace*{3pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{9}
+
+
+\bibitem{1-man-1}
+Ispol'zovanie megatekstur (megatexture, clipmaps) [Using megatextures
+(megatexture, clipmaps)]. Available at:\linebreak\vspace*{-12pt}
+
+\columnbreak
+
+
+\noindent {\sf
+http://www.gamedev.ru/code/articles/Megatexture} (accessed March~25,
+2014).
+\bibitem{2-man-1}
+\Aue{Arhipov, O.\,P., Yu.\,A.~Maniakov, and D.\,O.~Sirotinin}. 2012. Metod
+generatsii virtual'noy setki opornykh tochek \linebreak\vspace*{-12pt}
+
+\pagebreak
+
+\noindent
+na tsvetnykh izobrazheniyakh
+[Method of virtual markers grid generation on color images]. \textit{Mat-ly VI
+Mezhdunar. Nauch.-Tekhnich. Konf. Informatsionnye Tekhnologii v Nauke,
+Obrazovanii i Proizvodstve ITNOP-2012} [Information Technologies in
+Science, Education, and Production Science and Technology Conference
+(International) Proceedings]. Orel. CD-ROM.
+\bibitem{3-man-1}
+\Aue{Maniakov, Y.\,A.} 2010. Tekhnologiya registratsii povedeniya ob''ektov v
+trekhmernom prostranstve [Three-dimensional space object behavior tracking technology].
+\textit{Informatsionnye Tekhnologii v Nauke, Obrazovanii i Proizvodstve
+(ITNOP). Mater. Mezhdunar. Nauch.-Tehnich. Konf.} [Information
+Technologies in Science, Education, and Production Science and Technology
+Conference (International) Proceedings]. Orel. 3:182--186.
+\bibitem{4-man-1}
+\Aue{Arhipov, O.\,P., Yu.\,A.~Maniakov, and D.\,O.~Sirotinin}. 2014.
+Informatsionnaya model tekhnologii predstavleniya naturnogo ob''ekta i
+izmeneniya ego prostranstvennogo polozheniya [Information model of the
+full-scale object and its attitude changes representation technology].
+\textit{Informatika i ee Primeneniya}~--- \textit{Inform. Appl.} 1:71--76.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received June 03, 2014}}
+
+\vspace*{-18pt}
+
+\Contr
+
+  \noindent
+  \textbf{Arkhipov Oleg P.} (b.\ 1948)~--- Candidate of Science (PhD) in
+technology, Director, Orel Branch of Institute of Informatics Problems, Russian
+Academy of Sciences, 137 Moskovskoe Highway, Orel 302025, Russian
+Federation; arkhipov12@yandex.ru
+
+  \vspace*{3pt}
+
+  \noindent
+  \textbf{Maniakov Yury A.} (b.\ 1984)~---
+  Candidate of Science (PhD) in technology, scientist, Orel Branch of Institute of
+Informatics Problems, Russian Academy of Sciences, 137 Moskovskoe Highway,
+Orel 302025, Russian Federation; maniakov\_yuri@mail.ru
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}
+
+

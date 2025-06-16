@@ -1,0 +1,757 @@
+\def\stat{beschastnyy}
+
+\def\tit{АНАЛИЗ ПЛОТНОСТИ БАЗОВЫХ СТАНЦИЙ 5G~NR ДЛЯ~ПРЕДОСТАВЛЕНИЯ УСЛУГ 
+ВИРТУАЛЬНОЙ И~ДОПОЛНЕННОЙ РЕАЛЬНОСТИ$^*$}
+
+\def\titkol{Анализ плотности базовых станций 5G NR для предоставления услуг 
+виртуальной и~дополненной реальности}
+
+\def\aut{В.\,А.~Бесчастный$^1$, Д.\,Ю.~Острикова$^2$, С.\,Я.~Шоргин$^3$, 
+Д.\,А.~Молчанов$^4$, Ю.\,В.~Гайдамака$^5$}
+
+\def\autkol{В.\,А.~Бесчастный, Д.\,Ю.~Острикова, С.\,Я.~Шоргин и~др.}
+%$^3$,  Д.\,А.~Молчанов$^4$, Ю.\,В.~Гайдамака$^5$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Бесчастный В.\,А.}
+\index{Острикова Д.\,Ю.}
+\index{Шоргин С.\,Я.}
+\index{Молчанов Д.\,А.}
+\index{Гайдамака Ю.\,В.}
+\index{Beschastnyi V.\,A.}
+\index{Ostrikova D.\,Yu.}
+\index{Shorgin S.\,Ya.}
+\index{Moltchanov D.\,A.}
+\index{Gaidamaka Yu.\,V.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Публикация выполнена при финансовой поддержке РНФ (проект 22-29-00694).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Российский университет дружбы народов, beschastnyy-va@rudn.ru}
+\footnotetext[2]{Российский университет дружбы народов, ostrikova-dyu@rudn.ru}
+\footnotetext[3]{Федеральный исследовательский центр <<Информатика и~управление>> Российской академии наук, 
+\mbox{sshorgin@ipiran.ru}}
+\footnotetext[4]{  Университет Тампере, Финляндия, dmitri.moltchanov@tuni.fi}
+\footnotetext[5]{Российский университет дружбы народов; Федеральный исследовательский центр <<Информатика 
+и~управление>> Российской академии наук, \mbox{gaydamaka-yuv@rudn.ru}}
+
+\vspace*{-6pt}
+
+  
+  
+
+  
+
+  \Abst{Технология пятого поколения <<новое радио>> (5G New Radio, 5G NR), 
+работающая в~диапазоне частот миллиметрового диапазона (mmWave), разработана для 
+поддержки ресурсоемких приложений, требующих чрезвычайно высоких скоростей на 
+уровне радиоинтерфейса. В~сис\-те\-мах NR использование антенных решеток, 
+формирующих особые узкие диаграммы направленности излучения, позволяет избегать 
+высоких потерь и~помех при передаче сигнала, но в~то же время сокращает площадь 
+покрытия отдельно взятого луча, а~следовательно, и~число многоадресных пользователей, 
+которые могут быть обслужены с~его помощью. В~результате требуются эффективные 
+алгоритмы доставки данных для поддержки таких услуг как в~традиционных сетях 5G NR, так и~в~сетях
+ на базе беспилотных летательных аппаратов (БПЛА). В~работе рассматривается 
+передача потоковых данных для услуг виртуальной ре\-аль\-ности с~использованием технологии 
+масштабируемого видеокодирования, которая использует возможности многоадресной 
+передачи для предоставления базового слоя с~низким качеством разрешения получаемого 
+контента и~одноадресной передачи для предоставления дополнительных слоев 
+с~повышенным качеством. С~использованием аппарата стохастической геометрии и~теории 
+массового обслуживания разработан метод, позволяющий оценить минимальную плотность 
+развертывания базовых станций (БС) mmWave NR для обеспечения заданной 
+производительности многослойных услуг с~многоадресной передачей в~зависимости от их 
+различных требований и~структуры, а также от плотности расположения абонентских 
+терминалов.}
+   
+  \KW{5G; <<новое радио>>; миллиметровый диапазон; виртуальная реальность; 
+многоадресные соединения; масштабируемое видеокодирование; кластеризация}
+
+\DOI{10.14357/19922264220213}
+  
+\vspace*{-3pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+  
+\section{Введение}
+  
+  В настоящее время консорциум 3GPP уже завершил основные этапы 
+стандартизации технологии NR в~версиих~15 и~~16~[1]. Такие сис\-те\-мы, 
+ра\-бо\-та\-ющие как в~микроволновом, так и~в~миллиметровом диапазонах, 
+обещают обеспечить чрезвычайно высокие скорости передачи данных на 
+уровне радиоинтерфейса~[2]. На текущий момент внимание как 3GPP, так 
+и~исследовательского сообщества, сосредоточено на вопросе предоставления 
+дополнительных услуг поверх нового уникального интерфейса радиодоступа 
+с~возможностью многоадресной передачи~[3]. 
+  
+  В работе рассматривается многослойная услуга виртуальной реальности 
+(Virtual Reality, VR), где базовый слой, передача которого предполагается 
+многоадресной, обеспечивает самое низкое качество воспроизведения видео, 
+а~каждый новый слой содержит дополнительные данные для повышения качества 
+воспроизведения по технологии масштабируемого видеокодирования. По 
+запросу нового пользователя VR-услу\-га должна быть предостав\-ле\-на с~базовым 
+уровнем качества, а затем качество восприятия (Quality of Experience, QoE) 
+можно улучшить, добавив дополнительные слои~[4]. Такая возможность 
+зависит от полосы пропускания и~зоны покрытия. Дополнительный слой может 
+содержать альтернативный контент или данные для улучшения качества 
+текущего воспроизведения, его передача моделируются с~помощью 
+одноадресной сессии с~собственным фиксированным требованием к~ресурсу. 
+  
+  Большинство проведенных на данный момент исследований для 
+многослойных мно\-го\-ад\-рес\-ных/од\-но\-ад\-рес\-ных услуг сосредоточены 
+на оптимизации уже развернутой системы для заданных параметров качества 
+обслуживания~[5--7]. Однако для сетевых операторов не менее важен вопрос 
+оценки требуемой плотности БС NR для заданной стохастической нагрузки 
+трафика в~заданной об\-ласти. Помимо наземных сис\-тем плот\-ность 
+расположения точек доступа имеет еще большее значение для сис\-тем, 
+использующих БПЛА~[8]. В~этом случае БПЛА могут выступать как в~качестве 
+потребителя услуги, так и~в~качестве поставщика, предоставляя услугу 
+некоторой группе пользователей. Именно на решение этих проб\-лем направлена 
+данная работа, где с~использованием аппарата стохастической 
+геометрии и~тео\-рии массового обслуживания разработана математическая модель для 
+расчета доли многослойных многоадресных VR-сес\-сий, которые могут быть 
+обслужены в~зависимости от параметров точки доступа и~нагрузки на систему.
+
+\vspace*{-6pt}
+
+\section{Системная модель}
+
+\vspace*{-2pt}
+  
+  Рассматривается зона покрытия БС NR в~виде сектора радиуса~$R$, который 
+рассчитывается в~соответствии с~моделью распространения сигнала 
+в~миллиметровом диапазоне~[9]. Сота обслуживается тремя антеннами, каждая 
+из которых покрывает сектор с~центральным углом~120$^\circ$. Высота БС 
+фиксирована и~равна~$h_A$, пользовательское устройство (ПУ) находится на 
+высоте~$h_U$. Система функционирует на рабочей частоте~$f_c$, при этом 
+каждая БС имеет в~своем распоряжении~$B$~ресурсных блоков. Предположим 
+наличие в~соте потенциальных блокаторов сигнала~--- людей, распределенных 
+случайным образом в~соответствии с~пуассоновским точечным процессом 
+(ПТП) в~$\mathrm{Re}^2$ с~плот\-ностью~$\lambda_B$, блокирующих своим телом пути 
+распространения  сигнала между БС и~ПУ. Блокаторы моделируются как 
+цилиндры радиусом~$r_B$ и~высотой $h_B\hm > h_U$. 
+  
+  В работе рассматривается VR-услу\-га с~четырьмя уровнями качества 
+(слоями): одним базовым и~тремя дополнительными. Обозначим требуемую 
+скорость передачи данных базового слоя~$d_M$. Этот слой предоставляется 
+всем пользователям услуги. В~то же время все пользователи пытаются 
+повысить качество услуги и~получить дополнительные слои данных 
+с~требованиями $d_{U,l}$, $l\hm=1,2,3$. Предполагается, что процесс 
+поступления пользовательских запросов является пуассоновским  
+с~па\-ра\-мет\-ром~$\Lambda$, а~длительности VR-сес\-сий имеют 
+экспоненциальное распределение с~па\-ра\-мет\-ром~$\mu$.
+ 
+ При поступлении запроса на предоставление услуги от ПУ из зоны, не 
+покрытой многоадресной сессией, организуется новая многоадресная сессия, 
+и~пользователь всегда получает базовый слой данных. Если же ПУ находится 
+в~зоне действия уже установленной многоадресной сессии, оно присоединяется 
+к~ней, не требуя дополнительных ресурсов. Далее, если на БС достаточно 
+ресурсов для загрузки дополнительных слоев, инициируется их передача.
+
+\vspace*{-6pt}
+
+\section{Математическая модель}
+
+\vspace*{-4pt}
+  
+  В данном разделе приводится аналитический метод группировки 
+пользователей многоадресной сессии, после чего формулируется задача 
+доставки дополнительных слоев VR-услу\-ги в~виде системы массового 
+обслуживания. Посредством итеративного увеличения радиуса 
+покрытия БС такой подход позволяет рассчитывать необходимую плот\-ность 
+развертывания.
+  
+  Формирование групп многоадресных сессий основано на принципе выбора 
+максимальной ширины по уровню половинной мощности~$\alpha$, 
+позволяющей установить соединение с~ПУ, находящимся на границе 
+обслуживаемой соты. Для определения значения~$\alpha$ сначала необходимо 
+найти подходящее усиление на антенне БС, которое впоследствии может быть 
+скорректировано в~меньшую сторону с~учетом доступных конфигураций 
+антенной решетки:
+  \begin{equation}
+  G_A= \fr{S(R)[N_0+M_T]}{P_A G_U R^{-\zeta_T} e^{-KR} p_B(R)}\,.
+  \label{e1-bes}
+  \end{equation}
+  
+  Получив значение~$G_A$, можно рассчитать число многоадресных групп, 
+необходимое для покрытия всей обслуживаемой зоны 
+$$
+N= \left\lceil \fr{\Theta}{G_A}\right\rceil,
+$$
+ где $\Theta$~--- ширина дуги сектора антенны. Для того 
+чтобы воспользоваться моделью Хеллмана~[10], необходимо перевести ширину 
+угла~$\alpha$ в~длину дуги образуемого им сегмента:
+$$
+\xi= \fr{G_A\pi R}{180}\,.
+$$ 
+Теперь, согласно~[11], длины пробелов между парами соседних теней имеют 
+экспоненциальное распределение с~параметром $\lambda K^2/(2R)$. Это 
+позволяет выразить вероятность того, что пробел имеет ширину от~$k$ 
+до~$k\hm+1$ сегментов, в~виде
+  \begin{equation}
+  q_k= e^{-\lambda K^2 k\xi/(2R)} - e^{-\lambda K^2(k+1)\xi/(2R)}\,,
+  \label{e2-bes}
+  \end{equation}
+а~потому не требует покрытия лучами. В~конечном итоге это позволяет 
+оценить среднее число лучей многоадресных сессий, попадающих в~пробелы, 
+как
+\begin{equation}
+\Delta = \fr{\pi \lambda K^2}{3\left(e^{\lambda B(R-
+Q)+\lambda}\right)}\sum\limits^N_{k=1} kq_k\,.
+\label{e3-bes}
+\end{equation}
+  
+  Таким образом, среднее число многоадресных сессий в~соте можно найти как 
+$N\hm- \Delta$. В~то же время требование отдельной многоадресной сессии 
+зависит от того, все ли ПУ группы находятся в~условиях прямой видимости 
+или есть хотя бы одно заблокированное ПУ, которое вынуждает всю группу 
+снижать схему модуляции и~кодирования~[12]. Чтобы рассчитать средний 
+объем ресурса, тре\-бу\-емый для обслуживания многоадресной сессии, необходимо найти 
+вероятность вхождения некоторого чис\-ла ПУ~$u$ в~группу, которая имеет 
+пуассоновское распределение, по свойству ПТП:
+  \begin{equation}
+  q_u= \fr{e^{-\lambda_n}\lambda_n^u}{u!}\,,
+  \label{e4-bes}
+  \end{equation}
+где $\lambda_n= \lambda\pi (R^2\hm- Q^2)\alpha/360$.
+
+  Следовательно, средний объем требуемого ресурса можно рассчитать как
+  \begin{multline}
+  b_M= \sum\limits^\infty_{u=1} q_u\left[ \prod\limits^u_{i=1} \left(1-
+p_{B,i}\right) b_{M,L} +{}\right.\\
+\left.{}+\left( 1-\prod\limits^u_{i=1} \left(1-p_{B,i}\right)\right) 
+b_{M,B}\right],
+  \label{e5-bes}
+  \end{multline}
+где $b_{M,L}$ и~$b_{M,B}$~--- требования к~объему ресурса в~условиях 
+прямой видимости и~в~состоянии блокировки соответственно;  $p_{B,i}$~--- 
+вероятность блокировки ПУ, которое является $i$-м соседом для БС в~ПТП.
+
+  Как показано в~[13], вероятность блокировки прямой видимости зависит как 
+от расстояния между ПУ и~БС, которое имеет распределение расстояния до  
+$i$-го ближайшего соседа в~ПТП с~плот\-ностью
+  \begin{multline}
+  f_i(x)=\fr{2(\pi\lambda)^i}{(i-1)!}\,x^{2i-1} e^{-\pi\lambda x^2}\,,\\
+   x>0\,,\enskip  i=1,2,\ldots,
+  \label{e5-1.bes}
+  \end{multline}
+так и~от интенсивности блокаторов, пересекающих зону блокировки
+\begin{equation}
+\mu_{B,i}= \int\limits_0^\infty\! f_i(x) \fr{(x[h_B -h_U] +r_B [h_T-h_U])} 
+{(2r_B\lambda_B v)^{-1} (h_T- h_U)}\,dx\,,\!
+\label{e6-bes}
+\end{equation}
+где $h_T$, $h_U$ и~$h_B$~--- высоты БС, ПУ и~блокаторов соответственно; 
+$r_B$ и~$v$~--- радиус и~скорость блокаторов. Это позволяет найти 
+вероятность блокировки ПУ в~виде
+\begin{equation}
+p_{B,i}= \fr{\mu_{B,i}}{\mu_{B,i}+v/(2r_B)}\,,
+\label{e7-bes}
+\end{equation}
+где $2r_B/v$~--- среднее время прохождения блокатором зоны блокировки под 
+прямым углом к~ее длинной стороне.
+  
+  Для оценки среднего объема ресурсов, необходимых для доставки 
+дополнительных слоев видео с~по\-мощью одноадресных сессий, 
+рассматриваются ресурсы, позволяющие загружать каждый слой некоторой 
+доле пользователей. Процесс загрузки дополнительных слоев моделируется 
+в~виде СМО~[14] 
+$$
+\begin{matrix} M \\ \lambda\end{matrix} \left\vert \begin{matrix} M 
+\\ \mu\end{matrix}\right\vert C,
+$$ 
+где $\lambda$~--- интенсивность 
+поступления запросов на загрузку слоя видео; $\mu^{-1}$~--- средняя 
+длительность загружаемого фрагмента видео, которая имеет экспоненциальное 
+распределение;  $C$~--- чис\-ло активных одноадресных сессий, которые 
+необходимо поддерживать для выполнения определенных требований по 
+вероятности успешной загрузки. Для расчета вероятности сброса сессии 
+$E_C(\rho)$ можно воспользоваться первой формулой Эрланга
+  \begin{equation*}
+  E_C(\rho)=\fr{\rho^C/C!}{\sum\nolimits^C_{m=0} (\rho^m/m!)}\,,\enskip 
+0\leq\rho < \infty\,,
+ % \label{e8-bes}
+  \end{equation*}
+где $\rho=\lambda/\mu$. 
+  
+  Теперь можно оценить средний объем тре\-бу\-емых ресурсов для загрузки 
+дополнительного $l$-го слоя как
+  \begin{equation*}
+  E_l[U]=C_l \left[ p_{B,i} b_{U_l,B} +\left( 1-p_{B,i}\right) b_{U_l,L}\right],
+ % \label{e9-bes}
+  \end{equation*}
+где $b_{U_l,B}$ и~$b_{U_l,L}$~--- требования отдельно взятого ПУ для 
+загрузки $l$-го слоя в~условиях заблокированной и~незаблокированной прямой 
+видимости. 
+  
+  Зададим вектор $\mathbf{p}_U$ с~элементами $p_l$~---  вероятностями 
+успешной загрузки $l$-го слоя видео, $l\hm=1,\ldots , L$. Тогда в~общем виде 
+схема нахождения минимальной требуемой плот\-ности развертывания БС 
+выглядит следующим образом: 
+\begin{itemize}
+\item[(а)] для максимально большого допустимого 
+радиуса соты вы\-чис\-лить объем ресурса для доставки базового слоя, используя 
+выражения~(1)--(\ref{e7-bes}); 
+\item[(б)] для каждого дополнительного слоя найти 
+такое минимальное~$C_l$, при котором будет выполняться условие по 
+ве\-ро\-ят\-ности успешной загрузки~$p_l$; 
+\item[(в)] сложить рассчитанные требования на 
+базовый и~дополнительные слои и~сравнить с~объемом ресурсов на БС; 
+\item[(г)] если сумма требований меньше доступного ресурса, то повторить расчет для 
+меньшего радиуса соты, иначе принять предпоследнее значение радиуса за 
+минимально до\-пус\-ти\-мое.
+\end{itemize}
+
+\section{Численный анализ}
+  
+  В данном разделе проводится численный анализ влияния системных 
+параметров, представленных в~таблице, на минимальную допустимую 
+плотность развертывания БС NR.
+  
+  \begin{table*}[b]\small
+  \begin{center}
+  \begin{tabular}{|c|l|c|}
+  \multicolumn{3}{c}{Системные параметры}\\
+  \multicolumn{3}{c}{\ }\\[-6pt]
+  \hline
+Обозначение&\multicolumn{1}{c|}{Описание}&Значения по умолчанию\\
+\hline
+$f_C$ &Рабочая частота&73 ГГц\\
+$B$&Число доступных ресурсных блоков&264\\
+$r_B$&Радиус блокатора&0,4 м\\
+$h_B$&Высота блокатора&1,7 м\\
+$h_U$&Высота ПУ&1,5 м\\
+$h_T$&Высота БС&4 м\\
+$v$&Скорость блокатора&1 м/с\\
+$P_T$&Излучаемая мощность на БС&2 Вт\\
+$N_U$&Число конфигураций антенны ПУ&$8\times8$\\
+$\lambda_B$&Плотность блокаторов&0,3 ед./м$^2$\\
+$N_0$&Шум&$-$84~дБ\\
+$\zeta_T$&Коэффициент затухания&2,1\\
+$\lambda$&Интенсивность запросов на видеосессии от ПУ&1/3600 сессий/с\\
+$\mu^{-1}$&Средняя длительность видеосессии&15 с\\
+$d_M$&Требуемая скорость для загрузки базового слоя&7,78 Мбит/с\\
+$\mathbf{d}_U$&Требуемые скорости для загрузки дополнительных слоев&19{,}78; 
+25{,}81; 31{,}96~Мбит/с\\
+\hline
+\end{tabular}
+\end{center}
+%\end{table*}
+\setcounter{table}{0}
+\renewcommand{\tablename}{\protect\bf Рис.}
+%\begin{figure*} %fig1
+\vspace*{7pt}
+  \begin{center}  
+    \mbox{%
+\epsfxsize=163mm
+\epsfbox{bes-1.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Оптимальная плотность развертывания NR БС в~зависимости от плотности 
+блокаторов~(\textit{а}) и~пользовательских устройств~(\textit{б}): \textit{1}~--- 
+$\mathbf{p}_U\hm= (0{,}9; 0{,}8; 0{,}7)$;  \textit{2}~--- $(0{,}75; 0{,}5; 0{,}25)$; \textit{3}~--- 
+$\mathbf{p}_U\hm= (0{,}5; 0{,}3; 0{,}1)$}
+  %\end{figure*}
+  \end{table*}
+  
+  \renewcommand{\figurename}{\protect\bf Рис.}
+\renewcommand{\tablename}{\protect\bf Таблица}
+  
+  
+  В данной работе рассматриваются три профиля качества обслуживания, 
+характеризующися вектором~$\mathbf{p}_U$: строгий $(0{,}9; 0{,}8; 0{,}7)$, 
+средний $(0{,}75; 0{,}5; 0{,}25)$ и~мягкий $(0{,}5; 0{,}3; 0{,}1)$.
+  
+  Одним из ключевых параметров, оказывающих влияние на 
+производительность системы, является плот\-ность блокаторов. 
+
+На 
+рис.~1,\,\textit{a} представлен график зависимости оптимальной плотности 
+развертывавния БС от~$\lambda_B$, на котором можно заметить, что мягкий 
+и~средний профили не сильно подвержены влиянию блокаторов, в~отличие от 
+пользователей со строгим профилем, для которого при $\lambda_B\hm= 
+1{,}0$~ед./м$^2$ требуется 110~БС на~1~км$^2$. Для менее строгих профилей 
+требуемая плотность развертывания при этом практически вдвое меньше.
+  
+
+  На рис.~1,\,\textit{б} изображена зависимость оптимальной плотности 
+развертывавния БС от плотности ПУ. Очевидно, что чем более строгий профиль 
+у~пользователей, тем большую нагрузку они создают на сеть в~целом и~тем 
+большая плотность развертывания требуется для обеспечения эффективного 
+покрытия. Здесь стоит отметить, что рассматриваемая зависимость для всех 
+профилей имеет практически линейный характер.
+
+\setcounter{figure}{1}
+\begin{figure*} %fig2
+\vspace*{1pt}
+  \begin{center}  
+    \mbox{%
+\epsfxsize=163mm
+\epsfbox{bes-2.eps}
+}
+\end{center}
+\vspace*{-9pt}
+\Caption{Оптимальная плотность развертывания БС NR для разных режимов передачи 
+базового слоя~(\textit{а}) 
+(\textit{1}~---  $\mathbf{p}_U\hm= (0{,}9; 0{,}8; 0{,}7)$;  \textit{2}~--- 
+$(0{,}75; 0{,}5; 0{,}25)$;  \textit{3}~--- $\mathbf{p}_U\hm= 
+(0{,}5; 0{,}3; 0{,}1)$; пустые значки~--- многоадресные сессии; залитые значки~--- одноадресные сессии)
+    и~отношения долей одноадресных и~многоадресных сессий~(\textit{б}) (\textit{1}~--- 
+$\mathbf{p}_U\hm= (0{,}9; 0{,}8; 0{,}7)$;  \textit{2}~--- $(0{,}75; 0{,}5; 0{,}25)$; \textit{3}~--- 
+$\mathbf{p}_U\hm= (0{,}5; 0{,}3; 0{,}1)$)}
+  \end{figure*}
+  
+  На рис.~2,\,\textit{а} показа зависимость плотности развертывания от все той 
+же плотности ПУ, однако здесь присутствуют две схемы доставки базового 
+слоя: с~по\-мощью многоадресных сессий и~с помощью одноадресных. 
+Сравнение схем показывает, что использование многоадресных сессий при 
+низких плотностях ПУ малоэффективно, но для плотных сетей (при $\sigma\hm 
+\geq 0{,}4$~ед./м$^2$) они позволяют добиться существенного выигрыша за 
+счет переиспользования ресурсов для базового слоя.
+  
+  Для рис.~2,\,\textit{б} введен дополнительный коэффициент~$L_R$, который 
+обозначает отношение числа одноадресных сессий к~многоадресным. 
+Естественным образом с~ростом числа одноадресных сессий возрастает 
+необходимая плотность БС. Однако в~то же время возрастает и~разрыв между 
+значениями для разных профилей, что объясняется резким повышением 
+требований к~дополнительным слоям видео.
+  
+
+\vspace*{-6pt}
+
+\section{Заключение}
+
+\vspace*{-4pt}
+  
+  В данной работе предложен метод оценки производительности NR-систем 
+при предоставлении услуги масштабируемого VR-видео посредством 
+одноадресных и~многоадресных сессий. Численный анализ показал, что при 
+низкой плотности пользователей использование многоадресных сессий 
+малоэффективно, а наибольший позитивный эффект от их применения 
+наблюдается тогда, когда требования к~ресурсам для доставки базового слоя 
+начинают превосходить требования для дополнительных слоев видео. Также 
+показано, что параметры качества обслуживания наряду с~плотностью 
+пользователей имеют значительное влияние на необходимую плотность 
+развертывания БС. При этом наиболее сильное влияние 
+плотности блокаторов наблюдается в~случае наиболее высоких требований 
+к~качеству обслуживания. В~целом, в~за\-ви\-си\-мости от различных системных 
+па\-ра\-мет\-ров, плот\-ность раз\-вер\-ты\-ва\-ния варь\-и\-ру\-ет\-ся от~20 до~250~БС на~1~км$^2$. 
+  
+  Цель дальнейших исследований~--- расширение предложенной модели для 
+сценария с~использованием БПЛА в~качестве подвижных точек доступа, что 
+позволит исследовать проблему кластеризации роев.
+  
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-bes}
+\Au{Holma H., Toskala~A., Nakamura~T.} 5G technology: 3GPP New Radio.~--- New York, NY, 
+USA:  John Wiley \& Sons, 2020. 536~p.
+\bibitem{2-bes}
+\Au{Lin X., Li~J., Baldemair~R., \textit{et al.}} 5G New Radio: Unveiling the essentials of the next 
+generation wireless access technology~// IEEE Communications Standards Magazine, 2019. 
+Vol.~3. Iss.~3. P.~30--37. doi: 10.1109/ \mbox{MCOMSTD}.001.1800036.
+\bibitem{3-bes}
+\Au{Le T.\,K., Salim~U., Kaltenberger~F.} An overview of physical layer design for ultra-reliable 
+low-latency communications in 3GPP Releases 15, 16, and 17~// IEEE Access, 2020. Vol.~9. 
+P.~433--444. doi: 10.1109/\mbox{ACCESS}. 2020.3046773.
+\bibitem{4-bes}
+\Au{Karembai A.\,K., Thompson~J., Seeling~P.} Towards prediction of immersive virtual reality 
+image quality of experience and quality of service~// Future Internet, 2018. Vol.~10. Iss.~7. 
+Art.~63. 12~p. doi: 10.3390/fi10070063.
+\bibitem{5-bes}
+\Au{Nasrabadi A.\,T., Mahzari~A., Beshay~J.\,D., Prakash~R.} Adaptive 360-degree video 
+streaming using layered video coding~//  Virtual Reality Conference Proceedings.~--- 
+Pis-\linebreak\vspace*{-12pt}
+ 
+ \pagebreak
+ 
+ \noindent
+ cataway, NJ, USA: IEEE, 2017. P.~347--348. doi: 10.1109/ VR.2017.7892319.
+
+\bibitem{7-bes} %6
+\Au{Park J., Hwang J., Wei~H.} Cross-layer optimization for VR Video Multicast Systems~// 
+ Global Communications Conference Proceedings.~--- Piscataway, NJ, USA: 
+IEEE, 2018. P.~206--212. doi: 10.1109/GLOCOM.2018.8647389.
+
+\bibitem{6-bes} %7
+\Au{Long K., Cui~Y., Ye~C., Liu~Z.} Optimal transmission of multi-quality tiled 360 VR video by 
+exploiting multicast opportunities~// Global Communications Conference 
+ Proceedings.~--- Piscataway, NJ, USA: IEEE, 2019. Art.~9014280. 6~p. doi: 
+10.1109/\linebreak GLOBECOM38437.2019.9014280.
+\bibitem{8-bes}
+\Au{Tang N., Tang H., Li~B. Yuan~X.} Joint maneuver and beamwidth optimization for  
+UAV-enabled multicasting~// IEEE Access, 2019. Vol.~7. P.~149503--149514. doi: 
+10.1109/ACCESS.2019.2947031.
+\bibitem{9-bes}
+3GPP Technical Specification 38.211: Physical channels and modulation (Release~16), 2021. 
+{\sf https://www. 3gpp.org/ftp/Specs/archive/38\_series/38.211/38211-g50.zip}.
+\bibitem{10-bes}
+\Au{Хеллман О.} Введение в~теорию оптимального поиска~/ Пер. с~англ. 
+Е.\,М.~Столяровой.~--- М.: Наука, 1985. 246~с.
+\bibitem{11-bes}
+\Au{Gapeyenko M., Samuylov~A., Gerasimenko~M., Moltchanov~D., Singh~S., Akdeniz~M.\,R., 
+Aryafar~E., Himayat~N., Andreev~S., Koucheryavy~Y.} On the temporal effects of mobile blockers 
+in urban millimeter-wave cellular scenarios~// IEEE T. Veh. Technol., 2017. 
+Vol.~66. No.\,11. P.~10124--10138. doi: 10.1109/TVT.2017.2754543.
+\bibitem{12-bes}
+\Au{Samuylov A., Beschastnyi~V., Moltchanov~D., Ostrikova~D., Gaidamaka~Y., Shorgin~V.} 
+Modeling coexistence of unicast and multicast communications in 5G New Radio systems~// 
+30th Annual  Symposium (International) on Personal, Indoor and Mobile Radio 
+Communications  Proceedings.~--- Piscataway, NJ, USA: IEEE, 2019. Art.~8904350. 
+6~p. doi: 10.1109/PIMRC.2019.8904350.
+\bibitem{13-bes}
+\Au{Begishev V., Moltchanov D., Sopin~E., Samuylov~A., Andreev~S., Koucheryavy~Y., 
+Samouylov~K.} Quantifying the impact of guard capacity on session continuity in 3GPP new radio 
+systems~// IEEE T. Veh. Technol., 2019. Vol.~68. No.\,12. P.~12345--12359. 
+doi: 10.1109/TVT.2019.2948702.
+\bibitem{14-bes}
+\Au{Горбунова А.\,В., Наумов~В.\,А., Гайдамака~Ю.\,В., Самуйлов~К.\,Е.} Ресурсные системы массового обслуживания как модели беспроводных систем 
+связи~// Информатика и~её применения, 2018. 
+Т.~12. Вып.~3. С.~48--55. doi: 10.14357/19922264180307.
+ \end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 30.01.22}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+%\newpage
+
+%\vspace*{-28pt}
+
+\hrule
+
+\vspace*{2pt}
+
+\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{DENSITY ANALYSIS OF~mmWave NR DEPLOYMENTS FOR~DELIVERING SCALABLE 
+AR/VR VIDEO SERVICES}
+
+
+\def\titkol{Density analysis of~mmWave NR deployments for~delivering scalable 
+AR/VR video services}
+
+
+\def\aut{V.\,A.~Beschastnyi$^1$, D.\,Yu.~Ostrikova$^1$, S.\,Ya.~Shorgin$^2$, D.\,A.~Moltchanov$^3$,\\ 
+and~Yu.\,V.~Gaidamaka$^{1,2}$}
+
+\def\autkol{V.\,A.~Beschastnyi, D.\,Yu.~Ostrikova, S.\,Ya.~Shorgin, et al.}
+%D.\,A.~Moltchanov$^3$,  and~Yu.\,V.~Gaidamaka$^{1,2}$}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-10pt}
+
+
+ \noindent
+  $^1$Peoples' Friendship University of Russia (RUDN University), 6~Miklukho-Maklaya Str., 
+Moscow 117198, Russian\linebreak
+$\hphantom{^1}$Federation
+  
+  \noindent
+  $^2$Federal Research Center ``Computer Science and Control'' of the Russian Academy of 
+Sciences, 44-2~Vavilov\linebreak
+$\hphantom{^1}$Str., Moscow 119133, Russian Federation
+  
+  \noindent
+  $^3$Tampere University, 7~Korkeakoulunkatu, Tampere 33720, Finland
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 2}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2022\ \ \ volume~16\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{6pt}  
+  
+  
+  
+  
+  \Abste{The 5G New Radio (NR) technology operating in millimeter-wave 
+  (mmWave) frequency band is designed to support bandwidth-greedy applications requiring 
+  extraordinary rates at the access interface. In NR systems, the use of antenna arrays 
+  that form directional radiation patterns allows to avoid high propagation losses 
+  and interference but at the same time reduces the coverage area of a~single beam and, 
+  hence, the number of multicast users that can be served by the beam. As a~result, 
+  efficient algorithms are required to support such services in both terrestrial systems 
+  and drone-assisted systems that utilize unmanned aerial vehicles as access points.
+The present authors consider the streaming data delivery of virtual reality 
+   services using scalable video coding technology which utilizes multicast capabilities 
+   for baseline layer and unicast transmissions for delivering an enhanced experience. 
+   By utilizing the tools of stochastic geometry and queuing theory, the authors develop 
+   a~simple method allowing one to estimate the deployment density of mmWave NR base stations  
+   to provide a~given performance of multilayer multicast services depending on their various 
+   requirements and structure as well as on the density of users.}
+  
+  \KWE{5G; New Radio; mmWave; multi-layer VR; multicasting; scalable video coding; clustering}
+  
+
+  
+\DOI{10.14357/19922264220213}
+
+\vspace*{-8pt}
+
+  \Ack
+  \noindent
+  The publication has been funded by the Russian Science Foundation, project 22-29-00694. 
+
+%\vspace*{4pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-bes-1}
+  \Aue{Holma, H., A.~Toskala, and T.~Nakamura.} 2020. \textit{5G technology: 3GPP New 
+Radio}. New York, NY:  John Wiley \& Sons. 536~p.
+\bibitem{2-bes-1}
+  \Aue{Lin, X., J.~Li, R.~Baldemair, %J.\,F.\,T.~Cheng, S.~Parkvall, D.\,C.~Larsson, 
+%H.~Koorapaty, M.~Frenne, S.~Falahati, A.~Grovlen, 
+\textit{et al.}} 2019. 5G New Radio: Unveiling 
+the essentials of the next generation wireless access technology. \textit{IEEE Communications 
+Standards Magazine} 3(3):30--37. doi: 10.1109/MCOMSTD.001.1800036.
+\bibitem{3-bes-1}
+  \Aue{Le, T.\,K., U.~Salim, and F.~Kaltenberger.} 2020. An overview of physical layer design 
+for ultra-reliable low-latency communications in 3GPP Releases~15, 16, and 17. \textit{IEEE 
+Access} 9:433--444. doi: 10.1109/ACCESS.2020.3046773.
+\bibitem{4-bes-1}
+  \Aue{Karembai, A.\,K., J.~Thompson, and P.~Seeling.} 2018. Towards prediction of immersive 
+virtual reality image quality of experience and quality of service. \textit{Future Internet} 10(7):63. 
+12~p. doi: 10.3390/fi10070063.
+\bibitem{5-bes-1}
+  \Aue{Nasrabadi, A.\,T., A.~Mahzari, J.\,D.~Beshay, and R.~Prakash.} 2017. Adaptive  
+360-degree video streaming using layered video coding. \textit{Virtual Reality Conference 
+Proceedings}. Piscataway, NJ:  IEEE. 347--348. doi: 10.1109/VR.2017.7892319.
+
+\bibitem{7-bes-1} %6
+  \Aue{Park, J., J. Hwang, and H.~Wei.} 2018. Cross-layer optimization for VR video multicast 
+systems. \textit{Global Communications Conference Proceedings}.  Piscataway, NJ: IEEE. 206--212. doi: 
+10.1109/GLOCOM.2018.8647389.
+
+\bibitem{6-bes-1} %7
+  \Aue{Long, K., Y.~Cui, C.~Ye, and Z.~Liu.} 2019. Optimal transmission of multi-quality tiled 
+360~VR video by exploiting multicast opportunities. \textit{Global Communications Conference 
+Proceedings}. Piscataway, NJ: IEEE. Art.~9014280. 6~p. doi: 10.1109/\linebreak GLOBECOM38437.2019.9014280.
+\bibitem{8-bes-1}
+  \Aue{Tang N., H.~Tang, B.~Li, and X.~Yuan.} 2019. Joint maneuver and beamwidth 
+optimization for UAV-enabled multicasting. \textit{IEEE Access} 7:149503--149514. doi: 
+10.1109/\linebreak ACCESS.2019.2947031.
+\bibitem{9-bes-1}
+  3GPP Technical Specification 38.211: Physical channels and modulation. 2021. Available at: {\sf 
+https://www.3gpp. org/ftp/Specs/archive/38\_series/38.211/38211-g90.zip} (accessed April~20, 
+2022).
+\bibitem{10-bes-1}
+  \Aue{Hellman, O.} 1985. \textit{Vvedenie v~teoriyu optimal'nogo poiska} [Introduction to the 
+optimal search theory]. Moscow: Nauka. 246~p.
+\bibitem{11-bes-1}
+  \Aue{Gapeyenko, M., A.~Samuylov, M.~Gerasimenko, D.~Mol\-tcha\-nov, S.~Singh,  
+M.\,R.~Akdeniz, E.~Aryafar, N.~Hi\-ma\-yat, S.~Andreev, and Y.~Koucheryavy.} 2017. On the 
+temporal effects of mobile blockers in urban millimeter-wave cellular scenarios. \textit{IEEE 
+T.~Veh. Technol.} 66(11):10124--10138. doi: 10.1109/TVT.2017.2754543.
+\bibitem{12-bes-1}
+  \Aue{Samuylov, A., V.~Beschastnyi, D.~Moltchanov, D.~Ostrikova, Y.~Gaidamaka, and 
+V.~Shorgin.} 2019. Modeling coexistence of unicast and multicast communications in 5G New 
+Radio systems. \textit{30th Annual  Symposium (International) on Personal, Indoor and Mobile 
+Radio Communications Proceedings}. Piscataway, NJ:  IEEE. Art.~8904350. 6~p. doi: 10.1109/PIMRC.2019.8904350.
+\bibitem{13-bes-1}
+  \Aue{Begishev, V., D.~Moltchanov, E.~Sopin, A.~Samuylov, S.~Andreev, Y.~Koucheryavy, and 
+K.~Samouylov.} 2019. Quantifying the impact of guard capacity on session continuity in 3GPP new 
+radio systems. \textit{IEEE T. Veh. Technol.} 68(12):12345--12359. doi: 
+10.1109/TVT.2019.2948702.
+\bibitem{14-bes-1}
+  \Aue{Gorbunova, A.\,V., V.\,A.~Naumov, Y.\,V.~Gaidamaka, and K.\,E.~Samouylov.} 2018. 
+Resursnye sistemy massovogo obsluzhivaniya kak modeli besprovodnykh sistem svyazi [Resource 
+queuing systems as models of wireless communication systems]. \textit{Informatika i~ee 
+Primeneniya~--- Inform. Appl.} 12(3):48--55. doi: 10.14357/19922264180307. 
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received January 30, 2022}}
+
+
+  
+  \Contr
+  
+  \noindent
+  \textbf{Beschastnyi Vitalii A.} (b.\ 1992)~--- Candidate of Science (PhD) in physics and mathematics, 
+assistant professor, Department of Applied Probability and Informatics, Peoples' Friendship 
+University of Russia (RUDN University), 6~Miklukho-Maklaya Str., Moscow 117198, Russian 
+Federation; \mbox{beschastnyy-va@rudn.ru}
+
+\vspace*{3pt}
+  
+    \noindent
+  \textbf{Ostrikova Daria Yu.} (b.\ 1988)~--- Candidate of Science (PhD) in physics and mathematics, 
+associate professor, Department of Applied Probability and Informatics, Peoples' Friendship 
+University of Russia (RUDN University), 6~Miklukho-Maklaya Str., Moscow 117198, Russian 
+Federation; \mbox{ostrikova-dyu@rudn.ru}
+
+\vspace*{3pt}
+  
+    \noindent
+  \textbf{Shorgin Sergey Ya.} (b.\ 1952)~--- Doctor of Science in physics and mathematics, professor, 
+principal scientist, Institute of Informatics Problems, Federal Research Center ``Computer Science 
+and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119133, Russian 
+Federation; \mbox{sshorgin@ipiran.ru}
+
+\vspace*{3pt}
+  
+   \noindent
+  \textbf{Moltchanov Dmitri A.} (b.\ 1978)~--- Doctor of Science in technology, associate professor, 
+Department of Electronics and Communications Engineering, Tampere University,
+ 7~Korkeakoulunkatu, Tampere 33720, Finland; \mbox{dmitri.moltchanov@tuni.fi}
+ 
+ \vspace*{3pt}
+  
+  
+    \noindent
+  \textbf{Gaidamaka Yuliya V.} (b.\ 1971)~--- Doctor of Science in physics and mathematics, professor, 
+Department of Applied Probability and Informatics, Peoples' Friendship University of Russia 
+(RUDN University), 6~Miklukho-Maklaya Str., Moscow 117198, Russian Federation; senior 
+scientist, Institute of Informatics Problems, Federal Research Center ``Computer Science and 
+Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., Moscow 119333, Russian 
+Federation; \mbox{gaydamaka-yuv@rudn.ru}
+  
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 
+  

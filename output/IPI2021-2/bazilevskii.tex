@@ -1,0 +1,720 @@
+\def\stat{bazilevsky}
+
+\def\tit{МЕТОД ВЫПРЯМЛЕНИЯ\\ ИСКАЖЕННЫХ ИЗ-ЗА~МУЛЬТИКОЛЛИНЕАРНОСТИ\\ 
+КОЭФФИЦИЕНТОВ В~РЕГРЕССИОННЫХ МОДЕЛЯХ}
+
+\def\titkol{Метод выпрямления искаженных из-за~мультиколлинеарности 
+коэффициентов в~регрессионных моделях}
+
+\def\aut{М.\,П.~Базилевский$^1$}
+
+\def\autkol{М.\,П.~Базилевский}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Базилевский М.\,П.}
+\index{Bazilevskiy M.\,P.}
+
+%{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+%{Работа выполнена при финансовой поддержке РФФИ (проект 16-29-09458~офи\_м).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Иркутский государственный университет путей сообщения, кафедра математики, 
+\mbox{mik2178@yandex.ru}}
+
+
+\vspace*{-12pt}
+
+
+
+  \Abst{При построении регрессионной модели из-за сильной мультиколлинеарности 
+объясняющих переменных происходит искажение ее коэффициентов, в~частности их знаков, 
+что негативно сказывается на интерпретационных качествах такой регрессии. Статья посвящена 
+разработке метода выпрямления искаженных из-за мультиколлинеарности коэффициентов. 
+В~основе этого метода лежит свойство, которым обладают ранее предложенные автором 
+модели полносвязной линейной регрессии. Исследована нелинейная система, по которой 
+осуществляется оценивание полносвязных регрессий. Показано, что решение этой системы 
+может быть получено численно с~помощью метода простых итераций. Предложен способ 
+выбора неизвестных лямбда-параметров в~полносвязной регрессии. Установлено, что 
+в~многофакторных полносвязных моделях при сильной корреляции всех факторов знаки 
+коэффициентов при переменных во вторичном уравнении совпадают с~соответствующими 
+знаками коэффициентов корреляции. Для выпрямления искаженных коэффициентов на основе 
+проведенного исследования разработан алгоритм <<Selection~B>>. Разработанный метод 
+выпрямления успешно продемонстрирован на примере моделирования валового внутреннего продукта (ВВП) России.}
+  
+  \KW{регрессионный анализ; модель полносвязной линейной регрессии; 
+мультиколлинеарность; интерпретация; численный метод; ВВП России}
+
+\DOI{10.14357/19922264210209}
+
+%\vspace*{-3pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+  
+\section{Введение}
+
+  При оценивании неизвестных параметров регрессионных моделей, например 
+с~по\-мощью метода наименьших квадратов (МНК), на практике часто 
+приходится сталкиваться с~проблемой мультиколлинеарности~[1, 2]. Это 
+негативное явление возникает из-за наличия сильной корреляции между двумя 
+или более независимыми переменными. Мультиколлинеарность факторов 
+приводит к~искажению коэффициентов в~уравнении регрессии. В~частности, их 
+знаки могут противоречить теоретическим предпосылкам решаемой задачи. 
+Поэтому построенная при мультиколлинеарности регрессионная модель остается 
+годной в~лучшем случае только для прогнозирования, но никак не для 
+интерпретации и~принятия ка\-ких-ли\-бо правильных управленческих решений.
+  
+  Проблема мультиколлинеарности на сегодня еще окончательно не решена. 
+Существуют лишь несколько основных подходов к~ее устранению~[3,~4].
+{\looseness=-1
+
+}
+  
+  Во-первых, это метод исключения~\cite{4-baz}. Он заключается в~том, что на 
+основе матрицы парных коэффициентов корреляции определяются пары сильно 
+коррелированных объясняющих переменных. Затем из каждой пары исключается 
+тот фактор, который слабее коррелирует с~зависимой переменной. После чего по 
+оставшимся факторам оценивается регрессионная модель. Недостаток данного 
+подхода состоит в~том, что в~полученном уравнении из-за исключения нельзя 
+изучать совместное влияние всех исходных объясняющих переменных на 
+объясняемую.
+  
+  Во-вторых, метод главных компонент~[5]. С~помощью этого способа 
+происходит формирование\linebreak новых и~не коррелирующих между собой 
+переменных~--- главных компонент, являющихся линейными комбинациями 
+старых переменных. К~сожалению, в~этом случае возникает проблема 
+с~\mbox{интерпретацией} главных компонент.
+  
+  В-третьих, ридж-регрессия~[6]. В~этом случае в~формулу для  
+МНК-оце\-ни\-ва\-ния регрессии до\-бав\-ля\-ет\-ся так называемый коэффициент 
+регуляризации, который решает проблему мультиколлинеарности. Однако нет 
+четких правил для выбора этого коэффициента. И~нет гарантии, что в~полученной 
+модели коэффициенты будут удовлетворять содержательному смыслу задачи.
+  
+  Как справедливо отмечено в~работе~[7], все эти методы ориентированы на 
+устранение только вычислительных проб\-лем. Но проблема, связанная 
+с~построением интерпретируемых при мультиколлинеарности регрессионных 
+моделей, остается нерешенной.
+  
+  Целью данной работы ставилась разработка метода выпрямления искаженных 
+из-за мультиколлинеарности коэффициентов линейных регрессионных моделей. 
+Основой для этого метода послужило замеченное автором свойство 
+двухфакторных полносвязных регрессий~[8, 9], состоящее в~том, что в~их 
+вторичных уравнениях знаки коэффициентов при объясняющих переменных 
+совпадают с~соответствующими знаками коэффициентов корреляции. Это же 
+свойство может быть справедливо и~для многофакторных моделей полносвязной 
+линейной регрессии, впервые предложенных в~работе~[10].
+  
+\section{Многофакторная модель полносвязной линейной регрессии 
+без~выходной переменной}
+
+  Пусть $x_{ij}$, $i\hm=\overline{1,n}$, $j\hm=\overline{1,m}$,~--- наблюдаемые 
+значения~$m$~входных переменных $x_1, x_2, \ldots , x_m$. Предположим, что 
+существуют их <<истинные>> значения $x^*_{i1}, x^*_{i2},\ldots , x^*_{im}$, 
+$i\hm=\overline{1,n}$, связанные с~наблюдаемыми значениями соотношениями
+  \begin{equation}
+  x_{ij}= x^*_{ij}+\varepsilon_i^{(x_j)}\,,\enskip i=\overline{1,n}\,,\ 
+j=\overline{1,m}\,.
+  \label{e1-baz}
+  \end{equation}
+  
+  Предположим, что между <<истинными>> переменными $x_1^*, x_2^*, \ldots , 
+x_m^*$ имеют место функциональные зависимости
+  \begin{equation}
+  x_j^*=a_j+b_jx_m^*\,,\enskip j=\overline{1,m-1}\,,
+  \label{e2-baz}
+  \end{equation}
+где $a_j$ и~$b_j$, $j\hm=\overline{1,m-1}$,~--- неизвестные параметры.
+
+  Совокупность уравнений~(\ref{e1-baz}) и~(\ref{e2-baz}) называется 
+многофакторной моделью полносвязной линейной регрессии без выходной 
+переменной~\cite{10-baz}.
+  %
+  Для ее оценивания применим взвешенный метод наименьших полных 
+квадратов (ВМНПК):
+  \begin{multline}
+  S=\lambda_1\sum\limits^n_{i=1} \left( x_{i1}-a_1-b_1x^*_{im}\right)^2 
++{}\\
+{}+
+\lambda_2\sum\limits^n_{i=1} \left( x_{i2}-a_2-b_2x^*_{im}\right)^2+\cdots {}\\
+  {}\cdots\ +\lambda_{m-1}\sum\limits^n_{i=1}\left( x_{i,m-1}-a_{m-1}-b_{m-1} 
+x^*_{im}\right)^2+{}\\
+{}+\sum\limits^n_{i=1} \left( x_{im} -x^*_{im}\right)^2\to \min\,,
+  \label{e3-baz}
+  \end{multline}
+где $\lambda_1, \lambda_2,\ldots , \lambda_{m-1}$~--- положительные весовые 
+коэффициенты (лямбда-параметры).
+  
+  В работе~\cite{10-baz} показано, что если лямб\-да-па\-ра\-мет\-ры известны, то 
+решение задачи~(\ref{e3-baz}) осуществляется по следующему алгоритму.
+  \begin{enumerate}[1.]
+\item Находятся оценки $\tilde{b}_1, \tilde{b}_2,\ldots , \tilde{b}_{m-1}$ 
+параметров $b_1, b_2, \ldots, b_{m-1}$. Для этого численно решается нелинейная 
+система вида:
+\begin{multline} 
+b_p\left( D_{x_m}+\sum\limits_{j=1}^{m-1} \lambda^2_j b_j^2 
+D_{x_j} +{}\right.\\
+{}+2\sum\limits^{m-2}_{j_1=1} \sum\limits^{m-1}_{j_2=j_1+1} 
+\lambda_{j_1} \lambda_{j_2} b_{j_1}b_{j_2} 
+K_{x_{j_1}x_{j_2}}+{}\\
+\left.{}+2\sum\limits_{j=1}^{m-1} \lambda_j b_j 
+K_{x_jx_m}\right)= \left( 1+\sum\limits_{j=1}^{m-1} \lambda_j b_j^2\right)\times{}\\
+\hspace*{-5mm}{}\times \left( 
+\sum\limits_{j=1}^{m-1} \lambda_j b_j K_{x_jx_p}+K_{x_mx_p}\right),\enskip 
+  p=\overline{1,m-1}\,.\!\!
+  \label{e4-baz}
+  \end{multline}
+\item Определяются оценки $\tilde{a}_1, \tilde{a}_2, \ldots , \tilde{a}_{m-1}$ 
+па\-ра\-мет\-ров $a_1, a_2, \ldots , a_{m-1}$ по формулам:
+\begin{equation}
+\tilde{a}_j= \overline{x}_j -\tilde{b}_j \overline{x}_m\,,\enskip j\hm=\overline{1,m-
+1}\,.
+\label{e5-baz}
+\end{equation}
+\item Вычисляются оценки <<истинных>> значений переменной~$x_m$ по 
+формулам:
+\begin{multline}
+\tilde{x}_{im}^* =\left( 1+\sum\limits^{m-1}_{j=1} \lambda_j \tilde{b}_j^2\right)^{-
+1} \left( -\sum\limits_{j=1}^{m-1} \lambda_j \tilde{a}_j \tilde{b}_j 
++{}\right.\\
+\left.{}+\sum\limits_{j=1}^{m-1} \lambda_j \tilde{b}_j x_{ij} +x_{im}\right),\enskip
+i=\overline{1,n}\,.
+\label{e6-baz}
+\end{multline}
+  \end{enumerate}
+  
+  Очевидно, что если абсолютные значения парных коэффициентов корреляции 
+переменных $x_1, x_2,\ldots , x_m$ равны~1, то при оценивании полносвязной 
+регрессии по критерию~(\ref{e3-baz}) все остатки будут равны~0, а ее 
+оценки~$\tilde{b}_i$, $i\hm=\overline{1,m-1}$, будут совпадать  
+с~МНК-оцен\-ка\-ми соответствующих парных регрессий. А~знаки этих оценок 
+согласуются со знаками соответствующих коэффициентов 
+корреляции~$r_{x_ix_m}$, $i\hm=\overline{1,m-1}$, т.\,е.\ справедливы условия 
+$\tilde{b}_i r_{x_ix_m}\hm>0$, $i\hm=\overline{1,m-1}$. Значит, они будут справедливы и~при сильной 
+корреляции факторов.
+
+\section{Численный метод решения нелинейной  
+системы~(\ref{e4-baz})}
+
+  Систему~(\ref{e4-baz}) нетрудно привести к~виду:
+  \begin{equation}
+  H_p b_p^2 +B_p b_p +C_p=0\,,\enskip p=\overline{1,m-1}\,,
+  \label{e7-baz}
+  \end{equation}
+  где 
+ \begin{align*}
+  H_p&=\lambda_p\!\left( K_{x_mx_p}+\sum\limits_{j\in \{1,\ldots, m-1\}\backslash \{p\}} 
+\!\!\!\!\!\!\!\!\!\!\lambda_j b_j K_{x_jx_p}\right)\,;
+ \\
+  B_p&=D_{x_m}+\sum\limits_{ j\in \{1,\ldots, m-1\}\backslash\{p\}} \!\!\!\!\!\!\!\!\!\!\lambda_j^2 b_j^2 
+D_{x_j} + {}\\
+  &\hspace*{-20pt}{}+ 2\!\!\!\!\!\!\sum\limits_{ j_1\in \{1,\ldots, m-2\}\backslash \{p\}} \sum\limits_{ j_2\in 
+\{j_1+1,\ldots, m-1\}\backslash \{p\}}\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!
+ \lambda_{j_1} \lambda_{j_2} b_{j_1} b_{j_2} 
+K_{x_{j_1} x_{j_2}}+{}\\
+  &{}+2\!\!\! \sum\limits_{ j\in \{1,\ldots, m-1\}\backslash \{p\}} \!\!\!\!\!\!\!\!\!\!\lambda_jb_jK_{x_jx_m}-
+\lambda_pD_{x_p} -\lambda_p D_{x_p} \times{}\\
+&\hspace*{35mm}{}\times \sum\limits_{ j\in \{1,\ldots, m-1\}\backslash 
+\{p\}} \!\!\!\!\!\!\!\!\!\!\lambda_j b_j^2\,;
+  \\
+  C_p&=-\left( 1+\sum\limits_{ j\in \{1,\ldots, m-1\}\backslash \{p\}}  \!\!\!\!\!\!\!\!\!\!
+\lambda_jb_j^2\right)\times{}\\
+&\hspace*{15mm}{}\times \left( K_{x_mx_p} +\sum\limits_{ j\in \{1,\ldots, m-1\}\backslash 
+\{p\}} \!\!\!\!\!\!\!\!\!\!\lambda_j b_j K_{x_j x_p}\right)\,.
+  \end{align*}
+    Тогда систему~(\ref{e7-baz}) можно представить в~виде:
+  \begin{equation}
+  H_p\left( b_p-b^*_{p,1}\right) \left( b_p-b^*_{p,2}\right)=0\,,\enskip 
+p=\overline{1,m-1}\,,
+  \label{e8-baz}
+  \end{equation}
+где $b_{p,1}^*\hm= (-B_p-\sqrt{\mathrm{Disc}_p})/(2H_p)$ и~$b^*_{p,2}\hm= 
+(-B_p\hm+\sqrt{\mathrm{Disc}_p})/(2H_p)$~--- корни $p$-го квадратного трехчлена 
+системы~(\ref{e7-baz}); $\mathrm{Disc}_p\hm= B_p^2\hm- 4H_p C_p$~---  
+дискриминанты $p$-го квадратного трехчлена системы~(\ref{e7-baz}), которые, 
+как видно, всегда положительны.
+
+  Понятно, что система~(\ref{e8-baz}) равносильна совокупности $2^{m-1}$ 
+систем
+  \begin{multline}
+  \left\{
+  \begin{array}{l}
+  b_1=b^*_{1,1};\\[3pt]
+  b_2=b^*_{2,1};\\[3pt]
+   \ldots \\[3pt]
+  b_{m-1}=b^*_{m-1,1}\,;
+  \end{array}\right.
+  \enskip 
+  \left\{
+  \begin{array}{l}
+  b_1=b^*_{1,2};\\[3pt]
+  b_2=b^*_{2,1};\\[3pt]
+   \ldots \\[3pt]
+  b_{m-1}=b^*_{m-1,1}\,;
+  \end{array}
+  \right.\quad \cdots
+\\
+\cdots \quad \left\{
+  \begin{array}{l}
+  b_1=b^*_{1,2};\\[3pt]
+  b_2=b^*_{2,2};\\[3pt]
+   \ldots \\[3pt]
+  b_{m-1}=b^*_{m-1,2}\,.
+  \end{array}\right.
+  \label{e9-baz}
+  \end{multline}
+  
+  Покажем, что решение задачи~(\ref{e3-baz}) удовлетворяет только системе
+  \begin{equation}
+  \left\{ 
+  \begin{array}{l}
+  b_1=b^*_{1,2}\,;\\[3pt]
+  b_2=b^*_{2,2}\,;\\[3pt]
+  \ldots\\[3pt]
+  b_{m-1} =b^*_{m-1,2}\,.
+  \end{array}
+  \right.
+  \label{e10-baz}
+  \end{equation}
+  
+  Вторые частные производные функции~(\ref{e3-baz}) имеют вид:
+  
+  \noindent
+  \begin{multline}
+  \fr{\partial^2 S}{\partial b_p^2} =2\lambda_p n\left(  1+\sum\limits_{j=1}^{m-1} 
+\lambda_j b_j^2\right)^{-2} \left[
+\vphantom{\left( 1+\sum\limits_{j=1}^{m-1} \lambda_j b_j^2\right)}
+ 2H_p b_p +B_p-{}\right.\\
+  \left.{}- 2\fr{b_p}{n}\left( 1+\sum\limits_{j=1}^{m-1} \lambda_j b_j^2\right) 
+\fr{\partial S}{\partial b_p}\right]\,,\enskip p=\overline{1,m-1}\,.
+  \label{e11-baz}
+  \end{multline}
+  
+  Для того чтобы функция~(\ref{e3-baz}) имела минимум в~некоторой точке, 
+матрица Гессе, составленная из частных производных второго порядка, должна 
+быть положительно определенной. По критерию Сильвестра для положительно 
+определенной мат\-ри\-цы Гессе все ее элементы на главной  
+диагонали~(\ref{e11-baz}) должны быть положительными. А~из~$2^{m-1}$ 
+систем~(\ref{e9-baz}) это условие выполняется только для случая~(\ref{e10-baz}). 
+Поэтому для нахождения оценок полносвязной регрессии вместо 
+системы~(\ref{e4-baz}) достаточно решить систему~(\ref{e10-baz}). Если 
+$m\hm\geq 3$, то для этого можно воспользоваться методом простых итераций. 
+При $m\hm=3$ можно также применить метод подстановки.
+  
+  Как уже отмечалось, до решения системы~(\ref{e4-baz}) необходимо задать 
+значения лямб\-да-па\-ра\-мет\-ров. По мнению автора, рациональным будет 
+выбор таких значений этих параметров, при которых суммарное 
+аппроксимационное качество полносвязной регрессии~(\ref{e1-baz}),  
+(\ref{e2-baz}) будет наилучшим. Для этого введем аддитивный коэффициент 
+детерминации
+  \begin{equation*}
+  R^2_{\mathrm{add}}  =\sum\limits^m_{j=1} R^2_{x_j}\,,
+  %\label{e12-baz}
+  \end{equation*}
+где $R^2_{x_j}$~--- коэффициент детерминации для переменной~$x_j$ 
+полносвязной регрессии~(\ref{e1-baz}),~(\ref{e2-baz}).
+
+  Сформулируем следующую оптимизационную задачу:
+  \begin{equation*}
+  \sum\limits^m_{j=1} R^2_{x_j}\to \max\,,
+ % \label{e13-baz}
+  \end{equation*}
+которая, по определению $R^2_{x_j}$, равносильна задаче
+\begin{multline}
+\fr{\sum\nolimits^n_{i=1}\left(\varepsilon_i^{(x_1)}\right)^2}{D_{x_1}} +
+\fr{\sum\nolimits^n_{i=1}\left(\varepsilon_i^{(x_2)}\right)^2}{D_{x_2}}+\cdots{} \\{}\cdots +
+\fr{\sum\nolimits^n_{i=1}\left(\varepsilon_i^{(x_m)}\right)^2}{D_{x_m}}\to  \min\,.
+\label{e14-baz}
+\end{multline}
+    А~задача~(\ref{e14-baz}) эквивалентна задаче~(\ref{e3-baz}) при 
+$\lambda_1\hm= D_{x_m}/D_{x_1}, \lambda_2= D_{x_m}/D_{x_2}, \ldots, 
+\lambda_m\hm=D_{x_m}/D_{x_{m-1}}$. Таким образом, для полученных 
+значений ламб\-да-па\-ра\-мет\-ров аппроксимационное качество многофакторной 
+полносвязной регрессии~(\ref{e1-baz}), (\ref{e2-baz}) будет наилучшим.
+
+\section{Многофакторная модель полносвязной линейной 
+регрессии с~выходной переменной и~алгоритм <<Straight~B>>}
+
+  Дополним набор входных переменных $x_1, x_2, \ldots$\linebreak $\ldots , x_m$ выходной 
+переменной~$y$, которая сильно коррелирует с~ними. Свяжем оцененные 
+<<истинные>> значения, например, переменной~$\tilde{x}^*_m$ со значениями 
+переменной~$y$ моделью парной линейной регрессии:
+  \begin{equation}
+  y_i= c_0+c_1\tilde{x}_{im}^* +\varepsilon_i\,,\enskip i=\overline{1,n}\,,
+  \label{e15-baz}
+  \end{equation}
+где $c_0$ и~$c_1$~--- неизвестные параметры, которые находятся с~помощью 
+обычного МНК.
+
+  Совокупность уравнений (\ref{e1-baz}), (\ref{e2-baz}), (\ref{e15-baz}) называется 
+многофакторной моделью полносвязной линейной регрессии с~выходной 
+переменной~$y$~\cite{10-baz}. Если параметры $\lambda_1, \lambda_2,\ldots , 
+\lambda_{m-1}$ известны, то ее оценки находятся в~два этапа.
+  \begin{enumerate}[1.]
+\item С помощью МНПК оценивается полносвязная регрессия без выходной 
+переменной~(\ref{e1-baz}), (\ref{e2-baz}).
+\item С~по\-мощью МНК оценивается модель парной линейной  
+регрессии~(\ref{e15-baz}).
+\end{enumerate}
+
+  Пусть оцененная модель (\ref{e1-baz}), (\ref{e2-baz}) , (\ref{e15-baz}) имеет вид:
+  \begin{align}
+  \tilde{y} &= \tilde{c}_0 +\tilde{c}_1 \tilde{x}_m^*\,;\label{e16-baz}\\
+  \tilde{x}_j^* &= \tilde{a}_j +\tilde{b}_j \tilde{x}_m^*\,,\enskip j=\overline{1,m-
+1}\,; \notag%\label{e17-baz}
+\\
+  \tilde{x}_m^*&=A_0 +\sum\limits^m_{j=1} A_j x_j\,,
+  \label{e18-baz}
+  \end{align}
+где
+\begin{align*}
+A_0&=-\left( 1+\sum\limits^{m-1}_{j=1} \lambda_j \tilde{b}^2_j \right)^{-1} 
+\sum\limits_{j=1}^{m-1} \lambda_j \tilde{a}_j \tilde{b}_j\,;\\
+A_j&=\lambda_j \tilde{b}_j \left( 1+ \sum\limits^{m-1}_{j=1} \lambda_j 
+\tilde{b}^2_j\right)^{-1}\,,\enskip j=\overline{1,m-1}\,;\\
+A_m&=\left( 1+\sum\limits^{m-1}_{j=1} \lambda_j \tilde{b}_j^2\right)^{-1}\,.
+\end{align*}
+  Используя~(\ref{e18-baz}), перепишем уравнение~(\ref{e16-baz}) в~виде:
+  \begin{equation}
+  \tilde{y}=\theta_0 +\sum\limits^m_{j=1} \theta_j x_{ij}\,,
+  \label{e19-baz}
+  \end{equation}
+где $\theta_0 =\tilde{c}_0 \hm+ \tilde{c}_1A_0$; $\theta_j\hm= \tilde{c}_1A_j$, 
+$j\hm=\overline{1,m}$.
+  
+  Уравнение~(\ref{e19-baz}) называется вторичным уравнением многофакторной 
+модели полносвязной линейной регрессии~\cite{10-baz}.
+  
+  Как уже отмечалось, при сильной корреляции входных переменных $x_1, x_2, 
+\ldots , x_m$ коэффициенты уравнения~(\ref{e18-baz}) удовлетворяют условиям
+  \begin{equation}
+  A_j r_{x_j x_m}>0\,,\enskip j=\overline{1,m-1}\,;\enskip A_m>0\,,
+  \label{e20-baz}
+  \end{equation}
+а при сильной корреляции~$y$ с~этими переменными угловой коэффициент 
+уравнения~(\ref{e16-baz})~--- условию
+\begin{equation}
+\tilde{c}_1 r_{yx_m}>0\,.
+\label{e21-baz}
+\end{equation}
+  
+  Перемножив неравенства~(\ref{e20-baz}) на~(\ref{e21-baz}), получим 
+$\tilde{c}_1 A_j r_{x_jx_m} r_{yx_m}\hm>0$, $ j\hm=\overline{1,m-1}$, 
+и~$\tilde{c}_1 A_m r_{yx_m}\hm>0$.\linebreak Отсюда, учитывая, что знаки 
+произведений~$r_{x_jx_m}r_{yx_m}$ совпадают со знаками~$r_{yx_j}$,  
+$j\hm=\overline{1,m-1}$, следует, что
+  \begin{equation*}
+  \theta_j r_{yx_j}>0\,,\enskip    j=\overline{1,m}\,,
+  %\label{e22-baz}
+  \end{equation*}
+т.\,е.\ знаки коэффициентов при объясняющих переменных во вторичном 
+уравнении~(\ref{e19-baz}) совпадают с~соответствующими знаками 
+коэффициентов корреляции~$r_{yx_j}$, $j\hm=\overline{1,m}$.
+  
+  На основе проведенных автором исследований разработан следующий 
+алгоритм <<Straight~B>>, реализующий метод выпрямления искаженных 
+коэффициентов (МВИК) для многофакторных регрессионных моделей.
+  \begin{enumerate}[1.]
+\item При $\lambda_1=D_{x_m}/D_{x_1}, \lambda_2\hm= D_{x_m}/D_{x_2}, 
+\ldots, \lambda_{m-1}\hm= D_{x_m}/D_{x_{m-1}}$ из системы~(\ref{e10-baz}) 
+численно находятся оценки $\tilde{b}_1, \tilde{b}_2, \ldots , \tilde{b}_{m-1}$, 
+затем по формулам~(\ref{e5-baz})~--- коэффициенты $\tilde{a}_1, \tilde{a}_2, 
+\ldots , \tilde{a}_{m-1}$ и, наконец, по формулам~(\ref{e6-baz})~--- оцененные 
+<<истинные>> значения переменной~$\tilde{x}_m^*$.
+\item С помощью МНК оценивается модель~(\ref{e15-baz}).
+\item Путем подстановки~(\ref{e18-baz}) в~равенство~(\ref{e16-baz}) определяется 
+искомое уравнение регрессии.
+\end{enumerate}
+
+\section{Моделирование валового внутреннего продукта России}
+
+  Для демонстрации МВИК решалась задача моделирования ВВП России. Для 
+этого были использованы статистические данные с~сайта Федеральной службы 
+государственной статистики ({\sf https://rosstat.gov.ru}) за период с~2000 
+по~2018~гг.\ по следующим семи переменным: $y$~--- ВВП России (млрд руб.); $x_1$~--- среднемесячная заработная плата 
+в~России (руб.); $x_2$~--- численность безработных в~России (тыс.\ чел.); 
+$x_3$~--- потребление электроэнергии в~России (млн кВт$\cdot$ч); $x_4$~--- 
+продукция сельского хозяйства России (млрд руб.); $x_5$~--- грузооборот 
+железнодорожного транспорта России (млрд т$\cdot$км); $x_6$~--- оборот 
+розничной торговли (млн руб.).
+  
+  Матрица парных коэффициентов корреляции для этих переменных 
+представлена в~таблице.
+  
+  \begin{table*}\small
+  \begin{center}
+  \begin{tabular}{|c|c|c|c|c|c|c|c|}
+  \multicolumn{8}{c}{Матрица парных коэффициентов корреляции}\\
+  \multicolumn{8}{c}{\ }\\[-6pt]
+  \hline
+&$y$&$x_1$&$x_2$&$x_3$&$x_4$&$x_5$&$x_6$\\
+\hline
+$y$&1&0,997&$-$0,843&0,953&0,985&0,942&0,997\\
+$x_1$&0,997&1&$-$0,827&0,95\hphantom{9}&0,988&0,94\hphantom{9}&0,998\\
+$x_2$&$-$0,843\hphantom{$-$}&$-$0,827\hphantom{$-$}&1&$-$0,888\hphantom{$-$}&$-$0,805\hphantom{$-$}
+&$-$0,922\hphantom{$-$}&$-$0,831\hphantom{$-$}\\
+$x_3$&0,953&0,95\hphantom{9}&$-$0,888&1&0,92\hphantom{9}&0,981&0,954\\
+$x_4$&0,985&0,988&$-$0,805&0,92\hphantom{9}&1&0,917&0,987\\
+$x_5$&0,942&0,94\hphantom{9}&$-$0,922&0,981&0,917&1&0,937\\
+$x_6$&0,997&0,998&$-$0,831&0,954&0,987&0,937&1\\
+\hline
+\end{tabular}
+\end{center}
+\end{table*}
+       
+  
+  Как видно из таблицы, все объясняющие переменные тесным образом 
+коррелируют между собой. Следовательно, в~оцененной по исходным данным 
+модели множественной линейной регрессии будет присутствовать эффект 
+муль\-ти\-кол\-ли\-не\-ар\-ности. С~помощью МНК была построена следующая 
+регрессионная модель:
+  \begin{multline}
+  \tilde{y}= 24236{,}7+1{,}399x_1-2{,}136x_2-0{,}0067x_3-{}\\
+  {}- 0{,}225x_4-3{,}073x_5 +0{,}0013x_6\,.
+  \label{e23-baz}
+  \end{multline}
+  
+  Коэффициент детерминации модели~(\ref{e23-baz}) $R^2\hm= 0{,}996$. Как 
+и~оказалось, из-за мультиколлинеарности знаки коэффициентов при 
+переменных~$x_3$, $x_4$ и~$x_5$ не согласуются с~экономическим смыслом 
+задачи. Так, по регрессии~(\ref{e23-baz}) можно сделать абсурдный вывод о~том, 
+что для повышения ВВП России требуется снижать объемы производства 
+продукции сельского хозяйства.
+  
+  Для МВИК на основе алгоритма <<Selection~B>> на языке программирования 
+hansl эконометрического пакета Gretl была написана соответствующая программа. 
+С~помощью этой программы было получено вторичное уравнение полносвязной 
+регрессии:
+  \begin{multline}
+  \tilde{y}=-54754{,}02+0{,}409x_1-4{,}765x_2+0{,}0693x_3+{}\\
+  {}+ 3{,}475x_4 +15{,}73x_5+0{,}00054x_6\,.
+  \label{e24-baz}
+  \end{multline}
+  
+  Коэффициент детерминации модели~(\ref{e24-baz}) $R^2\hm=0{,}971$. Как 
+видно, теперь знаки абсолютно всех коэффициентов согласуются 
+с~экономическим смыслом задачи. При этом по отношению  
+к~модели~(\ref{e23-baz}) качество регрессии~(\ref{e24-baz}) снизилось 
+незначительно, поэтому ее можно использовать не только для интерпретации, но и~для прогнозирования.
+  
+{\small\frenchspacing
+{%\baselineskip=10.8pt
+%\addcontentsline{toc}{section}{References}
+\begin{thebibliography}{99}
+\bibitem{1-baz}
+\Au{Gunst R.\,F., Webster~J.\,T.} Regression analysis and problems of multicollinearity~// 
+Commun. Stat. Theory, 1975. Vol.~4. P.~277--292.
+\bibitem{2-baz}
+\Au{Tamura R., Kobayashi~K., Takano~Y., Miyashiro~R., Nakata~K., Matsui~T.} Best subset 
+selection for eliminating multicollinearity~// J.~Oper. Res. Soc.  Jpn., 2017. Vol.~60. 
+No.\,3. P.~321--336.
+
+\bibitem{4-baz} %3
+\Au{Ферстер Э., Ренц Б.} Методы корреляционного и~регрессионного анализа~/
+Пер. с~нем.~--- М.: Финансы 
+и~статистика, 1983. 304~с.
+(\Au{F$\ddot{\mbox{o}}$rster E., R$\ddot{\mbox{o}}$nz B.} Methoden der korrelation und regressionsanalyse.~--- 
+Berlin: Verlag Die Wirtschaft, 1979. 369~p.)
+
+\bibitem{3-baz} %4
+\Au{Chatterjee S., Hadi A.\,S.} Regression analysis by example.~--- 5th ed.~--- Hoboken, NJ, USA: 
+Wiley, 2012. 424~p. 
+
+\bibitem{5-baz}
+\Au{Jolliffe I.\,T.} Principal component analysis.~--- New York, NY, USA: Springer-Verlag, 2002. 
+488~p.
+\bibitem{6-baz}
+\Au{Hoerl A.\,E., Kennard~R.\,W.} Ridge regression: Biased estimation for nonorthogonal 
+problems~// Technometrics, 1970. Vol.~12. P.~55--67.
+\bibitem{7-baz}
+\Au{Мокшина С.\,И., Шуршикова~Г.\,В., Щекунских~С.\,С.} Метод построения содержательно 
+интерпретируемых регрессионных моделей в~условиях мультиколлинеарности~// Современная 
+экономика: проблемы и~решения, 2017. №\,5(89). С.~81--94.
+\bibitem{8-baz}
+\Au{Базилевский М.\,П.} Синтез модели парной линейной регрессии и~простейшей  
+EIV-мо\-де\-ли~// Моделирование, оптимизация и~информационные технологии, 2019. Т.~7. 
+№\,1(24). С.~170--182.
+\bibitem{9-baz}
+\Au{Базилевский М.\,П.} Исследование двухфакторной модели полносвязной линейной 
+регрессии~// Моделирование, оптимизация и~информационные технологии, 2019. Т.~7. 
+№\,2(25). С.~80--96.
+\bibitem{10-baz}
+\Au{Базилевский М.\,П.} Многофакторные модели полносвязной линейной регрессии без 
+ограничений на соотношения дисперсий ошибок переменных~// Информатика и~её применения, 
+2020. Т.~14. Вып.~2. С.~92--97.
+ \end{thebibliography}
+
+}
+}
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+\hfill{\small\textit{Поступила в~редакцию 21.09.2020}}
+
+%\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+%\hrule
+
+%\vspace*{2pt}
+
+%\hrule
+
+%\vspace*{-2pt}
+
+\def\tit{METHOD OF STRAIGHTENING DISTORTED DUE~TO~MULTICOLLINEARITY 
+COEFFICIENTS\\ IN~REGRESSION MODELS}
+
+
+\def\titkol{Method of straightening distorted due~to~multicollinearity 
+coefficients in~regression models}
+
+\def\aut{M.\,P.~Bazilevskiy}
+
+\def\autkol{M.\,P.~Bazilevskiy}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-11pt}
+
+
+\noindent
+Department of Mathematics, Irkutsk State Transport University, 15~Chernyshevskogo 
+Str., Irkutsk 664074, Russian Federation
+ 
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2021\ \ \ volume~15\ \ \ issue\ 2}
+}%
+\def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2021\ \ \ volume~15\ \ \ issue\ 2
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+\Abste{When constructing regression models, due to the strong multicollinearity of the 
+explanatory variables, its coefficients are distorted, in particular, their signs, which 
+negatively affects the interpretational qualities of such regression. This article is devoted 
+to the development of a~method of straightening coefficients distorted due to 
+multicollinearity. This method is based on the property of the fully connected linear 
+regression models proposed by the author. A~nonlinear system, which is used to 
+estimate fully connected regressions, is investigated. It is shown that the solution of this 
+system can be obtained numerically using the method of simple iterations. A method for 
+choosing unknown lambda-parameters in fully connected regression is proposed. It was 
+found that in multivariate fully connected models with a~strong correlation of all 
+factors, the signs of the coefficients for the variables in the secondary equation coincide 
+with the corresponding signs of the correlation coefficients. To straighten the distorted 
+coefficients on the basis of this research, the ``Selection~B'' algorithm was developed. 
+The developed method of straightening has been successfully demonstrated by the 
+example of modeling Russia's gross domestic product (GDP).}
+
+\KWE{regression analysis; fully connected linear regression model; multicollinearity; 
+interpretation; numerical method; GDP of Russia}
+
+
+\DOI{10.14357/19922264210209}
+
+%\vspace*{-15pt}
+
+% \Ack
+%\noindent
+
+
+%\vspace*{12pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\bibitem{1-baz-1}
+\Aue{Gunst, R.\,F., and J.\,T.~Webster.} 1975. Regression analysis and problems of 
+multicollinearity. \textit{Commun. Stat. Theory}  
+4:277--292.
+\bibitem{2-baz-1}
+\Aue{Tamura, R., K.~Kobayashi, Y.~Takano, R.~Miyashiro, K.~Nakata, and 
+T.~Matsui.} 2017. Best subset selection for eliminating multicollinearity. 
+\textit{J.~Oper. Res. Soc. Jpn.} 60(3):321--336.
+
+\bibitem{4-baz-1} %3
+\Aue{F$\ddot{\mbox{o}}$rster, E., and B.~R$\ddot{\mbox{o}}$nz.} 1983. 
+\textit{Methoden der korrelation und regressionsanalyse}. Berlin: Verlag Die Wirtschaft, 1979. 369~p.
+\bibitem{3-baz-1} %4
+\Aue{Chatterjee, S., and A.\,S.~Hadi.} 2012. \textit{Regression analysis by example}. 
+5th  ed. Hoboken, NJ: Wiley. 424~p.
+\bibitem{5-baz-1}
+\Aue{Jolliffe, I.\,T.} 2002. \textit{Principal component analysis}. New York, NY: 
+Springer-Verlag. 488~p.
+\bibitem{6-baz-1}
+\Aue{Hoerl, A.\,E., and R.\,W.~Kennard.} 1970. Ridge regression: Biased estimation for 
+nonorthogonal problems. \textit{Technometrics} 12:55--67.
+\bibitem{7-baz-1}
+\Aue{Mokshina, S.\,I., G.\,V.~Shurshikova, and S.\,S.~Shchekunskikh.} 2017. Metod 
+postroeniya soderzhatel'no interpretiruemykh regressionnykh modeley v~usloviyakh 
+mul'tikollinearnosti [The construction method of meaningful interpreted regression 
+models in conditions of multicollinearity]. \textit{Sovremennaya ekonomika: problemy 
+i~resheniya} [Modern Economics: Problems and Solutions] 89(5):81--94.
+\bibitem{8-baz-1}
+\Aue{Bazilevskiy, M.\,P.} 2019. Sintez modeli parnoy lineynoy regressii i~prosteyshey 
+EIV-modeli [Synthesis of linear regression model and EIV-model]. 
+\textit{Modelirovanie, optimizatsiya i~informatsionnye tekhnologii} [Modeling, 
+Optimization and Information Technology] 7(1):170--182.
+\bibitem{9-baz-1}
+\Aue{Bazilevskiy, M.\,P.} 2019. Issledovanie dvukhfaktornoy modeli polnosvyaznoy 
+lineynoy regressii [Investigation of a two-factor fully connected linear regression 
+model]. \textit{Modelirovanie, optimizatsiya i~informatsionnye tekhnologii} [Modeling, 
+Optimization and Information Technology] 7(2):80--96.
+\bibitem{10-baz-1}
+\Aue{Bazilevskiy, M.\,P.} 2020. Mnogofaktornye modeli polnosvyaznoy lineynoy 
+regressii bez ogranicheniy na sootnosheniya dispersiy oshibok peremennykh 
+[Multifactor fully connected linear regression models without constraints to the ratios of 
+variables errors variances]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 
+14(2):92--97.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-3pt}
+
+  \hfill{\small\textit{Received September~21, 2020}}
+
+
+%\pagebreak
+
+%\vspace*{-8pt}  
+
+\Contrl
+
+\noindent
+\textbf{Bazilevskiy Mikhail P.} (b.\ 1987)~--- Candidate of Science (PhD) in 
+technology, associate professor, Irkutsk State Transport University, 
+15~Chernyshevkogo Str., Irkutsk 664074, Russian Federation; 
+\mbox{mik2178@yandex.ru}
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература}

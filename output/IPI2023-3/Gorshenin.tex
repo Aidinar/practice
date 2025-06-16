@@ -1,0 +1,1020 @@
+\def\stat{gorshenin}
+
+\def\tit{О КЛАСТЕРИЗАЦИИ ОБЪЕКТОВ СЕТЕВОЙ ВЫЧИСЛИТЕЛЬНОЙ ИНФРАСТРУКТУРЫ НА~ОСНОВЕ АНАЛИЗА СТАТИСТИЧЕСКИХ АНОМАЛИЙ В~ТРАФИКЕ$^*$}
+
+\def\titkol{О кластеризации объектов сетевой вычислительной инфраструктуры на 
+основе анализа статистических аномалий} %в~трафике}
+
+\def\aut{А.\,К.~Горшенин$^1$, С.\,А.~Горбунов$^2$, Д.\,Ю.~Волканов$^3$}
+
+\def\autkol{А.\,К.~Горшенин, С.\,А.~Горбунов, Д.\,Ю.~Волканов}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\index{Горшенин А.\,К.}
+\index{Горбунов С.\,А.}
+\index{Волканов Д.\,Ю.}
+\index{Gorshenin A.\,K.}
+\index{Gorbunov S.\,A.}
+\index{Volkanov D.\,Yu.}
+
+
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}} \footnotetext[1]
+{Работа выполнена при 
+поддержке Программы развития МГУ, проект №\,23-Ш03-03. При обработке и~анализе 
+трафика использовалась инфраструктура Центра коллективного пользования 
+<<Высокопроизводительные вы\-чис\-ле\-ния и~большие данные>> (ЦКП <<Информатика>>) ФИЦ 
+ИУ РАН (г.~Москва).}}
+
+
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\footnotetext[1]{Федеральный исследовательский
+центр <<Информатика и~управление>> Российской академии наук; Московский 
+государственный университет имени М.\,В.~Ломоносова, \mbox{agorshenin@frccsc.ru}}
+\footnotetext[2]{Московский государственный университет имени М.\,В.~Ломоносова; 
+Московский центр фундаментальной и~при\-клад\-ной математики, 
+\mbox{s.gorbunov.cmc@gmail.com}}
+\footnotetext[3]{Московский государственный университет имени М.\,В.~Ломоносова, 
+\mbox{volkanov@asvk.cs.msu.ru}}
+
+%\vspace*{-12pt}
+
+\Abst{Рассматривается задача выявления статистических аномалий (т.\,е.\ существенных превышений от 
+типичных значений полученного и~исходящего трафика) на\-груз\-ки на узлы сетевой 
+вы\-чис\-ли\-тель\-ной инфраструктуры. Рост на\-груз\-ки 
+в~реальных сис\-те\-мах ведет к~не\-об\-хо\-ди\-мости регулярного мас\-шта\-би\-ро\-ва\-ния
+ вы\-чис\-ли\-тель\-ных ресурсов и~хранилищ, 
+а~так\-же перенаправления потоков данных. Предложена процедура выявления 
+ста\-ти\-сти\-че\-ских аномалий в~сетевом трафике с~использованием ап\-прок\-си\-ма\-ции 
+наблюдений обоб\-щен\-ным гам\-ма-рас\-пре\-де\-ле\-ни\-ем для дальнейшей клас\-те\-ри\-за\-ции объектов 
+сетевой вы\-чис\-ли\-тель\-ной инфраструктуры с~\mbox{целью} оцен\-ки по\-треб\-ности в~ресурсах. Все 
+вычислительные ста\-ти\-сти\-че\-ские процедуры, описанные в~\mbox{статье}, реализованы 
+с~использованием языка программирования~R и~применены к~сетевому трафику, 
+полученному в~рамках моделирования на специализированном ар\-хи\-тек\-тур\-но-про\-грам\-мном 
+стенде. Предложенные под\-хо\-ды могут быть использованы и~для более 
+широкого класса телекоммуникационных задач.}
+
+\KW{сетевая инфраструктура; сетевой трафик; обобщенное гам\-ма-рас\-пре\-де\-ле\-ние; вы\-чис\-ли\-тель\-ная ста\-ти\-сти\-ка; 
+проверка ста\-ти\-сти\-че\-ских гипотез; вы\-яв\-ле\-ние аномалий; клас\-те\-ри\-зация}
+
+\DOI{10.14357/19922264230311}{XHTMVI}
+  
+%\vspace*{2pt}
+
+
+\vskip 10pt plus 9pt minus 6pt
+
+\thispagestyle{headings}
+
+\begin{multicols}{2}
+
+\label{st\stat}
+
+\section{Введение}
+
+В современной сетевой вы\-чис\-ли\-тель\-ной 
+инфраструктуре по мере развития 
+информационных ресурсов рас\-тет на\-груз\-ка на вы\-чис\-ли\-тель\-ные ресурсы 
+инфраструктуры~\cite{Smeliansky2023,Smeliansky2019}. Этот рост периодически вызывает не\-об\-хо\-ди\-мость мас\-шта\-би\-ро\-ва\-ния 
+вы\-чис\-ли\-тель\-ных ресурсов и~ресурсов хранилищ данных на узлах сетевой 
+вы\-чис\-ли\-тель\-ной инфраструктуры или же пе\-ре\-на\-прав\-ле\-ния потоков данных. На 
+се\-год\-няш\-ний день эта проб\-ле\-ма чаще всего решается в~<<руч\-ном>> режиме на основе 
+опыта сетевых и~сис\-тем\-ных администраторов. Для 
+автоматизации процессов 
+управ\-ле\-ния мас\-шта\-би\-ро\-ва\-ни\-ем ресурсов на вы\-чис\-ли\-тель\-ных узлах сетевой 
+вы\-чис\-ли\-тель\-ной инфраструктуры необходимы методы объективного вы\-яв\-ле\-ния аномалий 
+в~на\-груз\-ке на такие узлы и~оцен\-ки размера аномалий для определения объемов 
+необходимых ресурсов~\cite{Rossem2017,Malak2021,Mesodiakaki2022,Zhang2022}. Под аномалиями 
+в~данной работе понимаются существенные превышения 
+ти\-пич\-ных значений полученного и~исходящего трафика. Они могут быть вызва\-ны, 
+например, работой несанкционированного программного обеспечения на узле или 
+не\-хват\-кой ресурсов для обработки пользовательского трафика. Один из воз\-мож\-ных 
+путей решения этой проб\-ле\-мы заключается в~мониторинге и~анализе сетевого трафика в~сетевой вы\-чис\-ли\-тель\-ной 
+инфраструктуре и~выявления в~нем ста\-ти\-сти\-че\-ских 
+аномалий, воз\-ни\-ка\-ющих в~том чис\-ле в~результате влияния набора случайных 
+факторов~\cite{Hosseinzadeh2020,Abood2021}.
+
+\begin{figure*}[b] %fig1
+  \vspace*{1pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=151.725mm 
+\epsfbox{gor-1.eps}
+}
+\end{center}
+\vspace*{-9pt}
+    \Caption{Временной ряд полученного трафика для одного объекта}
+    \label{some_machine_example}
+\end{figure*}
+
+Хорошо известна воз\-мож\-ность ста\-ти\-сти\-че\-ско\-го описания процессов 
+в~телекоммуникационных сетях с~использованием различных семейств 
+гам\-ма-рас\-пре\-де\-ле\-ний: классических гамма~--- для распределений времени 
+обслуживания~\cite{Parulekar1997}; гам\-ма--гам\-ма~--- для аппроксимации некоторых 
+характеристик\linebreak в~сетях сотовой связи~\cite{Tabassum2014}, подводных 
+коммуникационных сис\-те\-мах~\cite{Noor2022}, глобальных вы\-чис\-ли\-тель\-ных 
+сетях~\cite{Padhan2023}; конечных гам\-ма-сме\-сей~--- для\linebreak описания тон\-кой структуры 
+информационных потоков~\cite{Gorshenin2013a,Gorshenin2013b,Gorshenin2015,Gorshenin2016a,Gorshen
+in2017a}; обобщенных гамма  (Generalized Gamma, GG)~--- для распределений времени 
+пребывания пользователя в~ячейке сотовой сети~\cite{Zonoozi1996}.
+
+\begin{figure*} %fig2
+\vspace*{1pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=151.725mm 
+\epsfbox{gor-2.eps}
+}
+\end{center}
+\vspace*{-6pt}
+    \Caption{Выборка полученного трафика за одну отметку времени для всех объектов}
+    \label{some_timestamp_example}
+\end{figure*}
+
+В работе предложен ста\-ти\-сти\-че\-ский подход к~решению задачи клас\-те\-ри\-за\-ции объектов 
+сетевой вычис\-ли\-тель\-ной инфраструктуры по уровню на\-гру\-жен\-ности с~точ\-ки зрения 
+информационного обмена (передаваемого и~по\-лу\-ча\-емо\-го трафика) на основе процедуры 
+вы\-яв\-ле\-ния аномальных наблюдений в~сетевом трафике с~использованием специального 
+GG-тес\-та. Продемонстрированы примеры применения разработанной методики для 
+данных сетевого трафика, полученных в~рамках моделирования на специализированном 
+ар\-хи\-тек\-тур\-но-про\-грам\-мном стенде ка\-фед\-ры автоматизации сис\-тем вы\-чис\-ли\-тель\-ных 
+комплексов факультета вы\-чис\-ли\-тель\-ной математики и~кибернетики МГУ имени 
+М.\,В.~Ло\-мо\-но\-сова. 
+
+\vspace*{-4pt}
+
+\section{Статистическая модель трафика на~основе обобщенного гамма-распределения}
+
+\vspace*{-2pt}
+
+В качестве анализируемых данных в~\mbox{статье} используются наборы, полученные на 
+специализированном стен\-де,
+на котором моделируются раз\-лич\-ные сценарии реальных сетевых взаимодействий. 
+Рас\-смат\-ри\-ва\-ют\-ся суточные данные (с~пятиминутной агрегацией). В~каж\-дый момент 
+времени известно суммарное чис\-ло отправленных и~полученных бит (для удобства 
+дальнейшего анализа данные нормированы значением~$2^{20}$~--- около 131~Кбайт). 
+За указанный промежуток времени моделировалось взаимодействие для 1\,920  
+объектов в~сети.
+На рис.~\ref{some_machine_example} приведен пример данных входящего трафика для 
+одного из объектов за все время наблюдений, а~на 
+рис.~\ref{some_timestamp_example}~--- данные сразу для всех объектов, но в~некоторый фиксированный момент вре\-мени. 
+
+Ранее авторами было установлено высокое ста\-ти\-сти\-че\-ское согласие данных 
+мобильного трафика сотового оператора с~семейством обоб\-щен\-ных 
+гам\-ма-рас\-пре\-де\-ле\-ний~\cite{Stacy1962}~--- это со\-сре\-до\-то\-чен\-ное на положительной 
+полупрямой трех\-па\-ра\-мет\-ри\-че\-ское семейство вероятностных распределений, 
+опре\-де\-ля\-емое плот\-ностью вида
+$$f(x;r,\gamma,\mu)\hm=\fr{|\gamma|\mu^r}{\Gamma(r)}\,x^{\gamma r - 1} e^{-\mu x^{\gamma}}\,,$$ 
+где $x\hm>0$, $r\hm>0$, $\mu\hm > 0$, $\gamma\hm\in\mathbb{R}\setminus\{0\}$.
+Его выбор может объясняться и~тем фактом, что указанное семейство содержит 
+практически все самые популярные абсолютно непрерывные рас\-пре\-де\-ле\-ния, 
+со\-сре\-до\-то\-чен\-ные на положительной полупрямой, в~том чис\-ле рас\-пре\-де\-ле\-ния 
+с~тяжелыми хвос\-та\-ми (некоторые примеры приведены в~таб\-ли\-це). %~\ref{tab:GG}).
+Естественным образом возникает идея использования по\-доб\-ной ста\-ти\-сти\-че\-ской модели 
+для иных информационных сис\-тем.
+
+\begin{table*}[b]\small
+%\vspace*{-6pt}
+% \caption{Примеры непрерывных распределений}
+ %Некоторые важные частные случаи GG-распределения}
+%\vspace*{2ex}
+\begin{center}
+\begin{tabular}{|l|c|}
+\multicolumn{2}{c}{Некоторые частные случаи обобщенного гамма-распределения}\\[2ex]
+\hline
+\multicolumn{1}{|c|}{\bf{Семейство}} & \bf{Значения параметров} \\
+\hline
+Гамма-распределение & $\gamma=1$\\ 
+Обратное гамма-распределение& $\gamma=-1$\\
+Распределение Леви & $\gamma=-1,\ r=0{,}5$\\
+Показательное распределение & $\gamma=1,\ r=1$\\
+Распределение Эрланга & $\gamma=1,\ r \in \mathbb{N}$\\
+Распределение хи-квадрат & $\gamma=1,\ \mu=0{,}5$\\
+Распределение Накагами & $\gamma=2$\\
+Полунормальное распределение & $\gamma=2,\ r=0{,}5$\\
+Распределение Рэлея & $\gamma=2,\ r=1$\\
+Хи-распределение & $\gamma=2,\ \mu=1/\sqrt{2}$\\
+Распределение Максвелла &$\gamma=2,\ r=1{,}5$\\
+Распределение Фреше (распределение экстремальных значений II типа) &$r=1,\ \gamma<0$\\
+Распределение Вейбулла--Гнеденко (распределение экстремальных значений III типа)& $r=1,\ \gamma>0$\\
+\hline           
+\end{tabular}
+\end{center}
+% \label{tab:GG}
+\end{table*}
+
+Для оценивания па\-ра\-мет\-ров GG-рас\-пре\-де\-ле\-ния мож\-но применять различные методы, 
+начиная от классического метода максимального прав\-до\-по\-до\-бия. Однако в~этом 
+случае для ана\-ли\-зи\-ру\-емых данных наблюдались существенные ошиб\-ки при 
+ап\-прок\-си\-ма\-ции хвос\-тов распределения. Поэтому в~качестве вы\-чис\-ли\-тель\-ной процедуры 
+был реализован алгоритм на основе минимизации $l^2$-но\-рмы меж\-ду значениями 
+эмпирической и~тео\-ре\-ти\-че\-ской функций рас\-пре\-де\-ле\-ния, вы\-чис\-лен\-ны\-ми в~узлах 
+некоторой сет\-ки $y \hm= (y_1,\ldots, y_m)$. Для оценки па\-ра\-мет\-ров по выборке 
+$\mathbb{X} \hm= (X_1, \ldots, X_n)$ решается оптимизационная задача сле\-ду\-юще\-го 
+\mbox{вида}:
+{\looseness=-1
+
+}
+
+
+\noindent
+\begin{multline*}
+    \left(\hat{r}, \hat{\gamma}, \hat{\mu}\right)={}\\
+    {}=\argmin\limits_{r>0, \mu > 0, 
+\gamma\in\mathbb{R}\setminus\{0\}} \sum\limits_{i=1}^m \Bigg[\int\limits_0^{y_i} 
+\fr{|\gamma|\mu^r}{\Gamma(r)}\,x^{\gamma r - 1} e^{-\mu x^{\gamma}}\,dx - {}\\
+{}-
+\fr{1}{n} \sum\limits_{i=1}^n \mathbb{I}({X_i < y_i})\Bigg]^2.
+\end{multline*}
+ \vspace*{-15pt}
+
+
+Типичный пример функций, полученных в~результате применения различных методов, 
+продемонстрирован на рис.~3. %\ref{mle_vs_cdf}. 
+Оптимизационный под\-ход поз\-во\-лил не 
+толь\-ко точ\-нее, но и~примерно в~30~раз быст\-рее
+оценивать па\-ра\-мет\-ры для всех ана\-ли\-зи\-ру\-емых данных по срав\-не\-нию с~методом 
+максимального прав\-до\-по\-до\-бия. 
+
+{ \begin{center}  %fig3
+ \vspace*{-6pt}
+    \mbox{%
+ \epsfxsize=79mm 
+ \epsfbox{gor-3.eps}
+ }
+
+\end{center}
+\vspace*{-3pt}
+
+\noindent
+{{\figurename~3}\ \ \small{Сравнение эмпирической функции распределения~(\textit{1}) 
+и~функций, полученных двумя методами оценки па\-ра\-мет\-ров~--- максимального 
+прав\-до\-по\-до\-бия~(\textit{2}) и~функциональной оптимизации~(\textit{3})}
+}}
+
+\vspace*{-6pt}
+
+\addtocounter{figure}{1}
+
+\section{Метод кластеризации объектов сетевой вычислительной инфраструктуры на~основе анализа аномалий трафика}
+
+В реальных задачах ано\-маль\-ность трафика определяется не только его абсолютным 
+значением, но и~соотношением с~другими наблюдениями. В~данном разделе рас\-смот\-рим 
+процедуру, которая поз\-во\-ля\-ет ста\-ти\-сти\-че\-ски корректно учитывать это.
+
+Сначала рас\-смот\-рим ста\-ти\-сти\-че\-скую процедуру выявления аномальных наблюдений для 
+данных, опи\-сы\-ва\-емых обобщенным гам\-ма-рас\-пре\-де\-ле\-ни\-ем. Впервые такого рода 
+статистический тест был пред\-ло\-жен в~статье~\cite{Gorshenin2020} для 
+метеорологических рядов (осад\-ков). Учитывая особенности ана\-ли\-зи\-ру\-емых данных 
+(па\-ра\-метр~$\gamma$ для трафика может иметь как положительные, так 
+и~отрицательные значения), обоб\-щим описанную в~упомянутой \mbox{статье} про\-це\-дуру.
+
+Пусть $V_1,\ldots,V_m$~--- независимая выборка из обоб\-щен\-но\-го 
+гам\-ма-рас\-пре\-де\-ле\-ния с~некоторыми па\-ра\-мет\-ра\-ми $r\hm>0$, $\gamma \hm\neq 0$, $\mu \hm>0$, 
+$V_1 \hm\geqslant V_j,$ $\forall j \hm\geqslant 2$. Рас\-смот\-рим статистику вида
+$$\hat{\mathcal{R}} = \left(\fr{(m-1)V_1^\gamma}{V_2^\gamma+\cdots+V_m^\gamma}\right)^{\mathrm{sgn}\,(\gamma)}\,.$$
+% \end{equation*}
+Тогда при условии, что вер\-на гипотеза $H_0$: <<значение~$V_1$ не является 
+аномально большим>>, 
+$$\hat{\mathcal{R}} \sim 
+\begin{cases}
+F(r,\ (m-1)r) \enskip \mbox{для~~} \gamma \hm> 0;\\
+F((m-1)r,\ r) \enskip \mbox{для~~} \gamma\hm < 0,
+\end{cases}
+$$
+ \vspace*{-6pt}
+
+\noindent
+где через~$F$ обозначено распределение 
+Сне\-де\-ко\-ра--Фи\-ше\-ра (\mbox{F-рас}\-пре\-де\-ле\-ние) с~со\-от\-вет\-ст\-ву\-ющи\-ми па\-ра\-мет\-рами.
+
+Для того чтобы выявить аномальные наблюдения в~выборке из обоб\-щен\-но\-го 
+гам\-ма-рас\-пре\-де\-ле\-ния $\mathbb{V} \hm= \{V_1, \ldots, V_m\}$ с~па\-ра\-мет\-ра\-ми $(r, \gamma, \mu)$, 
+необходимо зафиксировать уровень зна\-чи\-мости~$\alpha$, для каждого 
+$V_i$, $i \hm\in \{1, \ldots, m\}$, рас\-счи\-тать значение статистики~$\hat{\mathcal{R}}$ 
+и~срав\-нить это значение с~$\alpha$-кван\-ти\-ля\-ми 
+$F$-рас\-пре\-де\-ле\-ния с~со\-от\-вет\-ст\-ву\-ющи\-ми па\-ра\-мет\-ра\-ми. Наблюдение признается 
+аномальным тогда и~только тогда, когда наблюд\-аемое значение ста\-ти\-сти\-ки больше 
+кван\-ти\-ля $F$-рас\-пре\-де\-ле\-ния.
+
+На практике для выборок большого объема под\-счет знаменателя ста\-ти\-сти\-ки~$\hat{\mathcal{R}}$ 
+для каж\-до\-го наблюдения может за\-мет\-но увеличить время работы 
+алгоритма, поэтому рациональнее будет один раз по\-счи\-тать $S \hm=  V_1^\gamma+\cdots+V_m^\gamma$, 
+а~затем для $i$-го наблюдения вы\-чис\-лять значение 
+статистики сле\-ду\-ющим образом:
+\vspace*{-3pt}
+
+\noindent 
+$$\hat{\mathcal{R}} = 
+\left(\fr{(m-1)V_i^\gamma}{S - V_i^\gamma}\right)^{\mathrm{sgn}\,(\gamma)}\,.$$
+
+% \vspace*{-3pt}
+
+На рис.~\ref{bytime_ex1} % и~\ref{bytime_ex2}
+приведены примеры выявления аномальных наблюдений при уровне зна\-чи\-мости\linebreak $\alpha \hm= 0{,}05$ 
+для фиксированного момента времени (выделены маркерами) с~по\-мощью 
+описанного ме\-тода.
+
+Для кластеризации мож\-но использовать такую раз\-мет\-ку наблюдений для выборок за 
+каж\-дый момент времени. Причем формировать вы\-бор\-ки можно как на не\-пе\-ре\-се\-ка\-ющих\-ся 
+по\-сле\-до\-ва\-тель\-ных интервалах времени, так и~воспользовавшись методом сколь\-зя\-ще\-го 
+\mbox{окна}.
+
+Сначала разметим аномальные наблюдения описанным выше GG-тес\-том, формируя 
+выборки не\-пе\-ре\-се\-ка\-ющи\-ми\-ся часовыми окнами, и~нанесем по\-лу\-чив\-шу\-юся раз\-мет\-ку на 
+временн$\acute{\mbox{ы}}$е ряды по кон\-крет\-ным объектам.
+Если рас\-смат\-ри\-вать разметку GG-тес\-та на выборках, по которым он обучал\-ся 
+(рис.~\ref{bytime_60m}), то мож\-но заметить, что существует некоторое пороговое 
+значение, раз\-де\-ля\-ющее аномальные и~обыч\-ные зна\-че\-ния.
+
+
+
+Однако при рас\-смот\-ре\-нии той же раз\-мет\-ки для конкретного объекта 
+(рис.~\ref{bymachine_60m}) такого порога может и~не оказаться. Так происходит из-за 
+того, что вы\-бор\-ки, на которых раз\-ме\-ча\-ют\-ся аномалии, формируются окнами по 
+времени, поэтому раз\-мет\-ка содержит в~себе информацию о~сред\-нем тренде по всем 
+объектам (рис.~7). %\ref{netin_percentiles}). 
+На примере объекта 
+с~риc.~\ref{bymachine_60m} мож\-но выделить две зоны с~большим чис\-лом аномалий: 
+в~районе $22{:}00$, где трафик рос быст\-рее сред\-не\-го по всем объектам, и~в~районе 
+$14{:}00$, где трафик конкретного объекта до\-стиг максимума, а~пер\-цен\-ти\-ли имели 
+нисходящий тренд.
+Имея раз\-мет\-ку по каж\-до\-му объекту, мож\-но провести бинарную клас\-те\-ри\-за\-цию, задавая 
+некоторый порог доли данных, которые были размечены ано\-маль\-ными.
+
+\end{multicols}
+
+\begin{figure*} %fig4
+\vspace*{-1pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=151.725mm 
+\epsfbox{gor-4.eps}
+}
+\end{center}
+\vspace*{-11pt}
+   \Caption{Аномалии в~полученном~(\textit{а}) и~от\-прав\-лен\-ном~(\textit{б}) тра\-фике}
+ \label{bytime_ex1}
+\vspace*{-7pt} 
+\end{figure*}
+
+\begin{multicols}{2}
+
+
+Для визуализации полученных результатов со\-ста\-вим при\-зна\-ко\-вое описание объектов: 
+каж\-дый объект опишем медианой, квар\-ти\-ля\-ми и~ин\-тер\-квар\-тиль\-ным размахом по 
+полученному и~от\-прав\-лен\-ному трафику по всем име\-ющим\-ся наблю\-де\-ниям. 
+{\looseness=-1
+
+}
+
+Применим 
+метод главных компонент, чтобы\linebreak пе\-ре\-вес\-ти при\-зна\-ко\-вое описание на двумерную 
+плос\-кость. Уста\-нов\-ле\-но, что пер\-вые две глав\-ные компоненты суммарно описывают 
+$95{,}8\%$ вариации, причем одна приписывает  больший вес перценти-\linebreak
+\vspace*{-11pt}
+
+\columnbreak
+
+\noindent
+лям (см.\ 
+ось абсцисс на рис.~\ref{disjoint_window_60m}), а~другая~--ин\-тер\-квар\-тиль\-но\-му 
+раз\-ма\-ху (см.\ ось ординат на рис.~\ref{disjoint_window_60m}). 
+%Цветами (красный, синий, сиреневый) 
+На рис.~\ref{disjoint_window_60m} отмечены объекты, при\-знан\-ные 
+аномальными по полученному~(\textit{1}), отправленному~(\textit{2}) и~обоим видам трафика~(\textit{3}).
+
+По оси абсцисс на рис.~\ref{disjoint_window_60m} отложены значения пер\-вой 
+глав\-ной компоненты, которая имеет вы\-ра\-жен\-ную положительную корреляцию 
+с~пер\-цен\-ти\-ля\-ми, по оси ординат~--- значения второй главной компоненты  
+с~выраженной отрицательной корре\-ляцией с~раз\-ма\-ха\-ми. При фиксированном уров-\linebreak
+\vspace*{-12pt}
+
+
+\end{multicols}
+
+\begin{figure*} %fig5
+\vspace*{-1pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=151.725mm 
+\epsfbox{gor-5.eps}
+}
+\end{center}
+\vspace*{-12pt}
+    \Caption{Аномалии на часовом горизонте наблюдения}
+    \label{bytime_60m}
+%\end{figure*}
+%\begin{figure*} %fig6
+\vspace*{10pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=148.725mm 
+\epsfbox{gor-6.eps}
+}
+\end{center}
+\vspace*{-12pt}
+    \Caption{Аномалии на временном ряде конкретного объ\-екта}
+    \label{bymachine_60m}
+\vspace*{-6pt}
+\end{figure*}
+
+\begin{multicols}{2}
+
+\noindent
+не 
+пер\-цен\-ти\-лей (пер\-вой компоненты) аномальны
+объекты, у~которых меньше размах, и,~наоборот, 
+при фиксированном уровне второй компоненты~--- у~которых больше 
+значения пер\-цен\-ти\-лей.
+
+
+Недостаток метода не\-пе\-ре\-се\-ка\-ющих\-ся окон заключается в~том, что каж\-дое наблюдение 
+попадает только в~одно окно, поэтому наблюдение для текущего окна может быть 
+при\-зна\-но аномальным, хотя при увеличении интервала времени оно таковым уже не 
+является (в~част\-ности, см.\ об\-суж\-де\-ние под\-хо\-да в~статье~\cite{Gorshenin2020}) 
+(см.\ рис.~\ref{bytime_60m}).
+
+
+\addtocounter{figure}{1}
+
+\begin{figure*}[b] %fig8
+\vspace*{-3pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=148.67mm 
+\epsfbox{gor-8.eps}
+}
+\end{center}
+\vspace*{-12pt}
+    \Caption{Кластеризация объектов на группы с~высоким входящим, исходящим и~общим трафиком:
+    \textit{1}~--- аномален по полученному трафику;
+\textit{2}~--- аномален по отправленному трафику;
+\textit{3}~--- аномален по обоим типам трафика}
+    \label{disjoint_window_60m}
+\end{figure*}
+
+
+Если же использовать скользящее окно некоторой ширины~$w$, то каж\-дое наблюдение 
+(за исключением расположенных на краях) попадет в~$w$~окон.\linebreak
+\vspace*{-12pt} 
+
+{ \begin{center}  %fig7
+ \vspace*{-6pt}
+    \mbox{%
+ \epsfxsize=79mm 
+ \epsfbox{gor-7.eps}
+ }
+
+\end{center}
+ \vspace*{-3pt}
+
+\noindent
+{{\figurename~7}\ \ \small{ Медиана~(\textit{1}) и~верхний квар\-тиль полученного 
+трафика для всех объектов: \textit{2}~--- 75\% пер\-цен\-тиль}
+\label{netin_percentiles}
+
+}}
+
+\vspace*{6pt}
+
+%\addtocounter{figure}{2}
+
+
+
+\noindent
+Таким образом, 
+наблюдение может быть признано аномальным от~0 до~$w$~раз и~мож\-но говорить 
+о~некотором со\-по\-став\-ле\-нии уровней ано\-маль\-ности
+конкретного наблюдения относительно 
+других. Будем считать аномальное наблюдение:
+
+\noindent
+\begin{itemize}
+    \item абсолютно аномальным (признано аномальным ров\-но $w$~раз);
+    \item относительно аномальным (признано аномальным от $\lceil {w}/{2} 
+\rceil$ до $w\hm - 1$~раз);
+    \item промежуточно аномальным (признано аномальным от~1 до $\lceil 
+{w}/{2} \rceil \hm- 1$~раз).
+\end{itemize}
+
+
+\noindent
+На рис.~\ref{bymachine_moving_ex1} 
+приведены примеры разметки некоторых объектов в~режиме сколь\-зя\-ще\-го окна шириной 
+1~ч.
+{\looseness=-1
+
+}
+%абсолютно аномальные наблюдения помечены крас\-ным цветом, относительно 
+%аномальные~--- сиреневым и~промежуточно аномальные~--- синим.
+
+\begin{figure*} %fig9
+\vspace*{1pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=148.725mm 
+\epsfbox{gor-9.eps}
+}
+\end{center}
+\vspace*{-9pt}
+ \Caption{Примеры разметки временных рядов трафика, скользящее окно: \textit{1}~--- абсолютно аномальные; 
+\textit{2}~--- относительно аномальные; \textit{3}~--- промежуточно аномальные}
+\label{bymachine_moving_ex1}
+\end{figure*}
+
+В этом случае наибольшие по абсолютной величине значения не обязательно 
+признаются ано-\linebreak
+\vspace*{-12pt}
+
+\noindent
+мальными, так как они могут соответствовать периодам об\-щей высокой 
+на\-груз\-ки на сеть. Для каж\-до\-го наблюдения~$V_j$ по каж\-до\-му объекту имеется 
+некоторый уровень ано\-маль\-ности $z_j \hm\in \{0,\ldots,w\}$, и~в~качестве правила 
+клас\-те\-ри\-за\-ции мож\-но использовать некоторую функ\-цию от $\{z_1,\ldots,z_n\}$. 
+Например, на рис.~\ref{moving_window_60m} пред\-став\-ле\-на клас\-те\-ри\-за\-ция на основе 
+ре\-ша\-юще\-го правила $\mathbb{I}\left( \left\{({1}/{n}) \sum\nolimits_i z_i\hm > 0{,}5\right \}\right)$. 
+
+\begin{figure*} %fig10
+\vspace*{-3pt}
+\begin{center}
+   \mbox{%
+\epsfxsize=148.67mm 
+\epsfbox{gor-10.eps}
+}
+\end{center}
+\vspace*{-12pt}
+        \Caption{Кластеризация объектов на группы с~высоким входящим, исходящим 
+        и~общим трафиком с~использованием скользящего окна: \textit{1}~--- аномален по полученному трафику;
+\textit{2}~--- аномален по отправленному трафику;
+\textit{3}~--- аномален по обоим типам трафика}
+    \label{moving_window_60m}
+\vspace*{-6pt}
+\end{figure*}
+
+На рис.~\ref{disjoint_window_60m} не были отображены~3~объекта с~наибольшими 
+значениями глав\-ных компонент, рас\-по\-ла\-га\-ющи\-еся в~правом верхнем углу на 
+рис.~\ref{moving_window_60m}, так как подход на основе не\-пе\-ре\-се\-ка\-ющих\-ся окон 
+отнес к~аномальным по общему трафику~37~объектов, большая часть из которых 
+продемонстрирована. Метод скользящего окна в~качестве 
+аномальных сразу по обоим типам трафика отметил только 
+эти~3~наблюдения, что действительно поз\-во\-ля\-ет говорить об их существенных 
+отличиях от других объектов.
+
+\vspace*{-12pt}
+
+\section{Заключение}
+\vspace*{-2pt}
+
+В работе рас\-смот\-рен статистический под\-ход к~выявлению аномальных на\-гру\-зок на 
+узлах сетевой вы\-чис\-ли\-тель\-ной архитектуры. С~использованием языка 
+программирования~R реализована процедура определения аномальных наблюдений 
+в~трафике в~рамках хорошо со\-от\-вет\-ст\-ву\-юще\-го реальным данным предположения 
+о~воз\-мож\-ности описания наблюдений обоб\-щен\-ным гам\-ма-рас\-пре\-де\-ле\-ни\-ем. На основе 
+анализа по\-яв\-ле\-ния таких наблюдений в~узлах может быть реализована процедура 
+клас\-те\-ри\-за\-ции объектов сети. Дальнейшие на\-прав\-ле\-ния исследований в~данной 
+об\-ласти могут быть связаны с~по\-стро\-ени\-ем ста\-ти\-сти\-че\-ских моделей для иных 
+характеристик вы\-чис\-ли\-тель\-ных узлов (например, за\-груз\-ки процессора или 
+ис\-поль\-зу\-емой памяти) и~решение описанной задачи клас\-те\-ри\-за\-ции в~расширенном 
+при\-зна\-ко\-вом пространстве. 
+
+Предложенная методика имеет определенный потенциал и~для других задач в~об\-ласти 
+телекоммуникаций, например связанных с~рас\-пре\-де\-ле\-ни\-ем ресурсов для виртуальных 
+машин~\cite{Huang2016,Tian2022}. Алгоритмы такого рода могут быть реализованы 
+в~виде сервисов отдельных аналитических сис\-тем~\cite{Gorshenin2016b,Gorshenin2017b} или в~рамках циф\-ро\-вых 
+плат\-форм~\cite{Gorshenin2018}.
+
+\medskip
+
+Авторы выражают признательность чле\-ну-кор\-рес\-пон\-ден\-ту РАН Р.\,Л.~Сме\-лян\-ско\-му за 
+ценные\linebreak советы, ка\-са\-ющи\-еся телекоммуникационной со\-став\-ля\-ющей \mbox{статьи}, а~так\-же 
+профессору В.\,Ю.~Королеву за пло\-до\-твор\-ные об\-суж\-де\-ния вопросов моделирования 
+реальных данных с~\mbox{использованием} различных семейств вероятностных распределений.
+{\looseness=-1
+
+}
+
+\vspace*{-6pt}
+
+{\small\frenchspacing
+ { %\baselineskip=12pt
+ %\addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99}
+\vspace*{-3pt}
+
+\bibitem{Smeliansky2019}  %2
+\Au{Смелянский~Р.\,Л.} Иерархические периферийные 
+вы\-чис\-ле\-ния~// Моделирование и~анализ информационных сис\-тем, 2019. Т.~26. Вып.~1.  C.~146--169.
+doi: 10.18255/1818-1015-2019-1-146-169.
+
+\bibitem{Smeliansky2023} 
+\Au{Smeliansky~R.} Network powered by computing~// 
+Edge computing~--- technology, management and integration.~--- IntechOpen, 2023. 21~p.
+doi: 10.5772/\mbox{intechopen}. 110178.
+
+\bibitem{Rossem2017} %3
+\Au{Rossem~S.V., Tavernier~W., Colle~D., Pickavet~M., 
+Demeester~P.} Automated monitoring and detection of resource-limited NFV-based 
+services~// Conference on Network Softwarization: Softwarization 
+Sustaining a~Hyper-Connected World: en Route to 5G, NetSoft 2017.~--- Piscataway, 
+NJ, USA: IEEE, 2017. Art.~8004220. doi: 10.1109/NETSOFT.2017.8004220.
+
+\bibitem{Malak2021} %4
+\Au{Malak~D., Medard~M., Andrews~J.\,G.} 
+Spatial concentration of caching in wireless heterogeneous networks~// 
+IEEE T. Wirel. Commun., 2021. Vol.~20. Iss.~6. P.~3397--3414. 
+doi: 10.1109/TWC.2021.3049812.
+
+\bibitem{Zhang2022} %5
+\Au{Zhang~Z., Lu~J., Chen~H.}
+Controller robust placement with dynamic traffic in software-defined networking~// Comput. Commun. 2022. Vol.~194. P.~458--467. 
+doi: 10.1016/j.comcom.2022.07.018.
+
+\pagebreak
+
+\bibitem{Mesodiakaki2022} %6
+\Au{Mesodiakaki~A., Zola~E., Kassler~A.} Robust and energy-efficient user association and traffic routing in B5G HetNets~//
+Comput. Netw., 2022. Vol.~217. Art.~109305. 
+doi: 10.1016/j.comnet.2022.109305.
+
+\bibitem{Hosseinzadeh2020} %7
+\Au{Hosseinzadeh~S.,
+Amirmazlaghani~M., Shajari~M.} An aggregated statistical approach for network 
+flood detection using gamma-normal mixture modeling~// Comput. Commun., 2020. Vol.~152. P.~137--148. 
+doi: 10.1016/j.comcom.2020.01.028.
+
+\bibitem{Abood2021} %8
+\Au{Abood~M.\,S., Mustafa~A.\,S., Mahdi~H.\,F., 
+Mohammed~A.-F.\,A., Hamdi~M.\,M., Hussein~N.\,A.} The analysis of teletraffic 
+and handover performance in cellular system~// 3rd  
+Congress (International) on Human--Computer Interaction, Optimization and Robotic Applications 
+Proceedings.~--- Piscataway, NJ, USA: IEEE, 2021. P.~1--5. 
+doi: 10.1109/HORA52670.2021.9461300.
+
+\bibitem{Parulekar1997} %9
+\Au{Parulekar~M., Makowski~A.\,M.} $M|G|\infty$ input 
+processes: A~versatile class of models for network traffic~// IEEE INFOCOM Proceedings.~--- Piscataway, NJ, USA: IEEE, 1997. Vol.~2. P.~419--426.
+doi: 10.1109/INFCOM. 1997.644490.
+
+\bibitem{Tabassum2014} %10
+\Au{Tabassum~H., Dawy~Z., Hossain~E., Alouini~M.-S.} 
+Interference statistics and capacity analysis for uplink transmission in two-tier 
+small cell networks: A~geometric probability approach~//
+IEEE T. Wirel. Commun., 2014. Vol.~13. Iss.~7. P.~3837--3852. doi: 10.1109/TWC.2014.2314101.
+
+\bibitem{Noor2022} %11
+\Au{Noor~K., Shahid~H., Obaid~H.\,M., Rauf~A., Yousaf~A., Shahid~A.}
+Hybrid underwater intelligent communication system //
+Wireless Pers. Commun., 2022. Vol.~125. Iss.~3. P.~2219--2238. doi: 10.1007/s11277-022-09653-7.
+
+\bibitem{Padhan2023} %12
+\Au{Padhan~A.\,K., Kumar~S.\,H., Sahu~P.\,R., Samantaray~S.\,R.} 
+Performance analysis of smart grid wide area network with RIS 
+assisted three hop system~// IEEE Transactions Signal Information  Processing Networks, 2023. Vol.~9. P.~48--59.
+doi: 10.1109/TSIPN.2023.3239652.
+
+\bibitem{Gorshenin2013b} %14
+\Au{Gorshenin~A., Korolev~V., Kuzmin~V., Zeif\-man~A.} 
+Coordinate-wise versions of the grid method for the analysis of intensities of 
+non-stationary information flows by moving separation of mixtures of gamma-distribution~// 
+27th European Conference on Modelling and Simulation Proceedings~/
+  Eds. W.~Rekdalsbakken, R.\,T.~Bye, and H.~Zhang.~--- 
+Dudweiler, Germany: Digitaldruck Pirrot GmbHP, 2013. P.~565--568. 
+doi: 10.7148/2013-0565.
+
+\bibitem{Gorshenin2013a} %13
+\Au{Gorshenin~A., Korolev~V.} Modelling of 
+statistical fluctuations of information flows by mixtures of gamma 
+distributions~// 27th European Conference on Modelling and Simulation Proceedings~/ 
+Eds. W.~Rekdalsbakken, R.\,T.~Bye, and H.~Zhang.~--- Dudweiler, Germany: Digitaldruck Pirrot GmbHP, 2013. P.~569--572. 
+doi: 10.7148/2013-0569.
+
+\bibitem{Gorshenin2015} %15
+\Au{Gorshenin~A., Kuzmin~V.} Online system for the 
+construction of structural models of information flows~// 7th 
+ Congress (International) on Ultra Modern Telecommunications and Control Systems  and 
+Workshops Proceedings.~--- Piscataway, NJ, USA: IEEE, 2015. P.~216--219. doi: 10.1109/ICUMT.2015.7382430.
+
+\bibitem{Gorshenin2016a} %16
+\Au{Gorshenin~A., Kuzmin~V.} On an interface of the 
+online system for a~stochastic analysis of the varied information flows~// AIP 
+Conf. Proc., 2016. Vol.~1738. Art.~220009. 4~p. doi: 10.1063/1.4952008.
+
+\bibitem{Gorshenin2017a} %17
+\Au{Горшенин~А.\,К.} О некоторых математических и~программных методах по\-стро\-ения структурных моделей информационных 
+потоков~// Информатика и~её применения, 2017. Т.~11. Вып.~1. C.~58--68. doi: 10.14357/ 19922264170105.
+
+\bibitem{Zonoozi1996} %18
+\Au{Zonoozi~M.\,M., Dassanayake~P., Faulkner~M.} 
+Teletraffic modelling of cellular mobile networks~// IEEE VTC~P., 1996. 
+Vol.~2. P.~1274--1277. doi: 10.1109/VETEC.1996.501517.
+
+\bibitem{Stacy1962} %19
+\Au{Stacy~E.\,W.} A~generalization of the gamma 
+distribution~// Ann. Math. Stat., 1962. Vol.~33. Iss.~3. 
+P.~1187--1192. doi: 10.1214/aoms/1177704481.
+
+\bibitem{Gorshenin2020} %20
+\Au{Korolev~V.\,Yu., Gor\-she\-nin~A.\,K.} Probability 
+models and statistical tests for extreme precipitation based on generalized 
+negative binomial distributions~// Mathematics, 2020. Vol.\,8. Iss.\,4. 
+Art.~604. doi: 10.3390/math8040604.
+
+\bibitem{Huang2016} %21
+\Au{Huang~B., Chen~J., He~Q., Wang~B., Liu~Z., Cheng~Y.} 
+HASO: A~hot-page aware scheduling optimization method in virtualized NUMA 
+systems~// 7th  Conference (International) on Information and Communication 
+Systems Proceedings.~--- Piscataway, NJ, USA: IEEE, 2016. P.~68--73. doi: 10.1109/IACS.2016.7476088.
+
+\bibitem{Tian2022} %22
+\Au{Tian~H., Li~S., Wang~A., Wang~W., Wu~T., Yang~H.} 
+Owl:  Performance-aware scheduling for resource-efficient function-as-a-service cloud~// 
+13th Symposium on Cloud Computing Proceedings.~--- New York, NY, USA: 
+Association for Computing Machinery, 2022. P.~78--93. doi: 10.1145/3542929.3563470.
+
+\bibitem{Gorshenin2016b} %23
+\Au{Горшенин~А.\,К.} Концепция он\-лайн-комп\-лек\-са для 
+сто\-ха\-сти\-че\-ско\-го моделирования реальных процессов~// Информатика и~её 
+применения, 2016. Т.~10. Вып.~1. C.~72--81.  doi: 10.14357/19922264160107.
+
+\bibitem{Gorshenin2017b} %24
+\Au{Gorshenin~A.\,K., Kuz\-min~V.\,Yu.} Research 
+support system for stochastic data processing~// Pattern Recognition  Image 
+Analysis, 2017. Vol.~27. No.~3. P.~518--524.  doi: 10.1134/S1054661817030117.
+
+\bibitem{Gorshenin2018} %25
+ \Au{Gorshenin~A.} Toward modern educational IT-ecosystems: From learning management systems to digital platforms~// 
+10th  Congress (International) on Ultra Modern Telecommunications and 
+Control Systems and Workshops Proceedings.~--- Piscataway, NJ, USA: IEEE, 2018. 
+P.~329--333. doi: 10.1109/ICUMT.2018.8631229.
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Поступила в~редакцию 15.07.23}}
+
+\vspace*{8pt}
+
+%\pagebreak
+
+\newpage
+
+\vspace*{-28pt}
+
+
+\def\tit{TOWARD CLUSTERING OF~NETWORK COMPUTING INFRASTRUCTURE OBJECTS BASED ON ANALYSIS OF~STATISTICAL ANOMALIES IN~NETWORK TRAFFIC}
+
+
+\def\titkol{Toward clustering of~network computing infrastructure objects based on analysis of~statistical anomalies in~network traffic}
+
+
+\def\aut{A.\,K.~Gorshenin$^{1,2}$, S.\,A.~Gorbunov$^{2,3}$, and~D.\,Yu.~Volkanov$^2$}
+
+\def\autkol{A.\,K.~Gorshenin, S.\,A.~Gorbunov, and~D.\,Yu.~Volkanov}
+
+\titel{\tit}{\aut}{\autkol}{\titkol}
+
+\vspace*{-10pt}
+
+\noindent
+$^{1}$Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov\linebreak
+$\hphantom{^1}$Str., Moscow 119133, Russian Federation
+
+\noindent
+$^{2}$M.\,V.~Lomonosov Moscow State University, 1~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation
+
+\noindent
+$^{3}$Moscow Center for Fundamental and Applied Mathematics, M.\,V.~Lomonosov Moscow State University,\linebreak
+$\hphantom{^1}$1-52~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation
+
+
+
+\def\leftfootline{\small{\textbf{\thepage}
+\hfill INFORMATIKA I EE PRIMENENIYA~--- INFORMATICS AND
+APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 3}
+}%
+ \def\rightfootline{\small{INFORMATIKA I EE PRIMENENIYA~---
+INFORMATICS AND APPLICATIONS\ \ \ 2023\ \ \ volume~17\ \ \ issue\ 3
+\hfill \textbf{\thepage}}}
+
+\vspace*{3pt}
+
+
+
+\Abste{The problem of detecting statistical anomalies (that is, outliers in relation to the typical values of upload and download traffic) 
+of the load on the nodes of the network computing infrastructure is considered. The regular scaling in computing resources and storage 
+as well as redirection of data flows is needed due to the increase of load in real systems. The procedure for detecting statistical
+ anomalies in network traffic is proposed using the approximation of observations by the generalized gamma distribution for further 
+ clustering of network computing infrastructure objects in order to evaluate resource need. All computational statistical 
+ procedures described in the paper are implemented using the~R programming language and they are applied for network traffic, 
+ simulated using a~specialized architectural and software stand. The proposed approaches can also be used for a~wider class of telecommunication problems.}
+
+\KWE{network  infrastructure; network traffic; generalized gamma distribution; computational statistics; statistical hypothesis testing; anomaly detection; 
+clustering}
+
+
+
+\DOI{10.14357/19922264230311}{XHTMVI}
+
+\vspace*{-12pt}
+
+\Ack
+\noindent
+This work was done with the support of MSU Program of Development, Project No.\,23-SCH03-03.
+The research was carried out using the infrastructure of the Shared Research Facilities ``High Performance Computing and Big Data'' (CKP ``Informatics'') 
+of FRC CSC RAS (Moscow).
+
+%\vspace*{8pt}
+
+  \begin{multicols}{2}
+
+\renewcommand{\bibname}{\protect\rmfamily References}
+%\renewcommand{\bibname}{\large\protect\rm References}
+
+{\small\frenchspacing
+ {%\baselineskip=10.8pt
+ \addcontentsline{toc}{section}{References}
+ \begin{thebibliography}{99} 
+
+\bibitem{Smeliansky2019-1} %2
+\Aue{Smelyansky, R.\,L.} 
+2019. Ierar\-khi\-che\-skie pe\-ri\-fe\-riy\-nye vy\-chis\-le\-niya [Hierarchical edge computing]. 
+\textit{Mo\-de\-li\-ro\-va\-nie i~ana\-liz in\-for\-ma\-tsi\-on\-nykh sis\-tem} 
+[Modeling and Analysis of Information Systems] 26(1):146--169. doi: 10.18255/1818-1015-2019-1-146-169.
+
+\bibitem{Smeliansky2023-1} 
+\Aue{Smeliansky, R.} 2023. 
+Network powered by computing. \textit{Edge computing~--- technology, management and integration}.  
+IntechOpen. 21~p. doi: 10.5772/intechopen.110178.
+
+\bibitem{Rossem2017-1} %3
+\Aue{Rossem, S.\,V., W.~Tavernier, D.~Colle, M.~Pickavet, and P.~Demeester.}
+ 2017. Automated monitoring and detection of resource-limited NFV-based services. 
+ \textit{Conference on Network Softwarization: Softwarization Sustaining a~Hyper-Connected World: en Route to 5G}. 
+Piscataway, NJ: IEEE. 8004220. doi: 10.1109/NETSOFT.2017.8004220.
+
+\bibitem{Malak2021-1} %4
+\Aue{Malak, D., M.~Medard, and J.\,G.~Andrews.}
+ 2021. Spatial concentration of caching in wireless heterogeneous networks. \textit{IEEE T. Wirel. Commun.} 
+ 20(6):3397--3414. doi: 10.1109/TWC.2021.3049812.
+
+\bibitem{Zhang2022-1}  %5
+\Aue{Zhang, Z., J.~Lu, and H.~Chen.}
+ 2022. Controller robust placement with dynamic traffic in software-defined networking. \textit{Comput. Commun.} 194:458--467. 
+ doi: 10.1016/ j.comcom.2022.07.018.
+
+\bibitem{Mesodiakaki2022-1} %6
+\Aue{Mesodiakaki, A., E.~Zola, and A.~Kassler.} 2022. Robust and energy-efficient 
+user association and traffic routing in B5G HetNets. 
+\textit{Comput. Netw.} 217:109305. doi: 10.1016/j.comnet.2022.109305.
+
+\bibitem{Hosseinzadeh2020-1} %7
+\Aue{Hosseinzadeh, S., M.~Amirmazlaghani, and M.~Shajari.}
+ 2020. An aggregated statistical approach for network flood detection using 
+ gamma-normal mixture modeling. \textit{Comput. Commun.}
+  152:137--148. doi: 10.1016/ j.comcom.2020.01.028.
+
+\bibitem{Abood2021-1} %8
+\Aue{Abood, M.\,S., A.\,S. Mustafa, H.\,F. Mahdi, A.-F.\,A.~Mohammed, M.\,M.~Hamdi, and N.\,A.~Hussein.}
+ 2021. The analysis of teletraffic and handover performance in cellular system. 
+ \textit{3rd Congress (International) on Human--Computer Interaction, Optimization and Robotic Applications Proceedings.} 
+ Piscataway, NJ: IEEE. 1--5. doi: 10.1109/\linebreak HORA52670.2021.9461300.
+
+\bibitem{Parulekar1997-1} %9
+\Aue{Parulekar, M., and A.\,M.~Makowski.} 1997. 
+$M|G|\infty$ input processes: A~versatile class of models for network traffic. 
+\textit{IEEE INFOCOM Proceedings}. Piscataway, NJ: IEEE. 2:419--426. doi: 10.1109/INFCOM.1997.644490.
+
+\bibitem{Tabassum2014-1} %10
+\Aue{Tabassum, H., Z.~Dawy, E.~Hossain, and M.-S.~Alouini.}
+ 2014. Interference statistics and capacity analysis for uplink transmission in two-tier small cell networks: A~geometric probability approach. 
+ \textit{IEEE T. Wirel. Commun.} 13(7):3837--3852. doi: 10.1109/TWC.2014.2314101.
+
+\bibitem{Noor2022-1} %11
+\Aue{Noor, K., H.~Shahid, H.\,M.~Obaid, A.~Rauf, A.~Yousaf, and  A.~Shahid.} 2022. 
+Hybrid underwater intelligent communication system. \textit{Wireless Pers. Commun.} 125(3):2219--2238. doi: 10.1007/s11277-022-09653-7.
+
+\bibitem{Padhan2023-1} %12
+\Aue{Padhan, A.\,K., S.\,H.~Kumar, P.\,R.~Sahu and S.\,R.~Samantaray.}
+ 2023.  Performance analysis of smart grid wide area network with RIS assisted three hop system. 
+ \textit{IEEE Transactions Signal Information Processing Networks} 9:48--59. doi: 10.1109/TSIPN.2023.3239652.
+
+\bibitem{Gorshenin2013b-1} %14
+\Aue{Gorshenin, A., V.~Korolev, V.~Kuz\-min, and A.~Zeif\-man.}
+ 2013. Coordinate-wise versions of the grid method for the analysis of intensities of non-stationary information flows by moving separation of mixtures
+  of gamma-distribution. \textit{27th European Conference on Modelling and Simulation Proceedings}. 
+  Eds. W.~Rekdalsbakken, R.\,T.~Bye, and H.~Zhang. Dudweiler, Germany: Digitaldruck Pirrot GmbHP. 565--568. doi: 10.7148/2013-0565.
+
+\bibitem{Gorshenin2013a-1} %13 
+\Aue{Gorshenin, A., and V.~Ko\-ro\-lev.}
+ 2013. Modelling of statistical fluctuations of information flows by mixtures of gamma distributions. 
+ \textit{27th European Conference on Modelling and Simulation Proceedings}. Eds.\ W.~Rekdalsbakken, R.\,T.~Bye, and H.~Zhang. 
+ Dudweiler, Germany: Digitaldruck Pirrot GmbHP. 569--572. doi: 10.7148/2013-0569.
+
+\bibitem{Gorshenin2015-1} %15
+\Aue{Gorshenin, A.\,K., and V.~Kuz\-min.}
+ 2015. Online system for the construction of structural models of information flows. 
+ \textit{7th Congress (International) on Ultra Modern Telecommunications and Control Systems and Workshops Proceedings}. 
+ Piscataway, NJ: IEEE. 216--219. doi: 10.1109/ICUMT.2015.7382430.
+
+\bibitem{Gorshenin2016a-1} %16
+\Aue{Gorshenin, A., and V.~Kuz\-min.}
+ 2016. On an interface of the online system for a~stochastic analysis of the varied information flows. 
+ \textit{AIP Conference Proceedings} 1738(1):220009. 4~p. doi: 10.1063/1.4952008.
+
+\bibitem{Gorshenin2017a-1} %17
+\Aue{Gorshenin, A.\,K.} 2017. O~ne\-ko\-to\-rykh ma\-te\-ma\-ti\-che\-skikh i~prog\-ram\-mnykh me\-to\-dakh po\-stro\-eniya struk\-tur\-nykh mo\-de\-ley 
+in\-for\-ma\-tsi\-on\-nykh po\-to\-kov [On some mathematical and programming methods for construction of structural models of information flows]. 
+\textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 11(1):58--68. doi: 10.14357/ 19922264170105.
+
+\bibitem{Zonoozi1996-1} %18
+\Aue{Zonoozi, M.\,M., P.~Dassanayake, and M.~Faulkner.}
+ 1996. Teletraffic modelling of cellular mobile networks. 
+ \textit{IEEE VTC~P.} 2:1274--1277. doi: 10.1109/VETEC.1996.501517.
+
+\bibitem{Stacy1962-1} %19
+\Aue{Stacy, E.\,W.} 1962. A~generalization of the gamma distribution. \textit{Ann. Math. Stat.} 33(3):1187--1192. doi: 10.1214/aoms/1177704481.
+
+\bibitem{Gorshenin2020-1} %20
+\Aue{Korolev, V.\,Yu., and A.\,K.~Gor\-she\-nin.}
+ 2020. Probability models and statistical tests for extreme precipitation based on generalized negative binomial distributions. 
+ \textit{Mathematics} 8(4):604. doi: 10.3390/math8040604.
+
+
+\bibitem{Huang2016-1} %21
+\Aue{Huang, B., J.~Chen, Q.~He, B.~Wang, Z.~Liu, and Y.~Cheng.}
+ 2016. HASO: A~hot-page aware scheduling optimization method in virtualized NUMA systems. 
+ \textit{7th  Conference (International) on Information and Communication Systems  Proceedings}. 
+ Piscataway, NJ: IEEE. 68--73. doi: 10.1109/IACS.2016.7476088.
+
+\bibitem{Tian2022-1} %22
+\Aue{Tian, H., S.~Li, A.~Wang, W.~Wang, T.~Wu, and H.~Yang.}
+ 2022. Owl: Performance-aware scheduling for resource-efficient function-as-a-service cloud. 
+ \textit{13th Symposium on Cloud Computing  Proceedings}. 
+ New York, NY: Association for Computing Machinery. 78--93. 
+doi: 10.1145/3542929.3563470.
+
+\bibitem{Gorshenin2016b-1} %23
+\Aue{Gorshenin, A.\,K.} 2016. 
+Kon\-tsep\-tsiya onlayn-kompleksa dlya sto\-kha\-sti\-che\-sko\-go mo\-de\-li\-ro\-va\-niya real'\-nykh pro\-tses\-sov 
+[Concept of online service for stochastic modeling of real processes]. \textit{Informatika i~ee Primeneniya~--- Inform. Appl.} 10(1):72--81. 
+doi: 10.14357/19922264160107.
+
+\bibitem{Gorshenin2017b-1} %24
+\Aue{Gorshenin, A.\,K., and V.\,Yu.~Kuz\-min.} 
+2017. Research support system for stochastic data processing. 
+\textit{Pattern Recognition Image Analysis} 27(3):518--524. doi: 10.1134/ S1054661817030117.
+
+\bibitem{Gorshenin2018-1} %25
+\Aue{Gorshenin, A.} 2018. Toward modern educational IT-ecosystems: From learning management systems to digital platforms. 
+\textit{10th  Congress (International) on Ultra Modern Telecommunications and Control Systems and Workshops Proceedings}. 
+Piscataway, NJ: IEEE. 329--333. doi: 10.1109/\mbox{ICUMT}.2018.8631229.
+
+\end{thebibliography}
+
+ }
+ }
+
+\end{multicols}
+
+\vspace*{-6pt}
+
+\hfill{\small\textit{Received July 15, 2023}} 
+
+\vspace*{-12pt}
+
+\Contr
+
+\noindent
+\textbf{Gorshenin Andrey K.} (b.\ 1986)~--- Doctor of Science in physics and mathematics, 
+associate professor, principal scientist, head of department, 
+Federal Research Center ``Computer Science and Control'' of the Russian Academy of Sciences, 44-2~Vavilov Str., 
+Moscow 119333, Russian Federation; associate professor, Department of Mathematical Statistics, 
+Faculty of Computational Mathematics and Cybernetics, M.\,V.~Lomonosov Moscow State University, 
+1-52~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation; \mbox{agorshenin@frccsc.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Gorbunov Sergei A.} (b.\ 2000)~--- master student, Faculty of Computational Mathematics and Cybernetics, 
+M.\,V.~Lomonosov Moscow State University, 1-52~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation; 
+mathematician, Moscow Center for Fundamental and Applied Mathematics, M.\,V.~Lomonosov Moscow State University, 
+1-52~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation; \mbox{shadesilent@yandex.ru}
+
+\vspace*{3pt}
+
+\noindent
+\textbf{Volkanov Dmitrii Yu.} (b.\ 1979)~--- Candidate of Science (PhD) in physics and mathematics, associate 
+professor, Faculty of Computational Mathematics and Cybernetics, M.\,V.~Lomonosov Moscow State University, 
+1-52~Leninskie Gory, GSP-1, Moscow 119991, Russian Federation; \mbox{volkanov@asvk.cs.msu.ru}
+
+
+
+\label{end\stat}
+
+\renewcommand{\bibname}{\protect\rm Литература} 
